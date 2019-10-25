@@ -1,0 +1,413 @@
+%1561432718962
+@
+sname=shell
+stext=CTabFolderEditorContainer
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=CTabFolderEditorContainer
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@cTabFolder
+  sname=cTabFolder
+  sstyle=TOP
+  sBORDER=true
+  sFLAT=false
+  sCLOSE=true
+  sSINGLE=false
+  sMRUVisible=false
+  ssimple=false
+  sdisposeControlOnItemClosed=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  slabel=centerTabFolder
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@CTabFolder
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=cTabFolder
+    @/@cTabFolder/@centerTabFolderMenu
+    sname=centerTabFolderMenu
+    sstyle=POP_UP
+    sNO_RADIO_GROUP=false
+    salign=LEFT_TO_RIGHT
+    slabel=centerTabFolderMenu
+    sdescriptors=xworker.swt.Widgets/@Menu
+    sid=centerTabFolderMenu
+      @/@cTabFolder/@centerTabFolderMenu/@cn_closeSelfItem
+      sname=cn_closeSelfItem
+      stext=res:res.w_exp:centerTabClose:关闭
+      sstyle=PUSH
+      sselected=false
+      senabled=true
+      slabel=cn_closeSelfItem
+      sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+      sid=cn_closeSelfItem
+        @/@cTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners
+        sname=listeners
+        slabel=listeners
+        sdescriptors=xworker.swt.events.Listeners/@listeners
+        sid=listeners
+          @/@cTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners/@cnTabMenuSelection
+          sname=cnTabMenuSelection
+          stype=Selection
+          slabel=cnTabMenuSelection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sid=cnTabMenuSelection
+            @/@cTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners/@cnTabMenuSelection/@GroovyAction
+            sname=GroovyAction
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Global
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+if(event.widget == cn_closeSelfItem){
+    def item = centerTabFolder.getSelection();
+    disposeItem(item);
+    item.dispose();
+}else if(event.widget == cn_closeOtherItem){
+    def item = centerTabFolder.getSelection();
+    for(it in centerTabFolder.getItems()){
+        if(it != item){            
+            disposeItem(it);
+        }
+    }
+    for(it in centerTabFolder.getItems()){
+        if(it != item){            
+            it.dispose();
+        }
+    }
+}else if(event.widget == cnCloseAllItem){
+    for(item in centerTabFolder.getItems()){
+        disposeItem(item);
+    }
+    for(item in centerTabFolder.getItems()){
+        item.dispose();
+    }
+}
+
+def disposeItem(item){
+    //销毁CtabItem相关的内容
+    if(item.getControl() != null){
+        try{
+            item.getControl().dispose();
+        }catch(Exception e){
+        }
+    }
+    def outlineTree = item.getData("outlineTree");
+    def childComposite = item.getData("childComposite");
+    
+    if(outlineTree != null){
+        try{
+             outlineTree.dispose();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    if(childComposite != null){
+        try{
+             childComposite.dispose();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    //item.dispose();   
+}
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sid=GroovyAction
+      @/@cTabFolder/@centerTabFolderMenu/@cn_closeOtherItem
+      sname=cn_closeOtherItem
+      stext=res:res.w_exp:centerTabCloseOther:关闭其他
+      sstyle=PUSH
+      sselected=false
+      senabled=true
+      slabel=cn_closeOtherItem
+      sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+      sid=cn_closeOtherItem
+        @/@cTabFolder/@centerTabFolderMenu/@cn_closeOtherItem/@listeners
+        sname=listeners
+        slabel=listeners
+        sdescriptors=xworker.swt.events.Listeners/@listeners
+        sid=listeners
+          @/@cTabFolder/@centerTabFolderMenu/@cn_closeOtherItem/@listeners/@cn_closeOteherSelectio
+          sname=cn_closeOteherSelectio
+          stype=Selection
+          sref=cnTabMenuSelection
+          slabel=cn_closeOteherSelectio
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sid=cn_closeOteherSelectio
+      @/@cTabFolder/@centerTabFolderMenu/@cnCloseAllItem
+      sname=cnCloseAllItem
+      stext=res:res.w_exp:centerTabCloseAll:关闭所有
+      sstyle=PUSH
+      sselected=false
+      senabled=true
+      slabel=cnCloseAllItem
+      sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+      sid=cnCloseAllItem
+        @/@cTabFolder/@centerTabFolderMenu/@cnCloseAllItem/@listeners
+        sname=listeners
+        slabel=listeners
+        sdescriptors=xworker.swt.events.Listeners/@listeners
+        sid=listeners
+          @/@cTabFolder/@centerTabFolderMenu/@cnCloseAllItem/@listeners/@cn_closeAllItemSelection
+          sname=cn_closeAllItemSelection
+          stype=Selection
+          sref=cnTabMenuSelection
+          slabel=cn_closeAllItemSelection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sid=cn_closeAllItemSelection
+    @/@cTabFolder/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@cTabFolder/@actions/@openEditor
+      sname=openEditor
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.swt.app.editorContainers.CTabFolderEditorContainer
+      smethodName=openEditor
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=openEditor
+      @/@cTabFolder/@actions/@editorModified
+      sname=editorModified
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.swt.app.editorContainers.CTabFolderEditorContainer
+      smethodName=editorModified
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=editorModified
+      @/@cTabFolder/@actions/@close
+      sname=close
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+if(editor != null && editor.isDirty()) {
+    confirm(actionContext);
+}else{
+    container.doClose(item);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=close
+        @/@cTabFolder/@actions/@close/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@cTabFolder/@actions/@close/@ActionDefined/@confirm
+          sname=confirm
+          sshell=var:shell
+          sicon=ICON_QUESTION
+          sbuttons=YES | NO | CANCEL
+          stitle=var:title
+          smessage=lang:d=内存已被修改，是否保存？&en=Content has been modified, do you want save it ?
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=confirm
+            @/@cTabFolder/@actions/@close/@ActionDefined/@confirm/@actions
+            sname=actions
+            sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox/@actions1
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=actions
+              @/@cTabFolder/@actions/@close/@ActionDefined/@confirm/@actions/@yes
+              sname=yes
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+//保存
+editor.doSave();
+
+//关闭Item
+container.doClose(item);
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=yes
+              @/@cTabFolder/@actions/@close/@ActionDefined/@confirm/@actions/@cancel
+              sname=cancel
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              scode=event.doit = false;
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=cancel
+              @/@cTabFolder/@actions/@close/@ActionDefined/@confirm/@actions/@no
+              sname=no
+              sexpression=container.doClose(item)
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@Ongl
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=no

@@ -1,0 +1,1247 @@
+^1545728731818
+@
+sname
+shell
+stext
+简单应用
+sNO_TRIM
+false
+sCLOSE
+true
+sTITLE
+true
+sMIN
+true
+sMAX
+true
+sBORDER
+false
+sRESIZE
+true
+sON_TOP
+false
+sTOOL
+false
+sNO_FOCUS
+false
+swidth
+1024
+sheight
+768
+scenterScreen
+true
+spack
+false
+smaximized
+false
+sfullScreen
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+SimpleAppWithTabFolderShell
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sdescriptors
+xworker.swt.widgets.Shell
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@shellFillLayout
+  sname
+  shellFillLayout
+  stype
+  SWT.HORIZONTAL
+  sdescriptors
+  xworker.swt.Layouts/@FillLayout
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  shellFillLayout
+  @/@mainSashForm
+  sname
+  mainSashForm
+  sstyle
+  HORIZONTAL
+  sSMOOTH
+  false
+  sweights
+  30,70
+  sBORDER
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_FOCUS
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.Widgets/@SashForm
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  mainSashForm
+    @/@mainSashForm/@thingTree
+    sname
+    thingTree
+    sselectStyle
+    SINGLE
+    sV_SCROLL
+    true
+    sH_SCROLL
+    true
+    sCHECK
+    false
+    sFULL_SELECTION
+    false
+    sHIDE_SELECTION
+    false
+    sBORDER
+    true
+    slineVisible
+    false
+    smultipleColumns
+    false
+    sheaderVisible
+    false
+    ssortIndicator
+    false
+    smoveableColumns
+    false
+    sheadImages
+    false
+    ssubImages
+    false
+    scheckSelection
+    false
+    scapture
+    false
+    senabled
+    true
+    sredraw
+    true
+    spack
+    false
+    svisible
+    true
+    sdescriptors
+    xworker.swt.Widgets/@Tree
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingTree
+      @/@mainSashForm/@thingTree/@Listeners
+      sname
+      Listeners
+      sdescriptors
+      xworker.swt.widgets.Widget/@Listeners
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      Listeners
+        @/@mainSashForm/@thingTree/@Listeners/@thingTreeSelection
+        sname
+        thingTreeSelection
+        stype
+        Selection
+        sdescriptors
+        xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thingTreeSelection
+          @/@mainSashForm/@thingTree/@Listeners/@thingTreeSelection/@thingTreeSelectionGroovy
+          sname
+          thingTreeSelectionGroovy
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.eclipse.swt.custom.CTabItem;
+import org.xmeta.ActionContext;
+import xworker.util.XWorkerUtils;
+
+def data = event.item.getData();
+def thing = data.get("_source");
+
+//outline，当用thingTab打开时
+if(actionContext.get("outlineBrowser") != null){
+    outlineBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+}
+
+if(thing.doAction("isEditor") == false){
+    //非编辑器的执行run
+    actions.doAction("executeItem", actionContext, "thing", thing);
+    return;
+}else{
+    //如果是编辑器则打开
+    actions.doAction("openItem", actionContext, [thing:thing]);
+}
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          thingTreeSelectionGroovy
+      @/@mainSashForm/@thingTree/@thingTreeMenu
+      sname
+      thingTreeMenu
+      sstyle
+      POP_UP
+      sNO_RADIO_GROUP
+      false
+      salign
+      LEFT_TO_RIGHT
+      svisible
+      true
+      senabled
+      true
+      sdescriptors
+      xworker.swt.widgets.Control/@Menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      thingTreeMenu
+        @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing
+        sname
+        openThing
+        stext
+        打开事物
+        sstyle
+        PUSH
+        sselected
+        false
+        senabled
+        true
+        sdescriptors
+        xworker.swt.widgets.Menu/@MenuItem
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        openThing
+          @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing/@listeners
+          sname
+          listeners
+          sdescriptors
+          xworker.swt.events.Listeners/@listeners
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          listeners
+            @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing/@listeners/@menuSelection
+            sname
+            menuSelection
+            stype
+            Selection
+            sdescriptors
+            xworker.swt.events.Listeners/@listeners/@Listener
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            menuSelection
+              @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing/@listeners/@menuSelection/@OpenThing
+              sname
+              OpenThing
+              screateIfNotExists
+              false
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              suseOtherAction
+              false
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.ide.worldExplorer.actions.ExplorerActions/@OpenThing
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_mark
+              false
+              sid
+              OpenThing
+                @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing/@listeners/@menuSelection/@OpenThing/@actions
+                sname
+                actions
+                sdescriptors
+                xworker.lang.actions.SelfAction/@actions1
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_mark
+                false
+                sid
+                actions
+                  @/@mainSashForm/@thingTree/@thingTreeMenu/@openThing/@listeners/@menuSelection/@OpenThing/@actions/@getThing
+                  sname
+                  getThing
+                  sexpression
+                  thingTree.getSelection()[0].getData().get("_source")
+                  sinterpretationType
+                  Self
+                  sattributeTemplate
+                  false
+                  schildsAttributeTemplate
+                  false
+                  svarScope
+                  Local
+                  sisSynchronized
+                  false
+                  sthrowException
+                  true
+                  suseOtherAction
+                  false
+                  screateLocalVarScope
+                  false
+                  ssaveReturn
+                  false
+                  sdisableGlobalContext
+                  false
+                  sdebugLog
+                  false
+                  sdescriptors
+                  xworker.lang.actions.Actions/@Ongl
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_registDisabled
+                  false
+                  sth_mark
+                  false
+                  sid
+                  getThing
+        @/@mainSashForm/@thingTree/@thingTreeMenu/@copyPathMenu
+        sname
+        copyPathMenu
+        stext
+        拷贝路径
+        sselected
+        false
+        senabled
+        true
+        sdescriptors
+        xworker.swt.widgets.Menu/@MenuItem
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        copyPathMenu
+          @/@mainSashForm/@thingTree/@thingTreeMenu/@copyPathMenu/@listeners
+          sname
+          listeners
+          sdescriptors
+          xworker.swt.events.Listeners/@listeners
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          listeners
+            @/@mainSashForm/@thingTree/@thingTreeMenu/@copyPathMenu/@listeners/@modifyGroupSelection
+            sname
+            copyPathSelection
+            stype
+            Selection
+            sdescriptors
+            xworker.swt.events.Listeners/@listeners/@Listener
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            modifyGroupSelection
+              @/@mainSashForm/@thingTree/@thingTreeMenu/@copyPathMenu/@listeners/@modifyGroupSelection/@setClipboard
+              sname
+              setClipboard
+              stype
+              string
+              scontent
+              ognl:thingTree.getSelection()[0].getData().get("_source").getMetadata().getPath()
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              suseOtherAction
+              false
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.java.util.Clipboard
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_mark
+              false
+              sid
+              setClipboard
+    @/@mainSashForm/@tabFolder
+    sname
+    tabFolder
+    sstyle
+    TOP
+    sBORDER
+    true
+    sFLAT
+    false
+    sCLOSE
+    false
+    sSINGLE
+    false
+    sMRUVisible
+    false
+    ssimple
+    false
+    sdisposeControlOnItemClosed
+    false
+    sH_SCROLL
+    false
+    sV_SCROLL
+    false
+    sNO_BACKGROUND
+    false
+    sNO_FOCUS
+    false
+    sNO_MERGE_PAINTS
+    false
+    sNO_REDRAW_RESIZE
+    false
+    sNO_RADIO_GROUP
+    false
+    sEMBEDDED
+    false
+    sDOUBLE_BUFFERED
+    false
+    scapture
+    false
+    senabled
+    true
+    sredraw
+    true
+    spack
+    false
+    svisible
+    true
+    sdescriptors
+    xworker.swt.Widgets/@CTabFolder
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    tabFolder
+    @/@mainSashForm/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.swt.Widgets/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@mainSashForm/@actions/@openThing
+      sname
+      openItem
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.xmeta.ActionContext;
+import xworker.util.XWorkerUtils;
+
+//标签名称
+def tabName = thing.doAction("getTabName", actionContext);
+if(tabName == null || tabName.trim() == ""){
+    tabName = thing.getMetadata().getPath();
+}
+def path = thing.getMetadata().getPath();
+
+//查看是否已经打开
+def opened = false;
+def tabItem = null;
+for(item in tabFolder.getItems()){
+    def tname = item.getData("name");
+    def tpath = item.getData("path");
+    
+    if(tname == tabName){        
+        //println "same:" + tabName;        
+        tabFolder.setSelection(item);
+        if(tpath == path){
+            //相同的数据，不需要做任何处理
+            return;
+        }else{
+            //同TabItem，不用的数据，需要执行更新操作
+            def ac = item.getData("actionContext");
+            def editorThing = item.getData("editorThing");
+            item.setText(thing.getMetadata().getLabel());
+            item.setData("thing", thing);
+            item.setData("path", thing.getMetadata().getPath());
+            editorThing.doAction("update", ac, 
+                  "editorThing", editorThing, "thing", thing, "tabItem", item);
+            return;
+        }
+    }
+}
+
+//是否需要创建
+if(tabItem == null){
+    int style = SWT.NONE;
+    if(thing.getBoolean("close")){
+        style = style | SWT.CLOSE;
+    }
+    
+    tabItem = new CTabItem(tabFolder, style);
+    def ac = new ActionContext();
+    ac.put("parentContext", actionContext);
+    ac.put("parent", tabFolder);
+    ac.put("tabItem", tabItem);
+    ac.put("outlineBrowser", actionContext.get("outlineBrowser"));
+    
+    def compositeThing = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@composite");
+    def composite = compositeThing.doAction("create", ac);
+    tabItem.setControl(composite);
+
+    tabItem.setData("actionContext", ac);
+    tabItem.setData("editorThing", thing);
+}
+
+//初始化控件
+tabItem.setData("name", tabName);
+tabItem.setData("path", path);
+tabItem.setData("thing", thing);
+tabItem.setText(thing.getMetadata().getLabel());
+
+def ac = tabItem.getData("actionContext");
+def composite = tabItem.getControl();
+for(child in composite.getChildren()){
+    child.dispose();
+}
+
+//对应菜单事物创建内容
+ac.peek().put("parent", composite);
+ac.peek().put("tabItem", tabItem);
+thing.doAction("create", ac);
+composite.layout();
+
+tabFolder.setSelection(tabItem);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      openThing
+        @/@mainSashForm/@actions/@openThing/@ins
+        sisValidate
+        false
+        sname
+        ins
+        sdescriptors
+        xworker.lang.actions.Inout/@ins
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        ins
+          @/@mainSashForm/@actions/@openThing/@ins/@thing
+          sname
+          thing
+          stypeCheck
+          false
+          soptional
+          true
+          scheck
+          false
+          scheckLevel
+          exception
+          sdescriptors
+          xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          thing
+      @/@mainSashForm/@actions/@selectThing
+      sname
+      selectThing
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+if(thing == thing.getRoot()){
+    //打开所有默认
+    def defaultOpen = thing.getStringBlankAsNull("defaultOpen");
+    if(defaultOpen != null){
+        for(str in defaultOpen.split("[\n]")){
+            str = str.trim();
+            def th = world.getThing(str);
+            if(th != null){
+                open(th);
+            }
+        }
+    }
+
+}else{
+    open(thing);
+}
+
+def open(thing){
+    actions.doAction("openItem", actionContext, [thing:thing]);
+
+    //选择事物的树节点
+    selectTreeItem(thingTree, thing);
+}
+
+
+def selectTreeItem(item, thing){
+    def data = item.getData();
+    if(data != null && data.get("_source") == thing){
+        expand(item);
+        thingTree.select(item);
+        return;
+    }
+    
+    for(child in item.getItems()){
+        selectTreeItem(child, thing);
+    }
+}
+
+def expand(item){
+    def pitem = item.getParentItem();
+    if(pitem == null){
+        return;
+    }
+    pitem.setExpanded(true);
+    
+    expand(pitem);
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      selectThing
+      @/@mainSashForm/@actions/@executeItem
+      sname
+      executeItem
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//非编辑器类的事物执行run方法
+def ac = new ActionContext();
+ac.put("parent", mainSashForm);
+ac.put("parentContext", actionContext);
+
+thing.doAction("run", ac);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      executeItem
+        @/@mainSashForm/@actions/@executeItem/@ins
+        sisValidate
+        false
+        sname
+        ins
+        sdescriptors
+        xworker.lang.actions.Inout/@ins
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        ins
+          @/@mainSashForm/@actions/@executeItem/@ins/@thing
+          sname
+          thing
+          stypeCheck
+          false
+          soptional
+          true
+          scheck
+          false
+          scheckLevel
+          exception
+          sdescriptors
+          xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          thing
+  @/@TreeModels
+  sname
+  TreeModels
+  sdescriptors
+  xworker.swt.widgets.Tree/@treeModels
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  TreeModels
+    @/@TreeModels/@treeModel
+    sname
+    treeModel
+    sthingPathVarName
+    thingPath
+    sincludeThingNames
+    Menu,TaskGuide
+    sdynamic
+    true
+    srootVisiable
+    true
+    sbindToParent
+    true
+    smultiSubModel
+    false
+    srootNodeId
+    __TreeNodeRootId__
+    smultiSubModelSeparator
+    -
+    sloadBackground
+    false
+    saddTabUrl
+    false
+    sdescriptors
+    xworker.app.model.tree.TreeModels/@ThingTreeModel
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    treeModel
+  @/@TreeModels1
+  sname
+  TreeModelsNoRoot
+  sdescriptors
+  xworker.swt.widgets.Tree/@treeModels
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  TreeModels1
+    @/@TreeModels1/@treeModel
+    sname
+    treeModel
+    sthingPathVarName
+    thingPath
+    sincludeThingNames
+    Menu,TaskGuide
+    sdynamic
+    true
+    srootVisiable
+    false
+    sbindToParent
+    true
+    smultiSubModel
+    false
+    srootNodeId
+    __TreeNodeRootId__
+    smultiSubModelSeparator
+    -
+    sloadBackground
+    false
+    saddTabUrl
+    false
+    sdescriptors
+    xworker.app.model.tree.TreeModels/@ThingTreeModel
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    treeModel
+  @/@composite
+  sname
+  composite
+  sBORDER
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_FOCUS
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.Widgets/@Composite
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  composite
+    @/@composite/@compositeFillLayout
+    sname
+    compositeFillLayout
+    stype
+    SWT.HORIZONTAL
+    sdescriptors
+    xworker.swt.Layouts/@FillLayout
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    compositeFillLayout
+  @/@browser
+  sname
+  browser
+  sMOZILLA
+  false
+  sWEBKIT
+  false
+  sjavascriptEnabled
+  true
+  sdescriptors
+  xworker.swt.Widgets/@Browser
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  browser
+    @/@browser/@UtilBrowser
+    sname
+    UtilBrowser
+    sdescriptors
+    xworker.swt.browser.Browser/@UtilBrowser
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    UtilBrowser
+  @/@webBrowser
+  sname
+  webBrowser
+  sdescriptors
+  xworker.swt.Widgets/@WebBrowser
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  webBrowser
+  @/@functionRunner
+  sname
+  functionRunner
+  sdescriptors
+  xworker.swt.Widgets/@FunctionRunner
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  functionRunner

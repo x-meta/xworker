@@ -1,0 +1,256 @@
+^1558517405950
+@
+sname
+DbAdmin
+slabel
+DbAdmin
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@checkDb1
+    sname
+    checkDb
+    schangeSelf
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ActionGroup
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    checkDb1
+      @/@actions/@checkDb1/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.actions.Begin/@actions
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@actions/@checkDb1/@actions/@checkAndCreateDataSource
+        sname
+        checkAndCreateDataSource
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.util.UtilThing;
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger(this.class);
+
+//检查数据源是否存在，如果不存在创建数据源
+def dataSource = world.getThing("_local.xworker.db.XWorkerIDEDataSource");
+if(dataSource == null){
+    dataSource = new Thing("xworker.db.jdbc.DataSource");
+    dataSource.initDefaultValue();
+    dataSource.put("name", "XWorkerIDEDataSource");
+    dataSource.put("type", "HikariCP");
+    dataSource.put("dbType", "sqlite");
+    dataSource.put("drivers", "15");
+    dataSource.put("driver_class", "org.sqlite.JDBC");
+    dataSource.put("url", "template:jdbc:sqlite:\${world.path}/databases/xworker.db");
+    dataSource.put("userName", "");
+    dataSource.put("password", "");
+    dataSource.put("th_createIndex", "true");
+    dataSource.put("checkoutTimeout", "3000");
+    dataSource.put("th_registThing", "child|xworker.ui.db.datasource.JdbcDatasourceRegistor");
+    dataSource.put("group", "xworker");
+    dataSource.saveAs("_local", "_local.xworker.db.XWorkerIDEDataSource");
+    dataSource = world.getThing("_local.xworker.db.XWorkerIDEDataSource");
+}
+
+//检查数据库是否存在，如果不存在创建数据库，仅限derby
+def con = null;
+def pst = null;
+def rs = null;
+def dbExists = false;
+String userName = dataSource.get("userName");
+String password = dataSource.get("password");
+try{
+    //建表
+    boolean createTables = false;
+    //如果是默认的数据库，检查数据库是否存在
+    if(dataSource.get("driver_class") == "org.apache.derby.jdbc.EmbeddedDriver"){       
+        try{
+            //建立到derby的连接            
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            con = java.sql.DriverManager.getConnection("jdbc:derby:app", userName, password);
+            if(con != null){
+                log.info("XWorer database exists");
+            }
+        }catch(Exception e){
+            log.info("XWorer database does not exists, create XWorer database");
+            con = java.sql.DriverManager.getConnection("jdbc:derby:xworker;create=true", userName, password);
+            
+            con.close();
+            
+            createTables = true;
+            con = dataSource.doAction("getConnection", actionContext);
+            log.info("XWorker database created");
+        }
+    }else{
+        con = dataSource.doAction("getConnection", actionContext);
+    }
+        
+    try{
+        //检查数据库表是否存在
+        pst = con.prepareStatement("select path from tblThings where id = 0");    
+        rs = pst.executeQuery();
+        
+        //检查数据库文件是否已修改
+        def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig",
+                 "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
+        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerIDEDatabase");
+        if(config.getLong("ideDbLastModified") != dbThing.getMetadata().getLastModified()){
+             createTables = true;
+             log.info("XWorker database tables has changed");
+        }else{
+             log.info("XWorker database tables exists before");
+        }
+    }catch(Exception e){
+		createTables = true;
+		if(con == null){
+		     log.warn("Xworker database not exists, please check '_local.xworker.db.XWorkerIDEDataSource'");
+		     return;
+		}
+        log.info("XWorker tables not exists, create them");
+    }
+    
+    if(createTables){
+         //创建schema
+         /*
+         try{
+            pst = con.prepareStatement("create schema " + userName + "");
+            pst.execute();
+            pst.close();
+         }catch(Exception e){
+              log.info("Create schema error", e);
+         }*/
+            
+        //释放资源
+        if(rs != null){
+            rs.close();
+        }
+        if(pst != null){
+            pst.close();
+        }
+        if(con != null){
+            con.close();
+        }        
+        //如果异常重新创建所有的表
+                     /*使用Apache的DDLutils        
+        def alter = new Thing("xworker.db.ddlutils.DDLActions/@AlterDatabase");
+        alter.put("dataSource", "_local.xworker.db.XWorkerIDEDataSource");
+        alter.put("database", "xworker.ide.db.dbindex.ddl.XWorkerIDEDatabase");
+        alter.doAction("run", actionContext);
+        */
+        def ddl = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerDDL");        
+        ddl.doAction("run", actionContext);
+        
+        //删除index文件，从而可以重新刷新索引
+        log.info("deleting all index cache .......");
+        delete(new File(world.getPath() + "/work/updateindex/"));
+        log.info("index cache deleted");
+        
+        //保存更新时间
+        def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig", 
+                        "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
+        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerIDEDatabase");
+        config.put("ideDbLastModified", dbThing.getMetadata().getLastModified());
+        config.save();                 
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+    if(con != null){
+        con.close();
+    }
+}
+
+def delete(file){
+    if(file.isFile()){
+        file.delete();
+    }else if(file.isDirectory()){
+        for(child in file.listFiles()){
+            delete(child);
+        }
+        
+        //log.info("delete index " + file.getPath());
+        file.delete();
+    }
+}
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        checkAndCreateDataSource

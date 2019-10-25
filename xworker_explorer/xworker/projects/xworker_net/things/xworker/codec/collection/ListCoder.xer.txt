@@ -1,0 +1,225 @@
+@xworker.codec.collection.ListCoder
+sname
+ListCoder
+slabel
+ListCoder
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.codec.Coder,xworker.codec.CollectionCodes
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>解码时生成List。</p>
+<p>List应该只有一个子节点。</p>
+#$@text#$@
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@actions/@encode
+sname
+encode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//List的长度
+def size = 0;
+if(data != null){
+    size = data.size();
+}
+switch(self.sizeType){
+    case "byte":
+        size = size & 0xFF;
+        buffer.put((byte) size);
+        break;
+    case "int":
+        buffer.putInt(size);
+        break;
+    default:
+        size = size & 0xFFFF;
+        buffer.putShort((short) size);
+        break;
+}
+
+//编码List的数据
+try{
+    def bindings = actionContext.push(null);
+    for(childData in data){
+        bindings.put("data", childData);
+        for(child in self.getChilds()){
+            child.doAction("encode", actionContext);
+        }
+    }
+}finally{
+    actionContext.pop();
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@actions/@decode
+sname
+decode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def data = [];
+
+//解码List的长度
+def size = 0;
+switch(self.sizeType){
+    case "byte":
+        size = buffer.get();
+        break;
+    case "int":
+        size = buffer.getInt();
+        break;
+    default:
+        size = buffer.getShort();
+        break;
+}
+
+//解码List的数据
+for(int i=0; i<size; i++){
+    for(child in self.getChilds()){ //一个List应该只有一个子节点吧
+        def value = child.doAction("decode", actionContext);
+        data.add(value);
+    }
+}
+
+return data;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@sizeType
+sname
+sizeType
+sinputtype
+select
+sreadOnly
+false
+sdefault
+short
+sinheritDescription
+false
+sdescription
+<p>List的size保存的方法，byte用一个字节，short两个字节，int4个字节。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@sizeType/@byte
+sname
+byte
+slabel
+byte
+svalue
+byte
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@sizeType/@short
+sname
+short
+slabel
+short
+svalue
+short
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.codec.collection.ListCoder/@sizeType/@int
+sname
+int
+slabel
+int
+svalue
+int
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false

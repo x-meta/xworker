@@ -1,0 +1,381 @@
+%1557887720121
+@
+sname=CommandActions
+slabel=CommandActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+sdescription=<p>和命令域相关的额动作。</p>
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@ReturnToParentExecutor
+  sname=ReturnToParentExecutor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=xworker.command
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>在子命令执行其中的命令中使用，返回到父命令执行器。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Object getResult()</strong><br />
+	返回设置到父命令中的结果值。&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ReturnToParentExecutor
+    @/@ReturnToParentExecutor/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ReturnToParentExecutor/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//子命令执行器是通过父命令触发的
+def parentCommand = commandExecutor.getActionContext().get("parentCommand");
+
+//设置结果
+def result = self.doAction("getResult", actionContext);
+parentCommand.setResult(result);
+parentCommand.getExecutor().checkStatus();
+
+//返回父执行器
+def executorContext = parentCommand.getExecutor().getActionContext();
+executorContext.mainStackLayout.topControl = executorContext.commandComposite;
+executorContext.mainComposite.layout();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@ReturnToParentExecutor/@actions/@getResult
+      sname=getResult
+      sattributeName=result
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getResult
+    @/@ReturnToParentExecutor/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@ReturnToParentExecutor/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@ReturnToParentExecutor/@result
+    sname=result
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=result
+    @/@ReturnToParentExecutor/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@CommandContents
+  sname=CommandContents
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=xworker.command
+  smodifier=public
+  sinheritDescription=false
+  sdescription=<p>返回命令内容列表。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=CommandContents
+    @/@CommandContents/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@CommandContents/@actions/@run1
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+import xworker.util.UtilData;
+
+text = text.toLowerCase();
+def keys = text.split("[ ]");
+def things = self.doAction("getCommands", actionContext);
+def list = [];
+for(thing in things){
+    def label = thing.getMetadata().getName() + "(" + thing.getMetadata().getLabel() + ")";
+    if(isMatch(label.toLowerCase(), keys)){
+        list.add(new SelectContent(label, thing));
+    }
+}
+
+return list;
+
+def isMatch(label, keys){
+    for(key in keys){
+        if(label.indexOf(key) == -1){
+            return false;
+        }
+    }
+    
+    return true;
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run1
+      @/@CommandContents/@actions/@getCommandThings
+      sname=getCommands
+      sattributeName=commands
+      schildThingName=Commands
+      schildThingOnly=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getCommandThings
+    @/@CommandContents/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@CommandContents/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@CommandContents/@commands
+    sname=commands
+    sinputtype=textarea
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=commands
+    @/@CommandContents/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@CommandContents/@Commands
+    sname=Commands
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.lang.command.CommandDomain/@OtherCommands
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Commands

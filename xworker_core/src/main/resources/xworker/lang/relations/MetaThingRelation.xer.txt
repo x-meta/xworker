@@ -1,0 +1,528 @@
+@xworker.lang.relations.MetaThingRelation
+sname
+MetaThingRelation
+slabel
+基本事物关联
+sdescription
+<p>该关联来自于元事物，所有事物均有此关联。</p>
+sid
+MetaThingRelation
+sdescriptors
+xworker.lang.relation.ThingRelation
+@xworker.lang.relations.MetaThingRelation/@UI
+sname
+searchThings
+slabel
+查询事物
+sid
+UI
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@UI/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@UI/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+try{
+    def uiThing = world.getThing("xworker.ide.db.dbindex.app.swt.ThingQueryerByKeyword/@shell/@mainComposite");
+    return uiThing.doAction("create", actionContext);
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@templateCategory
+sname
+templateCategory
+slabel
+模板
+Sdescription
+#$@text#$@
+<p><strong>如何使用模板？</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 输入关键字查询模板，在本界面下选择一个模板，点&lsquo;使用&rsquo;按钮，编辑模板的数据，点击&lsquo;应用&rsquo;执行模板。</p>
+<p><strong>什么是事物模板？</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 事物模板是一种快速编辑事物（子事物）的方法。</p>
+<p><strong>模板的原理</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 数据+模板=事物。</p>
+<p>&nbsp;&nbsp;&nbsp; 模板的原理是从一个已有的事物通过替换它的部分属性来生成一个新事物，要替换的属性就是数据，而已有的事物则是模板。</p>
+<p><strong>如何创建模板？</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 有两种方法可以创建模板：</p>
+<ul>
+    <li>打开一个事物，通过菜单&lsquo;创建模板&rsquo;的向导以这个事物创建模板。</li>
+    <li>使用描述者xworker.lang.util.ThingCreator直接创建模板事物。</li>
+</ul>
+<p>&nbsp;&nbsp;&nbsp; 创建模板后需要<strong>注册模板</strong>到指定事物（一般是描述者-结构）下。比如按钮面板注册到Composite下：template|xworker.swt.widgets.Composite，然后在编辑这个描述者的实例事物时就可以使用模板了。注册模板事物可以在元事物模式下编辑，即在描述者列表中选择元事物。</p>
+<p>&nbsp;&nbsp;&nbsp; 为了方便查找到模板，最好设置一些关联性强的容易联想的<strong>关键字</strong>。</p>
+<p><strong>模板示例</strong></p>
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('thing:xworker.swt.widgets.CompositeBtnComptTpl')">SWT按钮面板</a>。</p>
+#$@text#$@
+sid
+templateCategory
+sdescriptors
+xworker.lang.relation.ThingRelation/@Category
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@templage
+sname
+useTemplate
+slabel
+使用模板
+sdescription
+<p>使用描述者定义的模板。</p>
+sid
+templage
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@templage/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@templage/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+try{
+    def uiThing = world.getThing("xworker.lang.relations.TemplateCompoiste/@shell/@mainComposite");
+    return uiThing.doAction("create", actionContext);
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@createTempalte
+sname
+createTempalte
+slabel
+创建模板
+sdescription
+<p>把当前事物制作成一个模板。</p>
+sid
+createTempalte
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@createTempalte/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@templateCategory/@createTempalte/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+try{
+    def ac = new ActionContext();
+    ac.put("currentThing", thing);
+    ac.put("explorerActions", explorerActions);
+    ac.put("parent", parent);
+    def compositeThing = world.getThing("xworker.ide.assist.template.thingtotemplate.GenerateTemplateShell/@shell/@mainComposite");        
+    def composite = compositeThing.doAction("create", ac);
+    ac.cancelButton.dispose(); //不需要关闭按钮
+    return composite;
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@templateCategory1
+sname
+featureCategory
+slabel
+特征
+Sdescription
+#$@text#$@
+<p><strong>如何使用特征？</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 输入关键字查询特征，点击&lsquo;使用&rsquo;按钮应用特征。</p>
+<p><strong>什么是特征？</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 特征是一种快速编辑事物的方法。</p>
+<p>&nbsp;&nbsp;&nbsp; 一个事物的某些独特属性或子事物可以作为它的特征，使用特征也就是让另外一个事物具有相同的特征属性和特征子事物。</p>
+<p>&nbsp;&nbsp;&nbsp; 比如背景为蓝色的窗口&lsquo;背景为蓝色&rsquo;是它的一个特征，如果把这个特征应用于其他窗口，那么其他窗口的背景也将是蓝色的。</p>
+<p><strong>如何创建特征？</strong></p>
+<p>&nbsp;&nbsp; 一般是从当前事物抽取特征，在编辑事物的界面选择菜单特征-创建特征，根据向导创建特征事物。</p>
+<p><strong>特征和模板的区别</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 特征和模板有相似之处，特征的属性和子事物是固定的，不能动态生成，特征可以修改特定的属性，模板在此方面就相对弱一些。&nbsp;</p>
+#$@text#$@
+sid
+templateCategory1
+sdescriptors
+xworker.lang.relation.ThingRelation/@Category
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@templage
+sname
+useFeature
+slabel
+使用特征
+sdescription
+<p>使用相关的事物特征。</p>
+sid
+templage
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@templage/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@templage/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+try{
+    def uiThing = world.getThing("xworker.lang.relations.FeatureComposite/@shell/@mainComposite");
+    return uiThing.doAction("create", actionContext);
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@createTempalte
+sname
+createFeature
+slabel
+创建特征
+sdescription
+<p>使用当前事物创建一个特征。</p>
+sid
+createTempalte
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@createTempalte/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@templateCategory1/@createTempalte/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+try{
+    def featureThing = world.getThing("xworker.lang.features.Feature");
+    def feature = featureThing.doAction("createFeatures", actionContext, ["thing":thing]);
+    def ac = new ActionContext();
+    ac.put("currentThing", thing);
+    ac.put("explorerActions", explorerActions);
+    ac.put("parent", parent);
+    ac.put("thing", feature);
+    
+    def compositeThing = world.getThing("xworker.ide.assist.feature.thingtofeature.FeatureCreator/@shell/@mainComposite");        
+    def composite = compositeThing.doAction("create", ac);
+    ac.cancelButton.dispose(); //不需要关闭按钮   
+    return composite;
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@notes
+sname
+notes
+slabel
+笔记
+sid
+notes
+sdescriptors
+xworker.lang.relation.ThingRelation/@Category
+@xworker.lang.relations.MetaThingRelation/@notes/@viewNotes
+sname
+viewNotes
+slabel
+查看笔记
+sid
+viewNotes
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@notes/@viewNotes/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@notes/@viewNotes/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+try{
+    def uiThing = world.getThing("xworker.lang.relations.ThingNotesViewer/@shell/@mainComposite");
+    def composite = uiThing.doAction("create", actionContext);
+    utilBrowser.attach(browser);
+    return composite;
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@notes/@createNotes
+sname
+createNotes
+slabel
+创建笔记
+sid
+createNotes
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@notes/@createNotes/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@notes/@createNotes/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+try{
+    def uiThing = world.getThing("xworker.lang.relation.editors.RegistThingCreater/@shell/@mainSash");
+    actionContext.getScope(0).put("type", "notes");
+    return uiThing.doAction("create", actionContext);
+}catch(Exception e){
+    e.printStackTrace();
+}
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@edit
+sname
+edit
+slabel
+编辑
+sdescription
+<p>和编辑器有关的事物。</p>
+sid
+edit
+sdescriptors
+xworker.lang.relation.ThingRelation/@Category
+@xworker.lang.relations.MetaThingRelation/@edit/@initValues
+sname
+initValues
+slabel
+本界面动作上下文
+sid
+initValues
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@edit/@initValues/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@edit/@initValues/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def uiThing = world.getThing("xworker.ide.debug.swt.DebugConsole/@shell/@mainComposite/@mainSashForm/@rightSashForm");
+def control = uiThing.doAction("create", actionContext);
+utilBrowser.attach(valueText);
+
+def context = [:];
+def action = world.getAction("xworker.ide.debug.swt.DebugConsole/@shell/@mainComposite/@actions/@initDataTree");
+action.run(actionContext, [
+    "treeItem":dataTree, "value": actionContext, "context":context
+]);
+
+return control;
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.relations.MetaThingRelation/@edit/@theVariableOfEditor
+sname
+theVariableOfEditor
+slabel
+编辑器相关变量
+sid
+theVariableOfEditor
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI
+@xworker.lang.relations.MetaThingRelation/@edit/@theVariableOfEditor/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.relation.ThingRelation/@UI/@actions1
+@xworker.lang.relations.MetaThingRelation/@edit/@theVariableOfEditor/@actions/@createUI
+sname
+createUI
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def uiThing = world.getThing("xworker.ide.debug.swt.DebugConsole/@shell/@mainComposite/@mainSashForm/@rightSashForm");
+def control = uiThing.doAction("create", actionContext);
+valueText.addStatusTextListener(utilBrowser);
+
+def vars = [
+    "explorerActions":explorerActions,
+    "explorerContext":explorerContext,
+    "thingContext":thingContext,
+    "utilBrowser":utilBrowser,
+    "thing":thing,
+    "currentModel":currentModel,
+    "currentModelContext":currentModelContext
+    ];
+def context = [:];
+def action = world.getAction("xworker.ide.debug.swt.DebugConsole/@shell/@mainComposite/@actions/@initDataTree");
+action.run(actionContext, [
+    "treeItem":dataTree, "value": vars, "context":context
+]);
+
+return control;
+#$@text#$@
+sid
+createUI
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

@@ -1,0 +1,252 @@
+^1516847812327
+@
+sname
+OpenWindowSet
+slabel
+OpenWindowSet
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.DataObjects
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p><strong>属性弹出窗口设置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 设置一个属性编辑弹出窗口的相关信息。</p>
+
+<p><strong>设置方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 要设置两个部分，一个是参数表单，另一个是窗口路径。参数表单是在编辑属性时，在属性扩展输入的参数中要设置的参数。这些参数在编辑窗口是会传入。</p>
+
+<p><strong>参数设置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以添加一个数据对象作为参数的编辑器，数据对象的属性值就是参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 设置事物的第一个子事物被认作是数据对象的定义。</p>
+
+<p><strong>窗口获取参数的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在窗口的变量上下文中有一个prarams变量，它是一个字符串，格式为&lt;name1&gt;=&lt;value1&gt;,&lt;name2&gt;=&lt;value2&gt;，其中分隔符是在这个窗口设置中设置的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 把字符串转化为Map的方法。</p>
+
+<pre class="brush:java;">
+import org.xmeta.util.UtilString;
+
+Map&lt;String, String&gt; params = UtilString.getParams(param, &quot;,&quot;);
+</pre>
+
+<p><strong>窗口返回值的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 窗口的目的是给事物编辑器的属性辅助。方法是在变量上下文的全局变量中设置<strong>result</strong>变量，类型为字符串。</p>
+
+<p><strong>窗口设置编辑器多个属性值的方法</strong></p>
+
+<pre class="brush:java;">
+    //参考下面的示例
+    def values = [:];
+    values.put(typeName, registType);
+    parentModel.doAction(&quot;setPartialValues&quot;, parentContext, &quot;values&quot;, values);</pre>
+
+<p><strong>窗口可用变量</strong></p>
+
+<pre class="brush:java;">
+    	ac.put(&quot;parent&quot;, shell);
+    	ac.put(&quot;value&quot;, text.getText());
+    	ac.put(&quot;text&quot;, text);
+    	ac.put(&quot;param&quot;, param);
+    	ac.put(&quot;params&quot;, UtilString.getParams(param, &quot;,&quot;));
+    	ac.put(&quot;parentContext&quot;, actionContext.get(&quot;parentContext&quot;));
+    	ac.put(&quot;utilBrowser&quot;, actionContext.get(&quot;utilBrowser&quot;));
+    	ac.put(&quot;explorerActions&quot;, actionContext.get(&quot;explorerActions&quot;));
+    	ac.put(&quot;explorerContext&quot;, actionContext.get(&quot;explorerContext&quot;));
+    	ac.put(&quot;textContext&quot;, actionContext.get(&quot;actionContext&quot;));
+    	ac.put(&quot;parentModel&quot;, parentContext.get(&quot;__editModel__model&quot;));</pre>
+
+<p><strong>注册窗口</strong></p>
+
+<p>把本事物注册到xworker.swt.xworker.attributeEditor.OpenWindowSets的子节点下，那么在事物的编辑弹出窗口的扩展属性中则可以看到本事物的设置。</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+  @/@name
+  sname
+  name
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  label
+  @/@winPath
+  sname
+  winPath
+  sinputtype
+  dataSelector
+  sshowLabel
+  true
+  ssize
+  60
+  scolspan
+  2
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>弹出窗口的路径。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  winPath
+  @/@group
+  sname
+  group
+  ssize
+  60
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  group
+  @/@separateChar
+  sname
+  separateChar
+  slabel
+  分隔符
+  sreadOnly
+  false
+  sdefault
+  ,
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  separateChar
+  @/@encoding
+  sname
+  encoding
+  slabel
+  编码
+  sreadOnly
+  false
+  sdefault
+  utf-8
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  encoding
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  scolspan
+  2
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  description

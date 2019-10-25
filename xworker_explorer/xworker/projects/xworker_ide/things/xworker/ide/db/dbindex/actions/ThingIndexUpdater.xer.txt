@@ -1,0 +1,1395 @@
+^1558664813919
+@
+sname
+ThingIndexUpdater
+slabel
+ThingIndexUpdater
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sdescription
+<p>事物索引更新者。</p>
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@addIndexJob
+    sname
+    addIndexJob
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def config = self.doAction("getConfig", actionContext);
+
+if(actionContext.get("thingPath") != null && thingPath instanceof String){
+    config.thingList.add(thingPath);
+}
+
+if(actionContext.get("thing") != null && thing instanceof Thing){
+    config.thingList.add(thing.getMetadata().getThingManager().getName() + ":" + thing.metadata.path);
+}
+#$@text#$@
+    sdescription
+    <p>添加一个索引任务。</p>
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    addIndexJob
+      @/@actions/@addIndexJob/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@addIndexJob/@contexts/@thingPath
+        sname
+        thingPath
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        slabel
+        thingPath
+        sdescriptors
+        xworker.lang.actions.Inout/@contexts/@context
+        sid
+        thingPath
+        @/@actions/@addIndexJob/@contexts/@thing
+        sname
+        thing
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        slabel
+        thing
+        sdescriptors
+        xworker.lang.actions.Inout/@contexts/@context
+        sid
+        thing
+    @/@actions/@doUpdate
+    sname
+    doUpdate
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger(this.class);
+def config = self.doAction("getConfig", actionContext);
+
+//每次只更新最多100个事物
+def ths = [:];
+def deletedList = [];
+def i = 0;
+while(config.thingList.size() > 0){
+    if(i > 100){
+        break;
+    }
+    def path = config.thingList.remove(0);
+    ths.put(path, path);
+}
+while(config.deletedList.size() > 0){
+    deletedList.add(config.deletedList.remove(0));
+}
+
+//具体更新缓存
+def actions = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexActions");
+for(thingPath in ths.keySet()){
+    try{
+        //更新事物索引
+        def index = thingPath.indexOf(":");
+        if(index == -1){
+            log.info("thing index updator,path=" + thingPath);
+        }
+        def thingManagerName = thingPath.substring(0, index);
+        thingPath = thingPath.substring(index + 1, thingPath.length());
+        def thing = world.getThing(thingPath);
+        if(thing != null){
+            def rebulid = false;
+            def path = world.getPath() + "/work/updateindex/" + thingManagerName + "/" + thingPath.replace(':', '/').replace('.', '/') + ".xer";
+            def file = new File(path);
+            actions.doAction("updateThingIndex", actionContext, ["thing":thing, "rebulid": rebulid]);
+            
+            //保存日志
+            if(!file.getParentFile().exists()){
+               file.getParentFile().mkdirs();
+               rebulid = true;
+            }
+            def out = new FileOutputStream(file);
+            try{
+                out.write(String.valueOf(thing.metadata.lastModified).getBytes());
+            }finally{
+                out.close();
+            }
+            //log.info("thing index updated, thing=" + thingPath);
+        }
+    }catch(Exception e){
+        log.info("update thing index error, thing=" + thingPath, e);
+    }
+}
+
+//删除已删除事物的缓存
+for(deleteThing in deletedList){
+    try{
+        def index = deleteThing.indexOf(":");
+        def thingManagerName = deleteThing.substring(0, index);
+        deleteThing = deleteThing.substring(index + 1, deleteThing.length());
+        actions.doAction("deleteThingIndex", actionContext, ["thing" : deleteThing + "%"]);
+        def path = world.getPath() + "/work/updateindex/" + thingManagerName + "/" + deleteThing.replace(':', '/').replace('.', '/') + ".xer";
+        def file = new File(path);
+        if(file.exists()){
+            file.delete();
+        }
+        
+        log.info("thing index deleted, thing=" + thingManagerName + ":" + deleteThing);
+    }catch(Exception e){
+        log.error("delete thing index error, thing=" + deleteThing, e);
+    }
+}
+#$@text#$@
+    sdescription
+    <p>执行更新，从任务列表中执行。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    doUpdate
+    @/@actions/@scanUpdated
+    sname
+    scanUpdated
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Index;
+import org.xmeta.util.ThingRunner;
+
+//后台扫描并记录事物索引，应当尽量不占cpu
+
+//配置
+def config = self.doAction("getConfig", actionContext);
+if(actionContext.get("thingManager") != null){
+    scanThingManager(config, thingManager);
+}else{
+    scanDelay(config);
+}
+
+def scanThingManager(config, thingManager){
+   if(ThingRunner.working_project == thingManager.getName()){
+        //工作目录不索引
+        continue;
+    }
+    
+    def dirFile = new File(project.getPath() + "/" + thingManager.getName());
+    def path = project.getName() + "/" + thingManager.getName();
+    def list = [];
+    doSacn(dirFile, path, list, world.getPath() + "/work/updateindex/" + path);
+    
+    if(config.thingList == null){
+        config.thingList = [];
+    }
+    config.thingList.addAll(list);
+}
+
+//一次扫描全部
+def scanAll(config){
+    for(thingManager in world.getThingManagers()){
+        if(ThingRunner.working_project == thingManager.getName()){
+            //工作目录不索引
+            continue;
+        }
+        
+        def dirFile = new File(project.getPath() + "/" + thingManager.getName());
+        def path = project.getName() + "/" + thingManager.getName();
+        def list = [];
+        doSacn(dirFile, path, list, world.getPath() + "/work/updateindex/" + path);
+        
+        if(config.thingList == null){
+            config.thingList = [];
+        }
+        config.thingList.addAll(list);
+    }
+}
+
+//延迟扫描，每次只扫描一个
+def scanDelay(config){
+    //每10分钟更新一次
+    def boolean scan = false;
+    if(config.lastScanTime == null){
+        scan = true;        
+    }else if(System.currentTimeMillis() - config.lastScanTime > 600000){
+        scan = true;
+    }
+    
+    if(scan){
+        //根索引，根索引之下是事物管理器
+        def rootIndex = Index.getInstance();
+        rootIndex.refresh();
+        if(rootIndex.getChilds().size() == 0){
+            return;
+        }
+        
+        //为了不是太影响cpu，每次只扫描一个事物管理器
+        def thingManagerOffset = config.thingManagerIndex;
+        def thingManagerIndexs = rootIndex.getThingManagerIndexs();
+        if(thingManagerOffset == null || thingManagerOffset >= thingManagerIndexs.size()){
+            thingManagerOffset = 0;
+        }        
+        config.thingManagerIndex = thingManagerOffset + 1;
+        def thingManagerIndex = thingManagerIndexs.get(thingManagerOffset);
+        
+        //获取事物管理下所有事物的索引
+        def thingIndexs = [:];
+        for(childIndex in thingManagerIndex.getChilds()){
+            initAllThingsFromIndex(childIndex, thingIndexs);
+        }
+        
+        //已经缓存的事物索引
+        def thingManagerName = thingManagerIndex.getName();
+        def updateThingInfos = [:];
+        def updateInfoFile = new File(world.getPath() + "/work/updateindex/" + thingManagerIndex.getName());
+        if(updateInfoFile.exists()){
+            for(childFile in updateInfoFile.listFiles()){
+                initAllUpdateInfoFromDir(childFile, "", updateThingInfos);
+            }
+        } 
+        
+        //已经更新或新增的事物
+        for(key in thingIndexs.keySet()){
+             def thingIndex = thingIndexs.get(key);
+             def updateInfo = updateThingInfos.get(key);
+             if(updateInfo == null || thingIndex.getLastModified() != updateInfo.lastModified){
+                  config.thingList.add(thingManagerName + ":" + thingIndex.getPath());
+             }
+        } 
+        //已经删除的
+        for(key in updateThingInfos.keySet()){
+            if(thingIndexs.get(key) == null){
+                config.deletedList.add(thingManagerName + ":" + updateThingInfos.get(key).path);
+            }
+        }
+        /*   
+        def projects = [];
+        def project = null;    
+        def thingManager = null;
+        while(true){
+            def thingManagers = world.getThingManagers();
+            if(thingManagerIndex >= thingManagers.size()){
+                //扫描完毕
+                config.projectIndex = 0;
+                config.thingManagerIndex = 0;
+                config.lastScanTime = System.currentTimeMillis();
+                return;
+            }else{
+                thingManager = thingManagers.get(thingManagerIndex);
+                thingManagerIndex++;
+                break;
+            }
+        }
+        
+        config.projectIndex = projectIndex;
+        config.thingManagerIndex = thingManagerIndex;
+
+         
+        if(project instanceof FileProject){        
+            def dirPath = project.getFilePath() + "/" + thingManager.getName();
+            def dirFile = new File(dirPath);
+            def path = project.getName() + "/" + thingManager.getName();
+            def list = [];
+            doSacn(dirFile, path, list, world.getPath() + "/work/updateindex/" + path);
+            def deletedList = [];
+            doScanDeleted(new File(world.getPath() + "/work/updateindex/" + path), project.getName() + ":" + thingManager.getName(), 
+                deletedList, dirPath, "thingManager");
+            
+            if(config.thingList == null){
+                config.thingList = [];
+            }
+            if(config.deletedList == null){
+                config.deletedList = [];
+            }
+            config.thingList.addAll(list);
+            config.deletedList.addAll(deletedList);
+        } */
+    }
+}
+
+//扫描目录下的所有事物
+def initAllThingsFromIndex(index, thingIndexs){
+    if(index.getType() == Index.TYPE_CATEGORY){
+        index.refresh();
+        
+        for(childIndex in index.getChilds()){
+            initAllThingsFromIndex(childIndex, thingIndexs);
+        }
+    }else if(index.getType() == Index.TYPE_THING){
+        thingIndexs.put(index.getPath(), index);
+    }else if(index.getType() == Index.TYPE_THINGMANAGER) {
+        for(childIndex in index.getChilds()){
+            initAllThingsFromIndex(childIndex, thingIndexs);
+        }
+    }   
+}
+
+def isThingFile(fileName){
+    for(coder in world.getThingCoders()){
+        if(fileName.endsWith("." + coder.getType())){
+            return coder.getType();
+        }
+    }
+    
+    return null;
+}
+
+//从跟新目录下搜索所有更新的事物
+def initAllUpdateInfoFromDir(file, path, thingUpdateInfos){
+    if(file.isDirectory()){
+        for(childFile in file.listFiles()){
+            def childPath = (path == null || path == "") ? file.getName() : (path + "." + file.getName());
+            initAllUpdateInfoFromDir(childFile, childPath, thingUpdateInfos);
+        }
+    }else{
+        //判断是否是事物
+        def fileName = file.getName();
+        def codeType = isThingFile(fileName);
+        if(codeType != null){
+		    thingName = fileName.substring(0, fileName.length() - codeType.length() - 1);
+		    def thingPath = (path == null || path == "") ? thingName : (path + "." + thingName);
+		    //log.info("xxxxxxxxxxxxx= " + thingPath);
+		    FileInputStream fin = new FileInputStream(file);
+            def bytes = null;
+            try{
+                bytes = new byte[fin.available()];
+                fin.read(bytes);
+            }finally{
+                fin.close();
+            }
+            
+            if(bytes.length == 0){
+                return;
+            }
+            def lastModified = 0;
+            try{            
+                lastModified = Long.parseLong(new String(bytes));
+            }catch(Exception e){
+            }
+                
+		    thingUpdateInfos.put(thingPath, ["path": thingPath, "lastModified": lastModified]);
+        }			
+    }
+}
+
+//扫描已经删除的事物
+def doScanDeleted(file, thingPath, list, filePath, type){
+    if(file.isDirectory()){
+        def seperator = "";
+        if(type == "project"){
+            seperator = ":";
+            type = "thingManager";
+        }else if(type == "thingManager"){
+            seperator == ":";
+            type = "other";
+        }else{
+            seperator = ".";
+        }
+        for(child in file.listFiles()){            
+            doScanDeleted(child, thingPath + seperator + child.getName(), list, filePath + "/" + child.getName(), type);
+        }
+    }else{
+        def fileName = file.getName();
+        if(fileName.toLowerCase().endsWith(".xer")){
+            def cfile = new File(filePath);
+            if(!cfile.exists()){
+                list.add(thingPath);
+            }
+        }
+    }
+}
+
+//执行扫描
+def doSacn(file, path, list, ppath){
+    if(file.isDirectory()){
+        for(child in file.listFiles()){
+            doSacn(child, path + "/" + child.getName(), list, ppath + "/" + child.getName());
+        }
+    }else{
+        def fileName = file.getName();
+        if(world.isThingFile(fileName)){//fileName.toLowerCase().endsWith(".xer")){
+            def lastTime = file.lastModified();
+            def thingPath = path;
+            def tPath = ppath;
+            def cfile = new File(tPath);
+            def isNew = false;
+            if(!cfile.exists()){
+                isNew = true;
+            }else{
+                FileInputStream fin = new FileInputStream(cfile);
+                def bytes = null;
+                try{
+                    bytes = new byte[fin.available()];
+                    fin.read(bytes);
+                }finally{
+                    fin.close();
+                }
+                def lt = Long.parseLong(new String(bytes));
+                if(lastTime > lt){
+                    isNew = true;
+                }      
+                //log.info("" + isNew + " " + lt + " " +  tPath);
+            }
+            
+            if(isNew){
+                thingPath = thingPath.substring(0, thingPath.lastIndexOf("."));
+                def tpath = "";
+                def tps = thingPath.split("[/]");
+                for(int i=0; i<tps.length; i++){
+                    if(i==0){
+                        tpath = tps[0];
+                    }else if(i < 3){
+                        tpath = tpath + ":" + tps[i];
+                    }else{
+                        tpath = tpath + "." + tps[i];
+                    }
+                }
+                list.add(tpath);
+            }
+        }
+    }
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>扫描所有事物，若发现有新的事物，加入到更新工作列表中。</p>
+<p>一般用于后台更新，为防止占用资源太多，采用分批扫描的方式。</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    scanUpdated
+    @/@actions/@getConfig
+    sname
+    getConfig
+    sisSynchronized
+    true
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def config = world.getData("__xw_thingIndexUpdater");
+if(config == null){
+    config = [:];
+    config.thingList = [];
+    config.deletedList = [];
+    world.setData("__xw_thingIndexUpdater", config);
+}
+
+return config;
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    getConfig
+    @/@actions/@scanUpdatedAll
+    sname
+    scanUpdatedAll
+    sisSynchronized
+    true
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.projects.FileProject;
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger(this.class);
+
+//配置
+def config = self.doAction("getConfig", actionContext);
+
+//扫描情况的上下文
+def context = [:];
+def updatedList = []; //已更新列表
+def deletedList = []; //已删除列表
+
+//执行扫描
+def projects = world.getProjects();
+for(project in projects){
+    try{
+        def path = project.name;
+        def pfile = new File(project.getFilePath());
+        if(pfile.exists()){
+            doScan(pfile, project.name, "project", context);
+        }
+    }catch(Exception e){
+        log.error("scan project updated thing error, project=" + project.name, e);
+    }
+}
+
+//查找出已变更的和已删除的
+for(key in context.keySet()){
+    def data = context.get(key);
+    if(data.status == "deleted"){
+        deletedList.add(data);
+    }else if(data.status == "updated"){
+        updatedList.add(data);
+    }    
+}
+
+//打印
+for(d in deletedList){
+    println "deleted " + d.path;
+}
+for(u in updatedList){
+    println "updated " + u.path;
+}
+
+//保存到文件中
+
+//执行扫描
+def doScan(file, path, type, context){
+    if(file.isDirectory()){
+        for(childFile in file.listFiles()){
+            def ctype = null;
+            if(type == "project"){
+                ctype = "thingManager";
+            }else{
+                ctype = "other";
+            }
+            doScan(childFile, appendPath(path, childFile.name, type), ctype, context);
+        }
+    }else{
+        def name = file.name;
+        if(world.getThingName(name)){//name.toLowerCase().endsWith(".xer")){
+            name = name.substring(0, name.lastIndexOf("."));
+            name = appendPath(path, name, type);
+            def data = context.get(name);
+            if(data == null){
+                data = [path:name, lastDate:file.lastModified()];
+                data.status = "updated";
+                context.put(name, data);
+            }else{
+                if(data.lastDate != file.lastModified()){
+                    data.lastDate = file.lastModified();
+                    data.status = "updated";
+                }else{
+                    data.status = "nochange"; //未变更
+                }
+            }
+        }
+    }
+}
+
+//装载上一次扫描的结果
+def loadLastScanResult(context, world){
+    def file = new File(world.getPath() + "/work/updateindex/scaninfo.txt");
+    if(file.exists()){
+        def fin = new FileInputStream(file);
+        try{
+            def br = new BufferedReader(new InputStreamReader(fin));
+            def line = null;
+            while((line = br.readLine()) != null){
+                line = line.trim();
+                if(line != ""){
+                    def ss = line.split("[|]");
+                    //保存路径和日期
+                    def data = [:];
+                    data.path = ss[0];
+                    data.lastDate = Long.parseLong(ss[1]);
+                    data.status = "deleted"; //当重新扫描如果还存在时会修改此状态
+                    context.put(ss[0], data);
+                }
+            }
+        }finally{
+            fin.close();
+        }
+    }
+}
+
+def appendPath(path, name, type){
+    if(type == "project"){
+        return path + ":" + name;
+    }
+    
+    if(type == "thingManager"){
+        return path + ":" + name;
+    }
+    
+    return path + "." + name;
+}
+#$@text#$@
+    sdescription
+    <p>新的扫描方法，一次扫描所有的事物文件。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    scanUpdatedAll
+    @/@actions/@checkThingIndex
+    sname
+    checkThingIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//判断索引是否已经更新，如果已更新返回true，否则返回false
+if(self.doAction("isThingIndexChanged", actionContext)){
+    //更新索引
+    def indexActions = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexActions");
+    if(actionContext.get("con") == null){
+        indexActions.doAction("updateThingIndex", actionContext, ["thing": thing]);
+    }else{
+        indexActions.doAction("updateThingIndexNoContext", actionContext, ["thing": thing]);         
+    }
+    
+    //保存索引日期
+    self.doAction("saveThingIndexTime", actionContext, [thing: thing]);
+    
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    checkThingIndex
+      @/@actions/@checkThingIndex/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@checkThingIndex/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions/@isThingIndexChanged
+    sname
+    isThingIndexChanged
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//返回是否索引是否已变更
+def indexTime = self.doAction("getThingIndexTime", actionContext);
+
+//println("thing=" + thing.getMetadata().getPath());
+//println("    indexTime=" + indexTime);
+//println("    lastModified=" + thing.getMetadata().getLastModified());
+if(indexTime == null || thing.getMetadata().getLastModified() > indexTime){
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    isThingIndexChanged
+      @/@actions/@isThingIndexChanged/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@isThingIndexChanged/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions/@getThingIndexFile
+    sname
+    getThingIndexFile
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def path = thing.getMetadata().getPath();
+path = path.replace('.', '/');
+def thingManager = thing.getMetadata().getThingManager();
+def filePath = world.getPath() + "/work/updateindex/" +  thingManager.getName() + "/" + path + ".xer";
+
+return new File(filePath);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThingIndexFile
+      @/@actions/@getThingIndexFile/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@getThingIndexFile/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions/@getThingIndexTime
+    sname
+    getThingIndexTime
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//返回索引的时间
+def file = self.doAction("getThingIndexFile", actionContext);
+if(file == null || file.exists() == false){
+    return 0;
+}
+
+FileInputStream fin = new FileInputStream(file);
+def bytes = null;
+try{
+    bytes = new byte[fin.available()];
+    fin.read(bytes);
+}finally{
+    fin.close();
+}
+
+try{
+    return Long.parseLong(new String(bytes));
+}catch(Exception e){
+    return 0;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThingIndexTime
+      @/@actions/@getThingIndexTime/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@getThingIndexTime/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions/@saveThingIndexTime
+    sname
+    saveThingIndexTime
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//保存索引的时间
+def file = self.doAction("getThingIndexFile", actionContext);
+if(file.getParentFile().exists() == false){
+    file.getParentFile().mkdirs();
+}
+
+def out = new FileOutputStream(file);
+try{
+    out.write(String.valueOf(thing.metadata.lastModified).getBytes());
+}finally{
+    out.close();
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    saveThingIndexTime
+      @/@actions/@saveThingIndexTime/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@saveThingIndexTime/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions/@removeInvalidIndex
+    sname
+    removeInvalidIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//删除索引无效索引，通常是事物已删除的索引
+def datasource = world.getThing("xworker.ide.db.datasource.XWorkerDataSource");
+def deleted = [];
+def con = datasource.doAction("getConnection", actionContext);
+try{
+    def sql = new groovy.sql.Sql(con);
+    sql.eachRow("select * from tblThings", {
+         def path = it.path;
+         def index = path.indexOf("!");
+         if(index != -1){
+             //过滤掉资源的路径，资源的暂时不删除，还没有更好的方法
+             path = path.substring(0, index);
+         }
+         if(world.getThing(path) == null){
+             deleted.add(path);
+         }
+         //println(path);
+    });
+}finally{
+    con.close();
+}
+
+//删除索引
+def indexActions = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexActions/@actions/@deleteThingIndex");
+for(d in deleted){
+    indexActions.getAction().run(actionContext, "thing", d);
+    System.out.println("remove index :" + d);  
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    removeInvalidIndex
+    @/@actions/@updateThingManagerIndex
+    sname
+    updateThingManagerIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.util.UtilThing;
+
+//遍历所有的事物
+println("Check things");
+int count = 0;
+def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+
+//获取事务，执行事务模式，能够大大提高sqlite的插入速度
+def datasource = world.getThing("xworker.ide.db.datasource.XWorkerDataSource");
+def con = datasource.doAction("getConnection", actionContext);
+try{
+    //con.setAutoCommit(false);    
+    if("_transient" == thingManager.getName()){
+        return;
+    }
+    System.out.println("ThingManager : " + thingManager.getName());
+    def iter = thingManager.iterator(null, true);
+    while(iter.hasNext()){
+        def thing = iter.next();
+        //if( thingManager.getName() == "xworker_core"){
+        //    System.out.println(thing.metadata.path);
+       // }
+        if(updator.doAction("checkThingIndex", actionContext, [
+             thing: thing, con: con])){
+             System.out.println("Thing index updated : " + thing.metadata.path);
+        }
+        count++;
+    }
+
+    System.out.println("Total " + count + " things checked");
+    //con.commit();
+}catch(Exception e){
+    //con.rollback();
+    e.printStackTrace();
+}finally{   
+   //con.setAutoCommit(true);
+   con.close();
+}
+
+//删除无效索引
+println("Delete invalid index");
+updator.doAction("removeInvalidIndex", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    updateThingManagerIndex
+      @/@actions/@updateThingManagerIndex/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@updateThingManagerIndex/@ins/@thingManager
+        sname
+        thingManager
+        stype
+        org.xmeta.ThingManager
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        thingManager

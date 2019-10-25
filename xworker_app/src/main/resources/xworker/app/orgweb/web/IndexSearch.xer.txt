@@ -1,0 +1,908 @@
+^1566182409884
+@
+sname
+IndexSearch
+slabel
+IndexSearch
+sdescription
+<p>像Index那样显示内容的，但同时内容是搜索页面。</p>
+scheckPermission
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    schangeSelf
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ActionGroup
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    doAction
+      @/@actions/@doAction/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.actions.Begin/@actions
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@actions/@doAction/@actions/@doAction
+        sname
+        getConent
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        suseOuterJava
+        true
+        suseInnerJava
+        false
+        souterClassName
+        xworker.app.orgweb.OrgwebActions
+        smethodName
+        doAction
+        sdisableGlobalContext
+        false
+        sattributeTemplate
+        false
+        sinterpretationType
+        Action
+        svarScope
+        Global
+        screateLocalVarScope
+        false
+        ssaveReturn
+        true
+        sreturnVarName
+        contentReturn
+        sdescriptors
+        xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        doAction
+        @/@actions/@doAction/@actions/@If
+        sname
+        ifHaveContent
+        scondition
+        contentReturn == "success"
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@If
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        If
+          @/@actions/@doAction/@actions/@If/@Then
+          sname
+          Then
+          sdescriptors
+          xworker.lang.actions.If/@ChildAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          Then
+            @/@actions/@doAction/@actions/@If/@Then/@initCondition
+            sname
+            initCondition
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            svarScope
+            Local
+            sdisableGlobalContext
+            false
+            Scode
+#$@text#$@
+//关键字
+def q = requestBean.get("q");
+def keys = null;
+if(q != null){
+   def qs = q.split("[ ]");
+   for(qstr in qs){
+       qstr = qstr.trim();
+       if("" != qstr){
+           if(keys != null){
+               keys = keys + "," + qstr;
+           }else{
+               keys = qstr;
+           }
+       }
+   }
+}
+
+//附加内容指定的关键字
+if(content.searchKeys != null && content.searchKeys != ""){
+    if(keys == null){
+        keys = content.searchKeys;
+    }else{
+        keys = keys + "," + content.searchKeys;
+    }
+}
+
+condition = ["q":keys];
+condition.parentId = content.id;
+try{
+    page = Integer.parseInt(requestBean.page);
+}catch(Exception e){
+    page = 1;
+}
+indexSearch = true;
+//log.info("condition=" + condition);
+if(!logined){
+    condition.put("status", 1);
+}
+#$@text#$@
+            sinterpretationType
+            Action
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            initCondition
+            @/@actions/@doAction/@actions/@If/@Then/@doAction1
+            sname
+            query
+            sdataObjectPath
+            xworker.app.orgweb.dataobjects.ContentTree
+            sisServlet
+            false
+            sconditionData
+            condition
+            screatePageInfo
+            true
+            spageInfoVarName
+            pageInfo
+            spageInfoVarScope
+            Global
+            spage
+            var:page
+            spageSize
+            10
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Global
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            screateLocalVarScope
+            false
+            ssaveReturn
+            true
+            sreturnVarName
+            datas
+            sdisableGlobalContext
+            false
+            sdebugLog
+            true
+            sdescriptors
+            xworker.dataObject.actions.DataObjectActions/@query
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            doAction1
+              @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1
+              sname
+              Condition
+              boperator
+              1
+              sjoin
+              and
+              smultiValueJoin
+              and
+              signoreNull
+              true
+              sdummySql
+              false
+              sisClause
+              false
+              saddOneDay
+              false
+              sdescriptors
+              xworker.dataObject.actions.DataObjectActions/@query/@Condition
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              Condition1
+                @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@isPage
+                sname
+                isPage
+                sattributeName
+                isPage
+                boperator
+                1
+                sjoin
+                and
+                svalue
+                1
+                signoreNull
+                true
+                sdummySql
+                false
+                sisClause
+                false
+                saddOneDay
+                false
+                sdescriptors
+                xworker.dataObject.query.Condition/@Condition
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_mark
+                false
+                sid
+                isPage
+                @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@status
+                sname
+                status
+                sattributeName
+                status
+                sdataName
+                status
+                boperator
+                1
+                sjoin
+                and
+                signoreNull
+                true
+                sdummySql
+                false
+                sisClause
+                false
+                saddOneDay
+                false
+                sdescriptors
+                xworker.dataObject.query.Condition/@Condition
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_mark
+                false
+                sid
+                status
+                @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@parentId
+                sname
+                parentId
+                sattributeName
+                parentId
+                sdataName
+                parentId
+                boperator
+                1
+                sjoin
+                and
+                smultiValueJoin
+                or
+                signoreNull
+                true
+                sdummySql
+                false
+                sisClause
+                false
+                salwaysAddClause
+                false
+                sisClauseTemplate
+                false
+                saddOneDay
+                false
+                sdebug
+                false
+                sdescriptors
+                xworker.dataObject.query.Condition/@Condition
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_mark
+                false
+                sid
+                parentId
+                @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@keyandName
+                sname
+                keyandName
+                boperator
+                1
+                sjoin
+                and
+                smultiValueJoin
+                or
+                signoreNull
+                true
+                sdummySql
+                false
+                sisClause
+                false
+                salwaysAddClause
+                false
+                sisClauseTemplate
+                false
+                saddOneDay
+                false
+                sdebug
+                false
+                sdescriptors
+                xworker.dataObject.query.Condition/@Condition
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_mark
+                false
+                sid
+                keyandName
+                  @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@keyandName/@label
+                  sname
+                  label
+                  sattributeName
+                  label
+                  sdataName
+                  q
+                  boperator
+                  10
+                  sjoin
+                  and
+                  smultiValueJoin
+                  and
+                  signoreNull
+                  true
+                  sdummySql
+                  false
+                  sisClause
+                  false
+                  salwaysAddClause
+                  false
+                  sisClauseTemplate
+                  false
+                  saddOneDay
+                  false
+                  sdebug
+                  false
+                  sdescriptors
+                  xworker.dataObject.query.Condition/@Condition
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_registDisabled
+                  false
+                  sth_mark
+                  false
+                  sid
+                  label
+                  @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@keyandName/@keys
+                  sname
+                  keys
+                  sdataName
+                  q
+                  boperator
+                  1
+                  sjoin
+                  or
+                  smultiValueJoin
+                  and
+                  signoreNull
+                  true
+                  sdummySql
+                  false
+                  sisClause
+                  false
+                  salwaysAddClause
+                  false
+                  sisClauseTemplate
+                  false
+                  saddOneDay
+                  false
+                  sdebug
+                  false
+                  sdescriptors
+                  xworker.dataObject.query.Condition/@Condition
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_mark
+                  false
+                  sid
+                  keys
+                    @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@keyandName/@keys/@actions
+                    sname
+                    actions
+                    sdescriptors
+                    xworker.dataObject.query.Condition/@actions1
+                    sinheritDescription
+                    false
+                    sth_createIndex
+                    false
+                    sth_registMyChilds
+                    false
+                    sth_mark
+                    false
+                    sid
+                    actions
+                      @/@actions/@doAction/@actions/@If/@Then/@doAction1/@Condition1/@keyandName/@keys/@actions/@nodeToSql
+                      sname
+                      nodeToSql
+                      sisSynchronized
+                      false
+                      sthrowException
+                      true
+                      suseOtherAction
+                      false
+                      svarScope
+                      Local
+                      sdisableGlobalContext
+                      false
+                      Scode
+#$@text#$@
+import xworker.dataObject.query.UtilCondition;
+
+//获取关键字
+def q = UtilCondition.getConditionValue(self, actionContext);
+
+//没有查询条件返回null
+if(q == null || q == ""){
+    return null;
+}
+
+//分解关键字
+def qs = q.split("[,]");
+//子查询的sql
+def sql ="tid in (select contentTreeId FROM tblcontentkeywords where keyword in ("
+for(int i=0; i<qs.length; i++){
+   if(i != 0){
+       sql = sql + ",";
+   }
+   sql = sql + "?";
+   
+   //添加查询的条件的值，PreparedStatement设置参数时会使用
+   UtilCondition.addConditionValue(self, qs[i], actionContext);
+}
+sql = sql + ") group by contentTreeId having count(distinct keyword) = ?)";
+UtilCondition.addConditionValue(self, qs.length, actionContext);
+
+//最后返回sql
+return sql;
+#$@text#$@
+                      sinterpretationType
+                      Action
+                      screateLocalVarScope
+                      false
+                      ssaveReturn
+                      false
+                      sdebugLog
+                      false
+                      sdescriptors
+                      xworker.lang.actions.Actions/@GroovyAction
+                      sinheritDescription
+                      false
+                      sth_createIndex
+                      false
+                      sth_registMyChilds
+                      false
+                      sth_mark
+                      false
+                      sid
+                      nodeToSql
+            @/@actions/@doAction/@actions/@If/@Then/@initTopMenu
+            sname
+            initData
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            svarScope
+            Local
+            sdisableGlobalContext
+            false
+            Scode
+#$@text#$@
+import xworker.app.orgweb.ContentTreeManager;
+import java.text.SimpleDateFormat;
+
+//修改datas的url
+def sf = new SimpleDateFormat("yyyy年MM月dd日");
+def page = requestBean.page;
+if(page == null){
+    page = 1;
+}
+def parentId = requestBean.id;
+def backUrl = "do?" + request.getQueryString();
+backUrl = URLEncoder.encode(backUrl, "utf-8");
+for(data in datas){
+   def url = data.url;
+   if(url == null){
+       url = "";
+   }
+   if(url.startsWith("thing:")){
+       data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+           "&id=" + requestBean.id + "&page=" + page;
+   }else if(url == null || url == ""){
+       data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+           "&id=" + requestBean.id + "&page=" + page;
+   }else{
+       data.newUrl = url;
+   }
+   if(data.get("status") == 0){
+       data.label = data.label + "(未发布)";
+       data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+           "&id=" + requestBean.id + "&page=" + page;
+   }
+   //data.newDescription = sf.format(data.updateDate) + "&nbsp;-&nbsp;" + data.description;
+   data.newDescription = data.description;
+   if(logined){
+        data.newDescription = data.newDescription + "<br/><a  href=\"do?sc=xworker.app.orgweb.web.admin.EditContentTree&id=" + data.tid + 
+            "&backUrl=" + backUrl + "\">编辑</a>";
+   }
+}
+return "success";
+#$@text#$@
+            sinterpretationType
+            Action
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            initTopMenu
+  @/@view
+  sname
+  view
+  sbelongToHtml
+  false
+  sstyle
+  default
+  shasHead
+  false
+  shasBottom
+  false
+  snoCache
+  false
+  Sdescription
+#$@text#$@
+<form action="do?sc=xworker.app.orgweb.web.Search" name="form"><input name="topMenuId" type="hidden" value="${topMenuId}" />
+<p><input name="q" size="60" type="text" /><input name="submit" type="submit" value="查找" /></p>
+</form>
+#$@text#$@
+  SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/2_6beta1/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+<link rel="stylesheet" href="css/xworker_org/ebadusmenu.css" type="text/css" />
+<script src="js/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+<script src="js/xworker_org/ebadusmenu.js" type="text/javascript"></script>
+#$@text#$@
+  sdescriptors
+  xworker.http.controls.SimpleControl/@view
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  view
+    @/@view/@description
+    sname
+    description
+    scode
+    ${contentHtml?if_exists}
+    sdescriptors
+    xworker.html.base.container.childs/@code
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    description
+    @/@view/@serachForm
+    sname
+    serachForm
+    Scode
+#$@text#$@
+<form class="form-inline" action="do">
+  <input type="hidden" name="sc" value="xworker.app.orgweb.web.IndexSearch"/>
+  <input type="hidden" name="id" value="${requestBean.id?if_exists}"/>
+  <div class="form-group">
+    <input type="text" value="${requestBean.q?if_exists}" class="form-control" id="q" placeholder="" name="q">
+    <button type="submit" class="btn btn-default">查询</button>
+  </div>
+</form>
+#$@text#$@
+    sdescriptors
+    xworker.html.base.container.childs/@code
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    serachForm
+    @/@view/@SearchResult_Google
+    sname
+    SearchResult_Google
+    slistData
+    datas
+    stitle
+    label
+    simage
+    iconPath
+    surl
+    newUrl
+    surlTarget
+    ${data.target?if_exists}
+    sinfo
+    newDescription
+    sdescriptors
+    xworker.html.Widgets/@SearchResult_Google
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    SearchResult_Google
+    @/@view/@code
+    sname
+    code
+    scode
+    &nbsp;<br/>
+    sdescriptors
+    xworker.html.base.container.childs/@code
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    code
+    @/@view/@pageToolbar
+    sname
+    pageToolbar
+    spageInfo
+    pageInfo
+    spage
+    page
+    sprePage
+    <上一页
+    snextPage
+    下一页>
+    stotal
+    共有${pageInfo.totalCount}条记录
+    surl
+    do?sc=xworker.app.orgweb.web.IndexSearch&q=${(requestBean.q?html)?if_exists}&id=${requestBean.id?if_exists}
+    sdescriptors
+    xworker.html.Widgets/@PageToolbar
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    pageToolbar
+  @/@success
+  sname
+  success
+  stype
+  freemarker
+  scontentType
+  text/html;charset=UTF-8
+  svalue
+  xworker/app/orgweb/web/indexSearch.ftl
+  sdescriptors
+  xworker.http.controls.SimpleControl/@result
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  success
+    @/@success/@region
+    sname
+    contentHtml
+    stype
+    form
+    svalue
+    xworker.app.orgweb.web.IndexSearch/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result/@region
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    region

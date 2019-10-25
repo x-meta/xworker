@@ -1,0 +1,415 @@
+^1364550063621
+@xworker.dataObject.xworker.PathListDataObject
+sname
+PathListDataObject
+slabel
+PathListDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.DataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>列出指定路径和所有父级路径列表的数据对象，目前只支持查询操作。</p>
+<p>列表的数据属性有：name（名称）、label（标签）、path（路径）、object（路径所对应的对象，可以是项目、事物管理器、目录和事物），以上属性可以映射成数据对象的字段属性。</p>
+#$@text#$@
+@xworker.dataObject.xworker.PathListDataObject/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.dataObject.thing.ThingDataObject/@actions
+@xworker.dataObject.xworker.PathListDataObject/@actions/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Category;
+import org.xmeta.Project;
+import org.xmeta.ThingManager;
+import org.xmeta.Thing;
+
+import xworker.dataObject.DataObject;
+
+import ognl.Ognl;
+
+def matchedDatas = [];
+
+//事物的查找范围
+def thingScopePath = null;
+if(conditionData != null){
+    try{
+        thingScopePath = Ognl.getValue("pathListScopePath", conditionData);
+    }catch(Exception e){
+    }
+}
+
+if(thingScopePath == null || thingScopePath == ""){
+    thingScopePath = self.path;
+}
+def thingScope = world.get(thingScopePath);
+//log.info("thingScopePath=" + thingScopePath);
+//log.info("conditionData=" + conditionData);
+
+def datas = [];
+initDatas(datas, thingScope);
+def conditionConfig = actionContext.get("conditionConfig");
+def conditionData = actionContext.get("conditionData");
+if(conditionConfig != null){
+    for(data in datas){        
+        if(conditionConfig.doAction("isMatch", actionContext, ["condition":conditionData, "data":data])){
+            matchedDatas.add(data);
+        }
+    }
+}else{
+    matchedDatas = datas;
+}
+
+for(int i=0; i<matchedDatas.size(); i++){
+    def dataObject = new DataObject(self);
+    dataObject.putAll(matchedDatas.get(i));
+    matchedDatas[i] = dataObject;
+}
+
+if(actionContext.get("pageInfo") != null){
+    //是否排序
+    if(pageInfo.sort != null && pageInfo.sort != ""){
+        matchedDatas.sort(){ a,b->   
+            def av = a == null ? null : a.get(pageInfo.sort);
+            def bv = b == null ? null : b.get(pageInfo.sort);
+            if(av == null && bv == null){
+                return 0;
+            }else if(av == null && bv != null){
+                return pageInfo.dir == "DESC" ? 1 : -1;
+            }else if(av != null && bv == null){
+                return pageInfo.dir == "DESC" ? -1 : 1;
+            }else{
+                return pageInfo.dir == "DESC" ? -av.compareTo(bv) : av.compareTo(bv);
+            }            
+        }   	
+    
+    }
+    pageInfo.totalCount = matchedDatas.size();
+    if(pageInfo.limit > 0){
+        if(pageInfo.start > matchedDatas.size()){
+            pageInfo.start = matchedDatas.size();
+        }
+        def toIndex = pageInfo.start + pageInfo.limit;
+        if(toIndex > matchedDatas.size()){ 
+            toIndex = matchedDatas.size();
+        }
+        def startIndex = pageInfo.start;
+        if(startIndex < 0){
+            startIndex = 0;
+        }    
+        pageInfo.datas = matchedDatas.subList(pageInfo.start, toIndex);
+    }else{
+        pageInfo.datas = matchedDatas;
+    }
+    return pageInfo.datas;
+}else{
+    if(actionContext.get("pageInfo") != null){
+        pageInfo.totalCount = matchedDatas.size();
+        pageInfo.datas = matchedDatas;
+    }
+    return matchedDatas;
+}
+
+def initDatas(datas, obj){
+    if(obj == null){
+        return;
+    }
+    if(obj instanceof Thing){
+        def data = ["name":obj.metadata.name, "label":obj.metadata.label, 
+                "path":obj.metadata.path, "object":obj, "type":"thing"];
+        datas.add(0, data);
+        if(obj.getParent() != null){
+            initDatas(datas, obj.getParent());
+        }else{
+            def category = obj.metadata.getCategory();
+            if(category != null){
+                initDatas(datas, category);
+            }
+        }
+    }else if(obj instanceof Category){
+        if(obj.getName() != null && obj.getName() != ""){
+            def data = ["name":obj.getSimpleName(), "label":obj.getSimpleName(),
+                "path":obj.thingManager.project.name + ":" + obj.thingManager.name + ":" + obj.getName(), "object":obj, "type":"category"];
+            datas.add(0, data);
+            if(obj.getParent() != null){
+                initDatas(datas, obj.getParent());
+            }else{
+                initDatas(datas, obj.getThingManager());         
+            }
+        }else{
+            initDatas(datas, obj.getThingManager());  
+        }
+    }else if(obj instanceof ThingManager){
+        def data = ["name":obj.getName(), "label":obj.getName(), "type":"thingManager",
+                "path":obj.project.name + ":" + obj.getName(), "object":obj];
+        datas.add(0, data);
+        initDatas(datas, obj.getProject());
+    }else if(obj instanceof Project){
+        def data = ["name":obj.name, "label":obj.name, "type":"project", "path":obj.name, "object":obj];
+        datas.add(0, data);
+    }
+}
+
+//是否是符合条件的事物
+def isMatchThing(thing, conditionConfig, conditionData){
+    if(conditionConfig == null){
+        return true;
+    }else{
+        return conditionConfig.doAction("isMatch", actionContext, ["condition":conditionData, "data":thing]);        
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.PathListDataObject/@actions/@query/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.dataObject.xworker.PathListDataObject/@actions/@query/@ins/@conditionConfig
+sname
+conditionConfig
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+conditionConfig
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.dataObject.xworker.PathListDataObject/@actions/@query/@ins/@conditionData
+sname
+conditionData
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+conditionData
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.dataObject.xworker.PathListDataObject/@actions/@query/@ins/@thingScopePath
+sname
+pathListScopePath
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+thingScopePath
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.dataObject.xworker.PathListDataObject/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@path
+sname
+path
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>用于查找事物的范围。</p>
+<p>如果查询条件中包含pathListScopePath属性，那么替换此字段的值。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@attribute
+sname
+attribute
+slabel
+Attribute
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.Attribute
+smany
+true
+seditCols
+2
+Sdescription
+#$@text#$@
+<p>属性映射，Map的键值是key，值是value。</p>
+<p>如：key对应的键值，value.name对应value的name属性。</p>
+#$@text#$@
+sid
+attribute
+@xworker.dataObject.xworker.PathListDataObject/@attribute/@name
+sname
+name
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@attribute/@label
+sname
+label
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@attribute/@propertyPath
+sname
+propertyPath
+ssize
+60
+scolspan
+2
+sgroup
+Attribute
+Sdescription
+#$@text#$@
+<p>Ognl表达式，映射到事物上的属性。</p>
+<p>其中.label、.path、.thingName、.descriptor、.extend、.attributeName是特别的参数，分别可以对标签、路径、事物名、描述者和属性名等映射。其中thingName、descriptor、extend和attributeName有多个值，作为数据对象的属性映射时只返回第一个，其中attributeName作为属性映射时只返回null，这些属性通常用于搜索事物。</p>
+#$@text#$@
+sid
+propertyPath
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@xworker.dataObject.xworker.PathListDataObject/@thing
+sname
+thing
+slabel
+Thing
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.RelationDataObject
+smany
+true
+seditCols
+2
+sdescription
+<p>与其他数据对象有关联的属性或属性列表。</p>
+sid
+thing
+@xworker.dataObject.xworker.PathListDataObject/@actions1
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+actions1
+@xworker.dataObject.xworker.PathListDataObject/@actions1/@name
+sname
+name
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute

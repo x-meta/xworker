@@ -1,0 +1,105 @@
+^1477912030744
+@
+sname
+BrowserInThingManager
+slabel
+内置浏览器
+sgroup
+XWorker.文档和源码
+sicon
+icons/html.png
+Sdescription
+#$@text#$@
+<p><strong>内置浏览器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker在很多地方使用了SWT的Browser控件，通过UtilBrowser类可以实现浏览器和XWorker编辑器的简单交互。</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在HTML中加入相关脚本：</p>
+
+<pre class="brush:xml;">
+&lt;script type=&quot;text/javascript&quot; src=&quot;js/xworker/InnerBrowserUtil.js&quot;&gt;&lt;/script&gt;
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在超链接等使用invoke方法：</p>
+
+<pre class="brush:xml;">
+&lt;a href=&quot;javascript:invoke(&#39;xxxx1:xxxx2&#39;)&gt;UtilBrowser&lt;/a&gt;
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 其中xxxx1是前缀，xxxx2通常是事物的路径，常用的前缀有：</p>
+
+<ul>
+	<li><strong>thing</strong><br />
+	打开并编辑一个事物。<br />
+	&nbsp;</li>
+	<li><strong>tab</strong><br />
+	在工作台的编辑区域打开一个SWT的Composite事物。<br />
+	&nbsp;</li>
+	<li><strong>url</strong><br />
+	打开一个网址。<br />
+	&nbsp;</li>
+	<li><strong>action</strong><br />
+	执行一个动作（事物），变量上下文为当前编辑器。<br />
+	&nbsp;</li>
+	<li><strong>run</strong><br />
+	执行一个动作（事物），变量上下文为新的。<br />
+	&nbsp;</li>
+	<li><strong>shell</strong><br />
+	打开一个Shell窗口。<br />
+	&nbsp;</li>
+	<li><strong>shellSingle</strong><br />
+	以单实例的方式打开一个shell窗口，如果shell已经那么尝试获得焦点。<br />
+	&nbsp;</li>
+	<li><strong>shellTh</strong><br />
+	新起一个SWT线程来打开Shell窗口。<br />
+	&nbsp;</li>
+	<li><strong>shellThSingle</strong><br />
+	在新起的SWT线程中打开Shell窗口，如果shell已经那么尝试获得焦点。<br />
+	&nbsp;</li>
+	<li><strong>composite</strong><br />
+	打开一个Composite面板，和tab功能一致。<br />
+	&nbsp;</li>
+	<li><strong>downloadProduct</strong><br />
+	下载一个码农的世界共享的应用。<br />
+	&nbsp;</li>
+	<li><strong>webControl</strong><br />
+	打开运行一个WebControl。<br />
+	&nbsp;</li>
+	<li><strong>html_edit_content</strong><br />
+	编辑网页内容。？？<br />
+	&nbsp;</li>
+	<li><strong>html_edit_content1</strong><br />
+	编辑网页内容1。？？<br />
+	&nbsp;</li>
+	<li><strong>runThing&nbsp;​</strong><br />
+	执行事物的行为，默认行为是run，如果指定其它行为，那么在事物路径后+冒号+动作名。</li>
+</ul>
+
+<p><strong>自定义动作的实现</strong></p>
+
+<p>&nbsp; &nbsp; 如果在Browser节点下添加加了UtilBrowser子节点，那么可以在这个子节点中添加想要的动作，其中方法名是xx1:xx2中的前缀xx1，参数path是xx2。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 具体动作实现参看Java类xworker.swt.util.UtilBrowser和模型xworker.swt.util.UtilBrowser，动作首先执行Java类的，如果没有再执行模型的。</p>
+
+<p><strong>快速打开事物</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果浏览器中显示的是事物的文档，那么在页面的右下角通常会有一个edit连接，点击它就可以打开相应的事物。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.command.Word
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+command|xworker.command.Root
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false

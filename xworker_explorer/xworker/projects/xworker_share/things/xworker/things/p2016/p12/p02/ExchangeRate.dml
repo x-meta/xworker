@@ -1,0 +1,693 @@
+%1480667762220
+@
+sname=ExchangeRate
+slabel=汇率
+seditCols=2
+sgroup=金融.货币
+spaging=false
+snoTotalCount=false
+spagineByCursor=false
+sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+LstoreAutoDestroy=false
+sstoreAutoLoad=false
+LstoreAutoSave=true
+LstoreBatch=true
+LstorePruneModifiedRecords=false
+LstoreRemoteSort=false
+LstoreRestful=false
+sstoreRoot='rows'
+sstoreSuccessProperty='success'
+sstoreTotalProperty='totalCount'
+sstoreMessageProperty='msg'
+sgridEditable=false
+sgridEditType=cell
+sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+spaging_afterPageText=页 共
+spaging_beforePageText=第
+Lpaging_displayInfo=false
+spaging_displayMsg=第{0}-第{1}条，共{2}条
+spaging_emptyMsg=没有数据
+spaging_firstText=首页
+spaging_lastText=最后一页
+spaging_nextText=下一页
+Lpaging_prependButtons=false
+spaging_prevText=上一页
+spaging_refreshText=刷新
+sgridColumnLocking=false
+sgridLockText='锁定'
+sgridUnlockText='解锁'
+scolumnGroup=false
+sgridCheckable=false
+sgridRowNumber=false
+sgridGrouping=false
+sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+sgridRowExpander=false
+sautoGenerateId=false
+sidGenerateType=action
+sidAction=generateId
+sstoreSortDir=ASC
+sautoInit=false
+sautoInitAction=beforeCreate
+Sdescription=
+#$@text#$@
+<p>由于查询时间太长，这个功能暂时放弃。</p>
+#$@text#$@
+scacheRelation=false
+scacheRelationMaxSize=1000
+scacheRelationReadnone=false
+safterCreated=false
+sonLoaded=false
+sbeforeUpdate=false
+safterUpdated=false
+sbeforeDelete=false
+safterDeleted=false
+safterQueryed=false
+sshowUserTask=false
+sdescriptors=xworker.dataObject.DataObjects/@AbstractDataObject
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.dataObject.DataObjectIns
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.dataObject.AbstractDataObject/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@doQuery
+    sname=doQuery
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.finance.exchange.CurrencyUtils;
+import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectUtil;
+
+return [];
+
+//获取所有货币代码
+def currencyDataObject = world.getThing("xworker.things.p2016.p12.p01.CurrencyCode");
+def allCodes = currencyDataObject.doAction("query", actionContext);
+
+def datas = [];
+for(int i=0; i<allCodes.size(); i++){
+    for(int n=0; n<allCodes.size(); n++){
+        if(i == n){
+            continue;
+        }
+        
+        def base = allCodes.get(i);
+        def term = allCodes.get(n);
+        
+        def data = new DataObject("xworker.things.p2016.p12.p02.ExchangeRate");
+        data.put("baseCode", base.code);
+        data.put("baseLabel", base.labelCn);
+        data.put("termCode", term.code);
+        data.put("termLabel", term.labelCn);
+        try{
+            data.put("rate", CurrencyUtils.getexChangeRate(base.code, term.code));
+        }catch(Exception e){
+            data.put("rate", 0);
+        }
+        datas.add(data);
+    }
+}
+
+//过滤
+return DataObjectUtil.query(datas, actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doQuery
+  @/@baseCurrency
+  sname=baseCode
+  slabel=原始货币代码
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=baseCurrency
+  @/@baseLabel
+  sname=baseLabel
+  slabel=原始货币名称
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=150
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=baseLabel
+  @/@termCode
+  sname=termCode
+  slabel=目标货币代码
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=termCode
+  @/@termLabel
+  sname=termLabel
+  slabel=目标货币名称
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=150
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=termLabel
+  @/@rate
+  sname=rate
+  slabel=汇率
+  stype=double
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=rate
+  @/@QueryFormDataObject
+  sname=QueryFormDataObject
+  sdescriptors=xworker.dataObject.DataObject/@QueryFormDataObject
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=QueryFormDataObject
+    @/@QueryFormDataObject/@AbstractDataObject
+    sname=AbstractDataObject
+    seditCols=2
+    spaging=false
+    snoTotalCount=false
+    spagineByCursor=false
+    sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+    screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+    supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+    sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+    LstoreAutoDestroy=false
+    sstoreAutoLoad=false
+    LstoreAutoSave=true
+    LstoreBatch=true
+    LstorePruneModifiedRecords=false
+    LstoreRemoteSort=false
+    LstoreRestful=false
+    sstoreRoot='rows'
+    sstoreSuccessProperty='success'
+    sstoreTotalProperty='totalCount'
+    sstoreMessageProperty='msg'
+    sgridEditable=false
+    sgridEditType=cell
+    sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+    sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+    sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+    sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+    spaging_afterPageText=页 共
+    spaging_beforePageText=第
+    Lpaging_displayInfo=false
+    spaging_displayMsg=第{0}-第{1}条，共{2}条
+    spaging_emptyMsg=没有数据
+    spaging_firstText=首页
+    spaging_lastText=最后一页
+    spaging_nextText=下一页
+    Lpaging_prependButtons=false
+    spaging_prevText=上一页
+    spaging_refreshText=刷新
+    sgridColumnLocking=false
+    sgridLockText='锁定'
+    sgridUnlockText='解锁'
+    scolumnGroup=false
+    sgridCheckable=false
+    sgridRowNumber=false
+    sgridGrouping=false
+    sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+    sgridRowExpander=false
+    sautoGenerateId=false
+    sidGenerateType=action
+    sidAction=generateId
+    sstoreSortDir=ASC
+    sautoInit=false
+    sautoInitAction=beforeCreate
+    scacheRelation=false
+    scacheRelationMaxSize=1000
+    scacheRelationReadnone=false
+    safterCreated=false
+    sonLoaded=false
+    sbeforeUpdate=false
+    safterUpdated=false
+    sbeforeDelete=false
+    safterDeleted=false
+    safterQueryed=false
+    sshowUserTask=false
+    sdescriptors=xworker.dataObject.DataObjects/@AbstractDataObject
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=AbstractDataObject
+      @/@QueryFormDataObject/@AbstractDataObject/@baseCurrency
+      sname=baseCode
+      slabel=原始货币代码
+      stype=string
+      soptional=true
+      skey=false
+      sdataField=true
+      sviewField=true
+      sreadField=true
+      screateEditor=true
+      seditEditor=true
+      sviewEditor=true
+      sgridEditor=true
+      squeryEditor=true
+      sreadOnly=false
+      seditable=true
+      sdisabled=false
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      sshowInTable=true
+      sdisplayRelationLabel=false
+      sgridFixed=false
+      sgridHidden=false
+      sgridHideable=true
+      sgridSortable=false
+      scolumnLocked=false
+      sgridGroupable=true
+      sgridMenuDisabled=false
+      sgridResizable=true
+      sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=baseCurrency
+      @/@QueryFormDataObject/@AbstractDataObject/@baseLabel
+      sname=baseLabel
+      slabel=原始货币名称
+      stype=string
+      soptional=true
+      skey=false
+      sdataField=true
+      sviewField=true
+      sreadField=true
+      screateEditor=true
+      seditEditor=true
+      sviewEditor=true
+      sgridEditor=true
+      squeryEditor=true
+      sreadOnly=false
+      seditable=true
+      sdisabled=false
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      sshowInTable=true
+      sdisplayRelationLabel=false
+      sgridFixed=false
+      sgridHidden=false
+      sgridHideable=true
+      sgridSortable=false
+      scolumnLocked=false
+      sgridGroupable=true
+      sgridMenuDisabled=false
+      sgridResizable=true
+      sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=baseLabel
+      @/@QueryFormDataObject/@AbstractDataObject/@termCode
+      sname=termCode
+      slabel=目标货币代码
+      stype=string
+      soptional=true
+      skey=false
+      sdataField=true
+      sviewField=true
+      sreadField=true
+      screateEditor=true
+      seditEditor=true
+      sviewEditor=true
+      sgridEditor=true
+      squeryEditor=true
+      sreadOnly=false
+      seditable=true
+      sdisabled=false
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      sshowInTable=true
+      sdisplayRelationLabel=false
+      sgridFixed=false
+      sgridHidden=false
+      sgridHideable=true
+      sgridSortable=false
+      scolumnLocked=false
+      sgridGroupable=true
+      sgridMenuDisabled=false
+      sgridResizable=true
+      sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=termCode
+      @/@QueryFormDataObject/@AbstractDataObject/@termLabel
+      sname=termLabel
+      slabel=目标货币名称
+      stype=string
+      soptional=true
+      skey=false
+      sdataField=true
+      sviewField=true
+      sreadField=true
+      screateEditor=true
+      seditEditor=true
+      sviewEditor=true
+      sgridEditor=true
+      squeryEditor=true
+      sreadOnly=false
+      seditable=true
+      sdisabled=false
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      sshowInTable=true
+      sdisplayRelationLabel=false
+      sgridFixed=false
+      sgridHidden=false
+      sgridHideable=true
+      sgridSortable=false
+      scolumnLocked=false
+      sgridGroupable=true
+      sgridMenuDisabled=false
+      sgridResizable=true
+      sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=termLabel
+  @/@Condition
+  sname=Condition
+  boperator=1
+  sjoin=and
+  smultiValueJoin=or
+  signoreNull=true
+  sdummySql=false
+  sisClause=false
+  sisClauseTemplate=false
+  saddOneDay=false
+  sdebug=false
+  sdescriptors=xworker.dataObject.DataObject/@Condition
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Condition
+    @/@Condition/@baseCode
+    sname=baseCode
+    sattributeName=baseCode
+    sdataName=baseCode
+    boperator=10
+    sjoin=and
+    smultiValueJoin=or
+    signoreNull=true
+    sdummySql=false
+    sisClause=false
+    sisClauseTemplate=false
+    saddOneDay=false
+    sdebug=false
+    sdescriptors=xworker.dataObject.query.Condition/@Condition
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=baseCode
+    @/@Condition/@baseLabel
+    sname=baseLabel
+    sattributeName=baseLabel
+    sdataName=baseLabel
+    boperator=10
+    sjoin=and
+    smultiValueJoin=or
+    signoreNull=true
+    sdummySql=false
+    sisClause=false
+    sisClauseTemplate=false
+    saddOneDay=false
+    sdebug=false
+    sdescriptors=xworker.dataObject.query.Condition/@Condition
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=baseLabel
+    @/@Condition/@termCode
+    sname=termCode
+    sattributeName=termCode
+    sdataName=termCode
+    boperator=10
+    sjoin=and
+    smultiValueJoin=or
+    signoreNull=true
+    sdummySql=false
+    sisClause=false
+    sisClauseTemplate=false
+    saddOneDay=false
+    sdebug=false
+    sdescriptors=xworker.dataObject.query.Condition/@Condition
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=termCode
+    @/@Condition/@termLabel
+    sname=termLabel
+    sattributeName=termLabel
+    sdataName=termLabel
+    boperator=10
+    sjoin=and
+    smultiValueJoin=or
+    signoreNull=true
+    sdummySql=false
+    sisClause=false
+    sisClauseTemplate=false
+    saddOneDay=false
+    sdebug=false
+    sdescriptors=xworker.dataObject.query.Condition/@Condition
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=termLabel

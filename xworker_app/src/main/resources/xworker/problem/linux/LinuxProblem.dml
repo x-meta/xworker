@@ -1,0 +1,324 @@
+%1515477080534
+@
+sname=LinuxProblem
+slabel=LinuxProblem
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.problem.Problem
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>Linux问题，可以添加Handler来处理问题。</p>
+
+<p><strong>问题的产生</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一般是由其它程序产生的，如Linux检查任务。</p>
+
+<p><strong>解决问题的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 添加Hanlders子节点，添加处理问题的方法。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@getSessions
+    sname=getSessions
+    sattributeName=sessions
+    schildThingName=Sessions
+    schildThingOnly=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSessions
+    @/@actions/@getHandlers
+    sname=getHandlers
+    sattributeName=handlers
+    schildThingName=Handlers
+    schildThingOnly=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getHandlers
+    @/@actions/@doResolve
+    sname=doResolve
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.data.DATA;
+import xworker.util.UtilAction;
+import xworker.task.UserTaskManager;
+
+//获取数据源事物
+def sessions = self.doAction("getSessions", actionContext);
+//处理器列表
+def handlers = self.doAction("getHandlers", actionContext);
+
+def userTask = UserTaskManager.createTask(self, false);
+userTask.start();
+try{
+    for(sessionThing in sessions){
+        def session = null;
+        def path = sessionThing.getMetadata().getPath();
+        def label = sessionThing.getMetadata().getLabel();
+    
+        try{
+            userTask.setCurrentLabel("Handle server " + label);
+            
+            //连接服务器
+            session = sessionThing.doAction("create", actionContext);
+
+            //执行处理器
+            for(handler in handlers){
+                userTask.setCurrentLabel("Execute handler " + 
+                           handler.getMetadata().getLabel());
+                handler.doAction("handle", actionContext, 
+                          "problem", this,
+                          "sessionThing", sessionThing,
+                          "session", session,
+                          "userTask", userTask);
+            }
+        }catch(Exception e){
+            //println(e);
+            log.error("Resolve linux problem error, problem=" + self.getMetadata().getPath(), e) ;
+        }finally{
+            if(session != null){
+                session.disconnect();
+            }
+        }
+    }
+}finally{
+    userTask.finished();
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doResolve
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@sessions
+  sname=sessions
+  sinputtype=textarea
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=sessions
+  @/@handlers
+  sname=handlers
+  sinputtype=textarea
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=handlers
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Handlers
+  sname=Handlers
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.problem.linux.LinuxHandlers
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Handlers
+  @/@Sessions
+  sname=Sessions
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.net.jsch.Sessions
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Sessions
+    @/@Sessions/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Sessions/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Sessions/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

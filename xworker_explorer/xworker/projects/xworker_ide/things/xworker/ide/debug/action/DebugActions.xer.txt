@@ -1,0 +1,390 @@
+^1566811586188
+@
+sname
+DebugActions
+slabel
+DebugActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registThing
+child|xworker.lang.actions.Actions
+sth_registMyChilds
+true
+sth_mark
+false
+  @/@ActionContextViewer
+  sname
+  ActionContextViewer
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.debug
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>打开一个窗口浏览当前变量上下文。如果当前线程不是SWT的UI线程，那么使用IDE窗口，没有窗口的环境则在控制台打印相关信息。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>ActionContext getActionContext()</strong><br />
+	返回要浏览器的变量上下文，如果返回null则浏览当前变量上下文。</li>
+</ul>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  ActionContextViewer
+    @/@ActionContextViewer/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@ActionContextViewer/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilData;
+
+import org.eclipse.swt.widgets.Display;
+import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//显示变量上下文的相关信息，ac是要浏览的变量上下文
+def ac = self.doAction("getActionContext", actionContext);//UtilData.getData(self, "actionContextName", actionContext);
+if(ac == null){
+    ac = actionContext;
+}
+
+def shellThing = world.getThing("xworker.ide.debug.swt.ActionContextViewer/@shell");
+def swtControl = UtilData.getData(self, "swtControl", actionContext);
+def display = null;
+if(swtControl != null){
+    display = swtControl.getDisplay();
+}else if(XWorkerUtils.getIDEShell() != null){
+    display = XWorkerUtils.getIDEShell().getDisplay();
+}else{
+    Executor.warn("ActionContextViewer", "No active display to create shell! path={}", self.getMetadata().getPath());
+    return; 
+}
+
+if(display != null && display.isDisposed() == false){
+    if(actionContext.get("currentThing") == null){
+        currentThing = self;
+    }
+    
+    def acContext = actionContext;
+    def scopes = ac.getScopes();
+    display.asyncExec([
+        run : {            
+            def viewActionContext = new ActionContext();
+            for(bindings in scopes){
+                viewActionContext.push(bindings);
+            }
+            ActionContext context = new ActionContext();        
+            context.put("viewActionContext", viewActionContext);
+            context.put("parentContext", acContext);
+            context.put("parent", display);
+            
+            def shell = shellThing.doAction("create", context);
+            shell.open ();
+        }] as Runnable);
+}else{
+    Executor.warn("ActionContextViewer", "Display is null or disposed! path={}", self.getMetadata().getPath());
+    return; 
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+      @/@ActionContextViewer/@actions/@getActionContext
+      sname
+      getActionContext
+      sattributeName
+      actionContextName
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getActionContext
+    @/@ActionContextViewer/@name
+    sname
+    name
+    sinheritDescription
+    false
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@ActionContextViewer/@label
+    sname
+    label
+    sinheritDescription
+    false
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@ActionContextViewer/@actionContextName
+    sname
+    actionContextName
+    ssize
+    50
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    var:actionContext
+    sinheritDescription
+    false
+    sdescription
+    <p>需要查看的ActionContext名称，当前ActionContext的名为actionContxt。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    actionContextName
+    @/@ActionContextViewer/@swtControl
+    sname
+    swtControl
+    ssize
+    50
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，那么使用该swtControl的线程来打开窗口。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    swtControl
+  @/@Debuger
+  sname
+  Debuger
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.debug
+  smodifier
+  public
+  sinheritDescription
+  false
+  sdescription
+  <p>打开调试。</p>
+  snotXmlAttribute
+  false
+  sid
+  Debuger
+    @/@Debuger/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@Debuger/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.debug.Debuger;
+
+Debuger.debug(actionContext);
+#$@text#$@
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+    @/@Debuger/@name
+    sname
+    name
+    sinheritDescription
+    false
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@Debuger/@label
+    sname
+    label
+    sinheritDescription
+    false
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@Debuger/@description
+    sname
+    description
+    sinputtype
+    html
+    scolspan
+    2
+    sinheritDescription
+    false
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    description

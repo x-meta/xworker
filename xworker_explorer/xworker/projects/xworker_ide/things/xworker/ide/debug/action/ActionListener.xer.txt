@@ -1,0 +1,150 @@
+^1439378513505
+@
+sname
+ActionListener
+slabel
+ActionListener
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>记录动作的总入口，可以通过调用本事物的addListener和removeListener方法注册监听。</p>
+<p>有记录时是通过如下方式调用监听的，监听应有doAction方法，比如事物或ActionContainer：</p>
+<p>&nbsp;&nbsp;&nbsp; listener .doAction(&quot;actionExecuted&quot;, [&quot;records&quot;: recoreds]);</p>
+#$@text#$@
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@/@actions/@listener
+sname
+actionExecuted
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+true
+Scode
+#$@text#$@
+def listeners = world.getData(self.metadata.path);
+if(listeners != null && listeners.size() > 0){
+    for(listener in listeners){   
+        try{
+            listener.doAction("actionExecuted", ["records": records]);
+        }catch(Exception e){
+            log.error("do action executed listener erorr", e);
+        }
+    }
+}else{
+    //for(record in records){
+    //    log.info("actionExecuted: " + record.thread.getName() + ":   " + record.action.thing.metadata.path + ":" + record.namoTime);
+    //}
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@addListener
+sname
+addListener
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.util.concurrent.CopyOnWriteArrayList;
+
+def listeners = world.getData(self.metadata.path);
+if(listeners == null){
+    listeners = new CopyOnWriteArrayList();
+    world.setData(self.metadata.path, listeners);
+}
+
+if(!listeners.contains(listener)){
+    listeners.add(listener);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@/@actions/@addListener/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+sth_createIndex
+false
+@/@actions/@addListener/@ins/@listener
+sname
+listener
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescription
+<p>事物或者有doAction(name, params)方法的对象。</p>
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sth_createIndex
+false
+@/@actions/@removeListener
+sname
+removeListener
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def listeners = world.getData(self.metadata.path);
+if(listeners != null){
+    listeners.remove(listener);
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false

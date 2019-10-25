@@ -1,0 +1,574 @@
+@xworker.ide.util.CodeGenerator
+sname
+CodeGenerator
+slabel
+CodeGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+sdescription
+<p>代码生成。</p>
+sid
+CodeGenerator
+@xworker.ide.util.CodeGenerator/@name
+sname
+name
+ssize
+40
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@outputDir
+sname
+outputDir
+ssize
+60
+scolspan
+2
+sdescription
+<p>输出目录。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+outputDir
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@Things
+sname
+Things
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.ide.util.ThingCollection
+sdescription
+<p>需要导出的事物集合。</p>
+sid
+Things
+@xworker.ide.util.CodeGenerator/@TextTemplate
+sname
+TextTemplate
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sdescription
+<p>通过文本模板生成代码。</p>
+sid
+TextTemplate
+@xworker.ide.util.CodeGenerator/@TextTemplate/@name
+sname
+name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@label
+sname
+label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@templatePath
+sname
+templatePath
+ssize
+60
+scolspan
+2
+Sdescription
+#$@text#$@
+<p>模板文件的路径。</p>
+<p>格式是&lt;projectName&gt;.&lt;templateFilePath&gt;，如：core.test/util/freemarker.ftl，标识core项目下的目录的test/uitl/freemarker.ftl模板。</p>
+<p>如果projectName不写，那么表示是系统级的模板，这时模板的根路径为World.getPath() + &quot;/templaets/&quot;。</p>
+<p>模板可以用指定到文件，也可以直接编写代码，见属性：templateCode。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+templatePath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@type
+sname
+templateType
+sinputtype
+select
+sdefault
+freemarker
+sdescription
+<p>模板类型。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+type
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@type/@freemarker
+sname
+freemarker
+slabel
+freemarker
+svalue
+freemarker
+sid
+freemarker
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.ide.util.CodeGenerator/@TextTemplate/@type/@velocity
+sname
+velocity
+slabel
+velocity
+svalue
+velocity
+sid
+velocity
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.ide.util.CodeGenerator/@TextTemplate/@templateEncoding
+sname
+templateEncoding
+sdefault
+UTF-8
+sdescription
+<p>模板文件的编码。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+templateEncoding
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@thingsName
+sname
+thingsName
+sdefault
+things
+sdescription
+<p>上模板上下文中事物列表的名称，供模板访问事物列表。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+thingsName
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@thingName
+sname
+thingName
+sdefault
+thing
+sdescription
+<p>在模板上下文中单个模板的名称。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+thingName
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@outputDir
+sname
+outputDir
+ssize
+60
+scolspan
+2
+Sdescription
+#$@text#$@
+<p>输出目录。</p>
+<p>如果为空，默认使用上级输出目录。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+outputDir
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@outputFile
+sname
+outputFile
+ssize
+60
+scolspan
+2
+Sdescription
+#$@text#$@
+<p>输出文件。</p>
+<p>输出文件的路径可以使用freemarker模板来编写，在模板中可以使用projectName、thingManagerName、categoryName、thingName以及当前事物thing。</p>
+<p>注：模板情况只对单个事物生成有效，对全体事物生成无效。</p>
+<p>比如：</p>
+<p>&nbsp;&nbsp; 事物xworker.core.things.uitl.CodeGenerator，使用模板</p>
+<p>&nbsp;&nbsp;&nbsp; ${projectName}${thingManagerName}${categoryName}${thingName}.java</p>
+<p>&nbsp;&nbsp; 输出的结果为：</p>
+<p>&nbsp;&nbsp;&nbsp; core/things/util/CodeGenerator.java。</p>
+<p>&nbsp;&nbsp;&nbsp; 也可以是：</p>
+<p>&nbsp;&nbsp;&nbsp; ${thing.packageName?replace('.', '/')}/${thing.name}.xml</p>
+<p>&nbsp;</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+outputFile
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@outputEncoding
+sname
+outputEncoding
+sdefault
+UTF-8
+sdescription
+<p>输出编码。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+outputEncoding
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@forAllThings
+sname
+forAllThings
+sinputtype
+truefalse
+sdefault
+false
+Sdescription
+#$@text#$@
+<p>是否是针对所有事物的模板处理。</p>
+<p>模板处理有两种情况，一是对所有的事物，而是对单个事物，二者只能选一。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+forAllThings
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@TextTemplate/@filterDescriptors
+sname
+filterDescriptors
+sinputtype
+textarea
+scolspan
+2
+Sdescription
+#$@text#$@
+<p>事物过滤列表。</p>
+<p>按照事物的描述者过滤事物，多个事物可用,号隔开。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+filterDescriptors
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.CodeGenerator/@CodeGenerator
+sname
+CodeGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.ide.util.CodeGenerator
+Sdescription
+#$@text#$@
+<p>子代码生成。</p>
+<p>子代码生成和父代码生成是各自独立，不过在父执行时子也会执行。</p>
+#$@text#$@
+sid
+CodeGenerator
+@xworker.ide.util.CodeGenerator/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.util.CodeGenerator/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.util.UtilTemplate;
+
+//获取事物列表
+def thingCollection = self.get("Things@0");
+if(thingCollection == null){
+    log.warn(self.metadata.path + "\n        没有定义事物集合！");
+    return;
+}
+
+def things = thingCollection.doAction("run", actionContext);
+if(things == null){
+    log.warn(sefl.metadata.path + "\n        事物集合返回空事物！");
+    return;
+}
+
+if(things instanceof Thing){
+    things = [things];
+}
+
+//获取模板列表
+def templates = self.getChilds("TextTemplate");
+try{
+    def bindings = actionContext.push();
+    bindings.put("things", things);
+    
+    //生成单个事物的模板
+    for(thing in things){        
+        bindings.put("thing", thing);
+        
+        for(template in templates){
+            if(template.forAllThings == "true") continue;
+            
+            boolean pass = false;
+            def filter = template.filterDescriptors;            
+            if(filter != null && filter != ""){
+                //过滤事物
+                String[] fs = filter.split("[,]");
+                for(f in fs){
+                    if(thing.isThing(f.trim())){
+                        pass = true;
+                        break;
+                    }
+                }
+                
+                if(!pass){
+                    continue;
+                }
+            }
+                        
+            bindings.put(template.thingsName, things);
+            bindings.put(template.thingName, thing);
+            bindings.put("projectName", "/" + thing.metadata.project.name);
+            bindings.put("thingManagerName", "/" + thing.metadata.thingManager.name);
+            bindings.put("categoryName", "/" + thing.metadata.category.name.replace('.', '/'));
+            bindings.put("thingName", thing.metadata.name);
+                                    
+            Thing t = new Thing("xworker.lang.text.TextTemplate");
+            t.set("name", template.name);
+            t.set("templatePath", template.templatePath);
+            t.set("type", template.templateType);
+            t.set("templateEncoding", template.templageEncoding);
+            t.set("isTemplateContext", "true");
+            String output = UtilTemplate.processString(actionContext, template.outputFile);
+            if(template.outputDir != null && template.outputDir != ""){
+                output = self.template.outputDir + "/" + output;
+            }else if(self.outputDir != null && self.outputDir != ""){
+                output = self.outputDir + "/" + output;
+            }else{
+                log.warn(template.metadata.path + "\n        没有设置输出目录！");
+                continue;
+            }
+            
+            t.set("output", "\"" + output + "\"");
+            t.set("outputEncoding", template.outputEncoding);
+            t.doAction("run", actionContext);
+        }
+    }    
+    
+    //生成多个事物的模板
+    if(true){
+        for(template in templates){
+            if(template.forAllThings == "false") continue;
+            
+            def ts = [];
+            def filter = template.filterDescriptors;            
+            for(thing in things){                
+                if(filter != null && filter != ""){
+                    //过滤事物
+                    String[] fs = filter.split("[,]");
+                    for(f in fs){
+                        if(thing.isThing(f.trim())){
+                            ts.add(thing);                            
+                            break;
+                        }
+                    }
+                }else{
+                    ts.add(thing);
+                }
+            }
+            
+            bindings.put("things", ts);
+            bindings.put(template.thingsName, ts);
+              
+            Thing t = new Thing("xworker.lang.text.TextTemplate");
+            t.set("name", template.name);
+            t.set("templatePath", template.templatePath);
+            t.set("type", template.templateType);
+            t.set("templateEncoding", template.templageEncoding);
+            t.set("isTemplateContext", "true");
+            String output = UtilTemplate.processString(actionContext, template.outputFile);
+            if(template.outputDir != null && template.outputDir != ""){
+                output = self.template.outputDir + "/" + output;
+            }else if(self.outputDir != null && self.outputDir != ""){
+                output = self.outputDir + "/" + output;
+            }else{
+                log.warn(template.metadata.path + "\n        没有设置输出目录！");
+                continue;
+            }
+            
+            t.set("output", "\"" + output + "\"");
+            t.set("outputEncoding", template.outputEncoding);
+            t.doAction("run", actionContext);
+        }
+    }
+}finally{
+    actionContext.pop();
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.util.CodeGenerator/@actions/@swtMenuRun
+sname
+swtMenuRun
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+log.info("run code");
+
+currentThing.doAction("run");
+#$@text#$@
+sid
+swtMenuRun
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.util.CodeGenerator/@swtMenus
+sname
+swtMenus
+sid
+swtMenus
+slabel
+swtMenus
+sdescriptors
+xworker.lang.MetaDescriptor3/@swtMenus
+@xworker.ide.util.CodeGenerator/@swtMenus/@menuDefine
+sname
+menuDefine
+sid
+menuDefine
+slabel
+menuDefine
+sdescriptors
+xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+@xworker.ide.util.CodeGenerator/@swtMenus/@menuDefine/@codeGenerator
+sname
+codeGenerator
+slabel
+代码生成
+sid
+codeGenerator
+sdescriptors
+xworker.lang.ThingMenu/@menuDefine/@menu
+@xworker.ide.util.CodeGenerator/@swtMenus/@menuSetting
+sname
+menuSetting
+stype
+data
+smenuType
+codeGenerator
+sid
+menuSetting
+slabel
+menuSetting
+sdescriptors
+xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+@xworker.ide.util.CodeGenerator/@swtMenus/@menuSetting/@runCode
+sname
+runCode
+slabel
+生成代码
+surl
+xworker.ide.util.CodeGenerator/@actions/@swtMenuRun
+sisSplit
+false
+sattachParam
+true
+sid
+runCode
+sdescriptors
+xworker.lang.ThingMenu/@menuSetting/@menu

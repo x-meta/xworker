@@ -1,0 +1,1872 @@
+^1568602174435
+@
+sname
+OrgDocument
+slabel
+OrgDocument
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>一个简易文档应用，可以在线编辑页面，所有页面都放在一个事物里。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.http.server.HttpServerApps
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@httpDo
+    sname
+    httpDo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.security.SecurityManager;
+
+//需要安全校验的动作列表
+def ac_security = ["addCategoryPage", "addCategory", "editPage", 
+                "savePage", "removePage", "moveUp", "moveDown",
+                "ckbrowser", "editModel", "editDocPage", "saveDoc",
+                "editMenu"];
+
+//检查服务器资源
+if(self.doAction("check", actionContext) == false){
+    def result = world.getThing("xworker.app.web.docorg.InstallTip/@success");
+    result.doAction("doResult", actionContext);
+    return;
+}
+
+//校验权限
+def ac = request.getParameter("ac");
+def checkSecurity = false;
+for(acc in ac_security){
+    if(acc == ac){
+        checkSecurity = true;
+        break;
+    }
+}
+if(checkSecurity){
+    if(!SecurityManager.doCheck((byte) 1, "xworker.app.web.docorg.OrgDocument", null, null, actionContext)){
+        //response.writer.println("Security check failured");
+        return;
+    }
+}
+
+if(ac == "ckbrowser"){
+    //ckeditor的文件管理器
+    def ckbrowser = self.getData("ckbrowser");
+    if(ckbrowser == null){
+        ckbrowser = new Thing("xworker.com.ckeditor.filebrowser.ExtjsFileBrowser");
+        ckbrowser.put("sessionName", self.metadata.path);
+        self.setData("ckbrowser", ckbrowser);
+    }
+    ckbrowser.doAction("httpDo", actionContext);
+    return;
+}
+
+//分类目录
+def category = getCategory(request, self);
+//菜单列表
+def menus = self.getChilds("Category");
+//要显示的文档
+def content = getContent(request, category, self);
+if(content != null){
+    def act = getCategoryByContent(content);
+    if(act != null){
+        category = act;
+    }
+}
+
+//保存全局变量
+_g.put("category", category);
+_g.put("menus", menus);
+_g.put("content", content);
+_g.put("doc", self);
+if(ac == "editModel"){
+    session.setAttribute(self.metadata.path + "_EditModel", "editModel");
+}else if(ac == "exitEditModel"){
+    session.setAttribute(self.metadata.path + "_EditModel", null);
+}
+_g.put("logined", isLogined(session, self));
+
+ //输出页面
+if(ac == "addCategoryPage"){
+    self.doAction("addCategoryPage", actionContext);
+}else if(ac == "addRootCategoryPage"){
+    _g.put("category", self);
+    _g.put("content", self);
+    self.doAction("addCategoryPage", actionContext);
+}else if(ac == "addCategory"){
+    self.doAction("addCategory", actionContext);
+}else if(ac == "editPage"){
+    self.doAction("editPage", actionContext);
+}else if(ac == "savePage"){
+    self.doAction("savePage", actionContext);
+}else if(ac == "removePage"){
+    self.doAction("removePage", actionContext);
+}else if(ac == "moveUp"){
+    self.doAction("moveUp", actionContext);
+}else if(ac == "moveDown"){
+    self.doAction("moveDown", actionContext);
+}else if(ac == "editMenu"){
+    self.doAction("editMenu", actionContext);
+}else if(ac == "saveDoc" || ac == "editDoc"){
+    self.doAction(ac, actionContext);
+}else if(ac == "movePage"){
+    self.doAction("movePage", actionContext);
+}else if(ac == "doMovePage"){
+    self.doAction("doMovePage", actionContext);
+}else{
+    if(content != null){
+        def href= content.getStringBlankAsNull("href");
+        if(href != null){
+            response.sendRedirect(href);
+            return;
+        }
+    }
+    
+    //默认是输出文件
+    self.doAction("writeContent", actionContext);
+}
+
+def isLogined(session, self){
+    return session.getAttribute(self.metadata.path + "_EditModel") != null;
+}
+
+//返回文档内容
+def getContent(request, category, self){
+    def path = request.getParameter("content");
+    def content = null;
+    if(path != null){
+        content = world.getThing(path);
+    }
+    
+    if(content == null && category != null){
+        def item1 = category.getThing("CategoryItem@0");
+        if(item1 != null && item1.getChilds("CategoryItem").size() > 0){
+            content = item1.getThing("CategoryItem@0");
+        }else if(item1 != null){
+            content = item1;
+        }else{
+            content = category;
+        }
+    }
+    
+    return content;
+}
+
+//获取要显示的分类栏目
+def getCategory(request, self){
+    def c = request.getParameter("cat");
+    def category = null;
+    if(c != null){
+        category = world.getThing(c);
+    }
+    if(category == null){
+        category = self.getThing("Category@0");
+        if(category == null){
+            category = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+            self.addChild(category);
+            self.save();
+        }
+        for(child in category.getChilds()){
+            if(child.thingName == "Category"){
+                return child;
+            }
+        }
+    }
+    
+    return category;
+}
+
+def getCategoryByContent(content){
+    if(content.thingName == "Category"){
+        return content;
+    }
+    content = content.parent;
+    if(content == null){
+        return null;
+    }
+    return getCategoryByContent(content);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    httpDo
+    @/@actions/@doTemplate
+    sname
+    doTemplate
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.UtilTemplate;
+
+//输出为utf-8
+response.setContentType("text/html; charset=utf-8");
+
+//用freemarker模板输出
+UtilTemplate.process(actionContext, 
+      template, "freemarker", response.getWriter(), "utf-8");
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>输出HTML页面。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>template</strong><br />
+	Freemarker模板的路径。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doTemplate
+    @/@actions/@writeContent
+    sname
+    writeContent
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/ContentPage.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    writeContent
+    @/@actions/@addCategory
+    sname
+    addCategoryPage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/AddContent.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addCategory
+    @/@actions/@addCategory1
+    sname
+    addCategory
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+def label = request.getParameter("label");
+def data = request.getParameter("data");
+def href = request.getParameter("href");
+
+log.info("add category................");
+if(label == null){
+    _g.put("label", "标签不能为空！");
+    self.doAction("addCategoryPage", actionContext);
+}else{
+    def thing = null;
+    if(content != null){
+        if(content == self){
+            thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+        }else{
+            if("menu" == requestBean.type){
+           	    thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@Category");
+            }else{
+                thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+            }
+        }
+        thing.put("label", label);
+        thing.put("href", href);
+        thing.put("description", data);       
+        content.addChild(thing);
+    }else if(category == null){
+        thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+        thing.put("label", label);
+        thing.put("href", href);
+        thing.put("description", data);        
+        self.addChild(thing);
+       _g.put("category", thing)
+    }else{    
+        if("menu" == requestBean.type){
+            thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@Category");
+        }else{
+            thing = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+        }
+        thing.put("label", label);
+        thing.put("href", href);
+        thing.put("description", data);       
+        category.addChild(thing);
+    }    
+    
+    self.save();
+    
+    _g.put("menus", self.getChilds("Category"));
+    _g.put("content", thing);
+    self.doAction("writeContent", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addCategory1
+      @/@actions/@addCategory1/@Variables
+      sname
+      Variables
+      sdescriptors
+      xworker.lang.actions.Inout/@Variables
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      Variables
+        @/@actions/@addCategory1/@Variables/@log
+        sname
+        log
+        stagName
+        xworker.app.web.docorg.OrgDocument/@actions/@addCategory1
+        saction
+        true
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        log
+    @/@actions/@editPage
+    sname
+    editPage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/EditPage.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    editPage
+    @/@actions/@savePage
+    sname
+    savePage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def label = request.getParameter("label");
+def data = request.getParameter("data");
+def href = request.getParameter("href");
+
+//println("label=" + label);
+//println("data=" + data);
+content.put("label", label);
+content.put("href", href);
+content.put("description", data);
+content.save();
+
+if(request.getParameter("saveAndReturn") == "true"){
+    self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/ContentPage.ftl");
+}else{   
+    self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/EditPage.ftl");
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    savePage
+    @/@actions/@removePage
+    sname
+    removePage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//删除指定的内容节点
+def parent = content.getParent();
+parent.removeChild(content);
+parent.save();
+content = parent;
+_g.put("content", content);
+
+self.doAction("writeContent", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    removePage
+    @/@actions/@moveUp
+    sname
+    moveUp
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def parent = content.getParent();
+parent.changeChildIndex(content, -1, -1);
+_g.put("menus", self.getChilds("Category"));
+
+def nextAc = requestBean.nextAc;
+if(nextAc == null || nextAc == ""){
+    nextAc = "writeContent";
+}
+self.doAction(nextAc, actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    moveUp
+    @/@actions/@moveDown
+    sname
+    moveDown
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def parent = content.getParent();
+parent.changeChildIndex(content, -1, 1);
+_g.put("menus", self.getChilds("Category"));
+
+def nextAc = requestBean.nextAc;
+if(nextAc == null || nextAc == ""){
+    nextAc = "writeContent";
+}
+self.doAction(nextAc, actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    moveDown
+    @/@actions/@check
+    sname
+    check
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.apache.commons.io.FileUtils;
+
+//检查服务器资源是否都已经安装了
+if(self.getData("checkResource") == true){
+    self.setData("checking", false);
+    return true;
+}
+
+//self.setData("checking", null);
+if(self.getData("checking") == true){
+    return false;
+}else{
+    self.setData("checking", true) ;
+
+    def root = new File(request.getServletContext().getRealPath("/"));
+    def wroot = new File(world.getPath());
+    if(fileEquals(actionContext, "src", root, "dest", new File(wroot, "webroot")) == true){
+        //如果都是使用相同的目录，即是用了XWorker，一般不是单独的模型项目
+        self.setData("checkResource", true);
+        return true;
+    }
+    
+    def params = [root: root, wroot: wroot, doc: self];
+    self.doAction("checkTask", actionContext, ["params": params]);
+    
+    return false;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    check
+      @/@actions/@check/@ActionDefined
+      sname
+      ActionDefined
+      sdescriptors
+      xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      ActionDefined
+        @/@actions/@check/@ActionDefined/@fileEquals
+        sname
+        fileEquals
+        ssrcFile
+        var:src
+        sdestFile
+        var:dest
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.io.FileUtilActions/@FileEquals
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        fileEquals
+    @/@actions/@checkTask
+    sname
+    checkTask
+    senable
+    true
+    scallback
+    false
+    scallbackCancel
+    false
+    ssingleInstance
+    false
+    ssaveAsGlobalVar
+    false
+    sparams
+    params
+    sschedule
+    false
+    sfixedRate
+    false
+    stimeUnit
+    MILLISECONDS
+    sfixTime
+    false
+    scalculatePassCount
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@Task
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    checkTask
+      @/@actions/@checkTask/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.task.Task/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@actions/@checkTask/@actions/@doTask
+        sname
+        doTask
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import org.apache.commons.io.FileUtils;
+
+//检查extjs
+checkJs("js/extjs", root, wroot);
+checkJs("js/xworker", root, wroot);
+
+//检查swfupload
+checkJs("js/swfupload", root, wroot);
+checkJs("fckeditor", root, wroot);
+checkJs("icons", root, wroot);
+checkJs("js/syntaxhighlighter", root, wroot);
+checkJs("js/jquery/jquery-2.0.3.min.js", root, wroot);
+checkJs("js/bootstrap-3.3.5", root, wroot);
+
+doc.setData("checkResource", true);
+return true;
+
+def checkJs(path, root, wroot){
+    def extjsDir = new File(root, path);
+    if(!extjsDir.exists()){
+        File src = new File(wroot, "/webroot/" + path);
+        if(src.isFile()){
+            FileUtils.copyFile(src, extjsDir);
+        }else{
+            FileUtils.copyDirectory(src, extjsDir);
+        }
+    }
+}
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        doTask
+    @/@actions/@editDocPage
+    sname
+    editDoc
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/EditDoc.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    editDocPage
+    @/@actions/@saveDoc
+    sname
+    saveDoc
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.put("title", requestBean.title);
+self.put("icon", requestBean.icon);
+self.put("bottom", requestBean.bottomV);
+
+self.save();
+
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/ContentPage.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    saveDoc
+    @/@actions/@editMenu
+    sname
+    editMenu
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/EditMenu.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    editMenu
+    @/@actions/@movePage
+    sname
+    movePage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/MovePage.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    movePage
+    @/@actions/@doMovePage
+    sname
+    doMovePage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def target = world.getThing(requestBean.target);
+def parent = content.getParent();
+parent.removeChild(content);
+target.addChild(content);
+target.save();
+
+//重新保存变量
+_g.put("category", getCategory(content));
+_g.put("content", content);
+
+//显示页面
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/app/web/docorg/ContentPage.ftl");
+        
+def getCategory(content){
+    if(content.thingName == "Category"){
+        return content;
+    }
+    content = content.parent;
+    return getCategory(content);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doMovePage
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@title
+  sname
+  title
+  ssize
+  50
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  title
+  @/@icon
+  sname
+  icon
+  ssize
+  60
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  icon
+  @/@bottom
+  sname
+  bottom
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  bottom
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@Category
+  sname
+  Category
+  slabel
+  主菜单
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Category
+    @/@Category/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@Category/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@Category/@href
+    sname
+    href
+    ssize
+    60
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    href
+    @/@Category/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+    @/@Category/@CategoryItem
+    sname
+    CategoryItem
+    slabel
+    栏目
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    false
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    CategoryItem
+      @/@Category/@CategoryItem/@name
+      sname
+      name
+      sshowLabel
+      true
+      sreadOnly
+      false
+      sinheritDescription
+      false
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      name
+      @/@Category/@CategoryItem/@label
+      sname
+      label
+      sshowLabel
+      true
+      sreadOnly
+      false
+      sinheritDescription
+      false
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      label
+      @/@Category/@CategoryItem/@href
+      sname
+      href
+      sshowLabel
+      true
+      sreadOnly
+      false
+      sinheritDescription
+      false
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      href
+      @/@Category/@CategoryItem/@description
+      sname
+      description
+      sinputtype
+      html
+      sshowLabel
+      true
+      sreadOnly
+      false
+      sinheritDescription
+      false
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      description
+      @/@Category/@CategoryItem/@CategoryItem
+      sname
+      CategoryItem
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@thing
+      sextends
+      xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem
+      smany
+      true
+      seditCols
+      2
+      sinitialization
+      false
+      smodifier
+      public
+      sinheritDescription
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      CategoryItem
+    @/@Category/@Category
+    sname
+    Category
+    slabel
+    子菜单
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.app.web.docorg.OrgDocument/@Category
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    Category
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sextends
+  xworker.http.ControlSet/@swtMenus1
+  sth_createIndex
+  false
+  sid
+  sswtMenus

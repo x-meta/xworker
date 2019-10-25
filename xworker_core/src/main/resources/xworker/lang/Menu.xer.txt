@@ -1,0 +1,615 @@
+^1556173315266
+@
+sname
+Menu
+slabel
+菜单定义
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>一个通用菜单定义，常用于XWorker的HTML和SWT菜单。</p>
+<p>如果使用本描述创建一个xxx.xxx.config.Doc的文档，那么将会加入到XWorker的帮助系统中，其中xxx.xxx是任意前两级目录。</p>
+#$@text#$@
+sen_label
+Menu
+  @/@name
+  sname
+  name
+  slabel
+  名称
+  sinputtype
+  text
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  name
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  sinputtype
+  text
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Label
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  label
+  @/@extends
+  sname
+  extends
+  slabel
+  继承
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  extends
+  @/@action
+  sname
+  action
+  slabel
+  动作
+  sinputtype
+  text
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Action
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  action
+  @/@url
+  sname
+  url
+  slabel
+  地址（动作）
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sshowLabel
+  true
+  smodifier
+  public
+  sinputattrs
+  prefix=do?sc=
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>URL地址或动作。</p>
+
+<p><strong>在HTML页面中</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是URL连接，在HTML中URL是要打开的页面。</p>
+
+<p><strong>在XWorker的事物菜单中</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是菜单的动作，菜单的动作处理如下：</p>
+
+<ul>
+	<li><strong>http://前缀</strong><br />
+	打开一个网址。</li>
+	<li><strong>do?前缀</strong><br />
+	打开一个XWorker的内部网址，并附加参数currentThing=&lt;当前事物路径&gt;。</li>
+	<li><strong>do?sc=</strong><br />
+	打开当前事物的WEB应用，打开do?sc=&lt;当前事物路径&gt;的网页。</li>
+	<li><strong>doc</strong><br />
+	打开当前事物的事物文档网页。</li>
+	<li><strong>action:xxx</strong><br />
+	执行当前事物的xxx动作。</li>
+	<li><strong>其它</strong><br />
+	当作动作事物来执行，把当前事物作为参数currentThing和thing传入。</li>
+</ul>
+
+<p><strong>XWorker菜单时动作可以使用那些变量，以及动作时如何解释的</strong></p>
+
+<p>请看属性SWT窗口的文档。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sen_label
+  Url
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  url
+  @/@shell
+  sname
+  shell
+  slabel
+  SWT窗口
+  sinputtype
+  openWindow
+  ssize
+  60
+  scolspan
+  2
+  sshowLabel
+  true
+  sinputattrs
+  xworker.swt.xworker.attributeEditor.openWins.ShellWithParamsWindow|desc=null
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p><strong>功能</strong></p>
+
+<p>如果地址（动作路径）为空而此字段是一个SWT shell的路径，那么点击菜单是打开窗口。</p>
+
+<p><strong>如何编写窗口</strong></p>
+
+<p>窗口时SWT的shell事物，创建窗口时使新的动作上下文，其中变量有:</p>
+
+<ul>
+	<li>context.put(&quot;parent&quot;, coolBar.getShell());</li>
+	<li>context.put(&quot;explorerActions&quot;, explorerActions);</li>
+	<li>context.put(&quot;explorerContext&quot;, explorerContext);</li>
+	<li>context.put(&quot;thingContext&quot;, actionContext);</li>
+	<li>context.put(&quot;utilBrowser&quot;, utilBrowser);</li>
+	<li>context.put(&quot;thing&quot;, currentThing);</li>
+	<li>context.put(&quot;currentThing&quot;, currentThing);</li>
+	<li>context.put(&quot;currentModelContext&quot;, currentModelContext);</li>
+	<li>context.put(&quot;currentModel&quot;, currentModel);</li>
+</ul>
+
+<p>如果调用对应的路径的事物的create方法返回的shell.getData(&quot;menuShellDispose&quot;)==true，那么shell将被dispose()。</p>
+
+<p><strong>解释动作和窗口的程序</strong></p>
+
+<p>参看：<a href="javascript:invoke('thing:xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection/@GroovyAction')">xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection/@GroovyAction。</a></p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  shell
+  @/@target
+  sname
+  target
+  slabel
+  目标
+  sinputtype
+  inputSelect
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Target
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  target
+    @/@target/@blank
+    sname
+    blank
+    slabel
+    blank
+    svalue
+    _blank
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    blank
+    @/@target/@parent
+    sname
+    parent
+    slabel
+    parent
+    svalue
+    _parent
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    parent
+    @/@target/@self
+    sname
+    self
+    slabel
+    self
+    svalue
+    _self
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    self
+    @/@target/@top
+    sname
+    top
+    slabel
+    top
+    svalue
+    _top
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    top
+    @/@target/@main
+    sname
+    main
+    slabel
+    mainPanel
+    svalue
+    main
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    main
+    @/@target/@contentPanel
+    sname
+    contentPanel
+    slabel
+    contentPanel
+    svalue
+    contentPanel
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    contentPanel
+    @/@target/@truePanel
+    sname
+    truePanel
+    slabel
+    treePanel
+    svalue
+    treePanel
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    truePanel
+    @/@target/@outlinePanel
+    sname
+    outlinePanel
+    slabel
+    outlinePanel
+    svalue
+    outlinePanel
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    outlinePanel
+  @/@isSplit
+  sname
+  isSplit
+  slabel
+  分隔符
+  sinputtype
+  truefalse
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>是否是分隔符。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Split
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  isSplit
+  @/@attachParam
+  sname
+  attachParam
+  slabel
+  附加参数
+  sinputtype
+  truefalse
+  sdefault
+  true
+  sdescription
+  当定义为数据或者包的菜单时，是否附加有关数据和包的参数。
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Parameters
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>Aditional parameters.</p>
+  sid
+  attachParam
+  @/@menu
+  sname
+  Menu
+  slabel
+  子菜单
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.Menu
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sen_label
+  Menu
+  sid
+  menu
+  @/@param
+  sname
+  param
+  slabel
+  参数
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sen_label
+  Parameter
+  sid
+  param
+    @/@param/@name
+    sname
+    name
+    slabel
+    名称
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sen_label
+    Name
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@param/@value
+    sname
+    value
+    slabel
+    值
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sen_label
+    Value
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    value
+  @/@accelerator
+  sname
+  accelerator
+  slabel
+  快捷键
+  sdescription
+  <p>如Shift + T。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Accelerator
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  accelerator
+  @/@image
+  sname
+  image
+  slabel
+  图标
+  sinputtype
+  imageSelector
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Icon
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  image
+  @/@params
+  sname
+  params
+  slabel
+  参数
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Params
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  params
+  @/@description
+  sname
+  description
+  slabel
+  描述
+  stype
+  text
+  sinputtype
+  html
+  scolspan
+  2
+  sinputattrs
+  rows=3 cols=70
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Description
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  description
+  @/@actions
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  sdescription
+  <p>菜单的动作，如果指定了地址，那么不生效，否则只有第一个动作生效。</p>
+  szh_label
+  动作
+  sid
+  actions
+    @/@actions/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name

@@ -1,0 +1,296 @@
+%1482223012085
+@
+sname=shell
+sBORDER=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_FOCUS=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=添加控件子节点
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+stext=编辑子节点
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sdescriptors=xworker.swt.xworker.ThingRegistThing/@Composite,xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+sid=Composite
+  @/@shellGridLayout
+  sname=shellGridLayout
+  smakeColumnsEqualWidth=false
+  smarginWidth=5
+  smarginHeight=5
+  smarginLeft=0
+  smarginTop=0
+  smarginRight=0
+  smarginBottom=0
+  shorizontalSpacing=5
+  sverticalSpacing=5
+  sdescriptors=xworker.swt.Layouts/@GridLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellGridLayout
+  @/@thingEditor
+  sname=thingEditor
+  stitle=true
+  suseRootThing=false
+  sdescriptors=xworker.swt.Widgets/@ThingEditor
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=thingEditor
+    @/@thingEditor/@thingEditorGridData
+    sname=thingEditorGridData
+    sstyle=FILL_BOTH
+    shorizontalIndent=0
+    swidth=-1
+    sheight=-1
+    shorizontalAlignment=BEGINNING
+    sverticalAlignment=CENTER
+    shorizontalSpan=1
+    sverticalSpan=1
+    sgrabExcessHorizontalSpace=false
+    sgrabExcessVerticalSpace=false
+    sxw_cl_global=false
+    sdescriptors=xworker.swt.Commons/@GridData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEditorGridData
+  @/@1442
+  sname=buttonComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sid=1442
+    @/@1442/@1443
+    sname=buttonCompositeGridData
+    sstyle=FILL_HORIZONTAL
+    shorizontalIndent=0
+    swidth=-1
+    sheight=-1
+    shorizontalAlignment=END
+    sverticalAlignment=CENTER
+    shorizontalSpan=1
+    sverticalSpan=1
+    sgrabExcessHorizontalSpace=false
+    sgrabExcessVerticalSpace=false
+    sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+    sid=1443
+    @/@1442/@1444
+    sname=buttonCompositeRowLayout
+    sfill=false
+    sjustify=false
+    smarginWidth=0
+    smarginHeight=0
+    smarginLeft=3
+    smarginTop=3
+    smarginRight=3
+    smarginBottom=3
+    spack=true
+    sspacing=3
+    stype=SWT.HORIZONTAL
+    swrap=true
+    sdescriptors=xworker.swt.Layouts/@RowLayout
+    sid=1444
+    @/@1442/@1445
+    sname=okButton
+    stext=确定
+    stype=SWT.PUSH
+    sflat=false
+    sborder=false
+    sselected=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Button
+    sth_createIndex=false
+    sid=1445
+      @/@1442/@1445/@1446
+      sname=RowData
+      sexclude=false
+      swidth=80
+      sheight=-1
+      sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+      sth_createIndex=false
+      sid=1446
+      @/@1442/@1445/@1447
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sth_createIndex=false
+      sid=1447
+        @/@1442/@1445/@1447/@1448
+        sname=okButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sth_createIndex=false
+        sid=1448
+          @/@1442/@1445/@1447/@1448/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import xworker.swt.design.InjectableComposite;
+
+import org.xmeta.Thing;
+
+def itemNames = ["ExpandItem", "CTabItem", "TabItem"];
+//获取正编辑的事物
+def thing = thingEditor.editorActions.doAction("getRootThing");
+for(itemName in itemNames){
+    if(thing.getThingName() == itemName){
+        def icomposite = new Thing("xworker.swt.design.InjectableComposite");
+        thing.addChild(icomposite);
+    }
+}
+
+//获取ui
+def ui = parentContext.parentContext.parentContext.ui;
+
+//可注入的面板对应的事物
+def uithing = ui.getControl().getData("thing");
+
+//获取子节点
+def child = uithing.getThing("Control@0");
+if(child != null && child.getChilds().size() > 0){
+    child = child.getChilds().get(0);
+}else{
+    child = null;
+}
+
+if(child == null){
+    return;
+}
+
+child.addChild(thing);
+
+//设置子节点，在帮助小精灵的变量上下文中
+InjectableComposite.setChild(child, parentContext);
+
+shell.dispose();
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+    @/@1442/@1449
+    sname=cancelButton
+    stext=取消
+    stype=SWT.PUSH
+    sflat=false
+    sborder=false
+    sselected=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Button
+    sth_createIndex=false
+    sid=1449
+      @/@1442/@1449/@1450
+      sname=RowData
+      sexclude=false
+      swidth=80
+      sheight=-1
+      sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+      sth_createIndex=false
+      sid=1450
+      @/@1442/@1449/@1451
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sth_createIndex=false
+      sid=1451
+        @/@1442/@1449/@1451/@1452
+        sname=cancelButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sth_createIndex=false
+        sid=1452
+          @/@1442/@1449/@1451/@1452/@Dispose
+          sname=Dispose
+          scontrolList=shell
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Dispose
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Dispose
+    @/@1442/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions

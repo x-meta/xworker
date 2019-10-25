@@ -1,0 +1,271 @@
+%1516342314487
+@
+sname=shell
+stext=lang:d=编辑模型数据&en=Edit Template Data
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=800
+sheight=640
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=ThingTextTemplateDataEditor
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellGridLayout
+  sname=shellGridLayout
+  smakeColumnsEqualWidth=false
+  smarginWidth=5
+  smarginHeight=5
+  smarginLeft=0
+  smarginTop=0
+  smarginRight=0
+  smarginBottom=0
+  shorizontalSpacing=5
+  sverticalSpacing=5
+  sdescriptors=xworker.swt.Layouts/@GridLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellGridLayout
+  @/@thingEditor
+  sname=thingEditor
+  sthingPath=var:thing
+  stitle=true
+  suseRootThing=false
+  ssaveActionContainer=true
+  sdescriptors=xworker.swt.Widgets/@ThingEditor
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=thingEditor
+    @/@thingEditor/@thingEditorGridData
+    sname=thingEditorGridData
+    sstyle=FILL_BOTH
+    shorizontalIndent=0
+    swidth=-1
+    sheight=-1
+    shorizontalAlignment=BEGINNING
+    sverticalAlignment=CENTER
+    shorizontalSpan=1
+    sverticalSpan=1
+    sgrabExcessHorizontalSpace=false
+    sgrabExcessVerticalSpace=false
+    sdescriptors=xworker.swt.Commons/@GridData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEditorGridData
+  @/@5146
+  sname=buttonComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sid=5146
+    @/@5146/@5147
+    sname=buttonCompositeGridData
+    sstyle=FILL_HORIZONTAL
+    shorizontalIndent=0
+    swidth=-1
+    sheight=-1
+    shorizontalAlignment=END
+    sverticalAlignment=CENTER
+    shorizontalSpan=1
+    sverticalSpan=1
+    sgrabExcessHorizontalSpace=false
+    sgrabExcessVerticalSpace=false
+    sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+    sid=5147
+    @/@5146/@5148
+    sname=buttonCompositeRowLayout
+    sfill=false
+    sjustify=false
+    smarginWidth=0
+    smarginHeight=0
+    smarginLeft=3
+    smarginTop=3
+    smarginRight=3
+    smarginBottom=3
+    spack=true
+    sspacing=3
+    stype=SWT.HORIZONTAL
+    swrap=true
+    sdescriptors=xworker.swt.Layouts/@RowLayout
+    sid=5148
+    @/@5146/@5149
+    sname=okButton
+    stext=lang:d=确定(&amp;O)&en=Ok(&amp;O)
+    stype=SWT.PUSH
+    sflat=false
+    sborder=false
+    sselected=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Button
+    sth_createIndex=false
+    sid=5149
+      @/@5146/@5149/@5150
+      sname=RowData
+      sexclude=false
+      swidth=80
+      sheight=-1
+      sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+      sth_createIndex=false
+      sid=5150
+      @/@5146/@5149/@5151
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sth_createIndex=false
+      sid=5151
+        @/@5146/@5149/@5151/@5152
+        sname=okButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sth_createIndex=false
+        sid=5152
+          @/@5146/@5149/@5151/@5152/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.util.ExceptionUtil;
+import xworker.lang.actions.ActionUtils;
+
+
+//保存和获取编辑的事物
+thingEditor.doAction("save");
+def thing = thingEditor.doAction("getThing");
+
+//生成文本
+try{
+    def text = thing.doAction("run", parentContext.parentContext);
+    if(text != null){
+        editInput.setText(text);
+    }else{
+        editInput.setText("");
+    }
+}catch(Exception e){
+    editInput.setText(ExceptionUtil.toString(e));
+}
+
+shell.dispose();
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+    @/@5146/@5153
+    sname=cancelButton
+    stext=lang:d=取消(&amp;C)&en=Cancel(&amp;C)
+    stype=SWT.PUSH
+    sflat=false
+    sborder=false
+    sselected=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Button
+    sth_createIndex=false
+    sid=5153
+      @/@5146/@5153/@5154
+      sname=RowData
+      sexclude=false
+      swidth=80
+      sheight=-1
+      sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+      sth_createIndex=false
+      sid=5154
+      @/@5146/@5153/@5155
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sth_createIndex=false
+      sid=5155
+        @/@5146/@5153/@5155/@5156
+        sname=cancelButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sth_createIndex=false
+        sid=5156
+          @/@5146/@5153/@5155/@5156/@ShellNormalActions
+          sname=ShellNormalActions
+          sshellName=shell
+          smethod=dispose
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ShellActions/@ShellNormalActions1
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ShellNormalActions

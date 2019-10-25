@@ -1,0 +1,328 @@
+^1477963750158
+@
+sname
+TestGridRealStockData1
+slabel
+测试抓取和保存股票实时数据
+stype
+action
+sgroup
+金融.股票
+sicon
+icons/application.png
+sstyledTextForInsert
+parentContext.parentContext.codeText
+Sdescription
+#$@text#$@
+<h3>股票实时抓取数据</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 演示定时抓取实时数据并保存到数据库中。</p>
+
+<h3>方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 每隔10秒抓取一次民生银行的实时数据，并保存到数据库中。民生银行的代码是：sh600016。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 抓取的数据会打印到控制台中，抓取10次后自动停止。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.swt.xworker.ThingRegistThing
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+command|xworker.command.Root
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@ActionThing
+  sname
+  ActionThing
+  sdescriptors
+  xworker.swt.xworker.ThingRegistThing/@ActionThing
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  ActionThing
+    @/@ActionThing/@run
+    sname
+    run
+    sgroup
+    test.stock
+    senable
+    true
+    scallback
+    false
+    scallbackCancel
+    false
+    ssingleInstance
+    false
+    ssaveAsGlobalVar
+    false
+    sschedule
+    true
+    speriod
+    10000
+    sfixedRate
+    false
+    stimeUnit
+    MILLISECONDS
+    sfixTime
+    false
+    sexecuteCount
+    10
+    scalculatePassCount
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@Task
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run
+      @/@ActionThing/@run/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.task.Task/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@ActionThing/@run/@actions/@doTask
+        sname
+        doTask
+        schangeSelf
+        false
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@ActionGroup
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        doTask
+          @/@ActionThing/@run/@actions/@doTask/@actions
+          sname
+          actions
+          sdescriptors
+          xworker.lang.actions.Begin/@actions
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          actions
+            @/@ActionThing/@run/@actions/@doTask/@actions/@loadRealData
+            sname
+            loadRealData
+            suri
+            template:http://hq.sinajs.cn/list=sh600016
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Local
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            screateLocalVarScope
+            false
+            ssaveReturn
+            true
+            sreturnVarName
+            realData
+            sdisableGlobalContext
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.httpclient.HttpGet
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            loadRealData
+            @/@ActionThing/@run/@actions/@doTask/@actions/@saveToDb
+            sname
+            saveToDb
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            svarScope
+            Local
+            sdisableGlobalContext
+            false
+            Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+
+if(actionContext.get("realData") != null){
+    def ss = realData.split("[,]");
+    def dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    def timeFormat = new SimpleDateFormat("HH:mm:ss");
+    def data = new DataObject("xworker.app.stock.dataobjects.StockRealTimeData");
+    data.stockCode = "600016";
+    data.open = Double.parseDouble(ss[1]);
+    data.close = Double.parseDouble(ss[2]);
+    data.price = Double.parseDouble(ss[3]);
+    data.max = Double.parseDouble(ss[4]);
+    data.low = Double.parseDouble(ss[5]);
+    data.bidBuy = Double.parseDouble(ss[6]);
+    data.bidSell = Double.parseDouble(ss[7]);
+    data.exchangeCount = Long.parseLong(ss[8]);
+    data.exchangeMoney = Double.parseDouble(ss[9]);
+    data.buy1Count = Long.parseLong(ss[10]);
+    data.buy1Price = Double.parseDouble(ss[11]);
+    data.buy2Count = Long.parseLong(ss[12]);
+    data.buy2Price = Double.parseDouble(ss[13]);
+    data.buy3Count = Long.parseLong(ss[14]);
+    data.buy3Price = Double.parseDouble(ss[15]);
+    data.buy4Count = Long.parseLong(ss[16]);
+    data.buy4Price = Double.parseDouble(ss[17]);
+    data.buy5Count = Long.parseLong(ss[18]);
+    data.buy5Price = Double.parseDouble(ss[19]);
+    data.sell1Count = Long.parseLong(ss[20]);
+    data.sell1Price = Double.parseDouble(ss[21]);
+    data.sell2Count = Long.parseLong(ss[22]);
+    data.sell2Price = Double.parseDouble(ss[23]);
+    data.sell3Count = Long.parseLong(ss[24]);
+    data.sell3Price = Double.parseDouble(ss[25]);
+    data.sell4Count = Long.parseLong(ss[26]);
+    data.sell4Price = Double.parseDouble(ss[27]);
+    data.sell5Count = Long.parseLong(ss[28]);
+    data.sell5Price = Double.parseDouble(ss[29]);
+    data.dataDate = dateFormat.parse(ss[30]);
+    data.dataTime = timeFormat.parse(ss[31]);
+    
+    data = data.create(actionContext);
+    println("save success, data=" + data);
+}else{
+    println("no data grabed, path=xworker.app.topics.p2015.p09.p09.TestGridRealStockData1");
+}
+#$@text#$@
+            sinterpretationType
+            Action
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            saveToDb

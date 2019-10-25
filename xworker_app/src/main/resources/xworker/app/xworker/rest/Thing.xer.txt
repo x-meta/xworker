@@ -1,0 +1,106 @@
+^1449801977926
+@
+sname
+Thing
+slabel
+Thing
+sdescriptors
+xworker.http.controls.REST
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET
+sname
+GET
+scheckPermission
+false
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.REST/@GET
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def remoteAddr = request.getRemoteAddr();
+def config = world.getThing("xworker.ide.config.decriptors.GlobalConfig");
+def ipLimit = config.getStringBlankAsNull("restIpLimits");
+if(ipLimit == null){
+    ipLimit = "127.*|192.*|0.*";
+}
+if(remoteAddr.matches(ipLimit)){
+    def thing = world.getThing(requestBean.thing);
+    if(thing == null || thing.getMetadata().getThingManager().getName() == "_local"){
+        response.setStatus(404);
+    }else{
+        response.setContentType("text/plain; charset=utf-8");
+        def coder = world.getThingCoder("xer.txt");
+        coder.encode(thing, response.getOutputStream());
+    }
+}else{
+    response.setStatus(403);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false

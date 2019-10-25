@@ -1,0 +1,294 @@
+^1412905301271
+@
+sname
+ThingCreator
+slabel
+事物创建者
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+Sdescription
+#$@text#$@
+<p>事物创建有一个输入事物和一个事物模板，输入事物用于创建编辑界面并产出输入数据，输入数据和事物模板合并最后返回一个新的事物。</p>
+<p>事物创建者的目的是创建一个新事物，创建事物的方法是process方法，所以可以通过重载process方法来替换原有的创建事物的方法。</p>
+<p>输入事物创建的事物是以data变量名传入事物模板的。</p>
+#$@text#$@
+sid
+DataObjectTemplate
+sen_label
+Thing Creator
+sen_description
+<p>A creator for generate things.</p>
+@/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sen_label
+Name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sen_label
+Label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@includeRoot
+sname
+includeRoot
+slabel
+是否包含根节点
+sinputtype
+truefalse
+scolspan
+2
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>是否包含事物模板生成的事物的根节点。</p>
+<p>如果为true那么把模板生成的事物覆盖当前正编辑的事物，由于模板生成的事物默认本身是空的，所以效果是正编辑的事物增加了子节点。</p>
+<p>如果为false，那么模板的结果事物的第一个子节点覆盖当前正编辑的事物，效果是覆盖了当前正编辑的子事物。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sen_label
+Include Root
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@extends
+sname
+extends
+slabel
+继承
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@description
+sname
+description
+slabel
+描述
+stype
+cdata
+sinputtype
+html
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sen_label
+Description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@InputThing
+sname
+InputThing
+slabel
+输入事物
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.lang.MetaDescriptor3
+sen_label
+Input Thing
+@/@ThingTemplate
+sname
+ThingTemplate
+slabel
+事物模板
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.lang.util.ThingTemplate
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+snotXmlAttribute
+false
+sen_label
+Thing Template
+@/@ThingTemplate/@extends
+sname
+extendTemplate
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>如果不为空，那么使用继承的事物模板。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@scripts1
+sname
+actions
+slabel
+动作集合
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.lang.MetaDescriptor3/@actions
+sid
+scripts1
+sen_label
+Actions
+@/@ThingCreator
+sname
+ThingCreator
+slabel
+事物创建者
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.ide.util.ThingCreator
+sen_label
+Thing Creator
+@/@scripts
+sname
+scripts
+sid
+scripts
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@/@scripts/@process
+sname
+process
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def templateNode = self.getThing("ThingTemplate@0");
+
+if(templateNode != null){    
+    if(templateNode.extendTemplate != null && templateNode.extendTemplate != ""){
+        templateNode = world.getThing(templateNode.extendTemplate);
+    }
+    def thing = templateNode.doAction("process", actionContext, ["data":actionContext.get("data")]);
+    if(self.getBoolean("includeRoot")){
+        return thing;
+    }else{
+        if(thing.childs.size() > 0){
+            return thing.childs.get(0);
+        }else{
+            return null;
+        }
+    }
+}else{
+    return null;
+}
+
+def change(thing, data){
+    for(key in thing.getAttributes().keySet()){
+        def value = thing.getAttributes().get(key);
+        value = changeValue(value, data);
+        thing.set(key, value);
+    }
+    
+    for(child in thing.getChilds()){
+        change(child, data);
+    }
+}
+
+def changeValue(value, data){
+    if(value == null) return null;
+    if(!value instanceof String) return value;
+    if(value.indexOf("\${") == -1) return value;
+    
+    for(key in data.keySet()){        
+        def v = data.get(key);
+        if(v == null) v = "";
+                
+        value = value.replaceAll("(\\\$\\{" + key + "\\})", v);  
+        //log.info(value);      
+    }
+    
+    return value;
+}
+#$@text#$@
+sid
+process
+sdescriptors
+xworker.lang.actions.GroovyAction

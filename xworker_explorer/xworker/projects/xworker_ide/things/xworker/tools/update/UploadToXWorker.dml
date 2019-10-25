@@ -1,0 +1,103 @@
+^1548052843212
+@
+sname
+UploadToXWorker
+slabel
+UploadToXWorker
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.filesync.FileSync;
+
+def userObj = world.getThing("_local.manong.User");
+
+File rootDir = new File("e:\\git\\xworker_explorer\\xworker_explorer\\target\\xworker\\");
+String fileListUrl = "https://www.xworker.org/do?sc=xworker.tools.update.GetFileList";
+String uploadUrl = "https://www.xworker.org/do?sc=xworker.tools.update.Upload";
+String user = userObj.userName;
+String password = userObj.password;
+String filter = "actionClasses\n" + 
+			"actionSources\n" + 
+			"updateindex\n" +
+		"work\n" +
+			"log\n" +
+		"projects/_local\n" + "projects/_share";
+		
+FileSync fileSync = new FileSync();
+fileSync.upload(fileListUrl, uploadUrl, user, password, rootDir, filter);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run

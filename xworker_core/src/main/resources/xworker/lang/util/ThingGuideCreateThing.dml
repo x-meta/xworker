@@ -1,0 +1,183 @@
+%1516158624287
+@
+sname=ThingGuideCreateThing
+slabel=ThingGuideCreateThing
+sdescription=<p>创建事物的向导，描述者是当前正在编辑事物的第一个描述者（不是ThingGuide的）子节点或注册子节点。</p>
+sdescriptors=xworker.lang.util.ThingGuide
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@Composite
+  sname=Composite
+  slabel=创建事物向导
+  sdescription=<p>请选择一个事物作为当前正在编辑的事物的描述者，选择后进入编辑向导，如果有编辑向导的话。</p>
+  snotRemoveGuideOnFinish=true
+  sdescriptors=xworker.lang.util.ThingGuideNodes/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.lang.util.ThingGuideNodes/@Composite/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@Composite/@Composite/@compositeFillLayout
+      sname=compositeFillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=compositeFillLayout
+      @/@Composite/@Composite/@thingRegist
+      sname=thingRegist
+      sregistType=child
+      sparent=false
+      ssearchByKeywords=true
+      sshowContent=true
+      scontentDisplayType=Composite
+      sshowDescBrowser=false
+      sdescBrowserRight=false
+      sautoLoad=true
+      scache=true
+      sdescritporForNewThing=xworker.lang.MetaDescriptor3
+      sdescritporChilds=false
+      sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingRegist
+        @/@Composite/@Composite/@thingRegist/@actions
+        sname=actions
+        sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@Composite/@Composite/@thingRegist/@actions/@init
+          sname=getThing
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def currentThing = thingGuide.getEditThing();
+def tguide = world.getThing("xworker.lang.ThingGuide");
+for(desc in currentThing.getDescriptors()){
+    if(desc != tguide){
+        return desc;
+    }
+}
+
+return null;
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.widgets.Widget/@Code
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=init
+          @/@Composite/@Composite/@thingRegist/@actions/@defaultSelected
+          sname=defaultSelected
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+if(thing != null){
+    thingGuide.finishCurrentNode();
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=defaultSelected
+    @/@Composite/@actions
+    sname=actions
+    sdescriptors=xworker.lang.util.ThingGuideNodes/@Composite/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Composite/@actions/@doFinish
+      sname=doFinish
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取已经选择的向导事物
+def gthing = thingRegist.doAction("getThing");
+def editThing = thingGuide.getEditThing();
+if(gthing == null){
+    //没有选择向导，回到正常编辑页面
+    def guideDesc = world.getThing("xworker.lang.ThingGuide");
+    editThing.removeDescriptor(guideDesc);
+}else{
+    //设置描述者，并进入自动向导选择
+    editThing.set("descriptors", "xworker.lang.ThingGuide," + gthing.metadata.path);
+    editThing.set("tg_thingGuidePath", "xworker.lang.util.ThingGuideAutoSelector");
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doFinish

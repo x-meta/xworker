@@ -1,0 +1,425 @@
+^1563266689829
+@
+sname
+ThingCommMenuScripts
+slabel
+ThingCommMenuScripts
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@pasteFromXml
+    sname
+    pasteFromXml
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+//打开显示窗体
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.XmlImportTextDialog/@shell");
+ActionContext context = new ActionContext();
+context.put("parentContext", actionContext);
+context.put("parent", explorerContext.shell);
+context.put("currentThing", currentThing);
+context.put("refreshMenuSelection", refreshMenuSelection);
+def newShell = shellObj.doAction("create", context);
+
+newShell.open();
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    pasteFromXml
+    @/@actions/@toXml
+    sname
+    toXml
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+//打开显示窗体
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.ThingToXmlDialog/@shell");
+ActionContext context = new ActionContext();
+context.put("parent", explorerContext.shell);
+context.put("thing", currentThing);
+def newShell = shellObj.doAction("create", context);
+context.scripts.doAction("setThing", ["thing":currentThing]);
+
+newShell.open();
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    toXml
+    @/@actions/@history
+    sname
+    history
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+//打开显示窗体
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.HistoryDialog/@shell");
+ActionContext context = new ActionContext();
+context.put("parent", explorerContext.shell);
+context.put("thing", currentThing);
+context.put("explorerContext", explorerContext);
+context.put("actions", actions);
+//context.put("outlineTree", outlineTree);
+context.put("refreshMenuSelection", refreshMenuSelection);
+def newShell = shellObj.doAction("create", context);
+context.scripts.doAction("setThing", ["thing":currentThing]);
+
+newShell.open();
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    history
+    @/@actions/@editId
+    sname
+    editId
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+//打开显示窗体
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.EditThingIdDialog/@shellt");
+ActionContext context = new ActionContext();
+context.put("parent", explorerContext.shell);
+context.put("thing", currentThing);
+
+def newShell = shellObj.doAction("create", context);
+context.idText.setText(currentThing.metadata.id);
+
+newShell.open();
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    editId
+    @/@actions/@showTextTempalte
+    sname
+    showTextTempalte
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def globalCfg = world.getThing("xworker.ide.config.globalConfig");
+def httpServer = null;
+if(globalCfg != null){
+    globalCfg.getString("httpServer");
+}
+
+if(httpServer == null || httpServer == ""){
+   httpServer = "http://localhost:9001/";
+}
+url = httpServer + "do?sc=" + java.net.URLEncoder.encode("xworker.core.tools.web.ThingTemplate/@process", "UTF-8") + "&thing=" + 
+    java.net.URLEncoder.encode(currentThing.metadata.path, "UTF-8") + 
+    "&tempalte=" + java.net.URLEncoder.encode("core:templates/showThingTempalte.ftl", "UTF-8");
+
+explorerContext.actions.doAction("openUrl", ["url":url, "name":currentThing.metadata.path + "template"]);
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    showTextTempalte
+    @/@actions/@updateThingDBIndex
+    sname
+    updateThingDBIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def ac = new ActionContext();
+def updater = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+updater.doAction("addIndexJob", ac, ["thing":currentThing]);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    updateThingDBIndex
+    @/@actions/@reloadThing
+    sname
+    reloadThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.cache.ThingCache;
+import xworker.util.XWorkerUtils;
+
+import org.eclipse.swt.SWT;
+
+//从缓存中删除，重新加载
+def path = currentThing.getRoot().getMetadata().getPath()
+ThingCache.remove(path);
+world.getThing(path);
+
+msg(actionContext);
+//XWorkerUtils.ideShowMessageBox("重新加载", "请关闭事物编辑器然后再重新打开！", SWT.ICON_INFORMATION | SWT.OK);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    reloadThing
+      @/@actions/@reloadThing/@ActionDefined
+      sname
+      ActionDefined
+      sdescriptors
+      xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ActionDefined
+        @/@actions/@reloadThing/@ActionDefined/@msg
+        sname
+        msg
+        sshell
+        ognl:explorerContext.shell
+        sicon
+        ICON_INFORMATION
+        sbuttons
+        OK
+        stitle
+        lang:d=重新加载&en=Reload
+        smessage
+        lang:d=事物模型已重新加载，请先关闭编辑器然后再重新打开。&en=The model has been reloaded. Please close the editor first and reopen it.
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        msg
+    @/@actions/@monitorThingFile
+    sname
+    monitorThingFile
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.thingManagers.FileThingManager;
+import org.xmeta.thingManagers.FileMonitor;
+
+def rootThing = currentThing.getRoot();
+def rootThingPath = rootThing.getMetadata().getPath();
+def th = rootThing.getMetadata().getThingManager();
+if(th instanceof FileThingManager){
+    def thingRootFile = th.getThingRootFile();
+    def thingCoder = world.getThingCoder(rootThing.getMetadata().getCoderType());
+	   def thingFile = new File(thingRootFile, rootThingPath.replace('.', '/') + "." + thingCoder.getType());
+	   if(thingFile.exists()){
+	        FileMonitor.getInstance().addFile(rootThingPath, rootThing, thingFile, true);
+	        println "Add to file monitor successed";
+	   }else{
+	        println "Thing file not exists, file=" + thingFile;
+    }
+}else{
+    println "Thing manager is not a FileThingManager";
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    monitorThingFile

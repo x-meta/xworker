@@ -1,0 +1,2 @@
+<#import "common.ftl" as lib>
+<input type="password" id="${object.name?if_exists}" <@lib.showProperties names=["name", "value", "size", "alt", "emsg", "class", "style"] dataObject=object/> <#if object.disabled?exists && object.disabled == "true">disabled </#if>${object.otherAttributes?if_exists}/>

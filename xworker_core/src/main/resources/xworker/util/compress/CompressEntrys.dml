@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="CompressEntrys" descriptors="xworker.lang.MetaDescriptor3" icon="icons/folder.png">
+    <description><![CDATA[<p>压缩相关的Entrys的索引。</p>
+
+<p><strong>规范</strong></p>
+
+<ul>
+	<li><strong>CompressEntry create()</strong><br />
+	每一个Entry应该实现create方法。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>]]></description>
+    <thing name="FileEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>文件Entry。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getPath()</strong><br />
+	返回在压缩包中的路径。如果返回null，使用文件名。默认实现是取属性path的设置。<br />
+	&nbsp;</li>
+	<li><strong>File getFile()</strong><br />
+	返回要压缩的文件。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createFileEntry"></JavaAction>
+            <GetFile name="getFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="file"></GetFile>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="file" inputtype="file" size="60" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="DirectoryEntry" extends="xworker.util.compress.CompressEntry" icon="icons/folder_add.png">
+        <description><![CDATA[<p>目录Entry，主要作用是把目录包含所有子目录下的文件生成Entry。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>File getDirectory()</strong><br />
+	返回文件夹。是要遍历的文件夹。<br />
+	&nbsp;</li>
+	<li><strong>File getRootDirectory()</strong><br />
+	应该返回一个父文件夹，因为要获取文件的相对路径。如果返回null，使用getDirectory()返回的文件。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createDirectoryEntry"></JavaAction>
+            <GetFile name="getDirectory" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="directory"></GetFile>
+            <GetFile name="getRootDirectory" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="rootDirectory"></GetFile>
+            <GetString name="getPathPrefix" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="pathPrefix"></GetString>
+            <GetString name="getExcludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="excludes"></GetString>
+            <GetString name="getIncludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="includes"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="directory" inputtype="filePath" size="60" modifier=""></attribute>
+        <attribute name="rootDirectory" _xmeta_id_="rootPath" inputtype="filePath" size="60"
+             modifier=""></attribute>
+        <attribute name="pathPrefix" size="40">
+            <description><![CDATA[<p>附加到路径前的路径。</p>
+]]></description>
+        </attribute>
+        <attribute name="excludes" inputtype="textarea"></attribute>
+        <attribute name="includes" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ThingEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>使用事物实现的Entry。</p>
+
+<p><strong>需要实现的方法</strong></p>
+
+<ul>
+	<li><strong>String getName()</strong><br />
+	返回名称。默认从path属性获取。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	返回Entity的最后修改日期。<br />
+	&nbsp;</li>
+	<li><strong>void write(OutputStream output)</strong><br />
+	写入内容。<br />
+	&nbsp;</li>
+	<li><strong>long getSize()</strong><br />
+	返回Entity的内容byte数组长度。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createThingEntry"></JavaAction>
+            <GetThing name="getThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="thing"></GetThing>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="thing" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="path" size="60"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ClassFileEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>Class文件Entry，获取当前运行的系统中的&lt;className&gt;.class文件。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>String getClassName()</strong><br />
+	返回类名。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	默认使用本事物的最后修改时间，由于得不到类本身的时间。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createClassFileEntry"></JavaAction>
+            <GetString name="getClassName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="className"></GetString>
+            <JavaAction name="getLastModified" _xmeta_id_="create1" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="getLastModified"></JavaAction>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="className" inputtype="openWindow" size="60" modifier="" inputattrs="xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="StringEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>字符串内容的Entity。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>String getName()</strong><br />
+	返回内容的路径。如：META-INFMANIFEST.MF<br />
+	&nbsp;</li>
+	<li><strong>String getContent()</strong><br />
+	返回Entity的内容。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	返回Entity的修改日期。默认返回事物本身的最后修改时间。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createStringEntry"></JavaAction>
+            <GetString name="getContent" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="content"></GetString>
+            <GetString name="getName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <JavaAction name="getLastModified" _xmeta_id_="create1" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="getLastModified"></JavaAction>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="content" inputtype="textarea" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="BytesEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>字符串内容的Entity。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>String getName()</strong><br />
+	返回内容的路径。如：META-INFMANIFEST.MF<br />
+	&nbsp;</li>
+	<li><strong>byte[] getBytes()</strong><br />
+	返回Entity的内容。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	返回Entity的修改日期。默认返回事物本身的最后修改时间。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createBytesEntry"></JavaAction>
+            <GetString name="getName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <JavaAction name="getLastModified" _xmeta_id_="create1" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="getLastModified"></JavaAction>
+            <GetBytes name="getBytes" descriptors="xworker.lang.actions.ActionUtil/@GetBytes"
+                 attributeName="content"></GetBytes>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="content" inputtype="textarea" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="EntryGroups" _xmeta_id_="EntryNodes" extends="xworker.util.compress.CompressEntrys"
+         icon="icons/folder.gif" description="&lt;p&gt;只是用于Entry分组，把不同的Entry分到一个组下便于管理。&lt;/p&gt;">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.GroupEntry" methodName="create"></JavaAction>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="XMetaLibsEntry" _xmeta_id_="XMetaLibs" extends="xworker.util.compress.CompressEntry"
+         group="xworker" description="&lt;p&gt;XMeta引擎相关的类库的entry。&lt;/p&gt;">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.XMetaLibsEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetBoolean name="isDecompress" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="decompress"></GetBoolean>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="decompress" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="XWorkerWebLibsEntry" extends="xworker.util.compress.CompressEntry" group="xworker"
+         description="&lt;p&gt;用于打包到war中的相关类库，包括XMeta引擎和web的相关类库。&lt;/p&gt;">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.XWorkerWebLibsEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetBoolean name="isDecompress" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="decompress"></GetBoolean>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="decompress" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="XWorkerLibsEntry" extends="xworker.util.compress.CompressEntry" group="xworker">
+        <description><![CDATA[<p>拷贝XWorker的lib目录下的jar文件，需要指定jar文件列表。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getPath()</strong><br />
+	返回路径前缀，比如jar文件要打包到WEB-INF/lib/目录下。<br />
+	&nbsp;</li>
+	<li><strong>boolean isDecompress()</strong><br />
+	是否解压，比如拷贝到WEB-INF/classes/目录下时。<br />
+	&nbsp;</li>
+	<li><strong>String getJars()</strong><br />
+	返回Jar文件列表。如有多个使用英文逗号或换行符分割，可以只写文件名的一部分。</li>
+</ul>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.XWorkerLibsEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetBoolean name="isDecompress" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="decompress"></GetBoolean>
+            <GetString name="getJars" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="jars"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="decompress" inputtype="truefalse" default="false"></attribute>
+        <attribute name="jars" inputtype="textarea" description="&lt;p&gt;XWorker的lib目录下的jar文件列表，可以是文件名的一部分，比如groovy对应groovy-all-2.4.5.jar,如果有多个使用英文逗号或者换行分割。&lt;/p&gt;"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="JarFileEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>获取Jar文件中的内容。两种操作方式：</p>
+
+<ul>
+	<li><strong>store=false</strong><br />
+	解压Jar文件的内容，拷贝到新的压缩文件中。<br />
+	&nbsp;</li>
+	<li><strong>store=true</strong><br />
+	把当前Jar文件转为STORE的压缩方式，并把新的Jar添加到新的压缩文件中。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getPath()</strong><br />
+	路径，会附加到Jar里面的内容的路径前。<br />
+	&nbsp;</li>
+	<li><strong>File getFile()</strong><br />
+	返回要解压缩的Jar文件。<br />
+	&nbsp;</li>
+	<li><strong>boolean isStore()</strong><br />
+	是否是转为STORE的压缩方式。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.JarFileEntry"
+                 methodName="create"></JavaAction>
+            <GetFile name="getFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="file"></GetFile>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="file" inputtype="file" size="60" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ZipFileEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>获取ip文件中的内容。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getPath()</strong><br />
+	返回在压缩包中的路径。如果返回null，使用文件的名字。<br />
+	&nbsp;</li>
+	<li><strong>File getFile()</strong><br />
+	返回要压缩的文件。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.ZipFileEntry"
+                 methodName="create"></JavaAction>
+            <GetFile name="getFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="file"></GetFile>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="file" inputtype="file" size="60" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ResourceEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>获取当前系统中的资源文件。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>String getResource()</strong><br />
+	返回类名。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	默认使用本事物的最后修改时间，由于得不到类本身的时间。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createResourceEntry"></JavaAction>
+            <GetString name="getResource" _xmeta_id_="getClassName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="resource"></GetString>
+            <JavaAction name="getLastModified" _xmeta_id_="create1" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="getLastModified"></JavaAction>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="resource" _xmeta_id_="className" size="60"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="AbstractEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>抽象的Entry，需要实现以下方法。</p>
+
+<p><strong>需要实现的方法</strong></p>
+
+<ul>
+	<li><strong>String getName()</strong><br />
+	返回名称。默认从path属性获取。<br />
+	&nbsp;</li>
+	<li><strong>long getLastModified()</strong><br />
+	返回Entity的最后修改日期。<br />
+	&nbsp;</li>
+	<li><strong>void write(OutputStream output)</strong><br />
+	写入内容。<br />
+	&nbsp;</li>
+	<li><strong>long getSize()</strong><br />
+	返回Entity的内容byte数组长度。<br />
+	&nbsp;</li>
+	<li><strong>Iterator&lt;CompressEntry&gt; getChilds()</strong><br />
+	返回子Entry的迭代器，默认返回null，没有子Entry。<br />
+	&nbsp;</li>
+	<li><strong>boolean isDirectory()</strong><br />
+	返回是否是目录，默认返回false。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.AbstractEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <NOOP name="write" unimplementedException="true"></NOOP>
+            <JavaAction name="getLastModified" _xmeta_id_="create1" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="getLastModified"></JavaAction>
+            <NOOP name="getSize" unimplementedException="true"></NOOP>
+            <NOOP name="getChilds"></NOOP>
+            <NOOP name="isDirectory"></NOOP>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="RapLibsEntry" extends="xworker.util.compress.CompressEntry" group="xworker"
+         description="&lt;p&gt;拷贝XWorker的lib_rap下的文件。&lt;/p&gt;">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.RapLibsEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetBoolean name="isDecompress" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="decompress"></GetBoolean>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
+        <attribute name="decompress" inputtype="truefalse" default="false">
+            <description><![CDATA[<p>是否解压类库。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+    </thing>
+    <thing name="XWorkerModuleEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>使用XWorker的模块配置的Entry。从模块中读取类库和资源，形成子Entry，子Entry包括FileEntry、DirectoryEntry和JarFileEntry。</p>
+
+<p><strong>模块相关的知识</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模块是XWorker下的类库和资源的分类，一个模块定义了它需要类库和资源。模块可以通过modules属性和Module子节点设置。</p>
+
+<ul>
+	<li><strong>类库</strong><br />
+	模块定义类类，通常是Jar文件。<br />
+	&nbsp;</li>
+	<li><strong>资源</strong><br />
+	模块定义的资源，文件或目录。</li>
+</ul>
+
+<p><strong>&nbsp;可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getEntryPath(String path, String resPath, ModuleResource moduleResource)</strong><br />
+	返回子Entry在压缩包中最终的路径，path是entry中设置的路径，resPath是资源相对于xworker根目录的路径，可以通过moduelResouce判断是否是类库等。<br />
+	默认实现是直接返回path + moduleResource.getPath()。如果getPath返回null，表示丢弃该资源。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createXWorkerModuleEntry"></JavaAction>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetBoolean name="isDecompress" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="decompress"></GetBoolean>
+            <JavaAction name="getEntryPath" outerClassName="xworker.util.compress.XWorkerModuleEntry"
+                 methodName="getEntryPath"></JavaAction>
+            <GetString name="getScope" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="scope"></GetString>
+            <GetString name="getType" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="type"></GetString>
+            <GetBoolean name="isTrimParentPath" _xmeta_id_="isTrimLibParentPath" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="trimParentPath"></GetBoolean>
+            <GetString name="getExcludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="excludes"></GetString>
+            <GetString name="getOs" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="os"></GetString>
+            <GetStringList name="getModules" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="modules" delimiter="\n"></GetStringList>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="path" size="60"></attribute>
+        <attribute name="decompress" inputtype="truefalse" default="false">
+            <description><![CDATA[<p>是否解压类库。</p>
+]]></description>
+        </attribute>
+        <attribute name="type" inputtype="select">
+            <description><![CDATA[<p>不选默认包含类库和资源。</p>
+]]></description>
+            <value name="lib" value="lib"></value>
+            <value name="resource" value="resource"></value>
+        </attribute>
+        <attribute name="scope" inputtype="select">
+            <value name="min" value="min"></value>
+            <value name="normal" value="normal"></value>
+            <value name="max" value="max"></value>
+        </attribute>
+        <attribute name="trimParentPath" _xmeta_id_="trimLibParentPath" inputtype="truefalse"
+             default="false">
+            <description><![CDATA[<p>是否过滤父路径，比如一个类库在xworker的目录下是/lib/xxx.jar，过滤之后就是去掉/lib/，变成xxx.jar。</p>
+]]></description>
+        </attribute>
+        <attribute name="os" extends="xworker.util.deploy.Module/@Lib/@os" inputtype="inputSelect"></attribute>
+        <attribute name="modules" inputtype="textarea">
+            <description><![CDATA[<p>模块列表，如有多个可以使用英文逗号或换行符分割。</p>
+]]></description>
+        </attribute>
+        <attribute name="excludes" inputtype="textarea">
+            <description><![CDATA[<p>需要排除的类库和资源，使用正则表达式，如果有多个，使用英文逗号或换行符分割。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Module">
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="module" inputtype="openWindow" size="60" inputattrs="xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.util.deploy.ModuleIndex,seperator=%2C,returnType=path,append=false"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="Module" extends="xworker.util.deploy.Module" inheritDescription="true"></thing>
+        </thing>
+        <thing name="NewModule" _xmeta_id_="NewModel" extends="xworker.util.deploy.Module"
+             inheritDescription="true"></thing>
+        <sswtMenus>
+            <menuDefine>
+                <menu name="XWorkerModuleEntry"></menu>
+            </menuDefine>
+            <menuSetting menuType="XWorkerModuleEntry">
+                <menu name="EditModulesMenu" label="Edit Modules" shell="xworker.util.compress.swt.EditXWorkerModulesDialog"></menu>
+            </menuSetting>
+        </sswtMenus>
+    </thing>
+    <thing name="JarCompressWithEntrys" extends="xworker.util.jar.JarActions/@JarCompressWithEntrys,xworker.util.compress.CompressEntry"
+         inheritDescription="true">
+        <description><![CDATA[<p>把Jar压缩作为一个Entry，jarFile是Jar文件中的路径，如WEB-INF/lib/Test.jar。</p>
+
+<p>参看文档<a href="do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.util.jar.JarActions/@JarCompressWithEntrys">JarCompressWithEntrys</a>。</p>
+]]></description>
+    </thing>
+    <thing name="IconsEntry" extends="xworker.util.compress.CompressEntry" icon="icons/folder_add.png">
+        <description><![CDATA[<p>获取图标的Entry，遍历当前动作所在的事物管理器所有的事物，查找属性icon或image，如果属性的值是${xworker}/webroot/icons下的文件，那么添加到子Entry重。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getPathPrefix()</strong><br />
+	路径的前缀，附加在icons的路径之前。。<br />
+	&nbsp;</li>
+	<li><strong>Pattern getExludes()</strong><br />
+	返回排除的正则表达式。<br />
+	&nbsp;</li>
+	<li><strong>Pattern getIncludes()</strong><br />
+	返回包含的正则表达式。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.util.compress.EntryActions"
+                 methodName="createIconsEntry"></JavaAction>
+            <GetString name="getPathPrefix" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="pathPrefix"></GetString>
+            <GetString name="getExcludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="excludes"></GetString>
+            <GetString name="getIncludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="includes"></GetString>
+        </actions>
+        <attribute name="name" modifier=""></attribute>
+        <attribute name="label" modifier=""></attribute>
+        <attribute name="pathPrefix" size="40">
+            <description><![CDATA[<p>附加到路径前的路径。</p>
+]]></description>
+        </attribute>
+        <attribute name="excludes" inputtype="textarea"></attribute>
+        <attribute name="includes" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+</thing>

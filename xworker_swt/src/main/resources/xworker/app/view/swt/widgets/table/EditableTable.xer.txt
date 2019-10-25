@@ -1,0 +1,550 @@
+@xworker.app.view.swt.widgets.table.EditableTable
+sname
+EditableTable
+slabel
+EditableTable
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.swt.widgets.Table
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+@xworker.app.view.swt.widgets.table.EditableTable/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.custom.TableCursor;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.custom.ControlEditor;
+
+//调用table的方法创建一个表格
+def tableThing = world.getThing("xworker.swt.widgets.Table");
+def table = tableThing.run("create", actionContext);
+
+def cursor = new TableCursor(table, SWT.NONE);
+cursor.addKeyListener([
+     keyPressed: {
+         e->
+                if (e.keyCode == SWT.MOD1 || 
+                    e.keyCode == SWT.MOD2 || 
+                    (e.stateMask & SWT.MOD1) != 0 || 
+                    (e.stateMask & SWT.MOD2) != 0) {
+                        cursor.setVisible(false);
+                }
+        }
+] as KeyListener);
+
+table.addKeyListener([
+       keyPressed: {
+         e->
+                if (e.keyCode == SWT.MOD1 && (e.stateMask & SWT.MOD2) != 0) return;
+                if (e.keyCode == SWT.MOD2 && (e.stateMask & SWT.MOD1) != 0) return;
+                if (e.keyCode != SWT.MOD1 && (e.stateMask & SWT.MOD1) != 0) return;
+                if (e.keyCode != SWT.MOD2 && (e.stateMask & SWT.MOD2) != 0) return;
+        
+                def selection = table.getSelection();
+                TableItem row = (selection.length == 0) ? table.getItem(table.getTopIndex()) : selection[0];
+                table.showItem(row);
+                cursor.setSelection(row, 0);
+                cursor.setVisible(true);
+                cursor.setFocus();
+        }
+] as KeyListener);
+
+
+//从创建TableEditor和初始化editor的参数
+def editor = new ControlEditor(cursor);
+//editor.grabHorizontal = true;
+//editor.grabVertical = true;
+def editorThing = world.getThing("xworker.swt.custom.ControlEditor");
+editorThing.run("init", actionContext, ["editor":editor]);
+
+def selfThing = self;
+def acContext = actionContext;
+def selectioListener = [
+    editor: editor,
+    table: table,
+    columnIndex: 0,
+    cursor: cursor,
+    self: selfThing,
+    actionContext: acContext,
+    widgetDefaultSelected : {
+        event->
+        try{
+            def newEditor = selfThing.doAction("createEditor", acContext, ["row":cursor.getRow(),
+                    "column":cursor.getColumn(), "cursor":cursor, "table":table]);
+            if(newEditor != null){
+                editor.setEditor(newEditor);
+                //println newEditor.class;
+                newEditor.setFocus();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    },
+    widgetSelected: {
+        event->
+        try{
+            table.setSelection([cursor.getRow()] as TableItem[]);            	
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }    
+] as SelectionListener;
+cursor.addSelectionListener(selectioListener);
+
+return table;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor
+sname
+createEditor
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def tableColumn = table.getColumn(column);
+def type = tableColumn.getData("editorType");
+if(type == null || type == ""){
+    type = "Text";
+}
+
+return self.doAction("create" + type + "Editor", actionContext);
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor/@ins/@row
+sname
+row
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor/@ins/@column
+sname
+column
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor/@ins/@cursor
+sname
+cursor
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createEditor/@ins/@table
+sname
+table
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@createTextEditor
+sname
+createTextEditor
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionListener;
+
+def text = new Text(cursor, SWT.NONE);
+def selfThing = self;
+def acContext = actionContext;
+def row = row;
+def column = column;
+text.setText(self.doAction("getValueAt", actionContext));
+text.addKeyListener([
+    keyPressed: {
+        e->
+        // close the text editor and copy the data over 
+        // when the user hits "ENTER"
+        if (e.character == SWT.CR) {
+            try{
+                selfThing.doAction("setValueAt", acContext, ["value":text.getText(), "row":row, "column":column]);
+             }catch(Exception dd){
+                 dd.printStackTrace();
+             }
+            
+            text.dispose();
+        }
+        // close the text editor when the user hits "ESC"
+        if (e.character == SWT.ESC) {
+            text.dispose();
+        }
+    }
+] as KeyListener );
+
+text.addFocusListener([
+    text: text,
+    focusLost: {
+        e->
+        
+        text.dispose();
+    },
+    focusGained: {
+        e->
+    }
+] as FocusListener);
+
+//text.setFocus();
+text.selectAll();
+return text;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@getValueAt
+sname
+getValueAt
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+return row.getText(column);
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@getValueAt/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@getValueAt/@ins/@row
+sname
+row
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@getValueAt/@ins/@column
+sname
+column
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@setValueAt
+sname
+setValueAt
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+row.setText(column, value);
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@setValueAt/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@setValueAt/@ins/@row
+sname
+row
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@setValueAt/@ins/@column
+sname
+column
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@actions/@setValueAt/@ins/@value
+sname
+value
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.widgets.table.EditableTable/@horizontalAlignment
+sname
+horizontalAlignment
+sinputtype
+select
+sgroup
+editor
+sdefault
+CENTER
+sdescription
+<p>Specifies how the editor should be aligned relative to the control. Allowed values are SWT.LEFT, SWT.RIGHT and SWT.CENTER. The default value is SWT.CENTER.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.widgets.table.EditableTable/@horizontalAlignment/@LEFT
+sname
+LEFT
+slabel
+LEFT
+svalue
+LEFT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@horizontalAlignment/@RIGHT
+sname
+RIGHT
+slabel
+RIGHT
+svalue
+RIGHT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@horizontalAlignment/@CENTER
+sname
+CENTER
+slabel
+CENTER
+svalue
+CENTER
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@grabHorizontal
+sname
+grabHorizontal
+sinputtype
+truefalse
+sgroup
+editor
+sdefault
+false
+sdescription
+<p>Specifies whether the editor should be sized to use the entire width of the control. True means resize the editor to the same width as the cell. False means do not adjust the width of the editor. The default value is false.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.widgets.table.EditableTable/@minimumWidth
+sname
+minimumWidth
+sgroup
+editor
+sdescription
+<p>Specifies the minimum width the editor can have. This is used in association with a true value of grabHorizontal. If the cell becomes smaller than the minimumWidth, the editor will not made smaller than the minimum width value. The default value is 0.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.widgets.table.EditableTable/@verticalAlignment
+sname
+verticalAlignment
+sinputtype
+select
+sgroup
+editor
+sdefault
+CENTER
+sdescription
+<p>Specifies how the editor should be aligned relative to the control. Allowed values are SWT.TOP, SWT.BOTTOM and SWT.CENTER. The default value is SWT.CENTER.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.widgets.table.EditableTable/@verticalAlignment/@TOP
+sname
+TOP
+slabel
+TOP
+svalue
+TOP
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@verticalAlignment/@BOTTOM
+sname
+BOTTOM
+slabel
+BOTTOM
+svalue
+BOTTOM
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@verticalAlignment/@CENTER
+sname
+CENTER
+slabel
+CENTER
+svalue
+CENTER
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.widgets.table.EditableTable/@grabVertical
+sname
+grabVertical
+sinputtype
+truefalse
+sgroup
+editor
+sdefault
+false
+sdescription
+<p>Specifies whether the editor should be sized to use the entire height of the control. True means resize the editor to the same height as the underlying control. False means do not adjust the height of the editor. The default value is false.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.widgets.table.EditableTable/@minimumHeight
+sname
+minimumHeight
+sgroup
+editor
+sdescription
+<p>Specifies the minimum height the editor can have. This is used in association with a true value of grabVertical. If the control becomes smaller than the minimumHeight, the editor will not made smaller than the minimum height value. The default value is 0.</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

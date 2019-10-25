@@ -1,0 +1,1 @@
+mvn package -D maven.javadoc.skip=true

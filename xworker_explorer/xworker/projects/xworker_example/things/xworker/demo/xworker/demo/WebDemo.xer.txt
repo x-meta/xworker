@@ -1,0 +1,1269 @@
+^1445923833668
+@
+sname
+WebDemo
+slabel
+WEB编程示例
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo
+sname
+AutoDemo
+slabel
+简介
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo/@ShowHtml
+sname
+ShowHtml
+slabel
+演示-介绍演示主题
+swaitTime
+5000
+surl
+xworker.demo.xworker.demo.WebDemo/@AutoDemo/@ShowHtml
+sisWebControl
+false
+sisThing
+true
+Sdescription
+#$@text#$@
+<p>这里讲演示如何使用XWorker编写一个WEB程序。</p>
+
+<p><strong>要点：</strong></p>
+
+<ul>
+	<li>在Servlet中调用事物。</li>
+	<li>用事物可以直接写WEB程序。</li>
+	<li>用事物还可以定义框架。</li>
+	<li>实现框架的要点是约定框架事物之间的关系。</li>
+</ul>
+#$@text#$@
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowHtml
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo/@SysResponse
+sname
+SysResponse
+slabel
+系统-介绍主题
+swaitTime
+3000
+sdescription
+<p>你好，我将演示如何使用XWorker编写WEB程序。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1
+sname
+AutoDemo
+slabel
+Servlet
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse
+sname
+SysResponse
+slabel
+系统-介绍Servlet
+swaitTime
+5000
+sdescription
+<p>由于XWorkker使用X-Meta引擎编写的，而X-Meta使用Java编写的，因此我们首先我们讲述一下Servlet该怎么写。</p>
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@ShowCode
+sname
+ShowCode
+slabel
+演示-显示XWorker的Servlet
+scodeType
+java
+Scode
+#$@text#$@
+/*******************************************************************************
+* Copyright 2007-2013 See AUTHORS file.
+ * 
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* 
+*   http://www.apache.org/licenses/LICENSE-2.0
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+******************************************************************************/
+package xworker.http;
+
+import java.io.IOException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.util.ThingRegistor;
+
+/**
+ * 执行事物的Servlet。
+ * 
+ * @author zhangyuxiang
+ *
+ */
+public class HttpServletDo extends HttpServlet{
+	private static final long serialVersionUID = -7340146943865363473L;
+	private static Logger log = LoggerFactory.getLogger(HttpServletDo.class);
+
+	private World world = World.getInstance();
+	public static boolean debug = true;
+	private long lastCheckGlbalConfigTime = 0;
+	
+	public HttpServletDo(){
+		super();		
+	}
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+        //初始化World
+		String xworkerPath = config.getInitParameter("xworkerPath");		
+		if(xworkerPath != null  && !"".equals(xworkerPath)){
+			world.init(xworkerPath);
+		}else if(!world.isInited()){
+			//初始化默认在WEB-INF/data/
+			String worldPath = config.getServletContext().getRealPath("WEB-INF/data/");
+			
+			world.init(worldPath);
+			world.setWebFileRoot(config.getServletContext().getRealPath("/"));
+		}
+	}
+
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		long start = System.currentTimeMillis();
+		long startN = System.nanoTime();
+
+		if(start - lastCheckGlbalConfigTime > 10000){
+			lastCheckGlbalConfigTime = start;
+			//最多10秒检测一次全局配置
+			Thing cfg = world.getThing(ThingRegistor.getPath("_xworker_globalConfig"));
+			if(cfg != null){
+				debug = cfg.getBoolean("webDebug");
+			}else{
+				debug = false;
+			}
+		}
+		
+		ActionContext actionContext = new ActionContext();
+		//设置变量
+		//基本变量
+		actionContext.put("world", world);			
+		
+		//访问变量
+		actionContext.put("requestBean", new HttpRequestBean(request));
+		
+		//http变量
+		actionContext.put("request", request);
+		actionContext.put("response", response);	
+		actionContext.put("servlet", this);		
+		actionContext.put("session", request.getSession());			
+		
+		//名称空间变量
+		Names.attach(actionContext);
+				
+		//执行脚本
+		String uri = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		uri = uri.substring(contextPath.length(), uri.length());
+		Thing webControl = null;
+		String webControlName = null;
+		if(uri.length() == 3){
+			webControlName = request.getParameter("sc");
+			webControl = world.getThing(webControlName);
+		}else{
+			webControlName = uri.substring(1,  uri.length() - 3);
+			webControlName = webControlName.replace('/', '.');
+			webControlName = webControlName.replace('_', '.');
+			webControl = world.getThing(webControlName);
+		}
+		
+		if(webControl == null){		
+			response.setContentType("text/plain; charset=utf-8");
+			response.getWriter().print("webControl不存在：" + webControlName);
+			log.warn("webControl不存在：" + webControlName);
+			//throw new ServletException();
+		}else{
+			try{
+				webControl.doAction("httpDo", actionContext);
+			}catch(Exception e){
+				if(!(e instanceof ServletException)){
+					throw new ServletException(e);
+				}else{
+					throw (ServletException) e;
+				}
+			}
+		}
+		if(debug && log.isInfoEnabled()){
+			log.info("web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
+		}
+		
+	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doGet(request, response);
+	}
+	
+	/**
+	 * 获取Webapp的路径。
+	 * 通过项目的配置文件project可以配置webapp，每个webapp都是一个虚拟的应用，每个应用有
+	 * 自己的数据库和登录信息。<p>
+	 * getWebapp方法可以得到虚拟的应用的名称，默认的名称是xworker，在core插件的配置下的
+	 * project定义。<p>
+	 * 
+	 * @param url
+	 * @param contentPath
+	 * @return
+	 */
+	public static String getWebappName(String url, String contentPath){
+		if(url.length() <= contentPath.length()){
+			return null;
+		}
+		
+		String temp = url.substring(contentPath.length() + 1, url.length());
+		int scriptIndex = temp.indexOf("do");
+		if(scriptIndex != -1){
+			temp = temp.substring(0, scriptIndex);
+		}
+		if(temp.length() == 0){
+			return null;
+		}
+		
+		int index = temp.indexOf("/");
+		if(index == -1){
+			return temp;
+		}else{
+			return temp.substring(0, index);
+		}		
+	}
+	
+	public void destroy() {
+		super.destroy(); // Just puts "destroy" string in log
+		// Put your code here
+	}
+}
+#$@text#$@
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowCode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse1
+sname
+SysResponse
+slabel
+系统-解释Servlet
+swaitTime
+15000
+sdescription
+<p>现在右边显示的是XWorker中正使用的Servlet代码， 请先大致浏览一下，然后我分段详细解释。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse2
+sname
+SysResponse
+slabel
+系统-解释Servlet
+swaitTime
+3000
+sdescription
+<p>我们假设Servlet的基本知识你已经知道了，那我们进入代码的详细分析。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@ShowCode1
+sname
+ShowCode
+slabel
+演示-显示设置变量的代码
+scodeType
+java
+Scode
+#$@text#$@
+//设置变量
+ActionContext actionContext = new ActionContext();
+//基本变量
+actionContext.put("world", world);			
+
+//访问变量
+actionContext.put("requestBean", new HttpRequestBean(request));
+
+//http变量
+actionContext.put("request", request);
+actionContext.put("response", response);	
+actionContext.put("servlet", this);		
+actionContext.put("session", request.getSession());
+#$@text#$@
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowCode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse3
+sname
+SysResponse
+slabel
+系统-解释设置变量
+swaitTime
+15000
+sdescription
+<p>首先要创建的是变量上下文，如右面的代码所示，我们可以把一些全局变量放进来，然后WEB框架所有的事物都可以使用这些变量了。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@ShowCode2
+sname
+ShowCode
+slabel
+演示-显示获取事物的代码
+scodeType
+java
+Scode
+#$@text#$@
+//获取事物
+String uri = request.getRequestURI();
+String contextPath = request.getContextPath();
+uri = uri.substring(contextPath.length(), uri.length());
+Thing webControl = null;
+String webControlName = null;
+if(uri.length() == 3){
+	webControlName = request.getParameter("sc");
+	webControl = world.getThing(webControlName);
+}else{
+	webControlName = uri.substring(1,  uri.length() - 3);
+	webControlName = webControlName.replace('/', '.');
+	webControlName = webControlName.replace('_', '.');
+	webControl = world.getThing(webControlName);
+}
+#$@text#$@
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowCode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse4
+sname
+SysResponse
+slabel
+系统-解释获取事物的代码
+swaitTime
+15000
+Sdescription
+#$@text#$@
+<p>其次是定义获取事物的方法，在右面的代码里可以通过sc参数获取，或者通过路径获取。</p>
+
+<p>比如一个事物是：org.xworker.test，那么URL路径的规则可以是：</p>
+
+<ul>
+	<li>do?sc=org.xworker.test</li>
+	<li>org_xworker_test.do</li>
+	<li>org/xworker/test.do</li>
+</ul>
+#$@text#$@
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@ShowCode3
+sname
+ShowCode
+slabel
+演示-显示执行事物的代码
+scodeType
+java
+Scode
+#$@text#$@
+//执行事物
+try{
+	webControl.doAction("httpDo", actionContext);
+}catch(Exception e){
+	if(!(e instanceof ServletException)){
+		throw new ServletException(e);
+	}else{
+		throw (ServletException) e;
+	}
+}
+#$@text#$@
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowCode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse5
+sname
+SysResponse
+slabel
+系统-解释执行事物
+swaitTime
+15000
+sdescription
+<p>最后是执行事物，右面的代码约定了事物应该有一个httpDo的方法，因此只要一个事物有httpDo方法，那么就可以执行。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo1/@SysResponse6
+sname
+SysResponse
+slabel
+系统-servlet分析结束
+swaitTime
+3000
+sdescription
+<p>到这里，Servlet的代码就分析完，有了Servlet我们就可以编写WEB应用了。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2
+sname
+AutoDemo
+slabel
+HelloWorld
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@SysResponse
+sname
+SysResponse
+slabel
+系统-介绍Hello World
+swaitTime
+5000
+sdescription
+<p>首先我们编写一个简单的Hello World吧，就是在浏览器中显示一个Hello World字符串。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@EditThing
+sname
+EditThing
+slabel
+演示-打开HelloWorld
+sthingPath
+xworker.demo.xworker.demo.web.HelloWorld/@actions/@httpDo
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@SysResponse1
+sname
+SysResponse
+slabel
+系统-解释HelloWorld
+swaitTime
+7000
+sdescription
+<p>由于Servlet里要求一个事物只要有httpDo方法即可，所以我们用可以定义事物行为的元事物创建了一个HelloWorld。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@SysResponse2
+sname
+SysResponse
+slabel
+系统-解释HelloWorld的代码
+swaitTime
+7000
+sdescription
+<p>其中httpDo方法使用Groovy编写的，而response变量是在Servlet里预先放好了，所以可以直接使用。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@ShowHtml
+sname
+ShowHtml
+slabel
+演示-显示helloWorld
+surl
+xworker.demo.xworker.demo.web.HelloWorld
+sisWebControl
+true
+sisThing
+false
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowHtml
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@SysResponse3
+sname
+SysResponse
+slabel
+系统-提示HelloWorld
+swaitTime
+5000
+sdescription
+<p>看右面的浏览器，可以看到已经输出了Hello World!</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo2/@SysResponse4
+sname
+SysResponse
+slabel
+系统-使用事物编写WEB应用
+swaitTime
+5000
+sdescription
+<p>这样就演示了如何使用事物编写WEB应用了，除此之外我们还可以用事物定义WEB框架。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3
+sname
+AutoDemo
+slabel
+简单WEB框架
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse
+sname
+SysResponse
+slabel
+系统-介绍XWorker编写框架的特点
+swaitTime
+4000
+sdescription
+<p>使用XWorker编写框架是比较容易的，下面我们演示一个简单的框架。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse1
+sname
+SysResponse
+slabel
+系统-解释框架
+swaitTime
+10000
+sdescription
+<p>由于事物的属性提供了一个HTML编辑器，现在希望做一个框架，用了这个框架后在事物属性中编辑HTML，然后在浏览器打开这个事物把HTML属性输出到浏览器上。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@EditThing
+sname
+EditThing
+slabel
+演示-打开HtmlContent
+sthingPath
+xworker.demo.xworker.demo.web.HtmlContent
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse2
+sname
+SysResponse
+slabel
+系统-解释htmlContent
+swaitTime
+5000
+sdescription
+<p>首先我们用元事物创建一个htmlContent事物，如右面的编辑器显示。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@EditThing1
+sname
+EditThing
+slabel
+演示-编辑html
+sthingPath
+xworker.demo.xworker.demo.web.HtmlContent/@html
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse3
+sname
+SysResponse
+slabel
+系统-解释html属性
+swaitTime
+5000
+sdescription
+<p>添加一个html属性，输入方式使用HTML输入。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@EditThing2
+sname
+EditThing
+slabel
+演示-编辑动作
+sthingPath
+xworker.demo.xworker.demo.web.HtmlContent/@actions/@httpDo
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse4
+sname
+SysResponse
+slabel
+系统-解释
+swaitTime
+7000
+sdescription
+<p>最后实现httpDo动作，见右面的编辑器。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@CreateThingDialog
+sname
+CreateThingDialog
+slabel
+演示-创建事物
+sthingName
+HtmlContent
+sdescriptorPath
+xworker.demo.xworker.demo.web.HtmlContent
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@CreateThingDialog
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse5
+sname
+SysResponse
+slabel
+系统-框架已做好
+swaitTime
+3000
+sdescription
+<p>到这里框架就已经做好了，我们可以编写一个事物测试它。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@EditThing3
+sname
+EditThing
+slabel
+演示-编辑测试
+sthingPath
+xworker.demo.xworker.demo.web.HtmlContentTest
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse6
+sname
+SysResponse
+slabel
+系统-讲解测试
+swaitTime
+5000
+sdescription
+<p>现在右面编辑器打开了HtmlContentTest事物，可以编辑html属性。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@ShowHtml
+sname
+ShowHtml
+slabel
+演示-运行HtmlContentTest
+surl
+xworker.demo.xworker.demo.web.HtmlContentTest
+sisWebControl
+true
+sisThing
+false
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@ShowHtml
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo3/@SysResponse7
+sname
+SysResponse
+slabel
+系统-解释运行效果
+swaitTime
+5000
+sdescription
+<p>现在可以查看一下运行效果，结果如右面的浏览器所示。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo4
+sname
+AutoDemo
+slabel
+复杂的WEB框架
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo4/@SysResponse
+sname
+SysResponse
+slabel
+系统-介绍复杂的框架
+swaitTime
+3000
+sdescription
+<p>除了可以编写简单的WEB框架，还可以编写复杂的WEB框架。</p>
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo4/@EditThing
+sname
+EditThing
+slabel
+演示-打开SimpleControl
+sthingPath
+xworker.http.controls.SimpleControl
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@EditThing
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo4/@SysResponse1
+sname
+SysResponse
+slabel
+系统-举例
+swaitTime
+3000
+sdescription
+<p>比如XWorker自带的xworker.http.controls.SimpleControl框架。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo4/@SysResponse2
+sname
+SysResponse
+slabel
+系统-不再介绍了
+swaitTime
+5000
+sdescription
+<p>有兴趣的话可以查看一下SimpleControl的实现，原理是一样的，只是实现的更复杂一些。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@AutoDemo5
+sname
+AutoDemo
+slabel
+结束
+sisChapter
+true
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@AutoDemo
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@SysResponse
+sname
+SysResponse
+slabel
+系统-说再见
+swaitTime
+3000
+sdescription
+<p>本次演示就到这里吧，再见。</p>
+sisChapter
+false
+sdescriptors
+xworker.ide.tools.autodemo.AutoDemo/@SysResponse
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false

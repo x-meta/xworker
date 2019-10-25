@@ -1,0 +1,6127 @@
+^1571834047238
+@
+sname
+DataStoreActions
+slabel
+DataStoreActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>一些SWT相关的DataStore的动作。</p>
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.actions.Actions
+sth_registMyChilds
+true
+sth_mark
+false
+  @/@GetDataObject
+  sname
+  GetDataObject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p><strong>Depreacted</strong></p>
+
+<p>从DataStore或者DataStore绑定的控件上取一个数据对象，只能从二者之一取数据，从控件取数据优先。</p>
+
+<p>如果是从DataStore取那么返回当前数据列表的第一个，如果从绑定的控件上取则取正选择的，没有指定控件则是默认从DataStore上取。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  true
+  sth_fileMonitor
+  false
+  sth_deprecated
+  true
+  sth_mark
+  false
+  sid
+  GetDataObject
+    @/@GetDataObject/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@GetDataObject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Tree;
+
+def dataObject = null;
+//从SWT控件取
+if(self.controlName != null && self.controlName != ""){
+    def control = Ognl.getValue(self.controlName, actionContext);   
+    if(control instanceof Table){
+        if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+            //取多选框选中的记录
+            for(item in control.getItems()){
+                if(item.getChecked()){
+                    dataObject = item.getData();
+                    break;
+                }
+            }
+        }
+        if(dataObject == null){
+           //取当前表格选中的记录
+            for(item in control.getSelection()){
+                dataObject = item.getData();
+                break;
+            }
+        }
+    }else if(control instanceof Tree){
+        if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+            //取多选框选中的记录
+            for(item in control.getItems()){
+                dataObject = getTreeItemData(item);
+                if(dataObject != null){
+                    break;
+                }
+            }
+        }
+
+        if(dataObject == null){
+           //取当前表格选中的记录
+            for(item in control.getSelection()){
+                dataObject = item.getData();
+                break;
+            }
+        }
+    }else if(control instanceof CCombo || control instanceof Combo || control instanceof List){
+        def records = control.getData("_store_records");
+        if(records != null && control.getSelectionIndex() != -1){
+            dataObject = records.get(control.getSelectionIndex());
+        }
+    }else if(control instanceof Composite){
+        for(child in control.getChildren()){
+            if(child instanceof Button && child.getSelection()){
+                dataObject = child.getData();
+                break;
+            }
+        }
+    }else if(control == null){
+        log.info("DataStoreActions.GetDataObject: control is null, controlName=" + self.controlName);
+    }else{
+        log.info("DataStoreActions.GetDataObject: currently not support control: " + control);
+    }
+}else{
+    //需要指定dataStore名称
+    if(self.dataStore == null || self.dataStore == ""){
+        log.info("DataStoreActions.GetDataObject: must has datastore name");
+    }else{    
+        //数据仓库
+        def dataStore = Ognl.getValue(self.dataStore, actionContext);
+        if(dataStore == null){
+            log.info("DataStoreActions.GetDataObject: datastore is null, datastore name=" + self.dataStore);
+            return null;
+        }
+        
+        if(dataStore.records != null && dataStore.records.size() > 0){
+            dataObject = dataStore.records.get(0);
+        }
+    }
+}
+
+//保存变量
+if(self.varName != null && self.varName != ""){
+    def bindings = self.doAction("getVarScope", actionContext);
+    if(bindings != null){
+        bindings.put(self.varName, dataObject);
+    }
+}
+
+return dataObject;
+
+def getTreeItemData(item){
+    if(item.getChecked()){
+        return item.getData();
+    }
+    
+    for(childItem in item.getItems()){
+        def data = getTreeItemData(childItem);
+        if(data != null){
+            return data;
+        }
+    }
+    
+    return null;
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+    @/@GetDataObject/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@GetDataObject/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@GetDataObject/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>数据对象的名称，吃用Ognl从actionContext中取。</p>
+<p>dataStore名称和controlName只有一个生效，优先controlName从控件中取选中的数据对象。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@GetDataObject/@controlName
+    sname
+    controlName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>SWT控件的名称，使用Ognl从actionContext中SWT控件，如果为空默认从dataStore中取数据对象。</p>
+<p>dataStore名称和controlName只有一个生效，优先controlName从控件中取选中的数据对象。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    controlName
+    @/@GetDataObject/@varName
+    sname
+    varName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，把获取到的数据对象保存到这个变量里。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+  @/@GetDataObjects
+  sname
+  GetDataObjects
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  private
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p><strong>Deprecated</strong></p>
+
+<p>从DataStore或者DataStore绑定的控件上取一个数据对象列表，只能从二者之一取数据，从控件取数据优先。</p>
+
+<p>如果是从DataStore取那么返回当前数据列表，如果从绑定的控件上取则取正选择的列表，没有指定控件则是默认从DataStore上取。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  true
+  sth_fileMonitor
+  false
+  sth_deprecated
+  false
+  sth_mark
+  false
+  sid
+  GetDataObjects
+    @/@GetDataObjects/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@GetDataObjects/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Button;
+
+def dataObjects = [];
+//从SWT控件取
+if(self.controlName != null && self.controlName != ""){
+    def control = Ognl.getValue(self.controlName, actionContext);   
+    if(control instanceof Table){
+        if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+            //取多选框选中的记录
+            for(item in control.getItems()){
+                if(item.getChecked()){
+                    dataObjects.add(item.getData());
+                }
+            }
+        }
+        if(dataObjects.size() == 0){
+           //取当前表格选中的记录
+            for(item in control.getSelection()){
+                dataObjects.add(item.getData());
+            }
+        }
+    }else if(control instanceof Tree){
+        if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+            //取多选框选中的记录
+            for(item in control.getItems()){
+                selectTreeItemData(dataObjects, item);
+            }
+        }
+        if(dataObjects.size() == 0){
+           //取当前表格选中的记录
+            for(item in control.getSelection()){
+                dataObjects.add(item.getData());
+            }
+        }
+        //println(dataObjects);
+    }else if(control instanceof CCombo || control instanceof Combo){
+        def records = control.getData("_store_records");
+        if(records != null && control.getSelectionIndex() != -1){
+            dataObjects.add(records.get(control.getSelectionIndex()));
+        }
+    }else if( control instanceof List){
+        def records = control.getData("_store_records");
+        if(records != null){
+            for(index in control.getSelectionIndices()){
+                dataObjects.add(records.get(index));
+            }
+        }
+    }else if(control instanceof Composite){
+        for(child in control.getChildren()){
+            if(child instanceof Button && child.getSelection()){
+                dataObjects.add(child.getData());
+            }
+        }
+    }else if(control == null){
+        log.info("DataStoreActions.GetDataObject: control is null, controlName=" + self.controlName);
+    }else{
+        log.info("DataStoreActions.GetDataObject: currently not support control: " + control);
+    }
+}else{
+    //需要指定dataStore名称
+    if(self.dataStore == null || self.dataStore == ""){
+        log.info("DataStoreActions.GetDataObject: must has datastore name");
+    }else{    
+        //数据仓库
+        def dataStore = Ognl.getValue(self.dataStore, actionContext);
+        if(dataStore == null){
+            log.info("DataStoreActions.GetDataObject: datastore is null, datastore name=" + self.dataStore);
+            return null;
+        }
+        
+        if(dataStore.records != null){
+            for(dataObject in dataStore.records){
+                dataObjects.add(dataObject);
+            }
+        }
+    }
+}
+
+//保存变量
+if(self.varName != null && self.varName != ""){
+    def bindings = self.doAction("getVarScope", actionContext);
+    if(bindings != null){
+        bindings.put(self.varName, dataObjects);
+    }
+}
+
+//log.info("dataobject selected:" + dataObjects);
+return dataObjects;
+
+def selectTreeItemData(dataObjects, item){
+    if(item.getChecked()){
+        dataObjects.add(item.getData());
+    }
+    
+    for(childItem in item.getItems()){
+        selectTreeItemData(dataObjects, childItem);
+    }
+    
+    return dataObjects;
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+    @/@GetDataObjects/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@GetDataObjects/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@GetDataObjects/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>数据对象的名称，吃用Ognl从actionContext中取。</p>
+<p>dataStore名称和controlName只有一个生效，优先controlName从控件中取选中的数据对象。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@GetDataObjects/@controlName
+    sname
+    controlName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>SWT控件的名称，使用Ognl从actionContext中SWT控件，如果为空默认从dataStore中取数据对象。</p>
+<p>dataStore名称和controlName只有一个生效，优先controlName从控件中取选中的数据对象。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    controlName
+    @/@GetDataObjects/@varName
+    sname
+    varName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，把获取到的数据对象保存到这个变量里。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+  @/@NewDataObjectInstance
+  sname
+  NewDataObject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>使用数据仓库的当前数据对象结构创建一个数据对象。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	返回DataStore。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  NewDataObjectInstance
+    @/@NewDataObjectInstance/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@NewDataObjectInstance/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+import ognl.Ognl;
+
+def dataObject = null;
+
+def dataStore = self.doAction("getDataStore", actionContext)
+if(dataStore instanceof String){
+    dataStore = Ognl.getValue(self.dataStore, actionContext);
+}
+if(dataStore != null){
+    dataObject = new DataObject(dataStore.dataObject);
+}else{
+    def log = getLogger(actionContext);
+    log.info("dataStore is null, thing=" + self.getMetadata().getPath());
+}
+
+if(self.varName != null && self.varName != ""){
+    def bindings = self.doAction("getVarScope", actionContext);
+    if(bindings != null){
+        bindings.put(self.varName, dataObject);
+    }
+}
+
+return dataObject;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@NewDataObjectInstance/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@NewDataObjectInstance/@actions/@run/@ActionDefined/@log
+          sname
+          getLogger
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@Load1/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@NewDataObjectInstance/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+    @/@NewDataObjectInstance/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    VariablesDescs
+      @/@NewDataObjectInstance/@VariablesDescs/@var
+      sname
+      var
+      svarName
+      _thingName_
+      spassive
+      false
+      stype
+      object
+      sclassName
+      xworker.dataObject.DataObject
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      var
+    @/@NewDataObjectInstance/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@NewDataObjectInstance/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@NewDataObjectInstance/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据仓库的名称，使用Ognl表达式获取。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@NewDataObjectInstance/@varName
+    sname
+    varName
+    sgroup
+    deprecated
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，那么以此变量名保存到变量上下文中。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+    @/@NewDataObjectInstance/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@CreateDataObject
+  sname
+  NewDataObjectDialog
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>弹出一个对话框创建数据对象，如果选择了插入（保存），那么将保存数据对象，否则只返回弹出对话框的结果。如果选择了持续编辑，那么返回的结果是List。</p>
+
+<p><strong>SWT线程</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用SWT对话框，只有在当前线程是SWT线程时有效。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	返回数据仓库事物。<br />
+	&nbsp;</li>
+	<li><strong>Map&lt;String, Object&gt; getInitValues()</strong><br />
+	返回初始化的数据。<br />
+	&nbsp;</li>
+	<li><strong>String getTitle()</strong><br />
+	返回对话框的标题。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>注：其它个别字符串属性也支持var: ognl:等前缀。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  CreateDataObject
+    @/@CreateDataObject/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@CreateDataObject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+import xworker.swt.util.SwtDialog;
+import org.xmeta.util.UtilString;
+import xworker.util.UtilTemplate;
+import xworker.dataObject.DataObject;
+
+import ognl.Ognl;
+
+def dataObject = null;
+
+//初始化数据仓库
+def storeName = self.getStringBlankAsNull("dataStore");
+def store = null
+if(storeName == null || storeName.indexOf(":") != -1){
+    store = self.doAction("getDataStore", actionContext);
+}else{
+    store = Ognl.getValue(storeName, actionContext);
+}
+if(store == null){
+    log.warn("DataStoreActios.NewDataObjectDialog: data store not exists, store=" + self.dataStore);
+}else{
+    //SWT的窗体的父
+    def display = Display.getCurrent();
+    if(display == null){
+        return null;
+    }
+    def parent = display.getActiveShell();
+    if(parent == null){
+        parent = display;
+    }
+    
+    def title = self.doAction("getTitle", actionContext);//UtilString.getString(self.title, actionContext);
+    def message = UtilString.getString(self.confirmMessage, actionContext);
+       
+    try{
+        def bindings = actionContext.push(null);
+        bindings.put("dataObject", store.dataObject);
+ 
+        //打开编辑对话框
+        def ac = new ActionContext();
+        ac.put("parent", parent);    
+        ac.put("title", title);
+        ac.put("message", message);
+        ac.put("insert", self.getBoolean("insert"));
+        ac.put("continueEdit", self.getBoolean("continueEdit"));
+        ac.put("dataStore", store);
+        ac.put("parentContext", actionContext);
+        ac.put("initDataObject", new DataObject(store.dataObject));
+        ac.put("confirm", self.getBoolean("confirm"));
+        
+        def initValuesStr = self.getStringBlankAsNull("initValues");
+        def initValues = null;
+        if(initValuesStr == null || initValuesStr.indexOf(":") != -1){
+            initValues = self.doAction("getInitValues", actionContext);
+        }else{
+            initValues = Ognl.getValue(self.initValues, actionContext);
+        }
+        //log.info("initValues=" + initValues);
+        ac.put("initValues", initValues);
+        
+        //log.info("initValues=" + ac.get("initValues"));
+        def dialogThing = world.getThing("xworker.app.view.swt.data.dialogs.NewDataObjectDialog/@shell");
+        def shell = dialogThing.doAction("create", ac);
+        if(title != null){
+            shell.setText(title);
+        }
+
+        dataObject = store.dataObject;
+        if(dataObject != null){
+            def editDialogWith = dataObject.getInt("editDialogWith");
+            def editDialogHeight = dataObject.getInt("editDialogHeight");
+            if(editDialogWith != 0 && editDialogHeight != 0){
+                shell.setSize(editDialogWith, editDialogHeight);
+            }else{
+                shell.pack();
+            }
+        }else{
+            shell.pack();
+        }
+        
+        ac.actions.doAction("setDataObject", ac, ["dataObject":store.dataObject]);
+        SwtDialog dialog = new SwtDialog(shell, ac);
+        dataObject = dialog.open();       
+    }catch(Exception e){
+        log.error("create dataObject error", e);
+        errMsg(actionContext, "shell", parent, "title", title, 
+            "message", e.getMessage());
+            
+        /*    
+        MessageBox box = new MessageBox(parent, SWT.ICON_ERROR | SWT.OK);
+        if(title != null){
+            box.setText(title);
+        }
+        box.setMessage("" + e.getMessage());
+        box.open();*/
+        return;
+    }finally{
+        actionContext.pop;
+    }
+}
+
+if(self.varName != null && self.varName != ""){
+    def bindings = self.doAction("getVarScope", actionContext);
+    bindings.put(self.varName, dataObject);
+}
+
+return dataObject;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@CreateDataObject/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@CreateDataObject/@actions/@run/@ActionDefined/@errMsg
+          sname
+          errMsg
+          sshell
+          var:shell
+          sicon
+          ICON_ERROR
+          sbuttons
+          OK
+          stitle
+          var:title
+          smessage
+          var:message
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          errMsg
+        @/@CreateDataObject/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@CreateDataObject/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@CreateDataObject/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@CreateDataObject/@actions/@getInitValues
+      sname
+      getInitValues
+      sattributeName
+      initValues
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getInitValues
+      @/@CreateDataObject/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+      @/@CreateDataObject/@actions/@getTitle
+      sname
+      getTitle
+      sattributeName
+      title
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getTitle
+    @/@CreateDataObject/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@CreateDataObject/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@CreateDataObject/@dataObject
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataObject
+    @/@CreateDataObject/@title
+    sname
+    title
+    sreadOnly
+    false
+    sdefault
+    新建${dataObject.metadata.label}
+    sinheritDescription
+    false
+    sdescription
+    <p>弹出框的标题。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    title
+    @/@CreateDataObject/@valuesName
+    sname
+    initValues
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>初始化值的变量名称，当对话框打开后使用初始化值填充表单，使用Ognl表达式获取。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    valuesName
+    @/@CreateDataObject/@insert
+    sname
+    insert
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    true
+    sinheritDescription
+    false
+    sdescription
+    <p>如果对话框选择的确定后是否插入新编辑的数据对象，如果选择false那么仅返回编辑的数据对象，选择true并保存。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    insert
+    @/@CreateDataObject/@varName
+    sname
+    varName
+    sgroup
+    deprecated
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+    @/@CreateDataObject/@continueInsert
+    sname
+    continueEdit
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>是否持续插入。</p>
+<p>如果持续插入，那么在编辑对话框中点击确定后重新初始化编辑表单并编辑下一个新的数据对象。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    continueInsert
+    @/@CreateDataObject/@confirm
+    sname
+    confirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>如果插入（insert=true），并且confirm=true，那么插入前是否有提示确认对话框。</p>
+<p>无论提示是否选择是或否，如果编辑对话框选择了确定，那么总是会返回编辑的数据对象，而不是null。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    confirm
+    @/@CreateDataObject/@confirmMessage
+    sname
+    confirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>可以使用Freemarker模板，新的数据对象放在变量名dataObject中。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    confirmMessage
+    @/@CreateDataObject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@EditDataObjectDialog
+  sname
+  EditDataObjectDialog
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>编辑数据对象对话框。</p>
+
+<p>编辑完毕后保存。</p>
+
+<p><strong>获取要编辑的数据对象的顺序</strong></p>
+
+<ol>
+	<li><strong>DataObject getDataObject()</strong><br />
+	首先通过getDataObject()方法。</li>
+	<li><strong>controlName</strong><br />
+	其次通过controlName指定的控件上获取。&nbsp;&nbsp;</li>
+</ol>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	返回DataStore。<br />
+	&nbsp;</li>
+	<li><strong>String getTitle()</strong><br />
+	返回标题。<br />
+	&nbsp;</li>
+	<li><strong>DataObject getDataObject()</strong><br />
+	返回要编辑的数据对象。&nbsp;&nbsp;</li>
+</ul>
+
+<p>注：其它个别字符串属性也支持var: ognl:等前缀。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  EditDataObjectDialog
+    @/@EditDataObjectDialog/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@EditDataObjectDialog/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.ActionContext;
+
+import org.xmeta.util.UtilString;
+import xworker.swt.util.SwtDialog;
+import xworker.swt.util.SwtUtils;
+
+def display = Display.getCurrent();
+if(display == null){
+    log.info("DataStoreActions.EditDataObjectDialog: current thread is not a swt thread");
+    return null;
+}
+def parent = display.getActiveShell();
+if(parent == null){
+    parent = display;
+}
+    
+def storeName = self.getStringBlankAsNull("dataStore");
+def dataStore = null
+if(storeName == null || storeName.indexOf(":") != -1){
+    dataStore = self.doAction("getDataStore", actionContext);
+}else{
+    dataStore = Ognl.getValue(storeName, actionContext);
+}
+        
+//获取要编辑的数据对象
+def dataObject = self.doAction("getDataObject", actionContext);
+if(dataObject == null){
+    def getAction = world.getAction("xworker.app.view.swt.data.DataStoreActions/@GetDataObject/@actions/@run");
+    dataObject = getAction.run(actionContext);
+}
+
+//提示语句
+def title = null;
+def noDataConfirmMessage = null;
+def updateConfirmMessage = null;
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("dataObject", dataStore.dataObject);
+    title = self.doAction("getTitle", actionContext);
+    noDataConfirmMessage = UtilString.getString(self.noDataConfirmMessage, actionContext);
+    updateConfirmMessage = UtilString.getString(self.updateConfirmMessage, actionContext);
+}finally{
+    actionContext.pop();
+}
+
+//编辑数据对象
+if(dataObject == null){
+    if(self.getBoolean("noDataConfirm")){
+        MessageBox box = new MessageBox(parent, SWT.ICON_ERROR | SWT.OK);
+        if(title != null){
+            box.setText(title);
+        }else{
+            box.setText("错误");
+        }
+        if(noDataConfirmMessage != null){
+            box.setMessage(noDataConfirmMessage);
+        }else{
+            box.setMessage("请先选择一个数据。");
+        }
+        
+        box.open();
+    }
+    
+    return null;
+}
+def ac = new ActionContext();
+ac.put("parent", parent);    
+ac.put("title", title);
+ac.put("message", updateConfirmMessage);
+ac.put("confirm", self.getBoolean("updateConfirm"));
+ac.put("dataStore", dataStore);
+ac.put("parentContext", actionContext);
+ac.put("dataObject", dataObject);
+def dialogThing = world.getThing("xworker.app.view.swt.data.dialogs.EditDataObjectDialog/@shell");
+def shell = dialogThing.doAction("create", ac);
+if(dataObject != null){
+    dataObject = dataObject.getMetadata().getDescriptor();
+    def editDialogWith = dataObject.getInt("editDialogWith");
+    def editDialogHeight = dataObject.getInt("editDialogHeight");
+    if(editDialogWith != 0 && editDialogHeight != 0){
+        shell.setSize(editDialogWith, editDialogHeight);
+    }else{
+        shell.pack();
+    }
+}else{
+    shell.pack();
+}
+SwtUtils.centerShell(shell);
+SwtDialog dialog = new SwtDialog(shell, ac);
+dataObject = dialog.open();
+
+//保存变量
+if(self.varName != null && self.varName != ""){
+    self.doAction("setVar", actionContext, ["varName":self.varName, "value":dataObject]);
+}
+
+return dataObject;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@EditDataObjectDialog/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@EditDataObjectDialog/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@EditDataObjectDialog/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@EditDataObjectDialog/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+      @/@EditDataObjectDialog/@actions/@getTitle
+      sname
+      getTitle
+      sattributeName
+      title
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getTitle
+      @/@EditDataObjectDialog/@actions/@getDataObject
+      sname
+      getDataObject
+      sattributeName
+      dataObject
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataObject
+    @/@EditDataObjectDialog/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@EditDataObjectDialog/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@EditDataObjectDialog/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据对象的名称，吃用Ognl从actionContext中取。DataStore不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@EditDataObjectDialog/@dataObject
+    sname
+    dataObject
+    ssize
+    40
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    dataObject
+    @/@EditDataObjectDialog/@controlName
+    sname
+    controlName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>SWT控件的名称，使用Ognl从actionContext中SWT控件，如果为空默认从dataStore中取数据对象。</p>
+<p>不能为空。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    controlName
+    @/@EditDataObjectDialog/@title
+    sname
+    title
+    sreadOnly
+    false
+    sdefault
+    编辑${dataObject.metadata.label}
+    sinheritDescription
+    false
+    sdescription
+    <p>编辑对话框的标题，支持Freemarker模板。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    title
+    @/@EditDataObjectDialog/@varName
+    sname
+    varName
+    sgroup
+    deprecated
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，把获取到的数据对象保存到这个变量里。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+    @/@EditDataObjectDialog/@notDataConfirm
+    sname
+    noDataConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    true
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据时是否提示。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    notDataConfirm
+    @/@EditDataObjectDialog/@noDataConfirmMessage
+    sname
+    noDataConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据的提示语句。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    noDataConfirmMessage
+    @/@EditDataObjectDialog/@updateConfirm
+    sname
+    updateConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时是否提示确认。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirm
+    @/@EditDataObjectDialog/@updateConfirmMessage
+    sname
+    updateConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时提示的提示消息。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirmMessage
+    @/@EditDataObjectDialog/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@EditDataObjectsDialog
+  sname
+  EditDataObjectsDialog
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>一次可以编辑多个数据对象对话框。编辑完毕后保存。</p>
+
+<p><strong>编辑数据对象的顺序</strong></p>
+
+<ul>
+	<li>首先从controlName对应的SWT控件上获取选中的数据对象</li>
+	<li>其次通过getDataObjects()方法获取</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 以上只有一个可以生效。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	返回DataStore.<br />
+	&nbsp;</li>
+	<li><strong>List&lt;DataObject&gt; getDataObjects()</strong><br />
+	返回要编辑的属性对象列表。&nbsp;&nbsp;</li>
+</ul>
+
+<p>注：其它个别字符串属性也支持var: ognl:等前缀。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  EditDataObjectsDialog
+    @/@EditDataObjectsDialog/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@EditDataObjectsDialog/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.ActionContext;
+
+import org.xmeta.util.UtilString;
+import xworker.swt.util.SwtDialog;
+
+def display = Display.getCurrent();
+if(display == null){
+    log.info("current thread is not a swt thread, thing=" + self.getMetadata().getPath());
+    return null;
+}
+def parent = display.getActiveShell();
+if(parent == null){
+    parent = display;
+}
+    
+def dataStore = self.doAction("getDataStore", actionContext);
+if(dataStore instanceof String){
+    //为了兼容旧版
+    dataStore = Ognl.getValue(dataStore, actionContext);
+}
+if(dataStore == null){
+    log.info("datastore is null, thing=" + self.getMetadata().getPath());
+    return null;
+}
+        
+//获取要编辑的数据对象
+def getAction = world.getAction("xworker.app.view.swt.data.DataStoreActions/@GetDataObjects/@actions/@run");
+def dataObjects = getAction.run(actionContext);
+
+//提示语句
+def title = null;
+def noDataConfirmMessage = null;
+def updateConfirmMessage = null;
+try{  
+    def bindings = actionContext.push(null);
+    bindings.put("dataObject", dataStore.dataObject);
+    title = UtilString.getString(self.title, actionContext);
+    noDataConfirmMessage = UtilString.getString(self.noDataConfirmMessage, actionContext);
+    updateConfirmMessage = UtilString.getString(self.updateConfirmMessage, actionContext);
+}finally{
+    actionContext.pop();
+}
+
+//从getDataObjects()方法中获取
+if(dataObjects == null || dataObjects.size() == 0){
+    dataObjects = self.doAction("getDataObjects", actionContext);
+}
+
+//编辑数据对象
+if(dataObjects == null || dataObjects.size() == 0){
+    if(self.getBoolean("noDataConfirm")){
+        MessageBox box = new MessageBox(parent, SWT.ICON_WARNING | SWT.OK);
+        if(title != null){
+            box.setText(title);
+        }else{
+            box.setText("错误");
+        }
+        if(noDataConfirmMessage != null){
+            box.setMessage(noDataConfirmMessage);
+        }else{
+            box.setMessage("请先选择一个数据。");
+        }
+        
+        box.open();
+    }
+    
+    return null;
+}
+
+def ac = new ActionContext();
+ac.put("parent", parent);    
+ac.put("title", title);
+ac.put("message", updateConfirmMessage);
+ac.put("confirm", self.getBoolean("updateConfirm"));
+ac.put("dataStore", dataStore);
+ac.put("parentContext", actionContext);
+ac.put("dataObjects", dataObjects);
+log.info("dataObjects=" + dataObjects);
+def dialogThing = world.getThing("xworker.app.view.swt.data.dialogs.EditDataObjectsDialog/@shell");
+def shell = dialogThing.doAction("create", ac);
+SwtDialog dialog = new SwtDialog(shell, ac);
+dataObjects = dialog.open();
+
+//保存变量
+if(self.varName != null && self.varName != ""){
+    self.doAction("setVar", actionContext, ["varName":self.varName, "value":dataObject]);
+}
+
+return dataObjects;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@EditDataObjectsDialog/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@EditDataObjectsDialog/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@EditDataObjectsDialog/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@EditDataObjectsDialog/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+      @/@EditDataObjectsDialog/@actions/@getDataObjects
+      sname
+      getDataObjects
+      sattributeName
+      dataObjects
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataObjects
+    @/@EditDataObjectsDialog/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@EditDataObjectsDialog/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@EditDataObjectsDialog/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据对象的名称，吃用Ognl从actionContext中取。DataStore不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@EditDataObjectsDialog/@controlName
+    sname
+    controlName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>SWT控件的名称，使用Ognl从actionContext中SWT控件，如果为空默认从dataStore中取数据对象。</p>
+<p>不能为空。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    controlName
+    @/@EditDataObjectsDialog/@dataObjects
+    sname
+    dataObjects
+    ssize
+    60
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    dataObjects
+    @/@EditDataObjectsDialog/@title
+    sname
+    title
+    sreadOnly
+    false
+    sdefault
+    编辑${dataObject.metadata.label}
+    sinheritDescription
+    false
+    sdescription
+    <p>编辑对话框的标题，支持Freemarker模板。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    title
+    @/@EditDataObjectsDialog/@varName
+    sname
+    varName
+    sgroup
+    deprecated
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>如果不为空，把获取到的数据对象保存到这个变量里。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    varName
+    @/@EditDataObjectsDialog/@notDataConfirm
+    sname
+    noDataConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    true
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据时是否提示。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    notDataConfirm
+    @/@EditDataObjectsDialog/@noDataConfirmMessage
+    sname
+    noDataConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据的提示语句。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    noDataConfirmMessage
+    @/@EditDataObjectsDialog/@updateConfirm
+    sname
+    updateConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时是否提示确认。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirm
+    @/@EditDataObjectsDialog/@updateConfirmMessage
+    sname
+    updateConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时提示的提示消息。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirmMessage
+    @/@EditDataObjectsDialog/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@DeleteDataObject
+  sname
+  DeleteDataObject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>删除控件选择的数据对象。</p>
+
+<p><strong>获取删除的数据对象的顺序</strong></p>
+
+<ul>
+	<li>从controlName指定的SWT控件上选择选中的数据对象。</li>
+	<li>从getDataObjects()返回。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 以上只有一个会生效。</p>
+
+<p><strong>事件</strong></p>
+
+<ul>
+	<li><strong>void deleted(List&lt;DataObject&gt; dataObjects)</strong><br />
+	执行了删除操作。dataObjects是删除的数据对象列表。<br />
+	&nbsp;</li>
+</ul>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	返回DataStore。<br />
+	&nbsp;</li>
+	<li><strong>String getTitle()</strong><br />
+	返回删除提示框的标题。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;DataObject&gt; getDataObjects()</strong><br />
+	返回要删除的数据对象列表。<br />
+	&nbsp;</li>
+	<li><strong>String getDeleteConfirmMessage()</strong><br />
+	返回确认删除提示框的提示信息。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  DeleteDataObject
+    @/@DeleteDataObject/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@DeleteDataObject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.ActionContext;
+
+import org.xmeta.util.UtilString;
+import xworker.swt.util.SwtDialog;
+
+def storeName = self.getStringBlankAsNull("dataStore");
+def dataStore = null
+if(storeName == null || storeName.indexOf(":") != -1){
+    dataStore = self.doAction("getDataStore", actionContext);
+}else{
+    dataStore = Ognl.getValue(storeName, actionContext);
+}
+//println dataStore;
+if(dataStore == null){
+    log.info("DataStoreActions.DeleteDataObject: datastore is null, datastore name=" + self.dataStore);
+    return null;
+}
+        
+//获取要编辑的数据对象
+def dataObjects = self.doAction("getDataObjects", actionContext);
+if(dataObjects == null){
+    def getAction = world.getAction("xworker.app.view.swt.data.DataStoreActions/@GetDataObjects/@actions/@run");
+    dataObjects = getAction.run(actionContext);
+}
+
+//提示语句
+def title = null;
+def noDataConfirmMessage = null;
+def deleteConfirmMessage = null;
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("dataObject", dataStore.dataObject);
+    title = self.doAction("getTitle", actionContext);
+    noDataConfirmMessage = UtilString.getString(self.noDataConfirmMessage, actionContext);
+    deleteConfirmMessage = self.doAction("getDeleteConfirmMessage", actionContext);
+    //println title;
+    //println deleteConfirmMessage;
+}finally{
+    actionContext.pop();
+}
+if(title == null){
+    title = UtilString.getString("lang:d=删除&en=Delete", actionContext);
+}
+
+//编辑数据对象
+if(dataObjects == null || dataObjects.size() == 0){
+    if(self.getBoolean("noDataConfirm")){
+        def display = Display.getCurrent();
+        if(display == null){
+            log.info("DataStoreActions.DeleteDataObject: current thread is not a swt thread");
+            return null;
+        }
+        def parent = display.getActiveShell();
+        if(parent == null){
+            parent = display;
+        }
+        
+        if(title == null || noDataConfirmMessage == null){
+            noDataDefaultMsg(actionContext, "shell", parent);
+        }else{
+            noDataMsg(actionContext, "shell", parent, "title", title,
+                 "noDataConfirmMessage", noDataConfirmMessage);
+        }
+       
+        /*
+        MessageBox box = new MessageBox(parent, SWT.ICON_ERROR | SWT.OK);
+        if(title != null){
+            box.setText(title);
+        }else{
+            box.setText("错误");
+        }
+        if(noDataConfirmMessage != null){
+            box.setMessage(noDataConfirmMessage);
+        }else{
+            box.setMessage("请先选择一个数据。");
+        }
+        
+        box.open();*/
+    }
+    
+    return null;
+}
+
+boolean doDelete = true;
+if(self.getBoolean("deleteConfirm")){
+    def display = Display.getCurrent();
+    if(display == null){
+        log.info("DataStoreActions.DeleteDataObject: current thread is not a swt thread");
+        return null;
+    }
+    def parent = display.getActiveShell();
+    if(parent == null){
+        parent = display;
+    }
+       
+    if(deleteConfirmMessage == null || "" == deleteConfirmMessage){
+        deleteConfirmMessage = UtilString.getString("lang:d=确定要删除选择的数据么？&en=Are you sure to delete the selected datas?", actionContext);
+    }   
+    deleteConfirm(actionContext, "shell", parent, "title", title,
+                   "deleteConfirmMessage", deleteConfirmMessage, 
+                   "dataStore", dataStore, "dataObjects", dataObjects);
+    /*               
+    MessageBox box = new MessageBox(parent, SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+    if(title != null){
+        box.setText(title);
+    }else{
+        box.setText("错误");
+    }
+    if(noDataConfirmMessage != null){
+        box.setMessage(deleteConfirmMessage);
+    }else{
+        box.setMessage("确定要删除选择的数据么？");
+    }
+    
+    if(box.open() != SWT.OK){
+        doDelete = false;
+    }
+    */
+} else {
+    dataObjects = dataStore.doAction("remove", actionContext, ["records":dataObjects, "record":null]);
+    
+    //触发事件
+    self.doAction("deleted", actionContext, "dataObjects", dataObjects);
+}
+
+return dataObjects;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@DeleteDataObject/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@DeleteDataObject/@actions/@run/@ActionDefined/@noDataDefault
+          sname
+          noDataDefaultMsg
+          sshell
+          var:shell
+          sicon
+          ICON_WARNING
+          sbuttons
+          OK
+          stitle
+          lang:d=删除&en=Delete
+          smessage
+          lang:d=没有选择数据！&en=No selected data for delete.
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          noDataDefault
+          @/@DeleteDataObject/@actions/@run/@ActionDefined/@noDataMsg
+          sname
+          noDataMsg
+          sshell
+          var:shell
+          sicon
+          ICON_QUESTION
+          sbuttons
+          OK
+          stitle
+          var:title
+          smessage
+          var:noDataConfirmMessage
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          noDataMsg
+          @/@DeleteDataObject/@actions/@run/@ActionDefined/@deleteConfirm
+          sname
+          deleteConfirm
+          sshell
+          var:shell
+          sicon
+          ICON_QUESTION
+          sbuttons
+          OK | CANCEL
+          stitle
+          var:title
+          svariables
+          dataStore,dataObjects,self
+          smessage
+          var:deleteConfirmMessage
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          deleteConfirm
+            @/@DeleteDataObject/@actions/@run/@ActionDefined/@deleteConfirm/@actions
+            sname
+            actions
+            sdescriptors
+            xworker.swt.actions.MessageBoxActions/@MessageBox/@actions1
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            actions
+              @/@DeleteDataObject/@actions/@run/@ActionDefined/@deleteConfirm/@actions/@ok
+              sname
+              ok
+              sisSynchronized
+              false
+              sthrowException
+              true
+              suseOtherAction
+              false
+              svarScope
+              Local
+              sdisableGlobalContext
+              false
+              Scode
+#$@text#$@
+dataObjects = dataStore.doAction("remove", actionContext, ["records":dataObjects, "record":null]);
+
+self.doAction("deleted", actionContext, "dataObjects", dataObjects);
+#$@text#$@
+              sinterpretationType
+              Action
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_mark
+              false
+              sid
+              ok
+        @/@DeleteDataObject/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@DeleteDataObject/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@DeleteDataObject/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@DeleteDataObject/@actions/@deleted
+      sname
+      deleted
+      sunimplementedException
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@NOOP
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      deleted
+      @/@DeleteDataObject/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+      @/@DeleteDataObject/@actions/@getTitle
+      sname
+      getTitle
+      sattributeName
+      title
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getTitle
+      @/@DeleteDataObject/@actions/@getDataObject
+      sname
+      getDataObjects
+      sattributeName
+      dataObjects
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataObject
+      @/@DeleteDataObject/@actions/@getDeleteConfirmMessage
+      sname
+      getDeleteConfirmMessage
+      sattributeName
+      deleteConfirmMessage
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDeleteConfirmMessage
+    @/@DeleteDataObject/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@DeleteDataObject/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@DeleteDataObject/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据对象的名称，吃用Ognl从actionContext中取。DataStore不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@DeleteDataObject/@dataObject
+    sname
+    dataObjects
+    ssize
+    40
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    dataObject
+    @/@DeleteDataObject/@controlName
+    sname
+    controlName
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>SWT控件的名称，使用Ognl从actionContext中SWT控件，如果为空默认从dataStore中取数据对象。</p>
+<p>不能为空。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    controlName
+    @/@DeleteDataObject/@title
+    sname
+    title
+    sreadOnly
+    false
+    sdefault
+    编辑${dataObject.metadata.label}
+    sinheritDescription
+    false
+    sdescription
+    <p>编辑对话框的标题，支持Freemarker模板。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    title
+    @/@DeleteDataObject/@notDataConfirm
+    sname
+    noDataConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    true
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据时是否提示。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    notDataConfirm
+    @/@DeleteDataObject/@noDataConfirmMessage
+    sname
+    noDataConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>没有可编辑数据的提示语句。支持var:,ognl:等表达式。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    noDataConfirmMessage
+    @/@DeleteDataObject/@updateConfirm
+    sname
+    deleteConfirm
+    sinputtype
+    truefalse
+    sreadOnly
+    false
+    sdefault
+    true
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时是否提示确认。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirm
+    @/@DeleteDataObject/@updateConfirmMessage
+    sname
+    deleteConfirmMessage
+    sinputtype
+    textarea
+    scolspan
+    2
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>更新时提示的提示消息。支持var:,ognl:等表达式。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    updateConfirmMessage
+  @/@Load
+  sname
+  Load
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>执行数据仓库的load方法。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getDataStore()</strong><br />
+	获取数据仓库。<br />
+	&nbsp;</li>
+	<li><strong>Map&lt;String, Object&gt; getParams()</strong><br />
+	返回查询参数。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  Load
+    @/@Load/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@Load/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+def dataStore = self.doAction("getDataStore", actionContext);
+if(dataStore instanceof String){
+    //为了兼容旧版
+    dataStore = Ognl.getValue(dataStore, actionContext);
+}
+if(dataStore == null){
+    def log = getLogger(actionContext);
+    log.info("DataStoreActions.Load: datastore is null, datastore name=" + self.dataStore);
+    return null;
+}
+ 
+def params = self.doAction("getParams", actionContext);
+dataStore.doAction("load", actionContext, "params", params);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@Load/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@Load/@actions/@run/@ActionDefined/@log
+          sname
+          getLogger
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@Load1/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+        @/@Load/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@Load/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@DeleteDataObject/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@Load/@actions/@getParams
+      sname
+      getParams
+      sattributeName
+      params
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getParams
+      @/@Load/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+    @/@Load/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@Load/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@Load/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    ssize
+    60
+    scolspan
+    2
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据对象的名称，吃用Ognl从actionContext中取。DataStore不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@Load/@params
+    sname
+    params
+    sinputtype
+    textarea
+    ssize
+    60
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    params
+    @/@Load/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@ExportToExcel
+  sname
+  ExportToExcel
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  ExportToExcel
+    @/@ExportToExcel/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@ExportToExcel/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import jxl.Workbook;
+import jxl.write.Label;
+
+//数据仓库
+def dataStore = Ognl.getValue(self.dataStore, actionContext);
+if(dataStore == null){
+    log.warn("DataStoreActions.ExportToExcel: dataStore is null, name=" + self.dataStore);
+    return;
+}
+
+//shell
+def shell = null;
+if(self.shell != null && self.shell != ""){
+    shell = Ognl.getValue(self.shell, actionContext);
+}
+if(shell == null){
+    shell = Display.getCurrent().getActiveShell();
+}
+if(shell == null){
+    log.warn("DataStoreActions.ExportToExcel: shell is null, name=" + self.shell);
+    return;
+}
+
+//保存
+def fileDialog = new FileDialog(shell, SWT.SAVE);
+if(self.saveDialogTitle != null && self.saveDialogTitle != ""){
+    fileDialog.setText(self.saveDialogTitle);
+}
+String fileName = fileDialog.open();
+if(fileName != null){
+    try{    
+        def file = new File(fileName);
+        workbook = Workbook.createWorkbook(file);
+        try{
+            sheet = workbook.createSheet("sheet", 0);
+            
+            //标题
+            int row = 0;
+            int i = 0;
+            for(attribute in dataStore.dataObject.get("attribute@")){
+                def cell = new Label(i, row, attribute.metadata.label);
+                sheet.addCell(cell);
+                i++;
+            }
+            
+            //保存数据
+            for(record in dataStore.records){
+                row++;
+                i=0;
+                for(attribute in dataStore.dataObject.get("attribute@")){
+                    String value = record.get(attribute.name);
+                    if(value == null){
+                        value = "";
+                    }else{
+                        value = String.valueOf(value);
+                    }
+                    
+                    def cell = new Label(i, row, value);
+                    sheet.addCell(cell);
+                    i++;
+                }
+            }
+            workbook.write();
+        }finally{       
+            workbook.close();
+        }
+        
+        def box = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION);
+        box.setText("Export Excel");
+        box.setMessage("导出成功！");
+        box.open();
+    }catch(Exception e){
+        def box = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+        box.setText("Export Excel");
+        box.setMessage("错误:" + e.getMessage());
+        box.open();
+    }
+}
+#$@text#$@
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@ExportToExcel/@actions/@run/@Variables
+        sname
+        Variables
+        sdescriptors
+        xworker.lang.actions.Inout/@Variables
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        Variables
+          @/@ExportToExcel/@actions/@run/@Variables/@log
+          sname
+          log
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@DeleteDataObject/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+    @/@ExportToExcel/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@ExportToExcel/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@ExportToExcel/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@ExportToExcel/@shell
+    sname
+    shell
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    shell
+    @/@ExportToExcel/@saveDialogTitle
+    sname
+    saveDialogTitle
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    saveDialogTitle
+  @/@Load1
+  sname
+  ReLoad
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore
+  smodifier
+  public
+  sinheritDescription
+  false
+  sdescription
+  <p>重新加载数据仓库。</p>
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  Load1
+    @/@Load1/@actions
+    sname
+    actions
+    slabel
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sid
+    actions
+      @/@Load1/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+def dataStore = self.doAction("getDataStore", actionContext);
+if(dataStore instanceof String){
+    //为了兼容旧版
+    dataStore = Ognl.getValue(dataStore, actionContext);
+}
+if(dataStore == null){
+    def log = getLogger(actionContext);
+    log.info("DataStoreActions.Load: datastore is null, datastore name=" + self.dataStore);
+    return null;
+}
+ 
+dataStore.doAction("reload", actionContext);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      run
+        @/@Load1/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@Load1/@actions/@run/@ActionDefined/@log
+          sname
+          getLogger
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@Load1/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@Load1/@actions/@getDataStore
+      sname
+      getDataStore
+      sattributeName
+      dataStore
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getDataStore
+    @/@Load1/@name
+    sname
+    name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    name
+    @/@Load1/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    label
+    @/@Load1/@dataStore
+    sname
+    dataStore
+    sinputtype
+    openWindow
+    ssize
+    60
+    scolspan
+    2
+    sshowLabel
+    true
+    sinputattrs
+    xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>数据对象的名称，吃用Ognl从actionContext中取。DataStore不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    dataStore
+    @/@Load1/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@GetSelectedDataObject
+  sname
+  GetSelectedDataObject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>从指定的SWT控件上获取所有选中的数据对象，如果多个则返回第一个符合条件的。</p>
+
+<p><strong>返回值：</strong>DataObject</p>
+
+<p><strong>前提条件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 控件必须是被DataStore绑定的，或者控件的Item.getData()返回的是DataObject。</p>
+
+<p><strong>支持的控件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Table、Tree、Combo、CCombo、List、Composite等。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Control getControl()</strong><br />
+	要从中获取选中的数据对象的控件。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  GetSelectedDataObject
+    @/@GetSelectedDataObject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@GetSelectedDataObject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+//使用GetSelectedDataObjects动作
+def action = world.getAction("xworker.app.view.swt.data.DataStoreActions/@GetSelectedDataObjects/@actions/@run");
+
+def dataObjects = action.run(actionContext);
+if(dataObjects == null || dataObjects.size() == 0){
+    return null;
+}else{
+    return dataObjects.get(0);
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@GetSelectedDataObject/@actions/@getControl
+      sname
+      getControl
+      sattributeName
+      control
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getControl
+    @/@GetSelectedDataObject/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    VariablesDescs
+      @/@GetSelectedDataObject/@VariablesDescs/@var
+      sname
+      var
+      svarName
+      _thingName_
+      spassive
+      false
+      stype
+      object
+      sclassName
+      java.util.List
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      var
+    @/@GetSelectedDataObject/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@GetSelectedDataObject/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@GetSelectedDataObject/@control
+    sname
+    control
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    control
+    @/@GetSelectedDataObject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@GetSelectedDataObjects
+  sname
+  GetSelectedDataObjects
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.datastore.swt
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>从指定的SWT控件上获取所有选中的数据对象列表。</p>
+
+<p><strong>返回值：</strong>List&lt;DataObject&gt;</p>
+
+<p><strong>前提条件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 控件必须是被DataStore绑定的，或者控件的Item.getData()返回的是DataObject。</p>
+
+<p><strong>支持的控件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Table、Tree、Combo、CCombo、List、Composite等。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Control getControl()</strong><br />
+	要从中获取选中的数据对象的控件。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  GetSelectedDataObjects
+    @/@GetSelectedDataObjects/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@GetSelectedDataObjects/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Button;
+
+def dataObjects = [];
+
+//获取SWT控件
+def control = self.doAction("getControl", actionContext);
+
+//从SWT控件取
+if(control instanceof Table){
+    if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+        //取多选框选中的记录
+        for(item in control.getItems()){
+            if(item.getChecked()){
+                dataObjects.add(item.getData());
+            }
+        }
+    }
+    if(dataObjects.size() == 0){
+       //取当前表格选中的记录
+        for(item in control.getSelection()){
+            dataObjects.add(item.getData());
+        }
+    }
+}else if(control instanceof Tree){
+    if((control.getStyle() & SWT.CHECK) == SWT.CHECK){
+        //取多选框选中的记录
+        for(item in control.getItems()){
+            selectTreeItemData(dataObjects, item);
+        }
+    }
+    if(dataObjects.size() == 0){
+       //取当前表格选中的记录
+        for(item in control.getSelection()){
+            dataObjects.add(item.getData());
+        }
+    }
+    //println(dataObjects);
+}else if(control instanceof CCombo || control instanceof Combo){
+    def records = control.getData("_store_records");
+    if(records != null && control.getSelectionIndex() != -1){
+        dataObjects.add(records.get(control.getSelectionIndex()));
+    }
+}else if( control instanceof List){
+    def records = control.getData("_store_records");
+    if(records != null){
+        for(index in control.getSelectionIndices()){
+            dataObjects.add(records.get(index));
+        }
+    }
+}else if(control instanceof Composite){
+    for(child in control.getChildren()){
+        if(child instanceof Button && child.getSelection()){
+            dataObjects.add(child.getData());
+        }
+    }
+}else if(control == null){
+    def log = getLogger(actionContext);
+    log.info("control is null, path=" + self.getMetadata().getName());
+}
+
+return dataObjects;
+
+def selectTreeItemData(dataObjects, item){
+    if(item.getChecked()){
+        dataObjects.add(item.getData());
+    }
+    
+    for(childItem in item.getItems()){
+        selectTreeItemData(dataObjects, childItem);
+    }
+    
+    return dataObjects;
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      run
+        @/@GetSelectedDataObjects/@actions/@run/@ActionDefined
+        sname
+        ActionDefined
+        sdescriptors
+        xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        ActionDefined
+          @/@GetSelectedDataObjects/@actions/@run/@ActionDefined/@log
+          sname
+          getLogger
+          stagName
+          xworker.app.view.swt.data.DataStoreActions/@GetSelectedDataObjects/@actions/@run
+          saction
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          log
+      @/@GetSelectedDataObjects/@actions/@getControl
+      sname
+      getControl
+      sattributeName
+      control
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      getControl
+    @/@GetSelectedDataObjects/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    VariablesDescs
+      @/@GetSelectedDataObjects/@VariablesDescs/@var
+      sname
+      var
+      svarName
+      _thingName_
+      spassive
+      false
+      stype
+      object
+      sclassName
+      java.util.List
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      var
+    @/@GetSelectedDataObjects/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@GetSelectedDataObjects/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@GetSelectedDataObjects/@control
+    sname
+    control
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    control
+    @/@GetSelectedDataObjects/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    description

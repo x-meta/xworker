@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd"> -->
+<web-app>
+    <display-name>XWorker Application</display-name>
+       
+     <!--  not correct for fckedtor if not commoned.-->
+     <!--
+     <mime-mapping>
+		<extension>xml</extension> 
+		<mime-type>text/x-cross-domain-policy</mime-type>
+	</mime-mapping><-->
+    <context-param>
+        <param-name>org.eclipse.rap.applicationConfiguration</param-name>
+        <param-value>xworker.rap.XWorkerConfiguration</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.eclipse.rap.rwt.engine.RWTServletContextListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.http.HttpServletDo</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <servlet-class>xworker.http.HttpActionMappingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>rwtServlet</servlet-name>
+        <servlet-class>org.eclipse.rap.rwt.engine.RWTServlet</servlet-class>
+    </servlet>
+  
+    <servlet>
+        <servlet-name>websoketServlet</servlet-name>
+        <servlet-class>xworker.http.WebSocketDo</servlet-class>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do/*</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.dml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.txt</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <url-pattern>*.ac</url-pattern>
+    </servlet-mapping>   
+    
+    <servlet-mapping>
+        <servlet-name>rwtServlet</servlet-name>
+        <url-pattern>/rap</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>websoketServlet</servlet-name>
+        <url-pattern>/socket/*</url-pattern>
+    </servlet-mapping>    
+</web-app>

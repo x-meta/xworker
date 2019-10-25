@@ -1,0 +1,1 @@
+dml xworker.tools.GenerateXsd run %1 %2

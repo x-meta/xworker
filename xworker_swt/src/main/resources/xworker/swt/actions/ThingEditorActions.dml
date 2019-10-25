@@ -1,0 +1,211 @@
+%1479462376022
+@
+sname=ThingEditorActions
+slabel=ThingEditorActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@SetThing
+  sname=SetThing
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=xworker.thingeditor
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>设置事物编辑器中要编辑的事物。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SetThing
+    @/@SetThing/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SetThing/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionException;
+
+//获取编辑器和事物
+def thing = self.doAction("getThing", actionContext);
+def thingEditor = self.doAction("getThingEditor", actionContext);
+
+if(thing == null || thingEditor  == null){
+    throw new ActionException("thing or thingeditor is null, action=" + self.getMetadata().getPath());    
+}
+
+//编辑器设置事物
+thingEditor.editorActions.doAction("setThing", ["thing":thing]);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@SetThing/@actions/@getThingEditor
+      sname=getThingEditor
+      sattributeName=thingEditor
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThingEditor
+      @/@SetThing/@actions/@getThing
+      sname=getThing
+      sattributeName=thing
+      schildThingFirstChild=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThing
+    @/@SetThing/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SetThing/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SetThing/@thingEditor
+    sname=thingEditor
+    sinputtype=openWindow
+    sshowLabel=true
+    ssize=40
+    sinputattrs=xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|prefix=var%3A,descriptor=xworker.swt.xworker.ThingEditor,seperator=%2C,returnType=name,append=false
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEditor
+    @/@SetThing/@thing
+    sname=thing
+    sinputtype=dataSelector
+    sshowLabel=true
+    ssize=60
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thing
+    @/@SetThing/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

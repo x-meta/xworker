@@ -1,0 +1,1348 @@
+%1556267585335
+@
+sname=XmlEditorCommandDomain
+slabel=XML编辑器命令
+sextends=xworker.lang.command.BaseDomain
+sdescriptors=xworker.lang.command.CommandDomain
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.command.CommandIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=xworker.thingEditor
+sth_mark=false
+  @/@OtherCommands
+  sname=OtherCommands
+  sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=OtherCommands
+    @/@OtherCommands/@list_nodes
+    sname=list_nodes
+    slabel=事物节点列表
+    shasContents=true
+    sdescriptors=xworker.lang.command.CommandDomain/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=list_nodes
+      @/@OtherCommands/@list_nodes/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@OtherCommands/@list_nodes/@actions/@getContents
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.ide.command.ThingEditorCommand
+        smethodName=list_nodesContents
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getContents
+    @/@OtherCommands/@list_add_childs
+    sname=list_add_childs
+    slabel=可添加子节点列表
+    shasContents=true
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=list_add_childs
+      @/@OtherCommands/@list_add_childs/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@OtherCommands/@list_add_childs/@actions/@run
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+
+if(actionContext.get("doInitChildTree") == false){
+    //如果子节点树没有初始化，那么初始化
+    actionContext.getScope(0).put("doInitChildTree", true);
+    def desc = world.getThing(descriptor);
+    def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+    childScripts.doAction("selectDescriptor", ["descriptor":desc, "thing":thing]);
+}
+
+//查找子节点
+def dess = childScripts.doAction("searchChilds", actionContext, ["keyword": text]);
+
+def contents = [];
+for(des in dess){
+    def content = new SelectContent(des.getMetadata().getLabel(), des);
+    contents.add(content);
+}
+
+return contents;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+      @/@OtherCommands/@list_add_childs/@descriptor
+      sname=descriptor
+      slabel=描述者（类）
+      scommand=xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain/@OtherCommands/@GetThingDescriptors
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=descriptor
+    @/@OtherCommands/@SelectThingAttributes
+    sname=SelectThingAttributes
+    slabel=选择事物属性
+    shasContents=true
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=SelectThingAttributes
+      @/@OtherCommands/@SelectThingAttributes/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@OtherCommands/@SelectThingAttributes/@actions/@run
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+import xworker.util.UtilData;
+if(text == null){
+	text = "";
+}
+
+text = text.toLowerCase();
+def txts = text.split("[ ]");
+def contents = [];
+def context = [:];
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+for(des in thing.getAllAttributesDescriptors()){
+    def name = des.getMetadata().getName();
+    def label= name +  "(" + des.getMetadata().getLabel() + ")";
+    label = label.toLowerCase();
+    if(UtilData.indexHas(label, txts) && context.get(name) == null){
+        def content = new SelectContent(label, label, name,name );
+        contents.add(content);
+        
+        context.put(name, name);
+    }
+}
+
+return contents;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+    @/@OtherCommands/@list_methods
+    sname=list_methods
+    slabel=事物方法列表
+    shasContents=true
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=list_methods
+      @/@OtherCommands/@list_methods/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@OtherCommands/@list_methods/@actions/@run
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+import xworker.util.UtilData;
+if(text == null){
+	text = "";
+}
+
+text = text.toLowerCase();
+def txts = text.split("[ ]");
+def contents = [];
+def context = [:];
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+for(des in thing.getActionThings()){
+    def name = des.getMetadata().getName();
+    def label= name;
+    label = label.toLowerCase();
+    if(UtilData.indexHas(label, txts) && context.get(name) == null){
+        def content = new SelectContent(name, name, name,name );
+        contents.add(content);
+        
+        context.put(name, name);
+    }
+}
+
+return contents;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+    @/@OtherCommands/@GetThingDescriptors
+    sname=GetThingDescriptors
+    slabel=获取事物的描述者（类）
+    shasContents=true
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=GetThingDescriptors
+      @/@OtherCommands/@GetThingDescriptors/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@OtherCommands/@GetThingDescriptors/@actions/@run
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+import xworker.util.UtilData;
+if(text == null){
+	text = "";
+}
+
+text = text.toLowerCase();
+def txts = text.split("[ ]");
+def contents = [];
+def context = [:];
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+for(des in thing.getDescriptors()){
+    def name = des.getMetadata().getPath();
+    def label= des.getMetadata().getLabel();
+    label = label.toLowerCase();
+    if(UtilData.indexHas(label, txts) && context.get(name) == null){
+        def content = new SelectContent(name, label, null, name );
+        contents.add(content);
+        
+        context.put(name, name);
+    }
+}
+
+return contents;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+  @/@select
+  sname=find
+  slabel=查找
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=select
+    @/@select/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@select/@actions/@run1
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def offset = xmlText.getSelection().x + 1;
+def text = xmlText.getText();
+println(content);
+if(content != null && content != ""){
+   def index = text.indexOf(content, offset);
+   if(index == -1){
+       index = text.indexOf(content);
+   }
+   
+   println(index);
+   if(index == -1){
+       
+   }else{
+       xmlText.setCaretOffset(index);
+       xmlText.setSelection(index, index + content.length());
+       xmlText.showSelection();       
+       xmlText.update();
+   }
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run1
+    @/@select/@thing
+    sname=content
+    slabel=内容
+    scommand=xworker.lang.command.BaseDomain/@OtherCommands/@InputText
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thing
+  @/@add1
+  sname=add
+  slabel=添加子节点
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=add1
+    @/@add1/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@add1/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import org.xmeta.Thing;
+
+//父节点
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+def childData = ["name": name];
+
+//创建和添加子节点
+def childStructure = descriptor;
+Thing childObj = new Thing(null, null, childStructure.metadata.path, false);
+childObj.cognize(childData);
+childObj.set("descriptors", childStructure.metadata.path);        
+thing.addChild(childObj);
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+    @/@add1/@descritpor
+    sname=descriptor
+    slabel=子节点描述者
+    scommand=xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain/@OtherCommands/@list_add_childs
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=descritpor
+    @/@add1/@name
+    sname=name
+    slabel=名称
+    scommand=xworker.lang.command.BaseDomain/@OtherCommands/@InputText
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+  @/@remove
+  sname=delete
+  slabel=删除节点
+  shasContents=false
+  sdescription=<p>删除当前选中的节点？</p>
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=remove
+    @/@remove/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@remove/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import org.xmeta.Thing;
+
+if(choice == false){
+    return;
+}
+
+//父节点
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+def parent = thing.getParent();
+if(parent == null){
+    return;
+}
+def sthing = parent.getChildBy(thing, -1);
+if(sthing == null){
+    sthing = parent;
+}
+
+parent.removeChild(thing);
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", parent.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", sthing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+    @/@remove/@choice
+    sname=choice
+    slabel=是否删除当前节点
+    scommand=xworker.lang.command.BaseDomain/@OtherCommands/@YesNo
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=choice
+  @/@set
+  sname=set
+  slabel=设置属性
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=set
+    @/@set/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@set/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//父节点
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+thing.put(name, value);
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+    @/@set/@attributeName
+    sname=name
+    slabel=属性名
+    scommand=xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain/@OtherCommands/@SelectThingAttributes
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributeName
+    @/@set/@value
+    sname=value
+    slabel=属性值
+    scommand=xworker.lang.command.BaseDomain/@OtherCommands/@InputText
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=value
+  @/@Save
+  sname=Save
+  slabel=保存
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Save
+    @/@Save/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Save/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=okButtonSelection.handleEvent(null);
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@edit
+  sname=edit
+  slabel=编辑属性
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=edit
+    @/@edit/@attributeName
+    sname=name
+    slabel=属性名
+    scommand=xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain/@OtherCommands/@SelectThingAttributes
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributeName
+    @/@edit/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@edit/@Composite/@thingForm
+      sname=thingForm
+      scolumn=1
+      sH_SCROLL=true
+      sV_SCROLL=true
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      sdescriptors=xworker.swt.Widgets/@ThingForm
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingForm
+      @/@edit/@Composite/@compositeFillLayout
+      sname=compositeFillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=compositeFillLayout
+      @/@edit/@Composite/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.swt.util.SwtDialog;
+
+actionContext.g().put("currentThing", domainContext.currentThing);
+actionContext.g().put("currentModel", domainContext.currentModel);
+actionContext.g().put("currentModelContext",  domainContext.currentModelContext);
+actionContext.g().put("okButtonSelection", domainContext.okButtonSelection);
+actionContext.g().put("thing", domainContext.currentThing);
+actionContext.g().put("actions", domainContext.actions);
+
+//属性的描述者
+def descriptor = currentThing.getAttributeDescriptor(name);
+
+if(descriptor != null){    
+    def thing = new Thing("xworker.lang.MetaDescriptor3");
+    thing.addChild(descriptor.detach());
+    
+    def ovalues = currentModel.doAction("getValue", currentModelContext);
+    
+    def newThing = new Thing(thing.getMetadata().getPath());
+    newThing.put(name, ovalues.get(name));
+    thingForm.doAction("setThing", actionContext, ["thing": newThing]);
+    
+    executorContext.mainComposite.display.asyncExec({
+        thingForm.doAction("setFocus", actionContext);
+    });
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.widgets.Widget/@Code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init
+    @/@edit/@Buttons
+    sname=Buttons
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Buttons
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Buttons
+      @/@edit/@Buttons/@saveButton
+      sname=saveButton
+      stext=lang:d=保存(&amp;S)&en=Save(&amp;S)
+      stype=SWT.PUSH
+      sflat=false
+      sborder=false
+      sselected=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Buttons/@Button
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=saveButton
+        @/@edit/@Buttons/@saveButton/@onSelection
+        sname=onSelection
+        sdescriptors=xworker.swt.widgets.Widget/@Event
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=onSelection
+          @/@edit/@Buttons/@saveButton/@onSelection/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+def ovalues = currentModel.doAction("getValue", currentModelContext);
+def result = thingForm.doAction("getValues", actionContext);
+if(result != null){
+    thing.put(name, result.get(name));
+    //重新刷新XML
+    actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+        
+    actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+    
+    //保存模型编辑器
+    okButtonSelection.handleEvent(null);
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+  @/@run
+  sname=run
+  slabel=执行方法
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=run
+    @/@run/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@run/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def ac = new ActionContext();
+ac.put("parentContext", actionContext);
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+println(thing.doAction(action, ac));
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+    @/@run/@action
+    sname=action
+    slabel=动作
+    scommand=xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain/@OtherCommands/@list_methods
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=action
+  @/@moveup
+  sname=moveup
+  slabel=节点上移
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=moveup
+    @/@moveup/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@moveup/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//父节点
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+def parent = thing.getParent();
+if(parent != null){
+    parent.changeChildIndex(thing, -1, -1);
+}
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@movedown
+  sname=movedown
+  slabel=节点下移
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=movedown
+    @/@movedown/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@movedown/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//父节点
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+def parent = thing.getParent();
+if(parent != null){
+    parent.changeChildIndex(thing, -1, 1);
+}
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@copy
+  sname=copy
+  slabel=拷贝
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=copy
+    @/@copy/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@copy/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.ui.swt.Clipboard;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+if(thing != null){
+    Clipboard.add(thing.detach(false));
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@copy_path
+  sname=copy_path
+  slabel=拷贝路径
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=copy_path
+    @/@copy_path/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@copy_path/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.RTFTransfer;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+Clipboard clipboard = new Clipboard(innerOutline.getDisplay());
+String plainText = thing.metadata.path;
+TextTransfer textTransfer = TextTransfer.getInstance();
+clipboard.setContents([plainText] as String[], [textTransfer] as Transfer[]);
+clipboard.dispose();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@paset
+  sname=paste
+  slabel=粘贴
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=paset
+    @/@paset/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@paset/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.ui.swt.Clipboard;
+import org.xmeta.util.ThingUtil;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+
+def memObj = Clipboard.get();
+if(memObj == null) return;
+
+memObj = memObj.detach();
+ThingUtil.paste(thing, memObj);
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@paste_as_child
+  sname=paste_as_child
+  slabel=粘贴到子节点
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=paste_as_child
+    @/@paste_as_child/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@paste_as_child/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.util.ThingUtil;
+
+import xworker.ui.swt.Clipboard;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+
+def memObj = Clipboard.get();
+if(memObj == null) return;
+
+memObj = memObj.detach();
+ThingUtil.pasteAsChild(thing, memObj);
+
+//重新刷新XML
+actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", thing.getRoot());
+actions.doAction("xmlEditorShowThing", actionContext, "thing", thing);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@cut
+  sname=cut
+  slabel=剪切
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=cut
+    @/@cut/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@cut/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.ui.swt.Clipboard;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+if(thing != null){
+    Clipboard.add(thing.detach(false));
+    
+    def parent = thing.getParent();
+    parent.removeChild(thing);
+    
+    //重新刷新XML
+    actions.doAction("xmlEditorSetXmlThing", actionContext, "thing", parent.getRoot());
+    
+    actions.doAction("xmlEditorShowThing", actionContext, "thing", parent);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@select1
+  sname=select
+  slabel=选择节点
+  shasContents=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=select1
+    @/@select1/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@select1/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def thing = actions.doAction("xmlEditorGetSelectThing", actionContext);
+def ac = new ActionContext();
+ac.put("parent", commandExecutor.getActionContext().get("shell"));
+ac.put("thing", thing.getRoot());
+ac.put("currentThing", thing);
+ac.put("ec", actionContext);
+ac.put("actionName", "xmlEditorShowThing");
+
+def shellThing = world.getThing("xworker.ide.worldExplorer.swt.command.SelectNodesShell");
+def shell = shellThing.doAction("create", ac);
+shell.open();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run

@@ -1,0 +1,333 @@
+%1481702841751
+@
+sname=shell
+stext=插入内容
+sstyle=APPLICATION_MODAL
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=true
+sRESIZE=true
+sON_TOP=true
+sTOOL=false
+sNO_FOCUS=false
+swidth=400
+sheight=500
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=StyledTextContentInserter
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLyaout
+  sname=shellFillLyaout
+  stype=SWT.HORIZONTAL
+  sxw_cl_global=false
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLyaout
+  @/@mainCompoiste
+  sname=mainCompoiste
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=mainCompoiste
+    @/@mainCompoiste/@GridLayout
+    sname=GridLayout
+    snumColumns=1
+    smakeColumnsEqualWidth=false
+    smarginWidth=5
+    smarginHeight=5
+    smarginLeft=0
+    smarginTop=0
+    smarginRight=0
+    smarginBottom=0
+    shorizontalSpacing=5
+    sverticalSpacing=5
+    sdescriptors=xworker.swt.Layouts/@GridLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=GridLayout
+    @/@mainCompoiste/@calssSelector
+    sname=contentSelector
+    sdescriptors=xworker.swt.Widgets/@ContentSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=calssSelector
+      @/@mainCompoiste/@calssSelector/@GridData
+      sname=GridData
+      sstyle=FILL_BOTH
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sxw_cl_global=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=GridData
+      @/@mainCompoiste/@calssSelector/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xwidgets.ContentSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@mainCompoiste/@calssSelector/@actions/@query
+        sname=query
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+
+def cs = [];
+for(content in contents){
+    if(content.label != null && content.label.indexOf(text) != -1){
+        cs.add(content);
+    }
+}
+return cs;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=query
+        @/@mainCompoiste/@calssSelector/@actions/@selected
+        sname=selected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+if(value != null && actionContext.get("text") != null){
+    def offset = text.getCaretOffset();
+    text.insert(value);
+    if(text.getCaretOffset() == offset){
+        text.setCaretOffset(offset + value.length())
+    }
+}
+
+actionContext.g().put("result", value);
+shell.dispose();
+
+if(actionContext.get("text") == null){
+    return;
+}
+text.display.asyncExec({
+    text.setFocus();
+});
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=selected
+    @/@mainCompoiste/@7225
+    sname=buttonComposite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sid=7225
+      @/@mainCompoiste/@7225/@7226
+      sname=buttonCompositeGridData
+      sstyle=FILL_HORIZONTAL
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=END
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sid=7226
+      @/@mainCompoiste/@7225/@7227
+      sname=buttonCompositeRowLayout
+      sfill=false
+      sjustify=false
+      smarginWidth=0
+      smarginHeight=0
+      smarginLeft=3
+      smarginTop=3
+      smarginRight=3
+      smarginBottom=3
+      spack=true
+      sspacing=3
+      stype=SWT.HORIZONTAL
+      swrap=true
+      sdescriptors=xworker.swt.Layouts/@RowLayout
+      sid=7227
+      @/@mainCompoiste/@7225/@7228
+      sname=closeButton
+      stext=关闭(&C)
+      stype=SWT.PUSH
+      sflat=false
+      sborder=false
+      sselected=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Button
+      sth_createIndex=false
+      sid=7228
+        @/@mainCompoiste/@7225/@7228/@7229
+        sname=RowData
+        sexclude=false
+        swidth=80
+        sheight=-1
+        sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+        sth_createIndex=false
+        sid=7229
+        @/@mainCompoiste/@7225/@7228/@7230
+        sname=Listeners
+        sdescriptors=xworker.swt.widgets.Widget/@Listeners
+        sth_createIndex=false
+        sid=7230
+          @/@mainCompoiste/@7225/@7228/@7230/@7231
+          sname=closeButtonSelection
+          stype=Selection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sth_createIndex=false
+          sid=7231
+            @/@mainCompoiste/@7225/@7228/@7230/@7231/@selected
+            sname=selected
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+shell.dispose();
+    
+if(actionContext.get("text") == null){
+    return;
+}
+    
+text.display.asyncExec({
+    text.setFocus();
+});
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=selected
+    @/@mainCompoiste/@init
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    scode=contentSelector.doAction("setText", actionContext, "text", "");
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.widgets.Widget/@Code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=init

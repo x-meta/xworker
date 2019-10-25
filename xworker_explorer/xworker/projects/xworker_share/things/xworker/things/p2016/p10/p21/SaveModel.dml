@@ -1,0 +1,129 @@
+%1543571919971
+@
+sname=SaveModel
+slabel=SaveModel
+sdescriptors=xworker.lang.ActionThing
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@openDirectory
+  sname=openDirectory
+  smessage=选择用于保存模型的文件目录。
+  sinterpretationType=Self
+  sattributeTemplate=false
+  schildsAttributeTemplate=false
+  svarScope=Local
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdisableGlobalContext=false
+  sdebugLog=false
+  sdescriptors=xworker.swt.actions.DialogActions/@DirectoryDialog
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=openDirectory
+    @/@openDirectory/@actions
+    sname=actions
+    sdescriptors=xworker.lang.actions.SelfAction/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@openDirectory/@actions/@open
+      sname=open
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.codes.TxtThingCoder;
+if(fileName != null){
+    //保存模型
+    def thing = world.getThing("xworker.example.swt.SWTHelloWorld");    
+    def coder = new TxtThingCoder();
+    def file = new File(fileName + "/SWTHelloWorld.dml");
+    def fout = new FileOutputStream(file);
+    coder.encode(thing, fout);
+    fout.close();
+    
+    //打开提示
+    openInfo.run(actionContext);
+    openDir.run(actionContext);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=open
+        @/@openDirectory/@actions/@open/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@openDirectory/@actions/@open/@ActionDefined/@openDir
+          sname=openDir
+          sfileName=var:fileName
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.java.lang.RuntimeActions/@LanuchProgram
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=openDir
+          @/@openDirectory/@actions/@open/@ActionDefined/@openInfo
+          sname=openInfo
+          sicon=ICON_INFORMATION
+          sbuttons=OK
+          stitle=模型已保存
+          smessage=模型已经存为SWTHelloWorld.dml，请在目录中鼠标双击该文件打开SWT的Hello World窗口。
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=openInfo

@@ -1,0 +1,719 @@
+^1556195601962
+@
+sname
+ThingEditor
+slabel
+ThingEditor
+sdescriptors
+xworker.swt.widgets.Display
+  @/@shell
+  sname
+  shell
+  stext
+  "事物编辑器"
+  sNO_TRIM
+  false
+  sCLOSE
+  true
+  sTITLE
+  true
+  sMIN
+  true
+  sMAX
+  true
+  sBORDER
+  false
+  sRESIZE
+  true
+  sON_TOP
+  false
+  sTOOL
+  false
+  sNO_FOCUS
+  false
+  swidth
+  800
+  sheight
+  600
+  scenterScreen
+  true
+  spack
+  false
+  smaximized
+  false
+  sfullScreen
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.widgets.Display/@Shell
+  sid
+  shell
+    @/@shell/@shellFillLayout
+    sname
+    shellFillLayout
+    stype
+    SWT.HORIZONTAL
+    slabel
+    shellFillLayout
+    sdescriptors
+    xworker.swt.Layouts/@FillLayout
+    sid
+    shellFillLayout
+    @/@shell/@mainComposite
+    sname
+    mainComposite
+    sBORDER
+    false
+    sH_SCROLL
+    false
+    sV_SCROLL
+    false
+    sNO_BACKGROUND
+    false
+    sNO_FOCUS
+    false
+    sNO_MERGE_PAINTS
+    false
+    sNO_REDRAW_RESIZE
+    false
+    sNO_RADIO_GROUP
+    false
+    sEMBEDDED
+    false
+    sDOUBLE_BUFFERED
+    false
+    scapture
+    false
+    senabled
+    true
+    sredraw
+    true
+    svisible
+    true
+    sdescriptors
+    xworker.swt.Widgets/@Composite
+    sid
+    mainComposite
+      @/@shell/@mainComposite/@contentComposite
+      sname
+      contentComposite
+      sBORDER
+      false
+      sH_SCROLL
+      false
+      sV_SCROLL
+      false
+      sNO_BACKGROUND
+      false
+      sNO_FOCUS
+      false
+      sNO_MERGE_PAINTS
+      false
+      sNO_REDRAW_RESIZE
+      false
+      sNO_RADIO_GROUP
+      false
+      sEMBEDDED
+      false
+      sDOUBLE_BUFFERED
+      false
+      scapture
+      false
+      senabled
+      true
+      sredraw
+      true
+      svisible
+      true
+      sdescriptors
+      xworker.swt.Widgets/@Composite
+      sid
+      contentComposite
+        @/@shell/@mainComposite/@contentComposite/@contentCompositeFillLayout
+        sname
+        contentCompositeFillLayout
+        stype
+        SWT.HORIZONTAL
+        slabel
+        contentCompositeFillLayout
+        sdescriptors
+        xworker.swt.Layouts/@FillLayout
+        sid
+        contentCompositeFillLayout
+      @/@shell/@mainComposite/@blankComposite
+      sname
+      blankComposite
+      sBORDER
+      false
+      sH_SCROLL
+      false
+      sV_SCROLL
+      false
+      sNO_BACKGROUND
+      false
+      sNO_FOCUS
+      false
+      sNO_MERGE_PAINTS
+      false
+      sNO_REDRAW_RESIZE
+      false
+      sNO_RADIO_GROUP
+      false
+      sEMBEDDED
+      false
+      sDOUBLE_BUFFERED
+      false
+      scapture
+      false
+      senabled
+      true
+      sredraw
+      true
+      svisible
+      true
+      sdescriptors
+      xworker.swt.Widgets/@Composite
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      blankComposite
+      @/@shell/@mainComposite/@mainStackLayout
+      sname
+      mainStackLayout
+      stopControl
+      blankComposite
+      sdescriptors
+      xworker.swt.Layouts/@StackLayout
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      mainStackLayout
+      @/@shell/@mainComposite/@actions
+      sname
+      editorActions
+      slabel
+      editorActions
+      sdescriptors
+      xworker.swt.Widgets/@actions
+      sid
+      actions
+        @/@shell/@mainComposite/@actions/@setThing
+        sname
+        setThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Global
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+//输入参数是thing，如果没有提示错误并返回
+if(actionContext.get("thing") == null){    
+    mainStackLayout.topControl = blankComposite;
+    mainComposite.layout();
+    return;
+    //thing = world.getThing("xworker.ide.worldExplorer.ThingEditor");
+}
+
+//如果有编辑状态改为没有编辑
+thingContext.actions.doAction("modify", actionContext, "setModified", false);
+
+if(actionContext.get("editorThingUseRootThing") == true){
+    thingContext.put("thing", thing.getRoot());
+    thingContext.put("rootThing", thing.getRoot());
+    thingContext.actions.doAction("setThing", ["thing":thing.getRoot()]);
+    def thing = thing;
+    def thingContext = thingContext;
+    mainComposite.display.asyncExec({
+        thingContext.actions.doAction("selectThing", ["thing":thing]);
+    });
+}else{
+    thingContext.put("thing", thing);
+    thingContext.put("rootThing", thing);
+    thingContext.actions.doAction("setThing", ["thing":thing]);
+}
+
+mainStackLayout.topControl = contentComposite;
+mainComposite.layout();
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sid
+        setThing
+        @/@shell/@mainComposite/@actions/@getThing
+        sname
+        getThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Global
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+thingContext.okButtonSelection.handleEvent(null);
+return thingContext.thing;
+#$@text#$@
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sid
+        getThing
+        @/@shell/@mainComposite/@actions/@save
+        sname
+        save
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        scode
+        thingContext.actions.doAction("save");
+        sinterpretationType
+        Action
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sid
+        save
+        @/@shell/@mainComposite/@actions/@selectThing
+        sname
+        selectThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+
+thingContext.actions.doAction("selectThing", actionContext, "thing", thing);
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sid
+        selectThing
+        @/@shell/@mainComposite/@actions/@refresh
+        sname
+        refresh
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        scode
+        thingContext.actions.doAction("refreshOutline", ["refreshThing": refreshThing]);
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        refresh
+          @/@shell/@mainComposite/@actions/@refresh/@ins
+          sisValidate
+          false
+          sname
+          ins
+          slabel
+          ins
+          sdescriptors
+          xworker.lang.actions.Inout/@ins
+          sid
+          ins
+            @/@shell/@mainComposite/@actions/@refresh/@ins/@refreshThing
+            sname
+            refreshThing
+            stype
+            org.xmeta.Thing
+            stypeCheck
+            false
+            soptional
+            true
+            scheck
+            false
+            scheckLevel
+            exception
+            sdescriptors
+            xworker.lang.actions.Inout/@ins/@param
+            sid
+            refreshThing
+        @/@shell/@mainComposite/@actions/@openThing
+        sname
+        openThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        scode
+        thingContext.actions.doAction("openThing", ["thing":thing]);
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        openThing
+        @/@shell/@mainComposite/@actions/@getRootThing
+        sname
+        getRootThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+thingContext.okButtonSelection.handleEvent(null);
+return thingContext.rootThing;
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        getRootThing
+        @/@shell/@mainComposite/@actions/@setVariablesActionContext
+        sname
+        setVariablesActionContext
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        scode
+        actionContext.g().put("variablesActionContext", actionContext.get("variablesActionContext"));
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        setVariablesActionContext
+          @/@shell/@mainComposite/@actions/@setVariablesActionContext/@ins
+          sisValidate
+          false
+          sname
+          ins
+          sdescriptors
+          xworker.lang.actions.Inout/@ins
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          ins
+            @/@shell/@mainComposite/@actions/@setVariablesActionContext/@ins/@variablesActionContext
+            sname
+            variablesActionContext
+            stypeCheck
+            false
+            soptional
+            true
+            scheck
+            false
+            scheckLevel
+            exception
+            sdescriptors
+            xworker.lang.actions.Inout/@ins/@param
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            variablesActionContext
+        @/@shell/@mainComposite/@actions/@isModified
+        sname
+        isModified
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+def ac = thingContext.actions.getActionContext();
+return ac.modified;
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        isModified
+      @/@shell/@mainComposite/@init
+      sname
+      init
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.ui.swt.SwtBorder;
+import xworker.swt.ActionContainer;
+import xworker.ui.editor.OutlineTreeDragAndDrop;
+
+//找到要创建的编辑各组件
+//def treeThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@outlineTree");
+//def childThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@propertiesComposite");
+def contentThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+def scriptThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@actions");
+        
+//创建编辑器的个组件        
+ActionContext newContext = new ActionContext();
+newContext.setLabel("Thing Editor Shell");
+newContext.put("parentContext", actionContext);
+if(actionContext.get("explorerActions") != null){
+    newContext.put("explorerActions", explorerActions);
+}else{
+    newContext.put("explorerActions", new ActionContainer(new Thing(), newContext));
+}
+if(actionContext.get("explorerContext") != null){
+    newContext.put("explorerContext", explorerContext);
+}else{
+    newContext.put("explorerContext", newContext);
+}
+if(actionContext.get("utilBrowser") != null){
+    newContext.put("utilBrowser", utilBrowser);
+}else{
+    newContext.put("utilBrowser", null);
+}  
+
+def scripts = scriptThing.doAction("create", newContext);
+//newContext.put("actions", scripts);
+//actionContext.put("actions", scripts);
+
+        
+newContext.put("parent", contentComposite);
+def contentComposite = contentThing.doAction("create", newContext);
+        
+SwtBorder.attach(newContext.titleComposite);
+SwtBorder.attach(newContext.childTitleComposite);
+
+//编辑数据的上下文，外部调用者可以是用此上下文获取编辑的事物
+thingContext = newContext;
+
+//设置编辑器事物和其所在变量上下文，编辑器触发事件时会调用到他们
+thingContext.put("editorThing", editorThing);
+thingContext.put("editorThingContext", parentContext);
+
+actionContext.g().put("thingContext", thingContext);
+
+//mainSash.pack();
+return newContext;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.swt.Widgets/@Code
+      sid
+      init

@@ -1,0 +1,269 @@
+%1492488215706
+@
+sname=UserTaskDialog
+slabel=UserTaskDialog
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>一个显示用户任务进度的对话框。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getType()</strong><br />
+	返回要打开的对话框类型。<br />
+	&nbsp;</li>
+	<li><strong>UserTask getUserTask()</strong><br />
+	如果不为null，只监听这个UserTask，否则监听所有的UserTask。<br />
+	&nbsp;</li>
+	<li><strong>Shell getShell()</strong><br />
+	用于创建对话框的父Shell。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//变量
+def type = self.doAction("getType", actionContext);
+def userTask = self.doAction("getUserTask", actionContext);
+def shell = self.doAction("getShell", actionContext);
+
+//创建对话框
+def ac = new ActionContext();
+ac.put("parent", shell);
+ac.put("userTask", userTask);
+
+def dialogThing = world.getThing("xworker.swt.xworker.dialogs.prototype.UserTaskTextDialog");
+def newShell = dialogThing.doAction("create", ac);
+newShell.setVisible(true);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getType
+    sname=getType
+    sattributeName=type
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getType
+    @/@actions/@getUserTask
+    sname=getUserTask
+    sattributeName=userTask
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getUserTask
+    @/@actions/@getShell
+    sname=getShell
+    sattributeName=shell
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getShell
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@type
+  sname=type
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=text
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>打开的对话框的类型。</p>
+
+<ul>
+	<li><strong>text</strong><br />
+	显示一个对话框，包含一个StyledText，在StyledText中显示进度信息。&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=type
+    @/@type/@text
+    sname=text
+    svalue=text
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=text
+  @/@userTask
+  sname=userTask
+  sshowLabel=true
+  ssize=50
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=userTask
+  @/@shell
+  sname=shell
+  sshowLabel=true
+  ssize=50
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shell
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

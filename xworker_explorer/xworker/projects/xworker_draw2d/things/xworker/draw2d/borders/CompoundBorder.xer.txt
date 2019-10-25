@@ -1,0 +1,108 @@
+@xworker.draw2d.borders.CompoundBorder
+sname
+CompoundBorder
+slabel
+CompoundBorder
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.draw2d.borders.AbstractBorder
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Provides generic support for borders.</p>
+sth_createIndex
+false
+@xworker.draw2d.borders.CompoundBorder/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.draw2d.borders.CompoundBorder/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.draw2d.CompoundBorder;
+
+def innerBorder = null;
+def outerBorder
+def InnerBorderThing = self.get("InnerBorder@0");
+if(InnerBorderThing != null && InnerBorderThing.getChilds().size() > 0){
+    innerBorder = InnerBorderThing.getChilds().get(0).doAction("create", actionContext);
+}
+if(innerBorder != null){
+    def OuterBorderThing = self.get("OuterBorder@0");
+    if(OuterBorderThing != null && OuterBorderThing.getChilds().size() > 0){
+        outerBorder = OuterBorderThing.getChilds().get(0).doAction("create", actionContext);
+    }
+}
+
+if(innerBorder != null || outerBorder != null){
+    return new CompoundBorder(outerBorder, innerBorder);
+}else{
+    return new CompoundBorder();
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.draw2d.borders.CompoundBorder/@InnerBorder
+sname
+InnerBorder
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.draw2d.borders.Borders
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+@xworker.draw2d.borders.CompoundBorder/@OuterBorder
+sname
+OuterBorder
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.draw2d.borders.Borders
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false

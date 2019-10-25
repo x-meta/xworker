@@ -1,0 +1,1672 @@
+^1450257749707
+@
+sname
+CreateProjectMini
+slabel
+CreateProjectMini
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If
+sname
+run
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@If
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@actions
+sname
+actions
+sdescriptors
+xworker.lang.actions.If/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@actions/@condition
+sname
+condition
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+if(actionContext.get("args") == null){
+    log.info("args is null, please input project name");
+    return false;
+}
+
+return true;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction
+sname
+ChildAction
+sdescriptors
+xworker.lang.actions.If/@ChildAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//当前变量上下文
+def bindings = actionContext.getScope();
+def projectName = args[2];
+
+//在当前目录下创建项目目录
+def dir = new File(projectName);
+log.info("projectName=" + projectName);
+dir.mkdirs();
+
+def srcDir = new File(dir, "src");
+srcDir.mkdirs();
+
+def binDir = new File(dir, "bin");
+binDir.mkdirs();
+
+//获取xworker下的classPath
+def xworkerFile = new File(world.getPath()).getAbsolutePath() ;
+def classPath = world.getClassLoader().getClassPath();
+def classPaths = classPath.split("[" + File.pathSeparator + "]");
+def classPathList = [];
+for(clPath in classPaths){
+    def clFile = new File(clPath);
+    if(clFile.isFile() && clFile.getAbsolutePath().startsWith(xworkerFile)){
+        classPathList.add(clPath);
+    }
+}
+
+//保存变量
+bindings.put("projectName", projectName);
+bindings.put("xworkerPath", world.getPath());
+bindings.put("classPaths", classPathList);
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateProject
+sname
+generateProject
+stype
+overwrite
+sfilePath
+${projectName}/.project
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateProject/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateProject/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>${projectName?if_exists}</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+</projectDescription>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateClassPath
+sname
+generateClassPath
+stype
+overwrite
+sfilePath
+${projectName}/.classpath
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateClassPath/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateClassPath/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JDK_TOOLS"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
+<#list classPaths as classPath>
+	<classpathentry kind="lib" path="${classPath}"/>
+</#list>	
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings
+sname
+generateSettings
+stype
+overwrite
+sfilePath
+${projectName}/.settings/org.eclipse.jdt.core.prefs
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+eclipse.preferences.version=1
+org.eclipse.jdt.core.compiler.codegen.inlineJsrBytecode=enabled
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.6
+org.eclipse.jdt.core.compiler.codegen.unusedLocal=preserve
+org.eclipse.jdt.core.compiler.compliance=1.6
+org.eclipse.jdt.core.compiler.debug.lineNumber=generate
+org.eclipse.jdt.core.compiler.debug.localVariable=generate
+org.eclipse.jdt.core.compiler.debug.sourceFile=generate
+org.eclipse.jdt.core.compiler.problem.assertIdentifier=error
+org.eclipse.jdt.core.compiler.problem.enumIdentifier=error
+org.eclipse.jdt.core.compiler.source=1.6
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateStartXWorkerJava
+sname
+generateStartXWorkerJava
+stype
+overwrite
+sfilePath
+${projectName}/src/xworker/StartXWorker.java
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateStartXWorkerJava/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateStartXWorkerJava/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+package xworker;
+
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+import java.io.File;
+
+public class StartXWorker {
+	public static void main(String[] args){
+		try{
+			World world = World.getInstance();			
+			world.init("${xworkerPath?js_string}");
+
+			//如果当前目录是XWorker项目，那么加入
+			File xworkerProperties = new File("xworker.properties");
+			if(xworkerProperties.exists()){
+				world.initThingManager(new File("."));
+			}
+			
+			//启动编辑器
+			Thing worldExplorer = World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner");			
+			worldExplorer.doAction("run");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletRequestBean
+sname
+generateServletRequestBean
+stype
+overwrite
+sfilePath
+${projectName}/src/xworker/servlet/HttpRequestBean.java
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletRequestBean/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletRequestBean/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+package xworker.servlet;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+public class HttpRequestBean {
+	HttpServletRequest request;
+
+	public HttpRequestBean(HttpServletRequest request) {
+		this.request = request;
+	}
+
+	public Object get(String name) {
+		return request.getParameter(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Map getParameterMap() {
+		return request.getParameterMap();
+	}
+
+	public void set(String name, Object value) {
+		request.setAttribute(name, value);
+	}
+
+	public Object[] gets(String name) {
+		return request.getParameterValues(name);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Map getDataMap(String objectName) {
+		Map pmap = getParameterMap();
+		Map<String, Object> values = new HashMap<String, Object>();
+		Iterator keys = pmap.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			if (key.startsWith(objectName + ".")) {
+				String ks[] = key.split("[.]");
+				String[] vs = (String[]) gets(key);
+				String v = null;
+				if (vs != null) {
+					if (vs.length == 1) {
+						v = vs[0];
+					} else {
+						for (int i = 0; i < vs.length; i++) {
+							if (i != 0) {
+								v = v + "," + vs[i];
+							} else {
+								v = vs[i];
+							}
+						}
+					}
+				}
+				String value = null;
+				if (v != null) {
+					value = v.toString();
+				}
+				if (value != null && !"".equals(value.trim())) {
+					putValue(values, ks, 0, value.trim());
+				}
+			}
+		}
+
+		return values;
+	}
+
+	private void putValue(Map<String, Object> values, String[] vs, int index,
+			String value) {
+		if ((vs.length - index) == 2) {
+			values.put(vs[vs.length - 1], value);
+		} else if ((vs.length - index) > 2) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> vm = (Map<String, Object>) values
+					.get(vs[index + 1]);
+			if (vm == null) {
+				vm = new HashMap<String, Object>();
+				values.put(vs[index + 1], vm);
+			}
+
+			index = index + 1;
+			putValue(vm, vs, index, value);
+		}
+	}
+
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletDo
+sname
+generateServletDo
+stype
+overwrite
+sfilePath
+${projectName}/src/xworker/servlet/XWorkerServlet.java
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletDo/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateServletDo/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+package xworker.servlet;
+
+import java.io.IOException;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.util.ThingRegistor;
+
+
+public class XWorkerServlet extends HttpServlet{
+	private static final long serialVersionUID = -7340146943865363473L;
+	private static Logger log = LoggerFactory.getLogger(XWorkerServlet.class);
+
+	public static final String GET = "GET";
+	public static final String POST = "POST";
+	public static final String DELETE = "DELETE";
+	public static final String HEAD = "HEAD";
+	public static final String OPTIONS = "OPTIONS";
+	public static final String PUT = "PUT";
+	public static final String TRACE = "TRACE";
+	
+	private World world = World.getInstance();
+	public static boolean debug = true;
+	private long lastCheckGlbalConfigTime = 0;
+	
+	public XWorkerServlet(){
+		super();		
+	}
+	
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+        //初始化World
+		String xworkerPath = config.getInitParameter("xworkerPath");	
+		
+		if(xworkerPath != null  && !"".equals(xworkerPath)){
+			world.init(xworkerPath);
+		}else if(!world.isInited()){
+			//初始化默认在WEB-INF/data/
+			String worldPath = config.getServletContext().getRealPath("WEB-INF/data/");
+			
+			world.init(worldPath);
+			world.setWebFileRoot(config.getServletContext().getRealPath("/"));
+		}
+	}
+
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doRequest(request, response, XWorkerServlet.GET);
+	}
+
+	@Override
+	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doRequest(req, resp, XWorkerServlet.DELETE);
+	}
+
+	@Override
+	protected void doHead(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doRequest(req, resp, XWorkerServlet.HEAD);
+	}
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doRequest(req, resp, XWorkerServlet.OPTIONS);
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doRequest(req, resp, XWorkerServlet.PUT);
+	}
+
+	@Override
+	protected void doTrace(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		doRequest(req, resp, XWorkerServlet.TRACE);
+	}
+
+	public void doRequest(HttpServletRequest request, HttpServletResponse response, String method) throws ServletException, IOException {
+		long start = System.currentTimeMillis();
+		long startN = System.nanoTime();
+
+		if(start - lastCheckGlbalConfigTime > 10000){
+			lastCheckGlbalConfigTime = start;
+			//最多10秒检测一次全局配置
+			Thing cfg = world.getThing(ThingRegistor.getPath("_xworker_globalConfig"));
+			if(cfg != null){
+				debug = cfg.getBoolean("webDebug");
+			}else{
+				debug = false;
+			}
+		}
+		
+		ActionContext actionContext = new ActionContext();
+		//设置变量
+		//基本变量
+		actionContext.put("world", world);			
+		
+		//访问变量
+		actionContext.put("requestBean", new HttpRequestBean(request));
+		
+		//http变量
+		actionContext.put("request", request);
+		actionContext.put("requestMethod", method);
+		actionContext.put("response", response);	
+		actionContext.put("servlet", this);				
+		actionContext.put("session", request.getSession());			
+				
+		//执行脚本
+		String uri = request.getRequestURI();
+		String contextPath = request.getContextPath();
+		uri = uri.substring(contextPath.length(), uri.length());
+		Thing webControl = null;
+		String webControlName = null;
+		if(uri.length() == 3){
+			webControlName = request.getParameter("sc");
+			webControl = world.getThing(webControlName);
+		}else{
+			webControlName = uri.substring(1,  uri.length() - 3);
+			webControlName = webControlName.replace('/', '.');
+			webControlName = webControlName.replace('_', '.');
+			webControl = world.getThing(webControlName);
+		}
+		
+		if(webControl == null){		
+			response.setContentType("text/plain; charset=utf-8");
+			response.getWriter().print("webControl不存在：" + webControlName);
+			log.warn("webControl不存在：" + webControlName);
+			//throw new ServletException();
+		}else{
+			try{
+				webControl.doAction("httpDo", actionContext);
+			}catch(Exception e){
+				if(!(e instanceof ServletException)){
+					throw new ServletException(e);
+				}else{
+					throw (ServletException) e;
+				}
+			}
+		}
+		if(debug && log.isInfoEnabled()){
+			log.info("web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
+		}
+		
+	}
+	
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		doRequest(request, response, "POST");
+	}
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateWebXml
+sname
+generateWebXml
+stype
+overwrite
+sfilePath
+${projectName}/webapp/WEB-INF/web.xml
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateWebXml/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateWebXml/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+    <display-name>XWorker Application</display-name>
+       
+     <!--  not correct for fckedtor if not commoned.-->
+     <!--
+     <mime-mapping>
+		<extension>xml</extension> 
+		<mime-type>text/x-cross-domain-policy</mime-type>
+	</mime-mapping><-->
+	
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.servlet.XWorkerServlet</servlet-class>
+        <init-param>
+     		<param-name>xworkerPath</param-name> 
+     		<param-value>${xworkerPath}</param-value>
+    	</init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>      
+</web-app>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateJbossXml
+sname
+generateJbossXml
+stype
+overwrite
+sfilePath
+${projectName}/webapp/WEB-INF/jboss-web.xml
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateJbossXml/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateJbossXml/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+<jboss-web>
+   <!-- Uncomment the security-domain to enable security. You will
+      need to edit the htmladaptor login configuration to setup the
+      login modules used to authentication users.
+      <security-domain>java:/jaas/jmx-console</security-domain>
+   -->
+	<context-root>/@web_context_root@</context-root>
+</jboss-web>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@geneateLog4jProperties
+sname
+geneateLog4jProperties
+stype
+overwrite
+sfilePath
+${projectName}/src/log4j.properties
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@geneateLog4jProperties/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@geneateLog4jProperties/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+#
+# Log4J Settings for log4j 1.2.x (via jakarta-commons-logging)
+#
+# The five logging levels used by Log are (in order):
+#
+#   1. DEBUG (the least serious)
+#   2. INFO
+#   3. WARN
+#   4. ERROR
+#   5. FATAL (the most serious)
+
+
+# Set root logger level to WARN and append to stdout
+log4j.rootLogger=INFO, ROLLING_FILE, stdout
+
+#log4j.appender.stdout=org.xworker.util.Log4jConsoleAppender
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d %5p (%c:%L) - %m%n
+
+log4j.appender.ROLLING_FILE=org.apache.log4j.RollingFileAppender 
+log4j.appender.ROLLING_FILE.Threshold=ERROR 
+log4j.appender.ROLLING_FILE.File=log/xworker.log 
+log4j.appender.ROLLING_FILE.Append=true 
+log4j.appender.ROLLING_FILE.MaxFileSize=100KB 
+log4j.appender.ROLLING_FILE.MaxBackupIndex=1 
+log4j.appender.ROLLING_FILE.layout=org.apache.log4j.PatternLayout 
+log4j.appender.ROLLING_FILE.layout.ConversionPattern=[framework] %d - %c -%-4r [%t] %-5p %c %x - %m%n 
+
+
+# Print only messages of level INFO or above in the package noModule.
+log4j.logger.noModule=INFO
+log4j.logger.org.xmeta=INFO
+log4j.logger.xworker=INFO
+log4j.logger.core=INFO
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateXWorkerProperties
+sname
+generateXWorkerProperties
+stype
+overwrite
+sfilePath
+${projectName}/xworker.properties
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateXWorkerProperties/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateXWorkerProperties/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+scode
+projectName=${projectName?if_exists}
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings1
+sname
+generateXWorkerCmd
+stype
+overwrite
+sfilePath
+${projectName}/xworker.cmd
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings1/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings1/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+scode
+xer.cmd
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings2
+sname
+generateXWorkerSh
+stype
+overwrite
+sfilePath
+${projectName}/xworker.sh
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings2/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateSettings2/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+scode
+xer.cmd
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateAntBuild
+sname
+generateAntBuild
+stype
+overwrite
+sfilePath
+${projectName}/build.xml
+sfileEncoding
+UTF-8
+slog
+true
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@CodeGenerator
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateAntBuild/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@generateAntBuild/@Contents/@FreemarkerContent
+sname
+FreemarkerContent
+Scode
+#$@text#$@
+<project default="dist" basedir=".">
+    <property name="projectName" value="${projectName}"></property>
+    <property name="xworkerPath" value="${xworkerPath}/"></property>
+    <property name="web_context_root" value="${projectName}"></property>    
+    <target name="dist">
+        <delete dir="dist/classes"></delete>
+        <copy todir="dist/classes">
+            <fileset dir="bin"></fileset>
+        </copy>
+        <copy todir="dist/things">
+            <fileset dir="things"></fileset>
+        </copy>
+        <copy file="xworker.properties" tofile="dist/xworker.properties"></copy>
+        <jar destfile="dist/lib/${r"$"}{projectName}.jar">
+            <fileset dir="dist/classes"></fileset>
+        </jar>
+        <delete dir="dist/classes"></delete>
+    </target>
+    
+    <target name="distSingleJar">
+        <delete dir="dist/classes"></delete>
+        <copy todir="dist/classes">
+            <fileset dir="bin"></fileset>
+            <fileset dir="things"></fileset>
+            <fileset file="xer.ini"></fileset>
+        </copy>
+        <jar destfile="dist/${projectName}.jar">
+            <fileset dir="dist/classes"></fileset>
+        </jar>
+        <delete dir="dist/classes"></delete>
+    </target>
+    
+    <target name="distWarRunInXWorekr">
+        <delete dir="dist/classes"></delete>
+        <delete dir="dist/war"></delete>
+        <copy todir="dist/classes">
+            <fileset dir="bin"></fileset>
+            <fileset dir="things"></fileset>
+            <fileset file="xer.ini"></fileset>
+        </copy>
+        <copy todir="dist/war" filtering="true">
+            <fileset dir="webroot"></fileset>
+        </copy>        
+        <copy todir="dist/war/WEB-INF/lib/">
+            <fileset file="${r"$"}{xworkerPath}lib/log4j-1.2.15.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/slf4j-api-1.5.6.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/slf4j-log4j12-1.5.6.jar"></fileset>
+        </copy>
+        <replace file ="dist/war/WEB-INF/jboss-web.xml">    
+            <replacefilter token="@web_context_root@" value="${r"$"}{web_context_root}"/>
+        </replace>
+        <jar destfile="dist/war/WEB-INF/lib/${r"$"}{projectName}.jar">
+            <fileset dir="dist/classes"></fileset>
+        </jar>
+        <jar destfile="dist/${r"$"}{projectName}.war">
+            <fileset dir="dist/war"></fileset>
+        </jar>
+        <delete dir="dist/classes"></delete>
+    </target>
+    
+    <target name="distWarRunInOtherWebApp">
+        <delete dir="dist/classes"></delete>
+        <delete dir="dist/war"></delete>
+        <copy todir="dist/classes">
+            <fileset dir="bin"></fileset>
+            <fileset dir="things"></fileset>
+            <fileset file="xer.ini"></fileset>
+        </copy>
+        <copy todir="dist/war" filtering="true">
+            <fileset dir="webroot"></fileset>
+        </copy>        
+        <copy todir="dist/war/WEB-INF/lib/">
+            <fileset file="${r"$"}{xworkerPath}lib/log4j-1.2.15.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/slf4j-api-1.5.6.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/slf4j-log4j12-1.5.6.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/ognl.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/xworker/xmeta.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/jackson-core-2.2.0.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/jackson-databind-2.2.0.jar"></fileset>
+            <fileset file="${r"$"}{xworkerPath}lib/jackson-annotations-2.2.0.jar"></fileset>            
+        </copy>
+        <replace file ="dist/war/WEB-INF/jboss-web.xml">    
+            <replacefilter token="@web_context_root@" value="${r"$"}{web_context_root}"/>
+        </replace>
+        <jar destfile="dist/war/WEB-INF/lib/${r"$"}{projectName}.jar">
+            <fileset dir="dist/classes"></fileset>
+        </jar>
+        <jar destfile="dist/${r"$"}{projectName}.war">
+            <fileset dir="dist/war"></fileset>
+        </jar>
+        <delete dir="dist/classes"></delete>
+    </target>
+</project>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@If/@ChildAction/@Log
+sname
+Log
+slevel
+info
+smessage
+porject created
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@Log
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

@@ -1,0 +1,441 @@
+@xworker.ide.util.ThingCollection
+sname
+ThingCollection
+slabel
+ThingCollection
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sdescription
+<p>事物集合，通过设置事物集合的things属性，可以方便读取事物。</p>
+sid
+DataObjectCollector
+@xworker.ide.util.ThingCollection/@name
+sname
+name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@label
+sname
+label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@type
+sname
+type
+sinputtype
+select
+sdefault
+multi
+Sdescription
+#$@text#$@
+<p>SINGLE或者MULTI。</p>
+<p>如果是SINGLE返回事物，如果没有返回null。</p>
+<p>如果是MULTI返回事物列表，如果没有返回空的List。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+type
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@type/@single
+sname
+single
+slabel
+SINGLE
+svalue
+single
+sid
+single
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.ide.util.ThingCollection/@type/@multi
+sname
+multi
+slabel
+MULTI
+svalue
+multi
+sid
+multi
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.ide.util.ThingCollection/@dataName
+sname
+dataName
+Sdescription
+#$@text#$@
+保存到变量容器时的名称。<br />
+<br />
+数据对象收集完毕后用此名称保存到变量容器中，这样其他数据对象或者脚本就可以使用了。
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+dataName
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@append
+sname
+append
+sinputtype
+truefalse
+sdefault
+false
+Sdescription
+#$@text#$@
+<p>是否是追加数据模式。<br />
+<br />
+如果true，那么如果数据变量容器已经有此数据了，那么追加，否则覆盖。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+append
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@dataObjects
+sname
+things
+sinputtype
+textarea
+scolspan
+2
+Sdescription
+#$@text#$@
+<p>数据对象的名称列表，多个时用','号隔开。<br />
+<br />
+数据对象除了从World取也可以从actionContext（变量容器）中取，如果是数据中心中的数据，那么路径至少包含了工程名和数据工厂名，因此通过':'号分割长度至少为2，如果长度为1那么从变量范围中取。<br />
+<br />
+当dataObjects的一个路径为包名时，可以通过后置参数指定查找的结果：<br />
+d:是否包含子目录。<br />
+n:数据对象的名称，使用正则表达式判断。<br />
+s:数据对象的结构。<br />
+如：core.objects.lang&nbsp; d=true n=_core.*，查找core工程structure下的lang包下所有以_core开头的数据对象。<br />
+<br />
+如：<br />
+core.objects.collections.DataObjectCollector/@dataObjects,<br />
+core:objects,<br />
+aData</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+dataObjects
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@description
+sname
+description
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.util.ThingCollection/@scripts
+sname
+scripts
+sid
+scripts
+slabel
+scripts
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.util.ThingCollection/@scripts/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ThingManager;
+import org.xmeta.Category;
+
+def dataNames = self.things;
+if(dataNames == null){
+    //如果没有指定要读取的事物，那么直接返回
+    if(self.type == "single"){
+        return null;
+    }else{
+        return [];
+    }
+}
+
+//读取事物
+def data = null;
+if(self.type == "multi"){
+    data = [];
+}
+def dns = dataNames.split("[,]");
+for(name in dns){
+    name = name.trim();
+
+    if(name.split("[:]").length >= 2){
+        //读取事物
+        def obj = getData(name);
+        if(obj == null) continue;
+        
+        if(self.type == "single"){
+            data = obj;
+            break;
+        }else{
+            if(obj instanceof List)
+                data.addAll(obj);
+            else 
+                data.add(obj);
+        }
+    }else{
+        //从动作上下文中读物事物
+        def obj = actionContext.get(name);
+        if(obj == null) continue;
+        
+        if(self.type == "single"){
+            data = obj;
+            break;
+        }else{
+            if(obj instanceof List)
+                data.addAll(obj);
+            else 
+                data.add(obj);
+        }
+    }
+}
+
+if(self.dataName != null && self.dataName != ""){
+    if(self.append == "false"){
+        actionContext.put(self.dataName, data);
+    }else{
+        if(self.type == "single"){
+            if(data != null) actionContext.put(self.dataName, data);
+        }else{
+            def ds = actionContext.get(self.dataName);
+            if(ds != null && ds instanceof List){
+                ds.addAll(data);
+            }else{
+                actionContext.put(self.dataName, data);
+            }
+        }
+    }
+}
+
+return data;
+
+def getData(String name){
+    String[] ns = name.split("[ ]");
+    def obj = world.get(ns[0]);
+    //println obj;
+    if(obj instanceof Thing){
+        return obj;
+    }else if(obj instanceof Category || obj instanceof ThingManager){
+        //是包或者数据工厂（根包）
+        String includeChild = "true";
+        String structureName = null;
+        String nameRegex = null;
+        if(ns.length > 1){
+            for(n in ns){
+                String[] nss = n.split("[=]");
+                if(nss[0] == "d" && nss.length > 1){
+                    includeChild = nss[1].trim();
+                }
+                if(nss[0] == "n" && nss.length > 1){
+                    nameRegex = nss[1].trim();
+                }
+                if(nss[0] == "s" && nss.length > 1){
+                    structureName = nss[1].trim();
+                }
+            }
+        }
+        def factory = null;
+        String packageName = "";
+        if(obj instanceof ThingManager){
+            factory = (ThingManager) obj;
+            packageName = "";
+        }else{
+            factory = obj.getThingManager();
+            packageName = obj.getName();
+        }
+        
+        boolean inc = false;
+        if(includeChild == "true") inc = true;
+        
+        def datas = factory.getThings(packageName, (String) structureName, inc);
+        if(nameRegex != null && nameRegex != ""){
+            //println nameRegex;
+            def d = [];
+            for(data in datas){
+                def dname = data.metadata.name;
+
+                if(dname.matches(nameRegex)){
+                    d.add(data);
+                }
+            }
+            
+            return d;
+        }else{
+            return datas;
+        }
+    }
+    
+    return null;
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.GroovyAction
+@xworker.ide.util.ThingCollection/@scripts/@printObjects
+sname
+printObjects
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+Scode
+#$@text#$@
+def datas = self.doAction("run");
+for(d in datas){
+    println "thingCollection: " + d.metadata.path;
+}
+#$@text#$@
+sid
+printObjects
+sdescriptors
+xworker.lang.actions.GroovyAction
+@xworker.ide.util.ThingCollection/@scripts/@addThing
+sname
+addThing
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def thingForAdd = actionContext.get("thing");
+if(thingForAdd != null){
+    //取已有的事物
+    def things = self.doAction("run");
+    log.info(things);
+    if(things instanceof Thing){        
+        return;
+    }else if(things instanceof List){        
+        for(t in things){
+            if(t.metadata.path == thingForAdd.metadata.path){
+                //已经存在，返回
+                return;
+            }
+        }
+        
+        //事物不存，添加
+        addThing(self, thingForAdd);
+        self.save();
+    }else if(things == null){
+        //事物不存，添加
+        addThing(self, thingForAdd);
+        self.save();
+    }
+}
+
+def addThing(t1, t2){
+    def thingsStr = t1.getString("things");
+    if(thingsStr == null || thingsStr == ""){
+        thingsStr = t2.metadata.path;
+    }else{
+        thingsStr += ",\n" + t2.metadata.path;
+    }
+    t1.set("things", thingsStr);
+}
+#$@text#$@
+sid
+addThing
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.util.ThingCollection/@scripts/@addThing/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.ide.util.ThingCollection/@scripts/@addThing/@ins/@thing
+sname
+thing
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+thing
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param

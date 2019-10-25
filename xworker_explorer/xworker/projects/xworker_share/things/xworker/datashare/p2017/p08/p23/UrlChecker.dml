@@ -1,0 +1,276 @@
+%1503480313438
+@
+sname=UrlChecker
+slabel=UrlChecker
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=http
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>检查URL。</p>
+
+<p><strong>监控消息</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在获取url内容时有异常则使用异常堆栈信息，否则执行doCheck方法，如果doCheck方法返回值不为null则作为消息。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String doCheck(String url, String content, int level)</strong><br />
+	检查url及通过url获取的内容，返回监控的消息内容。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.monitor.check.Checkers
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@check
+    sname=check
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilAction;
+
+//获取要检查的url列表
+def urls = self.doAction("getUrls", actionContext);
+if(urls == null){
+   return null;
+}
+
+def msgs = [];
+for(us in urls.split("[\n]")){
+    us = us.trim();
+    for(url in us.split("[,]")){
+        try{
+            def content = getContent(actionContext, "url", url);
+            def msg = self.doAction("doCheck", actionContext, 
+                  "url", url, "content", content, "level", level);
+            if(msg != null){
+                msgs.add(["url":url, "msg": msg]);
+            }
+        }catch(Exception e){
+            msgs.add(["url": url, "msg": "<pre>" + UtilAction.getCauseStackTrace(e) + "</pre>"]);
+        }
+    }
+}
+
+if(msgs.size() == 0){
+    //没有内容不发送
+    return null;
+}else{
+    //println msgs;
+    return toHtml(actionContext, "messages", msgs, "checker", self);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=check
+      @/@actions/@check/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@check/@ActionDefined/@getContent
+        sname=getContent
+        surl=var:url
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.net.URLActions/@GetString
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getContent
+        @/@actions/@check/@ActionDefined/@toHtml
+        sname=toHtml
+        stype=freemarker
+        svarScope=Local
+        stemplateEncoding=UTF-8
+        soutputEncoding=UTF-8
+        StemplateCode=
+#$@text#$@
+<h2>${checker.metadata.label}</h2>
+&nbsp;&nbsp;&nbsp;&nbsp;${checker.metadata.path}
+<hr style="height:3px;border:none;border-top:3px double red;" />
+<#list messages as msg>
+<h3>${msg.url}</h3>
+<br/>
+${msg.msg}
+</#list>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.text.TextTemplate
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=toHtml
+    @/@actions/@getUrls
+    sname=getUrls
+    sattributeName=urls
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getUrls
+    @/@actions/@doCheck
+    sname=doCheck
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doCheck
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@urls
+  sname=urls
+  sinputtype=textarea
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=urls
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

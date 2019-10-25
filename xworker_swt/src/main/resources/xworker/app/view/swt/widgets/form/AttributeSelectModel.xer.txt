@@ -1,0 +1,194 @@
+^1519375370809
+@
+sname
+AttributeSelectModel
+slabel
+AttributeSelectModel
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sdescription
+<p>数据对象属性的下拉选择框的Model。</p>
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.swt.model.Model/@actions1
+  sid
+  actions
+    @/@actions/@setValue
+    sname
+    setValue
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def name = self.getMetadata().getName();
+def value = actionContext.get("value");
+if(value == null && actionContext.get("thingAttributes") != null){
+    value = thingAttributes.get((String) name);
+}
+
+def combo = actionContext.get(self.swtControl);
+if(combo != null){
+    //println combo.getData("storeListener");
+    combo.getData("storeListener").doAction("setSelection", actionContext, ["id":value]);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    setValue
+    @/@actions/@getValue
+    sname
+    getValue
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.custom.CCombo;
+import org.xmeta.Action;
+
+def combo = actionContext.get(self.swtControl);
+if(!(combo instanceof CCombo)){
+    //Debuger.debug(actionContext);
+    def scopes = actionContext.getScopes();
+    log.info("comboclas=" + combo.getClass() + ",swtControl=" + self.metadata.path);
+    
+    for(int i=scopes.size() - 1; i>=0; i--){
+        def bindings = scopes.get(i);
+        //log.info("cls" + i + "=" + bindings.caller);
+        if(bindings.caller instanceof Action){
+            //log.info("action=" + aciton.thing.metadata.path);
+        }
+    }
+    return;
+}
+def index = combo.getSelectionIndex();
+if(index >= 0 && actionContext.get("attribute") != null && attribute.getBoolean("optional")){
+    //log.info("optional=" + attribute.optional);
+    index = index - 1;
+}
+
+//log.info("getComboValue,index=" + index);
+if(index == -1){
+    if(combo instanceof CCombo && combo.getEditable()){
+        return combo.getText();
+    }else{
+        return null;
+    }
+}else{
+    def store = combo.getData("store");
+    def records = store.records;
+    if(records.size() > index){
+        def record = records.get(index);
+        
+        //按照属性所映射的值来取
+        def attribute = self.get("attribute");
+        //println(attribute);
+        def relationValueField = attribute.getStringBlankAsNull("relationValueField");
+        if(relationValueField != null){
+            return record.get(relationValueField);
+        }
+        
+        //按照数据对象的默认值来取
+        def dataObject = store.dataObject;
+        def valueName = dataObject.getStringBlankAsNull("valueName");
+        if(valueName != null){
+            return record.get(valueName);
+        }
+        
+        def keys = record.getKeyAndDatas();
+        if(keys != null && keys.length > 0){
+            return keys[0][1];
+        }else{
+            log.warn("record has no key, record=" + record + ", dataObject=" + record.getMetadata().getDescriptor());
+        }
+    }
+    
+    return null;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    getValue
+    @/@actions/@getControl
+    sname
+    getControl
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return actionContext.get(self.swtControl);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    getControl
+    @/@actions/@getRootControl
+    sname
+    getRootControl
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return actionContext.get(self.swtControl);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    getRootControl

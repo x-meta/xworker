@@ -1,0 +1,677 @@
+^1540967932191
+@
+sname
+SimpleAppWithTabFolder
+slabel
+SimpleAppWithTabFolder
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.swt.layout.LayoutDatas
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>一个具有菜单和TabFolder布局的简单应用，左边是树菜单，点击树菜单在右边的TabFolder打开编辑器。</p>
+
+<p><strong>返回值和保持变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; SimpleAppWithTabFolder会创建独立的变量上下文，返回的是Composite，保存的是创建的变量上下文。</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 设置菜单子节点。</p>
+
+<p><strong>变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量上下文中主要的变量有：</p>
+
+<ul>
+	<li><strong>mainSashForm: SashForm</strong><br />
+	主SashForm。</li>
+	<li><strong>thingTree: Tree</strong><br />
+	菜单树控件。</li>
+	<li><strong>tabFolder: CTabFolder</strong><br />
+	编辑区的标签页控件。</li>
+	<li><strong>actions: ActionContainer</strong><br />
+	动作容器。</li>
+</ul>
+
+<p><strong>outlineBrowser: Browser</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果在变量上下文中存在outlineBrowser变量，那么会在outlineBrowser中显示当前选中节点的事物文档。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@create
+    sname
+    create
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import xworker.swt.design.Designer;
+
+//使用新的变量上下文
+def ac = new ActionContext();
+ac.put("parent", parent);
+def menu = self.getThing("Menu@0");
+if(menu == null){
+    log.warn("must have an menu, thing=" + self.getMetadata().getPath());
+    return;
+}
+ac.put("parentContext", actionContext);
+
+//创建面板
+def thing = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@mainSashForm");
+def composite = null;
+Designer.pushCreator(self);
+try{
+    composite = thing.doAction("create", ac);
+}finally{
+    Designer.popCreator();
+}
+
+//创建树
+ac.peek().put("parent", ac.thingTree);
+ac.put("thingPath", menu.getMetadata().getPath());
+def model = null;
+if(false){//self.getBoolean("rootVisible", true)){改属性已作废
+    model = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@TreeModels");
+}else{
+    model = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@TreeModels1");
+}
+model.doAction("create", ac);
+
+//创建子节点
+actionContext.peek().put("parent", composite);
+for(child in self.getChilds()){
+    if(child.getThingName() == "Menu" || child.getThingName() == "Things"){
+        continue;
+    }
+    child.doAction("create", actionContext);
+}
+
+//创建默认打开的页面
+def defaultOpen = self.getStringBlankAsNull("defaultOpen");
+if(defaultOpen != null){
+    for(open in defaultOpen.split("[\n]")){
+        open = open.trim();
+        def item = world.getThing(open);
+        if(item != null){
+            ac.actions.doAction("openItem", actionContext, [thing:item]);
+        }
+    }
+}
+
+actionContext.g().put(self.getMetadata().getName(), ac);
+Designer.attachCreator(composite, self.getMetadata().getPath(), actionContext);
+
+return composite;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    create
+    @/@actions/@createThingTab
+    sname
+    createThingTab
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//使用新的变量上下文
+def ac = actionContext;
+def menu = self.getThing("Menu@0");
+if(menu == null){
+    log.warn("must have an menu, thing=" + self.getMetadata().getPath());
+    return;
+}
+ac.put("parentContext", actionContext);
+
+//创建面板
+def thing = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@mainSashForm");
+def composite = thing.doAction("create", ac);
+
+//创建树
+ac.peek().put("parent", ac.thingTree);
+ac.put("thingPath", menu.getMetadata().getPath());
+def model = null;
+if(self.getBoolean("rootVisible", true)){
+    model = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@TreeModels");
+}else{
+    model = world.getThing("xworker.swt.xwidgets.app.SimpleAppWithTabFolderShell/@TreeModels1");
+}
+model.doAction("create", ac);
+
+//创建默认打开的页面
+def defaultOpen = self.getStringBlankAsNull("defaultOpen");
+if(defaultOpen != null){
+    for(open in defaultOpen.split("[\n]")){
+        open = open.trim();
+        def item = world.getThing(open);
+        if(item != null){
+            ac.actions.doAction("openItem", actionContext, [thing:item]);
+        }
+    }
+}
+
+actionContext.g().put(self.getMetadata().getName(), ac);
+return composite;
+#$@text#$@
+    sdescription
+    <p>在事物管理器中以ThingTab的方式打开。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThingTab
+    @/@actions/@createThingTabOutline
+    sname
+    createThingTabOutline
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//创建Outline
+def browser = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
+return browser.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThingTabOutline
+    @/@actions/@menu_open
+    sname
+    menu_open
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+XWorkerUtils.ideOpenThingTab(currentThing);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menu_open
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@defaultOpen
+  sname
+  defaultOpen
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>默认打开的菜单组件，用菜单事物的完整路径，如有多个使用换行分割。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  defaultOpen
+  @/@thingTabRoot
+  sname
+  thingTabRoot
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sgroup
+  ThingTab
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>使用XWorker的thingTab方法打开是需要判断的，不需要修改这个值。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  thingTabRoot
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@Menu
+  sname
+  Menu
+  slabel
+  菜单
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.swt.xwidgets.app.Menu
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sicon
+  icons/folder.png
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Menu
+  @/@Things
+  sname
+  Things
+  slabel
+  功能组件
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.swt.xwidgets.app.SimpleAppWithSashForm/@Things
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sdescription
+  <p>可以为菜单可以实现的各种功能组件。</p>
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Things
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuDefine
+      @/@sswtMenus/@menuDefine/@application
+      sname
+      application
+      slabel
+      应用
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      application
+    @/@sswtMenus/@menuSetting
+    sname
+    menuSetting
+    smenuType
+    application
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuSetting
+      @/@sswtMenus/@menuSetting/@open
+      sname
+      open
+      slabel
+      打开
+      surl
+      xworker.swt.xwidgets.app.SimpleAppWithTabFolder/@actions/@menu_open
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      open

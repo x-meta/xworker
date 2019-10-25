@@ -1,0 +1,54 @@
+%1502279894239
+@
+sname=BrowserViewer
+slabel=BrowserViewer
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import xworker.util.XWorkerUtils;
+
+def thing = world.getThing("xworker.notification.prototypes.BrowserViewerShell/@webBrowser");
+thing.doAction("create", actionContext);
+
+def url = XWorkerUtils.getThingDescUrl(notification.thing);
+webBrowser.scripts.doAction("openUrl", actionContext, ["name": notification.getLabel(), "url":url]);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create

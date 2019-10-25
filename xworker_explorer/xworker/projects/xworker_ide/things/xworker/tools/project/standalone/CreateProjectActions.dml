@@ -1,0 +1,4567 @@
+^1544518930406
+@
+sname
+CreateProjectActions
+slabel
+CreateProjectActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>创建独立项目的有关动作。</p>
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.actions.Actions
+sth_registMyChilds
+true
+sth_registDisabled
+false
+sth_mark
+false
+  @/@CreateDmlProject
+  sname
+  CreateDmlProject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.tools.project
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>创建简单的动态模型的项目。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getProjectName()</strong><br />
+	返回项目名。<br />
+	&nbsp;</li>
+	<li><strong>String getProjectDir()</strong><br />
+	返回项目所在的目录，如果目录不存在将会创建。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAddToXWorker()</strong><br />
+	是否添加到XWorker。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CreateDmlProject
+    @/@CreateDmlProject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CreateDmlProject/@actions/@getProjectName
+      sname
+      getProjectName
+      sattributeName
+      projectName
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectName
+      @/@CreateDmlProject/@actions/@getProjectDir
+      sname
+      getProjectDir
+      sattributeName
+      projectDir
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectDir
+      @/@CreateDmlProject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+def projectName = self.doAction("getProjectName", actionContext);
+def dirObj = self.doAction("getProjectDir", actionContext);
+def dir = dirObj;
+if(dir instanceof String){
+    dir = new File(dir);
+}
+
+if(dir.exists() == false){
+    dir.mkdirs();
+}
+
+//创建dml文件
+def fout = new FileOutputStream(new File(dir, ".dmlprj"));
+fout.write(("projectName=" + projectName).getBytes());
+fout.close();
+
+//是否添加到xworker的初始化项目中
+if(self.doAction("isAddToXWorker", actionContext)){    
+    def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+        def initAttributes = ["name":projectName, "isWorkspace":"false", "isThingRoot":"true"];
+        projectSet.doAction("addProject", actionContext, ["projectFile":dir, "initAttributes":initAttributes]); 
+             
+    }
+}
+return true;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@CreateDmlProject/@actions/@isAddToXWorker
+      sname
+      isAddToXWorker
+      sattributeName
+      addToXWorker
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isAddToXWorker
+    @/@CreateDmlProject/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CreateDmlProject/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CreateDmlProject/@projectName
+    sname
+    projectName
+    sshowLabel
+    true
+    ssize
+    50
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectName
+    @/@CreateDmlProject/@projectDir
+    sname
+    projectDir
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectDir
+    @/@CreateDmlProject/@addToXWorker
+    sname
+    addToXWorker
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否添加到XWorker的项目组中，这样在XWorker的事物管理器中随时都可以看到这个项目。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addToXWorker
+    @/@CreateDmlProject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@CreateEclipseDmlProject
+  sname
+  CreateEclipseDmlProject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.tools.project
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>创建简单的动态模型的项目。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getProjectName()</strong><br />
+	返回项目名。<br />
+	&nbsp;</li>
+	<li><strong>String getProjectDir()</strong><br />
+	返回项目所在的目录，如果目录不存在将会创建。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAddToXWorker()</strong><br />
+	是否添加到XWorker。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CreateEclipseDmlProject
+    @/@CreateEclipseDmlProject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CreateEclipseDmlProject/@actions/@getProjectName
+      sname
+      getProjectName
+      sattributeName
+      projectName
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectName
+      @/@CreateEclipseDmlProject/@actions/@getProjectDir
+      sname
+      getProjectDir
+      sattributeName
+      projectDir
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectDir
+      @/@CreateEclipseDmlProject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+def projectName = self.doAction("getProjectName", actionContext);
+def dirObj = self.doAction("getProjectDir", actionContext);
+def dir = dirObj;
+if(dir instanceof String){
+    dir = new File(dir);
+}
+
+if(dir.exists() == false){
+    dir.mkdirs();
+}
+
+//创建dml文件
+def fout = new FileOutputStream(new File(dir, "dml.prj"));
+fout.write(("projectName=" + projectName).getBytes());
+fout.close();
+
+//创建Eclipse项目
+def prjInfo = """<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>${projectName}</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+</projectDescription>""";
+fout = new FileOutputStream(new File(dir, ".project"));
+fout.write(prjInfo.getBytes());
+fout.close();
+
+//是否添加到xworker的初始化项目中
+if(self.doAction("isAddToXWorker", actionContext)){
+    def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+        def initAttributes = ["name":projectName, "isWorkspace":"false", "isThingRoot":"true"];
+        projectSet.doAction("addProject", actionContext, ["projectFile":dir, "initAttributes":initAttributes]); 
+             
+    }
+}
+return true;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@CreateEclipseDmlProject/@actions/@isAddToXWorker
+      sname
+      isAddToXWorker
+      sattributeName
+      addToXWorker
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isAddToXWorker
+    @/@CreateEclipseDmlProject/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CreateEclipseDmlProject/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CreateEclipseDmlProject/@projectName
+    sname
+    projectName
+    sshowLabel
+    true
+    ssize
+    50
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectName
+    @/@CreateEclipseDmlProject/@projectDir
+    sname
+    projectDir
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectDir
+    @/@CreateEclipseDmlProject/@addToXWorker
+    sname
+    addToXWorker
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否添加到XWorker的项目组中，这样在XWorker的事物管理器中随时都可以看到这个项目。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addToXWorker
+    @/@CreateEclipseDmlProject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@CreateEclipseJavaProject
+  sname
+  CreateEclipseJavaProject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.tools.project
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>创建简单的动态模型的项目。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getProjectName()</strong><br />
+	返回项目名。<br />
+	&nbsp;</li>
+	<li><strong>String getProjectDir()</strong><br />
+	返回项目所在的目录，如果目录不存在将会创建。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAddToXWorker()</strong><br />
+	是否添加到XWorker。<br />
+	&nbsp;</li>
+	<li><strong>boolean isIncludeXWorkerLib()</strong><br />
+	是否包含XWorker中所有的Jar包。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CreateEclipseJavaProject
+    @/@CreateEclipseJavaProject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CreateEclipseJavaProject/@actions/@getProjectName
+      sname
+      getProjectName
+      sattributeName
+      projectName
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectName
+      @/@CreateEclipseJavaProject/@actions/@getProjectDir
+      sname
+      getProjectDir
+      sattributeName
+      projectDir
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectDir
+      @/@CreateEclipseJavaProject/@actions/@isAddToXWorker
+      sname
+      isAddToXWorker
+      sattributeName
+      addToXWorker
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isAddToXWorker
+      @/@CreateEclipseJavaProject/@actions/@run1
+      sname
+      run
+      schangeSelf
+      true
+      sselfVarName
+      data
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@ActionGroup
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run1
+        @/@CreateEclipseJavaProject/@actions/@run1/@actions
+        sname
+        actions
+        sdescriptors
+        xworker.lang.actions.Begin/@actions
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        actions
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@init
+          sname
+          resinit
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.apache.commons.io.FileUtils;
+
+def bindings = actionContext.getScope();
+def projectName = data.doAction("getProjectName", actionContext);
+def dirObj = data.doAction("getProjectDir", actionContext);
+def dir = dirObj;
+if(dir instanceof String){
+    dir = new File(dir);
+}
+
+if(dir.exists() == false){
+    dir.mkdirs();
+}
+
+def srcDir = new File(dir, "src");
+srcDir.mkdirs();
+
+def binDir = new File(dir, "bin");
+binDir.mkdirs();
+
+def thingsDir = new File(dir, "things");
+thingsDir.mkdirs();
+
+//获取xworker下的classPath
+boolean includeAllLib = data.doAction("isIncludeXWorkerLib", actionContext);
+def xworkerFile = new File(world.getPath()).getAbsolutePath() ;
+
+//拷贝动态模型的基本类库
+def baseLibs = ["org.xmeta.engine", "slf4j-log4j", "slf4j-api", "ognl", "log4j-", "javassist"];
+def classPathList = [];
+copyBaseLib(new File(world.getPath() + "/lib/"), dir, baseLibs, classPathList);
+//copyBaseLib(new File("d:/xworker/lib/"), dir, baseLibs, classPathList);
+if(includeAllLib){
+    def classPath = world.getClassLoader().getClassPath();
+    def classPaths = classPath.split("[" + File.pathSeparator + "]");
+    
+    for(clPath in classPaths){
+        def clFile = new File(clPath);
+        if(clFile.isFile() && clFile.getAbsolutePath().startsWith(xworkerFile)){
+            def isBase = false;
+            for(bl in baseLibs){
+                if(clPath.toLowerCase().indexOf(bl) != -1){
+                    isBase = true;
+                    break;
+                }
+            }
+            if(!isBase){            
+                //classPathList.add(clPath);
+                addToClassPath(classPathList, clPath, clFile);
+            }
+        }
+    }
+}
+
+//保存变量
+bindings.put("projectName", projectName);
+bindings.put("xworkerPath", world.getPath());
+bindings.put("classPaths", classPathList);
+bindings.put("rootDir", dir.getAbsolutePath());
+
+def copyBaseLib(dir, prjDir, libs, clss){ 
+    if(dir.isDirectory()){
+        for(child in dir.listFiles()){
+            copyBaseLib(child, prjDir, libs, clss)
+        }
+        return;
+    }
+        
+    //println(dir.getAbsolutePath());
+    def name = dir.getName().toLowerCase();
+    //println("xxxxxxxx=" + name);
+    def have = false;
+    for(lib in libs){
+        if(name.startsWith(lib)){
+            have = true;
+            break;
+        }
+    }
+    
+    if(have){
+        FileUtils.copyFile(dir, new File(prjDir, "/lib/" + dir.getName()));
+        addToClassPath(clss, "lib/" + dir.getName(), dir);
+    }
+}
+
+//classPath是eclips项目中要包含引入的类库
+def addToClassPath(classPath, path, file){
+    def name = file.getName();
+    //.jar和.zip是类库，允许加入
+    if(name.endsWith(".jar") || name.ends.with(".zip")){
+        //在classPath中不存在的才拷贝
+        for(cls in classPath){
+            if(cls.endsWith(name)){
+                return;
+            }
+        }
+        
+        classPath.add(path);
+    }
+}
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          init
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateProject
+          sname
+          generateProject
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/.project
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateProject
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateProject/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateProject/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>${projectName?if_exists}</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+</projectDescription>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateClassPath
+          sname
+          generateClassPath
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/.classpath
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateClassPath
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateClassPath/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateClassPath/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+    <classpathentry kind="src" path="things"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JDK_TOOLS"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SWT"/>
+<#list classPaths as classPath>
+	<classpathentry kind="lib" path="${classPath}"/>
+</#list>	
+	<classpathentry kind="output" path="bin"/>
+</classpath>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateXWorkerProperties
+          sname
+          generateDmlProject
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/dml.prj
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateXWorkerProperties
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateXWorkerProperties/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateXWorkerProperties/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              scode
+              projectName=${projectName?if_exists}
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava
+          sname
+          generateStartXWorkerJava
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/src/${projectName}/Main.java
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+package ${projectName};
+
+import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.ActionContext;
+
+public class Main {
+    public static void helloWorld(ActionContext actionContext){
+        System.out.println("Hello World!");
+    }
+    
+	public static void main(String[] args){
+		try{
+			World world = World.getInstance();			
+			world.init(null);
+
+			//HelloWorld
+			Thing helloWorld = world.getThing("${projectName}.HelloWorld");
+			helloWorld.doAction("run", new ActionContext());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+}
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava1
+          sname
+          generateHelloWorld
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/${projectName}/HelloWorld.dml
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava1
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava1/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava1/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="HelloWorld">
+    <actions>
+        <JavaAction name="run" outerClassName="${projectName}.Main" methodName="helloWorld"></JavaAction>
+    </actions>
+</thing>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@geneateLog4jProperties
+          sname
+          geneateLog4jProperties
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/src/log4j.properties
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          geneateLog4jProperties
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@geneateLog4jProperties/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@geneateLog4jProperties/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+#
+# Log4J Settings for log4j 1.2.x (via jakarta-commons-logging)
+#
+# The five logging levels used by Log are (in order):
+#
+#   1. DEBUG (the least serious)
+#   2. INFO
+#   3. WARN
+#   4. ERROR
+#   5. FATAL (the most serious)
+
+
+# Set root logger level to WARN and append to stdout
+log4j.rootLogger=INFO, ROLLING_FILE, stdout
+
+#log4j.appender.stdout=org.xworker.util.Log4jConsoleAppender
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d %5p (%c:%L) - %m%n
+
+log4j.appender.ROLLING_FILE=org.apache.log4j.RollingFileAppender 
+log4j.appender.ROLLING_FILE.Threshold=ERROR 
+log4j.appender.ROLLING_FILE.File=log/xworker.log 
+log4j.appender.ROLLING_FILE.Append=true 
+log4j.appender.ROLLING_FILE.MaxFileSize=100KB 
+log4j.appender.ROLLING_FILE.MaxBackupIndex=1 
+log4j.appender.ROLLING_FILE.layout=org.apache.log4j.PatternLayout 
+log4j.appender.ROLLING_FILE.layout.ConversionPattern=[framework] %d - %c -%-4r [%t] %-5p %c %x - %m%n 
+
+
+# Print only messages of level INFO or above in the package noModule.
+log4j.logger.noModule=INFO
+log4j.logger.org.xmeta=INFO
+log4j.logger.xworker=INFO
+log4j.logger.core=INFO
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava11
+          sname
+          generateHelloWorldSwt
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/${projectName}/HelloWorldSwt.dml
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava11
+            @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava11/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseJavaProject/@actions/@run1/@actions/@generateStartXWorkerJava11/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="HelloWorld" width="1024" height="768" label="TestShell" RESIZE="true">
+    <FillLayout></FillLayout>
+    <Browser url="http://www.xworker.org"></Browser>
+</Shell>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseJavaProject/@actions/@run1/@actions/@addToXWorker
+          sname
+          addToXWorker
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+//是否添加到xworker的初始化项目中
+if(data.doAction("isAddToXWorker", actionContext)){
+    //println("addddd");
+    def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+        def initAttributes = ["name":projectName, "isWorkspace":"false", "isThingRoot":"true"];
+        projectSet.doAction("addProject", actionContext, ["projectFile":new File(new File(rootDir), "things"), "initAttributes":initAttributes]); 
+        //println("project=" + new File(new File(rootDir), "things"));
+        //println("xxxxxxxxxxxxx11");
+    }
+    //println("xxxxxxxxxxxxx22");
+}
+//println("xxxxxxxxxxxxx33");
+//log.info("ddddddddddddddddddd");
+
+return true;
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          addToXWorker
+      @/@CreateEclipseJavaProject/@actions/@isIncludeXWorkerLib
+      sname
+      isIncludeXWorkerLib
+      sattributeName
+      includeXWorkerLib
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isIncludeXWorkerLib
+    @/@CreateEclipseJavaProject/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CreateEclipseJavaProject/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CreateEclipseJavaProject/@projectName
+    sname
+    projectName
+    sshowLabel
+    true
+    ssize
+    50
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectName
+    @/@CreateEclipseJavaProject/@projectDir
+    sname
+    projectDir
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectDir
+    @/@CreateEclipseJavaProject/@addToXWorker
+    sname
+    addToXWorker
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否添加到XWorker的项目组中，这样在XWorker的事物管理器中随时都可以看到这个项目。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addToXWorker
+    @/@CreateEclipseJavaProject/@includeXWorkerLib
+    sname
+    includeXWorkerLib
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否包含XWorker当前所有的类库。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    includeXWorkerLib
+    @/@CreateEclipseJavaProject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@CreateEclipseMavenProject
+  sname
+  CreateEclipseMavenProject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.tools.project
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>创建简单的动态模型的项目。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getProjectName()</strong><br />
+	返回项目名。<br />
+	&nbsp;</li>
+	<li><strong>String getProjectDir()</strong><br />
+	返回项目所在的目录，如果目录不存在将会创建。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAddToXWorker()</strong><br />
+	是否添加到XWorker。<br />
+	&nbsp;</li>
+	<li><strong>boolean isIncludeXWorkerLib()</strong><br />
+	是否包含XWorker中所有的Jar包。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CreateEclipseMavenProject
+    @/@CreateEclipseMavenProject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CreateEclipseMavenProject/@actions/@getProjectName
+      sname
+      getProjectName
+      sattributeName
+      projectName
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectName
+      @/@CreateEclipseMavenProject/@actions/@getProjectDir
+      sname
+      getProjectDir
+      sattributeName
+      projectDir
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectDir
+      @/@CreateEclipseMavenProject/@actions/@isAddToXWorker
+      sname
+      isAddToXWorker
+      sattributeName
+      addToXWorker
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isAddToXWorker
+      @/@CreateEclipseMavenProject/@actions/@run1
+      sname
+      run
+      schangeSelf
+      true
+      sselfVarName
+      data
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@ActionGroup
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run1
+        @/@CreateEclipseMavenProject/@actions/@run1/@actions
+        sname
+        actions
+        sdescriptors
+        xworker.lang.actions.Begin/@actions
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        actions
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@init
+          sname
+          init
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.apache.commons.io.FileUtils;
+
+def bindings = actionContext.getScope();
+def projectName = data.doAction("getProjectName", actionContext);
+def dirObj = data.doAction("getProjectDir", actionContext);
+def dir = dirObj;
+if(dir instanceof String){
+    dir = new File(dir);
+}
+
+if(dir.exists() == false){
+    dir.mkdirs();
+}
+
+def binDir = new File(dir, "target");
+binDir.mkdirs();
+
+def thingsDir = new File(dir, "things");
+thingsDir.mkdirs();
+
+def otherDir = new File(dir, "src/main/java");
+otherDir.mkdirs();
+otherDir = new File(dir, "src/main/resources");
+otherDir.mkdirs();
+otherDir = new File(dir, "src/test/java");
+otherDir.mkdirs();
+otherDir = new File(dir, "src/test/resources");
+otherDir.mkdirs();
+
+//获取xworker下的classPath
+boolean includeAllLib = data.doAction("isIncludeXWorkerLib", actionContext);
+def xworkerFile = new File(world.getPath()).getAbsolutePath() ;
+
+//拷贝动态模型的基本类库
+def baseLibs = ["org.xmeta.engine", "slf4j-log4j", "slf4j-api", "ognl", "log4j-", "javassist"];
+def classPathList = [];
+//copyBaseLib(new File(world.getPath() + "/lib/"), dir, baseLibs, classPathList);
+//copyBaseLib(new File("d:/xworker/lib/"), dir, baseLibs, classPathList);
+if(includeAllLib){
+    def classPath = world.getClassLoader().getClassPath();
+    def classPaths = classPath.split("[" + File.pathSeparator + "]");
+    
+    for(clPath in classPaths){
+        def clFile = new File(clPath);
+        if(clFile.isFile() && clFile.getAbsolutePath().startsWith(xworkerFile)){
+            def isBase = false;
+            for(bl in baseLibs){
+                if(clPath.toLowerCase().indexOf(bl) != -1){
+                    isBase = true;
+                    break;
+                }
+            }
+            if(!isBase){
+                classPathList.add(clPath);
+            }
+        }
+    }
+}
+
+//保存变量
+bindings.put("projectName", projectName);
+bindings.put("xworkerPath", world.getPath());
+bindings.put("classPaths", classPathList);
+bindings.put("rootDir", dir.getAbsolutePath());
+bindings.put("xmetaVersion", getXMetaVersion());
+
+def copyBaseLib(dir, prjDir, libs, clss){ 
+    if(dir.isDirectory()){
+        for(child in dir.listFiles()){
+            copyBaseLib(child, prjDir, libs, clss)
+        }
+        return;
+    }
+        
+    //println(dir.getAbsolutePath());
+    def name = dir.getName().toLowerCase();
+    //println("xxxxxxxx=" + name);
+    def have = false;
+    for(lib in libs){
+        if(name.startsWith(lib)){
+            have = true;
+            break;
+        }
+    }
+    
+    if(have){
+        FileUtils.copyFile(dir, new File(prjDir, "/lib/" + dir.getName()));
+        clss.add("lib/" + dir.getName());
+    }
+}
+
+def getXMetaVersion(){
+     def libdir = new File(world.getPath() + "/lib");
+     for(file in libdir.listFiles()){
+         def name = file.getName();
+         println(name);
+         if(name.startsWith("org.xmeta.engine-") && name.endsWith(".jar")){
+             if(name.endsWith("-sources.jar")){
+                 continue;
+             }
+             
+             return name.substring("org.xmeta.engine-".length(), name.length() - 4);
+         }
+     }
+     
+     return null;
+}
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          init
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateProject
+          sname
+          generateProject
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/.project
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateProject
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateProject/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateProject/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>${projectName?if_exists}</name>
+	<comment></comment>
+	<projects>
+	</projects>
+		<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.m2e.core.maven2Builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.m2e.core.maven2Nature</nature>
+	</natures>
+</projectDescription>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath
+          sname
+          generateClassPath
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/.classpath
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateClassPath
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+		<classpathentry kind="src" path="things"/>
+	<classpathentry kind="src" output="target/test-classes" path="src/test/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/classes" path="src/main/java">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry excluding="**" kind="src" output="target/test-classes" path="src/test/resources">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath1
+          sname
+          generateMavenPom
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/pom.xml
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateClassPath1
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath1/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateClassPath1/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>my.group.name</groupId>
+  <artifactId>${projectName}</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>${projectName}</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+   <dependency>
+    	<groupId>org.x-meta</groupId>
+    		<artifactId>org.xmeta.engine</artifactId>
+    		<version>${xmetaVersion?if_exists}</version>
+    	</dependency>
+  </dependencies>
+    <repositories>
+        <repository>
+            <id>sonatype</id>
+            <name>sonatype Repository</name>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+</project>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateXWorkerProperties
+          sname
+          generateDmlProject
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/dml.prj
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateXWorkerProperties
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateXWorkerProperties/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateXWorkerProperties/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              scode
+              projectName=${projectName?if_exists}
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava
+          sname
+          generateStartXWorkerJava
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/src/test/java/${projectName}/Main.java
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+package ${projectName};
+
+import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.ActionContext;
+
+public class Main {
+    public static void helloWorld(ActionContext actionContext){
+        System.out.println("Hello World!");
+    }
+    
+	public static void main(String[] args){
+		try{
+			World world = World.getInstance();			
+			world.init(null);
+
+			//HelloWorld
+			Thing helloWorld = world.getThing("${projectName}.HelloWorld");
+			helloWorld.doAction("run", new ActionContext());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+}
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava1
+          sname
+          generateHelloWorld
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/${projectName}/HelloWorld.dml
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava1
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava1/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava1/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="HelloWorld">
+    <actions>
+        <JavaAction name="run" outerClassName="${projectName}.Main" methodName="helloWorld"></JavaAction>
+    </actions>
+</thing>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@geneateLog4jProperties
+          sname
+          geneateLog4jProperties
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/src/test/java/log4j.properties
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          geneateLog4jProperties
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@geneateLog4jProperties/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@geneateLog4jProperties/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+#
+# Log4J Settings for log4j 1.2.x (via jakarta-commons-logging)
+#
+# The five logging levels used by Log are (in order):
+#
+#   1. DEBUG (the least serious)
+#   2. INFO
+#   3. WARN
+#   4. ERROR
+#   5. FATAL (the most serious)
+
+
+# Set root logger level to WARN and append to stdout
+log4j.rootLogger=INFO, ROLLING_FILE, stdout
+
+#log4j.appender.stdout=org.xworker.util.Log4jConsoleAppender
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%d %5p (%c:%L) - %m%n
+
+log4j.appender.ROLLING_FILE=org.apache.log4j.RollingFileAppender 
+log4j.appender.ROLLING_FILE.Threshold=ERROR 
+log4j.appender.ROLLING_FILE.File=log/xworker.log 
+log4j.appender.ROLLING_FILE.Append=true 
+log4j.appender.ROLLING_FILE.MaxFileSize=100KB 
+log4j.appender.ROLLING_FILE.MaxBackupIndex=1 
+log4j.appender.ROLLING_FILE.layout=org.apache.log4j.PatternLayout 
+log4j.appender.ROLLING_FILE.layout.ConversionPattern=[framework] %d - %c -%-4r [%t] %-5p %c %x - %m%n 
+
+
+# Print only messages of level INFO or above in the package noModule.
+log4j.logger.noModule=INFO
+log4j.logger.org.xmeta=INFO
+log4j.logger.xworker=INFO
+log4j.logger.core=INFO
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava11
+          sname
+          generateHelloWorldSwt
+          stype
+          overwrite
+          sfilePath
+          ${rootDir}/things/${projectName}/HelloWorldSwt.dml
+          sfileEncoding
+          UTF-8
+          slog
+          true
+          sinterpretationType
+          Self
+          sattributeTemplate
+          false
+          schildsAttributeTemplate
+          false
+          svarScope
+          Local
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdisableGlobalContext
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@CodeGenerator
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          generateStartXWorkerJava11
+            @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava11/@Contents
+            sname
+            Contents
+            sdescriptors
+            xworker.lang.actions.code.CodeGenerator/@Contents
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_mark
+            false
+            sid
+            Contents
+              @/@CreateEclipseMavenProject/@actions/@run1/@actions/@generateStartXWorkerJava11/@Contents/@FreemarkerContent
+              sname
+              FreemarkerContent
+              Scode
+#$@text#$@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="HelloWorld" width="1024" height="768" label="TestShell" RESIZE="true">
+    <FillLayout></FillLayout>
+    <Browser url="http://www.xworker.org"></Browser>
+</Shell>
+#$@text#$@
+              sdescriptors
+              xworker.lang.actions.code.CodeGenerator/@Contents/@FreemarkerContent
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              FreemarkerContent
+          @/@CreateEclipseMavenProject/@actions/@run1/@actions/@addToXWorker
+          sname
+          addToXWorker
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+//是否添加到xworker的初始化项目中
+if(data.doAction("isAddToXWorker", actionContext)){
+    //println("addddd");
+    def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+        def initAttributes = ["name":projectName, "isWorkspace":"false", "isThingRoot":"true"];
+        projectSet.doAction("addProject", actionContext, ["projectFile":new File(new File(rootDir), "things"), "initAttributes":initAttributes]); 
+             
+    }
+}
+
+return true;
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          addToXWorker
+      @/@CreateEclipseMavenProject/@actions/@isIncludeXWorkerLib
+      sname
+      isIncludeXWorkerLib
+      sattributeName
+      includeXWorkerLib
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isIncludeXWorkerLib
+    @/@CreateEclipseMavenProject/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CreateEclipseMavenProject/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CreateEclipseMavenProject/@projectName
+    sname
+    projectName
+    sshowLabel
+    true
+    ssize
+    50
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectName
+    @/@CreateEclipseMavenProject/@projectDir
+    sname
+    projectDir
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectDir
+    @/@CreateEclipseMavenProject/@addToXWorker
+    sname
+    addToXWorker
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否添加到XWorker的项目组中，这样在XWorker的事物管理器中随时都可以看到这个项目。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addToXWorker
+    @/@CreateEclipseMavenProject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@CreateDmlWebProject
+  sname
+  CreateDmlWebProject
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.tools.project
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>创建简单的动态模型的项目。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getProjectName()</strong><br />
+	返回项目名。<br />
+	&nbsp;</li>
+	<li><strong>String getProjectDir()</strong><br />
+	返回项目所在的目录，如果目录不存在将会创建。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAddToXWorker()</strong><br />
+	是否添加到XWorker。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CreateDmlWebProject
+    @/@CreateDmlWebProject/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CreateDmlWebProject/@actions/@getProjectName
+      sname
+      getProjectName
+      sattributeName
+      projectName
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectName
+      @/@CreateDmlWebProject/@actions/@getProjectDir
+      sname
+      getProjectDir
+      sattributeName
+      projectDir
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getProjectDir
+      @/@CreateDmlWebProject/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
+import org.xmeta.Thing;
+
+def projectName = self.doAction("getProjectName", actionContext);
+def dirObj = self.doAction("getProjectDir", actionContext);
+def dir = dirObj;
+if(dir instanceof String){
+    dir = new File(dir);
+}
+
+if(dir.exists() == false){
+    dir.mkdirs();
+}
+
+//创建dml文件
+def fout = new FileOutputStream(new File(dir, "dml.prj"));
+fout.write(("projectName=" + projectName).getBytes());
+fout.close();
+
+//创建WEB-INFO目录
+def webInfo = new File(dir, "WEB-INF");
+if(webInfo.exists() == false){
+    webInfo.mkdirs();
+}
+
+//创建web.xml
+def webSrc = new File(dir,"WEB-INF/web.xml");
+def webXml = self.doAction("toWebXML", actionContext, [thingManager:projectName]);
+fout = new FileOutputStream(webSrc);
+fout.write(webXml.getBytes());
+fout.close();
+
+//创建Server.dml
+def server = new Thing("xworker.http.server.SimpleHttpServer");
+server.put("contextPath", "/");
+server.put("port", "8080");
+server.getMetadata().setCoderType("dml_xml");
+def coder = world.getThingCoder("dml");
+def pname = StringUtils.capitalise(projectName);
+def sout = new FileOutputStream(new File(dir, "WebServer.dml"));
+coder.encode(server, sout);
+sout.close();
+
+//创建SimpleThingEditor
+self.doAction("copySimpleThingManager", actionContext, "file", new File(dir, "SimpleThingManager.dml"));
+
+//是否添加到xworker的初始化项目中
+if(self.doAction("isAddToXWorker", actionContext)){    
+    def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+        def initAttributes = ["name":projectName, "isWorkspace":"false", "isThingRoot":"true"];
+        projectSet.doAction("addProject", actionContext, ["projectFile":dir, "initAttributes":initAttributes]); 
+             
+    }
+}
+return true;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@CreateDmlWebProject/@actions/@isAddToXWorker
+      sname
+      isAddToXWorker
+      sattributeName
+      addToXWorker
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      isAddToXWorker
+      @/@CreateDmlWebProject/@actions/@toWebXMl
+      sname
+      toWebXML
+      Scode
+#$@text#$@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">-->
+<web-app>
+    <display-name>XWorker Application</display-name>
+    
+    <context-param>
+        <param-name>org.eclipse.rap.applicationConfiguration</param-name>
+        <param-value>xworker.rap.XWorkerConfiguration</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.eclipse.rap.rwt.engine.RWTServletContextListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.http.HttpServletDo</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <!-- 为了安全考虑，默认只允许当前的项目的事物才能够访问
+        <init-param>   
+            <param-name>thingManagers</param-name>   
+            <param-value>${thingManager?if_exists}</param-value>   
+        </init-param> 
+         -->
+    </servlet>
+    
+    <servlet>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <servlet-class>xworker.http.HttpActionMappingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>rwtServlet</servlet-name>
+        <servlet-class>org.eclipse.rap.rwt.engine.RWTServlet</servlet-class>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.dml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.txt</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <url-pattern>*.ac</url-pattern>
+    </servlet-mapping>   
+    
+    <servlet-mapping>
+        <servlet-name>rwtServlet</servlet-name>
+        <url-pattern>/rap</url-pattern>
+    </servlet-mapping>
+</web-app>
+#$@text#$@
+      stemplateEncoding
+      UTF-8
+      soutputEncoding
+      UTF-8
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.text.Freemarker
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      toWebXMl
+      @/@CreateDmlWebProject/@actions/@createWeb
+      sname
+      createWeb
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+//创建WEB-INFO目录
+def webInfo = new File(dir, "WEB-INF");
+if(webInfo.exists() == false){
+    webInfo.mkdirs();
+}
+
+//创建web.xml
+def webSrc = new File(dir,"WEB-INF/web.xml");
+def webXml = self.doAction("toWebXML", actionContext, [thingManager:""]);
+fout = new FileOutputStream(webSrc);
+fout.write(webXml.getBytes());
+fout.close();
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      createWeb
+        @/@CreateDmlWebProject/@actions/@createWeb/@ins
+        sisValidate
+        false
+        sname
+        ins
+        sdescriptors
+        xworker.lang.actions.Inout/@ins
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        ins
+          @/@CreateDmlWebProject/@actions/@createWeb/@ins/@dir
+          sname
+          dir
+          stype
+          java.io.File
+          stypeCheck
+          false
+          soptional
+          true
+          scheck
+          false
+          scheckLevel
+          exception
+          sdescriptors
+          xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          dir
+      @/@CreateDmlWebProject/@actions/@copySimpleThingManager
+      sname
+      copySimpleThingManager
+      sfile
+      var:file
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.io.XWorkerFileActions/@CopySimpleThingManager
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      copySimpleThingManager
+    @/@CreateDmlWebProject/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CreateDmlWebProject/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CreateDmlWebProject/@projectName
+    sname
+    projectName
+    sshowLabel
+    true
+    ssize
+    50
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectName
+    @/@CreateDmlWebProject/@projectDir
+    sname
+    projectDir
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    projectDir
+    @/@CreateDmlWebProject/@addToXWorker
+    sname
+    addToXWorker
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否添加到XWorker的项目组中，这样在XWorker的事物管理器中随时都可以看到这个项目。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    addToXWorker
+    @/@CreateDmlWebProject/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description

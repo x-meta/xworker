@@ -1,0 +1,3100 @@
+%1566539177000
+@
+sname=ThingGuideNodes
+slabel=ThingGuideNodes
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>事物向导节点的定义可以以child的方式注册到此事物下。</p>
+
+<p>可以执行表单中的事物的方法，见ExecuteMethod标签页的属性文档。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@ThingForm
+  sname=ThingForm
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.MetaDescriptor3,xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/application_form.png
+  sdescription=<p>事物表单，可以用来编辑事物的属性。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ThingForm
+    @/@ThingForm/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ThingForm/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建控件
+def formThing = world.getThing("xworker.lang.util.prototypes.ThingGuideForm/@form");
+def composite = formThing.doAction("create", actionContext);
+
+//设置表单的描述者
+form.doAction("setDescriptor", actionContext, "descriptor", self);
+
+//设置值
+form.doAction("setValues", actionContext, "values", thingGuide.editThing.getAttributes());
+
+actionContext.g().put("formThing", self);
+return composite;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@ThingForm/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+//执行方法
+if(formThing.getBoolean("executeMethod")){
+    def method = formThing.getStringBlankAsNull("methodName");
+    if(method != null){
+        def thing = form.doAction("getFormThing", actionContext);
+        def result = thing.doAction(method, actionContext);
+        println thing.getMetadata().getPath() + ":" + result + ":" + method;
+        //println result;
+        
+        def attrName = formThing.getStringBlankAsNull("resultAttribute");
+        if(attrName != null){
+            thingGuide.editThing.put(attrName, result);
+        }else{
+            if(result instanceof Thing || result instanceof String){
+                thingGuide.editThing.paste(result);
+            }else if(result instanceof Map){
+                thingGuide.putAll(result);
+            }
+        }
+        
+        return;
+    }
+}
+
+//获取表单的值
+def values = form.doAction("getValues", actionContext);
+//println "ThingForm: " + values;
+//保存到当前事物
+thingGuide.editThing.getAttributes().putAll(values);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=nodeFinished
+    @/@ThingForm/@executeMethod
+    sname=executeMethod
+    sinputtype=truefalse
+    sgroup=ExecuteMethod
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    Sdescription=
+#$@text#$@
+<p>如果为true，那么在结束时执行表单中的事物的方法。</p>
+
+<p><strong>执行的结果处理方式：</strong></p>
+
+<ul>
+	<li><strong>放到指定属性中</strong><br />
+	需要在resultAttribute中指定。<br />
+	&nbsp;</li>
+	<li><strong>String或Thing</strong><br />
+	结果为String或Thing，会当作xml解析到当前描述者中。<br />
+	&nbsp;</li>
+	<li><strong>Map&lt;String, Object&gt;</strong><br />
+	结果为Map&lt;String, Object&gt;，把值放到当前事物中。<br />
+	&nbsp;</li>
+	<li><strong>其它</strong><br />
+	丢弃。</li>
+</ul>
+
+<p>&nbsp; &nbsp;</p>
+#$@text#$@
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=executeMethod
+    @/@ThingForm/@methodName
+    sname=methodName
+    ssize=50
+    sgroup=ExecuteMethod
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=methodName
+    @/@ThingForm/@resultAttribute
+    sname=resultAttribute
+    sgroup=ExecuteMethod
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    sdescription=<p>如果不为空把执行结果放到指定的属性中，否则把结果放到当前事物中。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resultAttribute
+  @/@ThingRegistor
+  sname=AttributeByThingRegistor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  sdescription=<p>通过事物注册浏览器设置事物的一个属性。选择某个事物后可以把这个事物的路径设置到事物的属性里。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ThingRegistor
+    @/@ThingRegistor/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ThingRegistor/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建控件
+def uiThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@thingRegistor");
+uiThing.doAction("create", actionContext);
+
+//设置
+def registThing = world.getThing(self.registThing);
+def attrName = self.getStringBlankAsNull("attributeName");
+if(registThing == null || attrName == null){
+    registThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@noRegistorTip");
+}
+def registType = self.registType;
+thingRegistor.doAction("init", actionContext, "thing", registThing, "type", registType);
+thingRegistor.doAction("search");
+//log.info("sssssssssssssssssss");
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@ThingRegistor/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取事物注册器选中的事物
+def thing = thingRegistor.doAction("getThing", actionContext);
+if(thing == null){
+    msg(actionContext, 
+    		"shell", thingGuide.guideComposite.getShell(),
+    		"message", "事物为空，请选择一个事物!");
+    return false;
+}else{
+    def guideThing = thingGuide.currentNode;
+    def editThing = thingGuide.editThing;
+    
+    def attrName = guideThing.getStringBlankAsNull("attributeName");
+    def method = guideThing.getStringBlankAsNull("attributeSetMethod");
+    
+    //println("attrName=" + attrName);
+    if(attrName != null){
+        def path = thing.getMetadata().getPath();
+        if("append" == method){
+            String value = editThing.getStringBlankAsNull(attrName);
+            if(value != null && value.indexOf(path) == -1){                 
+                editThing.set(attrName, value + "," + path);
+            }
+        }else{
+            editThing.set(attrName, path);
+        }
+    }
+    
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=nodeFinished
+        @/@ThingRegistor/@actions/@nodeFinished/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@ThingRegistor/@actions/@nodeFinished/@ActionDefined/@notSelectedMsg
+          sname=msg
+          sshell=var:shell
+          sicon=ICON_WARNING
+          sbuttons=OK
+          stitle=选择事物
+          smessage=var:message
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=notSelectedMsg
+    @/@ThingRegistor/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@ThingRegistor/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@ThingRegistor/@thing
+    sname=registThing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    sdescription=<p>注册事物的路径，支持UtilString。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=thing
+    @/@ThingRegistor/@registType
+    sname=registType
+    sextends=xworker.lang.MetaThing/@th_registThing
+    sinputtype=inputSelect
+    ssize=50
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=registType
+    @/@ThingRegistor/@attributeName
+    sname=attributeName
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributeName
+    @/@ThingRegistor/@attributeSetMethod
+    sname=attributeSetMethod
+    sinputtype=select
+    sshowLabel=true
+    sreadOnly=false
+    sdefault=replace
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributeSetMethod
+      @/@ThingRegistor/@attributeSetMethod/@replace
+      sname=replace
+      svalue=replace
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=replace
+      @/@ThingRegistor/@attributeSetMethod/@append
+      sname=append
+      svalue=append
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=append
+    @/@ThingRegistor/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@ThingGuideByThingRegistor
+  sname=ThingGuideByThingRegistor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p><strong>通过注册器选择向导</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过注册器选择下一个向导，如果选择了向导那么执行新的向导，新的向导执行完毕后还会回到当前向导的下一个节点。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ThingGuideByThingRegistor
+    @/@ThingGuideByThingRegistor/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ThingGuideByThingRegistor/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建控件
+def uiThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@thingRegistor");
+uiThing.doAction("create", actionContext);
+
+//设置
+def registThing = world.getThing(self.registThing);
+if(registThing == null){
+    registThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@noRegistorTip");
+}
+def registType = self.registType;
+thingRegistor.doAction("init", actionContext, "thing", registThing, "type", registType);
+thingRegistor.doAction("search");
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@ThingGuideByThingRegistor/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取事物注册器选中的事物
+def thing = thingRegistor.doAction("getThing", actionContext);
+
+if(thing == null){
+    msg(actionContext, 
+    		"shell", thingGuide.guideComposite.getShell(),
+    		"message", "事物为空，请选择一个事物!");
+    return false;
+}else{
+    //调用新向导
+    thingGuide.callThingGuide(thing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=nodeFinished
+        @/@ThingGuideByThingRegistor/@actions/@nodeFinished/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@ThingGuideByThingRegistor/@actions/@nodeFinished/@ActionDefined/@notSelectedMsg
+          sname=msg
+          sshell=var:shell
+          sicon=ICON_WARNING
+          sbuttons=OK
+          stitle=选择事物
+          smessage=var:message
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=notSelectedMsg
+    @/@ThingGuideByThingRegistor/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@ThingGuideByThingRegistor/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@ThingGuideByThingRegistor/@thing
+    sname=registThing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    sdescription=<p>注册事物的路径，支持UtilString。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=thing
+    @/@ThingGuideByThingRegistor/@registType
+    sname=registType
+    sextends=xworker.lang.MetaThing/@th_registThing
+    sinputtype=inputSelect
+    ssize=50
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=registType
+    @/@ThingGuideByThingRegistor/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@ThingGuideByThingRegistor/@notRemoveGuideOnFinish
+    sname=notRemoveGuideOnFinish
+    sinputtype=truefalse
+    sgroup=Node
+    sshowLabel=true
+    sreadOnly=false
+    sdefault=true
+    sinheritDescription=false
+    sdescription=<p>当整个向导结束时是否清除向导的描述者，这样再编辑事物时就不会进入向导界面了。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=notRemoveGuideOnFinish
+  @/@Group
+  sname=Group
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode,xworker.lang.util.ThingGuideNodes
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/folder.png
+  sdescription=<p>分组，用于分组向导节点。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Group
+    @/@Group/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Group/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def childs = self.getChilds();
+if(childs.size() > 0){
+    //设置下一个节点为当前节点
+    thingGuide.setNextNode(childs.get(0));
+}else{
+    //空的子节点，向导进入下一个节点
+    thingGuide.finishCurrentNode();
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+    @/@Group/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Group/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Group/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@Composite
+  sname=Composite
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>自定义Composite面板。</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>boolean doFinish()</strong><br />
+	节点结束时的事件，如果可以完成返回true自动进入下一个向导节点，否则返回false。&nbsp;</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getCompositeThing()</strong><br />
+	返回要创建的Composite的事物。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Composite/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建面板
+def compositeThing = self.doAction("getCompositeThing", actionContext);
+if(compositeThing != null){
+    compositeThing.doAction("create", actionContext);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@Composite/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=return self.doAction("doFinish", actionContext);
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=nodeFinished
+      @/@Composite/@actions/@getCompositeThing
+      sname=getCompositeThing
+      sattributeName=compositePath
+      schildThingName=Composite
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getCompositeThing
+      @/@Composite/@actions/@doFinish
+      sname=doFinish
+      stype=boolean
+      svalue=true
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doFinish
+    @/@Composite/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Composite/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Composite/@compositePath
+    sname=compositePath
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=compositePath
+    @/@Composite/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@Composite/@Composite
+    sname=Composite
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.swt.widgets.Composite
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+    @/@Composite/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+    szh_label=动作
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+    sth_mark=false
+    sid=actions1
+      @/@Composite/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@SelectDescriptorAndAutoSelectGuide
+  sname=SelectDescriptorAndAutoSelectGuide
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  sdescription=<p>选择一个描述者作为当前事物的描述者，并自动进入向导界面如果有向导的话。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SelectDescriptorAndAutoSelectGuide
+    @/@SelectDescriptorAndAutoSelectGuide/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SelectDescriptorAndAutoSelectGuide/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//设置事物
+actionContext.peek().put("thing", world.getThing(self.descriptorsParentThing));
+
+//创建界面
+def compositeThing = world.getThing("xworker.lang.util.prototypes.SelectDescriptorAndAutoSelectGuide/@Composite");
+compositeThing.doAction("create", actionContext);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@SelectDescriptorAndAutoSelectGuide/@actions/@doFinish
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取已经选择的向导事物
+def gthing = thingRegist.doAction("getThing");
+def editThing = thingGuide.getEditThing();
+//println(gthing);
+if(gthing == null){
+    //没有选择向导，回到正常编辑页面
+    def guideDesc = world.getThing("xworker.lang.ThingGuide");
+    editThing.removeDescriptor(guideDesc);
+}else{
+    //设置描述者，并进入自动向导选择
+    editThing.set("descriptors", "xworker.lang.ThingGuide," + gthing.metadata.path);
+    editThing.set("tg_thingGuidePath", "xworker.lang.util.ThingGuideAutoSelector");
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doFinish
+    @/@SelectDescriptorAndAutoSelectGuide/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SelectDescriptorAndAutoSelectGuide/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SelectDescriptorAndAutoSelectGuide/@descriptorsParentThing
+    sname=descriptorsParentThing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=descriptorsParentThing
+    @/@SelectDescriptorAndAutoSelectGuide/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@NodeSelector
+  sname=NodeSelector
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNodes,xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons\org\eclipse\swt\widgets\List.gif
+  sdescription=<p>把自己的子节点作为可选择的节点，选择后进入选择的节点。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=NodeSelector
+    @/@NodeSelector/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@NodeSelector/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建控件
+def uiThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@thingRegistor");
+uiThing.doAction("create", actionContext);
+
+//设置
+def registThing = self;
+def registType = "child";
+thingRegistor.doAction("init", actionContext, "thing", registThing, "type", registType);
+thingRegistor.doAction("search");
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@NodeSelector/@actions/@getNextNode
+      sname=getNextNode
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取事物注册器选中的事物
+def thing = thingRegistor.doAction("getThing", actionContext);
+
+if(thing == null){
+    msg(actionContext, 
+    		"shell", thingGuide.guideComposite.getShell(),
+    		"message", "请选择一个节点!");
+    return false;
+}else{
+    return thing;
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getNextNode
+        @/@NodeSelector/@actions/@getNextNode/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@NodeSelector/@actions/@getNextNode/@ActionDefined/@notSelectedMsg
+          sname=msg
+          sshell=var:shell
+          sicon=ICON_WARNING
+          sbuttons=OK
+          stitle=选择事物
+          smessage=var:message
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=notSelectedMsg
+    @/@NodeSelector/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@NodeSelector/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@NodeSelector/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@Finish
+  sname=Finish
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/stop.png
+  sdescription=<p>结束节点，执行到此节点后向导终止。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Finish
+    @/@Finish/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Finish/@actions/@getNextNode
+      sname=getNextNode
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getNextNode
+      @/@Finish/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//Finish节点自动结束
+thingGuide.finishCurrentNode();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+    @/@Finish/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Finish/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Finish/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@CallNode
+  sname=CallNode
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/arrow_branch.png
+  Sdescription=
+#$@text#$@
+<p><strong>调用节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 调用指定的向导节点，当指定的向导节点的向导流程执行完毕后会回到当前节点的向导流程。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getNode()</strong><br />
+	返回向导要调用的节点。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=CallNode
+    @/@CallNode/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@CallNode/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//如果节点不为null，调用指定的节点
+def thing = self.doAction("getNode", actionContext);
+if(thing != null){
+    thingGuide.callNode(thing);
+}else{
+    def msgThing = world.getThing("xworker.lang.util.ThingGuideNodes/@CallNode/@actions/@errorMsg");
+    thingGuide.showNodeInitedErrorMessage(msgThing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+      @/@CallNode/@actions/@getNode
+      sname=getNode
+      sattributeName=node
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getNode
+      @/@CallNode/@actions/@errorMsg
+      sname=errorMsg
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sdescription=<p>没有设置要调用的节点，getNode()方法返回null。</p>
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=errorMsg
+    @/@CallNode/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@CallNode/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@CallNode/@node
+    sname=node
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=node
+    @/@CallNode/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@CallThingGuide
+  sname=CallThingGuide
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>调用指定的向导，指定向导执行完毕后回到当前节点继续执行。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getThingGuide()</strong><br />
+	返回要执行的向导。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=CallThingGuide
+    @/@CallThingGuide/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@CallThingGuide/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//如果节点不为null，调用指定的节点
+def thing = self.doAction("getThingGuide", actionContext);
+if(thing != null){
+    thingGuide.callThingGuide(thing);
+}else{
+    def msgThing = world.getThing("xworker.lang.util.ThingGuideNodes/@CallThingGuide/@actions/@errorMsg");
+    thingGuide.showNodeInitedErrorMessage(msgThing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+      @/@CallThingGuide/@actions/@getThingGuide
+      sname=getThingGuide
+      sattributeName=thingGuide
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThingGuide
+      @/@CallThingGuide/@actions/@errorMsg
+      sname=errorMsg
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sdescription=<p>没有设置要调用的向导，getThingGuide()方法返回null。</p>
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=errorMsg
+    @/@CallThingGuide/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@CallThingGuide/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@CallThingGuide/@thingGuide
+    sname=thingGuide
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingGuide
+    @/@CallThingGuide/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@GotoNode
+  sname=GotoNode
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/arrow_turn_right.png
+  Sdescription=
+#$@text#$@
+<p><strong>跳转到节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 跳转到指定的向导节点，流程跳到指定的节点，不会回到当前的节点。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getNode()</strong><br />
+	返回向导要调用的节点。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=GotoNode
+    @/@GotoNode/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@GotoNode/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//如果节点不为null，调用指定的节点
+def thing = self.doAction("getNode", actionContext);
+if(thing != null){
+    thingGuide.setNextNode(thing);
+}else{
+    def msgThing = world.getThing("xworker.lang.util.ThingGuideNodes/@GotoNode/@actions/@errorMsg");
+    thingGuide.showNodeInitedErrorMessage(msgThing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+      @/@GotoNode/@actions/@getNode
+      sname=getNode
+      sattributeName=node
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getNode
+    @/@GotoNode/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@GotoNode/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@GotoNode/@node
+    sname=node
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=node
+    @/@GotoNode/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@GotoThingGuide
+  sname=GotoThingGuide
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=Nodes
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>跳到指定的向导，当前向导将会结束。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getThingGuide()</strong><br />
+	返回要执行的向导。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=GotoThingGuide
+    @/@GotoThingGuide/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@GotoThingGuide/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//如果节点不为null，调用指定的节点
+def thing = self.doAction("getThingGuide", actionContext);
+if(thing != null){
+    thingGuide.editThing.set("tg_thingGuidePath", thing.getMetadata().getPath());
+    thingGuide.finishCurrentNode();
+}else{
+    def msgThing = world.getThing("xworker.lang.util.ThingGuideNodes/@GotoThingGuide/@actions/@errorMsg");
+    thingGuide.showNodeInitedErrorMessage(msgThing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+      @/@GotoThingGuide/@actions/@getThingGuide
+      sname=getThingGuide
+      sattributeName=thingGuide
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThingGuide
+      @/@GotoThingGuide/@actions/@errorMsg
+      sname=errorMsg
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sdescription=<p>没有设置要调用的向导，getThingGuide()方法返回null。</p>
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=errorMsg
+    @/@GotoThingGuide/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@GotoThingGuide/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@GotoThingGuide/@thingGuide
+    sname=thingGuide
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingGuide
+    @/@GotoThingGuide/@notRemoveGuideOnFinish
+    sname=notRemoveGuideOnFinish
+    sinputtype=truefalse
+    sgroup=Node
+    sshowLabel=true
+    sreadOnly=false
+    sdefault=true
+    sinheritDescription=false
+    sdescription=<p>不要修改该熟悉的默认值，保持true。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=notRemoveGuideOnFinish
+    @/@GotoThingGuide/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@SelectThingsByThingRegistor
+  sname=SelectThingsByThingRegistor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>通过事物注册器选择事物列表。如果只是属性设置一个值，参看AttributeByThingRegistor。</p>
+
+<p><strong>主要流程：</strong></p>
+
+<ol>
+	<li><strong>获取事物已经有的事物列表</strong><br />
+	注册事物显示时有多选框，初始化时需要知道当前事物已经有哪些事物了，通过<strong>getThings()</strong>方法返回已有的事物列表。</li>
+	<li><strong>实时添加和删除事物</strong><br />
+	在注册界面中，当一个复选框选中或取消选中时，会触发添加和删除事物的事件，见<strong>onAdd</strong>和<strong>onRemove</strong>方法。</li>
+	<li><strong>最后应用事物列表的变更</strong><br />
+	也可以在向导结束后应用事物列表的变更，见<strong>onSaveThings</strong>方法。</li>
+</ol>
+
+<p><strong>可以重写下面的方法</strong></p>
+
+<ul>
+	<li><strong>List&lt;Thing&gt; getThings()</strong><br />
+	返回正编辑的事物的已有的事物列表，默认实现是调用事物指定方法来获取，如果返回null，那么从指定的属性中取。<br />
+	&nbsp;</li>
+	<li><strong>void onAdd(Thing thing)</strong><br />
+	添加一个事物到列表。默认实现是修改指定属性的值，而值使用xworker约定的事物列表的标准格式。<br />
+	&nbsp;</li>
+	<li><strong>void onRemove(Thing thing)</strong><br />
+	在事物列表中移除一个上午。默认实现是修改指定属性的值，而值使用xworker约定的事物列表的标准格式。<br />
+	&nbsp;</li>
+	<li><strong>void onSaveThings(List&lt;Thing&gt; addedThings, List&lt;Thing&gt; removedThings)</strong><br />
+	向导结束时调用的方法，things为界面上已选中的事物列表。默认未实现</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SelectThingsByThingRegistor
+    @/@SelectThingsByThingRegistor/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SelectThingsByThingRegistor/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建控件
+def uiThing = world.getThing("xworker.lang.util.prototypes.SelectThingsByThingRegistor/@mainComposite");
+uiThing.doAction("create", actionContext);
+
+//设置
+def registThing = world.getThing(self.registThing);
+if(registThing == null){
+    registThing = world.getThing("xworker.lang.util.prototypes.ThingGuideThingRegist/@noRegistorTip");
+}
+def registType = self.registType;
+thingRegist.doAction("init", actionContext, "thing", registThing, "type", registType);
+thingRegist.doAction("search");
+
+//获取事物列表
+def things = self.doAction("getThings", actionContext);
+thingRegist.doAction("setChecked", actionContext, "things", things);
+
+//新增和移除的事物
+actionContext.g().put("addedThings", [:]);
+actionContext.g().put("removedThings", [:]);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@SelectThingsByThingRegistor/@actions/@getThings
+      sname=getThings
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.lang.actions.ActionUtils;
+//println "getThings";
+//用正在编辑事物自己的方法获取事物列表
+def editThing = thingGuide.getEditThing();
+def things = editThing.doAction(self.getThingsAction, actionContext);
+if(things == null){
+    def attrName = self.getStringBlankAsNull("thingsAttribute");
+
+    if(attrName != null){
+        def text = editThing.getString(attrName);
+        return ActionUtils.getThingsFromCode(text);
+    }
+}
+
+return null;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThings
+      @/@SelectThingsByThingRegistor/@actions/@add
+      sname=add
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.lang.actions.ActionUtils;
+
+//println "add";
+//放入addedThings缓存
+addedThings.put(thing.metadata.path, thing);
+
+self.doAction("onAdd", actionContext);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=add
+      @/@SelectThingsByThingRegistor/@actions/@remove
+      sname=remove
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.lang.actions.ActionUtils;
+
+//println "remove";
+addedThings.remove(thing.metadata.path, thing);
+removedThings.put(thing.metadata.path, thing);
+
+self.doAction("onRemove", actionContext);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=remove
+      @/@SelectThingsByThingRegistor/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//返回所有已选择的事物
+def alist = [];
+def rlist = [];
+
+for(key in addedThings.keySet()){
+    alist.add(addedThings.get(key));
+}
+
+for(key in addedThings.keySet()){
+    rlist.add(removedThings.get(key));
+}
+
+//保存事物
+self.doAction("saveThings", actionContext, "addedThings", alist, "removedThings", rlist);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=nodeFinished
+      @/@SelectThingsByThingRegistor/@actions/@saveChanges
+      sname=onSaveThings
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=saveChanges
+      @/@SelectThingsByThingRegistor/@actions/@onAdd
+      sname=onAdd
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.lang.actions.ActionUtils;
+
+def editThing = thingGuide.getEditThing();
+def attrName = self.getStringBlankAsNull("thingsAttribute");
+
+if(attrName != null){
+    def text = editThing.getString(attrName);
+    editThing.put(attrName, ActionUtils.addThingToCode(thing, text));
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onAdd
+      @/@SelectThingsByThingRegistor/@actions/@onRemove
+      sname=onRemove
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.lang.actions.ActionUtils;
+
+def editThing = thingGuide.getEditThing();
+def attrName = self.getStringBlankAsNull("thingsAttribute");
+
+if(attrName != null){
+    def text = editThing.getString(attrName);
+    editThing.put(attrName, ActionUtils.removeThinInCode(thing, text));
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onRemove
+    @/@SelectThingsByThingRegistor/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SelectThingsByThingRegistor/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SelectThingsByThingRegistor/@registThing
+    sname=registThing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=registThing
+    @/@SelectThingsByThingRegistor/@registType
+    sname=registType
+    sextends=xworker.lang.MetaThing/@th_registThing
+    sinputtype=inputSelect
+    ssize=50
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=registType
+    @/@SelectThingsByThingRegistor/@getThingsAction
+    sname=getThingsAction
+    ssize=40
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getThingsAction
+    @/@SelectThingsByThingRegistor/@thingsAttribute
+    sname=thingsAttribute
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingsAttribute
+    @/@SelectThingsByThingRegistor/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@SelectThingsByThingRegistor/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+    szh_label=动作
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+    sth_mark=false
+    sid=actions1
+      @/@SelectThingsByThingRegistor/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@ActionNode
+  sname=ActionNode
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.ThingGuideNode
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>执行一个动作，执行的动作名字是doAction。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionNode
+    @/@ActionNode/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ActionNode/@actions/@doAction
+      sname=doAction
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doAction
+      @/@ActionNode/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+self.doAction("doAction", actionContext);
+
+//自动结束当前节点
+thingGuide.finishCurrentNode();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+    @/@ActionNode/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@ActionNode/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@ActionNode/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@ActionNode/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@ActionNode/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@SetAttributes
+  sname=SetAttributes
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>设置编辑器的属性。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Map&lt;String, Object&gt; getAttributes()</strong><br />
+	返回一个属性Map，Map中的Key-Value将会作为属性设置到当前事物中。</li>
+</ul>
+
+<p>&nbsp; &nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SetAttributes
+    @/@SetAttributes/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SetAttributes/@actions/@getAttributes
+      sname=getAttributes
+      sattributeName=attributes
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getAttributes
+      @/@SetAttributes/@actions/@inited
+      sname=inited
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取表单的值
+def values = self.doAction("getAttributes", actionContext);
+
+//保存到当前事物
+if(values != null){
+    thingGuide.editThing.getAttributes().putAll(values);
+}
+
+//自动结束当前节点
+thingGuide.finishCurrentNode();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=inited
+    @/@SetAttributes/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SetAttributes/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SetAttributes/@attributes
+    sname=attributes
+    sinputtype=textarea
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributes
+    @/@SetAttributes/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@SetAttributes/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@SetAttributes/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name

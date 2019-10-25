@@ -1,0 +1,248 @@
+%1482300191874
+@
+sname=AttributeValueDataObject
+slabel=AttributeValueDataObject
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.dataObject.AbstractDataObject
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>把事物属性的value子节点做成数据对象。事物的属性的value子节点通常提供了属性的下拉选择数据等，因此也可以作为数据源。</p>
+
+<p><strong>实现功能</strong></p>
+
+<ul>
+	<li><strong>查询</strong><br />
+	只可以用于查询。</li>
+</ul>
+
+<p><strong>注意事项</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 属性是固定的value和label，其中value是主键。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getAttributeThing()</strong><br />
+	返回包含value子节点的属性的路径。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  slabel=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sid=actions
+    @/@actions/@query
+    sname=doQuery
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Global
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectUtil;
+
+//获取属性
+def attr = self.doAction("getAttributeThing", actionContext);
+//println("dataObject=" + self.getMetadata().getPath());
+//println("attr=" + attr);
+if(attr == null){
+    return [];
+}
+
+def datas = [];
+for(value in attr.getChilds("value")){
+    def data = new DataObject(self.getMetadata().getPath());
+    data.put("value", value.getString("value"));
+    data.put("label", value.getMetadata().getLabel());
+    datas.add(data);
+}
+
+return DataObjectUtil.query(datas, actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sid=query
+    @/@actions/@ValueFactory
+    sname=isMappingAble
+    stype=boolean
+    svalue=true
+    sinterpretationType=Self
+    svarScope=Local
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sid=ValueFactory
+    @/@actions/@getMappingFields
+    sname=getMappingFields
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+return [
+    ["colName":"value", "colTitle":"值", "key":"true"],
+    ["colName":"label", "colTitle":"标签"]
+];
+#$@text#$@
+    sdescription=<p>返回可以映射的字段列表，每一个字段列表是一个Map，有colName和colTitle两个属性。</p>
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sid=getMappingFields
+    @/@actions/@ValueFactory1
+    sname=getAttributeDescriptor
+    stype=string
+    svalue=xworker.dataObject.xworker.AttributeValueDataObject/@attribute
+    sinterpretationType=Self
+    svarScope=Local
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sid=ValueFactory1
+    @/@actions/@getAttribute
+    sname=getAttributeThing
+    sattributeName=attributePath
+    schildThingFirstChild=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getAttribute
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@attributePath
+  sname=attributePath
+  sinputtype=dataSelector
+  sshowLabel=true
+  ssize=60
+  sreadOnly=false
+  sinheritDescription=false
+  sdescription=<p>包含值列表的事物的属性的路径。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=attributePath
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@valueName
+  sname=valueName
+  slabel=值名称
+  sinputtype=openWindow
+  sshowLabel=true
+  ssize=40
+  sgroup=DisplayView
+  sinputattrs=xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.dataObject.Attribute,returnType=name
+  sreadOnly=false
+  sdefault=value
+  sinheritDescription=false
+  sdescription=<p>在一般的显示场合如下拉框时的标识字段。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=valueName
+  @/@idName
+  sname=displayName
+  slabel=显示字段名称
+  sinputtype=openWindow
+  sshowLabel=true
+  ssize=40
+  sgroup=DisplayView
+  sinputattrs=xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.dataObject.Attribute,returnType=name
+  sreadOnly=false
+  sdefault=label
+  sinheritDescription=false
+  sdescription=<p>在一般的显示场合的显示字段。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=idName

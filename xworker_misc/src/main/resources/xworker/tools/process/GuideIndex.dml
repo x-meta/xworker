@@ -1,0 +1,51 @@
+%1552369563033
+@
+sname=GuideIndex
+slabel=GuideIndex
+sdescritporForNewThing=xworker.message.MessageWithToolbar
+Sdescription=
+#$@text#$@
+<p><strong>进程执行器向导</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 设置进程命令和设置工作目录或环境变量的工具。</p>
+
+<p><strong>设置命令和工作目录的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以参看下面的代码，其中codeText和thingForm变量从父变量上下文中获取。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;GroovyAction name=&quot;complete&quot; descriptors=&quot;xworker.lang.actions.Actions/@GroovyAction&quot;&gt;
+    &lt;code&gt;&lt;![CDATA[def command = &quot;java\n-classpath\n\&quot;xworker.jar\&quot;\n xworker.filesync.FileSync\n&quot;;
+command = command + module.getMetadata().getName();
+
+def values = [
+   workDir : world.getPath(),
+   enviroment: &quot;&quot;
+];
+
+//设置命令
+codeText.setText(command);
+//设置工作目录和环境变量
+thingForm.doAction(&quot;setValues&quot;, actionContext, &quot;values&quot;, values);
+
+//关闭当前窗口
+shell.dispose();]]&gt;&lt;/code&gt;
+    &lt;Variables&gt;
+        &lt;GetParentContextValue name=&quot;shell&quot; varName=&quot;shell&quot;&gt;&lt;/GetParentContextValue&gt;
+        &lt;GetParentContextValue name=&quot;codeText&quot; varName=&quot;codeText&quot;&gt;&lt;/GetParentContextValue&gt;
+        &lt;GetParentContextValue name=&quot;thingForm&quot; varName=&quot;thingForm&quot;&gt;&lt;/GetParentContextValue&gt;
+    &lt;/Variables&gt;
+&lt;/GroovyAction&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.lang.util.ThingIndex
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.util.ThingIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=xworker.tools.processExecutor
+sth_mark=false

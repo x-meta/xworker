@@ -1,0 +1,211 @@
+%1525316484904
+@
+sname=HtmlToolTipWeb
+slabel=HtmlToolTipWeb
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.StringUtils;
+import org.xmeta.util.UtilString;
+def message = requestBean.message;
+
+if(message != null){
+    if(message.startsWith("thing=")){
+        def thingPath = message.substring(6, message.length());
+        def thing = world.getThing(thingPath);
+        if(thing != null){
+            //println thing;
+            def head = "<b><u><a href=\"do?sc="; 
+            head = head +  thing.getMetadata().getPath() + "\">"  
+            head = head + thing.getMetadata().getName() + "</a></u></b><br/><br/>";
+            if("attribute" == thing.getThingName()){
+                message = head + getAttrDesc(thing);
+            } else {
+                message = head + thing.getMetadata().getDescription();
+            }
+        }else{
+            message = "事物不存在：" + thingPath;
+        }
+    }    
+}
+actionContext.g().put("message", message);
+
+def getAttrDesc(thing){
+    def desc = thing.getMetadata().getDescription();
+    
+    //查找有哪些方法使用了改属性
+    def name = thing.getMetadata().getName();
+    def actionName = "get" + UtilString.capFirst(name);
+    def action = null;
+    if(thing.getParent() != null){
+        action = thing.getParent().getActionThing(actionName);
+        if(action == null){
+            action = thing.getParent().getActionThing("is" + UtilString.capFirst(name));
+        }
+    }
+    if(action != null){
+        def acDesc = action.getMetadata().getDescription();
+        if(acDesc == null || acDesc.trim() == ""){
+            acDesc = action.getDescriptor().getMetadata().getDescription();
+        }
+        if(desc == null){
+            desc = "";
+        }
+        
+        desc = desc + "<p>可能相关的方法：<b>" + actionName + "</b></p>" + acDesc;
+    }
+    
+    if(desc == null){
+        return "";
+    }else{
+        return desc;
+    }
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doAction
+  @/@view
+  sname=view
+  sbelongToHtml=false
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=view
+    @/@view/@code
+    sname=code
+    Scode=
+#$@text#$@
+<html>
+<head>
+<title>ToolTip</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="js/jquery/jquery-1.4.2.min.js"></script>
+<style type="text/css">
+<!--
+body {
+	overflow: hidden;
+    background-color: #ffffee;
+    margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>
+<script  type="text/javascript">
+//用于触发和事物管理器交互的事件
+function invoke(status){  
+    if (typeof(utilBrowserFunction) == "undefined"){
+        window.status = status;
+        window.status = "";        
+    }else{
+        utilBrowserFunction(status);
+    }
+}
+
+function getContents(){	
+    //alert("tt");
+    var div = document.getElementById("all");
+    var content = "html_edit_content1:" + $( document ).height() + ":" + div.offsetWidth;
+    invoke(content);
+    //content = "html_edit_content:" + div.clientHeight + ":" + div.offsetWidth;
+    //invoke(content);
+    window.status = "";
+}
+
+function setContent(content){
+    var divshow = $("#messageDiv");
+    divshow.text("");
+    divshow.append(content);
+}
+
+/*
+function getContents(){	
+    //alert("tt");
+    var div = document.getElementById("body");
+    window.status = "html_edit_content" + div.offsetHeight + ":" + div.offsetWidth;
+    window.status = "";
+}
+*/
+</script>
+</head>
+<body style="overflow:hidden">
+<div id="all" style="width:100%;height:0px;" >
+<div id="messageDiv" style='background-color: #ffffee;width:400px;color:#000000;border: 0px #000000 solid; font-size: 12px;overflow: auto;'>
+${message?if_exists}
+</div>
+<div align="right" style='background-color: #ffffee;width:100%;color:#000000;border-top: 1px #AAAAAA solid; font-size: 10px;'>Press 'mouse right button' or 'F2' for focus.</div>
+</div>
+<script language="javascript">
+$(document).ready(function(){
+  getContents();
+});
+</script>
+</body>
+</html>
+#$@text#$@
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@success
+  sname=success
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.ide.worldExplorer.swt.util.HtmlToolTipWeb/@view
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=success

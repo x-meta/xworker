@@ -1,0 +1,423 @@
+@xworker.jfreechart.data.gantt.TaskSeriesCollection
+sname
+TaskSeriesCollection
+slabel
+TaskSeriesCollection
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.jfreechart.data.Dataset
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<div class="block">A collection of <a title="class in org.jfree.data.gantt" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/data/gantt/TaskSeries.html"><code>TaskSeries</code></a> objects. This class provides one implementation of the <a title="interface in org.jfree.data.gantt" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/data/gantt/GanttCategoryDataset.html"><code>GanttCategoryDataset</code></a> interface.</div>
+<p>甘特图数据的一种，通过任务来构造数据。</p>
+<p>数据源应该有如下字段：</p>
+<ul>
+    <li>series<br />
+    系列字段名，应该是类似任务名的这种东西。一个series可以包含多个任务。<br />
+    &nbsp;</li>
+    <li>taskDescription<br />
+    任务描述字段名。<br />
+    &nbsp;</li>
+    <li>taskStart<br />
+    开始时间字段名，对应的数据是Date。<br />
+    &nbsp;</li>
+    <li>taskEnd<br />
+    结束时间字段名，对应的数据是Date。<br />
+    &nbsp;</li>
+    <li>percentComplete<br />
+    完成比例字段名，对应的数据是double类型。<br />
+    &nbsp;</li>
+    <li>taskId<br />
+    任务标识，可选。<br />
+    &nbsp;</li>
+    <li>taskParentId<br />
+    任务父项标识，可选，taskId和taskParentId一起组成任务和子任务的关系。</li>
+</ul>
+#$@text#$@
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@actions/@createDataset
+sname
+createDataset
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.jfree.data.gantt.TaskSeriesCollection;
+import ognl.Ognl;
+
+if(self.type == "Var"){
+    return Ognl.getValue(self.varName, actionContext);
+}else{
+    return TaskSeriesCollection();
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@actions/@loaded
+sname
+onLoaded
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.jfree.data.gantt.TaskSeriesCollection;
+import org.jfree.data.gantt.TaskSeries;
+import org.jfree.data.gantt.Task;
+
+//先移除旧的数据
+def dataset = self.dataset;
+dataset.removeAll();
+
+//重新加载数据
+switch(self.type){
+    case "Var":
+        return null;
+    case "TaskSeriesCollection":
+        //读取数据
+        def seriesList = [];
+        def seriesMap = [:];
+        def tasksMap = [:];
+        def tasksList = [];
+        def seriesTasks = [:];
+        for(record in dataStore.records){
+            def series = getValue(self.series, record);
+            def taskDescription = getValue(self.taskDescription, record);
+            def taskStart = getValue(self.taskStart, record);
+            def taskEnd = getValue(self.taskEnd, record);
+            def taskId = getValue(self.taskId, record);
+            def taskParentId = getValue(self.taskParentId, record);
+            
+            def taskSeries = seriesMap.get(series);
+            if(taskSeries == null){
+                taskSeries = new TaskSeries(series);
+                seriesList.add(taskSeries);
+                seriesMap.put(taskSeries);
+            }
+            
+            def task = new Task(taskDescription, taskStart, taskEnd);
+            def stask = ["id": taskId, "parentId":taskParentId, "ask": task];
+            tasksMap.put(taskId, task);
+            def stasks = seriesTasks.get(taskSeries);
+            if(stasks == null){
+                stasks = [];
+                seriesTasks.put(taskSeries, stasks);
+            }
+            stasks.add(stask);
+        }       
+        
+        //重组数据，尤其是任务的父子关系
+        for(s in seriesList){
+            dataset.add(s);
+            def stasks = seriesTasks.get(s);
+            for(stask in stasks){
+                if(stask.parentId == null || tasksMap.get(stask.parentId) == null){
+                    s.add(stask.task);
+                }else{
+                    def parentTask = tasksMap.get(stask.parentId);
+                    parentTask.addSubtask(stask.task);
+                }
+            }
+        }
+        break;
+}
+
+def getValue(express, object){
+    if(express != null && express != ""){
+        return Ognl.getValue(express, object);
+    }else{
+        return null;
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@actions/@loaded/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@actions/@loaded/@ins/@store
+sname
+store
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@type
+sname
+type
+sinputtype
+select
+sreadOnly
+false
+sdefault
+Var
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@type/@Var
+sname
+Var
+svalue
+Var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@type/@TaskSeriesCollection
+sname
+TaskSeriesCollection
+svalue
+TaskSeriesCollection
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@varName
+sname
+varName
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@series
+sname
+series
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@taskDescription
+sname
+taskDescription
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@taskStart
+sname
+taskStart
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@taskEnd
+sname
+taskEnd
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@percentComplete
+sname
+percentComplete
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@taskId
+sname
+taskId
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.gantt.TaskSeriesCollection/@taskParentId
+sname
+taskParentId
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

@@ -1,0 +1,449 @@
+%1551341827266
+@
+sname=ClassSourceViewer
+slabel=ClassSourceViewer
+Sdescription=
+#$@text#$@
+<p>类源文件的浏览器。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>className: String or Class</strong><br />
+	准备要查看的类。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=java
+sth_mark=false
+  @/@EditorComposite
+  sname=EditorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=EditorComposite
+    @/@EditorComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@EditorComposite/@resources
+    sname=resources
+    sdescriptors=xworker.swt.Widgets/@Resource
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resources
+      @/@EditorComposite/@resources/@iconImage
+      sname=iconImage
+      stype=Image
+      simageFile=icons/file/java.gif
+      sdescriptors=xworker.swt.util.Resource/@Image
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=iconImage
+    @/@EditorComposite/@sourceViewer
+    sname=sourceViewer
+    sdescriptors=xworker.swt.Widgets/@JavaSourceViewer
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=sourceViewer
+  @/@OutlineComposite
+  sname=OutlineComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@OutlineComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=OutlineComposite
+    @/@OutlineComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@OutlineComposite/@classViewer
+    sname=classViewer
+    sdescriptors=xworker.swt.Widgets/@ClassContentViewer
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=classViewer
+  @/@actions1
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@setContent
+    sname=setContent
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.ClassSourceViewer
+    smethodName=setContent
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def className = params.className;
+
+if(className instanceof Class){
+    className = className.getName();
+}
+
+//编辑器
+actionContext.g().put("className", className);
+sourceViewer.doAction("setClassName", actionContext, "className", className);
+
+//概要
+if(actionContext.get("classViewer") != null){
+    classViewer.doAction("setClass", actionContext, "cls", className);
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+    @/@actions1/@getSimpleTitle
+    sname=getSimpleTitle
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.ClassSourceViewer
+    smethodName=getSimpleTitle
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("className") != null){
+    def index = className.lastIndexOf(".");
+    if(index != -1){
+        return className.substring(index + 1, className.length()) + ".class";
+    }else{
+        return className + ".class";
+    }
+}else{
+    return "No class";
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@actions1/@getTitle
+    sname=getTitle
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.ClassSourceViewer
+    smethodName=getTitle
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("className") != null){
+    return className + ".class";
+}else{
+    return "No class";
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@actions1/@isDirty
+    sname=isDirty
+    stype=boolean
+    svalue=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isDirty
+    @/@actions1/@doSave
+    sname=doSave
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doSave
+    @/@actions1/@getOutline
+    sname=getOutline
+    svarName=OutlineComposite
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getOutline
+    @/@actions1/@doSave1
+    sname=doSave
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doSave1
+    @/@actions1/@isSameContent
+    sname=isSameContent
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.ClassSourceViewer
+    smethodName=isSameContent
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("className") == null){
+    return false;
+}
+
+def cName = params.className;
+
+if(cName instanceof Class){
+    cName = cName.getName();
+}
+
+return cName == className;
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@actions1/@onActive
+    sname=onActive
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onActive
+    @/@actions1/@onUnActive
+    sname=onUnActive
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onUnActive
+    @/@actions1/@doDispose
+    sname=doDispose
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doDispose
+    @/@actions1/@getIcon
+    sname=getIcon
+    svarName=iconImage
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon

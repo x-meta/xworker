@@ -1,0 +1,353 @@
+^1454580824417
+@
+sname
+DefaultTableXYDataset
+slabel
+DefaultTableXYDataset
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.jfreechart.data.Dataset
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<div class="block">默认XY数据集。</div>
+sth_createIndex
+false
+sid
+DefaultTableXYDataset
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+sid
+actions
+@/@actions/@createDateset
+sname
+createDateset
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.jfree.data.xy.DefaultTableXYDataset;
+
+import ognl.Ognl;
+
+if(self.type == "Var"){
+    return Ognl.getValue(self.varName, actionContext);
+}else{
+    return new DefaultTableXYDataset();
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sid
+createDateset
+@/@actions/@loaded
+sname
+onLoaded
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.jfree.data.xy.XYSeries;
+
+if(self.type == "Var"){
+    return;
+}
+
+//先移除旧的数据
+def dataset = self.dataset;
+dataset.removeAllSeries();
+
+//重新加载数据
+String rowKey = self.series;
+String xName = self.xValue;
+String yName = self.yValue;
+def datas = [:];
+for(record in store.records){
+    def row = "";
+    def column = "";
+    def value = 0;
+    if(rowKey != null && rowKey != ""){
+        row = Ognl.getValue(rowKey, record);
+    }
+    if(row == null){
+        row = "";
+    }
+    def values = datas.get(row);
+    if(values == null){
+        values = new XYSeries();
+        datas.put(row, values);
+    }            
+    values.add(Ognl.getValue(xName, record), Ognl.getValue(yName, record));    
+}
+
+for(row in datas.keySet()){
+    if(!rows.contains(row)){
+        rows.add(row);
+    }
+
+    def xySeries = datas.get(row);
+    dataset.addSeries(xySeries);
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sid
+loaded
+@/@actions/@loaded/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+sid
+ins
+@/@actions/@loaded/@ins/@store
+sname
+store
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sid
+store
+@/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+name
+@/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+label
+@/@type
+sname
+type
+sinputtype
+select
+sshowLabel
+true
+sreadOnly
+false
+sdefault
+DefaultTableXYDataset
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+type
+@/@type/@calculate
+sname
+Var
+svalue
+Var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+sid
+calculate
+@/@type/@statistics
+sname
+DefaultTableXYDataset
+svalue
+DefaultTableXYDataset
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+sid
+statistics
+@/@varName
+sname
+varName
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+varName
+@/@dataStore
+sname
+dataStore
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+dataStore
+@/@rowKey
+sname
+series
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>系列对应的字段名。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+rowKey
+@/@valueName
+sname
+xValue
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+valueName
+@/@standardDeviation
+sname
+yValue
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sid
+standardDeviation

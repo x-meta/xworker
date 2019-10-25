@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns="http://www.xworker.org/schema/"
+xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.xworker.org/schema/">
+<xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+
+    <xsd:element name="ExtendA" type="ExtendA"/>
+    <xsd:element name="Test" type="Test"/>
+    <xsd:element name="RegistToTest" type="RegistToTest"/>
+    <xsd:element name="ExtendB" type="ExtendB"/>
+
+    <xsd:complexType name="ExtendA">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="ExtendB" type="ExtendB"/>
+            <xsd:element name="ExtendA" type="ExtendA"/>
+        </xsd:choice>
+            <xsd:attribute name="name" type="xsd:string"/>
+            <xsd:attribute name="label" type="xsd:string"/>
+            <xsd:attribute name="description" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="Test">
+        <xsd:complexContent>
+            <xsd:extension base="ExtendA">
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="RegistToTest" type="RegistToTest"/>
+            </xsd:choice>
+            <xsd:attribute name="descriptors" type="xsd:string" default="xworker.doc.schema.test.Test"/>
+            <xsd:attribute name="select" type="select_873309252"/>
+            <xsd:attribute name="descritpion" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="RegistToTest">
+            <xsd:attribute name="descriptors" type="xsd:string" default="xworker.doc.schema.test.RegistToTest"/>
+            <xsd:attribute name="name" type="xsd:string"/>
+            <xsd:attribute name="label" type="xsd:string"/>
+            <xsd:attribute name="description" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="ExtendB">
+        <xsd:complexContent>
+            <xsd:extension base="ExtendA">
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:simpleType name="select_873309252">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="truefalseType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="true"/>
+            <xsd:enumeration value="false"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

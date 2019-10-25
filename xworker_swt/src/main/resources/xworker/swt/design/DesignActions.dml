@@ -1,0 +1,296 @@
+%1542350293940
+@
+sname=DesignActions
+slabel=DesignActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>和设计相关的动作。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@Init
+  sname=Init
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=swt.design
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>可操作不同控件的工具的初始化。设计器每次在界面选择一个控件，如果选择了起其它控件而当前工具仍然可以处理，那么可以使用本方法初始化。</p>
+
+<p><strong>要求：</strong></p>
+
+<ul>
+	<li>需要编写一个ActionContainer.</li>
+	<li>ActionContainer中实现<strong>boolean handleNewControl(Widget newControl)</strong>方法。</li>
+</ul>
+
+<p>handleNewControl方法返回是否可以处理新的控件。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Init
+    @/@Init/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Init/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import xworker.swt.design.DesignTools;
+
+//注册toolActions
+def actions = self.doAction("getActionContainer", actionContext);
+
+parentContext.g().put("toolActions", actions);
+
+return actions.doAction("handleNewControl", actionContext, "newControl", parentContext.control);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@Init/@actions/@getActionContainer
+      sname=getActionContainer
+      sattributeName=actionContainer
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getActionContainer
+    @/@Init/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Init/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Init/@actionContainer
+    sname=actionContainer
+    sshowLabel=true
+    ssize=50
+    smodifier=public
+    sreadOnly=false
+    sdefault=var:actions
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actionContainer
+    @/@Init/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@ReturnHome
+  sname=ReturnHome
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=swt.design
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>取消当前的工具，重新回到工具的初始界面。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ReturnHome
+    @/@ReturnHome/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@ReturnHome/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//重置参数
+parentContext.g().put("toolActions", null);
+parentContext.g().put("currentTool", null);
+
+parentContext.actions.doAction("reInit");
+
+if(!parentContext.shell.isDisposed()){
+    parentContext.shell.forceActive();
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+    @/@ReturnHome/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@ReturnHome/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@ReturnHome/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

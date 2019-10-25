@@ -1,0 +1,420 @@
+%1546049237136
+@
+sname=ThingViewer
+slabel=ThingViewer
+sdescription=<p>事物编辑器，参数thing: Thing。</p>
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@EditorComposite
+  sname=EditorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=EditorComposite
+    @/@EditorComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@EditorComposite/@resources
+    sname=resources
+    sdescriptors=xworker.swt.Widgets/@Resource
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resources
+      @/@EditorComposite/@resources/@editorIcon
+      sname=editorIcon
+      stype=Image
+      simageFile=icons/xworker/dataObject.gif
+      sdescriptors=xworker.swt.util.Resource/@Image
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=editorIcon
+    @/@EditorComposite/@thingViewer
+    sname=thingViewer
+    sdescriptors=xworker.swt.Widgets/@ThingViewer
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingViewer
+      @/@EditorComposite/@thingViewer/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaThing/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@EditorComposite/@thingViewer/@actions/@selection
+        sname=selection
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(actionContext.get("browser") != null){
+    def url = XWorkerUtils.getThingDescUrl(thing.getDescriptor());
+    browser.setUrl(url);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=selection
+  @/@OutlineComposite
+  sname=OutlineComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@OutlineComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=OutlineComposite
+    @/@OutlineComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@OutlineComposite/@browser
+    sname=browser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=browser
+  @/@ActionContainer
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionContainer
+    @/@ActionContainer/@setContent
+    sname=setContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import java.io.File;
+import xworker.util.XWorkerUtils;
+
+//判断参数是否存在
+if(params == null){    
+    noParams(actionContext);
+    return;
+}
+
+def thing = params.thing;
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+actionContext.g().put("thing", thing);
+thingViewer.doAction("setThing", actionContext, "thing", thing);
+
+if(actionContext.get("browser") != null){
+    def url = XWorkerUtils.getThingDescUrl(thing.getDescriptor());
+    browser.setUrl(url);
+}
+//thingEditor.doAction("selectThing", actionContext, "thing", thing);
+//EditorComposite.layout();
+//println thingEditor;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+      @/@ActionContainer/@setContent/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@ActionContainer/@setContent/@ActionDefined/@noParams
+        sname=noParams
+        sshell=ognl:EditorComposite.getShell()
+        sicon=ICON_WARNING
+        sbuttons=OK
+        stitle=lang:d=文件文本编辑器&FileTextEditor
+        smessage=lang:d=参数不存在，不能编辑文件！&en=Can not edit file, params not exists!
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=noParams
+    @/@ActionContainer/@isSameContent
+    sname=isSameContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+return false;
+/*
+if(actionContext.get("thing") == null){
+    return false;
+}
+
+if(actionContext.get("params") == null){
+    return false;
+}    
+
+def t = params.thing;
+if(t instanceof String){
+    t = world.getThing(t);
+}
+if(t != null && thing.getRoot() == t.getRoot()){
+    return true;
+}else{
+    return false;
+}*/
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@ActionContainer/@getSimpleTitle
+    sname=getSimpleTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("thing") != null){
+    return thing.getMetadata().getLabel();
+}else{
+    return "ThingViewer";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@ActionContainer/@getTitle
+    sname=getTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("thing") != null){
+    return thing.getMetadata().getPath();
+}else{
+    return "ThingViewer";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@ActionContainer/@getOutline
+    sname=getOutline
+    sexpression=OutlineComposite
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Ongl
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getOutline
+    @/@ActionContainer/@onUnActive
+    sname=onUnActive
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onUnActive
+    @/@ActionContainer/@onActive
+    sname=onActive
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onActive
+    @/@ActionContainer/@getIcon
+    sname=getIcon
+    svarName=editorIcon
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon

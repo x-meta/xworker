@@ -1,0 +1,167 @@
+^1563439434226
+@
+sname
+Download
+slabel
+Download
+scheckPermission
+false
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.filesync.FileSync;
+
+def project = requestBean.project;
+def rootDir = null;
+
+//根目录
+def fileList = "/work/update/filelist.txt";
+if(project == null || project == "" ){
+    rootDir = new File(world.getPath() + "/work/update/xworker/");
+}else{
+    rootDir = new File(world.getPath() + "/work/update/" + project + "/");
+    fileList = "/work/update/" + project + "FileList.txt";
+}
+log.info("project=" + project + ", fileList=" + fileList);
+def input = request.getInputStream();
+def output = response.getOutputStream();
+
+//强制读取所有字节
+def length = request.getContentLength();
+def bin = FileSync.readComplete(input, length);
+
+//处理上传文件
+response.setContentType("application/octet-stream");
+
+FileSync fileSync = new FileSync(new File(world.getPath() + fileList));
+fileSync.serverDownload(rootDir, bin, output);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doAction
+      @/@actions/@doAction/@Variables
+      sname
+      Variables
+      sdescriptors
+      xworker.lang.actions.Inout/@Variables
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      Variables
+        @/@actions/@doAction/@Variables/@log
+        sname
+        log
+        stagName
+        xworker.tools.update.Download/@actions/@doAction
+        saction
+        true
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        log

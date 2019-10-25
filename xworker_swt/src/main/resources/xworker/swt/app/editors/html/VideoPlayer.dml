@@ -1,0 +1,307 @@
+%1546047626322
+@
+sname=VideoPlayer
+slabel=VideoPlayer
+Sdescription=
+#$@text#$@
+<p>使用HTML的video标签播放视频。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>src:String</strong><br />
+	视频源。<br />
+	&nbsp;</li>
+	<li><strong>videoThing: Thing</strong><br />
+	video的设置。描述者是xworker.swt.html.Video。<br />
+	&nbsp;</li>
+	<li><strong>title:String</strong><br />
+	标题。如果为null使用src的文件名，否则使用videoThing的标签。<br />
+	&nbsp;</li>
+	<li><strong>desc: </strong>Thing<br />
+	描述文档事物。它的文档可以显示在概要栏的浏览器中。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 以上参数src和videoThing可以单选也可以多选。</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=html
+sth_mark=false
+  @/@EditorComposite
+  sname=EditorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=EditorComposite
+    @/@EditorComposite/@resources
+    sname=resources
+    sdescriptors=xworker.swt.Widgets/@Resource
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resources
+      @/@EditorComposite/@resources/@videoIcon
+      sname=videoIcon
+      stype=Image
+      simageFile=icons/film.png
+      sdescriptors=xworker.swt.util.Resource/@Image
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=videoIcon
+    @/@EditorComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@EditorComposite/@video
+    sname=video
+    sBORDER=false
+    sautoplay=false
+    scontrols=true
+    sloop=false
+    smuted=false
+    spreload=false
+    snotSupportText=Your browser does not support the video tag.
+    sdescriptors=xworker.swt.Widgets/@Video
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=video
+  @/@OutlineComposite
+  sname=OutlineComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@OutlineComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=OutlineComposite
+    @/@OutlineComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@OutlineComposite/@browser
+    sname=browser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=browser
+  @/@actions
+  sname=actions
+  sextends=xworker.swt.app.editors.NoopActionContainer
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@setContent
+    sname=setContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//设置参数
+if(params.videoThing != null){
+    def videoThing = params.videoThing;
+    if(videoThing instanceof String){
+        videoThing = world.getThing(videoThing);
+    }
+    if(videoThing != null){
+        actionContext.g().put("videoThing", videoThing);
+        
+        video.doAction("setVideoThing", actionContext, "videoThing", videoThing);
+    }
+}
+
+if(params.src != null){
+    actionContext.g().put("src", params.src);
+    
+    video.doAction("setVideo", actionContext, "src", params.src);
+}
+
+if(params.title != null){
+    actionContext.g().put("title", params.title);
+}
+
+if(params.desc != null && browser != null){
+    def desc = params.desc;
+    def url = XWorkerUtils.getThingDescUrl(desc);
+    browser.setUrl(url);
+}else{
+    browser.setText("");
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+    @/@actions/@getSimpleTitle
+    sname=getSimpleTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("title") != null){
+    return title;
+}
+
+if(actionContext.get("src") != null){
+    def file = new File(src);
+    return file.getName();
+}
+
+if(actionContext.get("videoThing") != null){
+    return videoThing.getMetadata().getLabel();
+}
+
+return "Video";
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@actions/@getTitle
+    sname=getTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("title") != null){
+    return title;
+}
+
+if(actionContext.get("src") != null){
+    return src;
+}
+
+if(actionContext.get("videoThing") != null){
+    return videoThing.getMetadata().getPath();
+}
+
+return "Video";
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@actions/@getIcon
+    sname=getIcon
+    svarName=videoIcon
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon

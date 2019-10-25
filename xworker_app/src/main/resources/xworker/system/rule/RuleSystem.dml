@@ -1,0 +1,421 @@
+%1471939566483
+@
+sname=RuleSystem
+slabel=RuleSystem
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.lang.actions.SelfAction
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=system.rule
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>规则系统。</p>
+
+<p><strong>执行规则</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;遍历规则(Rules)子节点的子节点，执行其accept方法，如果返回true那么执行它的run方法。</p>
+
+<p><strong>循环</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果loop=true，那么执行一遍后继续执行。如果breakOnNoRules=true，那么在循环结束后跳出循环，跳出循环后系统即终止了。循环时可以设置间隔。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>boolean isLoop(Thing system, boolean hasRule)</strong><br />
+	是否要循环执行。hasRule是上次循环中是否有规则被执行。<br />
+	&nbsp;</li>
+	<li><strong>boolean isBreak(Thing system, boolean hasRule)</strong><br />
+	是否要终止。hasRule是上次循环中是否有规则被执行。<br />
+	&nbsp;</li>
+	<li><strong>long getInterval()</strong><br />
+	循环之间的间隔。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilData;
+
+//设置本地变量范围
+actionContext.peek().setVarScopeFlag();
+
+//执行初始化
+for(inits in self.getChilds("Inits")){
+    for(init in inits.getChilds()){
+        init.doAction("run", actionContext);
+    }
+}
+
+//执行规则
+while(true){
+    boolean hasRule = false;
+    for(rules in self.getChilds("Rules")){
+        for(rule in rules.getChilds()){
+            if(UtilData.isTrue(rule.doAction("accept", actionContext))){
+                hasRule = true;
+                rule.doAction("run", actionContext);
+            }
+        }
+    }
+    
+    //是否是循环的
+    if(self.doAction("isLoop", actionContext, "system", self, "hasRule", hasRule)){
+        break;
+    }
+    
+    //是否终止循环
+    if(self.doAction("isBreak", actionContext, "system", self, "hasRule", hasRule)){
+        break;
+    }
+    
+    def interval = self.doAction("getInterval", actionContext);
+    if(interval > 0){
+        Thread.sleep(interval);
+    }
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@actions/@isBreak
+    sname=isBreak
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//默认系统循环没有规则执行，且breakOnNoRules属性值为true
+if(!hasRule && system.getBoolean("breakOnNoRules")){
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isBreak
+    @/@actions/@isLoop
+    sname=isLoop
+    sattributeName=loop
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isLoop
+    @/@actions/@getInterval
+    sname=getInterval
+    sattributeName=interval
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetLong
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getInterval
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@loop
+  sname=loop
+  sinputtype=truefalse
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=true
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=loop
+  @/@breakOnNoRules
+  sname=breakOnNoRules
+  sinputtype=truefalse
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=true
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>是否在没有Rule匹配时中断循环。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=breakOnNoRules
+  @/@interval
+  sname=interval
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>循环之间的间隔，单位毫秒。。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=interval
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Rules
+  sname=Rules
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Rules
+    @/@Rules/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Rules/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Rules/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+  @/@Inits
+  sname=Inits
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Inits
+    @/@Inits/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Inits/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Inits/@descriptoin
+    sname=descriptoin
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=descriptoin

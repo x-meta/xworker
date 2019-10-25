@@ -1,0 +1,128 @@
+^1449801989782
+@
+sname
+Resource
+slabel
+Resource
+sdescriptors
+xworker.http.controls.REST
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET
+sname
+GET
+scheckPermission
+false
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.REST/@GET
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@GET/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def remoteAddr = request.getRemoteAddr();
+def config = world.getThing("xworker.ide.config.decriptors.GlobalConfig");
+def ipLimit = config.getStringBlankAsNull("restIpLimits");
+if(ipLimit == null){
+    ipLimit = "127.*|192.*|0.*";
+}
+if(remoteAddr.matches(ipLimit)){
+    try{
+        def path = requestBean.get("path");
+        if(path == null || path == ""){
+            response.setStatus(404);
+            return;
+        }
+        
+        def fin = world.getResourceAsStream(path);
+        if(fin == null){
+            response.setStatus(404);
+            return;
+        }
+        response.setHeader("fileName", path);
+        def bytes = new byte[4096];
+        def out = response.getOutputStream();
+        try{
+            def length = -1;
+            while((length = fin.read(bytes)) != -1){
+                out.write(bytes, 0, length);
+            }
+            out.flush();
+        }finally{
+            fin.close();
+        }
+        
+       // Thread.sleep(2000);
+    }catch(Exception e){
+        log.info("error", e);
+        response.setStatus(404);
+    }
+}else{
+    response.setStatus(403);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false

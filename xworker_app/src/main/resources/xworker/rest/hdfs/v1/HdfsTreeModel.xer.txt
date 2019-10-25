@@ -1,0 +1,273 @@
+^1449740040061
+@
+sname
+HdfsTreeModel
+slabel
+HdfsTreeModel
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.app.model.tree.TreeModel
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@getRoot
+sname
+getRoot
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+return ["text":"/", "icon":"icons/folder.png", "id":"/", "leaf":false];
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions/@getChilds
+sname
+getChilds
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def thing = new Thing("xworker.rest.hdfs.v1.ListStatus");
+thing.host = self.host;
+thing.path = id;
+//println(id);
+def nodes = [];
+def result =  thing.doAction("run", actionContext);
+if(result.status == 200){
+    def datas = result.content.FileStatuses.FileStatus;
+    for(data in datas){
+        def node = [:];
+        if(id.endsWith("/")){
+            node.id = id + data.pathSuffix;
+        }else{
+            node.id = id + "/" + data.pathSuffix;
+        }
+        node.text = data.pathSuffix;
+        if(data.type == "DIRECTORY"){
+            node.icon = "icons/folder.png";
+            node.leaf = false;
+        }else{
+            node.icon = "icons/page_white.png";
+            node.leaf = true;
+        }
+        
+        nodes.add(node);
+    }    
+}
+
+return nodes;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@name
+sname
+name
+sshowLabel
+true
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@label
+sname
+label
+sshowLabel
+true
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@host
+sname
+host
+sshowLabel
+true
+ssize
+50
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@description
+sname
+description
+sinputtype
+html
+sshowLabel
+true
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false

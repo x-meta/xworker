@@ -1,0 +1,40 @@
+%1525250504499
+@
+sname=Security
+slabel=Security
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p><strong>安全</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; XWorker中存在一些公共服务，这些服务器可能存在安全问题。比如Extjs的DataStore服务允许通过Ajaxs查询、插入、更新和删除数据库中的数据等。</p>
+
+<p><strong>解决方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; XWorker的解决方法是当执行公共服务器的API时进行权限检查，通过则允许操作，不通过则返回不允许。</p>
+
+<p><strong>架构</strong></p>
+
+<ul>
+	<li><strong>Permission</strong><br />
+	权限。权限有名称(permission)、操作(action)、操作的内容(path)和执行环境(type)组成。其中环境(type)可以是WEB或APP等。<br />
+	&nbsp;</li>
+	<li><strong>SecurityHanlder</strong><br />
+	验证权限的处理器。通过boolean doCheck(type, permission, action, path, actionContext)来验证权限。<br />
+	&nbsp;</li>
+	<li><strong>SecurityManager</strong><br />
+	公共服务会请求SecurityManager会验证权限，SecurityManager会调用注册的符合条件的SecurityHandler来验证权限。<br />
+	&nbsp;</li>
+</ul>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

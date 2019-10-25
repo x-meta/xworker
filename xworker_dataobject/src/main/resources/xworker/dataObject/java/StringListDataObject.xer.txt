@@ -1,0 +1,649 @@
+^1364549952619
+@xworker.dataObject.java.StringListDataObject
+sname
+StringListDataObject
+slabel
+StringListDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.DataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>使用半角,号分割的字符串，每一个是一个值，字符串分割后每一个值变成{index,value}的Map，其中index为索引位置，value是分割的单个值。</p>
+<p>当字符串删除一个节点后，改节点后的索引会全部改变，所以界面中需要重新装载数据。</p>
+<p>列表数据使用csv的规则，相当于csv的一行。</p>
+#$@text#$@
+sid
+StringListDataObject
+@xworker.dataObject.java.StringListDataObject/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.java.StringListDataObject/@actions/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import com.csvreader.CsvReader;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.Charset;
+
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+
+//字符串变量
+def strValue = Ognl.getValue(self.stringVarName, actionContext);
+if(strValue == null){
+    strValue = "";
+}
+log.info("strValue=" + strValue);
+
+//使用CVS解析字符串
+def strIn = new ByteArrayInputStream(strValue.getBytes("utf-8"));
+def csvReader = new CsvReader(strIn, Charset.forName("utf-8"));
+csvReader.readRecord();
+
+//数据
+def matchedDatas = [];
+def index = 0;
+for(value in csvReader.getValues()){
+    log.info("values=" + csvReader.getValues());
+    def dobj = createDataObject(index, value, self);
+    if(actionContext.get("conditionConfig") != null){
+        def matched = conditionConfig.doAction("isMatch", actionContext, ["condition":conditionData, "data":dobj]);            
+        if(matched){
+            matchedDatas.add(dobj);
+        }
+    }else{
+        matchedDatas.add(dobj);
+    }
+    index++;
+}
+
+log.info("matchedDatas=" + matchedDatas);
+//查询和分页
+if(actionContext.get("pageInfo") != null){
+    //是否排序
+    if(pageInfo.sort != null && pageInfo.sort != ""){
+        matchedDatas.sort(){ a,b->   
+            def av = a == null ? null : a.get(pageInfo.sort);
+            def bv = b == null ? null : b.get(pageInfo.sort);
+            if(av == null && bv == null){
+                return 0;
+            }else if(av == null && bv != null){
+                return pageInfo.dir == "DESC" ? 1 : -1;
+            }else if(av != null && bv == null){
+                return pageInfo.dir == "DESC" ? -1 : 1;
+            }else{
+                return pageInfo.dir == "DESC" ? -av.compareTo(bv) : av.compareTo(bv);
+            }            
+        }   	
+    
+    }
+    pageInfo.totalCount = matchedDatas.size();
+    if(pageInfo.limit > 0){
+        if(pageInfo.start > matchedDatas.size()){
+            pageInfo.start = matchedDatas.size();
+        }
+        def toIndex = pageInfo.start + pageInfo.limit;
+        if(toIndex > matchedDatas.size()){ 
+            toIndex = matchedDatas.size();
+        }
+        def startIndex = pageInfo.start;
+        if(startIndex < 0){
+            startIndex = 0;
+        }    
+        pageInfo.datas = matchedDatas.subList(pageInfo.start, toIndex);
+    }else{
+        pageInfo.datas = matchedDatas;
+    }
+    return pageInfo.datas;
+}else{
+    if(actionContext.get("pageInfo") != null){
+        pageInfo.totalCount = matchedDatas.size();
+        pageInfo.datas = matchedDatas;
+    }
+    return matchedDatas;
+}
+
+//创建数据对象
+def createDataObject(index, value, descriptor){
+    def dataObj = new DataObject(descriptor);
+    for(attribute in descriptor.getChilds("attribute")){
+        def name = attribute.name;
+        if(attribute.propertyPath == "index"){
+            dataObj.put(name, index);
+        }else if(attribute.propertyPath == "value"){
+            dataObj.put(name, value);
+        }
+    }   
+    
+    //初始化多个属性列表
+    def things = dataObj.getMetadata().getThings();
+    for(int i=0; i<things.size(); i++){
+        def refThing = things[i];
+        if(things[i].getBoolean("many")){
+            def list = new DataObjectList(refThing, dataObj);
+            list.setInited(false);
+            dataObj.put(refThing.name, list);
+        }else{
+            def dchild = new DataObject(refThing.dataObjectPath);
+            dchild.put(refThing.refAttributeName, dataObj.get(refThing.localAttributeName));
+            dchild.setInited(false);
+            dataObj.put(refThing.name, dchild);
+        }
+    }      
+    
+    return dataObj;
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@actions/@load
+sname
+doLoad
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def descriptor = theData.getMetadata().descriptor;
+def keyDatas = theData.getKeyAndDatas();
+if(keyDatas == null || keyDatas.length == 0){
+    log.warn("no keys data cannot load, dataObjectPath=" + descriptor.metadata.path);
+    throw new Exception("No keys, data cannot laod");
+}
+
+def datas = self.doAction("query", actionContext, ["conditionConfig": null, "conditionData":null, "pageInfo":null]);
+
+def data = null;
+for(child in datas){
+    def have = true;
+    for(int i=0; i<keyDatas.length; i++){
+        if(child.get(keyDatas[i][0].name) !=  keyDatas[i][1]){
+           have = false;
+           break;
+        }        
+    }
+    if(have){
+         data = child;
+         break;
+    }
+}
+
+if(data != null){
+    for(key in data.getAttributes().keySet()){
+        theData.put(key, data.get(key));
+    }
+    
+    return theData;
+}else{
+    //log.info("数据对象不存在");
+    return null;
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+load
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@actions/@load/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.dataObject.java.StringListDataObject/@actions/@load/@ins/@theData
+sname
+theData
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+theData
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.dataObject.java.StringListDataObject/@actions/@update
+sname
+doUpdate
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def dataObjects = self.doAction("query", actionContext, ["conditionConfig": null, "conditionData":null, "pageInfo":null]);
+def keyDatas = theData.getKeyAndDatas();
+def updated = false;
+for(child in dataObjects.getChilds()){
+    def ok = true;
+    for(keyData in keyDatas){
+        if(keyData[1] != child.get(keyData[0].name)){
+            ok = false;
+            break;
+        }
+    }
+    
+    if(ok){
+        child.putAll(theData);
+        theData.putAll(child.getAttributes());
+        updated = true;
+        
+        if(actionContext.get("result") != null){
+            result.success = true;
+            result.msg = "数据更新成功";
+        }
+        break;
+    }
+}
+
+if(!updated && actionContext.get("result") != null){
+    result.success = false;
+    result.msg = "没有匹配的数据，更新失败";
+    return 0;
+}else{
+    self.doAction("saveToString", actionContext, ["dataObjects": dataObjects]);
+    return 1;
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+update
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@actions/@saveToString
+sname
+saveToString
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import com.csvreader.CsvWriter;
+
+import java.io.ByteArrayOutputStream;
+
+import java.nio.charset.Charset;
+
+//创建csvWriter
+def output = new ByteArrayOutputStream();
+def csvWriter = new CsvWriter(output, (char) ',', Charset.forName("utf-8"));
+
+//保存数据
+def valueName = null;
+for(attribute in self.get("attribute@")){
+    if(attribute.propertyPath == "value"){
+        valueName = attribute.name;
+        break;
+    }
+}
+
+if(valueName != null){
+    for(dataObject in dataObjects){
+        csvWriter.write("" + dataObject.get(valueName, true));
+    }
+    
+    csvWriter.flush();
+    def str =  new String(output.toByteArray(), "utf-8");
+    log.info("oldValue=" + actionContext.get(self.stringVarName));
+    actionContext.put(self.stringVarName, str);
+    log.info("save, name=" + self.stringVarName + ",str=" + str);
+    return str;
+}else{
+    log.warn("StringListDataObject: dataObject valueName is null, attribute not equal to value");
+    return null;
+}
+#$@text#$@
+sdescription
+<p>把数据对象的值保存到字符串中。</p>
+sid
+saveToString
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@actions/@saveToString/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.dataObject.java.StringListDataObject/@actions/@saveToString/@ins/@dataObjects
+sname
+dataObjects
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObjects
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.dataObject.java.StringListDataObject/@actions/@create
+sname
+doCreate
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+//是否需要自动初始化
+if(self.getBoolean("autoInit")){
+    theData.doAction(self.autoInitAction, actionContext);
+}
+
+def dataObjects = self.doAction("query", actionContext, ["conditionConfig": null, "conditionData":null, "pageInfo":null]);
+def keyDatas = theData.getKeyAndDatas();
+def id = dataObjects.size();
+theData.put(keyDatas[0][0].name, id);
+keyDatas[0][1] = id;
+
+def have = false;
+for(child in dataObjects){
+    def ok = true;
+    for(keyData in keyDatas){
+        if(keyData[1] != null && keyData[1].toString() != child.get(keyData[0].name)){
+            ok = false;
+            break;
+        }
+    }
+    
+    if(ok){        
+        have = true;
+        break;
+    }
+}
+
+if(!have){        
+    dataObjects.add(theData);
+    self.doAction("saveToString", actionContext, ["dataObjects": dataObjects]);
+    return true;
+}else{
+    if(actionContext.get("result") != null){
+        result.success = false;
+        result.msg = "数据重复，不能创建新数据";
+    }else{
+        throw new Exception("数据重复，不能创建新数据");
+    }
+    
+    return false;
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@actions/@delete
+sname
+doDelete
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def dataObjects = self.doAction("query", actionContext, ["conditionConfig": null, "conditionData":null, "pageInfo":null]);
+def keyDatas = theData.getKeyAndDatas();
+def deleted = false;
+for(child in dataObjects){
+    def ok = true;
+    for(keyData in keyDatas){
+        if(keyData[1] != null && keyData[1].toString() != child.get(keyData[0].name)){
+            ok = false;
+            break;
+        }
+    }
+    
+    if(ok){
+        dataObjects.remove(child);
+        deleted = true;
+        if(actionContext.get("result") != null){
+            result.success = true;
+            result.msg = "数据删除成功";
+        }
+        break;
+    }
+}
+
+if(!deleted && actionContext.get("result") != null){
+    result.success = true;
+    result.msg = "没有匹配的记录";
+}else{
+    self.doAction("saveToString", actionContext, ["dataObjects": dataObjects]);
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+delete
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.java.StringListDataObject/@stringVarName
+sname
+stringVarName
+sgroup
+DataObject
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>字符串变量名称，使用Ognl表达式从actionContext中取值。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+stringVarName
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.java.StringListDataObject/@attribute
+sname
+attribute
+slabel
+Attribute
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.Attribute
+smany
+true
+seditCols
+2
+sdescription
+<p>基本类型的属性。</p>
+sid
+attribute
+@xworker.dataObject.java.StringListDataObject/@attribute/@propertyPath
+sname
+propertyPath
+ssize
+60
+scolspan
+2
+sgroup
+Attribute
+sdescription
+<p>Ognl表达式，只能映射key或value。</p>
+sid
+propertyPath
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@xworker.dataObject.java.StringListDataObject/@thing
+sname
+thing
+slabel
+Thing
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.RelationDataObject
+smany
+true
+seditCols
+2
+sdescription
+<p>与其他数据对象有关联的属性或属性列表。</p>
+sid
+thing
+@xworker.dataObject.java.StringListDataObject/@actions1
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+actions1
+@xworker.dataObject.java.StringListDataObject/@actions1/@name
+sname
+name
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute

@@ -1,0 +1,821 @@
+^1540887791945
+@
+sname
+TreeModel
+slabel
+TreeModel
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.app.model.tree.TreeModelSwtAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+xworker.app.treeModel
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>&nbsp;&nbsp;&nbsp; 树模型通常用在树控件(Tree)上，为树控件提供要显示的数据。</p>
+
+<p><strong>帮助小精灵</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 树模型的文档比较多，这里只是简单的文档，更多详细文档和示例可以在帮助小精灵中找到。</p>
+
+<p><strong>特殊属性</strong></p>
+
+<p>tabId、dataId和url为三个比较特殊的参数，tabId和url一般可以用于对树节点的处理，比如打开指定的编辑器等，dataId一般为数据的真实标识，而id属性可能是在dataId基础上附加了模型标识前缀。</p>
+
+<p>tabId和url也可以在模型上设置，具体的模型在返回节点时应根据需要在节点中设置该属性。</p>
+
+<p><strong>自定义模型</strong></p>
+
+<p>自定义的模型一般需要继承本事物，本事物还定义了一些界面相关的公共方法，比如swt绑定到树控件上等。</p>
+
+<p>自定义的TreeModel主要需要实现以下两个方法：</p>
+
+<ul>
+	<li><strong>Object getRoot()</strong><br />
+	返回模型的根节点，根节点只有一个。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;Object&gt; getChilds(Object id)&nbsp;&nbsp;&nbsp;&nbsp;</strong>&nbsp;&nbsp;&nbsp;&nbsp;<br />
+	根据标识返回其子节点列表，日过标识为空，应返回getRoots方法的内容。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;Object&gt; getRoots（此方法可以不用重写）</strong><br />
+	&nbsp;返回可见的根节点列表，如果根节点可见，返回只包含根节点的列表，如果根节点不可见，返回根节点的子节点列表。</li>
+</ul>
+
+<p>返回的节点的数据结构应符合TreeNode的定义，树节点的属性childs为子节点列表，如果一个节点的leaf属性为false，那么界面可能会认为是动态树节点，会请求模型获取子节点列表。</p>
+
+<p><strong>模型和模型实例</strong></p>
+
+<p>当使用一个模型时，比如绑定到SWT的Tree上，那么会创建一个模型实例，模型实例也是事物，在getRoot、getChilds等方法中从actionContext中以变量名treeModel获取模型实例，运行时的一些变量可以设置到模型实例上。</p>
+
+<p><span style="color: rgb(255, 0, 0);">树模型通常用于界面显示，并不参与模型数据管理。</span></p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.util.DescriptorsIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@getRoot
+    sname
+    getRoot
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.app.model.tree.TreeModelCreator
+    smethodName
+    getRoot
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>返回树的根节点。</p>
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getRoot
+    @/@actions/@getRootChilds
+    sname
+    getRoots
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.app.model.tree.TreeModelCreator
+    smethodName
+    getRoots
+    sdisableGlobalContext
+    false
+    Sdescription
+#$@text#$@
+<p>返回根节点列表，通常用于不显示根节点时。</p>
+<p>如果根节点可见，返回只包含根节点的列表，如果根节点不可见，返回根节点的子节点列表。</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getRootChilds
+    @/@actions/@getNodeById
+    sname
+    getChilds
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.app.model.tree.TreeModelCreator
+    smethodName
+    getChilds
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>给定一个节点的标识(id)，返回该节点的子节点。</p>
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getNodeById
+      @/@actions/@getNodeById/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@getNodeById/@ins/@id
+        sname
+        id
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        id
+    @/@actions/@getTreeModel
+    sname
+    getTreeModel
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.app.model.tree.TreeModelCreator
+    smethodName
+    getTreeModel
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>如果一个树模型有子模型，通过节点标识判断属于哪一个子模型。通常只在子节点有多种模型时用。</p>
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getTreeModel
+      @/@actions/@getTreeModel/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@getTreeModel/@ins/@id
+        sname
+        id
+        slabel
+        节点标识
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        id
+  @/@name
+  sname
+  name
+  slabel
+  名称
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  name
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  stype
+  string
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>显示在Tree上的文字是text属性，label属性是显示在事物编辑中的标签。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  label
+  @/@rootVisiable
+  sname
+  rootVisiable
+  slabel
+  根节点是否可见
+  sinputtype
+  truefalse
+  sgroup
+  TreeModel
+  sdefault
+  true
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  rootVisiable
+  @/@bindToParent
+  sname
+  bindToParent
+  slabel
+  绑定父控件
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>在SWT里是否绑定的父控件，SWT一般绑定到Tree控件。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  bindToParent
+  @/@parentControls
+  sname
+  parentControls
+  slabel
+  父控件列表
+  sshowLabel
+  true
+  ssize
+  60
+  sgroup
+  TreeModel
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>父控件列表，如有多个使用英文逗号分隔。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  parentControls
+  @/@treeModelRef
+  sname
+  treeModelRef
+  slabel
+  引用
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>应用变量上下文中的树模型或者树模型的事物路径。</p>
+<p>如果引用成功，那么本事物只起引用作用，其他效果无。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  treeModelRef
+  @/@typeName
+  sname
+  multiSubModel
+  slabel
+  多子模型
+  sinputtype
+  truefalse
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>子节点是否是有多个树模型组成的。</p>
+<p>比如菜单可以包含用户节点和部门节点，其中用户节点的子列表为用户树模型提供，部门子节点的树节点由部门树模型提供。</p>
+<p>通常使用&lt;modelId&gt; + &lt;multiSubModelSeparator&gt; + &lt;nodeId&gt;（子模型标识+分隔符+节点标识）组成节点的新标识，通过分隔符确认该节点属于哪一个树模型。</p>
+<p><span style="color: #ff0000">在通过getChilds获取多子模型的数据时模型标识和分隔符是已去掉的，但对于子模型来说在返回数据时节点的id必须是自行加上模型标识和分割符的，因此如果一个模型的属性&ldquo;模型标识&rdquo;和&ldquo;分隔符&rdquo;不为空，那么在返回的模型数据里节点的标识则需要附加上模型标识和分隔符。</span></p>
+<p><span style="color: #ff0000">如果是多子模型，子模型都需设置模型标识和分隔符，然后子模型在返回节点时才可以正确添加模型标识和分隔符。</span></p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  typeName
+  @/@rootNodeId
+  sname
+  rootNodeId
+  slabel
+  根节点标识
+  sshowLabel
+  true
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  __TreeNodeRootId__
+  sinheritDescription
+  false
+  sdescription
+  <p>在某些场合下即使不显示根节点根节点也是存在的，比如在extjs下，此时根节点的默认标识是__TreeNodeRootId__，在自定义的树模型中请把id=__TreeNodeRootId__也当做根节点的标识。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  rootNodeId
+  @/@typeValue
+  sname
+  modelId
+  slabel
+  模型标识
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  typeValue
+  @/@multiSubModelSeparator
+  sname
+  multiSubModelSeparator
+  slabel
+  分隔符
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  -
+  sinheritDescription
+  false
+  sdescription
+  <p>一般只对根模型有效。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  multiSubModelSeparator
+  @/@loadBackground
+  sname
+  loadBackground
+  slabel
+  后台装载
+  sinputtype
+  truefalse
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>在某些平台里，比如swt程序，是否在后台状态和初始化数据。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  loadBackground
+  @/@addTabUrl
+  sname
+  addTabUrl
+  sinputtype
+  truefalse
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>具体的实现是否应该添加本事物tabId和url两个属性，由具体实现决定是否使用这两个属性。</p>
+<p>比如静态的TreeNode不会使用这两个属性，应为可以在TreeNode中设置，而一些动态的树模型可以使用这两个属性，比如DataObjectTreeModel等。</p>
+<p>通常tabId和url的优先级小于树节点本身，如果树节点本身已有这两个参数，那么就不用替换了。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  addTabUrl
+  @/@tabId
+  sname
+  tabId
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  tabId
+  @/@Root
+  sname
+  Root
+  slabel
+  根节点
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.app.model.tree.TreeNode
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sid
+  Root
+  @/@Root1
+  sname
+  Root
+  slabel
+  根节点（NoCheck)
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.app.model.tree.TreeNodeWithNoCheck
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  Root1
+  @/@url
+  sname
+  url
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  url
+  @/@cacheExpandStatus
+  sname
+  cacheExpandStatusId
+  sshowLabel
+  true
+  ssize
+  40
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果不为空那么缓存节点的打开状态，这里是缓存的标识。</p>
+
+<p><strong>注：</strong></p>
+
+<p>有些客户端界面没有实现此功能。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  cacheExpandStatus
+  @/@description
+  sname
+  description
+  slabel
+  描述
+  sinputtype
+  html
+  scolspan
+  2
+  sgroup
+  TreeModel
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  description
+  @/@13208
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  sid
+  13208
+    @/@13208/@13209
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    13209
+  @/@SubModels
+  sname
+  SubModels
+  slabel
+  子模型
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.app.model.tree.TreeModels
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p><strong>如何确定节点是那个子模型的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当有多个子模型时节点的标识是&lt;子模型的模型标识&gt; + &lt;分隔符&gt; + &lt;节点真正的标识&gt;。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 因此根模型设置multiSubModel=true，子模型设置匹配的模型标识。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sid
+  SubModels

@@ -1,0 +1,6560 @@
+@xworker.ide.worldExplorer.swt.WorldExplorer
+sname
+WorldExplorer
+slabel
+WorldExplorer
+sid
+WorldExplorer
+sdescriptors
+xworker.swt.widgets.Display
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1
+sname
+shell
+stext
+res:res.w_exp:worldExplorer:事物管理器
+sNO_TRIM
+false
+sCLOSE
+true
+sTITLE
+true
+sMIN
+true
+sMAX
+true
+sBORDER
+false
+sRESIZE
+true
+sON_TOP
+false
+sTOOL
+false
+sNO_FOCUS
+false
+swidth
+1024
+sheight
+768
+scenterScreen
+false
+spack
+false
+smaximized
+true
+sfullScreen
+false
+simeInputMode
+NONE
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+shell
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+shell1
+sdescriptors
+xworker.swt.widgets.Display/@Shell
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources
+sname
+resources
+sid
+resources
+slabel
+resources
+sdescriptors
+xworker.swt.Widgets/@Resource
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@saveImage
+sname
+saveImage
+stype
+Image
+simageFile
+/xworker/ide/images/save.gif
+sid
+saveImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@newImage
+sname
+newImage
+stype
+Image
+simageFile
+/xworker/ide/images/new.gif
+sid
+newImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@openImage
+sname
+openImage
+stype
+Image
+simageFile
+/xworker/ide/images/open.gif
+sid
+openImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@tabSelectBackground
+sname
+tabSelectBackground
+srgb
+"#D2E9FF"
+sid
+tabSelectBackground
+sdescriptors
+xworker.swt.util.Resource/@Color
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@flowImage
+sname
+flowImage
+stype
+Image
+simageFile
+/xworker/ide/images/thingFlow.GIF
+sid
+flowImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@resources/@xImage
+sname
+xImage
+stype
+Image
+simageFile
+/xworker/ide/images/x.gif
+sid
+xImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu
+sname
+mainMenu
+sstyle
+BAR
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+mainMenu
+slabel
+mainMenu
+sdescriptors
+xworker.swt.Widgets/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile
+sname
+menuFile
+stext
+res:res.w_exp:menuFile:文件
+sstyle
+CASCADE
+sselected
+false
+senabled
+true
+sid
+menuFile
+slabel
+menuFile
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile
+sname
+menuNewFile
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+menuNewFile
+slabel
+menuNewFile
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openDataObjectMenuItem
+sname
+openDataObjectMenuItem
+stext
+res:res.w_exp:menuItemOpenThing:打开事物
+sstyle
+PUSH
+saccelerator
+Ctrl+O
+sselected
+false
+senabled
+true
+sid
+openDataObjectMenuItem
+slabel
+openDataObjectMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openDataObjectMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openDataObjectMenuItem/@listeners/@openDataObjectMenuItemSelection
+sname
+openDataObjectMenuItemSelection
+stype
+Selection
+sid
+openDataObjectMenuItemSelection
+slabel
+openDataObjectMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openDataObjectMenuItem/@listeners/@openDataObjectMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "dataObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.OpenThingDialog/@shell");
+def shell = shellObj.doAction("create", newContext);
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenThing:打开事物", actionContext));
+shell.open();
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openScriptObjectMenuItem
+sname
+openScriptObjectMenuItem
+stext
+res:res.w_exp:menuItemOpenAction:打开动作
+sstyle
+PUSH
+saccelerator
+Ctrl+P
+sselected
+false
+senabled
+true
+sid
+openScriptObjectMenuItem
+slabel
+openScriptObjectMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openScriptObjectMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openScriptObjectMenuItem/@listeners/@openScriptObjectMenuItemSelection
+sname
+openScriptObjectMenuItemSelection
+stype
+Selection
+sid
+openScriptObjectMenuItemSelection
+slabel
+openScriptObjectMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openScriptObjectMenuItem/@listeners/@openScriptObjectMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "scriptObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.OpenThingDialog/@shell");
+def shell = shellObj.doAction("create", newContext);
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenAction:打开动作", actionContext));
+shell.open();
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openThingManagerMenuItem
+sname
+openThingManagerMenuItem
+stext
+Thing Flow Manager
+sstyle
+PUSH
+sid
+openThingManagerMenuItem
+slabel
+openThingManagerMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openThingManagerMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openThingManagerMenuItem/@listeners/@openThingManagerMenuItemSelection
+sname
+openThingManagerMenuItemSelection
+stype
+Selection
+sid
+openThingManagerMenuItemSelection
+slabel
+openThingManagerMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@openThingManagerMenuItem/@listeners/@openThingManagerMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thing = world.getThing("xworker.ide.worldExplorer.swt.flows.ThingFlowManager/@shell/@mainComposite");
+actions.doAction("openCompoisteAtTab", actionContext, ["compositeThing":thing, "title":"Thing Flow Manager","path":""]);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuFileSplit2
+sname
+menuFileSplit2
+sstyle
+SEPARATOR
+sid
+menuFileSplit2
+slabel
+menuFileSplit2
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuFileSaveItem
+sname
+menuFileSaveItem
+stext
+res:res.w_exp:menuItemSave:保存
+sstyle
+PUSH
+saccelerator
+Ctrl+S
+sselected
+false
+senabled
+true
+sid
+menuFileSaveItem
+slabel
+menuFileSaveItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuFileSaveItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuFileSaveItem/@listeners/@menuFileSaveItemSelection
+sname
+menuFileSaveItemSelection
+stype
+Selection
+sid
+menuFileSaveItemSelection
+slabel
+menuFileSaveItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuFileSaveItem/@listeners/@menuFileSaveItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//取得当前编辑窗体中的Tab的actionContext
+def tab = centerTabFolder.getSelection();
+def tabActionContext = tab.getData("actionContext");
+
+if(tabActionContext != null){
+    //如果actionContext中有okButtonSelection，执行保存
+    def okButtonSelection = tabActionContext.get("okButtonSelection");
+    if(okButtonSelection != null){
+        okButtonSelection.handleEvent(null);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@splitMenuItem1
+sname
+splitMenuItem1
+stext
+""
+sstyle
+SEPARATOR
+sid
+splitMenuItem1
+slabel
+splitMenuItem1
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuExit
+sname
+menuExit
+stext
+res:res.w_exp:menuItemExit:退出
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+menuExit
+slabel
+menuExit
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuExit/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuExit/@listeners/@menuExitSelection
+sname
+menuExitSelection
+stype
+Selection
+sid
+menuExitSelection
+slabel
+menuExitSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuFile/@menuNewFile/@menuExit/@listeners/@menuExitSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+scode
+System.exit(0);
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool
+sname
+menuTool
+stext
+res:res.w_exp:menuTool:工具
+sstyle
+CASCADE
+sselected
+false
+senabled
+true
+sid
+menuTool
+slabel
+menuTool
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm
+sname
+menuToolm
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+menuToolm
+slabel
+menuToolm
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@taskManagerItem
+sname
+taskManagerItem
+stext
+res:res.w_exp:menuItemTaskManager:任务管理器
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+taskManagerItem
+slabel
+taskManagerItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@taskManagerItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@taskManagerItem/@listeners/@taskManagerItemSelection
+sname
+taskManagerItemSelection
+stype
+Selection
+sid
+taskManagerItemSelection
+slabel
+taskManagerItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@taskManagerItem/@listeners/@taskManagerItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def shellThing = world.getThing("xworker.ide.worldExplorer.swt.TaskManager/@shell");
+shellThing.doAction("runShellThreadMenu");
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@taskManagerSplite1
+sname
+taskManagerSplite1
+stext
+""
+sstyle
+SEPARATOR
+sid
+taskManagerSplite1
+slabel
+taskManagerSplite1
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty
+sname
+menuJetty
+stext
+"Jetty"
+sstyle
+CASCADE
+sid
+menuJetty
+slabel
+menuJetty
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu
+sname
+jettyMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+jettyMenu
+slabel
+jettyMenu
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@startJettyMenuItem
+sname
+startJettyMenuItem
+stext
+res:res.w_exp:menuItemStartJetty:启动
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+startJettyMenuItem
+slabel
+startJettyMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@startJettyMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@startJettyMenuItem/@listeners/@startJettyMenuItemSelection
+sname
+startJettyMenuItemSelection
+stype
+Selection
+sid
+startJettyMenuItemSelection
+slabel
+startJettyMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@startJettyMenuItem/@listeners/@startJettyMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.webapp.WebAppContext;
+
+def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+def port = globalConfig.getInt("webPort", 9001);
+
+def server = actionContext.get("jettyServer");
+if(server != null) return;
+
+try{
+	def aserver = new Server();
+    Connector connector=new SelectChannelConnector();
+    connector.setPort(port);
+    aserver.setConnectors([connector] as Connector[]);
+    
+    //根应用
+    WebAppContext context = new WebAppContext(world.getPath() + "/webroot", "/");     	  
+    context.setResourceBase(world.getPath() + "/webroot");
+    context.setClassLoader(Thread.currentThread().getContextClassLoader());
+    aserver.setHandler(context);
+    
+    //eclipse helper
+    /*WebAppContext helpContext = new WebAppContext("webhelp", "/_help");     	  
+    helpContext.setResourceBase("webhelp");
+    helpContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+    aserver.addHandler(helpContext);*/
+
+    aserver.setStopAtShutdown(true);
+    
+    new Thread(
+        {
+            aserver.start();
+            aserver.join()
+        } as Runnable
+    ).start();    
+    
+    actionContext.getScope(0).put("jettyServer", aserver);
+    startJettyMenuItem.setEnabled(false);
+}catch(Exception e){
+	e.printStackTrace();
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@stopJettyMenuItem
+sname
+stopJettyMenuItem
+stext
+res:res.w_exp:menuItemStopJetty:关闭
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+stopJettyMenuItem
+slabel
+stopJettyMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@stopJettyMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@stopJettyMenuItem/@listeners/@stopJettyMenuItemSelection
+sname
+stopJettyMenuItemSelection
+stype
+Selection
+sid
+stopJettyMenuItemSelection
+slabel
+stopJettyMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuJetty/@jettyMenu/@stopJettyMenuItem/@listeners/@stopJettyMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+def server = actionContext.get("jettyServer");
+if(server != null) {
+    server.stop();
+    
+    actionContext.getScope(0).remove("jettyServer");
+    startJettyMenuItem.setEnabled(true);
+}else{
+    startJettyMenuItem.setEnabled(true);
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby
+sname
+menuDerby
+stext
+"Derby"
+sstyle
+CASCADE
+sid
+menuDerby
+slabel
+menuDerby
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu
+sname
+derbyMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+derbyMenu
+slabel
+derbyMenu
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@startDerbyMenuItem
+sname
+startDerbyMenuItem
+stext
+"Start at port : 1527"
+sstyle
+PUSH
+sid
+startDerbyMenuItem
+slabel
+startDerbyMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@startDerbyMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@startDerbyMenuItem/@listeners/@startDerbySelection
+sname
+startDerbySelection
+stype
+Selection
+sid
+startDerbySelection
+slabel
+startDerbySelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@startDerbyMenuItem/@listeners/@startDerbySelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+import org.apache.derby.drda.NetworkServerControl;
+import java.net.InetAddress;
+
+NetworkServerControl derbyServer = new NetworkServerControl
+	(InetAddress.getByName("localhost"),1527);
+derbyServer.start(null);
+
+actionContext.getScope(0).put("derbyServer", derbyServer);
+
+startDerbyMenuItem.setEnabled(false);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@stopDerbyMenuItem
+sname
+stopDerbyMenuItem
+stext
+"Stop"
+sstyle
+PUSH
+sid
+stopDerbyMenuItem
+slabel
+stopDerbyMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@stopDerbyMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@stopDerbyMenuItem/@listeners/@stopDerbyMenuItemSelection
+sname
+stopDerbyMenuItemSelection
+stype
+Selection
+sid
+stopDerbyMenuItemSelection
+slabel
+stopDerbyMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuDerby/@derbyMenu/@stopDerbyMenuItem/@listeners/@stopDerbyMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+if(actionContext.get("derbyServer") != null){
+    derbyServer.stop();
+    startDerbyMenuItem.setEnabled(true);
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuToolSplit2
+sname
+menuToolSplit2
+sstyle
+SEPARATOR
+sid
+menuToolSplit2
+slabel
+menuToolSplit2
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage
+sname
+menuItemLanguage
+stext
+res:res.w_exp:menuItemLanguage:语言
+sstyle
+CASCADE
+sselected
+false
+senabled
+true
+sid
+menuItemLanguage
+slabel
+menuItemLanguage
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage
+sname
+menuLanguage
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+menuLanguage
+slabel
+menuLanguage
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangZHCN
+sname
+menuItemLangZHCN
+stext
+res:res.w_exp:menuItemLangZHCN:简体中文
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+menuItemLangZHCN
+slabel
+menuItemLangZHCN
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangZHCN/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangZHCN/@listeners/@menuItemLangZHCNSelection
+sname
+menuItemLangZHCNSelection
+stype
+Selection
+sid
+menuItemLangZHCNSelection
+slabel
+menuItemLangZHCNSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangZHCN/@listeners/@menuItemLangZHCNSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.util.Locale;
+
+import org.xmeta.util.UtilResource;
+import org.xmeta.ui.session.SessionManager;
+
+if(event.widget == menuItemLangZHCN){
+    Locale l = new Locale("zh", "CN");
+    def session = SessionManager.getSession(null);
+    session.setLocale(l);
+    session.setI18nResource(UtilResource.getInstance(l));
+}else if(event.widget == menuItemLangENUS){
+    Locale l = new Locale("en", "US");
+    def session = SessionManager.getSession(null);
+    session.setLocale(l);
+    session.setI18nResource(UtilResource.getInstance(l));
+}
+
+reinitExplorerMenuItem.handleEvent(null);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangENUS
+sname
+menuItemLangENUS
+stext
+res:res.w_exp:menuItemLang:ENUSEnglish(US)
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+menuItemLangENUS
+slabel
+menuItemLangENUS
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangENUS/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuTool/@menuToolm/@menuItemLanguage/@menuLanguage/@menuItemLangENUS/@listeners/@menuItemLangENUSSelection
+sname
+menuItemLangENUSSelection
+stype
+Selection
+sref
+menuItemLangZHCNSelection
+sid
+menuItemLangENUSSelection
+slabel
+menuItemLangENUSSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug
+sname
+menuDebug
+stext
+res:res.w_exp:menuDebug:调试
+sstyle
+CASCADE
+sselected
+false
+senabled
+true
+sid
+menuDebug
+slabel
+menuDebug
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM
+sname
+menuDebugM
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+menuDebugM
+slabel
+menuDebugM
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@enableDebugMenuItem
+sname
+enableDebugMenuItem
+stext
+res:res.w_exp:menuItemEnableDebug:启动调试
+sstyle
+CHECK
+sselected
+false
+senabled
+true
+sid
+enableDebugMenuItem
+slabel
+enableDebugMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@enableDebugMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@enableDebugMenuItem/@listeners/@enableDebugMenuItemSelectio
+sname
+enableDebugMenuItemSelection
+stype
+Selection
+sid
+enableDebugMenuItemSelectio
+slabel
+enableDebugMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@enableDebugMenuItem/@listeners/@enableDebugMenuItemSelectio/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import xworker.debug.Debuger;
+
+Debuger debuger = Debuger.getDebuger();
+
+if(enableDebugMenuItem.getSelection()){
+    debuger.setEnabled(true);
+}else{
+    debuger.setEnabled(false);
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@viewDebugExceptionRecsItem
+sname
+viewDebugExceptionRecsItem
+stext
+"查看最后10个异常"
+sstyle
+PUSH
+sid
+viewDebugExceptionRecsItem
+slabel
+viewDebugExceptionRecsItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@viewDebugExceptionRecsItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@viewDebugExceptionRecsItem/@listeners/@viewExcpeionRecordSelection
+sname
+viewExcpeionRecordSelection
+stype
+Selection
+sid
+viewExcpeionRecordSelection
+slabel
+viewExcpeionRecordSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@menuDebug/@menuDebugM/@viewDebugExceptionRecsItem/@listeners/@viewExcpeionRecordSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+ActionContext context = new ActionContext();
+context.put("parent", shell);
+context.put("actions", actions);
+
+def thing = world.getThing("xworker.ide.worldExplorer.swt.debuger.ExceptionViewer/@shell");
+def newShell = thing.doAction("create", context);
+
+newShell.setVisible(true);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem
+sname
+helpMenuItem
+stext
+res:res.w_exp:menuHelp:帮助
+sstyle
+CASCADE
+sselected
+false
+senabled
+true
+sid
+helpMenuItem
+slabel
+helpMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu
+sname
+helpMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+helpMenu
+slabel
+helpMenu
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpContentMenuItem
+sname
+helpContentMenuItem
+stext
+res:res.w_exp:menuItemHelpContent:帮助内容
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+helpContentMenuItem
+slabel
+helpContentMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpContentMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpContentMenuItem/@listeners/@helpContentMenuItemSelection
+sname
+helpContentMenuItemSelection
+stype
+Selection
+sid
+helpContentMenuItemSelection
+slabel
+helpContentMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpContentMenuItem/@listeners/@helpContentMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+import org.eclipse.swt.widgets.Display;
+
+//查看帮助是否已经打开
+def helpWindow = actionContext.getScope(0).get("_helpWindow");
+if(helpWindow != null && helpWindow.isDisposed() == false){
+    def display = helpWindow.getDisplay();
+    display.asyncExec([
+        run : {
+            helpWindow.forceActive();
+        }
+    ] as Runnable);
+    return;
+}
+
+//运行帮助
+def acContext = actionContext;
+def uBrowser = utilBrowser;
+def helpThing = world.getThing("xworker.ide.worldExplorer.swt.help.HelpWindow/@shell");
+new Thread([
+    run : {
+        Display display = new Display ();
+        ActionContext context = new ActionContext();
+        context.put("parent", display);
+        context.put("utilBrowser", uBrowser);
+        def shell = helpThing.doAction("create", context);
+        shell.setData("display", display);
+        acContext.getScope(0).put("_helpWindow", shell);
+
+        shell.open ();
+	    while (!shell.isDisposed ()) {
+	        if (!display.readAndDispatch ()) display.sleep ();
+	    }
+	    display.dispose ();
+    }] as Runnable).start();
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpMenuSplit
+sname
+helpMenuSplit
+stext
+""
+sstyle
+SEPARATOR
+sid
+helpMenuSplit
+slabel
+helpMenuSplit
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@aboutMenuItem
+sname
+aboutMenuItem
+stext
+res:res.w_exp:menuItemAbout:关于
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+aboutMenuItem
+slabel
+aboutMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@aboutMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@aboutMenuItem/@listeners/@aboutMenuItemSelection
+sname
+aboutMenuItemSelection
+stype
+Selection
+sid
+aboutMenuItemSelection
+slabel
+aboutMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@aboutMenuItem/@listeners/@aboutMenuItemSelection/@AboutSelection
+sname
+AboutSelection
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+println "Hello";
+ActionContext context = new ActionContext();
+context.put("parent", shell);
+
+def aboutThing = world.getThing("xworker.ide.worldExplorer.swt.help.AboutDialog/@shell");
+def aboutShell = aboutThing.doAction("create", context);
+
+aboutShell.open();
+#$@text#$@
+sid
+AboutSelection
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@helpMenuSpli1
+sname
+helpMenuSpli1
+sstyle
+SEPARATOR
+sid
+helpMenuSpli1
+slabel
+helpMenuSpli1
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@reinitExplorerMenuItem
+sname
+reinitExplorerMenuItem
+stext
+res:res.w_exp:menuItemReinit:重新初始化事物管理器
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+reinitExplorerMenuItem
+slabel
+reinitExplorerMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@reinitExplorerMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@reinitExplorerMenuItem/@listeners/@reinitExplorerMenuItem
+sname
+reinitExplorerMenuItem
+stype
+Selection
+sid
+reinitExplorerMenuItem
+slabel
+reinitExplorerMenuItem
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainMenu/@helpMenuItem/@helpMenu/@reinitExplorerMenuItem/@listeners/@reinitExplorerMenuItem/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+for(childControl in shell.getChildren()){
+    childControl.dispose();
+}
+
+def bindings = actionContext.push();
+bindings.put("parent", shell);
+
+def shellThing = world.getThing("xworker.ide.worldExplorer.swt.WorldExplorer/@shell1");
+try{
+    for(child in shellThing.getAllChilds()){
+        child.doAction("create", actionContext);
+    }
+}finally{
+    actionContext.pop();
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@shellFillLayout
+sname
+shellFillLayout
+stype
+SWT.HORIZONTAL
+sid
+shellFillLayout
+slabel
+shellFillLayout
+sdescriptors
+xworker.swt.layout.FillLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite
+sname
+mainComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+mainComposite
+sid
+mainComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCompositeFillLayout
+sname
+mainCompositeFillLayout
+sid
+mainCompositeFillLayout
+slabel
+mainCompositeFillLayout
+sdescriptors
+xworker.swt.layout.GridLayout,xworker.swt.Layouts/@FillLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar
+sname
+mainCoolBar
+stype
+HORIZONTAL
+sBORDER
+false
+sFLAT
+true
+sid
+mainCoolBar
+sdescriptors
+xworker.swt.Widgets/@CoolBar
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCoolBarGridData
+sname
+mainCoolBarGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sid
+mainCoolBarGridData
+slabel
+mainCoolBarGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem
+sname
+mainCollItem
+sDROP_DOWN
+false
+sid
+mainCollItem
+slabel
+mainCollItem
+sdescriptors
+xworker.swt.widgets.CoolBar/@CoolItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar
+sname
+mainToolBar
+stype
+HORIZONTAL
+sFLAT
+true
+sWRAP
+false
+sBORDER
+false
+sSHADOW_OUT
+false
+sRIGHT
+false
+sid
+mainToolBar
+slabel
+mainToolBar
+sdescriptors
+xworker.swt.widgets.CoolBar/@CoolItem/@ToolBar
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem
+sname
+openFunctionsItem
+stype
+PUSH
+simage
+xImage
+stoolTiptext
+Open functions
+sid
+openFunctionsItem
+slabel
+openFunctionsItem
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem/@listeners/@openFunctionsItemSelection
+sname
+openFunctionsItemSelection
+stype
+Selection
+sid
+openFunctionsItemSelection
+slabel
+openFunctionsItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem/@listeners/@openFunctionsItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thingFunctions = world.getThing("xworker.ide.worldExplorer.swt.functions.FunctionManager/@shell/@mainComposite");
+
+actions.doAction("openCompoisteAtTab", actionContext, [
+    "compositeThing":thingFunctions,
+    "title":thingFunctions.metadata.label,
+    "path":thingFunctions.metadata.path
+]);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openToolItem
+sname
+openToolItem
+stype
+PUSH
+simage
+openImage
+stoolTiptext
+res:res.w_exp:toolBarItemOpenThing:打开事物
+senabled
+true
+sid
+openToolItem
+slabel
+openToolItem
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openToolItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openToolItem/@listeners/@openToolItemSelection
+sname
+openToolItemSelection
+stype
+Selection
+sref
+openDataObjectMenuItemSelection
+sid
+openToolItemSelection
+slabel
+openToolItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@saveToolItem
+sname
+saveToolItem
+stype
+PUSH
+simage
+saveImage
+stoolTiptext
+res:res.w_exp:toolBarItemSave:保存事物
+senabled
+true
+sid
+saveToolItem
+slabel
+saveToolItem
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@saveToolItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@saveToolItem/@listeners/@saveToolItemSelection
+sname
+saveToolItemSelection
+stype
+Selection
+sid
+saveToolItemSelection
+slabel
+saveToolItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash
+sname
+topSash
+sstyle
+VERTICAL
+sSMOOTH
+false
+sweights
+80,20
+slabel
+topSash
+sid
+topSash
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@topSashGridData
+sname
+topSashGridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sid
+topSashGridData
+slabel
+topSashGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash
+sname
+mainSash
+sstyle
+HORIZONTAL
+sSMOOTH
+false
+sweights
+20,60,20
+slabel
+mainSash
+sid
+mainSash
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash
+sname
+leftSash
+sstyle
+HORIZONTAL
+sSMOOTH
+false
+slabel
+leftSash
+sid
+leftSash
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder
+sname
+leftTabFolder
+sstyle
+TOP
+sBORDER
+true
+sFLAT
+false
+sCLOSE
+false
+sSINGLE
+false
+sMRUVisible
+false
+ssimple
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+leftTabFolder
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+leftCTablFolder
+sdescriptors
+xworker.swt.Widgets/@CTabFolder
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab
+sname
+projectTreeTab
+stext
+res:res.w_exp:projectNavTree:项目导航
+sCLOSE
+false
+sid
+projectTreeTab
+slabel
+projectTreeTab
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree
+sname
+projectTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+false
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+false
+smoveableColumns
+false
+sheadImages
+false
+ssubImages
+false
+sid
+projectTree
+slabel
+projectTree
+sdescriptors
+xworker.swt.Widgets/@DataTree
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource
+sname
+resources
+sid
+Resource
+slabel
+resources
+sdescriptors
+xworker.swt.Widgets/@Resource
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource/@projectImage
+sname
+projectImage
+slabel
+projectImage
+stype
+Image
+simageFile
+/xworker/ide/images/project.gif
+sid
+projectImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource/@project1
+sname
+project1Image
+slabel
+project1Image
+stype
+Image
+simageFile
+/xworker/ide/images/project1.gif
+sid
+project1
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource/@factoryImage
+sname
+factoryImage
+slabel
+factoryImage
+stype
+Image
+simageFile
+/xworker/ide/images/factory.gif
+sid
+factoryImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource/@packageIamge
+sname
+packageImage
+slabel
+packageImage
+stype
+Image
+simageFile
+/xworker/ide/images/package.gif
+sid
+packageIamge
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@Resource/@dataObjectImage
+sname
+dataObjectImage
+slabel
+dataObjectImage
+stype
+Image
+simageFile
+/xworker/ide/images/dataObject.gif
+sid
+dataObjectImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@listeners/@projectTreeMenudetect
+sname
+projectTreeMenudetect
+stype
+MenuDetect
+sid
+projectTreeMenudetect
+slabel
+projectTreeMenudetect
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@listeners/@projectTreeMenudetect/@ProjectTreeMenuDetect
+sname
+ProjectTreeMenuDetect
+slabel
+ProjectTreeMenuDetect
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+for(item in projectTreeMenu.getItems()){
+    item.dispose();
+}
+
+//设置弹出菜单的变量
+def treeItem = projectTree.getSelection()[0];
+
+def data = treeItem.getData();
+//log.info(data.type);
+String menuPath = "";
+switch(data.type){
+    case "ThingManagers":   
+        menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@projectComposite/@projectMenu";
+        break;
+    case "plugins":
+    case "projects":
+    case "virtuals":
+        menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataCenterComposite/@dataCenterMenu";
+        break;
+    case "thingManager":
+        menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@cactoryComposite/@facotyMenu";
+        break;
+    case "category":
+        menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@packageComposite/@packageMenu";
+        break;
+    case "thing":
+        menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataObjectComposite/@dataObjectMenuItem";
+        break;
+}
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", projectTreeMenu);
+newContext.put("explorerActions", actions);
+newContext.put("explorerActionContext", actionContext);
+newContext.put("treeItem", treeItem);
+newContext.put("projectTree", projectTree);
+
+Thing menuObj = world.getThing(menuPath);
+if(menuObj != null){
+    for(child in menuObj.childs){
+        child.doAction("create", newContext);
+    }
+}
+#$@text#$@
+sid
+ProjectTreeMenuDetect
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@listeners/@projectTreeSelection
+sname
+projectTreeSelection
+stype
+Selection
+sid
+projectTreeSelection
+slabel
+projectTreeSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@listeners/@projectTreeSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+actions.doAction("openPackageViewer", ["index":projectTree.getSelection()[0].getData(), "projectTree":projectTree]);
+actions.doAction("expandProjectTreeItem");
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeMenu
+sname
+projectTreeMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+projectTreeMenu
+slabel
+projectTreeMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource
+sname
+projectTreeDragSource
+sDROP_NONE
+false
+sDROP_COPY
+true
+sDROP_MOVE
+true
+sDROP_LINK
+true
+sid
+projectTreeDragSource
+sdescriptors
+xworker.swt.widgets.Control/@DragSource
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource/@prjTxtTransfer
+sname
+prjTxtTransfer
+stype
+Text
+sid
+prjTxtTransfer
+sdescriptors
+xworker.swt.dnd.DragSource/@Transfer
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource/@prjTreeDragStrat
+sname
+prjTreeDragStrat
+stype
+DragStart
+sid
+prjTreeDragStrat
+sdescriptors
+xworker.swt.dnd.DragSource/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource/@prjTreeDragStrat/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Index;
+
+def selection = projectTree.getSelection();
+if (selection.length > 0) {
+    def item = selection[0];
+    if(item.getData().type != Index.TYPE_CATEGORY){
+        event.doit = false;
+    }else{
+        event.doit = true;
+    }
+} else {
+    event.doit = false;
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource/@prjTreeSetData
+sname
+prjTreeSetData
+stype
+DragSetData
+sid
+prjTreeSetData
+sdescriptors
+xworker.swt.dnd.DragSource/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDragSource/@prjTreeSetData/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def item = projectTree.getSelection()[0];
+def index = item.getData();
+event.data = index.indexObject.thingManager.getName() + ":" + item.getData().getPath();
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget
+sname
+projectTreeDrogTarget
+sDROP_NONE
+false
+sDROP_COPY
+true
+sDROP_MOVE
+true
+sDROP_LINK
+true
+sid
+projectTreeDrogTarget
+sdescriptors
+xworker.swt.widgets.Control/@DropTarget
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTTextTransfer
+sname
+prjTTextTransfer
+stype
+Text
+sid
+prjTTextTransfer
+sdescriptors
+xworker.swt.dnd.DropTarget/@Transfer
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTreeDragOver
+sname
+prjTreeDragOver
+stype
+DragOver
+sid
+prjTreeDragOver
+sdescriptors
+xworker.swt.dnd.DropTarget/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTreeDragOver/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.dnd.DND;
+import org.xmeta.Index;
+
+event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;;
+if(event.item != null){
+    //如果没有展开的节点，展开
+    //actions.doAction("expandProjectTreeItem", ["itemForExpand":event.item]);
+    
+    if(event.item.getData().type == Index.TYPE_CATEGORY || event.item.getData().type == Index.TYPE_THINGMANAGER){
+        event.detail = DND.DROP_MOVE;
+    }else{
+        event.detail = DND.DROP_NONE;
+    }
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTreeDrop
+sname
+prjTreeDrop
+stype
+Drop
+sid
+prjTreeDrop
+sdescriptors
+xworker.swt.dnd.DropTarget/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTreeDrop/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+
+import org.xmeta.ActionContext;
+import org.xmeta.ThingManager;
+
+if(event.item != null){
+    def srcPath = event.data;
+    def srcName = srcPath;
+    if(srcPath.lastIndexOf(".") != -1){
+        srcName = srcPath.substring(srcPath.lastIndexOf(".") + 1);
+    }else{
+        srcName = srcPath.substring(srcPath.lastIndexOf(":") + 1);
+    }
+    def targetIndexObject = event.item.getData().getIndexObject();
+    def targetCategory = targetIndexObject;
+    if(targetIndexObject instanceof ThingManager){
+        targetCategory = targetIndexObject.getCategory(null);
+    }
+    
+    def targPath = targetCategory.getThingManager().getName() + ":" ;
+    if(targetCategory.name == null || targetCategory.name == ""){
+        targPath = targPath + srcName;
+    }else{
+        targPath = targPath + targetCategory.name + "." + srcName;
+    }
+    
+    def ac = new ActionContext();
+    ac.put("parent", shell);
+    ac.put("srcPath", srcPath);
+    ac.put("targPath", targPath);
+    ac.put("sourceTreeItem", projectTree.getSelection()[0]);
+    
+    def shellThing = world.get("xworker.ide.worldExplorer.swt.dialogs.ThingRefactorDialog/@shell");
+    def shell = shellThing.doAction("create", ac);
+    shell.open();
+    
+    def display = shell.display;
+    while (!shell.isDisposed()) {
+        if (!display.readAndDispatch()) display.sleep();
+    }
+    
+    if(ac.get("executed") == "true"){
+        //如果原始目录已移除，那么删除项目树中间的节点        
+        if(world.get(srcPath) == null && srcPath == projectTree.getSelection()[0].getData().path){
+            projectTree.getSelection()[0].dispose();
+        }
+        projectTree.setSelection(event.item);
+        
+        actions.doAction("refreshProjectTree");
+    }
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@projectTreeTab/@projectTree/@projectTreeDrogTarget/@prjTreeTargetEffect
+sname
+prjTreeTargetEffect
+stype
+TreeDropTargetEffect
+sid
+prjTreeTargetEffect
+sdescriptors
+xworker.swt.dnd.DropTarget/@DragSourceEffect
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem
+sname
+functionTabItem
+stext
+res:res.w_exp:functionNavTab:功能
+sCLOSE
+false
+sid
+functionTabItem
+slabel
+functionTabItem
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree
+sname
+functionTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+false
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+false
+smoveableColumns
+false
+sheadImages
+false
+ssubImages
+false
+sid
+functionTree
+slabel
+functionTree
+sdescriptors
+xworker.swt.Widgets/@Tree
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@listeners/@functionTreedefaultSelection
+sname
+functionTreedefaultSelection
+stype
+DefaultSelection
+sid
+functionTreedefaultSelection
+slabel
+functionTreedefaultSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@listeners/@functionTreedefaultSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.util.UtilString;
+
+def functionTreeItem = functionTree.getSelection()[0];
+def dataObj = functionTreeItem.getData();
+
+if(dataObj.thingName == "Script"){
+    world.runAction(dataObj.metadata.path, actionContext);
+}else if(dataObj.thingName == "openComposite"){
+    def viewObject = world.getThing(dataObj.path);
+    if(viewObject == null){
+        MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilStrig.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+        box.setMessage(UtilStrig.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        actions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":dataObj.metadata.label, "path":""]);
+    }
+}else if(dataObj.thingName == "htmlUrl"){
+    actions.doAction("openUrl", ["url":dataObj.url, "name":dataObj.name]);
+}else if(dataObj.thingName == "openthing"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilStrig.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+        box.setMessage(UtilStrig.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        actions.doAction("openThing", ["thing":thing]);
+    }
+}else if(dataObj.thingName == "WebControl"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilStrig.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+        box.setMessage(UtilStrig.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    
+    def globalCfg = world.getThing("xworker.ide.config.globalConfig");
+    def httpServer = globalCfg.getString("httpServer");
+    if(httpServer == null || httpServer == ""){
+       httpServer = "http.//localhost.8080/";
+    }
+    def url = httpServer + "do?sc=" + thing.metadata.path;
+
+    actions.doAction("openUrl", ["url":url, "name":thing.metadata.path]);
+}else if(dataObj.thingName == "thingEditor"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilStrig.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+        box.setMessage(UtilStrig.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    def editorObject = world.getThing(dataObj.editorPath);
+    if(editorObject == null){
+        MessageBox box = new MessageBox(shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilStrig.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+        box.setMessage(UtilStrig.getString("res:res.w_exp:thingEditorNotExists事物编辑器不存在：", actionContext) + dataObj.editorPath);
+        box.open();
+        return;
+    }
+    def tab = actions.doAction("openCompoisteAtTab", ["compositeThing":editorObject, "title":thing.metadata.label, "path":editorObject.metadata.path + thing.metadata.path]);
+    def tabactionContext = tab.getData("tabactionContext");
+    if(tabactionContext != null){
+        tabactionContext.scripts.exec("setThing", ["thing":thing]);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@listeners/@functionTreeMenuDetect
+sname
+functionTreeMenuDetect
+stype
+MenuDetect
+sid
+functionTreeMenuDetect
+slabel
+functionTreeMenuDetect
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@listeners/@functionTreeMenuDetect/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+for(item in functionTreeMenu.getItems()){
+    item.dispose();
+}
+
+//设置弹出菜单的变量
+String menuPath = "";
+if(functionTree.getSelection().length == 0){
+    menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.FunctionTreeMenu/@refreshOnlyMenu";
+}else{
+    def treeItem = functionTree.getSelection()[0];
+    def data = treeItem.getData();
+    //log.info(data.type);
+    switch(data.getThingName()){
+        case "WebControl":   
+        case "openDataObject":
+        case "openComposite":
+            menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.FunctionTreeMenu/@withDataObjectMenu";
+            break;
+        default:
+            menuPath = "xworker.ide.worldExplorer.swt.dataExplorerParts.FunctionTreeMenu/@refreshOnlyMenu";
+            break;
+    }
+}
+
+ActionContext context = new ActionContext();
+context.put("functionTree", functionTree);
+context.put("parent", functionTreeMenu);
+context.put("explorerActions", actions);
+Thing menuObj = world.getThing(menuPath);
+if(menuObj != null){
+    for(child in menuObj.childs){
+        child.doAction("create", context);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@functionTreeMenu
+sname
+functionTreeMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+functionTreeMenu
+slabel
+functionTreeMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@functionTreeMenu/@functionTreeRefreshMenuItem
+sname
+functionTreeRefreshMenuItem
+stext
+res:res.w_exp:menuItemRefresh刷新
+sstyle
+PUSH
+sid
+functionTreeRefreshMenuItem
+slabel
+functionTreeRefreshMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@functionTreeMenu/@functionTreeRefreshMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@functionTreeMenu/@functionTreeRefreshMenuItem/@listeners/@functionTreeRefreshMenuItemSelection
+sname
+functionTreeRefreshMenuItemSelection
+stype
+Selection
+sid
+functionTreeRefreshMenuItemSelection
+slabel
+functionTreeRefreshMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@functionTabItem/@functionTree/@functionTreeMenu/@functionTreeRefreshMenuItem/@listeners/@functionTreeRefreshMenuItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+scode
+actions.doAction("refreshFunctionTree");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@leftSash/@leftCTablFolder/@listeners/@leftTabFolderMouseDoubleClick
+sname
+leftTabFolderMouseDoubleClick
+stype
+MouseDoubleClick
+sref
+mainTabFolderMouseDoubleClick
+sid
+leftTabFolderMouseDoubleClick
+slabel
+leftTabFolderMouseDoubleClick
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite
+sname
+contentComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+contentComposite
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+contentComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@contentCompoisteFillLayout
+sname
+contentCompoisteFillLayout
+stype
+SWT.HORIZONTAL
+sid
+contentCompoisteFillLayout
+slabel
+contentCompoisteFillLayout
+sdescriptors
+xworker.swt.Layouts/@FillLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder
+sname
+centerTabFolder
+sstyle
+TOP
+sBORDER
+true
+sFLAT
+false
+sCLOSE
+true
+sSINGLE
+false
+sMRUVisible
+false
+ssimple
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+centerTabFolder
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+centerTabFolder
+sdescriptors
+xworker.swt.Widgets/@CTabFolder
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@listeners/@mainTabSelection
+sname
+mainTabSelection
+stype
+Selection
+sid
+mainTabSelection
+slabel
+mainTabSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@listeners/@mainTabSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def outlineTree = event.item.getData("outlineTree");
+if(outlineTree == null){
+    outlineStackLayout.topControl = blankTree;
+    outlineComposite.layout();
+}else{
+    outlineStackLayout.topControl = outlineTree;
+    outlineComposite.layout();
+}
+
+def childComposite = event.item.getData("childComposite");
+if(childComposite == null){
+    childsCompositeStackLayout.topControl = blankChildList;
+    childsComposite.layout()
+}else{
+    childsCompositeStackLayout.topControl = childComposite;
+    childsComposite.layout();
+}
+
+//Tab上的事物路径，如果有，那么项目树选中该事物节点
+/*
+def thingPath = event.item.getData("thingPath");
+if(thingPath != null){
+    String[] tps = thingPath.split("[:]");
+    def project = world.getProject(tps[0]);
+    if(project == null){
+        return;
+    }
+    def thingManager = project.getThingManager(tps[1]);
+    if(thingManager == null){
+        return;
+    }
+    def thing = thingManager.getThing(tps[2]);
+    if(thing == null){
+        return;
+    }
+    
+    def currentTreeItem = null;
+    for(item in projectTree.getItems()){
+        if(project.isPlugIn() && item.getData().getName() == "plug-ins"){
+             currentTreeItem = item;
+             break;
+        }else if(!project.isPlugIn() && item.getData().getName() == "projects"){
+             currentTreeItem = item;    
+             break;
+        }
+    } 
+    
+    if(currentTreeItem == null) return;
+    
+    projectTree.setSelection(currentTreeItem);
+    for(item in currentTreeItem.getItems()){
+        if(item.getData().getName() == project.getName()){
+             currentTreeItem = item;
+             projectTree.setSelection(currentTreeItem);
+             break;
+        }    
+    }
+    
+    if(currentTreeItem == null) return;
+    projectTree.setSelection(currentTreeItem);
+    for(item in currentTreeItem.getItems()){
+        if(item.getData().getName() == thingManager.getName()){
+             currentTreeItem = item;
+             projectTree.setSelection(currentTreeItem);
+             break;
+        }    
+    }
+    
+    String categoryName = thing.getMetadata().getCategory().getName();
+    if(categoryName != null && categoryName != ""){
+        String[] cs = categoryName.split("[.]");
+        for(c in cs){
+            def temItem = null;
+            if(currentTreeItem.getItems() == 0){
+                actions.doAction("expandProjectTreeItem");
+            }
+            for(item in currentTreeItem.getItems()){
+                if(item.getData().getName() == c && item.getData().getType() == "category"){
+                    temItem = item;
+                    projectTree.setSelection(temItem);
+                    break;
+                }    
+            }
+            
+            if(temItem == null){
+                def treeItem = new TreeItem(projectTree, SWT.NONE);
+                return;
+            }else{
+                currentTreeItem = temItem;
+            }
+        }
+    }
+}
+*/
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@listeners/@mainTabFolderMouseDoubleClick
+sname
+mainTabFolderMouseDoubleClick
+stype
+MouseDoubleClick
+sid
+mainTabFolderMouseDoubleClick
+slabel
+mainTabFolderMouseDoubleClick
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@listeners/@mainTabFolderMouseDoubleClick/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def tabFolder = event.widget;
+
+//如果是鼠标中键什么也不做
+if(event.button == 2) return;
+
+switch(tabFolder){
+    case leftTabFolder:
+        if(tabFolder.getData("maxStatus") == "max"){
+            def oldLeftSashWeights = leftSash.getData("oldWeights");
+            leftSash.setWeights(oldLeftSashWeights);
+        }else{
+            def oldLeftSashWeights = leftSash.getWeights();
+            leftSash.setData("oldWeights", oldLeftSashWeights);
+            leftSash.setWeights([100] as int[]);
+        }
+        break;
+        
+    case rightTopTabFolder:
+        if(tabFolder.getData("maxStatus") == "max"){
+            def oldSashWeights = rightSashForm.getData("oldWeights");
+            rightSashForm.setWeights(oldSashWeights);
+        }else{
+            def oldSashWeights = rightSashForm.getWeights();
+            rightSashForm.setData("oldWeights", oldSashWeights);
+            rightSashForm.setWeights([100, 0] as int[]);
+        }
+        break;
+    case rightBottomTabFolder:
+        if(tabFolder.getData("maxStatus") == "max"){
+            def oldSashWeights = rightSashForm.getData("oldWeights");
+            rightSashForm.setWeights(oldSashWeights);
+        }else{
+            def oldSashWeights = rightSashForm.getWeights();
+            rightSashForm.setData("oldWeights", oldSashWeights);
+            rightSashForm.setWeights([0, 100] as int[]);
+        }
+        break;
+}
+
+if(tabFolder.getData("maxStatus") == "max"){
+    def oldWeights = mainSash.getData("oldWeights");
+    mainSash.setWeights(oldWeights);
+    
+    def topWeights = topSash.getData("oldWeigths");
+    if(topWeights != null){
+        topSash.setWeights(topWeights);
+    }
+    tabFolder.setData("maxStatus", "normal");
+}else{
+    def topWeights = topSash.getWeights();
+    topSash.setData("oldWeigths", topWeights);
+    topSash.setWeights([100, 0] as int[]);
+    
+    def oldWeights = mainSash.getWeights();
+    mainSash.setData("oldWeights", oldWeights);
+    switch(tabFolder){
+        case leftTabFolder:
+            mainSash.setWeights([100, 0, 0] as int[]);
+            break;
+        case centerTabFolder:
+            mainSash.setWeights([0, oldWeights[1], oldWeights[2]] as int[]);
+            break;
+        case rightTopTabFolder:
+        case rightBottomTabFolder:
+            mainSash.setWeights([0, 0, 100] as int[]);
+            break;
+    }
+    tabFolder.setData("maxStatus", "max");
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu
+sname
+centerTabFolderMenu
+sstyle
+POP_UP
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+centerTabFolderMenu
+slabel
+centerTabFolderMenu
+sdescriptors
+xworker.swt.Widgets/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeSelfItem
+sname
+cn_closeSelfItem
+stext
+res:res.w_exp:centerTabClose:关闭
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+cn_closeSelfItem
+slabel
+cn_closeSelfItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners/@cnTabMenuSelection
+sname
+cnTabMenuSelection
+stype
+Selection
+sid
+cnTabMenuSelection
+slabel
+cnTabMenuSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeSelfItem/@listeners/@cnTabMenuSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+if(event.widget == cn_closeSelfItem){
+    def item = centerTabFolder.getSelection();
+    disposeItem(item);
+}else if(event.widget == cn_closeOtherItem){
+    def item = centerTabFolder.getSelection();
+    for(it in centerTabFolder.getItems()){
+        if(it != item){
+            disposeItem(it);
+        }
+    }
+}else if(event.widget == cnCloseAllItem){
+    for(item in centerTabFolder.getItems()){
+        disposeItem(item);
+    }
+}
+
+def disposeItem(item){
+    //销毁CtabItem相关的内容
+    if(item.getControl() != null){
+        item.getControl().dispose();
+    }
+    def outlineTree = item.getData("outlineTree");
+    def childComposite = item.getData("childComposite");
+    
+    if(outlineTree != null){
+        outlineTree.dispose();
+    }
+    if(childComposite != null){
+        childComposite.dispose();
+    }
+    item.dispose();   
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeOtherItem
+sname
+cn_closeOtherItem
+stext
+res:res.w_exp:centerTabCloseOther:关闭其他
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+cn_closeOtherItem
+slabel
+cn_closeOtherItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeOtherItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cn_closeOtherItem/@listeners/@cn_closeOteherSelectio
+sname
+cn_closeOteherSelectio
+stype
+Selection
+sref
+cnTabMenuSelection
+sid
+cn_closeOteherSelectio
+slabel
+cn_closeOteherSelectio
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cnCloseAllItem
+sname
+cnCloseAllItem
+stext
+res:res.w_exp:centerTabCloseAll:关闭所有
+sstyle
+PUSH
+sselected
+false
+senabled
+true
+sid
+cnCloseAllItem
+slabel
+cnCloseAllItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cnCloseAllItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@contentComposite/@centerTabFolder/@centerTabFolderMenu/@cnCloseAllItem/@listeners/@cn_closeAllItemSelection
+sname
+cn_closeAllItemSelection
+stype
+Selection
+sref
+cnTabMenuSelection
+sid
+cn_closeAllItemSelection
+slabel
+cn_closeAllItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm
+sname
+rightSashForm
+sstyle
+VERTICAL
+sSMOOTH
+false
+sweights
+50,50
+slabel
+rightSashForm
+sid
+rightSashForm
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder
+sname
+rightTopTabFolder
+sstyle
+TOP
+sBORDER
+true
+sFLAT
+false
+sCLOSE
+false
+sSINGLE
+false
+sMRUVisible
+false
+ssimple
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+rightTopTabFolder
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+rightTopTabFolder
+sdescriptors
+xworker.swt.custom.CTabFolder
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@outlineTab
+sname
+outlineTab
+stext
+res:res.w_exp:outlineNavTab:概要
+sCLOSE
+false
+sid
+outlineTab
+slabel
+outlineTab
+sdescriptors
+,xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@outlineTab/@outlineComposite
+sname
+outlineComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+outlineComposite
+sid
+outlineComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@outlineTab/@outlineComposite/@outlineStackLayout
+sname
+outlineStackLayout
+sid
+outlineStackLayout
+slabel
+outlineStackLayout
+sdescriptors
+xworker.swt.Layouts/@StackLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@outlineTab/@outlineComposite/@blankTree
+sname
+blankTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+true
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+false
+smoveableColumns
+false
+sheadImages
+false
+ssubImages
+false
+sid
+blankTree
+slabel
+blankTree
+sdescriptors
+xworker.swt.Widgets/@Tree
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightTopTabFolder/@listeners/@rightTopTabFolderMouseDoubleClcik
+sname
+rightTopTabFolderMouseDoubleClcik
+stype
+MouseDoubleClick
+sref
+mainTabFolderMouseDoubleClick
+sid
+rightTopTabFolderMouseDoubleClcik
+slabel
+rightTopTabFolderMouseDoubleClcik
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder
+sname
+rightBottomTabFolder
+sstyle
+TOP
+sBORDER
+true
+sFLAT
+false
+sCLOSE
+false
+sSINGLE
+false
+sMRUVisible
+false
+ssimple
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+rightBottomTabFolder
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+rightBottomTabFolder
+sdescriptors
+xworker.swt.custom.CTabFolder
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@childsTab
+sname
+childsTab
+stext
+res:res.w_exp:addChildsTab:添加子事物
+sCLOSE
+false
+sid
+childsTab
+slabel
+childsTab
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@childsTab/@propertiesComposite
+sname
+childsComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+childsComposite
+sid
+propertiesComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@childsTab/@propertiesComposite/@propertiesCompositeStackLayout
+sname
+childsCompositeStackLayout
+sid
+propertiesCompositeStackLayout
+slabel
+childsCompositeStackLayout
+sdescriptors
+xworker.swt.Layouts/@StackLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@childsTab/@propertiesComposite/@blankChildList
+sname
+blankChildList
+sstyle
+SINGLE
+sH_SCROLL
+true
+sV_SCROLL
+true
+sBORDER
+false
+sid
+blankChildList
+slabel
+blankChildList
+sdescriptors
+xworker.swt.Widgets/@List
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@mainSash/@rightSashForm/@rightBottomTabFolder/@listeners/@rightBottomTabFolderMouseDoubleClick
+sname
+rightBottomTabFolderMouseDoubleClick
+stype
+MouseDoubleClick
+sref
+mainTabFolderMouseDoubleClick
+sid
+rightBottomTabFolderMouseDoubleClick
+slabel
+rightBottomTabFolderMouseDoubleClick
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder
+sname
+bottomTabFolder
+sstyle
+TOP
+sBORDER
+true
+sFLAT
+false
+sCLOSE
+false
+sSINGLE
+false
+sMRUVisible
+false
+ssimple
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+bottomTabFolder
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+bottomTabFolder
+sdescriptors
+xworker.swt.Widgets/@CTabFolder
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem
+sname
+consoleTabItem
+stext
+res:res.w_exp:consoleTab:控制台
+sCLOSE
+false
+sid
+consoleTabItem
+slabel
+consoleTabItem
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText
+sname
+consoleText
+sstyle
+MULTI
+sFULL_SELECTION
+false
+sREAD_ONLY
+false
+sWRAP
+false
+sH_SCROLL
+true
+sV_SCROLL
+true
+sBORDER
+false
+salign
+LEFT
+slabel
+consoleText
+sid
+consoleText
+sdescriptors
+xworker.swt.Widgets/@StyledText
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@font
+sname
+font
+sid
+font
+slabel
+font
+sdescriptors
+xworker.swt.Commons/@font
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@font/@consoleText
+sname
+consoleTextFont
+slabel
+consoleTextFont
+sid
+consoleText
+sdescriptors
+xworker.swt.Commons/@font/@Font
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextMouseHover
+sname
+consoleTextMouseMove
+stype
+MouseMove
+sid
+consoleTextMouseHover
+slabel
+consoleTextMouseMove
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextMouseHover/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+
+Point p = new Point(event.x, event.y);
+try{
+    int offset = consoleText.getOffsetAtLocation(p);
+    def range = consoleText.getStyleRangeAtOffset(offset);
+
+    if(range != null && range.underline == true){
+        //是类    
+        def cursor = shell.getDisplay().getSystemCursor(SWT.CURSOR_HAND);
+        def oldCursor = consoleText.getCursor();
+        if(oldCursor != cursor){
+            consoleText.setData("oldCursor", oldCursor);
+        }
+        consoleText.setCursor(cursor);
+    }else{
+        def cur = consoleText.getData("oldCursor");
+        if(cur != null){
+            consoleText.setCursor(cur);
+            consoleText.setData("oldCursor", null);
+        }
+    }
+}catch(Exception e){
+    def cur = consoleText.getData("oldCursor");
+    if(cur != null){
+        consoleText.setCursor(cur);
+        consoleText.setData("oldCursor", null);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextMouseDown
+sname
+consoleTextMouseDown
+stype
+MouseDown
+sid
+consoleTextMouseDown
+slabel
+consoleTextMouseDown
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextMouseDown/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import xworker.util.UtilAction;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.MessageBox;
+
+if(event.button == 1){
+    Point p = new Point(event.x, event.y);
+    try{
+        int offset = -1;
+        def range = null;
+        try{
+            offset = consoleText.getOffsetAtLocation(p);
+            range = consoleText.getStyleRangeAtOffset(offset);
+        }catch(Exception e){
+        }
+  
+        if(range != null && range.underline == true){
+            int lineIndex = consoleText.getLineAtOffset(offset);
+            int lineStart = consoleText.getOffsetAtLine(lineIndex);
+            int lineEnd = consoleText.getOffsetAtLine(lineIndex + 1);            
+            String className = "";
+            def line = consoleText.getText(lineStart, lineEnd - 1);
+            for(r in consoleText.getStyleRanges(lineStart, lineEnd - lineStart - 1)){
+                if(r.underline == true && r.length > 0){
+                    //println r.start + ":" + r.length;
+                    className += consoleText.getText(r.start, r.start + r.length - 1);
+                }
+            }
+            //println className;
+            className = className.split("[\$]")[0];
+            def scriptObject = UtilAction.getActionThing(className);
+            if(scriptObject != null){
+                //打开数据对象，返回数据对象所在binding
+                def bin = actions.doAction("openThing", ["thing":scriptObject]);
+                def modelBin = bin.get("currentModelContext");
+                def input = modelBin.get("codeInput");
+                if(input != null){
+                    int leftIndex = line.indexOf("(");
+                    String lineCount = line.substring(line.indexOf(":", leftIndex) + 1, line.lastIndexOf(")"));
+                    try{
+                        int lIndex = Integer.parseInt(lineCount) - 4;                    
+                        offset = input.getOffsetAtLine(lIndex);
+                        input.setCaretOffset(offset);
+                        input.setSelection(offset, offset);
+                        input.showSelection();
+                    }catch(Exception ){
+                    }
+                }
+            }else{
+                //查看是否是在源文件目录下的对象
+                def fileName = className.replace('.', '/');
+                fileName = "src/xworker/" + fileName + ".java";
+                File f = new File(fileName);
+                //log.info(f.getAbsolutePath());
+                if(!f.exists()){
+                     fileName = "src/core/" + fileName + ".java";  
+                     f = new File(fileName);
+                }
+                
+                if(f.exists()){
+                     actions.doAction("openTextFile", ["file":f]);
+                }else{
+                     
+                }
+            }
+        }
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTableItemKeyUp
+sname
+consoleTextItemKeyDown
+stype
+KeyDown
+sid
+consoleTableItemKeyUp
+slabel
+consoleTextItemKeyDown
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextDispose
+sname
+consoleTextDispose
+stype
+Dispose
+sid
+consoleTextDispose
+slabel
+consoleTextDispose
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@listeners/@consoleTextDispose/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import xworker.io.SystemIoRedirectorListener;
+import xworker.io.SystemIoRedirector;
+
+SystemIoRedirector.removeListener(sytemIOListener);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@consoleTextMenu
+sname
+consoleTextMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+consoleTextMenu
+slabel
+consoleTextMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@consoleTextMenu/@clearMenuItem
+sname
+consoleTextClearMenuItem
+stext
+"Clear"
+sstyle
+PUSH
+sid
+clearMenuItem
+slabel
+consoleTextClearMenuItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@consoleTextMenu/@clearMenuItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@consoleTextMenu/@clearMenuItem/@listeners/@consoleTextClearMenuSelection
+sname
+consoleTextClearMenuSelection
+stype
+Selection
+sid
+consoleTextClearMenuSelection
+slabel
+consoleTextClearMenuSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@consoleTabItem/@consoleText/@consoleTextMenu/@clearMenuItem/@listeners/@consoleTextClearMenuSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+scode
+consoleText.setText("");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem
+sname
+dataObjectFlowTabItem
+stext
+res:res.w_exp:thingFlowMonitorTab:事物流程监控
+sCLOSE
+false
+sid
+dataObjectFlowTabItem
+slabel
+dataObjectFlowTabItem
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite
+sname
+dataObjectFlowComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+dataObjectFlowComposite
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+dataObjectFlowComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@dataObjectFlowCompositeGridLayou
+sname
+dataObjectFlowCompositeGridLayou
+stype
+SWT.HORIZONTAL
+sid
+dataObjectFlowCompositeGridLayou
+slabel
+dataObjectFlowCompositeGridLayou
+sdescriptors
+,xworker.swt.layout.FillLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm
+sname
+thingFlowSashForm
+sstyle
+HORIZONTAL
+sSMOOTH
+false
+sweights
+50,50
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+thingFlowSashForm
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable
+sname
+thingFlowDataTable
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+true
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+true
+smultipleColumns
+true
+sheaderVisible
+true
+ssortIndicator
+true
+smoveableColumns
+true
+sheadImages
+false
+ssubImages
+false
+sVIRTUAL
+false
+scolumnNames
+["name", "label", "path"] as String[]
+sid
+dataObjectFlowDataTable
+slabel
+thingFlowDataTable
+sdescriptors
+xworker.swt.Widgets/@DataTable
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@name
+sname
+name
+stext
+res:res.w_exp:name名称
+swidth
+150
+sid
+name
+slabel
+name
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@labelItem
+sname
+labelItem
+stext
+res:res.w_exp:label标签
+swidth
+150
+sid
+labelItem
+slabel
+labelItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@pathItem
+sname
+pathItem
+stext
+res:res.w_exp:path路径
+swidth
+500
+sid
+pathItem
+slabel
+pathItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@listeners/@dataObjectFlowDtDefaultSelection
+sname
+dataObjectFlowDtDefaultSelection
+stype
+DefaultSelection
+sid
+dataObjectFlowDtDefaultSelection
+slabel
+dataObjectFlowDtDefaultSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@listeners/@dataObjectFlowDtDefaultSelection/@script
+sname
+dataObject
+slabel
+dataObject
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def thing = thingFlowDataTable.getSelection()[0].getData();
+
+actions.doAction("openThing", ["thing":thing]);
+#$@text#$@
+sid
+script
+sdescriptors
+xworker.lang.actions.GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@listeners/@thingFlowDataTableSelection
+sname
+thingFlowDataTableSelection
+stype
+Selection
+sid
+thingFlowDataTableSelection
+slabel
+thingFlowDataTableSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@listeners/@thingFlowDataTableSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
+
+import org.xmeta.util.UtilString;
+
+for(item in thingFlowThreadsTable.getItems()){
+    item.dispose();
+}
+
+if(thingFlowDataTable.getSelection().length == 0) return;
+
+def thingFlow = thingFlowDataTable.getSelection()[0].getData("thingFlow");
+
+def threads = thingFlow.getThreads();
+def resRuniing = UtilString.getString("res:res.w_exp:running正在运行", actionContext);
+def resTerminated = UtilString.getString("res:res.w_exp:terminated已终止", actionContext);
+for(node in threads.keySet()){
+    def future = threads.get(node);
+    def item = new TableItem(thingFlowThreadsTable, SWT.NONE);
+    item.setData(["node":node, "future":future]);
+    item.setText([node.flowThing.metadata.name, node.flowThing.metadata.label, 
+            (future.isDone() ? resTerminated:resRuniing), node.flowThing.metadata.path] as String[]);    
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu
+sname
+thingFlowPopMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+thingFlowPopMenu
+slabel
+thingFlowPopMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@viewThingFlow
+sname
+viewThingFlowItem
+stext
+res:res.w_exp:thingFlowDefinitiong流程定义
+sstyle
+PUSH
+sid
+viewThingFlow
+slabel
+viewThingFlowItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@viewThingFlow/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@viewThingFlow/@listeners/@viewThingFlowItemSelection
+sname
+viewThingFlowItemSelection
+stype
+Selection
+sid
+viewThingFlowItemSelection
+slabel
+viewThingFlowItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@viewThingFlow/@listeners/@viewThingFlowItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//获得选中的事物流程
+def items = thingFlowDataTable.getSelection();
+if(items.length > 0){
+    def item = items[0];
+    def thingFlow = item.getData("thingFlow");
+    
+    //打开事物流程的事物
+    actions.doAction("openThing", ["thing" : thingFlow.flowThing]);
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@thingFlowSplitItem
+sname
+thingFlowSplitItem
+stext
+""
+sstyle
+SEPARATOR
+sid
+thingFlowSplitItem
+slabel
+thingFlowSplitItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@stopThingFlowItem
+sname
+stopThingFlowItem
+stext
+res:res.w_exp:stopThingFlow结束流程
+sstyle
+PUSH
+sid
+stopThingFlowItem
+slabel
+stopThingFlowItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@stopThingFlowItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@stopThingFlowItem/@listeners/@stopThingFlowItemSelection
+sname
+stopThingFlowItemSelection
+stype
+Selection
+sid
+stopThingFlowItemSelection
+slabel
+stopThingFlowItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@stopThingFlowItem/@listeners/@stopThingFlowItemSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//获得选中的事物流程
+def items = thingFlowDataTable.getSelection();
+if(items.length > 0){
+    def item = items[0];
+    def thingFlow = item.getData("thingFlow");
+    
+    //打开事物流程的事物
+    thingFlow.stop();
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@terminateThingFlowItem
+sname
+terminateThingFlowItem
+stext
+res:res.w_exp:terminateThingFlow终止流程
+sstyle
+PUSH
+sid
+terminateThingFlowItem
+slabel
+terminateThingFlowItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@terminateThingFlowItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@terminateThingFlowItem/@listeners/@terminateThingFlowSelection
+sname
+terminateThingFlowSelection
+stype
+Selection
+sid
+terminateThingFlowSelection
+slabel
+terminateThingFlowSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@dataObjectFlowDataTable/@thingFlowPopMenu/@terminateThingFlowItem/@listeners/@terminateThingFlowSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//获得选中的事物流程
+def items = thingFlowDataTable.getSelection();
+if(items.length > 0){
+    def item = items[0];
+    def thingFlow = item.getData("thingFlow");
+    
+    //打开事物流程的事物
+    thingFlow.terminate();
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable
+sname
+thingFlowThreadsTable
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+true
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+true
+smultipleColumns
+true
+sheaderVisible
+true
+ssortIndicator
+true
+smoveableColumns
+true
+sheadImages
+false
+ssubImages
+false
+sVIRTUAL
+false
+sid
+thingFlowThreadsTable
+slabel
+thingFlowThreadsTable
+sdescriptors
+xworker.swt.Widgets/@Table
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@name
+sname
+name
+stext
+res:res.w_exp:name名称
+swidth
+150
+sid
+name
+slabel
+name
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@labelItem
+sname
+labelItem
+stext
+res:res.w_exp:label标签
+swidth
+150
+sid
+labelItem
+slabel
+labelItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thFlowThreadStatusColumn
+sname
+thFlowThreadStatusColumn
+stext
+res:res.w_exp:status状态
+swidth
+80
+sid
+thFlowThreadStatusColumn
+slabel
+thFlowThreadStatusColumn
+sdescriptors
+xworker.swt.widgets.Table/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@pathItem
+sname
+pathItem
+stext
+res:res.w_exp:path路径
+swidth
+500
+sid
+pathItem
+slabel
+pathItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu
+sname
+thingFlowThreadTableMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+thingFlowThreadTableMenu
+slabel
+thingFlowThreadTableMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@cancelFlowThreadItem
+sname
+cancelFlowThreadItem
+stext
+res:res.w_exp:cancelThingFlowThread取消线程
+sstyle
+PUSH
+sid
+cancelFlowThreadItem
+slabel
+cancelFlowThreadItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@cancelFlowThreadItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@cancelFlowThreadItem/@listeners/@cancelThFlowThreadSelection
+sname
+cancelThFlowThreadSelection
+stype
+Selection
+sid
+cancelThFlowThreadSelection
+slabel
+cancelThFlowThreadSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@cancelFlowThreadItem/@listeners/@cancelThFlowThreadSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def items = thingFlowThreadsTable.getSelection();
+if(items.length > 0){   
+    def data = items[0].getData();
+    if(!data.future.isDone()){
+        data.future.cancel(false);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@terminateFlowThreadItem
+sname
+terminateFlowThreadItem
+stext
+res:res.w_exp:terminateThingFlowThread终止线程
+sstyle
+PUSH
+sid
+terminateFlowThreadItem
+slabel
+terminateFlowThreadItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@terminateFlowThreadItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@terminateFlowThreadItem/@listeners/@terminateFlowThreadsSelection
+sname
+terminateFlowThreadsSelection
+stype
+Selection
+sid
+terminateFlowThreadsSelection
+slabel
+terminateFlowThreadsSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@terminateFlowThreadItem/@listeners/@terminateFlowThreadsSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def items = thingFlowThreadsTable.getSelection();
+if(items.length > 0){   
+    def data = items[0].getData();
+    if(!data.future.isDone()){
+        data.future.cancel(true);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@flowThingSeparator
+sname
+flowThingSeparator
+stext
+""
+sstyle
+SEPARATOR
+sid
+flowThingSeparator
+slabel
+flowThingSeparator
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@thingFlowThRefhresItem
+sname
+thingFlowThRefhresItem
+stext
+res:res.w_exp:refresh刷新
+sstyle
+PUSH
+sid
+thingFlowThRefhresItem
+slabel
+thingFlowThRefhresItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@thingFlowThRefhresItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@thingFlowThRefhresItem/@listeners/@thingFlowThRefSelection
+sname
+thingFlowThRefSelection
+stype
+Selection
+sid
+thingFlowThRefSelection
+slabel
+thingFlowThRefSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjectFlowTabItem/@dataObjectFlowComposite/@thingFlowSashForm/@thingFlowThreadsTable/@thingFlowThreadTableMenu/@thingFlowThRefhresItem/@listeners/@thingFlowThRefSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+scode
+thingFlowDataTableSelection.handleEvent(null);
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem
+sname
+dataObjFlowRequetTabItem
+stext
+res:res.w_exp:thingFlowRequest:事物流程请求
+stoolTipText
+res:res.w_exp:thingFlowRequestTip:事物流程执行时发出的用户处理请求。
+sCLOSE
+false
+sid
+dataObjFlowRequetTabItem
+slabel
+dataObjFlowRequetTabItem
+sdescriptors
+xworker.swt.custom.CTabFolder/@CTabItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite
+sname
+dobjflowRequestComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+dobjflowRequestComposite
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+dobjflowRequestComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dobjflowRequestCompositeFillLayout
+sname
+dobjflowRequestCompositeFillLayout
+stype
+SWT.HORIZONTAL
+sid
+dobjflowRequestCompositeFillLayout
+slabel
+dobjflowRequestCompositeFillLayout
+sdescriptors
+xworker.swt.Layouts/@FillLayout
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable
+sname
+thingFlowRequestDataTable
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+true
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+true
+smultipleColumns
+true
+sheaderVisible
+true
+ssortIndicator
+true
+smoveableColumns
+true
+sheadImages
+false
+ssubImages
+false
+sVIRTUAL
+false
+scolumnNames
+["name", "label", "priority", "path", "flowPath"] as String[]
+sid
+dataObjectFlowRequestDataTable
+slabel
+thingFlowRequestDataTable
+sdescriptors
+xworker.swt.Widgets/@DataTable
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@name
+sname
+nameItem
+stext
+res:res.w_exp:name名称
+swidth
+120
+sid
+name
+slabel
+nameItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@label
+sname
+labelItem
+stext
+res:res.w_exp:label标签
+swidth
+120
+sid
+label
+slabel
+labelItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@priorityItem
+sname
+priorityItem
+stext
+res:res.w_exp:priority优先级
+swidth
+80
+sid
+priorityItem
+slabel
+priorityItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@path
+sname
+pathItem
+stext
+res:res.w_exp:path路径
+swidth
+350
+sid
+path
+slabel
+pathItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@flowPathItem
+sname
+flowPathItem
+stext
+res:res.w_exp:thingFlowPath流程路径
+swidth
+350
+sid
+flowPathItem
+slabel
+flowPathItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@listeners/@dataObjectFlowRequestDataTableListener
+sname
+dataObjectFlowRequestDataTableListener
+stype
+DefaultSelection
+sid
+dataObjectFlowRequestDataTableListener
+slabel
+dataObjectFlowRequestDataTableListener
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@listeners/@dataObjectFlowRequestDataTableListener/@script
+sname
+dataObject
+slabel
+dataObject
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def item = thingFlowRequestDataTable.getSelection()[0];
+def request = item.getData();
+
+actions.doAction("openEditFlowThing", ["flowRequest": request, "tableItem":item]);
+#$@text#$@
+sid
+script
+sdescriptors
+xworker.lang.actions.GroovyAction,xworker.swt.events.Listeners/@listeners/@Listener/@script
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu
+sname
+dataObjFlowRequestMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+dataObjFlowRequestMenu
+slabel
+dataObjFlowRequestMenu
+sdescriptors
+xworker.swt.Commons/@Menu
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenMenuitem
+sname
+dobjrequestOpenMenuitem
+stext
+res:res.w_exp:editRequest编辑请求
+sstyle
+PUSH
+sid
+dobjrequestOpenMenuitem
+slabel
+dobjrequestOpenMenuitem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenMenuitem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenMenuitem/@listeners/@dobjreqOpenMenuItemSelection
+sname
+dobjreqOpenMenuItemSelection
+stype
+Selection
+sid
+dobjreqOpenMenuItemSelection
+slabel
+dobjreqOpenMenuItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenMenuitem/@listeners/@dobjreqOpenMenuItemSelection/@script
+sname
+dataObject
+slabel
+dataObject
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def item = thingFlowRequestDataTable.getSelection()[0];
+def request = item.getData();
+
+actions.doAction("openEditFlowThing", ["flowRequest": request, "tableItem":item]);
+#$@text#$@
+sid
+script
+sdescriptors
+xworker.lang.actions.GroovyAction,xworker.swt.events.Listeners/@listeners/@Listener/@script
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenFlowItem
+sname
+dobjrequestOpenFlowItem
+stext
+res:res.w_exp:cancelRequest取消请求
+sstyle
+PUSH
+sid
+dobjrequestOpenFlowItem
+slabel
+dobjrequestOpenFlowItem
+sdescriptors
+xworker.swt.widgets.Menu/@MenuItem
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenFlowItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenFlowItem/@listeners/@dobjfloRequestOpenFlowSelection
+sname
+dobjfloRequestOpenFlowSelection
+stype
+Selection
+sid
+dobjfloRequestOpenFlowSelection
+slabel
+dobjfloRequestOpenFlowSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@dataObjFlowRequetTabItem/@dobjflowRequestComposite/@dataObjectFlowRequestDataTable/@dataObjFlowRequestMenu/@dobjrequestOpenFlowItem/@listeners/@dobjfloRequestOpenFlowSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+def item = thingFlowRequestDataTable.getSelection()[0];
+def request = item.getData();
+
+request.finish():
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@listeners/@bottomTabFolderMouseDoubleClick
+sname
+bottomTabFolderMouseDoubleClick
+stype
+MouseDoubleClick
+sid
+bottomTabFolderMouseDoubleClick
+slabel
+bottomTabFolderMouseDoubleClick
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@mainComposite/@topSash/@bottomTabFolder/@listeners/@bottomTabFolderMouseDoubleClick/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//如果是鼠标中键什么也不做
+if(event.button == 2) return;
+
+if(bottomTabFolder.getData("maxStatus") == "max"){
+    def topWeights = topSash.getData("oldWeigths");
+    if(topWeights != null){
+        topSash.setWeights(topWeights);
+    }
+    bottomTabFolder.setData("maxStatus", "normal");
+}else{
+    def topWeights = topSash.getWeights();
+    topSash.setData("oldWeigths", topWeights);
+    topSash.setWeights([0, 100] as int[]);
+    bottomTabFolder.setData("maxStatus", "max");
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts
+sname
+actions
+sid
+scripts
+slabel
+actions
+sdescriptors
+xworker.swt.Widgets/@actions
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openDataObject
+sname
+openThing
+slabel
+openThing
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.ui.swt.SwtBorder;
+import xworker.swt.events.SwtListener;
+import xworker.ui.editor.OutlineTreeDragAndDrop;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.HashMap;
+
+if(actionContext.get("thing") != null){    
+    def currentObj = actionContext.get("thing");
+    def thing = currentObj.getRoot();
+    def path = thing.metadata.path;
+    //log.info(path);
+    def tab = null;
+    for(item in centerTabFolder.items){
+        if(item.getData("tabPath") == path){
+            tab = item;
+        }
+    }
+       
+    if(tab == null){
+        //Tab不存在，创建新的Tab
+        tab = new CTabItem(centerTabFolder, SWT.NONE);
+        tab.setText(thing.getMetadata().getLabel());
+        tab.setToolTipText(thing.metadata.path);     
+        tab.setData("path", path);  
+        tab.setData("tabPath", path); 
+        //编辑事物的背景流程
+        tab.setData("backgroundFlow", "xworker.ide.worldExplorer.swt.flows.ThingEditorBackgroundFlow");
+       
+        //事物编辑器的概要、子事物、编辑事物等界面定义
+        def treeThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@outlineTree");
+        def childThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@propertiesComposite");
+        def contentThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+        def scriptThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@actions");
+                
+        ActionContext newContext = new ActionContext();
+        newContext.put("contentTab", tab);
+        newContext.put("explorerActions", actions);
+        newContext.put("explorerContext", actionContext);
+        newContext.put("utilBrowser", utilBrowser);
+        newContext.put("parent", outlineComposite);
+        
+        def scripts = scriptThing.doAction("create", newContext);
+        
+        def outlineTree = treeThing.doAction("create", newContext);
+        OutlineTreeDragAndDrop.attach(outlineTree, newContext);
+        
+        newContext.put("parent", childsComposite);
+        def childComposite = childThing.doAction("create", newContext);
+        
+        newContext.put("parent", centerTabFolder);
+        def contentComposite = contentThing.doAction("create", newContext);        
+        
+        tab.setControl(contentComposite);
+        tab.setData("outlineTree", outlineTree);
+        tab.setData("childComposite", childComposite);
+        tab.setData("scripts", scripts);
+        tab.setData("actionContext", newContext);
+        tab.setData("thingPath", thing.metadata.path);
+        
+        //显示Tab
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = outlineTree;
+        outlineComposite.layout();
+        childsCompositeStackLayout.topControl = childComposite;
+        childsComposite.layout();
+        
+        SwtBorder.attach(newContext.titleComposite);
+        SwtBorder.attach(newContext.childTitleComposite);
+
+        //显示数据对象
+        scripts.doAction("setThing", ["thing":thing]);
+        
+        if(currentObj != thing){
+            scripts.doAction("selectThing", ["thing":currentObj]);
+        }
+        
+        return newContext;
+    }else{
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = tab.getData("outlineTree");
+        outlineComposite.layout();
+        
+        childsCompositeStackLayout.topControl = tab.getData("childComposite");
+        childsComposite.layout();
+           
+        def scripts = tab.getData("scripts");        
+        if(currentObj != thing){            
+            scripts.doAction("selectThing", ["thing":currentObj]);
+        }
+        return scripts.actionContext;
+    }
+}
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>打开一个事物。</p>
+<p>参数：thing。</p>
+#$@text#$@
+sid
+openDataObject
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openPackageViewer
+sname
+openPackageViewer
+slabel
+openPackageViewer
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.util.UtilData;
+import xworker.util.UtilResource;
+import org.xmeta.util.UtilString;
+import xworker.swt.events.SwtListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.HashMap;
+
+def path = "categoryViewer";
+def tab = null;
+for(item in centerTabFolder.items){
+    if(item.getData("path") == path){
+        tab = item;
+    }
+}
+
+if(tab == null){
+    //Tab不存在，创建新的Tab
+    tab = new CTabItem(centerTabFolder, SWT.NONE);
+    tab.setText(UtilResource.getDefaultInstance().get("core", "categoryView", UtilString.getString("res:res.w_exp:categoryViewer:目录浏览", actionContext)));
+    tab.setData("path", "categoryViewer");
+        
+    ActionContext newContext = new ActionContext();
+    newContext.put("explorerActions", actions);
+    newContext.put("parent", centerTabFolder);
+    newContext.put("tree", projectTree);
+    
+    //PackageViewer
+    Thing viewerObject = world.getThing("xworker.ide.worldExplorer.swt.util.PackageViewer/@shell/@packageCompoiste");
+    def viewer = viewerObject.doAction("create", newContext);      
+    
+    //帮助页面
+    newContext.put("parent", outlineComposite);
+    Thing helpBrowserThing = world.getThing("xworker.ide.worldExplorer.swt.util.PackageViewer/@packageViewerHelpBrowser");
+    def helpBrowser = helpBrowserThing.doAction("create", newContext);
+    tab.setData("outlineTree", helpBrowser); //放入可以到最后删除
+    
+    tab.setControl(viewer);    
+    tab.setData("actions", newContext.actions);
+}
+
+centerTabFolder.setSelection(tab);
+def helpBrowser = tab.getData("outlineTree");
+if(helpBrowser != null){
+    outlineStackLayout.topControl = helpBrowser;
+}else{
+    outlineStackLayout.topControl = blankTree;
+}
+outlineComposite.layout();
+
+def actions = tab.getData("actions");
+actions.actionContext.put("treeItem", projectTree.getSelection()[0]);
+actions.doAction("refreshTable", ["index":index, "refresh":true]);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+openPackageViewer
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@expandProjectTreeItem
+sname
+expandProjectTreeItem
+slabel
+expandProjectTreeItem
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def item = actionContext.get("itemForExpand");
+if(item == null){
+    item = projectTree.getSelection()[0];
+}
+def data = item.getData();
+
+if(item.getItems().length == 0){
+    //如果当前节点没有子节点，那么打开子节点
+    //println data;
+    if(data == null){
+        //节点已经不存在
+        item.dispose();
+        return;
+    }
+    
+    data.refresh();
+    for(childIndex in data.childs){
+        //项目导航不显示树
+        if(childIndex.type == "thing") continue;
+        
+        TreeItem treeItem = new TreeItem(item, SWT.NONE);
+        treeItem.setText(childIndex.label);
+        treeItem.setData(childIndex);        
+        switch(childIndex.type){
+            case "project":
+                treeItem.setImage(project1Image);
+                break;
+            case "thingManager":
+                treeItem.setImage(factoryImage);
+                break;
+            case "category":
+                treeItem.setImage(packageImage);
+                break;
+            case "thing":
+                treeItem.setImage(dataObjectImage);
+                break;
+        }
+    }
+}
+
+//打开本节点关闭其他同级节点
+def parentItem = item.getParentItem();
+if(parentItem != null){
+    for(titem in parentItem.getItems()){
+         if(titem != item && titem.getExpanded()){
+             //titem.setExpanded(false);
+         }
+    }
+}
+item.setExpanded(true);
+#$@text#$@
+sid
+expandProjectTreeItem
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@refreshProjectTree
+sname
+refreshProjectTree
+slabel
+refreshProjectTree
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def item = projectTree.getSelection()[0];
+def data = item.getData();
+
+//item.removeAll();
+data.refresh();
+
+if(true){
+    def items = item.getItems();
+    def itemIndex = 0;
+    
+    //删除已不存在的节点
+    for(treeItem in items){
+        def have = false;
+        for(childIndex in data.childs){
+            if(treeItem.getData().getName() == childIndex.getName()){
+                have = true;
+                break;
+            }
+        }
+        
+        if(!have){
+            treeItem.dispose();
+        }
+    }
+    def itemRemoved = [];
+    //如果当前节点没有子节点，那么打开子节点
+    for(childIndex in data.childs){
+        //项目导航不显示树
+        if(childIndex.type == "thing") continue;
+        
+        if(itemIndex < items.length){
+            if(items[itemIndex].getData().getName() == childIndex.getName()){
+                itemIndex ++;
+                continue;
+            }else{
+                while(itemIndex < items.length && items[itemIndex].getData().getName() < childIndex.getName()){
+                    //节点已经被删除
+                    itemRemoved.add(items[itemIndex]);
+                    itemIndex ++;
+               }
+               
+               if(itemIndex < items.length && items[itemIndex].getData().getName() == childIndex.getName()){
+                   itemIndex ++;
+                   continue;
+               }else{
+                   //新增节点
+               }
+           }         
+        }
+        
+        TreeItem treeItem = new TreeItem(item, SWT.NONE, itemIndex);
+        treeItem.setText(childIndex.label);
+        treeItem.setData(childIndex);
+        switch(childIndex.type){
+            case "project":
+                treeItem.setImage(project1Image);
+                break;
+            case "thingManager":
+                treeItem.setImage(factoryImage);
+                break;
+            case "category":
+                treeItem.setImage(packageImage);
+                break;
+            case "dataObjectImage":
+                treeItem.setImage(dataObjectImage);
+                break;
+        }
+    }
+    
+    for(itemr in itemRemoved){
+        itemr.dispose();
+    }
+}
+
+//打开本节点关闭其他同级节点
+def parentItem = item.getParentItem();
+if(parentItem != null){
+    for(titem in parentItem.getItems()){
+         if(titem != item && titem.getExpanded()){
+             //titem.setExpanded(false);
+         }
+    }
+}
+item.setExpanded(true);
+#$@text#$@
+sid
+refreshProjectTree
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@refreshFunctionTree
+sname
+refreshFunctionTree
+slabel
+refreshFunctionTree
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+functionTree.removeAll();
+functionThing = world.getThing("xworker.ide.worldExplorer.swt.util.Function");
+for(node in functionThing.childs){
+    initTreeItem(functionTree, node);
+}
+
+def initTreeItem(treeItem, dataObj){
+    TreeItem item = new TreeItem(treeItem, SWT.NONE);
+    item.setData(dataObj);
+    item.setText(dataObj.metadata.label);
+    
+    for(child in dataObj.childs){
+        initTreeItem(item, child);
+    }
+}
+#$@text#$@
+sid
+refreshFunctionTree
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openCompoisteAtTab
+sname
+openCompoisteAtTab
+slabel
+openCompoisteAtTab
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.events.SwtListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Widget;
+
+import java.util.HashMap;
+
+if(compositeThing == null) return;
+
+if(path == ""){
+    path = "openTab" + compositeThing.metadata.path;
+}
+def tab = null;
+for(item in centerTabFolder.items){
+    if(item.getData("path") == path){
+        tab = item;
+    }
+}
+
+if(tab == null){
+    //Tab不存在，创建新的Tab
+    tab = new CTabItem(centerTabFolder, SWT.NONE);
+    tab.setText(title);
+    tab.setData("path", path);
+        
+    ActionContext newContext = new ActionContext();            
+    newContext.put("tab", tab);
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    newContext.put("parent", centerTabFolder);
+    newContext.put("utilBrowser", utilBrowser);
+    
+    def viewer = compositeThing.doAction("create", newContext);      
+    tab.setData("tabContext", newContext);
+    tab.setData("actionContext", newContext);
+    tab.setControl(viewer);        
+}
+
+centerTabFolder.setSelection(tab);
+def outlineTree = tab.getData("outlineTree");
+if(outlineTree == null){
+    outlineStackLayout.topControl = blankTree;
+    outlineComposite.layout();
+}else if(outlineTree instanceof Widget){
+    outlineStackLayout.topControl = outlineTree;
+    outlineComposite.layout();
+}
+
+def childComposite = tab.getData("childComposite");
+if(childComposite == null){
+    childsCompositeStackLayout.topControl = blankChildList;
+    childsComposite.layout()
+}else if(childComposite instanceof Widget){
+    childsCompositeStackLayout.topControl = childComposite;
+    childsComposite.layout();
+}
+
+return tab;
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>打开一个Composite。</p>
+<p>参数：title,</p>
+#$@text#$@
+sid
+openCompoisteAtTab
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openUrl
+sname
+openUrl
+slabel
+openUrl
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//打开浏览器
+def viewObject = world.getThing("xworker.ide.worldExplorer.swt.util.WebBrowser/@shell/@mainComposite");
+actions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":"Web Browser", "path":""]);
+
+//获得WebBrowser的binding
+for(item in centerTabFolder.getItems()){
+    if(item.getData("path") == "openTab" + viewObject.metadata.path){
+        def bin = item.getData("tabContext");
+        bin.scripts.doAction("openUrl", ["url":url, "name":name, "path":""]);
+        break;
+    }
+}
+#$@text#$@
+sid
+openUrl
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openEditFlowThing
+sname
+openEditFlowThing
+slabel
+openEditFlowThing
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.ui.swt.SwtBorder;
+import xworker.swt.events.SwtListener;
+import xworker.ui.editor.OutlineTreeDragAndDrop;
+import xworker.flow.ThingFlow;
+import xworker.flow.ThingFlowListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.HashMap;
+
+if(actionContext.get("flowRequest") != null){    
+    def uirequest = actionContext.get("flowRequest");
+    def tableItem = actionContext.get("tableItem");
+    
+    def currentObj = uirequest.thing;
+    def thing = currentObj.getRoot();
+    def thingFlow = uirequest.getThingFlow();
+    def tabPath = thingFlow.getName() + thingFlow.getId();
+    def path = thing.metadata.path;
+    def slient = actionContext.get("slient");
+    //log.info(path);
+    def tab = null;
+    for(item in centerTabFolder.items){
+        if(item.getData("tabPath") == tabPath){
+            tab = item;
+        }
+    }
+       
+    if(tab == null){
+        if(slient == true) return;
+        
+        //Tab不存在，创建新的Tab
+        tab = new CTabItem(centerTabFolder, SWT.NONE);
+        tab.setText(thingFlow.getName() + "(" + thingFlow.getId() + ")");
+        tab.setToolTipText(thing.metadata.path);     
+        tab.setData("path", path);  
+        tab.setData("tabPath", tabPath); 
+        thingFlow.addThingFlowListener([
+            start : {thingFlow0->
+            },
+            
+            close : {thingFlow1->
+                tab.getParent().getDisplay().asyncExec([
+                    run : {                    
+                        tab.dispose();
+                    }] as Runnable);
+            },
+            
+            nodeStart : {thingFlow2, flowNodeThing->
+            },
+
+            nodeClose : {thingFlow3, flowNodeThing1->
+            },
+            
+            requestUI : {equest0->
+            }
+        ] as ThingFlowListener);
+       
+        def treeThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@outlineTree");
+        def childThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@propertiesComposite");
+        def contentThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+        def scriptThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@actions");
+        
+        ActionContext newContext = new ActionContext();
+        newContext.put("contentTab", tab);
+        newContext.put("explorerActions", actions);
+        newContext.put("explorerContext", actionContext);
+        newContext.put("utilBrowser", utilBrowser);
+        newContext.put("flowRequest", uirequest);
+        newContext.put("tableItem", tableItem);
+        newContext.put("parent", outlineComposite);
+        newContext.put("thingFlow", uirequest.getThingFlow());
+        newContext.put("currentRequestFinished", false);
+        
+        def scripts = scriptThing.doAction("create", newContext);
+         
+        def outlineTree = treeThing.doAction("create", newContext);
+        OutlineTreeDragAndDrop.attach(outlineTree, newContext);
+        
+        newContext.put("parent", childsComposite);
+        def childComposite = childThing.doAction("create", newContext);
+        
+        newContext.put("parent", centerTabFolder);
+        def contentComposite = contentThing.doAction("create", newContext);       
+        
+        newContext.put("parent", newContext.get("contentComposite"));
+        def flowEditCompositeObj = world.getThing("xworker.ide.worldExplorer.swt.flowwidgets.ThingEditBottomButtons");
+        flowEditCompositeObj.doAction("create", newContext);
+        
+        contentComposite.layout();
+        
+        tab.setControl(contentComposite);
+        tab.setData("outlineTree", outlineTree);
+        tab.setData("childComposite", childComposite);
+        tab.setData("scripts", scripts);
+        tab.setData("actionContext", newContext);
+        tab.setData("thingPath", thing.metadata.path);
+        
+        //显示Tab
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = outlineTree;
+        outlineComposite.layout();
+        childsCompositeStackLayout.topControl = childComposite;
+        childsComposite.layout();
+        
+        SwtBorder.attach(newContext.titleComposite);
+        SwtBorder.attach(newContext.childTitleComposite);
+
+        //显示数据对象
+        scripts.doAction("setThing", ["thing":thing]);
+        
+        if(currentObj != thing){
+            scripts.doAction("selectThing", ["thing":currentObj]);
+        }
+        
+        return newContext;
+    }else{
+        def tabActionContext = tab.getData("actionContext");
+        if(slient == true && tabActionContext.get("currentRequestFinished") == false){
+            return;
+        }
+        
+        //选择事物流程已在的TAB
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = tab.getData("outlineTree");
+        outlineComposite.layout();
+        
+        childsCompositeStackLayout.topControl = tab.getData("childComposite");
+        childsComposite.layout();
+        
+        
+		
+		//查看当前正在执行的请求是否已经完成           
+        if(tabActionContext.get("currentRequestFinished") == false && slient != true){
+            MessageBox box = new MessageBox(centerTabFolder.getShell(), SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+            box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));            
+            box.setMessage(UtilString.getString("res:res.w_exp:askCancelRequsetHandle原先的请求还未处理完毕，要放弃原先的请求而处理新的请求吗？", actionContext));
+            if(box.open() == SWT.NO){
+                return;
+            }
+        }
+
+        //设置编辑请求事物，并选择要编辑的节点
+        def scripts = tab.getData("scripts");        
+        if(currentObj.getRoot() != tabActionContext.get("currentThing").getRoot()){  
+            scripts.doAction("setThing", ["thing": currentObj.getRoot()]);                     
+        }
+        scripts.doAction("selectThing", ["thing":currentObj]);        
+
+        tabActionContext.put("flowRequest", uirequest);
+        tabActionContext.put("tableItem", tableItem);
+        
+        if(tabActionContext.get("flowSaveButton") == null){
+            tabActionContext.put("parent", tabActionContext.get("contentComposite"));
+            def flowEditCompositeObj = world.getThing("xworker.ide.worldExplorer.swt.flowwidgets.ThingEditBottomButtons");
+            flowEditCompositeObj.doAction("create", tabActionContext);            
+            tabActionContext.get("contentComposite").layout();
+            //log.info("xxx");
+        }else{
+            tabActionContext.flowActions.doAction("enableButtons");
+        }
+        return scripts.actionContext;
+    }
+}
+#$@text#$@
+sid
+openEditFlowThing
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+
+if(actionContext.get("action") == null) return;
+
+if(action instanceof Action){
+    ActionContext newContext = new ActionContext();            
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    
+    action.run(newContext); 
+}
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>执行动作。</p>
+<p>参数：&nbsp;action 。</p>
+#$@text#$@
+sid
+doAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openTab
+sname
+openTab
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.events.SwtListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Widget;
+
+import java.util.HashMap;
+
+if(compositeThing == null) return;
+
+if(actionContext.get("path") == null || path == ""){
+    path = "openTab" + compositeThing.metadata.path;
+}
+def tab = null;
+for(item in centerTabFolder.items){
+    if(item.getData("path") == path){
+        tab = item;
+    }
+}
+
+if(tab == null){
+    //Tab不存在，创建新的Tab
+    tab = new CTabItem(centerTabFolder, SWT.NONE);
+    if(actionContext.get("title") == null || title == ""){
+        title = compositeThing.metadata.name;
+    }
+    
+    tab.setText(title);
+    tab.setData("path", path);
+        
+    ActionContext newContext = new ActionContext();            
+    newContext.put("tab", tab);
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    newContext.put("parent", centerTabFolder);
+    
+    def viewer = compositeThing.doAction("create", newContext);      
+    tab.setData("tabContext", newContext);
+    tab.setControl(viewer);        
+}
+
+centerTabFolder.setSelection(tab);
+def outlineTree = tab.getData("outlineTree");
+if(outlineTree == null){
+    outlineStackLayout.topControl = blankTree;
+    outlineComposite.layout();
+}else if(outlineTree instanceof Widget){
+    outlineStackLayout.topControl = outlineTree;
+    outlineComposite.layout();
+}
+
+def childComposite = tab.getData("childComposite");
+if(childComposite == null){
+    childsCompositeStackLayout.topControl = blankChildList;
+    childsComposite.layout()
+}else if(childComposite instanceof Widget){
+    childsCompositeStackLayout.topControl = childComposite;
+    childsComposite.layout();
+}
+
+return tab;
+#$@text#$@
+sid
+openTab
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@scripts/@openTextFile
+sname
+openTextFile
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.events.SwtListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Widget;
+
+import java.util.HashMap;
+
+if(actionContext.get("file") == null) return;
+
+def path = "textFile" + file.getAbsolutePath();
+def tab = null;
+for(item in centerTabFolder.items){
+    if(item.getData("path") == path){
+        tab = item;
+    }
+}
+
+if(tab == null){
+    //Tab不存在，创建新的Tab
+    tab = new CTabItem(centerTabFolder, SWT.NONE);
+    tab.setText(file.getName());
+    tab.setData("path", path);
+        
+    ActionContext newContext = new ActionContext();            
+    newContext.put("tab", tab);
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    newContext.put("parent", centerTabFolder);
+    newContext.put("utilBrowser", utilBrowser);
+    
+    def compositeThing = world.getThing("xworker.ide.worldExplorer.swt.editor.TextEditor/@shell/@mainComposite");
+    def viewer = compositeThing.doAction("create", newContext);  
+    newContext.actions.doAction("setFile", ["file":file]);    
+    tab.setData("tabContext", newContext);
+    tab.setData("actionContext", newContext);
+    tab.setControl(viewer);        
+}
+
+centerTabFolder.setSelection(tab);
+def outlineTree = tab.getData("outlineTree");
+if(outlineTree == null){
+    outlineStackLayout.topControl = blankTree;
+    outlineComposite.layout();
+}else if(outlineTree instanceof Widget){
+    outlineStackLayout.topControl = outlineTree;
+    outlineComposite.layout();
+}
+
+def childComposite = tab.getData("childComposite");
+if(childComposite == null){
+    childsCompositeStackLayout.topControl = blankChildList;
+    childsComposite.layout()
+}else if(childComposite instanceof Widget){
+    childsCompositeStackLayout.topControl = childComposite;
+    childsComposite.layout();
+}
+
+return tab;
+#$@text#$@
+sid
+openTextFile
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@initCode1
+sname
+initCode
+slabel
+initCode
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.StyleRange;
+
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Index;
+
+import xworker.io.SystemIoRedirector;
+import xworker.io.SystemIoRedirectorListener;
+import xworker.flow.ThingFlow;
+import xworker.flow.ThingFlowListener;
+import xworker.flow.UIRequestListener;
+import xworker.util.UtilAction;
+import xworker.util.UtilResource;
+import org.xmeta.util.UtilString;
+import xworker.swt.util.UtilBrowser;
+import xworker.swt.design.Designer;
+
+//设置设计器的事物浏览器
+Designer.setExplorerActions(shell.getDisplay(), actions);
+
+//浏览器和编辑器的工具
+utilBrowser = new UtilBrowser(shell.getDisplay(), actions);
+
+//I18n资源
+ref = UtilResource.getDefaultInstance();
+
+//设置CTabFolder选中时的颜色
+def selectedBackground = shell.getDisplay().getSystemColor(SWT.COLOR_BLUE);
+//leftTabFolder.setSelectionBackground(selectedBackground);
+
+//添加系统输出和出入的重新定向
+rListener = [
+    readLine : {
+        line ->
+        innerRun = [
+             run : {
+                 int lineOffset = consoleText.getText().length();
+                 if(consoleText.getLineCount() > 3000){
+                     //输出显示最多3000行
+                     int offset = consoleText.getOffsetAtLine(100);
+                     consoleText.replaceTextRange(0, offset, "");
+                 }
+                 consoleText.append(line + "\n");
+                 
+                 def offset = consoleText.getText().length();
+                 consoleText.setCaretOffset(offset);
+                 consoleText.setSelection(offset, offset);
+                 consoleText.showSelection();
+                        
+                 if(line.startsWith("\tat ")){         
+                     //判断是Exception的情况            
+                     String clss = line.substring(4, line.indexOf("("));
+                     clss = clss.substring(0, clss.lastIndexOf("."));
+                               
+                     //println clss;     
+                     //为提高速度，始终显示                           
+                     //def scriptObj = UtilAction.getActionThing(clss);
+                     //if(scriptObj != null){
+                     if(true){
+                         //println clss;
+                         try{
+                             int start = 4;
+                             int length = clss.length();
+                             def colorBlue = shell.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE );
+                             StyleRange range = new StyleRange(lineOffset + start, length, colorBlue, null);
+                             range.underline = true;
+                         
+                             consoleText.setStyleRange(range);
+                         }catch(Exception eeeee){
+                         }
+                     }
+                     
+                     return;
+                 }
+                 
+                 int leftIndex = line.indexOf("(");
+                 int rightIndex = line.indexOf(")");
+                 int commerIndex = line.indexOf(":", leftIndex);
+                 if(leftIndex != -1 && rightIndex != -1 && (commerIndex > leftIndex && commerIndex < rightIndex)){
+                     //是Log4j的输出格式
+                     def clss = line.substring(leftIndex + 1, commerIndex); 
+                     //println clss;
+                     //def scriptObj =  UtilAction.getActionThing(clss);
+                     //if(scriptObj != null){
+                     if(true){
+                         //println clss;
+                         try{
+                             int start = leftIndex + 1;
+                             int length = clss.length();
+                             def colorBlue = shell.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE );
+                             StyleRange range = new StyleRange(lineOffset + start, length, colorBlue, null);
+                             range.underline = true;
+                             consoleText.setStyleRange(range);
+                         }catch(Exception eeeee){
+                         }
+                     }
+                 }                 
+             }
+         ] as Runnable;
+             
+         shell.getDisplay().asyncExec(innerRun);
+    }
+] as SystemIoRedirectorListener;
+SystemIoRedirector.addListener(rListener);
+binding.setVariable("sytemIOListener", rListener);
+
+//添加数据对象流程监控
+def thingFlowListener = [
+    start : {
+        thingFlow->        
+        def runAble = [
+            run : {
+                def item = thingFlowDataTable.addRow(0, thingFlow.flowThing);
+                item.setData("thingFlow", thingFlow);
+            }
+        ] as Runnable;
+        
+        shell.getDisplay().asyncExec(runAble);
+    },
+    
+    close : {
+        thingFlow->
+        def runAble = [
+            run : {
+                //log.info("flow is over");
+                for(item in thingFlowDataTable.getItems()){
+                    if(item.getData("thingFlow") == thingFlow){
+                        item.dispose();
+                    }
+                }
+            }
+        ] as Runnable;
+        
+        shell.getDisplay().asyncExec(runAble);
+    },
+    
+    nodeStart : {
+        thingFlow, flowNodeThing->
+    },
+    
+    nodeClose : {
+        thingFlow, flowNodeThing->
+    },
+    
+    requestUI : {
+        request->
+        def runAble = [
+            run : {
+                def item = thingFlowRequestDataTable.addRow(0, request);
+                request.addListener([
+                        finish : {
+                            requesta->
+                            
+                            item.dispose();
+                        }
+                    ] as UIRequestListener);
+                actions.doAction("openEditFlowThing", ["flowRequest": request, "tableItem":item, "slient":true]);
+            }
+        ] as Runnable;
+        
+        shell.getDisplay().asyncExec(runAble);
+    }
+] as ThingFlowListener;
+actionContext.getScope(0).put("thingFlowListener", thingFlowListener);
+
+//启动背景线程
+/*
+ActionContext backgroundContext = new ActionContext();
+backgroundContext.put("explorerContext", actionContext);
+backgroundContext.put("explorerActions", actions);
+backgroundContext.put("display", shell.getDisplay());
+backgroundContext.put("thingFlowListener", thingFlowListener);
+
+def backgroundFlowThing = world.getThing("xworker.ide.worldExplorer.swt.flows.BackgroundFlow");
+backgroundFlowThing.doAction("run", backgroundContext);
+*/
+bottomTabFolder.setSelection(consoleTabItem);
+
+Index index = Index.getInstance();
+for(subIndex in index.childs){
+    TreeItem projectItem = new TreeItem(projectTree, SWT.NONE);
+    projectItem.setText(UtilString.getString("res:res.w_exp:" + subIndex.getLabel() + ":" + subIndex.getLabel(), actionContext));
+    projectItem.setData(subIndex);
+    projectItem.setImage(projectImage);
+}
+
+//设置outlinetree，一个默认的空树，为了美观
+outlineStackLayout.topControl = blankTree;
+outlineComposite.layout();
+
+childsCompositeStackLayout.topControl = blankChildList;
+childsComposite.layout();
+
+actions.doAction("refreshFunctionTree");
+centerTabFolder.addCTabFolder2Listener(new ContentTabListener(outlineStackLayout, outlineComposite, blankTree));
+
+//初始化默认执行的菜单
+//startJettyMenuItemSelection.handleEvent(null);
+enableDebugMenuItem.setSelection(true);
+enableDebugMenuItemSelection.handleEvent(null);
+
+class ContentTabListener implements CTabFolder2Listener{
+    def outlineStackLayout;
+    def outlineComposite;
+    def blankTree;
+    def mainTabFolder;
+    
+    public ContentTabListener(layout, composite, blankTree){
+        outlineStackLayout = layout;
+        outlineComposite = composite;
+        this.blankTree = blankTree;
+    }
+    
+    public void close(CTabFolderEvent event){  
+        def actionContext = event.item.getData("actionContext");     
+        if(actionContext != null && actionContext.get("modified") == true){
+            MessageBox box = new MessageBox(event.item.getParent().getShell(), SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_QUESTION);
+            box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+            box.setMessage(UtilString.getString("res:res.w_exp:askCancelThingEdit:事物已更改，是否要保存当前事物?", actionContext));
+            def result = box.open();
+            if(result == SWT.OK){
+                //actionContext.;
+            }else if(result == SWT.CANCEL){
+                event.doit = false;
+                return;
+            }
+        }
+        
+        //销毁CtabItem相关的内容
+        if(event.item.getControl() != null){
+            event.item.getControl().dispose();
+        }
+        def outlineTree = event.item.getData("outlineTree");
+        def childComposite = event.item.getData("childComposite");
+        
+        if(outlineTree == null) return;
+        /*
+        if(event.item.parent.getItems().length == 1){
+            outlineStackLayout.topControl = blankTree;
+            outlineComposite.layout();
+        }*/
+        if(outlineTree != null){
+            outlineTree.dispose();
+        }
+        if(childComposite != null){
+            childComposite.dispose();
+        }
+        event.item.dispose();   
+    }
+    
+    public void maximize(CTabFolderEvent event) {
+    }
+    
+    public void minimize(CTabFolderEvent event) {
+    }
+
+    public void restore(CTabFolderEvent event){   
+    }
+    
+    public void showList(CTabFolderEvent event){   
+    }
+}
+#$@text#$@
+sid
+initCode1
+sdescriptors
+xworker.swt.Widgets/@Code
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@listeners/@shellDispose
+sname
+shellDispose
+stype
+Dispose
+sid
+shellDispose
+slabel
+shellDispose
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldExplorer.swt.WorldExplorer/@shell1/@listeners/@shellDispose/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import xworker.io.SystemIoRedirector;
+
+SystemIoRedirector.removeListener(rListener);
+
+System.exit(0);
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@scripts1
+sname
+scripts
+sid
+scripts1
+slabel
+scripts
+sdescriptors
+xworker.swt.widgets.Display/@scripts1
+@xworker.ide.worldExplorer.swt.WorldExplorer/@scripts1/@run
+sname
+run
+slabel
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.util.UtilString;
+
+UtilString.runSwt(self);
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.WorldExplorer/@scripts1/@tabDispose
+sname
+tabDispose
+slabel
+tabDispose
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+import xworker.util.UtilGroovy;
+
+//把Tab从缓存中移出
+def tabCache = UtilGroovy.getProperty(binding, "__tabCache");
+if(tabCache != null){
+    tabCache.remove(event.widget.getData("tabName"));
+}
+#$@text#$@
+sid
+tabDispose
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

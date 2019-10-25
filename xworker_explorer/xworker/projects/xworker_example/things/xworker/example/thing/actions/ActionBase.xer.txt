@@ -1,0 +1,203 @@
+^1555482753958
+@
+Sdescription
+#$@text#$@
+<h3>定义事物的行为</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 事物的行为是动作，是定义在一个事物名为actions的子节点下的各种事物。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 动作可以使用多种语言编写，也可以集成新的语言，动作本事也是事物，所以还可以使用事物类型的动作。</p>
+
+<h3>执行事物的动作</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 事物的动作一般在代码里调用，也可以通过事物编辑器上的工具栏选择执行，或通网页链接，本事物的其它几个属性标签也分别演示了以上几种情况。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+SrunInHtml
+#$@text#$@
+<h3>在网页中运行动作</h3>
+
+<p>&nbsp;&nbsp; XWorker和内置的浏览器有集成，可以通过JavaScript执行事物的行为，方法是invoke函数， 如：</p>
+
+<p>&nbsp;&nbsp; invoke(&#39;runThing:&lt;thingPath&gt;:&lt;method&gt;&#39;)，其中thingPath是事物的路径，method是方法名。</p>
+
+<h3>本事物的动作列表</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 以下是本事物的几个动作的链接，点击可以执行，在控制台查看运行的结果。</p>
+
+<ul>
+	<li><a href="javascript:invoke('runThing:xworker.example.thing.actions.ActionBase:helloGroovy')">helloGroovy</a></li>
+	<li><a href="javascript:invoke('runThing:xworker.example.thing.actions.ActionBase:helloJava')">helloJava</a></li>
+	<li><a href="javascript:invoke('runThing:xworker.example.thing.actions.ActionBase:helloPrintln')">helloPrintln</a></li>
+</ul>
+#$@text#$@
+sname
+ActionBase
+slabel
+ActionBase
+sdescriptors
+xworker.example.thing.actions.ActionBaseDesc
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.example.thing.actions.ActionBaseDesc/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@helloJava
+    sname
+    helloJava
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    false
+    suseInnerJava
+    false
+    sclassName
+    Test
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+public class Test{
+    public static void run(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        
+        System.out.println(self.getString("name") + " says: Hello World from Java");
+    }
+}
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    helloJava
+    @/@actions/@helloGroovy
+    sname
+    helloGroovy
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    println("Hello World from Groovy");
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    helloGroovy
+    @/@actions/@helloPrintln
+    sname
+    helloPrintln
+    smessage
+    Hello World from Println
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@Println
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    helloPrintln

@@ -1,0 +1,399 @@
+^1571120288061
+@
+sname
+ActionContextViewer
+slabel
+ActionContextViewer
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.swt.layout.LayoutDatas
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>变量上下文浏览器。</p>
+
+<p><strong>保存变量和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 保存的是新创建到变量上下文。返回值是Composite，变量上下文中的composite也是返回值。</p>
+
+<p><strong>保存的动作的常用方法</strong></p>
+
+<ul>
+	<li><strong>初始化缓存</strong><br />
+	调用&lt;newContext&gt;.actions.doAction(&quot;setActionContext&quot;, actionContext, [&quot;ac&quot;: &lt;actionContext&gt;]方法设置新的变量上下文。<br />
+	&nbsp;</li>
+	<li><strong>Object getSelectedObject()</strong><br />
+	返回对象查看器上选中的对象。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>ActionContext getActionContext()</strong><br />
+	返回要浏览的变量上下文，默认是当前的变量上下文（parentContext是当前变量上下文）。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@create
+    sname
+    create
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import xworker.swt.design.Designer;
+
+//使用新的变量上下文
+def ac = new ActionContext();
+ac.put("parent", parent);
+
+//创建界面
+def thing = world.getThing("xworker.swt.xwidgets.prototypes.ActionContextViewerShell/@codeComposite");
+if(self.getBoolean("showStack")){
+    thing = world.getThing("xworker.ide.worldExplorer.swt.actions.ActionContextViewerShell/@mainSashFrom");
+}
+
+def composite = null;
+Designer.pushCreator(self);
+try{
+    composite = thing.doAction("create", ac);
+}finally{
+    Designer.popCreator();
+}    
+ac.put("composite", composite);
+
+//创建子节点
+actionContext.peek().put("parent", composite);
+for(child in self.getChilds()){
+    //过滤Button
+    if("Button" == child.getThingName()){
+        continue;
+    }
+
+    child.doAction("create", actionContext);
+}
+
+//创建Button
+actionContext.peek().put("parent", ac.buttonComposite);
+for(button in self.getChilds("Button")){
+    button.doAction("create", actionContext);
+}
+
+//初始化变量
+def acc = self.doAction("getActionContext", actionContext);
+if(acc == null || !( acc instanceof ActionContext)){
+    acc = actionContext;
+}
+ac.put("actionContextForView", acc);
+ac.actions.doAction("setActionContext", actionContext, ["ac": acc]);
+
+actionContext.g().put(self.getMetadata().getName(), ac);
+Designer.attachCreator(composite, self.metadata.path, actionContext);
+return composite;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    create
+    @/@actions/@getActionContext
+    sname
+    getActionContext
+    sattributeName
+    actionContext
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getActionContext
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@showStack
+  sname
+  showStack
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  showStack
+  @/@actionContext
+  sname
+  actionContext
+  ssize
+  50
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actionContext
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@Button
+  sname
+  Button
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.swt.widgets.Button
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Button

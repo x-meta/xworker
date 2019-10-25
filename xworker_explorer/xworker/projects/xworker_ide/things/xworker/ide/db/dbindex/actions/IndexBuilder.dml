@@ -1,0 +1,229 @@
+^1569037727765
+@
+sname
+IndexBuilder
+slabel
+IndexBuilder
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>一次性创建和更新索引的动作事物。是upidx.sh和upidx.cmd执行的动作，不要在事物管理器中执行，因为它执行完毕后会退出系统。</p>
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.util.UtilThing;
+import org.xmeta.thingManagers.JarThingManager;
+
+//等待5秒，因为jar事物管理器好初始化
+Thread.sleep(5000);
+
+//记录内部事物管理器
+def innerThingManagers = UtilThing.getThingIfNotExistsCreate(
+     "_local.xworker.config.InnerThingManagers", "_local", "xworker.ide.db.dbindex.actions.InnerThingManagers");
+innerThingManagers.doAction("clear", actionContext);
+     
+//检查_lcoal事物管理器
+println("Check _local");
+def _local = world.getThingManager("_local");
+if(_local == null){
+    world.createThingManager("_local", null);
+}
+
+//检查GloablConfig
+self.doAction("checkGlobalConfig", actionContext);
+
+//顺便检查app的数据是否存在
+def checkApp = world.getAction("xworker.app.appmanager.swt.AppManagerNew/@ActionContainer/@initAppDb");
+checkApp.run(actionContext);
+
+
+//检查数据库
+println("Check database");
+def dbadmin = world.getThing("xworker.ide.db.dbindex.actions.DbAdminActions");
+dbadmin.doAction("checkDb", actionContext);
+
+//装载所有项目
+println("Load all projects");
+projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+if(projectSet != null){
+	projectSet.doAction("run", actionContext);
+}
+
+//遍历所有的事物
+println("Check all things");
+int count = 0;
+def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+
+//获取事务，执行事务模式，能够大大提高sqlite的插入速度
+def datasource = world.getThing("xworker.ide.db.datasource.XWorkerDataSource");
+def con = datasource.doAction("getConnection", actionContext);
+try{
+    con.setAutoCommit(false);    
+    for(thingManager in world.getThingManagers()){
+        if("_transient" == thingManager.getName()){
+            continue;
+        }
+        System.out.println("ThingManager : " + thingManager.getName());
+        innerThingManagers.doAction("add", actionContext, "name", thingManager.getName());
+    	
+        def iter = thingManager.iterator(null, true);
+        while(iter.hasNext()){
+            def thing = iter.next();
+            //if( thingManager.getName() == "xworker_core"){
+            //    System.out.println(thing.metadata.path);
+           // }
+            if(updator.doAction("checkThingIndex", actionContext, [
+                 thing: thing, con: con])){
+                 System.out.println("Thing index updated : " + thing.metadata.path);
+            }
+            count++;
+        }
+    }
+    System.out.println("Total " + count + " things checked");
+    con.commit();
+}catch(Exception e){
+    con.rollback();
+    e.printStackTrace();
+}finally{   
+   con.setAutoCommit(true);
+   con.close();
+}
+
+//删除无效索引
+println("Delete invalid index");
+updator.doAction("removeInvalidIndex", actionContext);
+
+//解压JarThingManager中的资源
+println "Deflate resoruces in jar......";
+for(thingManager in world.getThingManagers()){
+     if(thingManager instanceof JarThingManager){
+          println "Defalte resources in " + thingManager.getName() + "...";
+          try{
+              thingManager.deflateResources();
+          }catch(Exception e){
+              e.printStackTrace();
+          }
+     }
+}
+
+//退出系统，在更新xworker后退出进程
+System.exit(0);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run
+    @/@actions/@checkGlobalConfig
+    sname
+    checkGlobalConfig
+    sthingPath
+    _local.xworker.config.GlobalConfig
+    sthingManager
+    _local
+    sthingDescriptor
+    xworker.ide.config.decriptors.GlobalConfig
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.thing.CheckOrCreateThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    checkGlobalConfig

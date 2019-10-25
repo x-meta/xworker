@@ -1,0 +1,254 @@
+%1516341617037
+@
+sname=ThingTextTemplate
+slabel=ThingTextTemplate
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>事物文本模板，一般的用法是事物提供模板所需的数据，一起生成最后的文本。</p>
+
+<p><strong>事物</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 添加事物(Thing)子节点，用于定义事物，可以通过这个事物生成编辑数据的表单。</p>
+
+<p><strong>模板</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 添加文本模板(TextTemplate)子节点定义模板， 使用模板时变量上下文会把事物作为<strong>thing</strong>变量传入。</p>
+
+<p><strong>需要配合其它工具实现功能</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 本事物主要是配置定义，需要配合其它工具实现功能。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@getTemplate
+    sname=getTemplate
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//从描述者上取
+return self.getDescriptor().getThing("TextTemplate@0");
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTemplate
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionException;
+
+//获取模板
+def template = self.doAction("getTemplate", actionContext);
+
+if(template == null){
+    throw new ActionException("Tempalte not setted, path=" + self.getMetadata().getPath());
+}else{
+    return template.doAction("run", actionContext, "thing", self);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@actions/@getCodeType
+    sname=getCodeType
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//返回模板生成的文本的代码类型
+//log.info("Get Template" + self.metadata.path);
+return self.getString("codeType");
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getCodeType
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@codeType
+  sname=codeType
+  sinputtype=openWindow
+  sshowLabel=true
+  smodifier=public
+  sinputattrs=xworker.dataObject.swt.AttributeDataObjectSelector/@shell|winWidth=-1,dataObject=xworker.things.p2018.p01.p17.ColorerSupportedTypes,winHeight=-1,attributeName=name,multi=false
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=codeType
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@TextTemplate
+  sname=TextTemplate
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.util.TextTemplate
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=TextTemplate
+  @/@attribute
+  sname=attribute
+  slabel=属性
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.MetaDescriptor3/@attribute
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sen_label=Attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=attribute
+  @/@thing
+  sname=thing
+  slabel=Thing
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.MetaDescriptor3
+  smany=true
+  seditCols=2
+  Sdescription=
+#$@text#$@
+<p><strong>子事物</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 子事物也是事物，用于添加到父事物的子节点下。比如儿女可以是人的子事物，那么可以在人这个事物下定义儿女这个子事物。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用方法同事物。</p>
+#$@text#$@
+  szh_label=事物
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<p><strong>Child Thing</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Child thing ia also a thing, can added to parent thing. For example, a person can have a child, then use child thing to define it.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The use method is same as Thing.</p>
+#$@text#$@
+  sth_mark=false
+  sid=thing

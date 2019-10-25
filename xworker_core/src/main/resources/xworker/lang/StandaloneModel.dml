@@ -1,0 +1,367 @@
+%1515392061924
+@
+sname=StandaloneModel
+slabel=StandaloneModel
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>为独立运行设计的模型，即在操作系统模型是独立的可执行的文件。</p>
+
+<p><strong>使用方法</strong></p>
+
+<ul>
+	<li>通过菜单Standalone-&gt;添加子模型添加子节点。</li>
+	<li>编辑子节点，运行后会执行子节点的模型。</li>
+</ul>
+
+<p><strong>编辑和运行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的属性mode=edit时总是进入编辑界面，改成mode=run时是执行模型，不进入编辑界面。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在mode=run时，在操作系统的控制台里<strong>dml xxx.dml run mode=edit</strong>也可以进入编辑界面。</p>
+
+<p><strong>帮助小精灵</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 帮助小精灵是XWorker的辅助工具，在编辑界面输入Ctrl + Alt + H可以打开。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.StandaloneModel
+    smethodName=run
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@actions/@menu_run
+    sname=menu_run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//菜单
+//运行app
+def app = currentThing.doAction("getApp", actionContext);
+if(app != null){
+    app.doAction("run", actionContext);
+}
+
+//运行子节点
+for(child in currentThing.getChilds()) {
+	  child.doAction("run", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=menu_run
+    @/@actions/@getApp
+    sname=getApp
+    sattributeName=appPath
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getApp
+    @/@actions/@menu_makePrj
+    sname=menu_makePrj
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def cdp = world.getThing("xworker.lang.util.CreateDmlProject");
+cdp.doAction("run", actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=menu_makePrj
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@runMode
+  sname=mode
+  sinputtype=select
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=edit
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>运行模式，如果是edit，那么打开一个事物编辑器编辑，只在非IDE模式下生效，即在没有其它窗口打开时。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=runMode
+    @/@runMode/@run
+    sname=run
+    svalue=run
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@runMode/@edit
+    sname=edit
+    svalue=edit
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=edit
+  @/@appPath
+  sname=appPath
+  sinputtype=openWindow
+  sshowLabel=true
+  ssize=60
+  smodifier=public
+  sinputattrs=xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.lang.StandaloneApp
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=appPath
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@sswtMenus
+  sname=sswtMenus
+  sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname=menuDefine
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=menuDefine
+      @/@sswtMenus/@menuDefine/@Standalone
+      sname=Standalone
+      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Standalone
+    @/@sswtMenus/@menuSetting
+    sname=menuSetting
+    smenuType=Standalone
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=menuSetting
+      @/@sswtMenus/@menuSetting/@run
+      sname=run
+      slabel=运行
+      surl=xworker.lang.StandaloneModel/@actions/@menu_run
+      sisSplit=false
+      sattachParam=true
+      sen_label=Run
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@sswtMenus/@menuSetting/@split1
+      sname=split1
+      sisSplit=true
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=split1
+      @/@sswtMenus/@menuSetting/@addItem
+      sname=addItem
+      slabel=添加子模型
+      sshell=xworker.lang.util.prototypes.MenuAddChildBySelectDescritporShell
+      sisSplit=false
+      sattachParam=true
+      sen_label=Add Child Model
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=addItem
+      @/@sswtMenus/@menuSetting/@split2
+      sname=split2
+      sisSplit=true
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=split2
+      @/@sswtMenus/@menuSetting/@makeProject
+      sname=makeProject
+      slabel=把当前目录转为项目
+      surl=xworker.lang.StandaloneModel/@actions/@menu_makePrj
+      sisSplit=false
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=makeProject

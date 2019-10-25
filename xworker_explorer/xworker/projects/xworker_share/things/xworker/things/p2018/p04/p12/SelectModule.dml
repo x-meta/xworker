@@ -1,0 +1,142 @@
+%1523534970998
+@
+sname=SelectModule
+slabel=SelectModule
+sdescriptors=xworker.lang.util.ThingGuide
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=guide|xworker.html.module.ModuleProviderHtml
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@selectModules
+  sname=selectModules
+  slabel=选择模块
+  sregistThing=xworker.html.module.ModuleProviders
+  sregistType=child
+  snotRemoveGuideOnFinish=false
+  sdescriptors=xworker.lang.util.ThingGuideNodes/@SelectThingsByThingRegistor
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=selectModules
+    @/@selectModules/@actions
+    sname=actions
+    sdescriptors=xworker.lang.util.ThingGuideNodes/@SelectThingsByThingRegistor/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@selectModules/@actions/@getThings
+      sname=getThings
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def thing = thingGuide.getEditThing();
+def list = [];
+for(child in thing.getChilds()){
+    def th = world.getThing(child.get("extends"));
+    if(th != null){
+        list.add(th);
+    }
+}
+
+return thing;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThings
+      @/@selectModules/@actions/@onAdd
+      sname=onAdd
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//正在编辑的事物
+def editThing = thingGuide.getEditThing();
+
+//要加入的事物
+def path = thing.getMetadata().getPath();
+def have = false;
+for(child in editThing.getChilds()){
+    def extPath = child.get("extends");
+    if(path == extPath){
+        have = true;
+        break;
+    }
+}
+
+if(!have){
+    def child = thing.detach();
+    child.set("extends", path);
+    editThing.addChild(child);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onAdd
+      @/@selectModules/@actions/@onRemove
+      sname=onRemove
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//正在编辑的事物
+def editThing = thingGuide.getEditThing();
+
+//要加入的事物
+def path = thing.getMetadata().getPath();
+def childThing = null;
+for(child in editThing.getChilds()){
+    def extPath = child.get("extends");
+    if(path == extPath){
+        childThing = child;
+        break;
+    }
+}
+
+if(childThing != null){
+    editThing.removeChild(childThing);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onRemove

@@ -1,0 +1,869 @@
+^1497609874392
+@
+sname
+SegmentTask
+slabel
+SegmentTask
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+常用.动作
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>分段任务，把一个大任务分为小段来并行处理。</p>
+
+<p><strong>原理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 从分段管理器（RanageManager）获取一个分段，从getCallable方法返回分段的处理方法，分段处理执行完后通知分段管理器，然后再返回新的段。当所有的段都完成则整个任务完成，如果是持续任务，当没有新的段时会休眠一段时间，然后再尝试读取新的段。</p>
+
+<p><strong>需要重写的方法：</strong></p>
+
+<ul>
+	<li><strong>RangeManager getRanageManager()</strong><br />
+	返回分段管理器，在动作的_actions.task.segment分组下有一些现成的RanageManager可用。<br />
+	&nbsp;</li>
+	<li><strong>Thing&nbsp;getRangeTaskThing(Range range)</strong><br />
+	返回执行分段任务的事物，默认返回自己，返回的事物需要实现下面的doRange方法。<br />
+	&nbsp;</li>
+	<li><strong>boolean doRange(SegmentTask task, RangeTask rangeTask, Range range)</strong><br />
+	在默认的getCallable方法下需要实现此方法，执行指定的分段任务，返回任务是否执行成功。</li>
+</ul>
+
+<p><strong>任务的启动、终止和重置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个分段任务同一时刻只能有一个实例，启动任务执行run方法，终止用stop方法，对于已经结束的任务可以执行removeTask方法重置。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>void onRangeSuccess(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+	<li><strong>void onRangeException(Range range, Callable&lt;Boolean&gt; callable, Exception e)</strong></li>
+	<li><strong>void onRangeFailed(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+	<li><strong>void onException(Exception e)</strong></li>
+	<li><strong>void onFinished()</strong></li>
+	<li><strong>void onRangeTimeout(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sen_group
+Common.Actions
+sth_createIndex
+false
+sth_keywords
+segment,task,分段任务
+sth_registThing
+child|xworker.lang.util.DescriptorsIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@getRanageManager
+    sname
+    getRanageManager
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getRanageManager
+    @/@actions/@getRangeTaskThing
+    sname
+    getRangeTaskThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    getRangeTaskThing
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getRangeTaskThing
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run
+    @/@actions/@stop
+    sname
+    stop
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    stop
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    stop
+    @/@actions/@removeTask
+    sname
+    removeTask
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    remove
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    removeTask
+    @/@actions/@onRangeSuccess1
+    sname
+    onRangeSuccess
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onRangeSuccess
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onRangeSuccess1
+    @/@actions/@onRangeException1
+    sname
+    onRangeException
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onRangeException
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onRangeException1
+    @/@actions/@onRangeFailure1
+    sname
+    onRangeFailure
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onRangeFailure
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onRangeFailure1
+    @/@actions/@onRanageTimeout1
+    sname
+    onRangeTimeout
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onRanageTimeout
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onRanageTimeout1
+    @/@actions/@onException1
+    sname
+    onException
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onException
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onException1
+    @/@actions/@onFinished1
+    sname
+    onFinished
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.segment.SegmentTaskActions
+    smethodName
+    onFinished
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onFinished1
+    @/@actions/@doRange
+    sname
+    doRange
+    stype
+    boolean
+    svalue
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ValueFactory
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doRange
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@continueTask
+  sname
+  continueTask
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为true那么表示这是一个持续的分段任务。如果已有的分段已经结束，那么会sleep短暂的时间后继续获取新的分段并执行。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  continueTask
+  @/@threadCount
+  sname
+  threadCount
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  1
+  sinheritDescription
+  false
+  sdescription
+  <p>执行任务的最大线程数。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  threadCount
+  @/@timeOut
+  sname
+  timeOut
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  -1
+  sinheritDescription
+  false
+  sdescription
+  <p>单个段任务的超时时间，超时任务将会标记为失败。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  timeOut
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  Sdescription
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label
+  动作
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  Sen_description
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name

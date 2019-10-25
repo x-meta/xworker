@@ -1,0 +1,708 @@
+^1497609920535
+@
+sname
+UiFlow
+slabel
+UiFlow
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.flow.uiflow.Nodes
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+常用
+smodifier
+public
+sinheritDescription
+false
+screateOpenAction
+thingTab
+Sdescription
+#$@text#$@
+<p>UiFlow是通过画流程图来快速编程的一种方法，可以编写界面程序和其它各种类型的程序。</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 把左面的可用流程节点拖拽到流程图上，然后编辑节点的属性或连接到其它节点等。</p>
+
+<p><strong>节点</strong></p>
+
+<ul>
+	<li><strong>如何编辑一个节点</strong><br />
+	鼠标双击一个节点，或选中一个节点后点击工具栏的编辑按钮。<br />
+	&nbsp;</li>
+	<li><strong>如何连接到其它节点</strong><br />
+	鼠标右键弹出菜单中选择设置连接，也可以点击工具栏上的设置连接按钮。<br />
+	使用Shift + 鼠标点击，也可以快捷设置。<br />
+	&nbsp;</li>
+	<li><strong>有哪些连接和如何设置连接</strong><br />
+	一个节点能够通过什么方式连接到其它节点是由这个这点决定的，一般是固定的类型或通过connections属性设置的。</li>
+</ul>
+
+<p><strong>如何运行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击工具栏上的运行按钮运行，会从当前正选择的节点开始运行。</p>
+
+<p><strong>流程是否可以用其它方式执行？</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以当作动作执行，也可以以非界面的方式运行，界面方式也分有设计和无设计两种。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sen_group
+Common
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.util.DescriptorsIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@createThingTabOutline
+    sname
+    createThingTabOutline
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//创建Outline
+def browser = world.getThing("xworker.lang.flow.uiflow.OutlineShell/@outlineSashForm");
+return browser.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThingTabOutline
+    @/@actions/@createThingTab
+    sname
+    createThingTab
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.lang.flow.uiflow.UiFlow;
+import org.xmeta.ActionContext;
+
+def ac = actionContext;
+
+//创建uiFlow
+def flowThing = self;
+UiFlow uiFlow = new UiFlow(parent, flowThing, ac);
+
+uiFlow.showOutlineDoc(self);
+//选择流程节点
+ac.tabFolder.setSelection(ac.flowItem);
+
+//启动
+if(self.getBoolean("startOnLoad")){
+    uiFlow.start();
+}
+
+return uiFlow.getMainComposite();
+#$@text#$@
+    sdescription
+    <p>在事物管理器中以ThingTab的方式打开。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThingTab
+    @/@actions/@getNextNode
+    sname
+    getNextNode
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getNextNode
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    runAsAction
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@thingTabRoot
+  sname
+  thingTabRoot
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sgroup
+  ThingTab
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>使用XWorker的thingTab方法打开是需要判断的，不需要修改这个值。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  thingTabRoot
+  @/@runMethod
+  sname
+  runMethod
+  sinputtype
+  select
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  action
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>通过自身的run方法运行时方法。</p>
+
+<ul>
+	<li><strong>action</strong><br />
+	作为动作执行。<br />
+	&nbsp;</li>
+	<li><strong>shell</strong><br />
+	打开一个窗口。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  runMethod
+    @/@runMethod/@action
+    sname
+    action
+    svalue
+    action
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    action
+    @/@runMethod/@shell
+    sname
+    shell
+    svalue
+    shell
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    shell
+    @/@runMethod/@shellWithOutline
+    sname
+    shellWithOutline
+    svalue
+    shellWithOutline
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    shellWithOutline
+    @/@runMethod/@design
+    sname
+    design
+    svalue
+    design
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    design
+  @/@startOnLoad
+  sname
+  startOnLoad
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>是否加载后即进入流程图后就自动执行。默认为false，如果一个流程已经制作完毕可能会需要自动执行。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  startOnLoad
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuDefine
+      @/@sswtMenus/@menuDefine/@application
+      sname
+      application
+      slabel
+      UFlow
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      application
+    @/@sswtMenus/@menuSetting
+    sname
+    menuSetting
+    smenuType
+    application
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuSetting
+      @/@sswtMenus/@menuSetting/@open
+      sname
+      open
+      slabel
+      打开
+      surl
+      xworker.swt.xwidgets.app.SimpleAppWithTabFolder/@actions/@menu_open
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      open
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  Sdescription
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label
+  动作
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  Sen_description
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name

@@ -1,0 +1,2 @@
+<#import "common.ftl" as lib>
+<input type="${object.type?if_exists}" id="${object.name?if_exists}" <@lib.showProperties names=["alt", "class", "style"] dataObject=object/> name="${object.name}" value="${object.value?if_exists}" <#if object.disabled?exists && object.disabled == "true">disabled="true" </#if><@lib.showEvent object=object/> ${object.otherAttributes?if_exists}/>

@@ -1,0 +1,525 @@
+%1544577948126
+@
+sname=ActionContextIntroduce
+slabel=变量上下文
+stype=composite
+sgroup=-9000|编程框架.-950|动作框架.-900|文档和教程
+sicon=icons/application.png
+sth_sortWeight=100
+sstyledTextForInsert=parentContext.parentContext.codeText
+sen_label=ActionContext
+sen_group=-9000|Programing.-950|Action.-900|Dcouments
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@Composite
+  sname=Composite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.xworker.ThingRegistThing/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@compositeFillLayout
+    sname=compositeFillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=compositeFillLayout
+    @/@Composite/@viewer
+    sname=viewer
+    sactionThingContext=var:actionContext
+    sdescriptors=xworker.swt.Widgets/@ActionExecuteViewer
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=viewer
+      @/@Composite/@viewer/@ActionThing
+      sname=ActionThing
+      slabel=变量上下文
+      smode=run
+      sdisabled=false
+      Sdescription=
+#$@text#$@
+<p>&nbsp;&nbsp;&nbsp; 变量上下文是动作执行的语境，变量上下文用于存储和管理变量，本教程将演示变量上下文的一般使用方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 选择根节点，然后点击左下方的<strong>启动按钮</strong>开始教程。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sen_label=ActionContext
+      sdescriptors=xworker.swt.xwidgets.ActionExecuteViewer/@ActionThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      Sen_description=
+#$@text#$@
+<h3>ActionContext</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The ActionContext is the context in which the action is executed, and the ActionContextis used to store and manage variables. This tutorial demonstrates the general use of ActionContext.</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+      sth_mark=false
+      sid=ActionThing
+        @/@Composite/@viewer/@ActionThing/@createAndManager
+        sname=createAndManager
+        slabel=基本概念和操作
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+
+//创建变量上下文
+ActionContext ac = new ActionContext();
+
+//存储和获取变量
+ac.put("name", "xworker");
+println ac.get("name") + " say hello world!";
+
+//变量上下文也是一个栈
+println "before push name is " + ac.get("name");
+Bindings bindings = ac.push();
+try{
+    //push后可以在bindings设置变量
+    bindings.put("name", "ActionContext");
+    //此时同名的变量会从最上层的栈获取，此时name=ActionContext
+    println("after push name is " + ac.get("name"));
+}finally{
+    //push和pop应该保持成对出现，否则语境可能会完全混乱
+    ac.pop();
+}
+
+//压入的栈弹出后，栈中的变量一起消失，此时name=xworker
+println("after pop name is " + ac.get("name"));
+
+//ActionContext创建时会有一个默认的栈，是全局变量栈
+println("stack 0 name is " + ac.get("name"));
+println("global stack name is " + ac.g().get("name"));
+#$@text#$@
+        Sdescription=
+#$@text#$@
+<p><strong>基本概念</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量上下文用于管理变量，变量上下文是一个Map和Stack的结合体，Stack的每层都是Map，变量放到Map中，栈层中同名的变量只取最上层的，最底层的栈是一直存在的，可用于全局变量。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量上下文的类是org.xmeta.ActionContext，栈的每一层的类是org.xmeta.Bindings。</p>
+
+<p><strong>基本操作</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 基本操作时Map和get()和set()方法，以及Stack的peek()、push()和pop()等方法。</p>
+
+<p><strong>示例</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 下方的界面显示的是变量上下文的栈以及栈层中的变量，可以编写Groovy脚本处理这些变量，另外在<strong>动作事物</strong>标签页查看相关代码。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sen_label=Create and Manage ActionContext
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Create and Manage ActionContext</h3>
+
+<p>&nbsp;&nbsp;&nbsp; This action demonstrates the main operation of the ActionContext, and you can view the relevant code at the action thing tab.</p>
+#$@text#$@
+        sth_mark=false
+        sid=createAndManager
+        @/@Composite/@viewer/@ActionThing/@actionContext
+        sname=Global Variables
+        slabel=全局变量
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+println "_g is th eglobal variables bindings";
+println _g == actionContext.getScope(0);
+println "_g.content=" + _g.get("content");
+println "actionContext.content=" + actionContext.get("content");
+#$@text#$@
+        Sdescription=
+#$@text#$@
+<p>&nbsp;&nbsp;&nbsp; 变量上下文也是一个栈，当栈压入时栈中的变量时可访问的，当栈弹出时栈中的变量就不可访问了，通过栈可以实现变量的访问范围。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量上下文存在一个栈通常永远不会弹出去，这个栈中的变量称为<strong>全局变量</strong>。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 下面的栈层中绿色的表示<span style="background-color: rgb(0, 255, 0);">全局变量栈层</span>。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sen_label=Global Variables
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Global Variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; A&nbsp;ActionContext is also a stack. When a stack is pressed, variables in the stack can be accessed. When&nbsp;a stack pops up, the variables in the stack are not accessible, and the range of variables can be implemented through the stack.</p>
+
+<p>&nbsp;&nbsp;&nbsp; There is a stack in the ActionContext that will never pop up. The variables in this stack are called global variables</p>
+#$@text#$@
+        sth_mark=false
+        sid=actionContext
+        @/@Composite/@viewer/@ActionThing/@iterator
+        sname=Local Variabels
+        slabel=局部变量
+        scollectionName={"hello", "world"}
+        svarName=it
+        Sdescription=
+#$@text#$@
+<h3>局部变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 局部变量由动作自行设置，一般只有动作的子节点的动作才能访问，在动作栈中用<span style="background-color: rgb(0, 255, 255);">蓝色</span>表示。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如迭代器中的it变量。</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sen_label=Local Variables
+        sdescriptors=xworker.lang.actions.Actions/@Iterate
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Local Variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Local variables are set by the actions themselves, and only the actions of the child nodes can be accessed, and they are shown in blue in the action stack.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Such as the it variable in an iterator.</p>
+#$@text#$@
+        sth_mark=false
+        sid=iterator
+          @/@Composite/@viewer/@ActionThing/@iterator/@ChildAction
+          sname=ChildAction
+          sdescriptors=xworker.lang.actions.Iterator/@ChildAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ChildAction
+            @/@Composite/@viewer/@ActionThing/@iterator/@ChildAction/@Println
+            sname=Println
+            slabel=打印it变量
+            smessage=template:局部变量（Local Variable）-${it}
+            Sdescription=
+#$@text#$@
+<h3>局部变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 局部变量范围由动作自行设置和控制，比如当前的节点是Iterator遍历时的子动作，Iterator遍历时设置了一个局部变量it，在局部变量范围中可见。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 查看下面局部范围栈层7中的变量，这些变量是迭代器(Iterator)所设置的。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sen_label=Println variable it
+            sdescriptors=xworker.lang.actions.Actions/@Println
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            Sen_description=
+#$@text#$@
+<h3>Local Variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The range of local variables is set and controlled by actions. For example, the current node is the child of the Iterator traversal, iterator sets a local variable it when traversing.</p>
+
+<p>&nbsp;&nbsp;&nbsp; See the variables in the following local scope stack layer 7, which are set by the iterator .</p>
+#$@text#$@
+            sth_mark=false
+            sid=Println
+        @/@Composite/@viewer/@ActionThing/@GroovyAction
+        sname=GroovyAction
+        slabel=传递参数
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+//传递参数要明确指定名称
+//Pass the parameter to the specified name
+def addRun = world.getAction("xworker.things.p2016.p10.p26.ActionContextIntroduce/@Composite/@viewer/@ActionThing/@GroovyAction/@Add/@actions/@run");
+addRun.run(actionContext, "x", 100, "y", 100);
+
+//也可以通过Map传参
+//You can also pass the Map pass
+def params = ["x": 300, "y": 300];
+addRun.run(actionContext, params);
+#$@text#$@
+        Sdescription=
+#$@text#$@
+<h3>传递参数</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在动态模型编程中动作相当于函数，但动态模型没有明确定义参数的概念，不过可以实现参数的传递。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在这个示例中， Add子动作需要x和y两个参数，可以在调用它时传入。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sen_label=Parameters
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GroovyAction
+          @/@Composite/@viewer/@ActionThing/@GroovyAction/@Add
+          sname=Add
+          sdescriptors=xworker.lang.MetaThing/@thing
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Add
+            @/@Composite/@viewer/@ActionThing/@GroovyAction/@Add/@actions
+            sname=actions
+            sdescriptors=xworker.lang.MetaThing/@actions
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=actions
+              @/@Composite/@viewer/@ActionThing/@GroovyAction/@Add/@actions/@run
+              sname=run
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              scode=println "Add result = " + (x + y);
+              Sdescription=
+#$@text#$@
+<h3>Add的run方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 由于在传递参数的动作脚本里调用了两次，所以会执行两次，第一次在控制台打印Add result=200，第二次是Add result=helloworld。<br />
+&nbsp;</p>
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=run
+        @/@Composite/@viewer/@ActionThing/@setReturnValue
+        sname=setReturnValue
+        slabel=保存返回值
+        SjsonText=
+#$@text#$@
+{
+    "people":[
+        {"firstName":"Brett","lastName":"McLaughlin","email":"aaaa"},
+        {"firstName":"Jason","lastName":"Hunter","email":"bbbb"},
+        {"firstName":"Elliotte","lastName":"Harold","email":"cccc"}
+    ]
+}
+#$@text#$@
+        Sdescription=
+#$@text#$@
+<h3>保存动作返回值</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;每一个动作执行后都有一个返回值，可以把该返回值保存到变量上下文中。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 保存动作返回值在动作编辑表单的Return标签页设置，可以查看当前动作的动作事物标签页。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=true
+        sreturnVarName=peoples
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sen_label=Save returned value
+        sdescriptors=xworker.lang.actions.text.JsonActions/@parse
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Save action return value</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Each action is executed with a return value that can store the return value into the ActionContext.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The save action return value is set on the Return tab of the action edit form to view the actions tab of the current action.</p>
+#$@text#$@
+        sth_mark=false
+        sid=setReturnValue
+        @/@Composite/@viewer/@ActionThing/@printPeoples
+        sname=printPeoples
+        slabel=保存返回值-查看
+        svarName=var:peoples
+        Sdescription=
+#$@text#$@
+<h3>检测保存的变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在上一个演示节点<strong>保存动作返回值</strong>中把动作的返回值以变量名people保存到局部变量范围里，本演示节点执行后则把该变量打印到控制台中。</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sen_label=Save returned value - check
+        sdescriptors=xworker.lang.actions.Actions/@Println
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Detect saved variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; In the last demonstration node <strong>save action return value</strong>, the return value of the action is saved into the local variable range with the variable name <strong>people</strong>, when the demo node executes, it prints the variable to the console.</p>
+#$@text#$@
+        sth_mark=false
+        sid=printPeoples
+        @/@Composite/@viewer/@ActionThing/@NOOP1
+        sname=NOOP
+        slabel=线程安全
+        sunimplementedException=false
+        Sdescription=
+#$@text#$@
+<h3>线程安全</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 变量上下文是线程安全的，一个变量上下文在不同的线程里其变量栈是独享的，即每个线程有各自的变量栈，它们的push和pop操作不受其它线程影响。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 全局变量栈是所有线程都共享的，在正常操作里不会被任何一个线程弹出。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sen_label=Thread safe
+        sdescriptors=xworker.lang.actions.Actions/@NOOP
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        Sen_description=
+#$@text#$@
+<h3>Thread Safe</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;ActionContext is thread safe, and a ActionContext in different threads whose variables stack is exclusive, that is, each thread has its own variable stack, and their push and pop operations are not affected by other threads.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The global variable stack is shared by all threads and will not be ejected by any thread in normal operation.</p>
+#$@text#$@
+        sth_mark=false
+        sid=NOOP1

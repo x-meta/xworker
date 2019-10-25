@@ -1,0 +1,94 @@
+@xworker.ide.worldExplorer.swt.flows.ThingEditorBackgroundFlow
+sname
+ThingEditorBackgroundFlow
+slabel
+ThingEditorBackgroundFlow
+sedit
+false
+seditOnException
+false
+seditOnFlowBroken
+false
+sid
+ThingEditorBackgroundFlow
+sdescriptors
+xworker.lang.flow.ThingFlow
+@xworker.ide.worldExplorer.swt.flows.ThingEditorBackgroundFlow/@InitThing
+sname
+InitThing
+sdescriptors
+xworker.lang.flow.ThingFlow/@AThing
+@xworker.ide.worldExplorer.swt.flows.ThingEditorBackgroundFlow/@InitThing/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaThing/@actions
+@xworker.ide.worldExplorer.swt.flows.ThingEditorBackgroundFlow/@InitThing/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.xmeta.World;
+
+display.asyncExec([
+    run : {
+        def thingContext = tabItem.getData("actionContext");
+        
+        def currentThing = thingContext.get("currentThing");
+        if(isThingTemplate(currentThing)){
+             //log.info("is template");
+             //添加事物模板的子节点
+             def childTree = thingContext.get("childTree");
+             boolean have = false;
+             for(item in childTree.getItems()){
+                 if(item.getData("flowSetted") != null){
+                     have = true;
+                     break;
+                 }
+             }
+             
+             if(!have){
+                 def subItem = new TreeItem(childTree, SWT.NONE);
+                 subItem.setText("ThingTemplate");
+                 subItem.setData("flowSetted", true);
+                 
+                 def thingTemplate = World.getInstance().getThing("xworker.lang.util.ThingTemplate");
+                 for(child in thingTemplate.get("thing@")){
+                     def item = new TreeItem(subItem, SWT.NONE);
+                     item.setText(child.metadata.label);
+                     item.setData(child);
+                 }
+             }
+        }
+    }] as Runnable);
+    
+def isThingTemplate(thing){
+    if(thing == null) return false;
+    
+    String des = thing.getString("descriptors");
+    if(des != null && des.indexOf("xworker.lang.util.ThingTemplate") != -1){
+        return true;
+    }else{
+        return isThingTemplate(thing.getParent());
+    }
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

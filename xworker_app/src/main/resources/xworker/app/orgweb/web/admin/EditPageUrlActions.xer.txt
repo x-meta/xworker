@@ -1,0 +1,154 @@
+^1450406001190
+@
+sname
+EditPageUrlActions
+slabel
+EditPageUrlActions
+sdescriptors
+xworker.http.controls.SimpleControl,xworker.http.ControlSet
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@inheritParentKeys
+sname
+inheritParentKeys
+scheckPermission
+false
+scheckLogin
+true
+sloginAttribute
+__orgWebAdmin__
+sloginUrl
+do?sc=xworker.app.orgweb.web.admin.AdminLogin
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@inheritParentKeys/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@inheritParentKeys/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//节点标识
+def id = Integer.parseInt(requestBean.id);
+
+def rs = null;
+def pst = null;
+def pst1 = null;
+try{
+    pst = con.prepareStatement("SELECT keyword FROM tblcontentkeywords where contentTreeId in (select parentId from tblcontenttree where tid=?) " + 
+         "and keyword not in(select keyword from tblcontentkeywords where contentTreeId = ?)");
+    pst.setInt(1, id);
+    pst.setInt(2, id);
+    rs = pst.executeQuery();
+    pst1 = con.prepareStatement("insert into tblcontentkeywords(contentTreeId,keyword) values(?,?)");
+    int count = 0;
+    while(rs.next()){
+        String keyword = rs.getString("keyword");
+        pst1.setInt(1, id);
+        pst1.setString(2, keyword);
+        pst1.addBatch();
+        count++;
+    }
+    if(count > 0){
+        pst1.executeBatch();
+    }
+    
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println("""{
+    "success":true,
+}""");
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+    if(pst1 != null){
+        pst1.close();
+    }
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@inheritParentKeys/@actions/@doAction/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@inheritParentKeys/@actions/@doAction/@contexts/@DataSouceActionContext
+sname
+DataSouceActionContext
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.app.orgweb.datasource.OrgwebDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

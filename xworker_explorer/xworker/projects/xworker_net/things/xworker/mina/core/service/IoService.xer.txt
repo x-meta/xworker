@@ -1,0 +1,196 @@
+@xworker.mina.core.service.IoService
+sname
+IoService
+slabel
+IoService
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Base interface for all <a title="interface in org.apache.mina.core.service" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoAcceptor.html"><code>IoAcceptor</code></a>s and <a title="interface in org.apache.mina.core.service" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoConnector.html"><code>IoConnector</code></a>s that provide I/O service and manage <a title="interface in org.apache.mina.core.session" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/session/IoSession.html"><code>IoSession</code></a>s.</p>
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@actions/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.apache.mina.core.service.IoServiceListener;
+
+//初始化监听器
+for(listeners in self.get("listeners@")){
+    for(child in listeners.getChilds()){
+        def listener = child.doAction("create", actionContext);
+        if(listener instanceof IoServiceListener){
+            service.addListener(listener);
+        }
+    }
+}
+
+//初始化过滤器
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("parent", service);
+    for(filters in self.get("filters@")){
+        for(child in filters.getChilds()){
+            child.doAction("create", actionContext);            
+        }
+    }
+}finally{
+    actionContext.pop();
+}
+
+//设置Handler
+def handler = self.get("handler@0");
+if(handler != null && handler.getChilds().size() > 0){
+    def hd = handler.getChilds().get(0).doAction("create", actionContext);
+    if(hd != null){
+        service.setHandler(hd);
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@actions/@init/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@actions/@init/@ins/@service
+sname
+service
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@listeners
+sname
+listeners
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+false
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@listeners/@IoServiceListener
+sname
+IoServiceListener
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.mina.core.service.IoServiceListener
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@filters
+sname
+filters
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.mina.IoFilters
+smany
+false
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@handler
+sname
+handler
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+false
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+@xworker.mina.core.service.IoService/@handler/@IoHandler
+sname
+IoHandler
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.mina.core.service.IoHandler
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false

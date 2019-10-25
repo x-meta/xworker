@@ -1,0 +1,292 @@
+@xworker.jfreechart.chart.urls.XYURLGenerator
+sname
+XYURLGenerator
+slabel
+XYURLGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.jfree.chart.urls.CustomXYURLGenerator;
+import org.jfree.chart.urls.StandardXYURLGenerator;
+import org.jfree.chart.urls.TimeSeriesURLGenerator;
+import org.jfree.chart.urls.StandardXYZURLGenerator;
+
+import java.text.SimpleDateFormat;
+
+switch(self.type){
+    case "Var":
+        return Ognl.getValue(self.varName, actionContext);
+    case "CustomXYURLGenerator":
+        if(self.urls == null || self.urls != ""){
+            return null;
+        }else{
+            def urls = Ognl.getValues(self.urls, actionContext);            
+            if(urls != null){
+                CustomXYURLGenerator c = new CustomXYURLGenerator();
+                for(surls in urls){
+                    c.addURLSeries(surls);
+                }
+                return c;
+            }else{
+                return null;
+            }
+        }
+    case "StandardXYURLGenerator":
+        if(self.prefix == null || self.prefix == ""){
+            return new StandardXYURLGenerator();
+        }else if(self.seriesParameterName == null || self.seriesParameterName == ""){
+            return new StandardXYURLGenerator(self.prefix);
+        }else{
+            return new StandardXYURLGenerator(self.prefix, self.seriesParameterName, self.itemParameterName);
+        }
+    case "StandardXYZURLGenerator":
+        if(self.prefix == null || self.prefix == ""){
+            return new StandardXYZURLGenerator();
+        }else if(self.seriesParameterName == null || self.seriesParameterName == ""){
+            return new StandardXYZURLGenerator(self.prefix);
+        }else{
+            return new StandardXYZURLGenerator(self.prefix, self.seriesParameterName, self.itemParameterName);
+        }
+    case "TimeSeriesURLGenerator":
+        if(self.prefix == null || self.prefix == ""){
+            return new StandardXYZURLGenerator();
+        }else{
+            return new StandardXYZURLGenerator(new SimpleDateFormat(self.dateFormat), self.prefix, self.seriesParameterName, self.itemParameterName);
+        }
+}
+
+return null;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type
+sname
+type
+sinputtype
+select
+sreadOnly
+false
+sdefault
+Var
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type/@Var
+sname
+Var
+svalue
+Var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type/@CustomCategoryURLGenerator
+sname
+CustomXYURLGenerator
+svalue
+CustomXYURLGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type/@StandardCategoryURLGenerator
+sname
+StandardXYURLGenerator
+svalue
+StandardXYURLGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type/@StandardXYZURLGenerator
+sname
+StandardXYZURLGenerator
+svalue
+StandardXYZURLGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@type/@TimeSeriesURLGenerator
+sname
+TimeSeriesURLGenerator
+svalue
+TimeSeriesURLGenerator
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@varName
+sname
+varName
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@urls
+sname
+urls
+sgroup
+CustomXYURLGenerator
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>自定义的RULGenerator的数据是一个List&lt;List&lt;String&gt;&gt;的结构的变量，从actionContext中取。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@prefix
+sname
+prefix
+sgroup
+Standard&TimeSeries
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@seriesParameterName
+sname
+seriesParameterName
+sgroup
+Standard&TimeSeries
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@categoryParameterName
+sname
+itemParameterName
+sgroup
+Standard&TimeSeries
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.urls.XYURLGenerator/@dateFormat
+sname
+dateFormat
+sgroup
+TimeSeriesURLGenerator
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

@@ -1,0 +1,2 @@
+<#import "common.ftl" as lib>
+<textarea name="${object.name?if_exists}" id="${object.name?if_exists}" <@lib.showProperties names=["alt", "emsg", "class", "style"] dataObject=object/> <#if object.disabled?exists && object.disabled == "true">disabled </#if>cols="${object.cols?if_exists}" rows="${object.rows?if_exists}" <@lib.showEvent object=object/> ${object.otherAttributes?if_exists}>${object.value?if_exists}</textarea>

@@ -1,0 +1,219 @@
+%1478683168973
+@
+sname=shell
+stext=注册关联事物
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+side=true
+sisIde=false
+sdesignDefaultOpen=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=RelationThingRegistor
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sxw_cl_global=false
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@mainComposite
+  sname=mainComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  slabel=关联导航
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=mainComposite
+    @/@mainComposite/@thingRegistor
+    sname=thingRegistor
+    ssearchByKeywords=true
+    sshowDescBrowser=true
+    sdescBrowserRight=true
+    sautoLoad=false
+    scache=true
+    sdescritporForNewThing=xworker.lang.MetaDescriptor3
+    sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegistor
+      @/@mainComposite/@thingRegistor/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@mainComposite/@thingRegistor/@actions/@defaultSelected
+        sname=defaultSelected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
+
+if(thing != null){
+    for(item in navTable.getItems()){
+        if(item.getData() == thing){
+            navTable.select(item);
+            return;
+        }
+    }
+    
+    def item = new TableItem(relationNavTable, SWT.NONE);
+    item.setText([thing.metadata.label] as String[]);
+    item.setData(thing);
+    navTable.select(item);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=defaultSelected
+    @/@mainComposite/@mainCompositeFillLayout
+    sname=mainCompositeFillLayout
+    stype=SWT.HORIZONTAL
+    sxw_cl_global=false
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=mainCompositeFillLayout
+    @/@mainComposite/@ActionContainer
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=ActionContainer
+      @/@mainComposite/@ActionContainer/@ideInit
+      sname=ideInit
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//初始化注册事物
+thingRegistor.doAction("init", actionContext, ["thing": params.get("thing"), "type":"relation"]);
+
+//保存导航的信息
+_g.put("navTable", params.get("navTable"));
+
+//println(params);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ideInit
+    @/@mainComposite/@init
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.manong.MaNongJavaScriptFunction;
+
+//初始化OutlineTree
+if(actionContext.get("outlineComposite") != null && actionContext.get("topicBrowser") == null){
+    actionContext.peek().put("parent", outlineComposite);
+    def thing = world.getThing("xworker.ui.topic.TopicOutline/@mainComposite");
+    def comp = thing.doAction("create", actionContext);
+    
+    if(actionContext.get("tab") != null){
+        tab.setData("outlineTree", comp);
+    }
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.Widgets/@Code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=init

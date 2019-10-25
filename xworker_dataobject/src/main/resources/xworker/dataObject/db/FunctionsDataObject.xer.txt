@@ -1,0 +1,330 @@
+^1364549576097
+@xworker.dataObject.db.FunctionsDataObject
+sname
+FunctionsDataObject
+slabel
+FunctionsDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.java.ListDataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Java SQL获取给定类别中可用的系统和用户函数的描述。&nbsp;</p>
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@actions1
+sname
+actions
+sdescriptors
+xworker.dataObject.db.DbDataObject/@actions1
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+import ognl.Ognl;
+
+//获取全部的表
+def datas = [];
+def metadata = con.getMetaData();
+def catalog = getConditionData(actionContext, "catalog");
+def schemaPattern = getConditionData(actionContext, "schemaPattern");
+def functionNamePattern = getConditionData(actionContext, "functionNamePattern");
+def rs = metadata.getFunctions(catalog, schemaPattern, functionNamePattern);
+try{    
+    while(rs.next()){
+        def data = [:];
+        data.put("FUNCTION_CAT", rs.getString("FUNCTION_CAT"));
+        data.put("FUNCTION_SCHEM", rs.getString("FUNCTION_SCHEM"));
+        data.put("FUNCTION_NAME", rs.getString("FUNCTION_NAME"));        
+        data.put("REMARKS", rs.getString("REMARKS"));
+        data.put("FUNCTION_TYPE", rs.getString("FUNCTION_TYPE"));
+        data.put("SPECIFIC_NAME", rs.getString("SPECIFIC_NAME"));        
+       
+        datas.add(data);
+    }
+}finally{
+    rs.close();
+}
+
+def listDataName = "__datas__";
+self.set("listData", listDataName);
+self.set("dataClassName", "java.util.HashMap");
+
+try{
+    def bindings = actionContext.push(null);
+    bindings.put(listDataName, datas);
+
+    //使用ListDataObject的load方法    
+    def action = world.getAction("xworker.dataObject.java.ListDataObject/@actions1/@query");
+    
+    return action.run(actionContext);
+}finally{
+    actionContext.pop();
+}
+
+def getConditionData(actionContext, name){
+    if(actionContext.get("conditionData") == null){
+        return null;
+    }else{
+        try{
+            def v = Ognl.getValue(name, conditionData);
+            if(v instanceof String && v.trim() == ""){
+                return null;
+            }else{
+                return v;
+            }
+        }catch(Exception e){
+            return null;
+        }
+    }
+}
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>额外可以附加以下参数：</p>
+<ul>
+    <li>catalog</li>
+    <li>schemaPattern</li>
+    <li>tableNamePattern</li>
+    <li>columnNamePattern</li>
+</ul>
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@query/@contexts
+sname
+contexts
+sid
+contexts
+slabel
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@query/@contexts/@dataSource
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+self.dataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sid
+dataSource
+sdescriptors
+xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@isMappingAble
+sname
+isMappingAble
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+if(actionContext.get("con") == null || con == null){
+    throw new Exception("获取不到数据库连接，数据源不存在或没有正确设置。");
+}
+
+return true;
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>返回属性是否可以映射，比如数据库数据对象、CSV数据对象和Excel等数据对象的属性适合表字段、CSV或Excel的列映射的。</p>
+<p>如果不能映射，直接抛出有说明文字的异常。</p>
+<p>映射用于快速编辑属性。</p>
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@isMappingAble/@contexts
+sname
+contexts
+sid
+contexts
+slabel
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@isMappingAble/@contexts/@dataSource
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+self.dataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sid
+dataSource
+sdescriptors
+xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+@xworker.dataObject.db.FunctionsDataObject/@actions1/@getMappingFields
+sname
+getMappingFields
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def fields = [
+    ["colName":"FUNCTION_CAT", "colTitle":"函数类别"],
+    ["colName":"FUNCTION_SCHEM", "colTitle":"函数模式"],
+    ["colName":"FUNCTION_NAME", "colTitle":"函数名称"],
+    ["colName":"REMARKS", "colTitle":"函数的解释性注释"],
+    ["colName":"FUNCTION_TYPE", "colTitle":"函数的种类"],
+    ["colName":"SPECIFIC_NAME", "colTitle":"唯一标识模式中此函数的名数"]
+];
+
+return fields;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@name
+sname
+name
+sgroup
+DataObject
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@label
+sname
+label
+sgroup
+DataObject
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.dataObject.db.FunctionsDataObject/@dbConfigPath
+sname
+dataSource
+slabel
+数据源
+sinputtype
+openWindow
+ssize
+60
+scolspan
+2
+sgroup
+DataObject
+sinputattrs
+xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworkerdbjdbc.DataSource,returnType=path
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+dbConfigPath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

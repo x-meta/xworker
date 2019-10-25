@@ -1,0 +1,450 @@
+%1560232238054
+@
+sname=Problem
+slabel=Problem
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=xworker.problem
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>问题的接口定义。</p>
+
+<p><strong>问题框架</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 问题是一类事物，用来表明存在某种问题，通常这些用问题需要解决。</p>
+
+<ul>
+	<li><strong>处理问题的流程</strong><br />
+	执行doResolve()方法，执行后执行isResolved()方法，如果isResolved()方法返回false或异常，执行onUnresolved()方法，否则执行onResolved()方法。<br />
+	&nbsp;</li>
+	<li><strong>Handler</strong><br />
+	问题通常含有Handlers子节点，可以用来快速处理问题。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>如何生成问题</strong><br />
+	&nbsp;问题一般可修改和需要长期存储的，可以通过动作GetOrCreateProblem来获取或生成问题。</li>
+</ul>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>void doResolve()</strong><br />
+	处理问题。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>void notify()</strong><br />
+	通知问题，默认实现是把本问题发送到系统通知里。<br />
+	&nbsp;</li>
+	<li><strong>boolean isResolved()</strong><br />
+	问题是否已经解决。默认返回resolved属性的值。</li>
+</ul>
+
+<p><strong>事件：</strong></p>
+
+<ul>
+	<li><strong>void onResolved()</strong><br />
+	当问题解决后触发的事件，默认实现什么也不做。<br />
+	&nbsp;</li>
+	<li><strong>void onUnresolved()</strong><br />
+	当问题不能解决后触发的事件，默认实现调用notify方法。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<ul>
+</ul>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registThing=child|xworker.lang.util.ThingIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_sortWeight=-1000
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@resolve
+    sname=resolve
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilAction;
+import xworker.util.UtilData;
+
+try{
+    //处理问题
+    self.doAction("doResolve", actionContext);
+    
+    //检查是否已解决问题
+    if(UtilData.isTrue(self.doAction("isResolved", actionContext))){
+        self.doAction("onResolved", actionContext);
+    }else{
+        self.doAction("onUnresolved", actionContext, "exception", null);
+    }
+}catch(Exception e){
+    def exception = UtilAction.getCauseStackTrace(e);
+    //发送未处理
+    self.doAction("onUnresolved", actionContext, "exception", exception);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resolve
+    @/@actions/@onResolved
+    sname=onResolved
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onResolved
+    @/@actions/@onUnResolved
+    sname=onUnresolved
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//默认执行notify方法
+if(self.getBoolean("notifyOnUnresolved")){
+    self.doAction("notify", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onUnResolved
+    @/@actions/@notify
+    sname=notify
+    schangeSelf=true
+    sselfVarName=data
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ActionGroup
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=notify
+      @/@actions/@notify/@actions
+      sname=actions
+      sdescriptors=xworker.lang.actions.Begin/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@actions/@notify/@actions/@setWebUrl
+        sname=setWebUrl
+        sexpression=@xworker.util.XWorkerUtils@getWebUrl()
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=true
+        sreturnVarName=webUrl
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@Ongl
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=setWebUrl
+        @/@actions/@notify/@actions/@onUnresolved
+        sname=doNotify
+        slevel=warning
+        spersistent=false
+        ssync=false
+        stimeout=9600
+        sincludeActionContext=false
+        svariables=data,webUrl
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.notification.Notification
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=onUnresolved
+          @/@actions/@notify/@actions/@onUnresolved/@actions
+          sname=actions
+          sdescriptors=xworker.message.Message/@actions1
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=actions
+            @/@actions/@notify/@actions/@onUnresolved/@actions/@getId
+            sname=getMessageId
+            sexpression=data.getMetadata().getPath()
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@Ongl
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=getId
+            @/@actions/@notify/@actions/@onUnresolved/@actions/@getLabel
+            sname=getLabel
+            sexpression=data.getMetadata().getLabel()
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@Ongl
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=getLabel
+          @/@actions/@notify/@actions/@onUnresolved/@QuickFunction
+          sname=QuickFunction
+          stype=thingDesc
+          spath=var:data
+          sicon=icons/folder_table.png
+          sstyledTextForInsert=parentContext.parentContext.codeText
+          suseTargetThingDoc=false
+          ssimpleBrowser=true
+          sdescriptors=xworker.lang.system.message.Message/@QuickFunction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sid=QuickFunction
+    @/@actions/@doResolve
+    sname=doResolve
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doResolve
+    @/@actions/@isResolved
+    sname=isResolved
+    sattributeName=resolved
+    sBoolean=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isResolved
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@notifyOnUnresolved
+  sname=notifyOnUnresolved
+  sinputtype=truefalse
+  sgroup=Problem
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=true
+  sinheritDescription=false
+  sdescription=<p>是否在为解决问题时时发送系统通知。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=notifyOnUnresolved
+  @/@resolved
+  sname=resolved
+  sinputtype=truefalse
+  sgroup=Problem
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=resolved
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

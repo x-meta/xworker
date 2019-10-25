@@ -1,0 +1,210 @@
+^1463036890474
+@
+sname
+ButtonsNode
+slabel
+ButtonsNode
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+actions
+@/@actions/@getConnectionStarts
+sname
+getConnectionStarts
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def list = [];
+def buttons = self.getStringBlankAsNull("buttons");
+if(buttons != null){
+    for(bu in buttons.split("[,]")){
+        bu = bu.trim();
+        def bs = bu.split("[:]");
+        if(bs.length == 2){
+            list.add(["name":bs[0].trim(), "label":bs[1].trim()]);
+        }
+    }
+}
+
+//println("message buttons=" + list + ", self=" + self);
+return list;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+getConnectionStarts
+@/@actions/@updateConnection
+sname
+updateConnection
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def child = null;
+if("newcase" != linkStartInfo.name){
+    for(cc in self.getChilds("Case")){
+        if(linkStartInfo.name == cc.getMetadata().getName()){
+            child = cc;
+            break;
+        }
+    }
+}
+if(child == null){
+    child = new Thing("xworker.lang.flow.uiflow.Switch/@Case");
+    child.put("name", linkStartInfo.name);
+    self.addChild(child);
+}
+
+child.put("nodeRef", target.getMetadata().getPath());
+self.save();
+
+uiFlow.recreateConnection(self);
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+updateConnection
+@/@actions/@getButtons
+sname
+getButtons
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def list = [];
+def buttons = self.getStringBlankAsNull("buttons");
+if(buttons != null){
+    for(bu in buttons.split("[,]")){
+        bu = bu.trim();
+        def bs = bu.split("[:]");
+        if(bs.length == 2){
+            list.add(["name":bs[0].trim(), "label":bs[1].trim()]);
+        }
+    }
+}
+
+//println("message buttons=" + list + ", self=" + self);
+return list;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+getButtons

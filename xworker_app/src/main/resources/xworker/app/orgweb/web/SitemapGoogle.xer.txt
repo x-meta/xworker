@@ -1,0 +1,377 @@
+^1428564627638
+@
+sname
+SitemapGoogle
+slabel
+SitemapGoogle
+scheckPermission
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1
+sname
+doAction
+schangeSelf
+false
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@ActionGroup
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions
+sname
+actions
+sdescriptors
+xworker.lang.actions.Begin/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions/@doAction
+sname
+query
+sdataObjectPath
+xworker.app.orgweb.dataobjects.ContentTree
+sisServlet
+false
+sconditionData
+condition
+screatePageInfo
+false
+spageInfoVarScope
+Global
+spageSize
+100000
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Global
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+true
+sreturnVarName
+datas
+sdisableGlobalContext
+false
+sdebugLog
+true
+sdescriptors
+xworker.dataObject.actions.DataObjectActions/@query
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions/@doAction/@Condition1
+sname
+Condition
+boperator
+1
+sjoin
+and
+smultiValueJoin
+and
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.actions.DataObjectActions/@query/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions/@doAction/@Condition1/@isPage
+sname
+isPage
+sattributeName
+isPage
+boperator
+1
+sjoin
+and
+svalue
+1
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.query.Condition/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions/@doAction/@Condition1/@status
+sname
+status
+sattributeName
+status
+boperator
+1
+sjoin
+and
+smultiValueJoin
+or
+svalue
+1
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.query.Condition/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction1/@actions/@initTopMenu
+sname
+initData
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.app.orgweb.ContentTreeManager;
+import java.text.SimpleDateFormat;
+
+//修改datas的url
+def sf = new SimpleDateFormat("yyyy-MM-dd");
+for(data in datas){
+   def url = data.url;
+
+   if(url.startsWith("thing:")){
+       if(data.parentId != -1){
+           data.newUrl = "http://www.xworker.org/do?sc=xworker.app.orgweb.web.Index&id=" + data.tid;
+       }else{
+           data.newUrl = "http://www.xworker.org/do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+               "&id=" + getCategoryId(data);
+       }
+   }else if(url == null || url == ""){
+       if(data.parentId != -1){
+           data.newUrl = "http://www.xworker.org/do?sc=xworker.app.orgweb.web.Index&id=" + data.tid;
+       }else{
+           data.newUrl = "http://www.xworker.org/do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+               "&id=" + getCategoryId(data);
+       }
+   }else{
+       data.newUrl = null;
+   }
+   if(data.get("status") == 0){
+       data.label = data.label + "(未发布)";
+       data.newUrl = null;
+   }
+   //data.newDescription = sf.format(data.updateDate) + "&nbsp;-&nbsp;" + data.description;
+   data.newDescription = data.description;
+   data.date = sf.format(data.updateDate); 
+}
+
+return "success";
+
+def getCategoryId(data){
+    if(data.categoryId == 0 && data.parentId != -1){
+        return data.parentId;
+    }
+    
+    return data.categoryId;
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view
+sname
+view
+sbelongToHtml
+false
+sstyle
+default
+shasHead
+false
+shasBottom
+false
+snoCache
+false
+SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/2_6beta1/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@code
+sname
+code
+Scode
+#$@text#$@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.google.com/schemas/sitemap/0.84'>
+  <url>
+     <loc>http://www.xworker.org/index.html</loc>
+     <lastmod>2015-04-09</lastmod>
+     <changefreq>daily</changefreq>
+     <priority>1.0</priority>
+  </url>
+<#list datas as data>  
+<#if data.newUrl?exists>
+  <url> 
+    <loc>${data.newUrl?xml}</loc> 
+    <lastmod>${data.date}</lastmod> 
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</#if>  
+</#list>  
+</urlset>
+#$@text#$@
+sdescriptors
+xworker.html.base.container.childs/@code
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@success
+sname
+success
+stype
+form
+scontentType
+text/xml;charset=utf-8
+svalue
+xworker.app.orgweb.web.SitemapGoogle/@view
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

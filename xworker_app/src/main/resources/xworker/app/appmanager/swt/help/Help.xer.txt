@@ -1,0 +1,149 @@
+^1445247754083
+@
+sname
+Help
+slabel
+Help
+stitle
+XWorker APP帮助文档
+sdescriptors
+xworker.doc.structures.SimpleDoc
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@help
+sname
+help
+slabel
+帮助
+sdescription
+<p>XWorker APP的帮助文档。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@help/@monitor
+sname
+monitor
+slabel
+任务和监控
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@help/@monitor/@task
+sname
+task
+slabel
+如何设置定时任务
+Sdescription
+#$@text#$@
+<h3>任务描述者</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 一般使用xworker.app.task.Task来创建定时任务。</p>
+
+<h3>自动初始化</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如果要加入到XWorker的应用初始化中，那么应注册到xworker.app.task.TaskInitIndex下，并设置group属性。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在应用里初始化数据会加入该计划任务</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@help/@monitor/@saveMonitorData
+sname
+saveMonitorData
+slabel
+如何保存监控数据
+Sdescription
+#$@text#$@
+<p><strong>数据对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 监控数据的数据对象是xworker.app.monitor.dataobjects.MonitorData，通过它保存数据。</p>
+
+<p><strong>字段说明</strong></p>
+
+<ul>
+	<li><strong>taskThingPath</strong><br />
+	产生数据的任务事物路径。</li>
+	<li><strong>resourceId</strong><br />
+	资源标识，可以为空。</li>
+	<li><strong>dataTypeId</strong><br />
+	数据类型标识，是数据的类别，如cpu负载、内存占用等，对应数据对象xworker.app.monitor.dataobjects.MonitorDataType。</li>
+	<li><strong>dataId</strong><br />
+	数据标识，给任务用的，如果有多条记录，任务可能会为每一条记录分配一个数据标识。</li>
+	<li><strong>value</strong><br />
+	数据的值，字符串类型，最大500字节。</li>
+	<li><strong>grabStartTime</strong><br />
+	开始抓取时间，这个从MonitorContext中获取，可以通过它判断是否是同一批抓取任务。</li>
+	<li><strong>grabEndTime</strong><br />
+	保存数据是的时间。</li>
+</ul>
+
+<p><strong>保存监控数据的代码示例</strong></p>
+
+<pre class="brush:java;">
+&nbsp;&nbsp;&nbsp;&nbsp;if(taskThing.getBoolean(&quot;saveData&quot;)){
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String dataTypes = taskThing.getStringBlankAsNull(&quot;dataTypes&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(dataTypes != null){
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String[] dts = dataTypes.split(&quot;[,]&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;String dataId = taskThing.getStringBlankAsNull(&quot;dataId&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(int i=0; i&lt;dts.length; i++){
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(!&quot;&quot;.equals(dts[i])){
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataObject data = new DataObject(&quot;xworker.app.monitor.dataobjects.MonitorData&quot;);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;taskThingPath&quot;, taskThing.getMetadata().getPath());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;resourceId&quot;, datasource.getString(&quot;id&quot;));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;dataTypeId&quot;, dts[i]);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(dataId != null){
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;dataId&quot;, values.get(&quot;v&quot; + dataId));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;value&quot;, values.get(&quot;v&quot; + i));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;grabStartTime&quot;, monitorContext.getStartTime());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data.put(&quot;grabEndTime&quot;, new Date());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MonitorDataSaveTask.addData(data);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

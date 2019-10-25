@@ -1,0 +1,305 @@
+^1412753623964
+@
+sname
+DataObjectStore
+slabel
+DataObjectStore
+sid
+DataObjectStore
+sdescriptors
+xworker.http.ControlSet
+@/@read
+sname
+read
+Sdescription
+#$@text#$@
+<p>通过数据对象查询和返回结果。</p>
+
+<p><strong>HTTP的参数：</strong></p>
+
+<ul>
+	<li><strong>dataObjectPath：</strong>数据对象路径。</li>
+	<li><strong>conditionPath：</strong>条件事物的路径。</li>
+	<li><strong>start：</strong>分页开始。</li>
+	<li><strong>limit：</strong>分页的大小。</li>
+	<li><strong>sort：</strong>排序字段。</li>
+	<li><strong>dir：</strong>排序的方向，ASC或DESC。</li>
+	<li><strong>其他：</strong>如查询的条件数据等。</li>
+</ul>
+
+<p><strong>HTTP的返回值是JSON:</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String result = &quot;{ &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;success:&quot; + pageInfo.get(&quot;success&quot;) + &quot;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;totalCount:&quot; + pageInfo.get(&quot;totalCount&quot;) + &quot;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;msg:&#39;&quot; + JsonFormator.formatString((String) pageInfo.get(&quot;message&quot;)) + &quot;&#39;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;pageSize:&quot; + pageInfo.get(&quot;limit&quot;) + &quot;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;limit:&quot; + pageInfo.get(&quot;limit&quot;) + &quot;, &quot; + storeCode + columnCode +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;rows:&quot; + code + &quot; &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&quot;}&quot;;</p>
+#$@text#$@
+sid
+read
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@read/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@read/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+true
+souterClassName
+xworker.app.view.extjs.server.DataObjectStoreReadCreator
+smethodName
+doAction
+sdisableGlobalContext
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.JavaAction
+@/@create
+sname
+create
+Sdescription
+#$@text#$@
+<p>通过数据对象创建记录，数据在参数rows中以JSON格式。</p>
+
+<p><strong>HTTP参数：</strong></p>
+
+<ul>
+	<li><strong>dataObjectPath：</strong>数据对象的路径。</li>
+	<li><strong>rows：</strong>数据的JSON数据。</li>
+</ul>
+
+<p><strong>HTTP返回值：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String code = &quot;{\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;success:&quot; + result.get(&quot;success&quot;) + &quot;,\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;msg:&#39;&quot; + JsonFormator.formatString((String) result.get(&quot;msg&quot;)) + &quot;&#39;,\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;rows:&quot; + jsonRecord + &quot;\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;}&quot;;</p>
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@create/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@create/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+true
+souterClassName
+xworker.app.view.extjs.server.DataObjectStoreCreateCreator
+smethodName
+doAction
+sdisableGlobalContext
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.JavaAction
+@/@update
+sname
+update
+Sdescription
+#$@text#$@
+<p>通过数据对象更新数据。</p>
+
+<p><strong>HTTP参数：</strong></p>
+
+<ul>
+	<li><strong>dataObjectPath：</strong>数据对象的定义。</li>
+	<li><strong>rows：</strong>要更新的数据。</li>
+</ul>
+
+<p><strong>HTTP返回值：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String code = &quot;{ &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;&quot;success&quot;:&quot; + result.get(&quot;success&quot;) + &quot;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;&quot;msg&quot;:&quot;&quot; + result.get(&quot;msg&quot;) + &quot;&quot;, &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;&quot;data&quot;:&quot; + jsonRecord + &quot; &quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;}&quot;;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sid
+update
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@update/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@update/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+true
+souterClassName
+xworker.app.view.extjs.server.DataObjectStoreUpdateCreator
+smethodName
+doAction
+sdisableGlobalContext
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.JavaAction
+@/@destroy
+sname
+destroy
+Sdescription
+#$@text#$@
+<p>通过数据对象删除数据。</p>
+
+<p><strong>HTTP参数：</strong></p>
+
+<ul>
+	<li><strong>dataObjectPath：</strong>数据对象的路径。</li>
+	<li><strong>rows：</strong>数据对象的值和条件等。</li>
+</ul>
+
+<p><strong>HTTP返回值：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String code = &quot;{\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;success:&quot; + result.get(&quot;success&quot;) + &quot;,\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;msg:&#39;&quot; + JsonFormator.formatString((String) result.get(&quot;msg&quot;)) + &quot;&#39;,\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;rows:&quot; + jsonRecord + &quot;\n&quot; +<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&quot;}&quot;;</p>
+#$@text#$@
+sid
+destroy
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@destroy/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@destroy/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+true
+souterClassName
+xworker.app.view.extjs.server.DataObjectStoreDestroyCreator
+smethodName
+doAction
+sdisableGlobalContext
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.JavaAction
+@/@export
+sname
+export
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@export/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@export/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+true
+souterClassName
+xworker.app.view.extjs.server.DataObjectStoreExportCreator
+smethodName
+doAction
+sdisableGlobalContext
+false
+sattributeTemplate
+false
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+svarScope
+Global
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.JavaAction

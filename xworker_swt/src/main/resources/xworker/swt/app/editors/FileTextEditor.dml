@@ -1,0 +1,902 @@
+%1545643749508
+@
+sname=FileTextEditor
+slabel=FileTextEditor
+Sdescription=
+#$@text#$@
+<p>文件文本编辑器，把文件作为文本来编辑。</p>
+
+<p><strong>params参数：</strong></p>
+
+<ul>
+	<li><strong>file: java.io.File</strong><br />
+	要编辑的文件。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@EditorComposite
+  sname=editorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite,xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=EditorComposite
+    @/@EditorComposite/@mainCompositeGridLayout
+    sname=mainCompositeGridLayout
+    smakeColumnsEqualWidth=false
+    smarginWidth=0
+    smarginHeight=0
+    smarginLeft=0
+    smarginTop=0
+    smarginRight=0
+    smarginBottom=0
+    shorizontalSpacing=0
+    sverticalSpacing=0
+    sdescriptors=xworker.swt.Layouts/@GridLayout
+    sid=mainCompositeGridLayout
+    @/@EditorComposite/@ifNoStatusBar
+    sname=ifNoStatusBar
+    scondition=parentContext.editorContainer.hasStatusBar()==false
+    sdescriptors=xworker.swt.Widgets/@_IF
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=ifNoStatusBar
+      @/@EditorComposite/@ifNoStatusBar/@statusLabel
+      sname=statusLabel
+      sBORDER=false
+      stype=HORIZONTAL
+      salignment=RIGHT
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Label
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=statusLabel
+        @/@EditorComposite/@ifNoStatusBar/@statusLabel/@statusLabelGridData
+        sname=statusLabelGridData
+        sstyle=FILL_HORIZONTAL
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=END
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=statusLabelGridData
+    @/@EditorComposite/@codeEditor1
+    sname=codeEditor
+    sstyle=MULTI
+    sFULL_SELECTION=false
+    sREAD_ONLY=false
+    sWRAP=false
+    sH_SCROLL=true
+    sV_SCROLL=true
+    sBORDER=false
+    salign=LEFT
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@StyledText
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_mark=false
+    sid=codeEditor1
+      @/@EditorComposite/@codeEditor1/@font
+      sname=font
+      slabel=font
+      sdescriptors=xworker.swt.Commons/@font
+      sid=font
+        @/@EditorComposite/@codeEditor1/@font/@editorFont
+        sname=editorFont
+        slabel=editorFont
+        sfontData="Courier New|10|0|#000000"
+        sdescriptors=xworker.swt.Commons/@font/@Font
+        sid=editorFont
+      @/@EditorComposite/@codeEditor1/@listeners
+      sname=listeners
+      sdescriptors=xworker.swt.events.Listeners/@listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=listeners
+        @/@EditorComposite/@codeEditor1/@listeners/@okButtonSelection
+        sname=okButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_mark=false
+        sid=okButtonSelection
+          @/@EditorComposite/@codeEditor1/@listeners/@okButtonSelection/@saveFile
+          sname=saveFile
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+def fout = new FileOutputStream(file);
+try{
+    fout.write(codeEditor.getText().getBytes());
+    //tab.setText(file.getName());
+    actionContext.g().put("dirty", false);
+    editorThing.doAction("editorChanged", actionContext);
+}finally{
+    fout.close();
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_mark=false
+          sid=saveFile
+        @/@EditorComposite/@codeEditor1/@listeners/@codeEditorModify
+        sname=codeEditorModify
+        stype=Modify
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_mark=false
+        sid=codeEditorModify
+          @/@EditorComposite/@codeEditor1/@listeners/@codeEditorModify/@codeModifyed
+          sname=codeModifyed
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+//noChangeEvent是setContent时设置的，避免设置时就变成脏数据
+if(actionContext.get("noChangeEvent") != true){
+    actionContext.g().put("dirty", true);
+    
+    //是编辑器事物，方法继承于Editor事物
+    editorThing.doAction("editorChanged", actionContext);
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_mark=false
+          sid=codeModifyed
+      @/@EditorComposite/@codeEditor1/@colorer
+      sname=colorer
+      sdescriptors=xworker.swt.custom.StyledText/@Colorer
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=colorer
+      @/@EditorComposite/@codeEditor1/@codeEditorGridDAta
+      sname=codeEditorGridDAta
+      sstyle=FILL_BOTH
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=codeEditorGridDAta
+      @/@EditorComposite/@codeEditor1/@CaretListener
+      sname=CaretListener
+      sdescriptors=xworker.swt.custom.StyledText/@CaretListener
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=CaretListener
+        @/@EditorComposite/@codeEditor1/@CaretListener/@actions
+        sname=actions
+        sdescriptors=xworker.swt.events.CaretListener/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@EditorComposite/@codeEditor1/@CaretListener/@actions/@caretMoved
+          sname=caretMoved
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.util.UtilString;
+import org.eclipse.swt.widgets.Text;
+import xworker.swt.util.SwtTextUtils;
+
+def lineCaret = "0:0";
+if(codeEditor instanceof Text){
+    def offset = codeEditor.getCaretPosition();    
+    int line = SwtTextUtils.getLineAtOffset(codeEditor, offset);
+    int lineOffset = SwtTextUtils.getLineAtOffset(codeEditor, offset);
+    lineCaret = "" + line + ":" + (offset - lineOffset + 1);
+}else{
+    int line = codeEditor.getLineAtOffset(codeEditor.getCaretOffset()) + 1;
+    int carOffset = codeEditor.getCaretOffset();
+    int lineOffset = codeEditor.getOffsetAtLine(line - 1);
+    lineCaret = "" + line + ":" + (carOffset - lineOffset + 1);
+}
+
+if(checkWidget("statusLabel", actionContext)){
+    statusLabel.setText(lineCaret);
+}
+
+if(checkWidget("caretItem", actionContext)){
+    //println "xxxxx";
+    caretItem.setText(lineCaret);  
+    
+    def writableStr = UtilString.getString("lang:d=可写&en=Writable", actionContext);
+    if(file.canWrite() == false){
+        writableStr = UtilString.getString("lang:d=只读&en=ReadOnley", actionContext);
+    }  
+    writableItem.setText(writableStr);
+}
+
+//检查组件是否有效
+def checkWidget(name, actionContext){
+    def obj = actionContext.get(name);
+    if(obj != null && obj.isDisposed() == false){
+        return true;
+    }else{
+        return false;
+    }
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=caretMoved
+      @/@EditorComposite/@codeEditor1/@TextEditor
+      sname=TextEditor
+      sdescriptors=xworker.swt.custom.StyledText/@TextEditor
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=TextEditor
+  @/@ActionContainer
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionContainer
+    @/@ActionContainer/@setContent
+    sname=setContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import java.io.File;
+
+//判断参数是否存在
+if(params == null){    
+    noParams(actionContext);
+    return;
+}
+
+//判断文件是否可编辑
+def file = params.file;
+if(file instanceof String){
+    file = new File(file);
+}
+if(file == null || !(file instanceof File) || !file.isFile()){
+    noFile(actionContext);
+    return;
+}
+
+actionContext.g().put("file", file);
+
+def fin = new FileInputStream(file);
+actionContext.g().put("noChangeEvent", true);
+try{
+    def bytes = new byte[fin.available()];
+    fin.read(bytes);
+    
+    def colorer = codeEditor.getData("textColorer");
+    if(colorer != null){
+    		colorer.chooseFileType(file.getName());
+    }
+    
+    String str = new String(bytes);    
+    codeEditor.setText(str);
+    
+    actionContext.g().put("dirty", false);
+    editorThing.doAction("editorChanged", actionContext, "dirty", false);
+}finally{
+    fin.close();
+    actionContext.g().put("noChangeEvent", false);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+      @/@ActionContainer/@setContent/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@ActionContainer/@setContent/@ActionDefined/@noParams
+        sname=noParams
+        sshell=ognl:codeEditor.getShell()
+        sicon=ICON_WARNING
+        sbuttons=OK
+        stitle=lang:d=文件文本编辑器&FileTextEditor
+        smessage=lang:d=参数不存在，不能编辑文件！&en=Can not edit file, params not exists!
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=noParams
+        @/@ActionContainer/@setContent/@ActionDefined/@noFile
+        sname=noFile
+        sshell=ognl:codeEditor.getShell()
+        sicon=ICON_WARNING
+        sbuttons=OK
+        stitle=lang:d=文件文本编辑器&FileTextEditor
+        smessage=lang:d=文件不存在或文件不可编辑！&en=File not exists or can not edit!
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=noFile
+    @/@ActionContainer/@isSameContent
+    sname=isSameContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("params") == null){
+    return false;
+}
+
+if(actionContext.get("file") == null){
+    return false;
+}    
+
+if(file.equals(params.file)){
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@ActionContainer/@doSave
+    sname=doSave
+    srefActionPath=xworker.swt.app.editors.FileTextEditor/@EditorComposite/@codeEditor1/@listeners/@okButtonSelection/@saveFile
+    skeepSelf=true
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@RefAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doSave
+    @/@ActionContainer/@isDirty
+    sname=isDirty
+    svariable=dirty
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Return
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isDirty
+    @/@ActionContainer/@Return
+    sname=Return
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Return
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Return
+    @/@ActionContainer/@getSimpleTitle
+    sname=getSimpleTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("file") != null){
+    return file.getName();
+}else{
+    return "";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@ActionContainer/@getTitle
+    sname=getTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("file") != null){
+    return file.getAbsolutePath();
+}else{
+    return "";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@ActionContainer/@getOutline
+    sname=getOutline
+    stype=null
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getOutline
+    @/@ActionContainer/@doDispose
+    sname=doDispose
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(editorComposite.isDisposed() == false){
+    editorComposite.dispose();
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doDispose
+    @/@ActionContainer/@onUnActive
+    sname=onUnActive
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onUnActive
+    @/@ActionContainer/@onActive
+    sname=onActive
+    srefActionPath=xworker.swt.app.editors.FileTextEditor/@EditorComposite/@codeEditor1/@CaretListener/@actions/@caretMoved
+    skeepSelf=true
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@RefAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onActive
+    @/@ActionContainer/@setFile
+    sname=setFile
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Global
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+actionContext.getScope(0).put("file", file);
+
+def fin = new FileInputStream(file);
+def bytes = new byte[fin.available()];
+fin.read(bytes);
+fin.close();
+
+def colorer = codeEditor.getData("textColorer");
+colorer.chooseFileType(file.getName());
+
+String str = new String(bytes);
+codeEditor.setText(str);
+tab.setText(file.getName());
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sid=setFile
+      @/@ActionContainer/@setFile/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@ActionContainer/@setFile/@ActionDefined/@attachTextEditor
+        sname=attachTextEditor
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.form.TextEditor;
+
+def colorer = codeEditor.getData("textColorer");
+
+colorer.chooseFileType(file.getName());
+
+TextEditor.attach(codeEditor);
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=attachTextEditor
+    @/@ActionContainer/@saveFile
+    sname=saveFile
+    srefActionPath=xworker.swt.app.editors.FileTextEditor/@EditorComposite/@codeEditor1/@listeners/@okButtonSelection/@saveFile
+    skeepSelf=true
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@RefAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=saveFile
+    @/@ActionContainer/@getIcon
+    sname=getIcon
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilFileIcon;
+import xworker.swt.util.SwtUtils;
+
+if(actionContext.get("file") != null){
+    def iconStr = UtilFileIcon.getFileIcon(file, false);
+    if(iconStr != null){
+        return SwtUtils.createImage(editorComposite, iconStr, actionContext);
+    }
+}
+
+return null;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon
+  @/@StatusBarConfig
+  sname=StatusBarConfig
+  sdescriptors=xworker.swt.app.Editor/@StatusBarConfig
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=StatusBarConfig
+    @/@StatusBarConfig/@CoolItem
+    sname=CoolItem
+    sDROP_DOWN=false
+    sdescriptors=xworker.swt.app.Editor/@CoolBarConfig/@CoolItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=CoolItem
+      @/@StatusBarConfig/@CoolItem/@ToolBar
+      sname=ToolBar
+      stype=HORIZONTAL
+      sFLAT=false
+      sWRAP=false
+      sBORDER=false
+      sSHADOW_OUT=false
+      sRIGHT=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.widgets.CoolBar/@CoolItem/@ToolBar
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ToolBar
+        @/@StatusBarConfig/@CoolItem/@ToolBar/@writeableItem
+        sname=writableItem
+        stype=PUSH
+        stext=lang:d=可写&en=Writable
+        swidth=80
+        senabled=true
+        sdescriptors=xworker.swt.widgets.ToolBar/@ToolItem
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=writeableItem
+        @/@StatusBarConfig/@CoolItem/@ToolBar/@sperateItem
+        sname=sperateItem
+        stype=SEPARATOR
+        senabled=true
+        sdescriptors=xworker.swt.widgets.ToolBar/@ToolItem
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=sperateItem
+        @/@StatusBarConfig/@CoolItem/@ToolBar/@caretItem
+        sname=caretItem
+        stype=PUSH
+        stext=0:0
+        senabled=true
+        sdescriptors=xworker.swt.widgets.ToolBar/@ToolItem
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=caretItem

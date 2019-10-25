@@ -1,0 +1,277 @@
+%1564535566576
+@
+sname=CheckTablespace
+slabel=CheckTablespace
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=oracle.tablespace
+smodifier=public
+sinheritDescription=false
+sdescription=<p>检查表空间的占用百分比。</p>
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.monitor.check.sql.SqlCheckTasks
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@check
+    sname=check
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import groovy.sql.Sql;
+import xworker.data.DATA;
+
+def sqlStr = """SELECT *
+  FROM (select b.tablespace_name,
+               round(a.bytes / 1024 / 1024) free_MB,
+               round(b.bytes / 1024 / 1024) userd_MB,
+               round(b.maxbytes / 1024 / 1024) max_MB
+          from (select sum(bytes) bytes, tablespace_name
+                  from dba_free_space
+                 group by tablespace_name) a,
+               (select TABLESPACE_NAME,
+                       sum(bytes) bytes,
+                       decode(sum(MAXBYTES), 0, sum(bytes), sum(maxbytes)) maxbytes
+                  from dba_data_files
+                 group by TABLESPACE_NAME) b
+         where a.tablespace_name = b.tablespace_name)
+ WHERE ((USERD_MB - FREE_MB) / USERD_MB * 100) > 1
+   AND (USERD_MB / MAX_MB * 100) > 1""";
+
+def info = self.doAction("getInfoPercent", actionContext);
+def warn = self.doAction("getWarningPercent", actionContext);
+def error = self.doAction("getErrorPercent", actionContext);
+
+def sql = new Sql(con);
+def msg = null;
+try{    
+    sql.eachRow(sqlStr, {    
+        def percent = 100.0 * (it.userd_MB - it.free_MB) / it.max_MB;
+        def name = it.tablespace_name;
+        
+        if(percent >= error){
+            //error的必然返回
+            msg = addToMsg(msg , "<font color=\"${DATA.COLOR_ERROR}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");        
+        }else if(percent >= warn){
+            if(level <= DATA.WARNING){
+                msg = addToMsg(msg ,  "<font color=\"${DATA.COLOR_WARNING}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+            }
+        }else if(percent >= info){
+            if(level <= DATA.INFO){
+                msg = addToMsg(msg , "<font color=\"${DATA.COLOR_INFO}E\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+            }
+        }else if(level == DATA.DEBUG){
+            msg = addToMsg(msg , "<font color=\"${DATA.COLOR_DEBUG}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+        }
+    });
+}catch(Exception e){
+    return e.getMessage(); 
+}  
+
+return msg;
+
+def addToMsg(msg, message){
+    if(msg == null){
+        return message;
+    }else{
+        return msg + "</br>" + message;
+    }
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=check
+    @/@actions/@getInfoPercent
+    sname=getInfoPercent
+    sattributeName=infoPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getInfoPercent
+    @/@actions/@getWarningPercent
+    sname=getWarningPercent
+    sattributeName=warningPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getWarningPercent
+    @/@actions/@getErrorPercent
+    sname=getErrorPercent
+    sattributeName=errorPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getErrorPercent
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@infoMb
+  sname=infoPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=50
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=infoMb
+  @/@warningMb
+  sname=warningPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=90
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=warningMb
+  @/@errorMb
+  sname=errorPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=95
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=errorMb
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

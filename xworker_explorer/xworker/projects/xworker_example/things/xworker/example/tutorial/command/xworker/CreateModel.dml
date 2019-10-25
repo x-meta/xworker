@@ -1,0 +1,702 @@
+%1556626169874
+@
+sname=editor
+slabel=模型编辑器
+sdescriptors=xworker.lang.command.CommandDomain
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.command.CommandDomain/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@getCommands
+    sname=getCommands
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def things = [];
+
+def tag = executor.getActionContext().get("tag");
+if(tag == null){
+    tag = "start";
+}
+for(thing in self.getChilds()){
+    if("actions" == thing.getThingName()){
+        continue;
+    }
+    
+    def t = thing.getStringBlankAsNull("tags");
+    if(t == null || t.indexOf(tag) != -1){
+        things.add(thing);
+    }
+}
+
+return things;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getCommands
+  @/@return
+  sname=return
+  slabel=返回到开始
+  shasContents=false
+  scommandContent=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=return
+    @/@return/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@return/@actions/@run
+      sname=run
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.command.CommandActions/@ReturnToParentExecutor
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@createModel
+  sname=createModel
+  slabel=创建模型
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=start
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel
+    @/@createModel/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel/@Composite/@QuickContent
+      sname=QuickContent
+      stype=thingDesc
+      ssimpleBrowser=true
+      Sdescription=
+#$@text#$@
+<h1>创建模型</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 模型一般是预先定义好的，通常使用模型的定义来创建一个新的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在本教程里，我们使用SWT的Shell模型<strong>xworker.swt.widgets.Shell</strong>来创建示例模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 现在示例模型已创建，可以通过命令<strong>code(代码）</strong>来查看模型的XML代码。</p>
+#$@text#$@
+      sdescriptors=xworker.swt.Widgets/@QuickContent
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=QuickContent
+      @/@createModel/@Composite/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def example = new Thing("xworker.swt.widgets.Shell");
+executorContext.g().put("example", example);
+executorContext.g().put("tag", "create");
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.widgets.Widget/@Code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init
+  @/@restart
+  sname=restart
+  slabel=重新开始教程
+  shasContents=false
+  scommandContent=false
+  sdescriptors=xworker.lang.command.CommandDomain/@Command
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=restart
+    @/@restart/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@restart/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+executorContext.g().put("tag", "start");
+executorContext.g().put("example", null);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@createModel1
+  sname=code
+  slabel=模型代码
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=create,edit
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel1
+    @/@createModel1/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel1/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel1/@Composite/@codeViewer
+      sname=codeViewer
+      scodeName=xml
+      scodeType=xml
+      sdescriptors=xworker.swt.Widgets/@CodeViewer
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=codeViewer
+      @/@createModel1/@Composite/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def example = executorContext.get("example");
+def xml = example.doAction("toXml", actionContext);
+codeViewer.setCode("xml", "xml", xml);
+
+if(executorContext.get("tag") == "create"){
+    executorContext.g().put("tag", "run");
+    
+    codeViewer.setCode("xml", "xml", xml + "\n\n<!-- 执行run(运行)命令来运行模型. -->");
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.widgets.Widget/@Code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init
+  @/@createModel11
+  sname=run
+  slabel=运行
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=run,edit
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel11
+    @/@createModel11/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel11/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel11/@Composite/@QuickContent
+      sname=QuickContent
+      stype=thingDesc
+      ssimpleBrowser=true
+      Sdescription=
+#$@text#$@
+<h1>运行模型</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 模型是动态的，一般可以随时执行，现在应该已经打开了一个无标题的Shell窗口。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注：你可以随时关闭已打开的示例窗口，通过<strong>run(运行)</strong>命令还可以再次打开。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 现在输入命令<strong>edit(编辑)</strong>来查看模型的编辑方法。</p>
+#$@text#$@
+      sdescriptors=xworker.swt.Widgets/@QuickContent
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=QuickContent
+      @/@createModel11/@Composite/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+if(executorContext.get("tag") == "run"){
+    executorContext.g().put("tag", "edit");
+}
+
+def ac = new ActionContext();
+ac.put("parent", domainContext.mainSashForm.getShell());
+def example = executorContext.get("example");
+example.doAction("run", ac);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.widgets.Widget/@Code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init
+  @/@createModel111
+  sname=edit
+  slabel=编辑模型
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=edit
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel111
+    @/@createModel111/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel111/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel111/@Composite/@QuickContent
+      sname=QuickContent
+      stype=thingDesc
+      ssimpleBrowser=true
+      Sdescription=
+#$@text#$@
+<h1>编辑模型</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 模型是像XML这样的树形结构的数据，编辑模型一般是编辑模型的属性和管理子节点。</p>
+
+<h2>1.模型编辑器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 一般使用模型编辑器来编辑模型，输入命令<strong>editor(编辑器）</strong>可以打开模型编辑器来编辑当前的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在RWT下没有编辑权限，此时是不能编辑示例模型的，可以通过下面的方法编辑和管理模型的子节点。</p>
+
+<h2>2.编辑模型的属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的属性通常使用表单来编辑，输入命令<strong>form(表单）</strong>打开Shell模型的属性表单。</p>
+
+<h2>3.管理子节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以添加那些子节点也是模型预先定义好的，输入命令<strong>childs(可选子节点）</strong>查看Shell模型可以添加那些子节点。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 输入<strong>addChild(添加子节点）</strong>命令添加本教程规定可以添加的子模型。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+      sdescriptors=xworker.swt.Widgets/@QuickContent
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=QuickContent
+  @/@createModel1111
+  sname=editor
+  slabel=模型编辑器
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=edit
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel1111
+    @/@createModel1111/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel1111/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel1111/@Composite/@thingEditor
+      sname=thingEditor
+      stitle=true
+      suseRootThing=false
+      ssaveActionContainer=false
+      sdescriptors=xworker.swt.Widgets/@ThingEditor
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingEditor
+        @/@createModel1111/@Composite/@thingEditor/@actions
+        sname=actions
+        sdescriptors=xworker.swt.xworker.ThingEditor/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@createModel1111/@Composite/@thingEditor/@actions/@getThing
+          sname=getThing
+          sexpression=executorContext.get("example")
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@Ongl
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=getThing
+  @/@createModel11111
+  sname=form
+  slabel=模型表单
+  shasContents=false
+  sdomainComposite=true
+  sdomainParent=var:exampleComposite
+  sdomainParentClear=true
+  scommandContent=false
+  stags=edit
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=createModel11111
+    @/@createModel11111/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@createModel11111/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FillLayout
+      @/@createModel11111/@Composite/@thingEditor
+      sname=thingEditor
+      stitle=true
+      suseRootThing=false
+      ssaveActionContainer=false
+      sdescriptors=xworker.swt.Widgets/@ThingEditor
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingEditor
+        @/@createModel11111/@Composite/@thingEditor/@actions
+        sname=actions
+        sdescriptors=xworker.swt.xworker.ThingEditor/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@createModel11111/@Composite/@thingEditor/@actions/@getThing
+          sname=getThing
+          sexpression=executorContext.get("example")
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@Ongl
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=getThing

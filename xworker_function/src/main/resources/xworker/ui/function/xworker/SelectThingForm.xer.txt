@@ -1,0 +1,327 @@
+^1383536159136
+@xworker.ui.function.xworker.SelectThingForm
+sname
+SelectThingForm
+slabel
+SelectThingForm
+sdescriptors
+xworker.lang.MetaDescriptor3,xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>获取事物管理器和目录的函数。</p>
+
+<p><strong>注意</strong></p>
+
+<p>本函数固定设置thingManager和category两个参数。必须要同时选择事物管理器和目录。</p>
+#$@text#$@
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.ui.function.FunctionCallback;
+import xworker.ui.function.FunctionManager;
+import xworker.ui.function.FunctionRequestUtil;
+
+//回调
+def callback = request.getRequestMessage();
+if(callback instanceof FunctionCallback){
+    if(message == "ok"){
+        callback.ok(values.get("thing"), actionContext);
+    }else{
+        callback.cancel(actionContext);
+    }
+}else{
+    def value = null;
+    if(message == "ok"){
+        value = values.get("thing");
+    }
+    
+    FunctionRequestUtil.callbakMyselfOk(callback, value, actionContext);
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@actions/@requestCallback
+sname
+requestCallback
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.ui.UIRequest;
+import xworker.ui.function.FunctionCallback;
+
+if(uiRequest.getRequestMessage() instanceof FunctionCallback)  {
+    //参数的描述
+    def descriptor = uiRequest.getRequestMessage().getParam().getDescriptor();
+    
+    //browserUIHandler
+    def browserUIHandler = formThing.getData("formContext").get("browserUIHandler");
+    
+    browserUIHandler.requestUI(new UIRequest(descriptor, actionContext), actionContext);
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting
+sshowMenu
+true
+sname
+SwtEditSetting
+sdescriptors
+xworker.lang.MetaDescriptor3/@SwtObject
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor
+sname
+SwtEditor
+sdescriptors
+xworker.lang.MetaDescriptor3/@SwtObject/@SwtEditor
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor/@createComposite
+sname
+createComposite
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thing = world.getThing("xworker.ui.session.manager.xworker.ThingManager/@composite");
+thing.doAction("create", actionContext);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.swt.Widgets/@Code
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor/@model
+sname
+model
+sdataType
+Map
+svalidate
+true
+sfocus
+false
+sfocusColor
+"#E8FAFF"
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.swt.Widgets/@Model
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor/@model/@thing
+sname
+thing
+svalidate
+true
+sfocus
+false
+sfocusColor
+"#E8FAFF"
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.swt.model.Model/@Model
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor/@model/@thing/@actions
+sname
+actions
+sdescriptors
+xworker.swt.model.Model/@actions1
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.xworker.SelectThingForm/@SwtEditSetting/@SwtEditor/@model/@thing/@actions/@getValue
+sname
+getValue
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.TreeItem;
+import xworker.ide.worldexplorer.actions.ExplorerActions;
+
+if(dataTable.getSelection().length > 0){
+    def item = dataTable.getSelection()[0];
+    def data = item.getData();
+    return world.getThing(data.path);
+}else{
+    return null;
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false

@@ -1,0 +1,84 @@
+%1551340178645
+@
+sname=ModelUsage
+slabel=6.常见问题
+stype=thingDesc
+sgroup=-9000|编程框架.-960|动态模型.-1000|文档和教程
+sicon=icons/application.png
+sth_sortWeight=390
+scodeType=6.Usage of Model
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=true
+Sdescription=
+#$@text#$@
+<h1>常见问题</h1>
+
+<h2>1.动态模型和Java的关系</h2>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker所使用的动态模型引擎是使用Java编写的，因此依赖于Java来运行。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的行为模型需要用JavaAction模型、Groovy等脚本模型或实现了run方法动作模型来编写，模型的行为最终是靠Java解释执行的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 编写模型应用时可以用Groovy等脚本语言代替Java来实现动作和行为，但在编写模型库时，建议只使用Java。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型引擎应该也可以用其它编程语言来实现。</p>
+
+<h2>2.使用XWorker编写的程序可以独立于XWorker运行吗？</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以的，动态模型本质上是一个Java应用，引擎和核心模型库已打包成了jar，只要引入相关jar就可以脱离XWorker运行了。</p>
+
+<h2>3.如何定义独立的第三方模型库？</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 独立的第三方模型库是指完全不依赖XWorker的模型库，只要引入动态模型引擎就可以使用的模型库。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 定义独立的第三方模型库的方法是把XWorker当作模型编辑器，使用xworker.lang.MetaDescriptor3来定义模型，并且只使用JavaAction或自定义的动作模型作为模型的行为。这样的模型是可以完全不依赖于XWorker的，只要引入动态模型引擎就可以执行了。</p>
+
+<h2>4.XWorker的模型项目打包的Jar执行后SWT中文乱码。</h2>
+
+<p>&nbsp;&nbsp; 运行Jar时添加参数-Dfile.encoding=UTF-8。</p>
+
+<h2>5.启动时报An illegal reflective access operation has occurred</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 如果是启动时org.xmeta.World修改了java.lang.ClassLoader.usr_paths而报的警告，那么在自动时设置java.libray.path。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如Windows的64位系统下：&nbsp;</p>
+
+<pre class="brush:as3;">
+-Djava.library.path=.\os\library\win32_x86_64\;.\os\library\win32\;%PATH%</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 报警是因为org.xmeta.World检测到符合当前操作系统的动态库的目录是存在的，但没有添加到java.libray.path中，因此World在运行时添加，但添加是在Java9或以上版本会报警告。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label=6.FAQ
+sen_group=-9000|Programing.-960|Dynamic Model.-1000|Documents
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+Sen_description=
+#$@text#$@
+<h1>FAQ</h1>
+
+<h2>1.The relationship between dynamic model and Java</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The dynamic model engine used by XWorker is written in Java, and the behavior of the model is ultimately executed by Java interpretation. Dynamic models are usually programmed with Java.</p>
+
+<p>&nbsp;&nbsp;&nbsp; However, dynamic models should also be implemented in other programming languages.</p>
+
+<h2>2.Can programs written with XWorker run independently of XWorker?</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Yes, the dynamic model is essentially a Java application, and the engine and core model libraries are packaged into jars, so long as the relevant jars are included, they can run out of XWorker.</p>
+
+<h2>3.How to define an independent third-party model library?</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Independent third-party model libraries can be completely independent of XWorker and can be used as long as they rely on dynamic model engines.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The way to define independent third-party model libraries is to use XWorker as a model editor, xworker.lang.MetaDescriptor3 as a model definition, and JavaAction as the behavior of the model (custom actions are unlimited). Such a model can be completely independent of XWorker, as long as it relies on the dynamic model engine to execute.</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sth_mark=false

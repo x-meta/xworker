@@ -1,0 +1,139 @@
+@xworker.example.tutorial.lession 3.HtmlComponents
+sname
+HtmlComponents
+slabel
+HtmlComponents
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+@xworker.example.tutorial.lession 3.HtmlComponents/@MessageViewer
+sname
+MessageViewer
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+@xworker.example.tutorial.lession 3.HtmlComponents/@MessageViewer/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.example.tutorial.lession 3.HtmlComponents/@MessageViewer/@actions/@toHtml
+sname
+toHtml
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def childs = self.getChilds("message");
+def messageStr = "";
+def i = 0;
+
+for(child in childs){
+    messageStr += "quoteArray[" + i + "]=\"" + child.content + "\";\n";
+    i++;
+}
+
+return """
+<script language="javascript">
+<!-- 
+numQuotes=${childs.size()};
+quoteArray = new Array(numQuotes);
+${messageStr}
+quoteShowing=-1;
+
+
+
+function nextQuote()
+{
+  // restart at 0 if done
+  if (quoteShowing >= numQuotes) quoteShowing=-1;
+  quoteShowing++;
+
+  // assign the value in the textbox to the new quote
+  document.quoteForm.quoteHere.value = quoteArray[quoteShowing];
+}
+
+function prevQuote()
+{
+  // restart at end if on 0
+  if (quoteShowing <= 0) quoteShowing=numQuotes+1;
+  quoteShowing--;
+
+  document.quoteForm.quoteHere.value = quoteArray[quoteShowing];
+}
+
+function randQuote()
+{ 
+  // Make sure you don't show the same quote 2x in a row
+  prevQuoteShowing = quoteShowing;
+  while(quoteShowing == prevQuoteShowing)
+    quoteShowing = Math.ceil(Math.random() * numQuotes);
+
+  document.quoteForm.quoteHere.value = quoteArray[quoteShowing];
+}
+
+//!-->
+
+
+</script>
+<h1>Message Output!!</h1>
+<form name="quoteForm">
+  <textarea wrap="virtual" name="quoteHere" Rows=3 Cols=60>
+    Message Viewer
+  </textarea><br>
+  <input type=button value="Next" onClick="nextQuote();">
+  <input type=button value="Previous" onClick="prevQuote();">
+  <input type=button value="Random" onclick="randQuote();">
+</form>
+""";
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.example.tutorial.lession 3.HtmlComponents/@MessageViewer/@message
+sname
+message
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+@xworker.example.tutorial.lession 3.HtmlComponents/@MessageViewer/@message/@content
+sname
+content
+sinputtype
+textarea
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

@@ -1,0 +1,591 @@
+%1565947311180
+@
+sname=StaticDataObjectList
+slabel=StaticDataObjectList
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>获取或创建一个数据对象列表，并把数据对象列表保存到全局变量上下文中。</p>
+
+<p><strong>数据对象列表的顺序</strong></p>
+
+<ol>
+	<li>如果getStaticThing()返回不为null，如果它是DataObject下的StaticDataObjectList模型，那么使用它返回DataObjectList，否则使用它的getStaticData(&quot;StaticDataObjectList&quot;)方法返回数据对象列表。</li>
+	<li>自行创建数据对象列表，见getDataObject()方法和scope属性的文档。<strong>&nbsp;&nbsp; </strong></li>
+</ol>
+
+<p><strong>绑定</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 可以绑定到各种控件上，绑定时会创建一个DataStore，变量名是本事物名+DataStore.</p>
+
+<p><span style="color: rgb(255, 0, 0);"><strong>批量修改</strong></span></p>
+
+<p>&nbsp;&nbsp;&nbsp; 任何对DataObjectList的修改都会触发事件，因此如果是批量的或者是大量快速的修改，那么可以是使用下面的语句。</p>
+
+<pre class="brush:java;">
+try{
+     //开始批量修改，此时不会触发事件
+     dataObjectList.begin();
+     ....执行添加、删除或者修改等
+
+}finally{
+     //结束批量修改，此时触发onLoaded()事件
+     dataObjectList.finish();
+}</pre>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getDataObject()</strong><br />
+	获取数据对象的描述者。<br />
+	&nbsp;</li>
+	<li><strong>String getScope()</strong><br />
+	返回数据对象的保存范围。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;String&gt; getBindTo()</strong><br />
+	返回要绑定的控件列表。<br />
+	&nbsp;</li>
+	<li><strong>void bind(Object parent, DataObjectList dataObjectList, Thing dataObject)</strong><br />
+	实现绑定数据对象到控件的方法。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>Thing getStaticThing()</strong><br />
+	返回要作为key保存静态数据对象列表的事物。默认是数据对象的描述者。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>void init(DataObjectList dataObjectList)</strong><br />
+	创建DataObjectList对象时调用。<br />
+	&nbsp;</li>
+	<li><strong>Thing getInitAction()</strong><br />
+	获取初始化动作，在init()方法之前执行，如果存在的话。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.app.view.swt.data.StaticDataObjectList
+    smethodName=create
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getDataObject
+    sname=getDataObject
+    sattributeName=dataObject
+    schildThingName=DataObjects
+    schildThingFirstChild=true
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getDataObject
+    @/@actions/@bindThing
+    sname=bind
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.app.view.swt.data.StaticDataObjectList
+    smethodName=bind
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=bindThing
+    @/@actions/@getScope
+    sname=getScope
+    sattributeName=scope
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getScope
+    @/@actions/@getBindTo
+    sname=getBindTo
+    sattributeName=bindTo
+    snotNull=false
+    sdelimiter=,
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetStringList
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getBindTo
+    @/@actions/@getStaticDataObjectList
+    sname=getStaticThing
+    sattributeName=staticThing
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getStaticDataObjectList
+    @/@actions/@getDataObjectList
+    sname=getDataObjectList
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.app.view.swt.data.StaticDataObjectList
+    smethodName=getDataObjectList
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getDataObjectList
+    @/@actions/@init
+    sname=init
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=init
+    @/@actions/@getInitAction
+    sname=getInitAction
+    sattributeName=initAction
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getInitAction
+    @/@actions/@getDataObjectList1
+    sname=getData
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.app.view.swt.data.StaticDataObjectList
+    smethodName=getDataObjectList
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getDataObjectList1
+  @/@name
+  sname=name
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=label
+  @/@staticDataObjectList
+  sname=staticThing
+  sinputtype=dataSelector
+  ssize=60
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=staticDataObjectList
+  @/@dataObject
+  sname=dataObject
+  sinputtype=openWindow
+  ssize=60
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sinputattrs=xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.dataObject.DataObjectIns,seperator=%2C,returnType=path,append=false
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=dataObject
+  @/@scope
+  sname=scope
+  sinputtype=select
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=global
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>数据对象的保存范围。</p>
+
+<ul>
+	<li><strong>world</strong><br />
+	数据对象保存到World的data中，key用dataObject描述者的路径加其它组合。<br />
+	&nbsp;</li>
+	<li><strong>global</strong><br />
+	数据对象保存到当前变量上下文的全局变量栈中，key是数据对象描述者的路径。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=scope
+    @/@scope/@world
+    sname=world
+    svalue=world
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=world
+    @/@scope/@global
+    sname=global
+    svalue=global
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=global
+  @/@bindToParent
+  sname=bindToParent
+  sinputtype=truefalse
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  sdescription=<p>是否绑定到当前的父控件上。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=bindToParent
+  @/@bindTo
+  sname=bindTo
+  ssize=60
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  sdescription=<p>要绑定的控件，如有多个使用英文逗号分隔。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=bindTo
+  @/@initAction
+  sname=initAction
+  sinputtype=dataSelector
+  ssize=60
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=initAction
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=description
+  @/@DataObjects
+  sname=DataObjects
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.dataObject.DataObjects
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=DataObjects
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  szh_label=动作
+  sinheritDescription=true
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name

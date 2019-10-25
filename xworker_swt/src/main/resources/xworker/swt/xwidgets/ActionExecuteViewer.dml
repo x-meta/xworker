@@ -1,0 +1,251 @@
+%1477472744312
+@
+sname=ActionExecuteViewer
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.layout.LayoutDatas
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p><strong>动作执行浏览器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以执行一个动作，并且按步查看执行的情况，可以用于动作的解说。</p>
+
+<p><strong>变量和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 回创建新的变量上下文，保存的是ActionConatiner，返回的是Composite，composite在新的变量上下文中的变量是composite。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getActionThing()</strong><br />
+	返回要执行的动作事物。<br />
+	&nbsp;</li>
+	<li><strong>ActionContext getActionThingContext()</strong><br />
+	返回动作执行时所需的变量上下文。</li>
+</ul>
+
+<p><strong>保存的ActionContainer的方法</strong></p>
+
+<ul>
+	<li><strong>void setAction(Thing actionThing, ActionContext actionThingContext)</strong><br />
+	设置要执行的动作和变量上下文。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//创建独立的变量上下文
+def ac = new ActionContext();
+ac.put("parent", parent);
+
+//创建界面
+def thing = world.getThing("xworker.swt.xwidgets.prototypes.ActionExecuteViewerShell/@mainSashForm");
+def composite = thing.doAction("create", ac);
+ac.put("composite", composite);
+
+//创建子节点
+actionContext.peek().put("parent", composite);
+for(child in self.getChilds()){
+    child.doAction("create", actionContext);
+}
+
+//设置动作和动作的变量上下文
+def actionThing = self.doAction("getActionThing", actionContext);
+def actionThingContext = self.doAction("getActionThingContext", actionContext);
+
+if(actionThing != null){
+    ac.actions.doAction("setAction", ac, "actionThing", actionThing, "actionThingContext", actionThingContext);
+}
+actionContext.g().put(self.getMetadata().getName(), ac.actions);
+
+return composite;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getActionThing
+    sname=getActionThing
+    sattributeName=actionThing
+    schildThingName=ActionThing
+    schildThingFirstChild=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getActionThing
+    @/@actions/@getActionThingContext
+    sname=getActionThingContext
+    sattributeName=actionThingContext
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getActionThingContext
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@actionThing
+  sname=actionThing
+  sinputtype=dataSelector
+  sshowLabel=true
+  ssize=60
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actionThing
+  @/@actionThingContext
+  sname=actionThingContext
+  sshowLabel=true
+  ssize=50
+  sreadOnly=false
+  sdefault=var:actionContext
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actionThingContext
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@ActionThing
+  sname=ActionThing
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.ActionThing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionThing

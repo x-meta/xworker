@@ -1,0 +1,514 @@
+^1474535428065
+@
+sname
+TableDataObject
+slabel
+TableDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.java.ListDataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>只有查询功能，一般用于查询数据库中的表。</p>
+sth_createIndex
+false
+  @/@actions1
+  sname
+  actions
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@actions1
+  sth_createIndex
+  false
+  sid
+  actions1
+    @/@actions1/@query
+    sname
+    doQuery
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+//获取全部的表
+def datas = [];
+def metadata = con.getMetaData();
+def catalog = getConditionData(actionContext, "catalog");
+def schemaPattern = getConditionData(actionContext, "schemaPattern");
+def tableNamePattern = getConditionData(actionContext, "tableNamePattern");
+def types = getConditionData(actionContext, "types");
+//log.info("before get tables: " + metadata.getDriverName());
+def rs = null;
+if(metadata.getDriverName().indexOf("Derby") != -1){
+    rs = metadata.getTables(null, null, null, ["TABLE"] as String[]);
+}else{
+    rs = metadata.getTables(null, metadata.getUserName(), null, ["TABLE"] as String[]);
+}
+//log.info("tabled gettted");
+try{    
+    while(rs.next()){
+        def data = [:];
+        data.put("TABLE_CAT", rs.getString("TABLE_CAT"));
+        data.put("TABLE_SCHEM", rs.getString("TABLE_SCHEM"));
+        data.put("TABLE_NAME", rs.getString("TABLE_NAME"));        
+        data.put("TABLE_TYPE", rs.getString("TABLE_TYPE"));
+        data.put("REMARKS", rs.getString("REMARKS"));
+        //data.put("TYPE_CAT", rs.getString("TYPE_CAT"));
+        //data.put("TYPE_SCHEM", rs.getString("TYPE_SCHEM"));
+        //data.put("TYPE_NAME", rs.getString("TYPE_NAME"));
+        //data.put("SELF_REFERENCING_COL_NAME", rs.getString("SELF_REFERENCING_COL_NAME"));
+        //data.put("REF_GENERATION", rs.getString("REF_GENERATION"));       
+        datas.add(data);
+    }
+}finally{
+    rs.close();
+}
+
+def listDataName = "__datas__";
+self.set("listData", listDataName);
+self.set("dataClassName", "java.util.HashMap");
+
+try{
+    def bindings = actionContext.push(null);
+    bindings.put(listDataName, datas);
+
+    //使用ListDataObject的load方法    
+    def action = world.getAction("xworker.dataObject.java.ListDataObject/@actions1/@query");
+    
+    return action.run(actionContext);
+}finally{
+    actionContext.pop();
+}
+
+def getConditionData(actionContext, name){
+    if(actionContext.get("conditionData") == null){
+        return null;
+    }else{
+        try{
+            def v = Ognl.getValue(name, conditionData);
+            if(v instanceof String && v.trim() == ""){
+                return null;
+            }else{
+                return v;
+            }
+        }catch(Exception e){
+            return null;
+        }
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    query
+      @/@actions1/@query/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions1/@query/@contexts/@dataSource
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        self.dataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        dataSource
+    @/@actions1/@isMappingAble
+    sname
+    isMappingAble
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return true;
+    Sdescription
+#$@text#$@
+<p>返回属性是否可以映射，比如数据库数据对象、CSV数据对象和Excel等数据对象的属性适合表字段、CSV或Excel的列映射的。</p>
+<p>如果不能映射，直接抛出有说明文字的异常。</p>
+<p>映射用于快速编辑属性。</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    isMappingAble
+      @/@actions1/@isMappingAble/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions1/@isMappingAble/@contexts/@dataSource
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        self.dataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        dataSource
+    @/@actions1/@getMappingFields
+    sname
+    getMappingFields
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def fields = [
+    ["colName":"TABLE_CAT", "colTitle":"表类别"],
+    ["colName":"TABLE_SCHEM", "colTitle":"表模式"],
+    ["colName":"TABLE_NAME", "colTitle":"表名称"],
+    ["colName":"TABLE_TYPE", "colTitle":"表类型"],
+    ["colName":"REMARKS", "colTitle":"注释"],
+    ["colName":"TYPE_CAT", "colTitle":"类型的类别"],
+    ["colName":"TYPE_SCHEM", "colTitle":"类型模式"],
+    ["colName":"TYPE_NAME", "colTitle":"类型名称"],
+    ["colName":"SELF_REFERENCING_COL_NAME", "colTitle":"有类型表的指定"],
+    ["colName":"REF_GENERATION", "colTitle":"创建值的方式"],
+    ["colName":"catalog", "colTitle":"查询catalog"],
+    ["colName":"schemaPattern", "colTitle":"查询schemaPattern"],
+    ["colName":"tableNamePattern", "colTitle":"查询tableNamePattern"],
+    ["colName":"types", "colTitle":"查询types"]
+];
+
+return fields;
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    getMappingFields
+    @/@actions1/@getAttributeDescriptor
+    sname
+    getAttributeDescriptor
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return "xworker.dataObject.java.ListDataObject/@attribute";
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getAttributeDescriptor
+    @/@actions1/@iterator
+    sname
+    iterator
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+//获取全部的表
+def datas = [];
+def metadata = con.getMetaData();
+def catalog = getConditionData(actionContext, "catalog");
+def schemaPattern = getConditionData(actionContext, "schemaPattern");
+def tableNamePattern = getConditionData(actionContext, "tableNamePattern");
+def types = getConditionData(actionContext, "types");
+log.info("before get tables: " + metadata.getDriverName());
+def rs = null;
+if(metadata.getDriverName().indexOf("Derby") != -1){
+    rs = metadata.getTables(null, null, null, ["TABLE"] as String[]);
+}else{
+    rs = metadata.getTables(null, metadata.getUserName(), null, ["TABLE"] as String[]);
+}
+log.info("tabled gettted");
+try{    
+    while(rs.next()){
+        def data = [:];
+        data.put("TABLE_CAT", rs.getString("TABLE_CAT"));
+        data.put("TABLE_SCHEM", rs.getString("TABLE_SCHEM"));
+        data.put("TABLE_NAME", rs.getString("TABLE_NAME"));        
+        data.put("TABLE_TYPE", rs.getString("TABLE_TYPE"));
+        data.put("REMARKS", rs.getString("REMARKS"));
+        //data.put("TYPE_CAT", rs.getString("TYPE_CAT"));
+        //data.put("TYPE_SCHEM", rs.getString("TYPE_SCHEM"));
+        //data.put("TYPE_NAME", rs.getString("TYPE_NAME"));
+        //data.put("SELF_REFERENCING_COL_NAME", rs.getString("SELF_REFERENCING_COL_NAME"));
+        //data.put("REF_GENERATION", rs.getString("REF_GENERATION"));       
+        datas.add(data);
+    }
+}finally{
+    rs.close();
+}
+
+def listDataName = "__datas__";
+self.set("listData", listDataName);
+self.set("dataClassName", "java.util.HashMap");
+
+try{
+    def bindings = actionContext.push(null);
+    bindings.put(listDataName, datas);
+
+    //使用ListDataObject的load方法    
+    def action = world.getAction("xworker.dataObject.java.ListDataObject/@actions1/@iterator");
+    
+    return action.run(actionContext);
+}finally{
+    actionContext.pop();
+}
+
+def getConditionData(actionContext, name){
+    if(actionContext.get("conditionData") == null){
+        return null;
+    }else{
+        try{
+            def v = Ognl.getValue(name, conditionData);
+            if(v instanceof String && v.trim() == ""){
+                return null;
+            }else{
+                return v;
+            }
+        }catch(Exception e){
+            return null;
+        }
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    iterator
+      @/@actions1/@iterator/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions1/@iterator/@contexts/@dataSource
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        self.dataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        dataSource
+  @/@name
+  sname
+  name
+  sgroup
+  DataObject
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sgroup
+  DataObject
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  label
+  @/@dbConfigPath
+  sname
+  dataSource
+  slabel
+  数据源
+  sinputtype
+  openWindow
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  DataObject
+  sinputattrs
+  xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworkerdbjdbc.DataSource,returnType=path
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  dbConfigPath

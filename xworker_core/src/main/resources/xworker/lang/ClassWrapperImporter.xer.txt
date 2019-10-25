@@ -1,0 +1,842 @@
+@xworker.lang.ClassWrapperImporter
+sname
+ClassWrapperImporter
+slabel
+ClassWrapperImporter
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sdescription
+<p>包装类的导入工具。</p>
+sid
+ClassWrapperImporter
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc
+sname
+ImportJavaDoc
+slabel
+ImportJavaDoc
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.io.FileIterator
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sid
+ImportJavaDoc
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def thread = world.getThing("xworker.lang.Thread");
+def docConfig = new Thing("xworker.lang.JavaDocConfig");
+docConfig.classType = self.classLabel;
+docConfig.interfaceType = self.interfaceLabel;
+thread.doAction("start1", actionContext, 
+    ["action":self, 
+     "method":"import", 
+     "docConfig":docConfig,
+     "packageLimit":self.packageLimit,
+     "packagePath":self.thingPath,
+     "name":"Draw2dImportThread"]);
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@import
+sname
+import
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+self.doAction("doIterator", actionContext, ["listener":self]);
+self.doAction("initExtends", actionContext);
+self.doAction("initAttributeObjs", actionContext);
+self.doAction("initInterface", actionContext);
+#$@text#$@
+sid
+import
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@listFile
+sname
+listFile
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.thingManagers.FileCategory;
+
+//不处理目录
+if(event.file.isDirectory()){
+    return;
+}
+
+//文件和事物名
+def file = event.file;
+def filePath = file.getAbsolutePath();
+if(filePath.indexOf("class-use") != -1 || filePath.indexOf("doc-files") != -1
+    || filePath.indexOf("package-") != -1){
+    return;
+}
+
+def fileName = file.name;
+
+def rpath = self.filePath;
+rpath = rpath.replace("\\", ".");
+rpath = rpath.replace("/", ".");
+fileName = fileName.substring(0, fileName.lastIndexOf("."));
+def thingName = fileName;
+def packageName = "local.gef";
+def pk = filePath.replace("\\", ".").replace("/", ".");
+pk = pk.replaceAll(rpath, "");
+pk = pk.replace('\\', '.');
+pk = pk.substring(0, pk.lastIndexOf("."));
+if(pk.indexOf(".") != -1){
+    packageName = packageName + "." + pk.substring(0, pk.lastIndexOf("."));
+}
+
+//取文件内容
+def fileReader = new Thing("xworker.io.FileReader");
+fileReader.fileVarName = "file";
+def content = fileReader.doAction("getContentString", actionContext, ["file":event.file]);
+
+//创建类包装器
+log.info(file.getName());
+def thing = self.doAction("createClassWrapperFromDoc", actionContext, ["content":content]);
+thing.set("name", thingName);
+thing.metadata.setThingManager(world.get("xworker:ui"));
+thing.metadata.setPath("xworker.ui." + packageName + "." + thingName);
+thing.metadata.setCategory(new FileCategory(packageName, world.get("xworker:ui"), null));
+
+//保存事物
+thing.save();
+#$@text#$@
+sid
+listFile
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@initExtends
+sname
+initExtends
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def category = world.get(self.thingPath);
+for(thing in category.iterator(true)){
+    def context = [:];
+    for(extend in thing.getAllExtends()){
+        if(extend.metadata.path.startsWith(self.thingPath)){
+            def extends_path = extend.metadata.path;
+            if(context.get(extends_path) != null){
+                continue;
+            }
+            context.put(extends_path, extends_path);
+            
+            extends_path = extends_path.substring(0, extends_path.lastIndexOf("."));
+            extends_path = extends_path + "." + extend.name.toLowerCase() + "s";
+            println "init extends: " + extends_path;
+            def extends_ = world.getThing(extends_path);
+            if(extends_ == null){
+                extends_ = new Thing("xworker.lang.ClassWrapper");
+                extends_.set("name", extend.name.toLowerCase() + "s");
+                extends_.metadata.setThingManager(world.get("xworker:ui"));
+                extends_.metadata.setPath(extends_path);
+                extends_.metadata.setCategory(extend.metadata.category);                
+            }
+            
+            def have = false;
+            for(child in extend.getChilds()){
+                if(child.name == thing.name){
+                    child.set("descriptors", "xworker.lang.MetaDescriptor3/@thing");
+                    have = true;
+                    break;
+                }
+            }
+            if(!have && extends_.getThing("ClassWrapper@" + thing.name) == null){
+                Thing ext = new Thing("xworker.lang.MetaDescriptor3/@thing");
+                ext.set("name", thing.name);
+                ext.set("id", thing.name);
+                println thing.metadata.path;
+                ext.set("extends", thing.metadata.path);
+                ext.set("group", extend.name);
+                extends_.addChild(ext);
+            }
+            extends_.save();
+        }
+    }    
+}
+println "int extends over";
+#$@text#$@
+sid
+initExtends
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@initAttributeObjs
+sname
+initAttributeObjs
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def category = world.get(self.thingPath);
+println self.thingPath;
+def packageName = self.packageLimit;
+for(thing in category.iterator(true)){
+   println "init attribute objs: " + thing.metadata.path;
+   for(child in thing.getChilds()){
+       if(child.get("descriptors") == "xworker.lang.ClassWrapper/@childThing"){
+           def className = child.className;
+           if(className.startsWith(packageName + ".")){
+               def thingPath = self.thingPath + "." + className.substring(packageName.length(), className.length());
+               thingPath = thingPath.substring(0, thingPath.lastIndexOf(".")) + thingPath.substring(thingPath.lastIndexOf("."), thingPath.length()).toLowerCase() + "s";
+               def extend = world.get(thingPath);
+               if(extend != null){
+                   child.set("extends", thingPath);
+               }else{                   
+                   thingPath = self.thingPath + "." + className.substring(packageName.length(), className.length());
+                   def thingName = thingPath.substring(thingPath.lastIndexOf(".") + 1, thingPath.length());                   
+                    child.getChilds().clear();
+                    for(c in child.getChilds()){                        
+                        if(c.name == thingName){
+                            extend = c;
+                            break;
+                        }
+                    }
+                   extend = new Thing("xworker.lang.ClassWrapper");
+                   extend.set("name", thingName);
+                   extend.set("extends", thingPath);
+                   child.addChild(extend);
+               }
+           }
+       }
+   }
+    thing.save();
+}
+
+
+
+println "int attribute over";
+#$@text#$@
+sid
+initAttributeObjs
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@initInterface
+sname
+initInterface
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def category = world.get(self.thingPath);
+def packageName = self.packageLimit;
+for(thing in category.iterator(true)){
+    println "init interface: " + thing.metadata.path;
+    if(thing.type == "interface"){
+        def have = false;
+        for(child in thing.getChilds()){
+            if(child.name == "actions"){
+                have = true;
+                break;
+            }
+        }
+        if(!have){
+            def ac = new Thing("xworker.lang.MetaDescriptor2/@thing");
+            ac.set("name", "actions");
+            ac.set("extends", "xworker.lang.actions.Actions");
+            def att = new Thing("xworker.lang.MetaDescriptor2/@attribute");
+            att.set("name", "name");
+            ac.addChild(att);
+            thing.addChild(ac);
+        }
+    }
+    thing.save();
+}
+
+
+
+println "int interface over";
+#$@text#$@
+sid
+initInterface
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@initActions
+sname
+initActions
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def category = world.get(self.thingPath);
+def packageName = self.packageLimit;
+for(thing in category.iterator(true)){
+   println "init actions: " + thing.metadata.path;
+   if(thing.get("descriptors").indexOf("xworker.lang.ClassWrapper") == -1){
+       continue;
+   }
+   def exts = thing.get("extends");
+   if(exts != null && exts.indexOf("xworker.lang.ClassWrapperActions") == -1){
+       exts = exts + ",xworker.lang.ClassWrapperActions";
+       thing.set("extends", exts);
+   }
+   
+   for(child in thing.getChilds()){
+       if(child.get("descriptors").indexOf("xworker.lang.ClassWrapper/@childThing") != -1){
+           exts = child.get("extends");
+           if(exts != null && exts.indexOf("xworker.lang.ClassAttributeActions") == -1){
+               exts = exts + ",xworker.lang.ClassAttributeActions";
+               child.set("extends", exts);
+           }                      
+       }
+   }
+   thing.save();
+}
+
+
+
+println "int actions over";
+#$@text#$@
+sid
+initActions
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@actions/@createClassWrapperFromDoc
+sname
+createClassWrapperFromDoc
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+//将要创建的类包装器
+def thing = new Thing("xworker.lang.ClassWrapper");
+
+//类名和类型
+def index = content.indexOf("START OF CLASS DATA");
+index = content.indexOf("<FONT SIZE=\"-1\">", index) + 17;
+def index1 = content.indexOf("</FONT>", index);
+def packageName = content.substring(index, index1).trim();
+index = content.indexOf("<BR>", index) + 4;
+index1 = content.indexOf("</H2>", index);
+def str = content.substring(index, index1).trim();
+def strs = str.split("[ ]");
+def classType = strs[0].trim();
+def className = strs[1].trim();
+thing.type = docConfig.doAction("getClassType", actionContext, ["typeName":classType]);
+thing.name = className;
+thing.className = packageName + "." + className;
+
+//初始化继承和实现类
+def extendstr = "";
+index = content.indexOf("<PRE>", index1);
+def limitIndex = content.indexOf("</PRE>", index);
+while(index < limitIndex){
+    index1 = content.indexOf("<A", index);
+    if(index1 > limitIndex || index1 == -1){
+        break;
+    }
+    
+    index = content.indexOf("\">", index1) + 2;
+    index1 = content.indexOf("</A>", index);
+    def extendClass = content.substring(index, index1);
+    if(extendClass.startsWith(packageLimit)){
+        extendClass = extendClass.replaceAll("(" + packageLimit + ")", packagePath);
+        if(extendstr != ""){
+            extendstr = extendClass + "," + extendstr;
+        }else{
+            extendstr = extendClass;
+        }
+    }
+}
+index1 = content.indexOf("All Implemented Interfaces", index);
+if(index1 != -1){
+    limitIndex = content.indexOf("</DL>", index1);
+    while(index1 < limitIndex){
+        index1 = content.indexOf("<A HREF", index1);
+        if(index1 >= limitIndex || index1 == -1){
+            break;
+        }   
+        index = content.indexOf("interface in ", index1) + 13;
+        index1 = content.indexOf("\">", index);
+        def pk = content.substring(index, index1);
+        index = index1 + 2;
+        index1 = content.indexOf("</A>", index);
+        pk = pk + "." + content.substring(index, index1);
+        if(pk.startsWith(packageLimit)){
+            pk = pk.replaceAll("(" + packageLimit + ")", packagePath);
+            if(extendstr != ""){
+                extendstr = extendstr + "," + pk;
+            }else{
+                extendstr = pk;
+            }
+        }
+    }
+}
+thing.put("extends", extendstr);
+
+//类描述
+def classDesc = "";
+index = content.indexOf("<P>", index) + 3;
+index1 = content.indexOf("<HR>", index) - 9;
+if(index > 0 && index1 > 0 && index1 > index){
+    classDesc = content.substring(index, index1);
+    thing.set("description", classDesc);
+}
+
+//构造函数
+index1 = content.indexOf("CONSTRUCTOR SUMMARY");
+indexLimit = content.indexOf("</TABLE>", index1);
+index1 = content.indexOf("<B>Constructor Summary</B>", index1);
+while(true){
+    index1 = content.indexOf("TD><CODE><B>", index1);
+    if(index1 >= indexLimit || index1 == -1){
+        break;
+    }
+    
+    index = content.indexOf("</B>(", index1) + 5;
+    index1 = content.indexOf(")", index);
+    def paramStr = content.substring(index, index1);
+    if(paramStr == ""){
+        continue;
+    }
+    
+    index = content.indexOf("<BR>", index1) + 66;
+    index1 = content.indexOf("</TD>", index);
+    def desc = content.substring(index, index1);
+
+    def construct = new Thing("xworker.lang.ClassWrapper/@constructor");
+    construct.set("description", desc);
+    construct.set("name", "constructor");
+    construct.set("label", "构造器");
+    construct.set("label_en", "Constructor");
+    def params = paramStr.split("[,]");
+    for(param in params){
+        def p = parseParam(param);
+        def pm = new Thing("xworker.lang.ClassWrapper/@constructor/@parmeter");
+        pm.set("name", p.name);
+        pm.set("className", p.type);
+        def ptype = getType(p.type);
+        if(!ptype.isObj){
+            pm.set("type", ptype.type);
+        }
+        construct.addChild(pm);
+    }
+    thing.addChild(construct);
+}
+
+//字段
+index1 = content.indexOf("FIELD SUMMARY");
+index1 = content.indexOf("</B></FONT></TH>", index1);
+indexLimit = content.indexOf("TABLE", index1);
+while(index < indexLimit){
+    index1 = content.indexOf("<TR BGCOLOR", index1);
+    if(index1 >= indexLimit || index1 == -1){
+        break;
+    }
+    if(index1 < indexLimit){
+        index = content.indexOf("<CODE>", index1) + 6;
+        index1 = content.indexOf("</CODE>", index);
+        def field = content.substring(index, index1).trim();
+       
+        if(field.indexOf("&nbsp;") == 0){
+            //是pulbic的字段
+            field = field.substring(6, field.length());
+            def type = getType(field);
+            index = content.indexOf("\">", index1) + 2;
+            index1 = content.indexOf("</A", index);
+            def fieldName = content.substring(index, index1);
+            index = content.indexOf("<BR>", index1) + 66;
+            index1 = content.indexOf("</TD>", index);
+            def methodDesc = content.substring(index, index1);
+            def attribute = null;
+            if(type.isObj){
+                attribute = new Thing("xworker.lang.ClassWrapper/@childThing");
+                attribute.set("name", fieldName);
+                attribute.set("className", type.type);
+                attribute.set("many", "false");
+                attribute.set("description", methodDesc);
+            }else{
+                attribute = new Thing("xworker.lang.ClassWrapper/@attribute");
+                attribute.set("name", fieldName);
+                attribute.set("type", type.type);
+                attribute.set("description", methodDesc);
+            }
+            thing.addChild(attribute);
+        }
+    }
+}
+
+//方法
+index1 = content.indexOf("METHOD SUMMARY");
+index1 = content.indexOf("</B></FONT></TH>", index1);
+indexLimit = content.indexOf("TABLE", index1);
+while(index < indexLimit){
+    index1 = content.indexOf("<TR BGCOLOR", index1);
+    if(index1 >= indexLimit){
+        break;
+    }
+    if(index1 < indexLimit){
+        index = content.indexOf("<CODE>", index1) + 6;
+        index1 = content.indexOf("</CODE>", index);
+        def returnType = content.substring(index, index1).trim();
+       
+        if(returnType.indexOf("&nbsp;") == 0){
+            //是pulbic的方法
+            returnType = returnType.substring(6, returnType.length());
+            def type = getType(returnType);
+            index = content.indexOf("\">", index1) + 2;
+            index1 = content.indexOf("</A", index);
+            def methodName = content.substring(index, index1);
+            index = content.indexOf("</B>(", index1) + 5;
+            index1 = content.indexOf(")", index);
+            def paramStr = content.substring(index, index1);
+            index = content.indexOf("<BR>", index1) + 66;
+            index1 = content.indexOf("</TD>", index);
+            def methodDesc = content.substring(index, index1);
+            if((methodName.startsWith("add") || methodName.startsWith("set")) &&
+                paramStr.indexOf(",") == -1 && paramStr != ""){
+                //如果方法的参数只有一个，并且是add或set，当作属性
+                def attributeName = methodName.substring(3, methodName.length()).toLowerCase();
+                def param = parseParam(paramStr); 
+                type = getType(param.type);
+                def attribute = null;
+                if(type.isObj){
+                    attribute = new Thing("xworker.lang.ClassWrapper/@childThing");
+                    attribute.set("name", attributeName);
+                    attribute.set("className", type.type);
+                    if(methodName.startsWith("add")){
+                        attribute.set("many", "true");
+                    }else{
+                        attribute.set("many", "false");
+                    }
+                    attribute.set("description", methodDesc);
+                }else{
+                    attribute = new Thing("xworker.lang.ClassWrapper/@attribute");
+                    attribute.set("name", attributeName);
+                    attribute.set("type", type.type);
+                    attribute.set("description", methodDesc);
+                }
+                attribute.set("setMethod", methodName);
+                if(thing.get("attribute@" + attributeName) == null || thing.get("childThing@" + attributeName) == null){
+                    thing.addChild(attribute);
+                }
+            }
+            
+            if(thing.type == "interface"){
+                //如果类类型是接口，那么添加方法
+                def method = new Thing("xworker.lang.ClassWrapper/@thing");
+                method.set("name", methodName);
+                method.set("description", methodDesc);
+                if(paramStr != ""){
+                def params = paramStr.split("[,]");
+                    for(param in params){                    
+                        def p = parseParam(param);
+                        def pm = new Thing("xworker.lang.ClassWrapper/@thing/@parameter");
+                        pm.set("name", p.name);
+                        pm.set("className", p.type);
+                        def ptype = getType(p.type);
+                        if(!ptype.isObj){
+                            pm.set("type", ptype.type);
+                        }
+                        method.addChild(pm);
+                    }
+                }
+                thing.addChild(method);
+       		}
+        }
+    }
+}
+return thing;
+
+//分析参数
+def parseParam(param){
+    def ps = param.split("&nbsp;");
+    def p = [:];
+    if(ps[0].indexOf("title=") != -1){
+        def i1 = ps[0].indexOf("in ", ps[0].indexOf("title=")) + 3;
+        def i2 = ps[0].indexOf("\">", i1);
+        def pk = ps[0].substring(i1, i2);
+        i1 = i2 + 2;
+        i2 = ps[0].indexOf("</A>", i1);
+        p.type = pk + "." + ps[0].substring(i1, i2);
+    }else{
+        p.type = ps[0].trim();;
+    }
+    p.name = ps[1];
+    return p;	
+}
+
+def getType(typeName){
+    def type = [:];
+    type.isObj = false;
+    switch(typeName){
+        case "java.lang.String":
+            type.type = "string";
+            break;
+        case "java.math.BigDecimal":
+            type.type = "bigDecimal";
+            break;
+        case "java.math.BigInteger":
+            type.type = "bigInteger";
+            break;
+        case "byte":
+        case "java.lang.Byte":
+            type.type = "byte";
+            break;
+        case "int":
+        case "java.lang.Integer":
+            type.type = "int";
+            break;
+        case "char":
+        case "java.lang.Char":
+            type.type = "char";
+            break;
+        case "short":
+        case "java.lang.Short":
+            type.type = "short";
+            break;
+        case "long":
+        case "java.lang.Long":
+            type.type = "long";
+            break;
+        case "float":
+        case "java.lang.Float":
+            type.type = "float";
+            break;
+        case "double":
+        case "java.lang.Double":
+            type.type = "double";
+            break;
+        case "byte[]":
+            type.type = "bytes";
+            break;
+        case "boolean":
+        case "java.lang.Boolean":
+            type.type = "boolean";
+            break;
+        default:
+            type.type = typeName;
+            type.isObj = true;
+            
+    }
+    
+    return type;
+}
+#$@text#$@
+sid
+createClassWrapperFromDoc
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@classLabel
+sname
+classLabel
+slabel
+类标签
+sgroup
+JavaDoc
+sdefault
+Class
+sdescription
+<p>JavaDoc中类的名字，如英文Class，中文类</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+classLabel
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@interfaceLabel
+sname
+interfaceLabel
+slabel
+接口标签
+sgroup
+JavaDoc
+sdefault
+Interface
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+interfaceLabel
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@packageLimit
+sname
+packageLimit
+slabel
+包限制
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+packageLimit
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.lang.ClassWrapperImporter/@ImportJavaDoc/@thingPage
+sname
+thingPath
+slabel
+事物路径
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+thingPage
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

@@ -1,0 +1,167 @@
+^1548814455233
+@
+sname
+Upload
+slabel
+Upload
+sdescription
+<p>处理上传版本信息。</p>
+scheckPermission
+false
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.manong.MaNongUtils;
+
+import xworker.util.filesync.FileUploadChecker;
+import xworker.util.filesync.FileSync;
+
+def actionContext = actionContext;
+def con = con;
+def project = requestBean.project;
+
+def checker = [
+    checkUser: {
+        userName, password->
+        return MaNongUtils.getUserInfo(userName, password, con, actionContext) != null;
+    }
+] as FileUploadChecker;
+
+//根目录
+def rootDir = null;
+def fileListFile = null;
+if(project == null || project == ""){
+    rootDir = new File(world.getPath() + "/work/update/xworker/");
+    fileListFile = new File(world.getPath() + "//work/update/filelist.txt");
+}else{
+    rootDir = new File(world.getPath() + "/work/update/" + project + "/");
+    fileListFile = new File(world.getPath() + "/work/update/" + project + "FileList.txt");
+}
+def input = request.getInputStream();
+def output = response.getOutputStream();
+
+//强制读取所有字节
+def length = request.getContentLength();
+def bin = FileSync.readComplete(input, length);
+
+//处理上传文件
+response.setContentType("application/octet-stream");
+
+FileSync fileSync = new FileSync();
+fileSync.serverUpload(rootDir, fileListFile, bin, output, checker);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doAction
+      @/@actions/@doAction/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      contexts
+        @/@actions/@doAction/@contexts/@DataSouceActionContext
+        sname
+        DataSouceActionContext
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        _local.xworker.db.XWorkerWebDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.lang.context.Contexts/@DataSouceActionContext
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        DataSouceActionContext

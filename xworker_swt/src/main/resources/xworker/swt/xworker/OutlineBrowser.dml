@@ -1,0 +1,273 @@
+%1478833998104
+@
+sname=OutlineBrowser
+slabel=OutlineBrowser
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>具有一个浏览器的概要栏控件。如果概要栏并不存在，那么不会创建浏览器，但下面的动作容器仍然可用，只是设置后无效果。</p>
+
+<p><strong>返回值：void</strong></p>
+
+<p><strong>保存变量：ActionContainer</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; ActionContainer的主要方法如下。</p>
+
+<ul>
+	<li><strong>void setUrl(String url)</strong><br />
+	设置一个url。<br />
+	&nbsp;</li>
+	<li><strong>void setThing(Thing thing)</strong><br />
+	设置一个事物文档的url。<br />
+	&nbsp;</li>
+	<li><strong>void setWebControl(Thing thing)</strong><br />
+	设置一个WebControl。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def ac = new ActionContext();
+ac.put("parentContext", actionContext);
+
+//创建概要树的浏览器
+if(actionContext.get("outlineComposite") != null){
+    ac.put("parent", outlineComposite);
+    def thing = world.getThing("xworker.ui.topic.TopicOutline/@mainComposite/@topicBrowser");
+    def comp = thing.doAction("create", ac);
+    
+    if(actionContext.get("tab") != null){
+        tab.setData("outlineTree", comp);
+    }
+}
+
+//创建概要树的动作容器
+ac.put("parent", actionContext.get("parent"));
+def acThing = world.getThing("xworker.swt.xworker.prototype.OutlineBrowser/@actions");
+acThing.doAction("create", ac);
+
+//设置浏览器的内容
+def type = self.getString("type");
+if(type == "webControl"){
+    def thing = self.doAction("getThing", actionContext);
+    if(thing != null){
+        ac.actions.doAction("setWebControl", ac, "thing", thing);
+    }
+}else if(type == "url"){
+    def url = self.doAction("getUrl", actionContext);
+    if(url != null){
+        ac.actions.doAction("setUrl", ac, "url", url);
+    }
+}else{
+    def thing = self.doAction("getThing", actionContext);
+    if(thing != null){
+        ac.actions.doAction("setThing", ac, "thing", thing);
+    }
+}
+
+//保存变量
+_g.put(self.getMetadata().getName(), ac.actions);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getUrl
+    sname=getUrl
+    sattributeName=url
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getUrl
+    @/@actions/@getThing
+    sname=getThing
+    sattributeName=path
+    schildThingFirstChild=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getThing
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@type
+  sname=type
+  sinputtype=select
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=thing
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=type
+    @/@type/@thing
+    sname=thing
+    svalue=thing
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thing
+    @/@type/@url
+    sname=url
+    svalue=url
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=url
+    @/@type/@webControl
+    sname=webControl
+    svalue=webControl
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=webControl
+  @/@path
+  sname=path
+  sinputtype=dataSelector
+  sshowLabel=true
+  ssize=60
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=path
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

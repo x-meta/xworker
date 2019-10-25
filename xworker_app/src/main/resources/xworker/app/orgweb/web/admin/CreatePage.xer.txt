@@ -1,0 +1,145 @@
+^1486694577984
+@
+sname
+CreatePage
+slabel
+CreatePage
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import xworker.dataObject.DataObject;
+
+if(session.getAttribute("__orgWebAdmin__") == null){
+    def str = """{
+        "success":false,
+        "msg":"未登录，请先登录!"
+        }""";
+    response.setContentType("text/plain; charset=utf-8");
+    response.getOutputStream().write(str.getBytes("utf-8"));
+    return;
+}
+
+def id = requestBean.id;
+def theData = new DataObject("xworker.app.orgweb.dataobjects.ContentTree");
+theData.put("tid", id);
+theData.load(actionContext);
+
+def thingPath = "orgweb.pages.Page" + id;
+def page = world.getThing(thingPath);
+if(page == null){
+    page = new Thing("xworker.doc.structures.HtmlContent");
+    page.put("name", "Page" + id);
+    page.saveAs("_local", thingPath);
+}
+page.put("label", theData.get("label"));
+page.put("label_en", theData.get("label_en"));
+page.save();
+
+//theData.put("url", "thing:" + thingPath);
+theData.update(actionContext);
+
+def str = """{
+    "success":true,
+    "path":"${thingPath}",
+    "url": "thing:${thingPath}"
+}""";
+response.setContentType("text/plain; charset=utf-8");
+response.getOutputStream().write(str.getBytes("utf-8"));
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    doAction
+      @/@actions/@doAction/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      contexts
+        @/@actions/@doAction/@contexts/@DataSouceActionContext
+        sname
+        DataSouceActionContext
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        xworker.app.orgweb.datasource.OrgwebDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.lang.context.Contexts/@DataSouceActionContext
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        DataSouceActionContext

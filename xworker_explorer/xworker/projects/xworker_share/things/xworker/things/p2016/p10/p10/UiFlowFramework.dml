@@ -1,0 +1,55 @@
+%1500609794011
+@
+sname=UiFlowFramework
+slabel=界面流程
+stype=thingDesc
+sgroup=-9000|编程框架.300|界面流程
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+Sdescription=
+#$@text#$@
+<h1>界面流程</h1>
+
+<h2>1.界面流程</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 界面流程是一个通过流程图编程的方法，常常是把各种界面的操作通过流程关联在一起，所以叫做界面流程。</p>
+
+<h2>2.界面流程模型的约定</h2>
+
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;</strong>界面流程节点模型需要实现下面的方法。新的界面流程节点需要继承<strong>xworker.lang.flow.uiflow.UiNode</strong>模型。</p>
+
+<ul>
+	<li><strong>void flowRun(IFlow uiFlow, Thing flowNode)</strong><br />
+	执行节点。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 界面流程节点模型还可以重写下面的方法，从而实现在流程图中的显示方式等等更多功能。</p>
+
+<ul>
+	<li><strong>GraphNode createZestGraphNode(Graph graph, UiFlow uiFlow)</strong><br />
+	创建Draw2d的节点。<br />
+	&nbsp;</li>
+	<li><strong>void createZestGraphConnection(Graph graph, UIiFlow uiFlow, Map&lt;String, GraphNode&gt; graphNodes)</strong><br />
+	创建节点之间的链接。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;Map&lt;String, String&gt;&gt; getConnectionStats()</strong><br />
+	如果一个这个节点可以连多个其它节点，那么返回连接列表，比如IF的Then和Else。<br />
+	&nbsp;</li>
+	<li><strong>void updateConnection(Graph graph, Map&lt;String, String&gt; linkStartInfo)</strong><br />
+	连接其他节点是的操作。</li>
+</ul>
+
+<h2>3.注册新的流程节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 新的界面流程节点可以以<strong>child</strong>的方式注册到<strong>xworker.lang.flow.uiflow.Nodes</strong>模型下。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_group=-9000|Programing.300|UI Flow
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

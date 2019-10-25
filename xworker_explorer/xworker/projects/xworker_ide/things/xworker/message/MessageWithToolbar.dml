@@ -1,0 +1,151 @@
+%1554888914240
+@
+sname=MessageWithToolbar
+slabel=MessageWithToolbar
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.message.Message
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>这种消息在展示界面的上方有一个toolbar，tooblar默认使用QuickToolbar编写。</p>
+
+<p><strong>Deprecated</strong></p>
+
+<p>在ThingRegistSelector中建议使用xworker.swt.xworker.ThingRegistThing来代替本事物。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//创建包含toolbar的控件
+def thing = world.getThing("xworker.message.prototype.MessageWdithToolbar/@mainCompostie");
+thing.doAction("create", actionContext);
+
+//创建toolbar
+def toolbar = self.doAction("getToolbar", actionContext);
+if(toolbar == null){
+    //toolba不存在，销毁相对应的父面板
+    toolbarComposite.dispose();
+}else{
+    actionContext.peek().put("parent", toolbarComposite);
+    toolbar.doAction("create", actionContext);
+}
+
+//初始化变量等
+def type = self.getString("type");
+self.doAction("init", actionContext);
+//把自己也保存到全局变量上下文中
+_g.put("thingSelf", self);
+
+def content = actionContext.get("content");
+
+//如果没有内容显示一个空白
+actionContext.peek().put("parent", contentComposite);
+if(content == null){
+    thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@noContent");
+    thing.doAction("create", actionContext);
+}else{
+    actionContext.g().put("content", content);
+    self.doAction(type, actionContext, ["content": content, "execute":false]);
+}
+
+return mainCompostie;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getToolbar
+    sname=getToolbar
+    sattributeName=toolbar
+    schildThingName=Toolbar
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getToolbar
+  @/@toolbar
+  sname=toolbar
+  sinputtype=dataSelector
+  ssize=60
+  sgroup=Message
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=toolbar
+  @/@Toolbar
+  sname=Toolbar
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.xwidgets.QuickToolbar
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Toolbar

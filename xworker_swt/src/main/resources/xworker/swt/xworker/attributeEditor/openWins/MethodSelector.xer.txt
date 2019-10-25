@@ -1,0 +1,347 @@
+^1470991575084
+@
+sname
+MethodSelector
+slabel
+MethodSelector
+sdescriptors
+xworker.swt.widgets.Display
+sth_createIndex
+false
+  @/@shell
+  sname
+  shell
+  stext
+  方法选择器
+  sNO_TRIM
+  false
+  sCLOSE
+  true
+  sTITLE
+  true
+  sMIN
+  true
+  sMAX
+  true
+  sBORDER
+  false
+  sRESIZE
+  false
+  sON_TOP
+  false
+  sTOOL
+  false
+  sNO_FOCUS
+  false
+  swidth
+  450
+  sheight
+  500
+  scenterScreen
+  true
+  spack
+  false
+  smaximized
+  false
+  sfullScreen
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sxw_cl_global
+  false
+  sdescriptors
+  xworker.swt.widgets.Display/@Shell
+  sth_createIndex
+  false
+  sid
+  shell
+    @/@shell/@shellGridLayout
+    sname
+    shellGridLayout
+    smakeColumnsEqualWidth
+    false
+    smarginWidth
+    5
+    smarginHeight
+    5
+    smarginLeft
+    0
+    smarginTop
+    0
+    smarginRight
+    0
+    smarginBottom
+    0
+    shorizontalSpacing
+    5
+    sverticalSpacing
+    5
+    sdescriptors
+    xworker.swt.Layouts/@GridLayout
+    sth_createIndex
+    false
+    sid
+    shellGridLayout
+    @/@shell/@selector
+    sname
+    selector
+    sdescriptors
+    xworker.swt.Widgets/@ContentSelector
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    selector
+      @/@shell/@selector/@selectorGridData
+      sname
+      selectorGridData
+      sstyle
+      FILL_BOTH
+      shorizontalIndent
+      0
+      swidth
+      -1
+      sheight
+      -1
+      shorizontalAlignment
+      BEGINNING
+      sverticalAlignment
+      CENTER
+      shorizontalSpan
+      1
+      sverticalSpan
+      1
+      sgrabExcessHorizontalSpace
+      false
+      sgrabExcessVerticalSpace
+      false
+      sxw_cl_global
+      false
+      sdescriptors
+      xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      selectorGridData
+      @/@shell/@selector/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.xwidgets.ContentSelector/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@shell/@selector/@actions/@query
+        sname
+        query
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+def list = [];
+for(m in methods){
+    if(m.value.startsWith(text)){
+        list.add(m);
+    }
+}
+return list;
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        query
+        @/@shell/@selector/@actions/@selected
+        sname
+        selected
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+if(value != null){
+    text.setText(value);
+    
+    //参数
+    if(content != null){
+        def data = [:];        
+        def ps = null;
+        def index = 0;
+        for(param in content.object){
+            if(ps == null){
+                ps = param.getType();
+            }else{
+                ps = ps + "," + param.getType();
+            }
+            data.put("param" + index, param.getName());
+            index++;
+        }
+        data.put(params.methodParamsAttributeName, ps);     
+        
+        //向编辑表单设置参数
+        def values = parentModel.doAction("getValue", parentContext);
+        values.putAll(data);
+        parentModel.doAction("setValue", parentContext, ["thingAttributes": values]);
+    }
+}
+
+//关闭窗口
+shell.dispose();
+
+//定位焦点
+text.setFocus();
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        selected
+    @/@shell/@init
+    sname
+    init
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.swt.util.JavaUtils;
+
+if(params.classAttributeName == null || params.classAttributeName == ""){
+    throw new Exception("属性编辑器没有设置指向类名的属性参数(classAttributeName)。");
+}
+
+def values = parentModel.doAction("getValue",  parentContext);
+def className = values.get(params.classAttributeName);
+if(className == null || className == ""){
+    throw new Exception("没有设置类名。");
+}
+
+def methods = JavaUtils.getMethodsForSelect(className);
+actionContext.g().put("methods", methods);
+
+selector.doAction("setText", actionContext, ["text": text.getText()]);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.swt.widgets.Widget/@Code
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    init

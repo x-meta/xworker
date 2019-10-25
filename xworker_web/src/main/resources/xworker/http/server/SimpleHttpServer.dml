@@ -1,0 +1,1333 @@
+^1565406015571
+@
+sname
+SimpleHttpServer
+slabel
+SimpleHttpServer
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.security.WebTextSecurityHandler
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p><strong>独立简单的Jetty服务器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在XWorker之外运行的一个简单的Jetty的WEB服务器。它把当前目录作为WEB的根目录，并且事物也是放在根目录。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.jetty.SimpleHttpServer
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run
+      @/@actions/@run/@ActionDefined
+      sname
+      ActionDefined
+      sdescriptors
+      xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      ActionDefined
+        @/@actions/@run/@ActionDefined/@monitorFile
+        sname
+        monitorFile
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.thing.ThingManagerActions/@MonitorOutterFileThingManager
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        monitorFile
+    @/@actions/@httpDo
+    sname
+    httpDo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def allowActions = ["index", "login", "checkLogin", "logout", 
+     "createThingPage", "createThing"];
+def ac = request.getParameter("ac");
+if(ac == null || ac == ""){
+    ac = "index";
+}
+boolean allow = false;
+for(aac in allowActions){
+    if(ac == aac){
+        allow = true;
+        break;
+    }
+}
+
+if(!allow){
+    response.writer.println("Un allowed action, ac=" + ac);
+    return;
+}
+
+_g.put("serverThing", self);
+self.doAction(ac, actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    httpDo
+    @/@actions/@doTemplate
+    sname
+    doTemplate
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.UtilTemplate;
+
+//输出为utf-8
+response.setContentType("text/html; charset=utf-8");
+_g.put("server", self);
+
+//用freemarker模板输出
+UtilTemplate.process(actionContext, 
+      template, "freemarker", response.getWriter(), "utf-8");
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>输出HTML页面。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>template</strong><br />
+	Freemarker模板的路径。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doTemplate
+    @/@actions/@index
+    sname
+    index
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.ide.utils.ThingRegistUtils;
+
+def sessionName = self.getString("sessionName");
+if(session.getAttribute(sessionName) == null){
+    _g.put("logined", false);
+    _g.put("loginUrl", "do?sc=" + self.metadata.path + "&ac=login");
+}else{
+    _g.put("logined", true);
+    _g.put("logoutUrl", "do?sc=" + self.metadata.path + "&ac=logout");
+}
+
+//可用服务器事物列表
+_g.put("things", ThingRegistUtils.getAllRegists("xworker.http.server.HttpServerApps", 
+     "child", actionContext));
+
+//显示页面
+def result = world.getThing("xworker.http.server.SimpleHttpServerIndex/@success");
+result.doAction("doResult", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    index
+    @/@actions/@login
+    sname
+    login
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+self.doAction("doTemplate", actionContext, 
+        "template", "xworker/http/server/login.ftl");
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    login
+    @/@actions/@checkLogin
+    sname
+    checkLogin
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def name = request.getParameter("name");
+def password = request.getParameter("password");
+
+def uname = self.getStringBlankAsNull("userName");
+def upassword = self.getStringBlankAsNull("password");
+
+if((uname == null && upassword == null) ||(uname == name && password == upassword)){
+    //如果没有设置用户名密码可以随意登录
+    session.setAttribute(self.getString("sessionName"), self);
+    _g.put("logined", true);
+    _g.put("logoutUrl", "do?sc=" + self.metadata.path + "&ac=logout");
+
+    def oldUrl = request.getParameter("oldUrl");
+    if(oldUrl != null && oldUrl != ""){
+        //从其它页面跳转来的登出
+        response.sendRedirect(oldUrl);
+    }else{
+        self.doAction("index", actionContext);
+    }
+}else{
+    //验证失败，还是显示登录页面
+    self.doAction("login", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    checkLogin
+    @/@actions/@logout
+    sname
+    logout
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+session.setAttribute(self.getString("sessionName"), null);
+
+def oldUrl = request.getParameter("oldUrl");
+if(oldUrl != null && oldUrl != ""){
+    //从其它页面跳转来的登出
+    response.sendRedirect(oldUrl);
+}else{
+    self.doAction("index", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    logout
+    @/@actions/@createThingPage
+    sname
+    createThingPage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//描述者
+_g.put("desc", world.getThing(requestBean.thing));
+
+//输出页面
+def result = world.getThing("xworker.http.server.SimpleHttpServerIndex/@createThingResult");
+result.doAction("doResult", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThingPage
+    @/@actions/@createThing
+    sname
+    createThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def thing = new Thing(requestBean.descriptor);
+thing.getMetadata().setCoderType("dml_xml");
+def coder = world.getThingCoder("dml");
+
+def file = new File("./" + requestBean.thingPath);
+if(file.getParentFile().exists() == false){
+    file.getParentFile().mkdirs();
+}
+
+def sout = new FileOutputStream(file);
+coder.encode(thing, sout);
+sout.close();
+
+//self.doAction("index", actionContext);
+response.sendRedirect(requestBean.thingPath);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createThing
+    @/@actions/@securityCheckFailed
+    sname
+    securityCheckFailed
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    self.doAction("login", actionContext);
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    securityCheckFailed
+    @/@actions/@getContextPath
+    sname
+    getContextPath
+    sattributeName
+    contextPath
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getContextPath
+    @/@actions/@menu_exportWar1
+    sname
+    menu_exportWar
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.task.UserTask;
+
+//创建任务事物
+def taskThing = new Thing();
+taskThing.set("label", "导出WAR文件");
+
+//创建用户任务
+def userTask = new UserTask(taskThing, false);
+
+//创建用户任务对话框
+def ac = new ActionContext();
+ac.put("parent", coolBar.getShell());
+ac.put("userTask", userTask);
+
+def dialogThing = world.getThing("xworker.swt.xworker.dialogs.prototype.UserTaskTextDialog");
+def shell = dialogThing.doAction("create", ac);
+shell.setVisible(true);
+
+def thing = currentThing;
+//启动用户任务
+new Thread({
+    userTask.start();
+    try{
+         //检查路径
+        def path = thing.getStringBlankAsNull("warFilePath");
+        if(path == null){
+            userTask.setCurrentLabel("War path is null, not export");
+        }
+        
+        def warFile = new File(path);
+        if(!warFile.getParentFile().exists()){
+            warFile.getParentFile().mkdirs();
+        }
+        
+        //导出war
+        userTask.setCurrentLabel("Exporting war, please waitting...");
+        export(actionContext);
+        
+        userTask.setCurrentLabel("ath + " is exported");
+    }finally{
+        userTask.finished();
+    }
+}).start();
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menu_exportWar1
+      @/@actions/@menu_exportWar1/@ActionDefined
+      sname
+      ActionDefined
+      sdescriptors
+      xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ActionDefined
+        @/@actions/@menu_exportWar1/@ActionDefined/@export
+        sname
+        export
+        szipFile
+        var:path
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.util.zip.ZipActions/@ZipCompressWithEntrys
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        export
+          @/@actions/@menu_exportWar1/@ActionDefined/@export/@Entrys
+          sname
+          Entrys
+          sdescriptors
+          xworker.util.zip.ZipActions/@ZipCompressWithEntrys/@Entrys
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_mark
+          false
+          sid
+          Entrys
+            @/@actions/@menu_exportWar1/@ActionDefined/@export/@Entrys/@DirectoryEntry
+            sname
+            DirectoryEntry
+            sdirectory
+            .
+            srootDirectory
+            .
+            sdescriptors
+            xworker.util.compress.CompressEntrys/@DirectoryEntry
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            DirectoryEntry
+            @/@actions/@menu_exportWar1/@ActionDefined/@export/@Entrys/@XWorkerWebLibsEntry
+            sname
+            XWorkerWebLibsEntry
+            spath
+            WEB-INF/lib/
+            sdescriptors
+            xworker.util.compress.CompressEntrys/@XWorkerWebLibsEntry
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_mark
+            false
+            sid
+            XWorkerWebLibsEntry
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@port
+  sname
+  port
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  8080
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  port
+  @/@contextPath
+  sname
+  contextPath
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  /
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  contextPath
+  @/@resourcesForCopy
+  sname
+  resourcesForCopy
+  ssize
+  60
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  js/xworker,js/extjs
+  sinheritDescription
+  false
+  sdescription
+  <p>选择需要从XWorker拷贝拷贝的资源。如有多个使用英文逗号分隔，是相对xworker的webroot目录。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  resourcesForCopy
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@userName
+  sname
+  userName
+  sgroup
+  Security
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  userName
+  @/@password
+  sname
+  password
+  sgroup
+  Security
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  password
+  @/@webApp
+  sname
+  webApp
+  sshowLabel
+  true
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  webApp
+  @/@sessionName
+  sname
+  sessionName
+  sgroup
+  Security
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>登录后保存会话的名称。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  sessionName
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuDefine
+      @/@sswtMenus/@menuDefine/@WebServer
+      sname
+      WebServer
+      slabel
+      WEB服务器
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      WebServer
+    @/@sswtMenus/@menuSetting
+    sname
+    menuSetting
+    stype
+    data
+    smenuType
+    WebServer
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuSetting
+      @/@sswtMenus/@menuSetting/@exportToWarMenuItem
+      sname
+      exportToWarMenuItem
+      slabel
+      导出为WAR
+      surl
+      xworker.http.server.SimpleHttpServer/@actions/@menu_exportWar1
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      exportToWarMenuItem
+  @/@warFilePath
+  sname
+  warFilePath
+  sinputtype
+  file
+  ssize
+  60
+  sgroup
+  Export
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  warFilePath

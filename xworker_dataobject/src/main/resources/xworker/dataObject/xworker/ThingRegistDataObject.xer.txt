@@ -1,0 +1,461 @@
+^1364550080308
+@xworker.dataObject.xworker.ThingRegistDataObject
+sname
+ThingRegistDataObject
+slabel
+ThingRegistDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.AbstractDataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>查询事物注册信息的数据对象。</p>
+sid
+ThingRegistDataObject
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+import xworker.dataObject.utils.DbUtil;
+
+import org.xmeta.Thing;
+
+import ognl.Ognl;
+
+import java.util.Locale;
+
+import org.xmeta.ui.session.Session;
+import org.xmeta.ui.session.SessionManager;
+
+def keys = Ognl.getValue(self.keywordsVarName, actionContext);
+if(keys != null && keys instanceof String){
+    if(keys.trim() == ""){
+        keys = null;
+    }else{
+        def ks = [];
+        for(key in keys.split("[,]")){
+            ks.add(key);
+        }
+        keys = ks;
+    }
+}
+//log.info("keys=" + keys);
+
+def pst = null;
+def rs = null;
+try{
+    def keysql = null;
+    if(keys != null && keys.size() > 0){
+        keysql = "select distinct thingId from (select thingId, count(*) as cnt from tblThingKeywords where ";
+        for(int i=0; i<keys.size(); i++){
+            if(i != 0){
+                keysql = keysql + " or ";
+            }
+            
+            keysql = keysql + "keyword = ?";
+        }
+        keysql = keysql + " group by thingId) as k0 where cnt >= " + keys.size();
+    }else{
+        keys = null;
+    }
+    
+    def registOwner = self.registOwner;
+    if(self.registOwnerType == "var"){
+        registOwner = Ognl.getValue(registOwner, actionContext);
+    }
+    if(registOwner == ""){
+        registOwner = null;
+    }
+    def dsql = "select registThingId from tblThingRegists where registType=?";
+    if(registOwner != null){
+        dsql = dsql + " and thingPath=?";
+    }
+    def sql = null;
+    if(keys != null){
+        sql = "select a.name, a.path, a.label,a.en_label,a.zh_label from tblThings a, (" + dsql + ") b, (" + keysql + ") c where a.id=b.registThingId and a.id=c.thingId and b.registThingId=c.thingId";
+    }else {
+        sql = "select a.name, a.path, a.label,a.en_label,a.zh_label from tblThings a, (" + dsql + ") b where a.id=b.registThingId";
+    }
+
+    if(pageInfo != null && pageInfo.limit != 0){
+        //分页查询
+        def countSql = "select count(*) from (" + sql + ") as t";
+        //log.info(countSql);
+        pst = con.prepareStatement(countSql);
+        def index = 1;
+        
+        pst.setString(index, self.registType);
+        index++;
+        
+        if(registOwner != null){
+            pst.setString(index, registOwner);
+            index++;
+        }
+        
+        if(keys != null){
+            for(key in keys){
+                pst.setString(index, key);
+                index++;
+            }
+        }
+        
+        rs = pst.executeQuery();
+        rs.next();
+        pageInfo.totalCount = rs.getInt(1);
+        rs.close();
+        pst.close();
+        
+        //分页的sql    
+        sql = "SELECT * FROM ( SELECT ROW_NUMBER() OVER() AS rownum, t.*  FROM (" + sql + " order by name) t) AS tmp WHERE rownum >= ? AND rownum < ?";
+    }
+    
+    //if(self.getBoolean("showSql")){
+        log.info(sql);
+    //}
+    pst = con.prepareStatement(sql);
+    def index = 1;
+    pst.setString(index, self.registType);
+    index++;
+    
+    if(registOwner != null){
+        pst.setString(index, registOwner);
+        index++;
+    }
+    
+    if(keys != null){
+        for(key in keys){
+            pst.setString(index, key);
+            index++;
+        }
+    }
+        
+    if(pageInfo != null && pageInfo.limit != 0){
+        def start = pageInfo.start + 1;
+        pst.setInt(index, start);
+        pst.setInt(index + 1, start + pageInfo.limit);
+    }
+    rs = pst.executeQuery();
+    def datas = [];
+    def tmpThing = new Thing();
+    Session session = SessionManager.getSession(null);
+	Locale locale = session.getLocale();
+    while(rs.next()){
+        def data = [:];
+        data.put("path", rs.getString("path"));
+        data.put("label", rs.getString("label"));        
+        data.put("name", rs.getString("name"));
+        data.put("en_label", rs.getString("en_label"));
+        data.put("zh_label", rs.getString("zh_label"));
+        String country = locale.getCountry();
+		String language = locale.getLanguage();		
+		def label = data.get(country + "_" + language + "_" + Thing.LABEL);
+		if(label == null || "".equals(label)){
+			label = data.get(language + "_" + Thing.LABEL);
+		}
+		if(label == null || "".equals(label)){
+			label = data.get(Thing.LABEL);
+		}
+		if(label == null || "" == label){
+		    label = data.name;
+		}
+		data.put("metaLabel", label);
+        datas.add(data);
+    }
+    
+    return datas;
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@query/@contexts
+sname
+contexts
+sid
+contexts
+slabel
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@query/@contexts/@dataSource
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.ide.db.datasource.XWorkerDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sid
+dataSource
+sdescriptors
+xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@ValueFactory
+sname
+isMappingAble
+stype
+boolean
+svalue
+true
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Self
+svarScope
+Local
+sid
+ValueFactory
+sdescriptors
+xworker.lang.actions.Actions/@ValueFactory
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@getMappingFields
+sname
+getMappingFields
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+return [
+    ["colName":"path", "colTitle":"path"],
+    ["colName":"label", "colTitle":"label"],
+    ["colName":"name", "colTitle":"name"],
+    ["colName":"en_label", "colTitle":"en_label"],
+    ["colName":"zh_label", "colTitle":"zh_label"],
+    ["colName":"metaLabel", "colTitle":"metaLabel"]
+];
+#$@text#$@
+sdescription
+<p>返回可以映射的字段列表，每一个字段列表是一个Map，有colName和colTitle两个属性。</p>
+sid
+getMappingFields
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.ThingRegistDataObject/@actions/@ValueFactory1
+sname
+getAttributeDescriptor
+stype
+string
+svalue
+xworker.dataObject.xworker.ThingRegistDataObject/@attribute
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Self
+svarScope
+Local
+sid
+ValueFactory1
+sdescriptors
+xworker.lang.actions.Actions/@ValueFactory
+@xworker.dataObject.xworker.ThingRegistDataObject/@thingDescriptor1
+sname
+registOwner
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>注册者，其他事物注册到的主人事物。</p>
+<p>如SWT控件注册到widgets事物，widgets是registOwner。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+thingDescriptor1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.ThingRegistDataObject/@thingDescriptorType1
+sname
+registOwnerType
+sinputtype
+select
+sreadOnly
+false
+sdefault
+constant
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>指明查询时描述者的类型：</p>
+<ul>
+    <li>constant（常量）<br />
+    指定的路径。<br />
+    &nbsp;</li>
+    <li>var（变量）<br />
+    thingDescriptor指定是的变量名，从actionContext中取。</li>
+</ul>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+thingDescriptorType1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.ThingRegistDataObject/@thingDescriptorType1/@constant
+sname
+constant
+svalue
+constant
+sid
+constant
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.dataObject.xworker.ThingRegistDataObject/@thingDescriptorType1/@var
+sname
+var
+svalue
+var
+sid
+var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.dataObject.xworker.ThingRegistDataObject/@registType
+sname
+registType
+sextends
+xworker.lang.MetaThing/@th_registThing
+sinputtype
+select
+sreadOnly
+false
+sdefault
+child
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+registType
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.dataObject.xworker.ThingRegistDataObject/@keywordsVarName
+sname
+keywordsVarName
+sreadOnly
+false
+sdefault
+keywords
+sinheritDescription
+false
+sdescription
+<p>关键字的变量名。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+keywordsVarName
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

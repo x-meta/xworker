@@ -1,0 +1,396 @@
+%1502848872392
+@
+sname=CheckDatas
+slabel=CheckDatas
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.lang.actions.SelfAction
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=data.check
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilAction;
+
+//检查的级别
+def level = self.doAction("getLevel", actionContext);
+
+//要检查的东西
+def checks = self.doAction("getCheckers", actionContext);
+
+def msgs = [];
+for(check in checks){
+    try{
+        def msg = check.doAction("check", actionContext, "level", level);
+        if(msg != null){
+            msgs.add(msg);
+        }
+    }catch(Exception e){
+        def msg = UtilAction.getCauseStackTrace(e);
+        msgs.add("Check " + check.getMetadata().getLabel() 
+            + "</br><pre>" + msg + "</pre>");
+    }
+}
+
+//返回内容
+if(msgs.size() == 0){
+    return null;
+}else{
+    return html(actionContext, "checker", self, "msgs", msgs);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+      @/@actions/@run/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@run/@ActionDefined/@html
+        sname=html
+        stype=freemarker
+        svarScope=Local
+        stemplateEncoding=UTF-8
+        soutputEncoding=UTF-8
+        StemplateCode=
+#$@text#$@
+<html>
+    <title>${checker.metadata.label}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+table.datatable {
+	font-family: verdana,arial,sans-serif;
+	font-size:12px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #666666;
+	border-collapse: collapse;
+}
+table.datatable caption { 
+  padding: 0 0 5px 0; 
+  font: italic 12px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; 
+  text-align: left; 
+} 
+table.datatable th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+}
+table.datatable td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+}
+</style>
+    <body>
+    <h1>${checker.metadata.label}</h1>
+    &nbsp;&nbsp;&nbsp;&nbsp;${checker.metadata.path}
+    <hr style="height:10px;border:none;border-top:10px groove skyblue;" />
+    <#list msgs as msg>
+    <p>
+    ${msg}
+    </p>
+    </#list>
+    </body>
+</html>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.text.TextTemplate
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=html
+    @/@actions/@getLevel
+    sname=getLevel
+    sattributeName=level
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetInt
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getLevel
+    @/@actions/@getCheckables1
+    sname=getCheckers
+    sattributeName=checkers
+    schildThingName=Checkers
+    schildThingOnly=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getCheckables1
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@level
+  sname=level
+  sinputtype=select
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=WARNING
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=level
+    @/@level/@DEBUG
+    sname=DEBUG
+    svalue=0
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=DEBUG
+    @/@level/@INFO
+    sname=INFO
+    svalue=1
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=INFO
+    @/@level/@WARNING
+    sname=WARNING
+    svalue=2
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=WARNING
+    @/@level/@ERROR
+    sname=ERROR
+    svalue=3
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=ERROR
+  @/@checkables
+  sname=checkers
+  sshowLabel=true
+  ssize=60
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=checkables
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Checkers
+  sname=Checkers
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.data.check.Checkers
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Checkers
+    @/@Checkers/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Checkers/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Checkers/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

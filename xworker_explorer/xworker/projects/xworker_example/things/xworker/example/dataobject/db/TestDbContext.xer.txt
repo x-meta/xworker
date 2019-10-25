@@ -1,0 +1,139 @@
+@xworker.example.dataobject.db.TestDbContext
+sname
+TestDbContext
+slabel
+TestDbContext
+sdescriptors
+xworker.lang.MetaDescriptor3
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@log
+sname
+log
+slevel
+info
+smessage
+DriverName=
+svarName
+con.getMetaData().getDriverName()
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Self
+svarScope
+Local
+sdescriptors
+xworker.lang.actions.Actions/@Log
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@log/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@log/@contexts/@DataSouceActionContext
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.example.dataobject.db.TestDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@queryUser
+sname
+queryUser
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def pst = null;
+def rs = null;
+
+try{
+    pst = con.prepareStatement("select name from TBLTESTUSER");
+    rs = pst.executeQuery();
+    while(rs.next()){
+        log.info("userName=" + rs.getString("name"));
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@queryUser/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sth_createIndex
+false
+@xworker.example.dataobject.db.TestDbContext/@actions/@queryUser/@contexts/@DataSouceActionContext
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.example.dataobject.db.TestDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sth_createIndex
+false

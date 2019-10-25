@@ -1,0 +1,590 @@
+%1502155417577
+@
+sname=ActionFlowControl
+slabel=流程控制
+stype=composite
+sgroup=-9000|编程框架.-950|动作框架.-900|文档和教程
+sicon=icons/application.png
+sth_sortWeight=105
+sstyledTextForInsert=parentContext.parentContext.codeText
+sen_label=Flow control
+sen_group=-9000|Programing.-950|Action.-900|Dcouments
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@Composite
+  sname=Composite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.xworker.ThingRegistThing/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@Composite/@ActionExecuteViewer
+    sname=ActionExecuteViewer
+    slabel=流程控制
+    sactionThingContext=var:actionContext
+    Sdescription=
+#$@text#$@
+<h3>流程控制</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 动作模型支持If、Try/Catch、Continue、Break和Return等等流程控制模型，效果类似其它编程语言中的类似语法规则。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sen_label=Flow control
+    sdescriptors=xworker.swt.Widgets/@ActionExecuteViewer
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=ActionExecuteViewer
+      @/@Composite/@ActionExecuteViewer/@ActionThing
+      sname=ActionThing
+      slabel=流程控制
+      smode=run
+      Sdescription=
+#$@text#$@
+<h3>流程控制</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 动作模型支持If、Try/Catch、Continue、Break和Return等等流程控制模型，效果类似其它编程语言中的类似语法规则。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sen_label=Flow control
+      sdescriptors=xworker.swt.xwidgets.ActionExecuteViewer/@ActionThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      Sen_description=
+#$@text#$@
+<h3>Flow Control</h3>
+
+<p>&nbsp;&nbsp;&nbsp;The action model supports flow control models such as If, Try/Catch, Continue, Break, and Return, and the effects are similar to the syntax rules in other programming languages.</p>
+#$@text#$@
+      sth_mark=false
+      sid=ActionThing
+        @/@Composite/@ActionExecuteViewer/@ActionThing/@If
+        sname=If
+        slabel=If & Return
+        Sdescription=
+#$@text#$@
+<p>Test if.</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@If
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=If
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@actions
+          sname=actions
+          sdescriptors=xworker.lang.actions.If/@actions
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=actions
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@actions/@condition
+            sname=condition
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import xworker.util.XWorkerUtils;
+import org.xmeta.util.UtilString;
+
+def result = false;
+def ide = XWorkerUtils.getIDEShell();
+ide.display.syncExec({
+    def box = new MessageBox(XWorkerUtils.getIDEShell(), SWT.ICON_INFORMATION | SWT.OK | SWT.CANCEL);
+    box.setText(UtilString.getString("lang:d=是否Return&en=Return?", actionContext));
+    box.setMessage(UtilString.getString("lang:d=点击确定测试Return，点击取消继续其他测试。&en=Click OK to test Return, click Cancel to continue the other tests.", actionContext));
+    result = box.open() == SWT.OK;
+});
+
+return result;
+#$@text#$@
+            Sdescription=
+#$@text#$@
+<p>The condition action of if.</p>
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=condition
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@Then
+          sname=Then
+          sdescriptors=xworker.lang.actions.If/@ChildAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Then
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@Then/@Return
+            sname=Return
+            sexpression="这是Return的结果。"
+            Sdescription=
+#$@text#$@
+<h3>Return.</h3>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@Return
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Return
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@Else
+          sname=Else
+          sdescriptors=xworker.lang.actions.If/@Else
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Else
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@If/@Else/@Println
+            sname=Println
+            slabel=打印取消
+            smessage=If:选择的是取消按钮。
+            Sdescription=
+#$@text#$@
+<p>Selected cancel button.</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sen_label=Println Cancel
+            sdescriptors=xworker.lang.actions.Actions/@Println
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Println
+        @/@Composite/@ActionExecuteViewer/@ActionThing/@Try
+        sname=Try
+        slabel=Try/Catch
+        Sdescription=
+#$@text#$@
+<p>Test Try/Catch.</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@Try
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=Try
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@ChildAction
+          sname=ChildAction
+          sdescriptors=xworker.lang.actions.Try/@ChildAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ChildAction
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@ChildAction/@Throw
+            sname=Throw
+            svalue="这是抛出来的对象"
+            Sdescription=
+#$@text#$@
+<h3>Throw</h3>
+
+<p>&nbsp;&nbsp;&nbsp; In the action model, you can Throw any Java object.</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@Throw
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Throw
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@Catch
+          sname=Catch
+          sexception=java.lang.String
+          svarName=e
+          sdescriptors=xworker.lang.actions.Try/@Catch
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Catch
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@Catch/@Println
+            sname=Println
+            slabel=打印Catch
+            smessage=template:抛出的结果是:${e}
+            Sdescription=
+#$@text#$@
+<h3>Catch</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Catch is captured according to the class of the object, such as java.lang.Object capturing all thrown objects, and java.lang.String catching only the java.lang.String object thrown.</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sen_label=Println Catch
+            sdescriptors=xworker.lang.actions.Actions/@Println
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Println
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@Finally
+          sname=Finally
+          sdescriptors=xworker.lang.actions.Try/@Finally
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Finally
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Try/@Finally/@Println
+            sname=Println
+            slabel=打印Finally
+            smessage=Finally下的动作总是会被执行。
+            Sdescription=
+#$@text#$@
+<h3>Finally</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Actions under Finally will always be executed.</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sen_label=Println Finally
+            sdescriptors=xworker.lang.actions.Actions/@Println
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Println
+        @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator
+        sname=Iterator
+        slabel=Continue和Break
+        scollectionName=0..5
+        svarName=it
+        Sdescription=
+#$@text#$@
+<p>Test iterator, range 0..5.</p>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sen_label=Continue And Break
+        sdescriptors=xworker.lang.actions.Actions/@Iterate
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=Iterator
+          @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction
+          sname=ChildAction
+          sdescriptors=xworker.lang.actions.Iterator/@ChildAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ChildAction
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If1
+            sname=If
+            slabel=it < 2
+            scondition=it < 2
+            Sdescription=
+#$@text#$@
+<h3>当it &lt; 2时Continue。</h3>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@If
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            Sen_description=
+#$@text#$@
+<p>Continue if it &lt; 2.</p>
+#$@text#$@
+            sth_mark=false
+            sid=If1
+              @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If1/@Then
+              sname=Then
+              sdescriptors=xworker.lang.actions.If/@ChildAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=Then
+                @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If1/@Then/@Continue
+                sname=Continue
+                Sdescription=
+#$@text#$@
+<p>Continue.</p>
+#$@text#$@
+                sinterpretationType=Action
+                sisSynchronized=false
+                sthrowException=true
+                suseOtherAction=false
+                svarScope=Global
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.Actions/@Continue
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=Continue
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If
+            sname=If
+            slabel=it == 4
+            scondition=it == 4
+            Sdescription=
+#$@text#$@
+<h3>当it == 4是break。</h3>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@If
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            Sen_description=
+#$@text#$@
+<p>Break if it == 4.</p>
+#$@text#$@
+            sth_mark=false
+            sid=If
+              @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If/@Then
+              sname=Then
+              sdescriptors=xworker.lang.actions.If/@ChildAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=Then
+                @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@If/@Then/@Break
+                sname=Break
+                Sdescription=
+#$@text#$@
+<p>Break.</p>
+#$@text#$@
+                sinterpretationType=Action
+                sisSynchronized=false
+                sthrowException=true
+                suseOtherAction=false
+                svarScope=Global
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.Actions/@Break
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=Break
+            @/@Composite/@ActionExecuteViewer/@ActionThing/@Iterator/@ChildAction/@Println
+            sname=Println
+            slabel=打印It值
+            smessage=template:it=${it}
+            Sdescription=
+#$@text#$@
+<p>Print the value of it.</p>
+#$@text#$@
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sen_label=Println it
+            sdescriptors=xworker.lang.actions.Actions/@Println
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Println

@@ -1,0 +1,86 @@
+%1565768871343
+@
+sname=ResourceStatusIndex
+slabel=ResourceStatusIndex
+sgroup=xworker.app.resource
+scontentDisplayType=Composite
+sdescritporForNewThing=xworker.app.view.swt.data.StaticDataObjectList
+SnewThingAttributes=
+#$@text#$@
+"xworker.app.resource.dataobjects.ResourceStatus":dataObject,
+"xworker.app.resource.swt.ResourceStatusThingRegistViewer":th_thingRegistViewer,
+"dataObjectContainer":bindTo,
+"xworker.app.resource.dataobjects.ResourceStatus/@actions/@initIndexs":initAction,
+"world":scope
+#$@text#$@
+Sdescription=
+#$@text#$@
+<h2>资源监控总索引</h2>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker的资源监控模块，用于显示各种资源的状态，以及详细信息等。</p>
+
+<p><strong>实现原理</strong></p>
+
+<ul>
+	<li><strong>StaticDataObjectList</strong><br />
+	添加到事物注册索引的是StaticDataObjectList，是全局的List对象。<br />
+	&nbsp;</li>
+	<li><strong>ResourceStatus</strong><br />
+	ResourceStatus是数据对象，含有资源的状态和显示资源状态的方法。ResourceStatus数据对象添加到对应的StaticDataObjectList的列表中，从而可以通过StaticDataObjectList查看到。</li>
+</ul>
+
+<p><strong>ResourceStatus数据对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 数据对象使用xworker.app.resource.dataobjects.ResourceStatus。字段如下：</p>
+
+<ul>
+	<li><strong>resourceId: String</strong><br />
+	资源标识，主键，用户自定义。<br />
+	&nbsp;</li>
+	<li><strong>name: String</strong><br />
+	资源名称。<br />
+	&nbsp;</li>
+	<li><strong>level: String</strong><br />
+	级别，不同的值对应不同的颜色。可选值muted、primary、success、info、warning、danger。<br />
+	&nbsp;</li>
+	<li><strong>resourceHandler: String</strong><br />
+	资源处理器事物的路径。资源处理器需要实现Control create()方法来创建监控界面，监控界面在100 * 90的框内（可能会更小）。<br />
+	&nbsp;</li>
+	<li><strong>params: String</strong><br />
+	参数。使用URL的格式，即x1=y1&amp;x2=y2.&amp;...&amp;xn=yn得格式。<br />
+	&nbsp;</li>
+	<li><strong>memo: String</strong><br />
+	备注，可以是html。<br />
+	&nbsp;</li>
+	<li><strong>indexThing: String</strong><br />
+	索引事物，应设置成注册到的StaticDataObjectList的路径，为了可以从数据库中加载。</li>
+</ul>
+
+<p><strong>SWT界面</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 通过resourceHandler创建，主要有两个方法需要实现。可以使用<strong>xworker.app.resource.swt.ResourceStatusHandler</strong>来作为描述者创建相关Handler。</p>
+
+<ul>
+	<li><strong>Control&nbsp;create(DataObject theData, DataObjectBinder binder)</strong><br />
+	创建显示摘要的控件，大小在100*90左右，可以显示三行文本左右。<br />
+	&nbsp;</li>
+	<li><strong>Control createDetail(DataObject theData, DataObjectBinder binder)</strong><br />
+	创建显示资源的详细信息的界面。</li>
+</ul>
+
+<p><strong>DefaultResourceStatusHandler</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>xworker.app.resource.swt.DefaultResourceStatusHandler</strong>是ResourceStatusHandler的默认实现。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 默认的Handler信息展示界面是一个Text，显示ResourceStatus数据对象的info属性，可以显示4行。详细内容节目显示的是ResourceStatus数据对象的memo属性的内容。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.lang.util.ThingIndex
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.util.ThingIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false

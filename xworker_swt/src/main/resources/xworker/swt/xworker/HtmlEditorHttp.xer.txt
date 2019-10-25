@@ -1,0 +1,221 @@
+^1515465925167
+@
+sname
+HtmlEditorHttp
+slabel
+HtmlEditorHttp
+sdescriptors
+xworker.http.ControlSet
+  @/@showHtml
+  sname
+  showHtml
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sid
+  showHtml
+    @/@showHtml/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/2_6beta1/editor/css/fck_editorarea.css" TITLE="Style"/>-->
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+<script type="text/javascript">
+    function setHtmlContent(html){      
+        //ert(html);
+        var contentDiv = document.getElementById("content");
+        //alert("tt");
+        html = html.replace(new RegExp("&_n_;","gm"), "\n");
+        html = html.replace(new RegExp("&_r_;","gm"), "\r");
+        html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+        //alert(html);
+        contentDiv.innerHTML = html;
+    }
+</script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sid
+    view
+      @/@showHtml/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<div id="content">
+</div>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sid
+      code
+    @/@showHtml/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;
+    svalue
+    xworker.swt.xworker.HtmlEditorHttp/@showHtml/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sid
+    success
+  @/@showEditorHtml
+  sname
+  showEditorHtml
+  sdescriptors
+  xworker.http.controls.SimpleControl
+  sid
+  showEditorHtml
+    @/@showEditorHtml/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@showEditorHtml/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      suseOuterJava
+      true
+      souterClassName
+      xworker.swt.xworker.HtmlEditorHttpShowEditorHtmlCreator
+      smethodName
+      doAction
+      sdisableGlobalContext
+      false
+      sdescriptors
+      xworker.lang.actions.JavaAction
+      sid
+      doAction
+    @/@showEditorHtml/@view
+    sname
+    view
+    sbelongToHtml
+    false
+    sstyle
+    default
+    sdescriptors
+    xworker.http.controls.BizControl/@view
+    sid
+    view
+      @/@showEditorHtml/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html>
+<head>
+	<title>SWT Kckeditor</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<!--<script type="text/javascript" src="fckeditor/2.6beta1/fckeditor.js"></script>-->
+	<script type="text/javascript" src="fckeditor/4_1/ckeditor.js"></script>
+	<script type="text/javascript">
+function getContents(){	
+	var oEditor = CKEDITOR.instances.data ;	
+	window.status = "html_edit_content:" + oEditor.getData();
+  	//alert(window.status) ;	
+}
+
+function setContents(html){
+    var oEditor = CKEDITOR.instances.data ;	
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    oEditor.setData(html);
+    //oEditor.SetHTML(html);
+    //var contentDiv = document.getElementById("data");
+    //contentDiv.value = html;
+}
+
+function setContentsFirst(html){
+    //var oEditor = FCKeditorAPI.GetInstance('data') ;
+    //oEditor.SetHTML(html);
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    var contentDiv = document.getElementById("data");
+    contentDiv.value = html;
+}
+
+function executeCommand( commandName ){
+	  var oEditor = FCKeditorAPI.GetInstance('data') ;
+
+	  // Execute the command.
+	  oEditor.Commands.GetCommand( commandName ).Execute() ;
+}
+
+function FCKeditor_OnComplete( editorInstance ){
+	  executeCommand("FitWindow");	  
+}
+</script>
+</head>
+<body id="main">	
+	<form method="post" target="_blank">
+		<textarea  id="data" name="data.description" >${(value?html)?if_exists}</textarea>
+<script language="javascript">    
+    var editor = CKEDITOR.replace('data',{ 
+         filebrowserImageBrowseUrl : 'do?sc=xworker.ide.http.CkeditorFileBrowser',  
+         filebrowserFlashBrowseUrl : 'do?sc=xworker.ide.http.CkeditorFileBrowser',
+         allowedContent : true
+        });
+    editor.on('instanceReady',   // editor是CKEDITOR的一个实例
+                 function(event){
+                    event.editor.getCommand('maximize').exec();
+                  }
+    );    
+
+    //var oFCKeditor = new FCKeditor( 'data' ) ;    
+    //oFCKeditor.BasePath = "fckeditor/";
+    //oFCKeditor.ToolbarSet="${(requestBean.toolbarSet)?default("SwtEdit")}";
+    //oFCKeditor.ReplaceTextarea() ;    
+     
+</script>
+	</form>
+	<form id="contentForm" name="contentForm" method="post" action="do?sc=xworker.swt.xworker.HtmlEditorHttp/@showEditorHtml">
+	     <input type="hidden" name="editorContent"  id="editorContent" value=""/>
+	</form>
+</body>
+</html>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sid
+      code
+    @/@showEditorHtml/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;
+    svalue
+    xworker.swt.xworker.HtmlEditorHttp/@showEditorHtml/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sid
+    success

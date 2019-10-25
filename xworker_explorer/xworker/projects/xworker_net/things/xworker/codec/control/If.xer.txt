@@ -1,0 +1,434 @@
+@xworker.codec.control.If
+sname
+If
+slabel
+If
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.codec.Coder,xworker.codec.Coders
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+_statement
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>IF条件，条件使用Ognl表达式。</p>
+sid
+If
+@xworker.codec.control.If/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.codec.control.If/@actions/@create
+sname
+encode
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+suseOuterJava
+false
+sclassName
+Encode
+smethodName
+run
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+import org.xmeta.World;
+
+import xworker.util.UtilAction;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+
+import ognl.Ognl;
+
+public class Encode{
+    static World world = World.getInstance();
+    public static Object run(ActionContext actionContext) throws Exception{
+        Thing self = (Thing) actionContext.get("self");
+
+        //System.out.println("if condition = " + self.getString("condition"));        
+        List<Thing> elseIfList = self.getChilds("ELSEIF");
+        Thing elseObj = self.getThing("ELSE@0");
+        
+        Object result = "success";
+        try{
+        	List<Thing> statements = null;
+        	//System.out.println(UtilAction.runAsGroovy(self, "condition", actionContext, self.getMetadata().getPath()));
+        	//if(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(self, "condition", actionContext, self.getMetadata().getPath()))){
+        	if((Boolean) Ognl.getValue(self.getString("condition"), actionContext)){
+        	    //System.out.println("if is ok");
+        		//If
+        		statements = self.getChilds();
+        		List<Thing> forRemoved = new ArrayList<Thing>();
+        		for(Thing s : statements){
+        			//过滤ElseIf和Else
+        			if(s.isThingByName("ELSEIF") || s.isThingByName("ELSE")){
+        				forRemoved.add(s);
+        			}
+        		}
+        		
+        		for(Thing r : forRemoved){
+        			statements.remove(r);
+        		}
+        	}else{
+        		//执行ElseIf
+        		boolean isElseIf = false;
+        		for(Thing elseIf : elseIfList){
+        		    //if(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(elseIf, "condition", actionContext, self.getMetadata().getPath()))){
+        			//if(UtilJavaScript.runLogicScript(elseIf.getString("condition"), actionContext)){
+        			//System.out.println("elseIf ok=" + Ognl.getValue(self.getString("condition"), actionContext));
+        		    if((Boolean) Ognl.getValue(elseIf.getString("condition"), actionContext)){
+        				isElseIf = true;
+        				statements = elseIf.getChilds();
+        			}
+        		}
+        		
+        		if(!isElseIf && elseObj != null){
+        			statements = elseObj.getChilds();
+        		}
+        	}
+        	
+        	if(statements != null){
+        	    Object data = actionContext.get("data");
+        	    try{
+        	        Bindings bindings = actionContext.push(null);        	        
+            		for(Thing child : statements){            		
+            		    String propertyPath = child.getString("propertyPath");
+            		    if(propertyPath != null && !"".equals(propertyPath)){
+            		        bindings.put("data", Ognl.getValue(child.getString("propertyPath"), data));
+            		    }else{
+            		        bindings.put("data", data);
+                        }
+            		    //System.out.println(child.getMetadata().getPath());
+                        result = child.doAction("encode", actionContext, null, true);      
+                        
+    					if(actionContext.getStatus() != ActionContext.RUNNING){
+    						break;
+    					}
+                    }
+                }finally{
+                    actionContext.pop();
+                }
+        	}            
+            
+            return result;
+        }finally{                        
+        }        
+    }
+}
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@JavaAction
+@xworker.codec.control.If/@actions/@create1
+sname
+decode
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+suseOuterJava
+false
+sclassName
+Decode
+smethodName
+run
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+import org.xmeta.World;
+
+import xworker.util.UtilAction;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
+
+import ognl.Ognl;
+
+public class Decode{
+    static World world = World.getInstance();
+    public static Object run(ActionContext actionContext) throws Exception{
+        Thing self = (Thing) actionContext.get("self");
+
+        //System.out.println("if condition = " + self.getString("condition"));        
+        //System.out.println("actionContext.data=" + actionContext.get("data"));
+        List<Thing> elseIfList = self.getChilds("ELSEIF");
+        Thing elseObj = self.getThing("ELSE@0");
+        
+        Object result = "success";
+        try{
+        	List<Thing> statements = null;
+        	//System.out.println(UtilAction.runAsGroovy(self, "condition", actionContext, self.getMetadata().getPath()));
+        	//if(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(self, "condition", actionContext, self.getMetadata().getPath()))){
+        	if((Boolean) Ognl.getValue(self.getString("condition"), actionContext)){
+        	    //System.out.println("if is ok");
+        		//If
+        		statements = self.getChilds();
+        		List<Thing> forRemoved = new ArrayList<Thing>();
+        		for(Thing s : statements){
+        			//过滤ElseIf和Else
+        			if(s.isThingByName("ELSEIF") || s.isThingByName("ELSE")){
+        				forRemoved.add(s);
+        			}
+        		}
+        		
+        		for(Thing r : forRemoved){
+        			statements.remove(r);
+        		}
+        	}else{
+        		//执行ElseIf
+        		boolean isElseIf = false;
+        		for(Thing elseIf : elseIfList){
+        		    //if(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(elseIf, "condition", actionContext, self.getMetadata().getPath()))){
+        			//if(UtilJavaScript.runLogicScript(elseIf.getString("condition"), actionContext)){
+        			//System.out.println("elseIf ok=" + Ognl.getValue(self.getString("condition"), actionContext));
+        		    if((Boolean) Ognl.getValue(elseIf.getString("condition"), actionContext)){
+        				isElseIf = true;
+        				statements = elseIf.getChilds();
+        			}
+        		}
+        		
+        		if(!isElseIf && elseObj != null){
+        			statements = elseObj.getChilds();
+        		}
+        	}
+        	
+        	if(statements != null){
+        	    Object data = actionContext.get("data");
+        		for(Thing child : statements){
+                    result = child.doAction("decode", actionContext, null, true);    
+                    
+					if(actionContext.getStatus() != ActionContext.RUNNING){
+						break;
+					}
+					
+					String propertyPath =  child.getString("propertyPath");
+					if(data != null && propertyPath != null && !"".equals(propertyPath)){
+					    Ognl.setValue(propertyPath, data, result);
+					} 
+                }
+        	}            
+            
+            return result;
+        }finally{                        
+        }        
+    }
+}
+#$@text#$@
+sid
+create1
+sdescriptors
+xworker.lang.actions.Actions/@JavaAction
+@xworker.codec.control.If/@name
+sname
+name
+sinheritDescription
+false
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@label
+sname
+label
+sinheritDescription
+false
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@condition
+sname
+condition
+sinputtype
+textarea
+scolspan
+2
+sinheritDescription
+false
+sdescription
+<p>条件，使用Ognl表达式。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+condition
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@_ELSEIF
+sname
+ELSEIF
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.codec.Coders
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+_ELSEIF
+@xworker.codec.control.If/@_ELSEIF/@name
+sname
+name
+sinheritDescription
+false
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@_ELSEIF/@label
+sname
+label
+sinheritDescription
+false
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@_ELSEIF/@condition
+sname
+condition
+sinputtype
+textarea
+scolspan
+2
+sinheritDescription
+false
+sdescription
+<p>条件，使用Ognl表达式。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+condition
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@_ELSE
+sname
+ELSE
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.codec.Coders
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+_ELSE
+@xworker.codec.control.If/@_ELSE/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.codec.control.If/@_ELSE/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

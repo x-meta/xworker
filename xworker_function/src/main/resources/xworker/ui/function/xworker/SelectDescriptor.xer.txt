@@ -1,0 +1,1616 @@
+^1411881295891
+@
+sname
+SelectDescriptor
+slabel
+SelectDescriptor
+sdescriptors
+xworker.lang.MetaDescriptor3,xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>请选择一个描述者，描述者是指要创建什么事物，比如要创建一个SWT的shell就选择一个SWT的shell事物作为描述者。</p>
+sth_createIndex
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+sth_mark
+false
+@/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.ui.function.FunctionCallback;
+import xworker.ui.function.FunctionManager;
+import xworker.ui.function.FunctionRequestUtil;
+
+//回调
+def functionRequest = request.getRequestMessage();
+if(message == "ok"){
+    FunctionRequestUtil.callbakMyselfOk(functionRequest, values.get("descriptor"), actionContext);
+}else{
+    FunctionRequestUtil.callbakMyselfCancel(unctionRequest, values.get("descriptor"), actionContext);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_mark
+false
+@/@actions/@requestCallback
+sname
+requestCallback
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.ui.UIRequest;
+import xworker.ui.function.FunctionCallback;
+
+if(uiRequest.getRequestMessage() instanceof FunctionCallback)  {
+    //参数的描述
+    def descriptor = uiRequest.getRequestMessage().getParam().getDescriptor();
+    
+    //browserUIHandler
+    def browserUIHandler = formThing.getData("formContext").get("browserUIHandler");
+    
+    browserUIHandler.requestUI(new UIRequest(descriptor, actionContext), actionContext);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting
+sshowMenu
+true
+sname
+SwtEditSetting
+sdescriptors
+xworker.lang.MetaDescriptor3/@SwtObject
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor
+sname
+SwtEditor
+sdescriptors
+xworker.lang.MetaDescriptor3/@SwtObject/@SwtEditor
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite
+sname
+composite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sdescriptors
+xworker.swt.Widgets/@Composite
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite/@compositeGridLayout
+sname
+compositeGridLayout
+snumColumns
+3
+smakeColumnsEqualWidth
+false
+smarginWidth
+5
+smarginHeight
+5
+smarginLeft
+0
+smarginTop
+0
+smarginRight
+0
+smarginBottom
+0
+shorizontalSpacing
+5
+sverticalSpacing
+5
+sdescriptors
+xworker.swt.Layouts/@GridLayout
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.swt.Widgets/@actions
+@/@SwtEditSetting/@SwtEditor/@composite/@actions/@initHistory
+sname
+initHistory
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+historyTable.removeAll();
+
+def memory = world.getThing("_local.xworker.worldExplorer.CreateThingMemory");
+if(memory == null){
+    memory = new Thing("xworker.ide.worldExplorer.swt.memory.CreateThingMemory/@struct");
+    memory.saveAs("_local", "_local.xworker.worldExplorer.CreateThingMemory");
+
+    memory = world.getThing("_local.xworker.worldExplorer.CreateThingMemory");
+}
+def ms = memory.childs;
+
+def alist = [];
+for(m in ms){
+    alist.add(m);
+}
+
+alist = alist.sort{ l,r -> return r.lastVisit <=> l.lastVisit};
+historyTable.setData(alist);
+for(m in alist){    
+    historyTable.updateRow(null, -1, m);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+initHistory
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@actions/@initCategoryThing
+sname
+initCategoryThing
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+historyTable.removeAll();
+
+def item = categoryTree.getSelection()[0];
+
+def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+def webUrl = globalConfig.getString("webUrl");
+historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + item.getData().metadata.path);
+    
+def alist = [];
+for(child in item.getData().getAllChilds()){
+    if(child.thingName == "Thing"){
+        def t = [:];
+        t.name = child.metadata.label;
+        t.path = child.getString("descriptor");
+        t.lastVisit = "";
+        t.visitCount = "";
+        t.thingType = child.thingType;
+        t.thingPath = child.thingPath;
+        alist.add(t);
+    }
+}
+
+historyTable.setData(alist);
+for(m in alist){    
+    historyTable.updateRow(null, -1, m);
+}
+#$@text#$@
+sid
+initCategoryThing
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@deslabel
+sname
+deslabel
+stext
+res:res.w_exp:descriptorNameLabel:描述名：
+stype
+HORIZONTAL
+sshadow
+SHADOW_OUT
+sBORDER
+false
+salignment
+LEFT
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+deslabel
+slabel
+deslabel
+sdescriptors
+xworker.swt.Widgets/@Label
+@/@SwtEditSetting/@SwtEditor/@composite/@descriptorText
+sname
+descriptorText
+sstyle
+SINGLE
+sH_SCROLL
+false
+sV_SCROLL
+false
+sWRAP
+false
+sREAD_ONLY
+false
+sPASSWORD
+false
+sSEARCH
+false
+sCANCEL
+false
+sBORDER
+true
+salign
+LEFT
+sid
+descriptorText
+slabel
+descriptorText
+sdescriptors
+xworker.swt.Widgets/@Text
+@/@SwtEditSetting/@SwtEditor/@composite/@descriptorText/@descriptorTextGridData
+sname
+descriptorTextGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+300
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+descriptorTextGridData
+slabel
+descriptorTextGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@selectButton
+sname
+selectButton
+stext
+*
+stype
+SWT.PUSH
+sflat
+false
+sborder
+false
+sselected
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+selectButton
+slabel
+selectButton
+sdescriptors
+xworker.swt.Widgets/@Button
+@/@SwtEditSetting/@SwtEditor/@composite/@selectButton/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@SwtEditSetting/@SwtEditor/@composite/@selectButton/@listeners/@selectionButtonSelection
+sname
+selectionButtonSelection
+stype
+Selection
+sid
+selectionButtonSelection
+slabel
+selectionButtonSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@SwtEditSetting/@SwtEditor/@composite/@selectButton/@listeners/@selectionButtonSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+import xworker.swt.util.SwtDialog;
+
+def shell = selectButton.getShell();
+def dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+def treeItem = event.widget.getParent().getData();
+
+ActionContext context = new ActionContext();
+context.put("treeItem", treeItem);
+context.put("parent", shell);
+context.put("text", descriptorText);
+
+def newShell = dialogObject.doAction("create", context);
+SwtDialog dialog = new SwtDialog(selectButton.getShell(), newShell, context);
+
+def result = dialog.open();
+if(result != null){
+    descriptorText.setText(result);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite
+sname
+historyThingsComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+historyThingsComposite
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+historyComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@resources
+sname
+resources
+sdescriptors
+xworker.swt.Widgets/@Resource
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@resources/@folderImage
+sname
+folderImage
+stype
+Image
+simageFile
+icons/folder.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@resources/@historyImg
+sname
+historyImg
+stype
+Image
+simageFile
+icons/book_open.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@historyCompositeGridData
+sname
+historyCompositeGridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+3
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+historyCompositeGridData
+slabel
+historyCompositeGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie
+sname
+thingsCompostie
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+thingsCompostie
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@thingsCompositeGridLayout
+sname
+thingsCompositeGridLayout
+snumColumns
+1
+smakeColumnsEqualWidth
+false
+smarginWidth
+0
+smarginHeight
+5
+smarginLeft
+0
+smarginTop
+0
+smarginRight
+0
+smarginBottom
+0
+shorizontalSpacing
+5
+sverticalSpacing
+5
+sid
+thingsCompositeGridLayout
+slabel
+thingsCompositeGridLayout
+sdescriptors
+xworker.swt.Layouts/@GridLayout
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historyLabel
+sname
+historyLabel
+stext
+label:xworker.ide.worldExplorer.swt.i18n.I18nResource/@newThingDialog/@historyLabel
+stype
+HORIZONTAL
+sshadow
+SHADOW_OUT
+sBORDER
+false
+salignment
+LEFT
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+historyLabel
+slabel
+historyLabel
+sdescriptors
+xworker.swt.Widgets/@Label
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historyLabel/@historyLabelGridData
+sname
+historyLabelGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+historyLabelGridData
+slabel
+historyLabelGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm
+sname
+historySashForm
+sstyle
+HORIZONTAL
+sSMOOTH
+false
+sweights
+40,60
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+historySashForm
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+historySashForm
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@categoryTree
+sname
+categoryTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+false
+sHIDE_SELECTION
+true
+sBORDER
+true
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+true
+smoveableColumns
+true
+sheadImages
+false
+ssubImages
+false
+scheckSelection
+false
+sxw_cl_global
+false
+sid
+categoryTree
+slabel
+categoryTree
+sdescriptors
+xworker.swt.Widgets/@Tree
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@categoryTree/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@categoryTree/@listeners/@categoryTreeSelection
+sname
+categoryTreeSelection
+stype
+Selection
+sid
+categoryTreeSelection
+slabel
+categoryTreeSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@categoryTree/@listeners/@categoryTreeSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.swt.util.ResourceManager;
+
+def item = categoryTree.getSelection()[0];
+
+if(item.getData() == null){
+    //历史记录
+    actions.doAction("initHistory", actionContext);
+}else{
+    //历史记录
+    actions.doAction("initCategoryThing", actionContext);
+}
+
+for(tableItem in historyTable.getItems()){
+    def path = tableItem.getData().get("path");
+    def thing = world.getThing(path);
+    if(thing != null){
+        def img = getIcon(thing, historyTable, actionContext);
+        if(img != null){
+            tableItem.setImage(img);
+        }
+    }
+}
+
+def getIcon(thing, table, actionContext){
+	String icon = null;
+	icon = thing.getString("icon");
+	if(icon == null || icon == ""){
+    	for(descriptor in thing.getAllExtends()){
+    	    //println descriptor.getMetadata().getPath();
+    	    icon = descriptor.getString("icon");
+    	    //println icon;
+    	    if(icon != null && !"".equals(icon)){
+    	        break;
+    	    }
+    	}
+	}
+	if(icon == null || icon == ""){
+	    def metaThing = world.getThing("xworker.lang.MetaThing");
+	    icon = metaThing.getString("icon");
+	}
+	
+	if(icon != null && !"".equals(icon)){
+		actionContext.push().put("parent", table);
+    	try{
+	        return ResourceManager.createIamge(icon, actionContext);
+    	}catch(Exception e){
+    		logger.error("Create image error", e);
+    	}finally{
+    		actionContext.pop();
+    	}
+	}
+	
+	return null;
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm
+sname
+descriptorSashForm
+sstyle
+VERTICAL
+sSMOOTH
+false
+sweights
+55,45
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+descriptorSashForm
+sdescriptors
+xworker.swt.Widgets/@SashForm
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable
+sname
+historyTable
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+true
+sHIDE_SELECTION
+false
+sBORDER
+true
+slineVisible
+true
+smultipleColumns
+true
+sheaderVisible
+true
+ssortIndicator
+true
+smoveableColumns
+true
+sheadImages
+false
+ssubImages
+false
+sVIRTUAL
+false
+scolumnNames
+["name", "lastVisit", "visitCount"] as String[]
+sid
+historyTable
+slabel
+historyTable
+sdescriptors
+xworker.swt.Widgets/@DataTable
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@nameItem
+sname
+nameItem
+stext
+res:res.w_exp:name:名称
+swidth
+400
+sid
+nameItem
+slabel
+nameItem
+sdescriptors
+xworker.swt.xworker.DataTable/@TableColumn
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@nameItem/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@nameItem/@listeners/@nameItemSelection
+sname
+nameItemSelection
+stype
+Selection
+sid
+nameItemSelection
+slabel
+nameItemSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@nameItem/@listeners/@nameItemSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+
+def sortColumn = historyTable.getSortColumn();
+def currentColumn = event.widget;
+int dir = historyTable.getSortDirection();
+if (sortColumn == currentColumn) {
+	dir = dir == SWT.UP ? SWT.DOWN : SWT.UP;
+} else {
+	historyTable.setSortColumn(currentColumn);
+	switch(currentColumn){
+	    case nameItem:
+	    case lastVisitItem:
+	    case visitCountItem:
+	        dir = SWT.DOWN;
+	        break;
+	    default:
+	        dir = SWT.UP;
+	        break;
+	}
+}
+
+historyTable.setSortDirection(dir);
+def alist = historyTable.getData();
+if(currentColumn == nameItem){
+    if(dir == SWT.DOWN){
+        alist = alist.sort{l,r -> return r.name <=> l.name};
+    }else{
+        alist = alist.sort{l,r -> return l.name <=> r.name};
+    }
+}
+/*
+if(currentColumn == lastVisitItem){
+    if(dir == SWT.DOWN){
+        alist = alist.sort{l,r -> return r.lastVisit <=> l.lastVisit};
+    }else{
+        alist = alist.sort{l,r -> return l.lastVisit <=> r.lastVisit};
+    }
+}
+if(currentColumn == visitCountItem){
+    if(dir == SWT.DOWN){
+        alist = alist.sort{l,r -> return r.visitCount <=> l.visitCount};
+    }else{
+        alist = alist.sort{l,r -> return l.visitCount <=> r.visitCount};
+    }
+}
+*/
+historyTable.removeAll();
+for(m in alist){
+    historyTable.updateRow(null, -1, m);
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@listeners/@historyTableSelection
+sname
+historyTableSelection
+stype
+Selection
+sid
+historyTableSelection
+slabel
+historyTableSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@historyTable/@listeners/@historyTableSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def itemData = historyTable.getSelection()[0].getData();
+
+def path = itemData.path;
+def docPath = path;
+def pathObj = world.getThing(path);
+
+if(path != null){
+    descriptorText.setText(path);
+    //def cfg = world.getThing("xworker.ide.config.globalConfig/@html");
+    //String html = cfg.getString("head") + pathObj.getString("description") + cfg.getString("bottom"); 
+    
+    def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+    def webUrl = globalConfig.getString("webUrl");
+    historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + docPath);
+    /*String html = pathObj.getString("description");
+    if(html == null){
+        html = "";
+    }
+    historyBorwser.setText(html);*/
+}else{
+    descriptorText.setText("");
+    historyBorwser.setText("");
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@browserComposite
+sname
+browserComposite
+sBORDER
+true
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+browserComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@browserComposite/@historyBorwser
+sname
+historyBorwser
+sMOZILLA
+false
+sid
+historyBorwser
+slabel
+historyBorwser
+sdescriptors
+xworker.swt.Widgets/@Browser
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@browserComposite/@historyBorwser/@historyBrowserUtil
+sname
+historyBrowserUtil
+sid
+historyBrowserUtil
+sdescriptors
+xworker.swt.browser.Browser/@UtilBrowser
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@descriptorSashForm/@browserComposite/@browserCompositeFillLayout
+sname
+browserCompositeFillLayout
+stype
+SWT.HORIZONTAL
+sxw_cl_global
+false
+sid
+browserCompositeFillLayout
+slabel
+browserCompositeFillLayout
+sdescriptors
+xworker.swt.Layouts/@FillLayout
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@thingsCompostie/@historySashForm/@historySashFormgridData
+sname
+historySashFormgridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+historySashFormgridData
+slabel
+historySashFormgridData
+sdescriptors
+xworker.swt.layout.LayoutDatas/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite
+sname
+templateComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+templateComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite/@thingsCompositeGridLayout
+sname
+thingsCompositeGridLayout
+snumColumns
+1
+smakeColumnsEqualWidth
+false
+smarginWidth
+0
+smarginHeight
+5
+smarginLeft
+0
+smarginTop
+0
+smarginRight
+0
+smarginBottom
+0
+shorizontalSpacing
+5
+sverticalSpacing
+5
+sid
+thingsCompositeGridLayout
+slabel
+thingsCompositeGridLayout
+sdescriptors
+xworker.swt.Layouts/@GridLayout
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite/@historyLabel
+sname
+historyLabel
+stext
+编辑模板数据：
+stype
+HORIZONTAL
+sshadow
+SHADOW_OUT
+sBORDER
+false
+salignment
+LEFT
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+historyLabel
+slabel
+historyLabel
+sdescriptors
+xworker.swt.Widgets/@Label
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite/@historyLabel/@historyLabelGridData
+sname
+historyLabelGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+historyLabelGridData
+slabel
+historyLabelGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite/@templateComp
+sname
+templateComp
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+templateComp
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@templateComposite/@templateComp/@tempalteCompGridData
+sname
+tempalteCompGridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+tempalteCompGridData
+slabel
+tempalteCompGridData
+sdescriptors
+xworker.swt.layout.LayoutDatas/@GridData
+@/@SwtEditSetting/@SwtEditor/@composite/@historyComposite/@historyCompositeStackLayotu
+sname
+historyCompositeStackLayotu
+stopControl
+templateComposite
+sid
+historyCompositeStackLayotu
+slabel
+historyCompositeStackLayotu
+sdescriptors
+xworker.swt.Layouts/@StackLayout
+@/@SwtEditSetting/@SwtEditor/@composite/@InitCode
+sname
+InitCode
+slabel
+InitCode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+
+//历史记录
+actions.doAction("initHistory", actionContext);
+
+//目录树
+def item = new TreeItem(categoryTree, SWT.NONE);
+item.setText(world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@newThingDialog/@historyRecord").metadata.label);
+item.setImage(historyImg);
+       
+def coreThings = world.getThing("xworker.ide.config.Things");
+initThings(categoryTree, coreThings);
+
+for(thingManager in world.getThingManagers()){
+    def rootCategory = thingManager.getCategory(null);
+    for(lv1Category in rootCategory.getCategorys()){
+        for(lv2Category in lv1Category.getCategorys()){
+            String project = lv1Category.getSimpleName() + "." + lv2Category.getSimpleName();
+            def things = world.getThing(project + ".config.Things");
+            if(things != null){
+                 if(project == "xworker.ide"){                    
+                 }else{
+                     initThings(categoryTree, things);
+                 }
+            }
+        }
+    }
+}
+
+/*
+for(project in world.getProjects()){
+    for(thingManager in project.getThingManagers()){
+        def things = world.getThing(project.getName() + ":" + thingManager.getName() + ":config.Things");
+        if(things != null){
+             if(project.name == "xworker" && thingManager.name == "core"){                    
+             }else{
+                 initThings(categoryTree, things);
+             }
+        }
+    }
+}
+*/
+
+//为解决模板bug，事物定义是先显示模板，正常启动后切换到事物选择
+historyCompositeStackLayotu.topControl = thingsCompostie;
+historyThingsComposite.layout();
+
+def initThings(treeItem, things){
+    for(child in things.getAllChilds()){
+        if(child.thingName == "Category"){
+            def item = new TreeItem(treeItem, SWT.NONE);
+            item.setText(child.metadata.label);
+            item.setData(child);
+            item.setImage(folderImage);
+            
+            initThings(item, child);
+        }
+    }
+    
+    if(treeItem instanceof TreeItem){
+        treeItem.setExpanded(true);
+    }
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+InitCode
+sdescriptors
+xworker.swt.Widgets/@Code
+@/@SwtEditSetting/@SwtEditor/@model
+sname
+model
+sdataType
+Map
+svalidate
+true
+sfocus
+false
+sfocusColor
+"#E8FAFF"
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.swt.Widgets/@Model
+sth_createIndex
+false
+sth_mark
+false
+@/@SwtEditSetting/@SwtEditor/@model/@path
+sname
+descriptor
+sswtControl
+descriptorText
+svalidate
+true
+sfocus
+false
+sfocusColor
+"#E8FAFF"
+svalidateAllowBlank
+false
+sblankText
+请选择一个描述者！
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.swt.model.Model/@Model
+sth_createIndex
+false
+sth_mark
+false

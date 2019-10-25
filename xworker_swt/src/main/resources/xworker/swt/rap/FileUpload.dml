@@ -1,0 +1,493 @@
+%1570529636206
+@
+sname=FileUpload
+slabel=FileUpload
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.widgets.Control
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>A button-like widget allowing to select a file from the client&#39;s file system and to upload this file to a given URL using HTTP POST. Multiple files may be selected if MULTI style is given, but not all clients may support it.</p>
+
+<p><strong>基本功能</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; FileUpload是一个按钮，点击后会出现文件选择对话框，选中文件后触发Selection事件，在Session事件监听里可以调用FileUpload.submit(String url)方法把文件提交到指定的url中。</p>
+
+<p><strong>简单用法，设置useDefaultHandler=true</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;此时会使用XWorker默认事件的Selection监听器，它使用FileUploadHandler来接受上传的文件。<font color="#353833" face="Arial">See </font><a href="http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/index.html?org/eclipse/rap/fileupload/FileUploadEvent.html">http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/index.html?org/eclipse/rap/fileupload/FileUploadEvent.html.</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 此时可以通过重写下面的方法来监听文件的传输：</p>
+
+<ul>
+	<li><strong>void uploadProgress()</strong><br />
+	上传进行中。<span style="color: rgb(255, 0, 0);"><strong>注意uploadProgress事件会被大量触发，避免执行耗时操作，否则会严重影响上传速度。</strong></span><br />
+	&nbsp;&nbsp;</li>
+	<li><strong>void&nbsp;uploadFinished()</strong><br />
+	上传完成了。<br />
+	&nbsp;</li>
+	<li><strong>void&nbsp;uploadFailed()</strong><br />
+	上传失败了。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>以上方法的参数为：</strong></p>
+
+<ul>
+	<li><a href="http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/org/eclipse/rap/rwt/widgets/FileUpload.html">org.eclipse.rap.rwt.widgets.FileUpload</a> <strong>fileUpload</strong></li>
+	<li><a href="http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/org/eclipse/rap/fileupload/FileUploadHandler.html">org.eclipse.rap.fileupload.FileUploadHandler</a> <strong>uploadHandler</strong></li>
+	<li><a href="http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/org/eclipse/rap/fileupload/DiskFileUploadReceiver.html">org.eclipse.rap.fileupload.FileUploadReceiver</a> <strong>receiver</strong></li>
+	<li><a href="http://download.eclipse.org/rt/rap/doc/3.6/guide/reference/api/index.html?org/eclipse/rap/fileupload/FileUploadEvent.html">org.eclipse.rap.fileupload.FileUploadEvent</a> <strong>event</strong></li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 常用方法：</p>
+
+<ul>
+	<li><strong>FileDetails[] event.getFileDetails()</strong><br />
+	返回上传的文件信息。</li>
+	<li><strong>long getBytesRead()</strong><br />
+	已经读取的字节数。注意这是event里所有文件总的已读。</li>
+	<li><strong>long getContentLength()</strong><br />
+	文件内容总的长度。注意这是event里所有文件的总长度。</li>
+	<li><strong>File receiver.getTargetFile(FileDetails fileDetial)</strong><br />
+	返回fileDetial对应的目标文件。</li>
+</ul>
+
+<p><strong>&nbsp;&nbsp;&nbsp; 可以重写方法：</strong></p>
+
+<ul>
+	<li><strong>File getFileDir()</strong><br />
+	默认的FileUploadReceiver使用的是DiskFileUploadReceiver，是文件的临时存放目录。如果没有指定，只用用户临时目录。<br />
+	&nbsp;</li>
+	<li><strong>FileUploadReceiver getFileUploadReceiver()</strong><br />
+	返回文件接收器，默认使用DiskFileUploadReceiver。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.rap.widgets.FileUploadActions
+    smethodName=create
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@uploadProgress
+    sname=uploadProgress
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.rap.widgets.FileUploadActions
+    smethodName=uploadProgress
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uploadProgress
+    @/@actions/@uploadFinished
+    sname=uploadFinished
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.rap.widgets.FileUploadActions
+    smethodName=uploadFinished
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uploadFinished
+    @/@actions/@uploadFailed
+    sname=uploadFailed
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.rap.widgets.FileUploadActions
+    smethodName=uploadFailed
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uploadFailed
+    @/@actions/@getTempFileDir
+    sname=getFileDir
+    sattributeName=fileDir
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetFile
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTempFileDir
+    @/@actions/@getFileUploadReceiver
+    sname=getFileUploadReceiver
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.rap.widgets.FileUploadActions
+    smethodName=getFileUploadReceiver
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getFileUploadReceiver
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@MULTI
+  sname=MULTI
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=MULTI
+  @/@text
+  sname=text
+  ssize=40
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=text
+  @/@extensions
+  sname=filterExtensions
+  ssize=60
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  sdescription=<p>如有多个使用英文逗号分隔。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=extensions
+  @/@image
+  sname=image
+  sinputtype=imageSelector
+  ssize=50
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=image
+  @/@useDefaultHandler
+  sname=useDefaultHandler
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=true
+  sinheritDescription=false
+  sdescription=<p>如果为true，那么使用默认的Handler。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=useDefaultHandler
+  @/@maxFileSize
+  sname=maxFileSize
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=maxFileSize
+  @/@timeLimit
+  sname=timeLimit
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  sdescription=<p><span style="text-align: left; color: rgb(53, 56, 51); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: Arial, Helvetica, sans-serif; font-size: 12.16px; font-style: normal; font-weight: 400; word-spacing: 0px; float: none; display: inline !important; white-space: normal; orphans: 2; widows: 2; background-color: rgb(238, 238, 239); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px; text-decoration-style: initial; text-decoration-color: initial;">Sets the maximum upload duration in milliseconds.</span></p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=timeLimit
+  @/@tempFileDir
+  sname=fileDir
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  sdescription=<p>在useDefaultHandler=true和使用默认的FileUploadReceiver时有效，是上传文件的所保存的目录。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=tempFileDir
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label=动作
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@shell
+    sname=var
+    svarName=ognl:thing.getMetadata().getName()
+    stype=object
+    sclassName=org.eclipse.nebula.widgets.grid.Grid
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=shell

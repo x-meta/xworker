@@ -1,0 +1,269 @@
+%1515652294751
+@
+sname=ManageAppSessions
+slabel=管理App的会话事物
+sautoExecute=false
+sdescription=<p>快速设置子节点中的AppSession。</p>
+sdescriptors=xworker.lang.util.ThingGuide
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=guide|xworker.net.jsch.Sessions
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=app
+sth_mark=false
+  @/@Composite
+  sname=Composite
+  slabel=管理App会话
+  snotRemoveGuideOnFinish=false
+  sdescriptors=xworker.lang.util.ThingGuideNodes/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.lang.util.ThingGuideNodes/@Composite/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Composite
+      @/@Composite/@Composite/@composteGridLayout
+      sname=composteGridLayout
+      smakeColumnsEqualWidth=false
+      smarginWidth=5
+      smarginHeight=5
+      smarginLeft=0
+      smarginTop=0
+      smarginRight=0
+      smarginBottom=0
+      shorizontalSpacing=5
+      sverticalSpacing=5
+      sdescriptors=xworker.swt.Layouts/@GridLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=composteGridLayout
+      @/@Composite/@Composite/@editor1
+      sname=editor
+      sdataObject=xworker.app.server.dataobjects.Server
+      squeryButton=true
+      snewButton=true
+      seditButton=true
+      seditBatchButton=false
+      sdeleteButton=true
+      sselectAllButton=false
+      sselectRerverseButton=false
+      stoolsButton=false
+      spagingToolbar=true
+      sactionContext=dataObjectContext
+      stableCheck=true
+      sdebug=false
+      sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=editor1
+        @/@Composite/@Composite/@editor1/@editorGridData
+        sname=editorGridData
+        sstyle=FILL_BOTH
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=editorGridData
+        @/@Composite/@Composite/@editor1/@actions
+        sname=actions
+        sdescriptors=xworker.app.view.swt.widgets.DataObjectEditCompoiste/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@Composite/@Composite/@editor1/@actions/@onStoreLoaded1
+          sname=onStoreLoaded
+          swidgetForDisplay=Composite
+          stype=async
+          svariables=thingGuide,editor
+          scancelTaskOnWidgetDisposed=false
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onStoreLoaded1
+            @/@Composite/@Composite/@editor1/@actions/@onStoreLoaded1/@actions
+            sname=actions
+            sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec/@actions
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=actions
+              @/@Composite/@Composite/@editor1/@actions/@onStoreLoaded1/@actions/@onStoreLoaded
+              sname=doAction
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+if(actionContext.get("editor") == null){
+    return;
+}
+
+def ac = editor.getData("actionContext");
+def thing = thingGuide.getEditThing();
+for(item in ac.dataTable.getItems()){
+    def dataObject = item.getData();
+    for(child in thing.getChilds()){
+        if(child.getThingName() == "AppSession" 
+                && child.getLong("serverId") == dataObject.getLong("id")){
+             item.setChecked(true);
+             break;
+        }
+    }
+}
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=onStoreLoaded
+          @/@Composite/@Composite/@editor1/@actions/@tableSelection
+          sname=tableSelection
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def dataObject = event.item.getData();
+def add = event.item.getChecked();
+def thing = thingGuide.getEditThing();
+
+def have = false;
+def changed = false;
+for(child in thing.getChilds()){
+    if(child.getThingName() == "AppSession" 
+            && child.getLong("serverId") == dataObject.getLong("id")){
+         have = true;
+         break;
+    }
+}
+
+if(!have){
+    if(add){
+        def session = new Thing("xworker.net.jsch.AppSession");
+        session.put("name", "Server" + dataObject.getString("id"));
+        session.put("label", dataObject.getString("name"));
+        session.put("serverId", dataObject.getString("id"));
+        session.put("serverName", dataObject.getString("name"));
+        thing.addChild(session);
+        changed = true;
+    }
+}else{
+    if(!add){
+        for(child in thing.getChilds("AppSession")){
+            if(dataObject.getString("id") == child.getString("serverId")){
+                thing.removeChild(child);
+                changed = true;
+                break;
+            }
+        }
+    }
+}
+
+if(changed){
+    thing.save();
+}
+
+return true;
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=tableSelection
+      @/@Composite/@Composite/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=editor.doAction("doQuery", actionContext);
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.widgets.Widget/@Code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init

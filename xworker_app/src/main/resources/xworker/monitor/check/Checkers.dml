@@ -1,0 +1,69 @@
+%1554712926134
+@
+sname=Checkers
+slabel=Checkers
+Sdescription=
+#$@text#$@
+<p>数据检查者的接口。</p>
+
+<p><strong>约定的行为</strong></p>
+
+<ul>
+	<li><strong>String check(int level)</strong><br />
+	执行检查返回检查的结果，如果没有结果可以返回null，结果使用html格式，不包含html的头。<br />
+	<strong>level:</strong> 返回消息的重要性级别。参看类xworker.data.DATA所设置的常量。</li>
+</ul>
+
+<p><strong>xworker.data.DATA</strong></p>
+
+<ul>
+	<li>DEBUG=0</li>
+	<li>INFO=1</li>
+	<li>WARNING=2</li>
+	<li>ERROR=3</li>
+</ul>
+
+<p><strong>新建和注册</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<a href="javascript:invoke('action:xworker.swt.xworker.prototype.ThingRegistViewer/@ActionContainer/@openThingRegistViewer?type=child&amp;thing=xworker.data.check.Checkers')">这里</a>可以打开事物注册浏览界面，在里面可以添加可注册事物并实现注册。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以检查的事物，可以可以以child的方式注册到xworker.data.check.Checkers下。</p>
+
+<p><strong>HTML模板</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>标题模板。</strong></p>
+
+<pre class="brush:xml;">
+&lt;h2&gt;${checker.metadata.label}&lt;/h2&gt;
+&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;${checker.metadata.path}
+&lt;hr style=&quot;height:3px;border:none;border-top:3px double red;&quot; /&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>表格模板。</strong></p>
+
+<pre class="brush:xml;">
+&lt;table class=&quot;datatable&quot;&gt;
+  &lt;caption&gt;${check.metadata.label}&lt;/caption&gt;
+  &lt;tr&gt;
+      &lt;th&gt;数据库&lt;/th&gt;
+      &lt;th&gt;检查结果&lt;/th&gt;
+      &lt;th&gt;消息&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;#list msgs as msg&gt;
+  &lt;tr&gt;
+      &lt;td&gt;${msg.dataSource.metadata.label}&lt;/td&gt;
+      &lt;td&gt;${msg.status}&lt;/td&gt;
+      &lt;td&gt;${msg.dataSource.metadata.path}&lt;/br&gt;${msg.msg?if_exists}&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;/#list&gt;
+&lt;/table&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.lang.util.ThingIndex
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.util.ThingIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=xworker.monitor
+sth_mark=false

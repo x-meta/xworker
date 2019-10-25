@@ -1,0 +1,353 @@
+^1390457018450
+@xworker.jfreechart.data.general.DefaultPieDataset
+sname
+DefaultPieDataset
+slabel
+DefaultPieDataset
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.jfreechart.data.Dataset
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>饼图数据或键值对数据。应该是和只有一个rowKey的Category的数据类似。</p>
+
+<p>该数据的属性是：</p>
+
+<ul>
+	<li><strong>keyName</strong><br />
+	键名。<br />
+	&nbsp;</li>
+	<li><strong>valueName</strong><br />
+	值名。</li>
+</ul>
+
+<p>keyName和valueName均可以使用Ognl表达式。</p>
+#$@text#$@
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@actions/@createDateset
+sname
+createDataset
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.jfree.data.general.DefaultPieDataset;
+
+import ognl.Ognl;
+
+if(self.type == "Var"){
+    return Ognl.getValue(self.varName, actionContext);
+}else{
+    return new DefaultPieDataset();
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@actions/@loaded
+sname
+onLoaded
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+import org.jfree.data.statistics.BoxAndWhiskerItem;
+
+if(self.type == "Var"){
+    return;
+}
+
+//先移除旧的数据
+def dataset = self.dataset;
+log.info("dataSet=" + dataset);
+def rows = self.get("rows");
+if(rows != null){
+    for(rowKey in rows){
+        dataset.remove(rowKey);
+    }
+    rows.clear();
+}else{
+    rows = [];
+    self.put("rows", rows);
+}
+
+//重新加载数据
+String rowKey = self.keyName;
+String valueName = self.valueName;
+def datas = [:];
+for(record in store.records){
+    def row = "";
+    def value = 0;
+    if(rowKey != null && rowKey != ""){
+        row = Ognl.getValue(rowKey, record);
+    }
+    if(row == null){
+        row = "";
+    }
+    rows.add(row);
+
+    dataset.setValue(row, Ognl.getValue(valueName, record));
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.jfreechart.data.general.DefaultPieDataset/@actions/@loaded/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.jfreechart.data.general.DefaultPieDataset/@actions/@loaded/@ins/@store
+sname
+store
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.jfreechart.data.general.DefaultPieDataset/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@type
+sname
+type
+sinputtype
+select
+sshowLabel
+true
+sreadOnly
+false
+sdefault
+Dataset
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>取值的方式：</p>
+<ul>
+    <li>calculate<br />
+    根据数据值计算。<br />
+    &nbsp;</li>
+    <li>statistics<br />
+    数据仓库已提供箱线图的数据，只是从结果里取出来。</li>
+</ul>
+<p>各种属性对应的是DataStore数据的列名（属性名）。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@type/@calculate
+sname
+Var
+svalue
+Var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@type/@statistics
+sname
+Dataset
+svalue
+Dataset
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@varName
+sname
+varName
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@dataStore
+sname
+dataStore
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@rowKey
+sname
+keyName
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>键值名称。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.data.general.DefaultPieDataset/@valueName
+sname
+valueName
+sshowLabel
+true
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>提供用于计算箱线数据的数据列名称。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

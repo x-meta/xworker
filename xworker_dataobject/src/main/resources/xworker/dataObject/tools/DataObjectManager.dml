@@ -1,0 +1,335 @@
+%1565937791657
+@
+sname=shell
+stext=数据对象管理器
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=DataObjectManager
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@mainSashForm
+  sname=mainSashForm
+  sstyle=HORIZONTAL
+  sSMOOTH=false
+  sweights=30,70
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  slabel=数据对象实例
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@SashForm
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sicon=icons/database_table.png
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=mainSashForm
+    @/@mainSashForm/@thingRegist
+    sname=thingRegist
+    sthing=xworker.dataObject.DataObjectIns
+    sregistType=child
+    sparent=false
+    ssearchByKeywords=true
+    sshowContent=false
+    scontentDisplayType=TabFolder
+    sshowDescBrowser=false
+    sdescBrowserRight=false
+    sautoLoad=true
+    scache=true
+    sdescritporForNewThing=xworker.dataObject.tools.DataObjectCreator
+    sdescritporChilds=false
+    sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegist
+      @/@mainSashForm/@thingRegist/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@mainSashForm/@thingRegist/@actions/@defaultSelected
+        sname=defaultSelected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+if(thing != null){    
+    def composite = world.getThing("xworker.dataObject.tools.DataObjectEditor/@dataObjectEditor");
+    def tabKey = thing.getMetadata().getPath();
+    def text = thing.getMetadata().getLabel();
+    def contentKey = thing.getMetadata().getPath();
+    
+    def item = actions.doAction("open", actionContext, [
+             "composite":composite, "tabKey":tabKey, "text":text, "contentKey":contentKey
+        ]);
+    if(item != null){
+        def ac = item.getData("actionContext");
+        ac.g().put("dataObject", thing);
+        ac.dataObjectEditor.doAction("setDataObject", ac, ["dataObject":thing]);
+    }
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=defaultSelected
+        @/@mainSashForm/@thingRegist/@actions/@selected
+        sname=selected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+
+if(thing != null){    
+    //设置概要栏中的文档
+    if(actionContext.get("outlineBrowser") != null){
+        def url = XWorkerUtils.getThingDescUrl(thing);
+        outlineBrowser.setUrl(url);
+    }
+    
+    //打开
+    def composite = world.getThing("xworker.dataObject.tools.DataObjectEditor/@dataObjectEditor");
+    def tabKey = thing.getMetadata().getPath();
+    def text = thing.getMetadata().getLabel();
+    def contentKey = thing.getMetadata().getPath();
+    
+    def item = actions.doAction("open", actionContext, [
+             "composite":composite, "tabKey":tabKey, "text":text, "contentKey":contentKey
+        ]);
+    if(item != null){
+        def ac = item.getData("actionContext");
+        ac.g().put("dataObject", thing);
+        ac.dataObjectEditor.doAction("setDataObject", ac, ["dataObject":thing]);
+    }
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=selected
+    @/@mainSashForm/@contentTabFolder
+    sname=contentTabFolder
+    sstyle=TOP
+    sBORDER=true
+    sFLAT=true
+    sCLOSE=false
+    sSINGLE=false
+    sMRUVisible=false
+    ssimple=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@CTabFolder
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=contentTabFolder
+    @/@mainSashForm/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@mainSashForm/@actions/@oepn
+      sname=open
+      scompositePath=var:composite
+      scTabFolder=var:contentTabFolder
+      sclose=true
+      stabItemText=var:text
+      stabItemKey=var:tabKey
+      stabContentKey=var:contentKey
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.actions.CTabFolderActions/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=oepn
+      @/@mainSashForm/@actions/@ideInit
+      sname=ideInit
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ideInit
+      @/@mainSashForm/@actions/@getOutline
+      sname=getOutline
+      svarName=outlineBrowser
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getOutline
+    @/@mainSashForm/@RunAction
+    sname=RunAction
+    sdescriptors=xworker.swt.widgets.Widget/@RunAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=RunAction
+      @/@mainSashForm/@RunAction/@CreateOutline
+      sname=CreateOutline
+      soutlineBrowserUrl=descurl:xworker.dataObject.DataObjectIns
+      snewActionContext=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.app.AppActions/@CreateOutline
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=CreateOutline

@@ -1,0 +1,26 @@
+<Shell xmlns="http://www.xworker.org/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.xworker.org/schema http://www.xworker.org/schema/swt.xsd"
+    text="HelloWorld" width="640" height="480" descriptors="xworker.swt.widgets.Shell">
+     
+    <FillLayout/>
+    <SashForm weights="30,70">        
+        <Tree FULL_SELECTION="false" lineVisible="false">
+            <TreeModels>
+                <FileTreeModel bindToParent="true" filePath="."></FileTreeModel>
+            </TreeModels>
+            <Listeners>
+                <Listener type="DefaultSelection">
+                    <GroovyAction>
+                        <code>def file = new File(event.item.getData().get("dataId"));
+                        if(file.isFile()){
+                            text.setText(file.text);
+                        }
+                        </code>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Tree>   
+        <StyledText name="text" H_SCROLL="true" V_SCROLL="true" style="MULTI"></StyledText>
+    </SashForm>
+</Shell>

@@ -1,0 +1,610 @@
+^1428563379007
+@
+sname
+Search
+slabel
+Search
+scheckPermission
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction
+sname
+doAction
+schangeSelf
+false
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.actions.Actions/@ActionGroup
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions
+sname
+actions
+sdescriptors
+xworker.lang.actions.Begin/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1
+sname
+query
+sdataObjectPath
+xworker.app.orgweb.dataobjects.ContentTree
+sisServlet
+true
+screatePageInfo
+true
+spageInfoVarName
+pageInfo
+spageInfoVarScope
+Global
+spage
+page
+spageSize
+10
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Global
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+true
+sreturnVarName
+datas
+sdisableGlobalContext
+false
+sdescriptors
+xworker.dataObject.actions.DataObjectActions/@query
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1/@Condition1
+sname
+Condition
+boperator
+1
+sjoin
+and
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.actions.DataObjectActions/@query/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1/@Condition1/@keys
+sname
+keys
+sdataName
+q
+boperator
+1
+sjoin
+and
+smultiValueJoin
+or
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.query.Condition/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1/@Condition1/@keys/@actions
+sname
+actions
+sdescriptors
+xworker.dataObject.query.Condition/@actions1
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1/@Condition1/@keys/@actions/@nodeToSql
+sname
+nodeToSql
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.query.UtilCondition;
+
+//获取关键字
+def q = UtilCondition.getConditionValue(self, actionContext);
+
+//没有查询条件返回null
+if(q == null || q == ""){
+    return null;
+}
+
+//分解关键字
+def qs = q.split("[,]");
+//子查询的sql
+def sql ="tid in (select contentTreeId FROM tblcontentkeywords where keyword in ("
+for(int i=0; i<qs.length; i++){
+   if(i != 0){
+       sql = sql + ",";
+   }
+   sql = sql + "?";
+   
+   //添加查询的条件的值，PreparedStatement设置参数时会使用
+   UtilCondition.addConditionValue(self, qs[i], actionContext);
+}
+sql = sql + ") group by contentTreeId having count(distinct keyword) = ?)";
+UtilCondition.addConditionValue(self, qs.length, actionContext);
+
+//最后返回sql
+return sql;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@doAction1/@Condition1/@isPage
+sname
+isPage
+sattributeName
+isPage
+boperator
+1
+sjoin
+and
+svalue
+1
+signoreNull
+true
+sdummySql
+false
+sisClause
+false
+saddOneDay
+false
+sdescriptors
+xworker.dataObject.query.Condition/@Condition
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@actions/@initTopMenu
+sname
+initTopMenu
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.app.orgweb.ContentTreeManager;
+import java.text.SimpleDateFormat;
+
+//右上角的菜单标识
+def topMenuId = 12;
+try{
+    topMenuId = Integer.parseInt(request.getParameter("topMenuId"));
+}catch(Exception e){
+}
+
+def topMenu = ContentTreeManager.getContentTree(topMenuId);
+def bindings = actionContext.getScope(0);
+bindings.put("menuSets", topMenu);
+bindings.put("topRightMenu", topMenu);
+bindings.put("topMenuId", topMenuId);
+
+//修改datas的url
+def sf = new SimpleDateFormat("yyyy年MM月dd日");
+for(data in datas){
+   def url = data.url;   
+   if(url.startsWith("thing:")){
+       if(data.parentId != -1){
+           data.newUrl = "do?sc=xworker.app.orgweb.web.Index&id=" + data.tid;
+       }else{
+           data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+               "&id=" + getCategoryId(data);
+       }
+   }else if(url == null || url == ""){
+       if(data.parentId != -1){
+           data.newUrl = "do?sc=xworker.app.orgweb.web.Index&id=" + data.tid;
+       }else{
+           data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+               "&id=" + getCategoryId(data);
+       }
+   }else{
+       data.newUrl = url;
+   }
+   if(data.get("status") == 0){
+       data.label = data.label + "(未发布)";
+       if(data.parentId != -1){
+           data.newUrl = "do?sc=xworker.app.orgweb.web.Index&id=" + data.tid;
+       }else{
+           data.newUrl = "do?sc=xworker.app.orgweb.web.IndexSearchView&contentId=" + data.tid + 
+               "&id=" + getCategoryId(data);
+       }
+   }
+   //data.newDescription = sf.format(data.updateDate) + "&nbsp;-&nbsp;" + data.description;
+   data.newDescription = data.description;
+}
+
+def getCategoryId(data){
+    if(data.categoryId == 0 && data.parentId != -1){
+        return data.parentId;
+    }
+    
+    return data.categoryId;
+}
+return "success";
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view
+sname
+view
+stitle
+${topRightMenu.label?default("查找")}
+sbelongToHtml
+true
+sstyle
+default
+shasHead
+false
+shasBottom
+false
+snoCache
+false
+Sdescription
+#$@text#$@
+<form action="do?sc=xworker.app.orgweb.web.Search" name="form"><input name="topMenuId" type="hidden" value="${topMenuId}" />
+<p><input name="q" size="60" type="text" /><input name="submit" type="submit" value="查找" /></p>
+</form>
+#$@text#$@
+SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/2_6beta1/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+<link rel="stylesheet" href="css/xworker_org/ebadusmenu.css" type="text/css" />
+<script src="js/jquery/jquery-1.4.2.min.js" type="text/javascript"></script>
+<script src="js/xworker_org/ebadusmenu.js" type="text/javascript"></script>
+#$@text#$@
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@topMenu
+sname
+topMenu
+Scode
+#$@text#$@
+<#if topRightMenu?exists>
+<!-- 右上角的菜单 -->
+<script type="text/javascript">
+<#list topRightMenu.childs as bar>
+<#if bar.childs?exists>
+ebadusmenu.definemenu("${bar.id}", "${bar.id}_sub", "mouseover")
+</#if>
+</#list>
+</script>
+</#if>  
+
+<!-- 右上角的菜单 -->
+<div id="headerb">
+  <div class="logo"><img src="${menuSets.getIconPath()?default("images/xworker_org/xworker_logo.png")}" /></div>
+  <div class="hdright">
+    <div class="hdrow">
+    <#if topRightMenu?exists>
+      <ul id="ebadu_nav" class="ebadu_nav">
+      
+        <#list topRightMenu.childs as bar>
+        <li>
+          <a <#if bar.getTarget()?exists>target="${bar.getTarget()}"</#if>  href="${bar.getUrl()?if_exists}" <#if bar.childs?exists>id="${bar.id?if_exists}"</#if>>${bar.getLabel()?if_exists}</a>
+        </li>
+        <#if bar_has_next>
+        <span class="sep">|</span>
+        </#if>
+        </#list>
+        
+      </ul>
+      </#if>
+     </div>
+   </div>
+</div> 
+<#if topRightMenu?exists>
+<!-- 二级菜单 -->
+<#list topRightMenu.childs as bar>
+<#if bar.childs?exists>
+<div id="${bar.id?if_exists}_sub" class="cssbadumenu">
+  <div class="jjt"></div>
+  <#list bar.childs as childBar>
+  <div class="column">
+    <h3 class="navt">
+      ${childBar.getLabel()?if_exists}
+      	<span>
+          &raquo;
+        </span>      
+    </h3>
+    <ul>
+      <#if childBar.childs?exists>
+      <#list childBar.childs as ccBar>
+      <li>
+        <a href="${ccBar.url}" <#if bar.getTarget()?exists>target="${bar.getTarget()}"</#if>>
+          ${ccBar.label}
+        </a>
+      </li>
+      </#list>
+      <#else>
+      <li>需要设置子节点：${childBar.label}</li>
+      </#if>
+    </ul>
+  </div>
+  </#list>
+</div>
+</#if>
+</#list>
+</#if>
+<div id="container" class="content">
+<form action="do" name="form">
+<input type="hidden" name="topMenuId" value="${topMenuId}"/>
+<input type="hidden" name="sc" value="xworker.app.orgweb.web.Search"/>
+<p><input name="q" size="60" type="text" value="${requestBean.q?if_exists}" /><input name="submit" type="submit" value="查找" /></p>
+</form>
+#$@text#$@
+sdescriptors
+xworker.html.base.container.childs/@code
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@SearchResult_Google
+sname
+SearchResult_Google
+slistData
+datas
+stitle
+label
+simage
+iconPath
+surl
+newUrl
+surlTarget
+_self
+sinfo
+newDescription
+sdescriptors
+xworker.html.Widgets/@SearchResult_Google
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@code
+sname
+code
+scode
+&nbsp;<br/>
+sdescriptors
+xworker.html.base.container.childs/@code
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@pageToolbar
+sname
+pageToolbar
+spageInfo
+pageInfo
+spage
+page
+sprePage
+<上一页
+snextPage
+下一页>
+stotal
+相关结果找到${pageInfo.totalCount}条
+surl
+do?sc=xworker.app.orgweb.web.Search&q=${(requestBean.q?html)?if_exists}&topMenuId=${topMenuId}
+sdescriptors
+xworker.html.Widgets/@PageToolbar
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@view/@xworkerCopyRight
+sname
+xworkerCopyRight
+Scode
+#$@text#$@
+<div align="center">
+<p>Copyright &copy;&nbsp; 2007-2014 XWorker.org &nbsp;版权所有</p>
+<p><a target="_blank" href="http://www.miibeian.gov.cn/">沪ICP备08000575号</a></p>
+</div>
+#$@text#$@
+sdescriptors
+xworker.html.base.container.childs/@code
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@success
+sname
+success
+stype
+form
+scontentType
+text/html;charset=UTF-8
+svalue
+xworker.app.orgweb.web.Search/@view
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

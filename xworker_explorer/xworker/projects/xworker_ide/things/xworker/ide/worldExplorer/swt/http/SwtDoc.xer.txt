@@ -1,0 +1,114 @@
+@xworker.ide.worldExplorer.swt.http.SwtDoc
+sname
+SwtDoc
+slabel
+SwtDoc
+sdescriptors
+xworker.http.ControlSet
+@xworker.ide.worldExplorer.swt.http.SwtDoc/@showElements
+sname
+showElements
+Sdescription
+#$@text#$@
+<p>显示SWT事物的元素列表。</p>
+<p>具有相同名称的事物会被替换。</p>
+#$@text#$@
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@xworker.ide.worldExplorer.swt.http.SwtDoc/@showElements/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@xworker.ide.worldExplorer.swt.http.SwtDoc/@showElements/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+
+utilDoc = UtilThingDoc.getInstance();
+
+//取事物列表
+def thingPaths = requestBean.things;
+things = [];
+if(thingPaths != null){
+    def paths = thingPaths.split("[,]");
+    for(path in paths){
+        def thing = world.getThing(path);
+        if(thing != null){
+            things.add(thing);
+        }
+    }
+}
+
+//获取事物元素列表
+elements = [];
+context = [:];
+for(thing in things){
+    getElements(thing, elements, context);
+}
+
+return "success";
+
+def getElements(thing, elements, context){
+    if(context.get(thing) != null){
+        return;
+    }else{
+        context.put(thing, thing);
+    }
+    
+    boolean have = false;
+    int i=0;
+    def thingNameF = thing.metadata.name.toUpperCase();
+    def thingName = thing.metadata.name;
+    for(element in elements){     
+        def elementName = element.name.toUpperCase();  
+        if(elementName > thingNameF){
+            elements.add(i, ["name":thingName, "thingName":thing.getThingName(), "thing":thing]);
+            have = true;
+            break;
+        }
+        
+        if(elementName == thingNameF){
+            element.name = thingName;
+            element.thing = thing;
+            element.thingName = thing.getThingName();
+            
+            have = true;
+            break;
+        }
+        
+        i++;
+    }
+    
+    if(!have){
+        elements.add(["name":thingName, "thingName":thing.getThingName(), "thing":thing]);
+    }
+    
+    for(child in thing.getAllChilds()){
+        getElements(child, elements, context);
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.http.SwtDoc/@showElements/@success
+sname
+success
+stype
+freemarker
+scontentType
+text/html;
+svalue
+xworker:ui/worldExplorer/swt/http/swtElements.ftl
+sdescriptors
+xworker.http.controls.SimpleControl/@result

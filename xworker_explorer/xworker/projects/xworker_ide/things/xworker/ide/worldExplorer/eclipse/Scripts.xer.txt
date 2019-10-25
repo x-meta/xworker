@@ -1,0 +1,1951 @@
+^1569242778289
+@
+sname
+Scripts
+slabel
+Scripts
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions,xworker.swt.Widgets/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@createEditor
+    sname
+    createEditor
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.ui.swt.SwtBorder;
+import xworker.swt.ActionContainer;
+import xworker.ui.editor.OutlineTreeDragAndDrop;
+
+import xworker.swt.util.UtilBrowser;
+import xworker.swt.editor.EditorModifyListener;
+import xworker.swt.design.Designer;
+
+//设置设计器的事物浏览器
+Designer.setExplorerActions(parent.getDisplay(), explorerActions);
+
+//浏览器和编辑器的工具
+utilBrowser = new UtilBrowser(parent.getDisplay(), explorerActions);
+
+// ModifyListener
+//modifyListener = new EditorModifyListener(actions);
+
+//找到要创建的编辑各组件
+def contentThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+//def scriptThing = world.getThing("xworker.ide.worldExplorer.eclipse.Scripts/@actions1");
+def scriptThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@actions");
+
+def scripts = (ActionContainer) scriptThing.doAction("create", actionContext);
+        
+//创建编辑器的个组件        
+contentThing.doAction("create", actionContext);
+
+SwtBorder.attach(titleComposite);
+//SwtBorder.attach(childTitleComposite);
+
+//显示数据对象
+//scripts.doAction("setThing", ["thing":thing]);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    createEditor
+    @/@actions/@init
+    sname
+    init
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+import xworker.ide.IdeImpl;
+import xworker.swt.design.Designer;
+import xworker.listeners.SwtMenuListener;
+import xworker.ide.config.ThingLibs;
+import xworker.util.ThingUtils;
+
+//--------------简单编辑器的初始化---------------
+
+Designer.setEnabled(true);
+Designer.setExplorerActions(shell.getDisplay(), actions);
+IdeImpl ide = new IdeImpl(shell.getDisplay(), actionContext);
+ide.setShell(shell);
+ide.setIsThingExplorer(false);
+XWorkerUtils.setIde(ide);
+
+def menuThing = world.getThing("xworker.ide.config.ProjectMenuSwt");
+SwtMenuListener.getInstance().updateMenu(menuThing);
+
+ThingUtils.startRegistThingCache();
+def actions = [
+    "xworker.swt.xwidgets.prototypes.SimpleThingEditorOld/@init",
+    "xworker.swt.xwidgets.prototypes.SimpleThingEditorOld/@init/@initGroovy"
+    ];
+for(acThing in actions){
+    def ac = world.getAction(acThing);
+    ac.run(actionContext);
+}
+
+/*
+--------------事物管理器的初始化---------------
+//顺便更新事物编辑器的菜单缓存
+def menuThing = world.getThing("xworker.ide.config.ProjectMenuSwt");
+SwtMenuListener.getInstance().updateMenu(menuThing);
+
+
+
+def swtRunner = world.getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner");
+swtRunner.doAction("init", actionContext);
+
+def tasks = world.getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner/@Tasks");
+for(task in tasks.getChilds()){
+    task.doAction("run", actionContext);
+}*/
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    init
+    @/@actions/@setThing
+    sname
+    setThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    scode
+    actions.doAction("setThing", actionContext);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    setThing
+    @/@actions/@save
+    sname
+    save
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    scode
+    actions.doAction("save");
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    save
+    @/@actions/@initPackageTree
+    sname
+    initPackageTree
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Index;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.xmeta.util.UtilString;
+import xworker.swt.design.Designer;
+
+Index index = Index.getInstance();
+TreeItem projectItem = new TreeItem(projectTree, SWT.NONE);
+projectItem.setText(UtilString.getString("res:res.w_exp:" + index.getLabel() + ":" + index.getLabel(), actionContext));
+projectItem.setData(index);
+projectItem.setImage(projectImage);
+/*
+
+for(subIndex in index.childs){
+    TreeItem projectItem = new TreeItem(projectTree, SWT.NONE);
+    projectItem.setText(UtilString.getString("res:res.w_exp:" + subIndex.getLabel() + ":" + subIndex.getLabel(), actionContext));
+    projectItem.setData(subIndex);
+    projectItem.setImage(projectImage);
+}
+*/
+
+Designer.setExplorerActions(Display.getCurrent(), actions);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    initPackageTree
+    @/@actions/@selectThing
+    sname
+    selectThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+actions.doAction("selectThing", actionContext);
+
+actions.doAction("initOutlineBrowser", actionContext);
+#$@text#$@
+    sdescription
+    <p>选中一个Outline中的事物。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    selectThing
+    @/@actions/@openThingDiag
+    sname
+    openThingDiag
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "dataObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.OpenThingDialog/@shell");
+
+def shell = shellObj.doAction("create", newContext);
+//println "dx1";
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenThing:打开事物", actionContext));
+//println "dx";
+shell.open();
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openThingDiag
+    @/@actions/@openActionDiag
+    sname
+    openActionDiag
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "scriptObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.OpenThingDialog/@shell");
+def shell = shellObj.doAction("create", newContext);
+//println UtilString.getString("res:res.w_exp:menuItemOpenAction打开动作", actionContext);
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenAction:打开动作", actionContext));
+shell.open();
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openActionDiag
+    @/@actions/@openThingComposite
+    sname
+    openThingComposite
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    scode
+    actions.doAction("openCompoisteAtTab", actionContext);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openThingComposite
+  @/@actions1
+  sname
+  actions
+  slabel
+  editorActions
+  sdescriptors
+  xworker.swt.Widgets/@actions
+  sid
+  actions1
+    @/@actions1/@checkDataObject
+    sname
+    checkThing
+    slabel
+    checkThing
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+if(thing == null || thing.metadata.isRemoved()){
+    MessageBox box = new MessageBox(outlineTree.getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+    box.setMessage("事物文件已更新或者节点已经被删除，是否要重新读取？");
+    box.setText("警告");
+    if(SWT.YES == box.open()){
+        outlineTree.select(innerOutline.getItems()[0]);
+        refreshMenuSelection.handleEvent(null);
+        return "changed";
+    }
+}
+    
+//log.info(thing.metadata.path);
+thing = world.getThing(thing.metadata.path);
+if(thing == null){
+    //节点已经被删除
+    MessageBox box = new MessageBox(innerOutline.getShell(), SWT.OK | SWT.ICON_WARNING);
+    box.setMessage("节点已经被删除");
+    box.setText("警告");
+    box.open();
+    
+    return null;
+}else{    
+    return thing;
+}
+/*
+//log.info(thing.metadata.path);
+thing = world.getThing(thing.metadata.path);
+if(thing == null){
+    //节点已经被删除
+    MessageBox box = new MessageBox(outlineTree.getShell(), SWT.OK | SWT.ICON_WARNING);
+    box.setMessage("节点已经被删除");
+    box.setText("操作信息");
+    box.open();
+    
+    return null;
+}else{
+    return thing;
+}*/
+#$@text#$@
+    sdescription
+    <p>检查事物是否还存在。</p>
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    checkDataObject
+    @/@actions1/@openDataObject
+    sname
+    openThing
+    slabel
+    openThing
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+
+import org.xmeta.util.UtilData;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.HashMap;
+
+//保存当前事物的编辑缓存
+actions.doAction("saveEditCache");
+
+def treeItem = innerOutline.getSelection()[0];
+def treeThing = treeItem.getData();
+
+//检测节点是否存在
+treeThing = actions.doAction("checkThing", ["thing":treeThing]);
+if(treeThing instanceof String){
+    return;
+}
+
+if(treeThing == null){
+    treeItem.dispose();
+    return;
+}
+treeItem.setData(treeThing);
+currentThing = treeThing;
+actionContext.getScope(0).put("currentThing", currentThing);
+actionContext.getScope(0).put("currentItem", treeItem);
+
+//初始化描述者
+descriptorsCombo.removeAll();
+structCombo.removeAll();
+def structures = treeThing.getDescriptors();
+def childComboDatas = [];
+for(str in structures){
+    childComboDatas.add(str);
+}
+childComboDatas.add(world.getThing("xworker.lang.util.ThingTemplate"));
+descriptorsCombo.setData(structures);
+structCombo.setData(childComboDatas);
+for(struct in structures){
+    descriptorsCombo.add(struct.metadata.label);
+}
+for(struct in childComboDatas){
+    structCombo.add(struct.metadata.label);
+}
+
+//初始化继承
+def exts = treeThing.getExtends();
+extendsCombo.setData(exts);
+extendsCombo.removeAll();
+for(ext in exts){
+    extendsCombo.add(ext.metadata.label);
+}
+
+//初始化方法列表
+methodsCombo.removeAll();
+def scriptObjects = treeThing.getActionsThings();
+for(sobj in scriptObjects){
+    methodsCombo.add(sobj.metadata.name);
+}
+methodsCombo.setData(scriptObjects);
+
+//选择默认的节点
+descriptorsCombo.select(0);
+structCombo.select(0);
+
+descriptSelection.handleEvent(null);
+descriptsComboSelection.handleEvent(null);
+
+//编辑缓存
+def data = dataCache.get(currentThing.metadata.path)
+if(data != null){
+    if(data.time < currentThing.metadata.lastModified){
+         MessageBox box = new MessageBox(structCombo.getShell(), SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+         box.setText("操作信息");
+         box.setMessage("当前事物比已修改的内容要新，是否放弃修改？");
+         if(SWT.YES == box.open()){
+             //刷新当前节点
+             dataCache.clear();
+             return;
+         }
+    }
+    currentModelContext.put("thingAttributes", data.data);
+    currentModel.doAction("setValue", currentModelContext);
+}
+#$@text#$@
+    sdescription
+    <p>打开当前概要树选中的节点的事物编辑。</p>
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openDataObject
+    @/@actions1/@setDataObject
+    sname
+    setThing
+    slabel
+    setThing
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//参数dataObject
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+//初始化概要树
+innerOutline.removeAll();
+def refreshAction = world.getAction("xworker.ide.worldExplorer.swt.shareScript.ThingEditor/@scripts/@initOutline");
+refreshAction.run(null, ["tree":innerOutline, "thing":thing, "itemIndex":null]);
+innerOutline.setSelection(innerOutline.getItems()[0]);
+actionContext.getScope(0).put("innerOutlineExpandCache", [:]);
+//默认选择根结点的数据
+innerOutlineSelectionListener.handleEvent(null);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    setDataObject
+    @/@actions1/@selectDataObject
+    sname
+    selectThing
+    slabel
+    selectThing
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def thing = actionContext.get("thing");
+if(thing == null) return;
+
+if(actionContext.get("innerOutline") == null) return;
+
+if(actionContext.get("refresh") != false){
+    innerOutline.setSelection(innerOutline.getItems()[0]);
+    refreshMenuSelection.handleEvent(null);
+}
+
+def it = null;
+for(item in innerOutline.getItems()){
+    it = getItem(thing, item);
+    if(it != null) break;
+}
+
+if(it != innerOutline.getSelection()[0]){
+    it.getParent().setSelection(it);	
+    it.getParent().notifyListeners(SWT.Selection, null);
+}
+return actionContext;
+
+def getItem(dataObj, item){
+    if(item.getData().metadata.path == dataObj.metadata.path){
+        return item;
+    }
+    
+    for(subItem in item.getItems()){
+        def it = getItem(dataObj, subItem);
+        if(it != null) return it;
+    }
+
+    return null;
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>选择一个事物的节点。</p>
+<p>参数:</p>
+<p>&nbsp;&nbsp;&nbsp; thing：要选择的事物。</p>
+<p>&nbsp;&nbsp;&nbsp; refresh：true/false，选择前是否要先刷新整个树，默认true即使没有设置。</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    selectDataObject
+      @/@actions1/@selectDataObject/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions1/@selectDataObject/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        thing
+        @/@actions1/@selectDataObject/@ins/@refresh
+        sname
+        refresh
+        stype
+        Boolean
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        refresh
+    @/@actions1/@save
+    sname
+    save
+    slabel
+    save
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    scode
+    okButtonSelection.handleEvent(null);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    save
+    @/@actions1/@delete
+    sname
+    delete
+    slabel
+    delete
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+MessageBox box = new MessageBox(outlineTree.getShell(), SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+box.setText("操作信息");
+box.setMessage("确定要删除选中的节点吗？");
+
+dataObject = currentDataObject;
+if(SWT.OK == box.open()){
+    if(dataObject.getParent() != null){
+        def treeItem = outlineTree.getSelection()[0];
+        def parentTreeItem = treeItem.getParentItem();
+        treeItem.dispose();
+        //outlineTree.select(parentTreeItem);
+        
+        if(!dataObject.isTransient()){
+            dataObject = dataCenter.getDataObject(dataObject.metadata.path);
+            def parent = dataObject.getParent();
+            parent.removeChild(dataObject);
+            def root = parent.getRootParent();        
+            root.metadata.factory.save(root);
+        }else{
+            def parent = dataObject.getParent();
+            parent.removeChild(dataObject);
+        }
+    }else{
+        box = new MessageBox(outlineTree.getShell(), SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+        box.setText("操作信息");
+        box.setMessage("确实要删除整个数据对象么？");
+        if(SWT.OK == box.open()){
+            if(!dataObject.isTransient()){
+                dataObject.metadata.factory.remove(dataObject);
+            }
+            
+            shell.dispose();
+        }
+    }
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    delete
+    @/@actions1/@moveUp
+    sname
+    moveUp
+    slabel
+    moveUp
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.xmeta.DataObject;
+import org.xmeta.ScriptObject;
+
+def dataObject = currentDataObject;
+if(!dataObject.isTransient()){
+    dataObject = dataCenter.getDataObject(dataObject.metadata.path);
+    if(dataObject == null) return;
+}
+
+int index = dataObject.getItemIndex(null);
+if(index != -1 && index != 0){        
+    def parent = dataObject.getParent();
+    parent.removeChild(dataObject);
+    parent.addChild(dataObject, index - 1);
+    
+    if(!dataObject.isTransient()){
+        parent.save();
+    }
+    
+    ScriptObject initTree = dataCenter.getScriptObject("core.editor.swt.shareScript.DataObjectEditor/@scripts/@initOutline");    
+    def treeItem = outlineTree.getSelection()[0];
+    def parentTreeItem = treeItem.getParentItem();    
+    def newItem = initTree.call(parentTreeItem, dataObject, index - 1);
+    outlineTree.setSelection(newItem);
+    treeItem.dispose();
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    moveUp
+    @/@actions1/@moveDown
+    sname
+    moveDown
+    slabel
+    moveDown
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.xmeta.DataObject;
+import org.xmeta.ScriptObject;
+
+def dataObject = currentDataObject;
+if(!dataObject.isTransient()){
+    dataObject = dataCenter.getDataObject(dataObject.metadata.path);
+    if(dataObject == null) return;
+}
+def treeItem = outlineTree.getSelection()[0];
+def parentTreeItem = treeItem.getParentItem();   
+int index = dataObject.getItemIndex(null);
+
+if(index != -1 && index < parentTreeItem.getItems().length - 1){        
+    def parent = dataObject.getParent();
+    parent.removeChild(dataObject);
+    parent.addChild(dataObject, index + 1);
+    if(!dataObject.isTransient()){
+        parent.save();
+    }
+    
+    ScriptObject initTree = dataCenter.getScriptObject("core.editor.swt.shareScript.DataObjectEditor/@scripts/@initOutline");    
+     
+    def newItem = initTree.call(parentTreeItem, dataObject, index + 2);
+    outlineTree.setSelection(newItem);
+    treeItem.dispose();
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    moveDown
+    @/@actions1/@clearCache
+    sname
+    clearCache
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+if(actionContext.get("dataCache") != null){
+    dataCache.remove(thing.metadata.path);
+    dataThingCache.remove(thing.metadata.path);
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    clearCache
+    @/@actions1/@saveEditCache
+    sname
+    saveEditCache
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+//保存当前事物的编辑缓存
+if(actionContext.get("dataCache") == null){
+    dataCache = [:];    
+    dataThingCache = [:];
+    actionContext.getScope(0).put("dataCache", dataCache);
+    actionContext.getScope(0).put("dataThingCache", dataThingCache);
+}
+
+if(actionContext.get("currentModel") != null && actionContext.get("modified") == true){
+    def data = currentModel.doAction("getValue", currentModelContext);
+    dataCache.put(currentThing.metadata.path, ["data":data, "time":currentThing.metadata.lastModified]);
+    dataThingCache.put(currentThing.metadata.path, currentThing);
+    
+    /*
+    //已经在Tb显示已修改的状态，故取消此代码
+    if(actionContext.get("currentItem") != null && !currentItem.isDisposed()){
+        currentItem.setData("modified", true);
+        actions.doAction("displayItemText", ["treeItem":currentItem]);
+    }*/
+}
+#$@text#$@
+    sdescription
+    <p>保存当前编辑事物节点的数据缓存。</p>
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    saveEditCache
+    @/@actions1/@displayItemText
+    sname
+    displayItemText
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.eclipse.swt.widgets.TreeItem;
+
+if(actionContext.get("treeItem") != null && treeItem instanceof TreeItem){
+    def thing = treeItem.getData();
+    def text = thing.metadata.label + "(" + thing.getDescriptors()[0].metadata.name + ")";
+    if(treeItem.getData("modified") != true){
+        text = text + "*";
+    }
+    
+    treeItem.setText(text);
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>显示概要树的指定节点的文本。</p>
+<p>参数:treeItem。</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    displayItemText
+    @/@actions1/@modify
+    sname
+    modify
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+if(actionContext.get("setModified") == false){
+    if(actionContext.get("modified") == true){
+        thingEditor.setDirty(false);
+    }
+    actionContext.put("modified", false);    
+}else if(actionContext.get("modified") != true){
+    actionContext.put("modified", true);
+    
+    thingEditor.setDirty(true);
+}
+//log.info(actionContext.get("modified"));
+#$@text#$@
+    sdescription
+    <p>向编辑界面控件传递的ModifierListener的实际调用函数。</p>
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    modify
+    @/@actions1/@refreshOutline
+    sname
+    refreshOutline
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+if(actionContext.get("refreshThing") != null){
+    actions.doAction("selectThing", ["thing":refreshThing, "refrsh":false]);    
+}
+
+refreshMenuSelection.handleEvent(null);
+#$@text#$@
+    sdescription
+    <p>&nbsp;参数：refreshThing，如果存在那么刷新thing指定的节点，否则刷新当前选中的树节点。</p>
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    refreshOutline
+      @/@actions1/@refreshOutline/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions1/@refreshOutline/@ins/@refreshThing
+        sname
+        refreshThing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        refreshThing
+    @/@actions1/@initOutlineTreeItem
+    sname
+    initOutlineTreeItem
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import xworker.swt.util.ResourceManager;
+import xworker.swt.util.XWorkerTreeUtil;
+
+//initItemColor(treeItem, thing);
+treeItem.setText(thing.metadata.label + " (" + thing.thingName + ")");
+treeItem.setData(thing);
+def th_font = thing.th_font;
+def th_nodeColor = thing.th_nodeColor;
+//log.info("dataCache=" + actionContext.get("dataCache"));
+if(actionContext.get("dataCache") != null){
+    def cache = dataCache.get(thing.metadata.path);
+    if(cache != null){
+        //log.info("i1cache=" + cache);
+        if(cache.data.containsKey("th_font")){
+            th_font = cache.data.th_font;
+            th_nodeColor = cache.data.th_nodeColor;
+            //println "ssssssssssssss";
+        }        
+    }    
+}
+def icon = null;
+for(descriptor in thing.getAllDescriptors()){
+    //println descriptor.getMetadata().getPath();
+    icon = descriptor.getString("icon");
+    //println icon;
+    if(icon != null && icon != ""){
+        break;
+    }
+}
+actionContext.peek().put("parent", treeItem.getParent()); //资源绑定到树上
+XWorkerTreeUtil.initItem(treeItem,  th_font , th_nodeColor, icon, actionContext);
+#$@text#$@
+    sdescription
+    <p>初始化节点的文字、字体和颜色等。</p>
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    initOutlineTreeItem
+      @/@actions1/@initOutlineTreeItem/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sth_createIndex
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions1/@initOutlineTreeItem/@ins/@treeItem
+        sname
+        treeItem
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sth_mark
+        false
+        sid
+        treeItem
+        @/@actions1/@initOutlineTreeItem/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions1/@getCurrentValue
+    sname
+    getCurrentAttribute
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//先获取编辑器的
+
+if(currentThing == thing){
+    def editedData = currentModel.doAction("getValue", currentModelContext);
+    if(editedData.containsKey(name)){
+        return editedData.get(name);
+    }
+}
+
+//其次获取编辑未保存的
+if(actionContext.get("dataCache") != null){
+    def cache = dataCache.get(thing.metadata.path);
+    if(cache != null){
+        //log.info("i1cache=" + cache);
+        if(cache.data.containsKey(name)){
+            return cache.data.get(name);
+        }        
+    }    
+}
+
+//最后获取事物本身的
+return thing.get(name);
+#$@text#$@
+    sdescription
+    <p>获取属性值，如果正在编辑获取编辑器中的值，负责获取还未保存的缓存中的值，最后获取事物本身的属性值。</p>
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    getCurrentValue
+      @/@actions1/@getCurrentValue/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sth_createIndex
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions1/@getCurrentValue/@ins/@name
+        sname
+        name
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sth_mark
+        false
+        sid
+        name
+        @/@actions1/@getCurrentValue/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sth_mark
+        false
+        sid
+        thing
+    @/@actions1/@initQuickEditoTable
+    sname
+    initQuickEditTable
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
+
+//先清除表格
+for(item in quickTable.getItems()){
+    item.dispose();
+}
+
+//按钮失效
+quickEditbutton.setEnabled(false);
+parentCategoryButton.setEnabled(false);
+childCategoryButton.setEnabled(false);
+
+//表格数据
+int selection = 0;
+def selectThing = null;
+def parent = currentThing.getParent();
+if(parent == null){
+    def item = new TableItem(quickTable, SWT.NONE);
+    item.setText([currentThing.getMetadata().getName(), currentThing.getMetadata().getLabel(), currentThing.getThingName()] as String[]);
+    item.setData(currentThing);
+    selectThing = currentThing;
+}else{
+    int index = 0;
+    for(child in parent.getChilds()){
+        def item = new TableItem(quickTable, SWT.NONE);
+        item.setText([child.getMetadata().getName(), child.getMetadata().getLabel(), child.getThingName()] as String[]);
+        item.setData(child);
+        
+        if(child == currentThing){
+            selection = index;
+            selectThing = child;
+        }
+        
+        index++;
+    }
+}
+
+if(quickTable.getItems().length > 0){
+    quickTable.setSelection(selection);
+    quickEditbutton.setEnabled(true);
+    if(parent != null){
+        parentCategoryButton.setEnabled(true);    
+    }
+    if(selectThing != null && selectThing.getChilds().size() > 0){
+        childCategoryButton.setEnabled(true);
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    initQuickEditoTable
+    @/@actions1/@setMenuVisiable
+    sname
+    setMenuVisiable
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+if(visiable){
+    titleTitleCompositeGridData.horizontalSpan = 0;
+    menuBarCompositeGridData.horizontalSpan = 0;
+    spliteLabel1GridData.horizontalSpan = 0;
+}else{
+    titleTitleCompositeGridData.horizontalSpan = 1;
+    menuBarCompositeGridData.horizontalSpan = 1;
+    spliteLabel1GridData.horizontalSpan = 1;
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    setMenuVisiable
+  @/@explorerActions
+  sname
+  actions
+  slabel
+  explorerActions
+  sdescriptors
+  xworker.swt.Widgets/@actions
+  sid
+  explorerActions
+    @/@explorerActions/@openDataObject
+    sname
+    openThing
+    slabel
+    openThing
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    scode
+    helper.openThing(thing);
+    Sdescription
+#$@text#$@
+<p>打开一个事物。</p>
+<p>参数：thing。</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openDataObject
+      @/@explorerActions/@openDataObject/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@explorerActions/@openDataObject/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        thing
+    @/@explorerActions/@openPackageViewer
+    sname
+    openPackageViewer
+    slabel
+    openPackageViewer
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def pvActions = helper.showPackageViewer().actions;
+
+pvActions.actionContext.put("treeItem", projectTree.getSelection()[0]);
+pvActions.doAction("refreshTable", ["index":index, "refresh":true]);
+
+//查看是否已经有帮助的Outline
+if(pvActions.actionContext.get("packageViewerHelpBrowser") == null){
+    def ac = pvActions.actionContext;
+    ac.put("parent", ac.explorerContext.outlineComposite);
+
+    if(ac.explorerContext.outlineComposite != null){
+        Thing helpBrowserThing = world.getThing("xworker.ide.worldExplorer.swt.util.PackageViewer/@packageViewerHelpBrowser");
+        def helpBrowser = helpBrowserThing.doAction("create", ac);
+        tab.setData("outlineTree", helpBrowser); //放入可以到最后删除
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openPackageViewer
+    @/@explorerActions/@expandProjectTreeItem
+    sname
+    expandProjectTreeItem
+    slabel
+    expandProjectTreeItem
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def item = projectTree.getSelection()[0];
+def data = item.getData();
+
+if(item.getItems().length == 0){
+    //如果当前节点没有子节点，那么打开子节点
+    //println data;
+    if(data == null){
+        //节点已经不存在
+        item.dispose();
+        return;
+    }
+    
+    data.refresh();
+    for(childIndex in data.childs){
+        //项目导航不显示树
+        if(childIndex.type == "thing") continue;
+        
+        TreeItem treeItem = new TreeItem(item, SWT.NONE);
+        treeItem.setText(childIndex.label);
+        treeItem.setData(childIndex);        
+        switch(childIndex.type){
+            case "project":
+                treeItem.setImage(project1Image);
+                break;
+            case "thingManager":
+                treeItem.setImage(factoryImage);
+                break;
+            case "category":
+                treeItem.setImage(packageImage);
+                break;
+            case "thing":
+                treeItem.setImage(dataObjectImage);
+                break;
+            case "workingSet":
+                treeItem.setImage(project1Image);
+                break;
+        }
+    }
+}
+
+//打开本节点关闭其他同级节点
+def parentItem = item.getParentItem();
+if(parentItem != null){
+    for(titem in parentItem.getItems()){
+         if(titem != item && titem.getExpanded()){
+             //titem.setExpanded(false);
+         }
+    }
+}
+item.setExpanded(true);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    expandProjectTreeItem
+    @/@explorerActions/@refreshProjectTree
+    sname
+    refreshProjectTree
+    slabel
+    refreshProjectTree
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def item = projectTree.getSelection()[0];
+refresh(item);
+
+//刷新树节点
+def refresh(item){
+    def data = item.getData();
+    data.refresh();
+    
+    //移除已经不存在的节点
+    for(childItem in item.getItems()){
+        def childPath = childItem.getData().getPath();
+        def have = false;
+        for(dataChild in data.childs){
+            if(dataChild.getPath() == childPath){
+                have = true;
+                break;
+            }
+        }
+        
+        if(!have){
+            childItem.dispose();
+        }
+    }
+
+    //添加新存在的节点    
+    for(childIndex in data.childs){
+        //项目导航不显示事物
+        if(childIndex.type == "thing") continue;
+        
+        def newItemIndex = 0;
+        def have = false;
+        for(childItem in item.getItems()){
+            //println childItem.data.path + " --- " + childIndex.path;
+            if(childItem.data.path == childIndex.path){
+                have = true;
+                //println "have";
+                break;
+            }else if(childItem.data.path < childIndex.path){
+                //println "> ";
+                newItemIndex++;
+            }else{
+                break;
+            }
+        }
+        
+        if(!have){            
+            TreeItem treeItem = new TreeItem(item, SWT.NONE, newItemIndex);
+            treeItem.setText(childIndex.label);
+            treeItem.setData(childIndex);
+            switch(childIndex.type){
+                case "project":
+                    treeItem.setImage(project1Image);
+                    break;
+                case "thingManager":
+                    treeItem.setImage(factoryImage);
+                    break;
+                case "category":
+                    treeItem.setImage(packageImage);
+                    break;
+                case "dataObjectImage":
+                    treeItem.setImage(dataObjectImage);
+                    break;
+            }
+        }        
+    }
+    
+    for(childItem in item.getItems()){
+        refresh(childItem);
+    }
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    refreshProjectTree
+    @/@explorerActions/@refreshFunctionTree
+    sname
+    refreshFunctionTree
+    slabel
+    refreshFunctionTree
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+functionTree.removeAll();
+functionThing = world.getThing("xworker.ide.worldExplorer.swt.util.Function");
+for(node in functionThing.childs){
+    initTreeItem(functionTree, node);
+}
+
+def initTreeItem(treeItem, dataObj){
+    TreeItem item = new TreeItem(treeItem, SWT.NONE);
+    item.setData(dataObj);
+    item.setText(dataObj.metadata.label);
+    
+    for(child in dataObj.childs){
+        initTreeItem(item, child);
+    }
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    refreshFunctionTree
+    @/@explorerActions/@openCompoisteAtTab
+    sname
+    openCompoisteAtTab
+    slabel
+    openCompoisteAtTab
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+if(compositeThing == null) return;
+
+helper.openThingComposite(compositeThing);
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>打开一个Composite。</p>
+<p>参数：title,</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openCompoisteAtTab
+    @/@explorerActions/@openUrl
+    sname
+    openUrl
+    slabel
+    openUrl
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//打开浏览器
+def viewObject = world.getThing("xworker.ide.worldExplorer.swt.util.WebBrowser/@shell/@mainComposite");
+def browserAction = actions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":"Web Browser", "path":""]);
+browserAction.scripts.doAction("openUrl", ["url":url, "name":actionContext.get("name"), "path":""]);
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openUrl
+    @/@explorerActions/@openEditFlowThing
+    sname
+    openEditFlowThing
+    slabel
+    openEditFlowThing
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    scode
+    helper.openThing(flowRequest.thing);
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openEditFlowThing
+    @/@explorerActions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+
+if(actionContext.get("action") == null) return;
+if(action instanceof Action){
+    ActionContext newContext = new ActionContext();            
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    
+    println action.thing;
+    action.run(newContext); 
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>执行动作。</p>
+<p>参数：&nbsp;action 。</p>
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    doAction
+    @/@explorerActions/@openTab
+    sname
+    openTab
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+if(compositeThing == null) return;
+
+helper.openThingComposite(compositeThing);
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openTab
+    @/@explorerActions/@openTextFile
+    sname
+    openTextFile
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.events.SwtListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Widget;
+
+import java.util.HashMap;
+
+if(actionContext.get("file") == null) return;
+
+def path = "textFile" + file.getAbsolutePath();
+def tab = null;
+for(item in centerTabFolder.items){
+    if(item.getData("path") == path){
+        tab = item;
+    }
+}
+
+if(tab == null){
+    //Tab不存在，创建新的Tab
+    tab = new CTabItem(centerTabFolder, SWT.NONE);
+    tab.setText(file.getName());
+    tab.setData("path", path);
+        
+    ActionContext newContext = new ActionContext();            
+    newContext.put("tab", tab);
+    newContext.put("explorerContext", actionContext);
+    newContext.put("explorerActions", actions);
+    newContext.put("parent", centerTabFolder);
+    newContext.put("utilBrowser", utilBrowser);
+    
+    def compositeThing = world.getThing("xworker.ide.worldExplorer.swt.editor.TextEditor/@shell/@mainComposite");
+    def viewer = compositeThing.doAction("create", newContext);  
+    newContext.actions.doAction("setFile", ["file":file]);    
+    tab.setData("tabContext", newContext);
+    tab.setData("actionContext", newContext);
+    tab.setControl(viewer);        
+}
+
+centerTabFolder.setSelection(tab);
+def outlineTree = tab.getData("outlineTree");
+if(outlineTree == null){
+    outlineStackLayout.topControl = blankTree;
+    outlineComposite.layout();
+}else if(outlineTree instanceof Widget){
+    outlineStackLayout.topControl = outlineTree;
+    outlineComposite.layout();
+}
+
+def childComposite = tab.getData("childComposite");
+if(childComposite == null){
+    childsCompositeStackLayout.topControl = blankChildList;
+    childsComposite.layout()
+}else if(childComposite instanceof Widget){
+    childsCompositeStackLayout.topControl = childComposite;
+    childsComposite.layout();
+}
+
+return tab;
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openTextFile

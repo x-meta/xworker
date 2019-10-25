@@ -1,0 +1,59 @@
+@xworker.ide.debug.util.ThingMenu
+sname
+ThingMenu
+slabel
+ThingMenu
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sid
+ThingMenu
+@xworker.ide.debug.util.ThingMenu/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.debug.util.ThingMenu/@actions/@showPerformanceTable
+sname
+showPerformanceTable
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def shellThing = world.getThing("xworker.ide.debug.swt.PerformanceViewer/@shell");
+
+ActionContext context = new ActionContext();
+context.put("parent", explorerContext.shell);
+context.put("explorerContext", explorerContext);
+context.put("explorerActions", explorerActions);
+
+def shell = shellThing.doAction("create", context);
+context.actions.doAction("setThing", ["thing":currentThing]);
+
+shell.setVisible(true);
+#$@text#$@
+sid
+showPerformanceTable
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

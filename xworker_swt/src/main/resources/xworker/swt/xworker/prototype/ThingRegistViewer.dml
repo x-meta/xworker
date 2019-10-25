@@ -1,0 +1,119 @@
+%1502791124755
+@
+sname=shell
+stext=lang:d=注册浏览器&Thing Regist Viewer
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=ThingRegistViewer
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@thingRegist
+  sname=thingRegist
+  sparent=false
+  ssearchByKeywords=true
+  sshowContent=true
+  scontentDisplayType=Composite
+  sshowDescBrowser=false
+  sdescBrowserRight=false
+  sautoLoad=false
+  scache=true
+  scheck=false
+  sdescritporForNewThing=xworker.message.MessageWithToolbar
+  sdescritporChilds=false
+  sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=thingRegist
+  @/@ActionContainer
+  sname=actions
+  sdescriptors=xworker.swt.Widgets/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionContainer
+    @/@ActionContainer/@openThingRegistViewer
+    sname=openThingRegistViewer
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+import org.xmeta.ActionContext;
+
+//本方法是用于浏览器的链接功能的
+def registThing = world.getThing(thing);
+
+//创建对话框
+def shell = XWorkerUtils.getIDEShell();
+def ac = new ActionContext();
+ac.put("parent", shell);
+def viewer = world.getThing("xworker.swt.xworker.prototype.ThingRegistViewer");
+def newShell = viewer.doAction("create", ac);
+ac.thingRegist.doAction("init", ac, "thing", registThing, "type", type, "keywords", null);
+ac.thingRegist.doAction("search", ac, "thing", registThing, "type", type, "keywords", null);
+
+newShell.setVisible(true);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=openThingRegistViewer

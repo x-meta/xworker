@@ -1,0 +1,211 @@
+%1474267914669
+@
+sname=UserTaskTable
+slabel=UserTaskTable
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.layout.LayoutDatas
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>用户任务表格，可以监控用户任务执行的表格。</p>
+
+<p><strong>返回值和保存变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 返回的是创建的Table，保存的是新的变量上下文，在新的变量上下文中taskTable变量是表格。</p>
+
+<p><strong>事件</strong></p>
+
+<ul>
+	<li><strong>void onSelected(Table taskTable, TableItem item, UserTask userTask)</strong><br />
+	任务表选择一条记录的事件。</li>
+</ul>
+
+<p><strong>监控过滤</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果想要监听特定的用户任务，那么可以重写下面的方法。</p>
+
+<ul>
+	<li><strong>boolean accept(UserTask userTask)</strong><br />
+	是否接受指定的用户任务，默认总是返回true。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+//原型
+def thing = world.getThing("xworker.swt.xworker.prototype.UserTaskTableShell/@taskTable");
+def ac = new ActionContext();
+ac.put("parent", parent);
+ac.put("thing", self);
+ac.put("parentContext", actionContext);
+
+//创建SWT对象
+def table = thing.doAction("create", ac);
+table.setData("tableThing", self);
+table.setData("actionContext", actionContext);
+
+ac.peek().put("parent", table);
+for(child in self.getChilds()){
+    child.doAction("create", ac);
+}
+
+actionContext.g().put(self.getMetadata().getName(), ac);
+return table;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@accept
+    sname=accept
+    svalue=userTask
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@IsNotNull
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=accept
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label=动作
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name

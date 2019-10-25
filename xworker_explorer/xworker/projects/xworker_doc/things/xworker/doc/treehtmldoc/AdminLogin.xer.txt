@@ -1,0 +1,136 @@
+^1409041831802
+@
+sname
+AdminLogin
+slabel
+AdminLogin
+stitle
+测试TreeHtmlDoc
+scompany
+Free
+slogo
+/images/logo.png
+ssessionAttributeName
+xworker.doc.TestTreeHtmlDoc
+sdescriptors
+xworker.app.view.http.app.SimpleLogin
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.app.view.http.app.SimpleLogin/@actions1
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@loadUser
+sname
+loadUser
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.manong.MaNongServer;
+
+def docThing = world.getThing(requestBean.docPath);
+def dataSource = world.getThing(docThing.getString("dataSource"));
+def con = dataSource.doAction("getConnection", actionContext);
+try{
+    def user = MaNongServer.login(name, password, con);
+    if(user == null || user.role != 1){
+        return null;
+    }else{
+        return user;
+    }
+}finally{
+    con.close();
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@httpDo
+sname
+httpDo
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//获取文档事物
+def docThing = world.getThing(requestBean.docPath);
+
+self.put("title", docThing.get("title"));
+self.put("company", docThing.get("company"));
+self.put("logo", docThing.get("logo"));
+self.put("loginedUrl", docThing.get("defaultContentUrl"));
+self.put("sessionAttributeName", requestBean.docPath);
+self.put("loginUrl", "do?sc=" + self.getMetadata().getPath() + "&docPath=" + requestBean.docPath);
+
+def action = world.getAction("xworker.app.view.http.app.SimpleLogin/@actions/@httpDo");
+action.run(actionContext);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

@@ -1,0 +1,1 @@
+dml.sh xworker.tools.GenerateXsd run $1 $2

@@ -1,0 +1,668 @@
+%1481698478037
+@
+sname=shell
+stext=XML编辑事物
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=800
+sheight=600
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=XmlEditorEditThingDialog
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sxw_cl_global=false
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@mainComposite
+  sname=mainComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=mainComposite
+    @/@mainComposite/@mainCompositeGridLayout
+    sname=mainCompositeGridLayout
+    snumColumns=2
+    smakeColumnsEqualWidth=false
+    smarginWidth=5
+    smarginHeight=5
+    smarginLeft=0
+    smarginTop=0
+    smarginRight=0
+    smarginBottom=0
+    shorizontalSpacing=5
+    sverticalSpacing=5
+    sdescriptors=xworker.swt.Layouts/@GridLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=mainCompositeGridLayout
+    @/@mainComposite/@editTypeLabel
+    sname=editTypeLabel
+    sBORDER=false
+    stype=HORIZONTAL
+    salignment=RIGHT
+    stext=编辑方式：
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Label
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=editTypeLabel
+    @/@mainComposite/@desCombo
+    sname=desCombo
+    stype=DROP_DOWN
+    sREAD_ONLY=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Combo
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=desCombo
+      @/@mainComposite/@desCombo/@Listeners
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Listeners
+        @/@mainComposite/@desCombo/@Listeners/@desComboSelection
+        sname=desComboSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=desComboSelection
+          @/@mainComposite/@desCombo/@Listeners/@desComboSelection/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+//保存缓存
+def cache = actionContext.get("cache");
+if(cache == null){
+    cache = [:];
+    actionContext.g().put("cache", cache);
+}
+def desc = descriptors.get(oldIndex);
+def values = thingForm.doAction("getValues", actionContext);
+cache.put(desc.metadata.path, values);
+
+//设置新的编辑方法
+desc = descriptors.get(desCombo.getSelectionIndex());
+thingForm.doAction("setDescriptor", actionContext, "descriptor", desc);
+values = cache.get(desc.metadata.path);
+if(values != null){
+    thingForm.doAction("setValues", actionContext, "values", values);
+}else{
+    thingForm.doAction("setValues", actionContext, "values", thing.getAttributes());
+}
+actionContext.put("oldIndex", desCombo.getSelectionIndex());
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+      @/@mainComposite/@desCombo/@desComboGridData
+      sname=desComboGridData
+      sstyle=FILL_HORIZONTAL
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sxw_cl_global=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=desComboGridData
+    @/@mainComposite/@thingForm
+    sname=thingForm
+    scolumn=1
+    sdefaultSelection=okButtonSelection
+    sH_SCROLL=true
+    sV_SCROLL=true
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    sdescriptors=xworker.swt.Widgets/@ThingForm
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingForm
+      @/@mainComposite/@thingForm/@thingFormGridData
+      sname=thingFormGridData
+      sstyle=FILL_BOTH
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=2
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sxw_cl_global=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingFormGridData
+    @/@mainComposite/@3228
+    sname=buttonComposite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=3228
+      @/@mainComposite/@3228/@3229
+      sname=cancelButton
+      sstyle=FILL_HORIZONTAL
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=END
+      sverticalAlignment=CENTER
+      shorizontalSpan=2
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sxw_cl_global=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=3229
+      @/@mainComposite/@3228/@3230
+      sname=cancelButton
+      sfill=false
+      sjustify=false
+      smarginWidth=0
+      smarginHeight=0
+      smarginLeft=3
+      smarginTop=3
+      smarginRight=3
+      smarginBottom=3
+      spack=true
+      sspacing=3
+      stype=SWT.HORIZONTAL
+      swrap=true
+      sdescriptors=xworker.swt.Layouts/@RowLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=3230
+      @/@mainComposite/@3228/@okButton
+      sname=okButton
+      stext=确定(&O)
+      stype=SWT.PUSH
+      sflat=false
+      sborder=false
+      sselected=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Button
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=okButton
+        @/@mainComposite/@3228/@okButton/@3232
+        sname=cancelButton
+        sexclude=false
+        swidth=80
+        sheight=-1
+        sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3232
+        @/@mainComposite/@3228/@okButton/@3233
+        sname=Listeners
+        sdescriptors=xworker.swt.widgets.Widget/@Listeners
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3233
+          @/@mainComposite/@3228/@okButton/@3233/@3234
+          sname=okButtonSelection
+          stype=Selection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=3234
+            @/@mainComposite/@3228/@okButton/@3233/@3234/@GroovyAction
+            sname=GroovyAction
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+actions.doAction("save");
+shell.dispose();
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=GroovyAction
+      @/@mainComposite/@3228/@saveButton
+      sname=saveButton
+      stext=保存(&S)
+      stype=SWT.PUSH
+      sflat=false
+      sborder=false
+      sselected=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Button
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=saveButton
+        @/@mainComposite/@3228/@saveButton/@3232
+        sname=RowData
+        sexclude=false
+        swidth=80
+        sheight=-1
+        sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3232
+        @/@mainComposite/@3228/@saveButton/@3233
+        sname=Listeners
+        sdescriptors=xworker.swt.widgets.Widget/@Listeners
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3233
+          @/@mainComposite/@3228/@saveButton/@3233/@3234
+          sname=saveButtonSelection
+          stype=Selection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=3234
+            @/@mainComposite/@3228/@saveButton/@3233/@3234/@GroovyAction
+            sname=GroovyAction
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+
+    actions.doAction("save");
+    
+    
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=GroovyAction
+      @/@mainComposite/@3228/@cancelButton
+      sname=cancelButton
+      stext=关闭(&C)
+      stype=SWT.PUSH
+      sflat=false
+      sborder=false
+      sselected=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Button
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=cancelButton
+        @/@mainComposite/@3228/@cancelButton/@3236
+        sname=RowData
+        sexclude=false
+        swidth=80
+        sheight=-1
+        sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3236
+        @/@mainComposite/@3228/@cancelButton/@3237
+        sname=Listeners
+        sdescriptors=xworker.swt.widgets.Widget/@Listeners
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=3237
+          @/@mainComposite/@3228/@cancelButton/@3237/@3238
+          sname=cancelButtonSelection
+          stype=Selection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=3238
+            @/@mainComposite/@3228/@cancelButton/@3237/@3238/@Dispose
+            sname=Dispose
+            scontrolList=shell
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.swt.actions.ControlActions/@Dispose
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Dispose
+    @/@mainComposite/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@mainComposite/@actions/@setThing
+      sname=setThing
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//自动保存旧的
+if(actionContext.g().get("cache") != null){
+    actions.doAction("save", actionContext);
+}
+    
+//初始化描述者列表 
+def descriptors = thing.getDescriptors();
+actionContext.g().put("descriptors", descriptors);
+actionContext.g().put("thing", thing);
+actionContext.g().put("oldIndex", 0);
+actionContext.g().put("cache", [:]);
+for(desc in descriptors){
+    desCombo.add(desc.getMetadata().getLabel());
+}
+desCombo.select(0);
+
+//默认编辑
+thingForm.doAction("setThing", actionContext);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=setThing
+        @/@mainComposite/@actions/@setThing/@ins
+        sisValidate=false
+        sname=ins
+        sdescriptors=xworker.lang.actions.Inout/@ins
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ins
+          @/@mainComposite/@actions/@setThing/@ins/@thing
+          sname=thing
+          stypeCheck=false
+          soptional=true
+          scheck=false
+          scheckLevel=exception
+          sdescriptors=xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=thing
+      @/@mainComposite/@actions/@save
+      sname=save
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.codes.XmlCoder;
+
+if(desCombo.isDisposed()){
+    return;
+}
+
+//读取编辑的数据
+def values = thingForm.doAction("getValues", actionContext);
+thing.getAttributes().putAll(values);
+def desc = descriptors.get(desCombo.getSelectionIndex());
+if(actionContext.get("cache") != null){
+    for(key in cache.keySet()){
+        if(key != desc.metadata.path){
+           thing.getAttributes().putAll(cache.get(key));
+        }
+    }
+}
+
+//设置xml
+def root = thing.getRoot();
+    
+//设置xml并重新定位光标到原来的位置
+def xml = XmlCoder.encodeToString(root);
+def offset = xmlText.getCaretOffset();
+xmlText.setText(xml);
+try{
+    xmlText.setCaretOffset(offset);
+}catch(Exception e){
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=save
+    @/@mainComposite/@init
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    scode=thingForm.getData("actionContext").g().put("okButtonSelection", okButtonSelection);
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.widgets.Widget/@Code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=init

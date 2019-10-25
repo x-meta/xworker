@@ -1,0 +1,331 @@
+^1557056550063
+@
+sname
+FileEntity
+slabel
+FileEntity
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>A self contained, repeatable entity that obtains its content from a file.</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>File getFile()</strong><br />
+	返回文件。<br />
+	&nbsp;</li>
+	<li><strong>String getContentType()</strong><br />
+	返回文件类型。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sid
+  actions
+    @/@actions/@create
+    sname
+    create
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.apache.http.entity.FileEntity;
+
+import org.xmeta.util.UtilData;
+import ognl.Ognl;
+
+
+def file = self.doAction("getFile", actionContext);//UtilData.getData(self, "file", actionContext);
+def contentType = self.getString("contentType");
+if(file instanceof String){
+    file = new File(file);
+}
+
+if(file == null){
+    return null;
+}else{
+    return new FileEntity(file, contentType);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    create
+    @/@actions/@getFile
+    sname
+    getFile
+    sattributeName
+    file
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetFile
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getFile
+    @/@actions/@getContentType
+    sname
+    getContentType
+    sattributeName
+    contentType
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getContentType
+  @/@name
+  sname
+  name
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  label
+  @/@file
+  sname
+  file
+  ssize
+  60
+  scolspan
+  2
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>首先是new File(file)，如果不存在使用Ognl从actionContext中取。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  file
+  @/@contentType
+  sname
+  contentType
+  sinputtype
+  inputSelect
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  application/octet-stream
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  srelationDataObject
+  xworker.things.p2018.p12.p28.ContentTypes
+  srelationValueField
+  contentType
+  srelationLabelField
+  contentType
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  contentType
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description

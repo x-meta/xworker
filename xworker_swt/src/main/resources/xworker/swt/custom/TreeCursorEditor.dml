@@ -1,0 +1,378 @@
+%1529910487416
+@
+sname=TreeCursorEditor
+slabel=TreeCursorEditor
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.events.Listeners
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>绑定到TableCursor上的编辑器，TableCursor用于遍历表格，编辑器用于编辑。</p>
+
+<p><strong>编辑器的触发</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; TableCursor的DefaultSelection会触发编辑事件，如果getEditorThing()方法返回值不为null，则创建编辑器。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在TableCursor的Selection事件里，如果先前存在编辑器，那么会保存先前编辑器的值，并销毁之前的编辑器。</p>
+
+<p><strong>创建编辑器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当创建编辑器时会传入如下变量：</p>
+
+<ul>
+	<li>parentContext&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 父动作上下文，表格所在的动作上下文</li>
+	<li>parent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 本TableCurosr</li>
+	<li>cursor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 本TableCursor</li>
+	<li>cursorThing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TableCursor的事物定义</li>
+	<li>tableItem&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 选中的表格行</li>
+	<li>item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 选中的表格行</li>
+	<li>column&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 选中的表格列，int值</li>
+	<li>table&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 表格</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 如果表格绑定了DataStore，那么table的getData(...)可以获取：</p>
+
+<ul>
+	<li>_columns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 列定义</li>
+	<li>_store&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DataStore</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; tableItem可以获取：</p>
+
+<ul>
+	<li>getData()或getData(&quot;_store_record&quot;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;行记录&nbsp;</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getEditorThing(Thing cursorThing, TreeCursor cursor,TreeItem item)</strong><br />
+	返回当前TableCursor处应该有的编辑器。<br />
+	&nbsp;</li>
+	<li><strong>void setValue(TreeItem item, int column, Object value)</strong><br />
+	设置值，默认实现是Store和普通的表格。<br />
+	&nbsp;</li>
+	<li><strong>Object getValue(TreeItem item, int column)</strong><br />
+	取值，这个值是要被编辑的。<br />
+	&nbsp;</li>
+	<li><strong>void onSelection(TreeItem item, int column, TreeCursor cursor)</strong><br />
+	当TableCursor选择一个单元格后会触发的事件，默认没有实现，在事件的末尾调用该方法。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  slabel=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=create
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sid=create
+    @/@actions/@selectionListener
+    sname=selectionListener
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=selectionListener
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sid=selectionListener
+    @/@actions/@tableSelectionListener
+    sname=tableSelectionListener
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=tableSelectionListener
+    sdisableGlobalContext=false
+    sdescription=<p>监听表格发生变化的事件。当正在编辑时且表格选择切换时，终止原先的编辑并保存编辑的值。</p>
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sid=tableSelectionListener
+    @/@actions/@setValueAt
+    sname=setValue
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=setValue
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sid=setValueAt
+      @/@actions/@setValueAt/@ins
+      sisValidate=false
+      sname=ins
+      slabel=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sid=ins
+        @/@actions/@setValueAt/@ins/@item
+        sname=item
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sid=item
+        @/@actions/@setValueAt/@ins/@column
+        sname=column
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sid=column
+        @/@actions/@setValueAt/@ins/@value
+        sname=value
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sid=value
+    @/@actions/@getValueAt
+    sname=getValue
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=getValue
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sid=getValueAt
+      @/@actions/@getValueAt/@ins
+      sisValidate=false
+      sname=ins
+      slabel=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sid=ins
+        @/@actions/@getValueAt/@ins/@item
+        sname=item
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sid=item
+        @/@actions/@getValueAt/@ins/@column
+        sname=column
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sid=column
+    @/@actions/@getEditorThing
+    sname=getEditorThing
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.custom.TreeCursorEditor
+    smethodName=getEditorThing
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getEditorThing
+    @/@actions/@onSelection
+    sname=onSelection
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onSelection
+  @/@name
+  sname=name
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=name
+  @/@label
+  sname=label
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=label
+  @/@BORDER
+  sname=BORDER
+  sinputtype=truefalse
+  scolspan=2
+  sdefault=false
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=BORDER
+  @/@foreground
+  sname=foreground
+  slabel=前景色
+  sinputtype=colorpicker
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=#FFFFFF
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=foreground
+  @/@background
+  sname=background
+  slabel=背景色
+  sinputtype=colorpicker
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=#004080
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=background
+  @/@ColumnEditor
+  sname=ColumnEditor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.custom.ItemColumnEditor
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ColumnEditor
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name
+  @/@dataType
+  sname=dataType
+  slabel=数据类型
+  sinputtype=select
+  sdefault=texts
+  Sdescription=
+#$@text#$@
+<p>表格的数据类型，决定如何取值和设置值：</p>
+<ul>
+    <li>texts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 通过表格行的getText(column)和setText(column, text)方法取值和赋值</li>
+    <li>store&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 通过绑定到表格的DataStore的取值和赋值</li>
+    <li>其他&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 可以通过重载本事物（TableCursorEditor）的getValue(item, column)和setValue(item, column, value)动作实现自定义的取值和赋值方法。</li>
+</ul>
+#$@text#$@
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sid=dataType
+    @/@dataType/@texts
+    sname=texts
+    slabel=texts
+    svalue=texts
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sid=texts
+    @/@dataType/@store
+    sname=store
+    slabel=store
+    svalue=store
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sid=store

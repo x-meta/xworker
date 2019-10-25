@@ -1,0 +1,295 @@
+%1555471229286
+@
+sname=VariableExamples
+slabel=VariableExamples
+smode=run
+sdisabled=false
+sinterpretationType=Self
+sattributeTemplate=false
+schildsAttributeTemplate=false
+svarScope=Local
+sisSynchronized=false
+sthrowException=true
+suseOtherAction=false
+screateLocalVarScope=false
+ssaveReturn=false
+sdisableGlobalContext=false
+sdebugLog=false
+sdescriptors=xworker.lang.ActionThing
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@ActionContext
+  sname=ActionContextExample
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+
+//创建变量上下文
+ActionContext ac = new ActionContext();
+
+//保存变量
+ac.put("x", 1);
+ac.put("y", 2);
+
+//使用变量
+printVar(ac); //x=1,y=2,x+y=3
+
+//栈操作, push
+Bindings bindings = ac.push();
+bindings.put("x", 3);
+bindings.put("y", 4);
+printVar(ac); //x=3,y=4,x+y=7
+
+//栈操作, pop
+ac.pop();
+printVar(ac); //x=1,y=2,x+y=3
+
+def printVar(ac){
+    println "x=" + ac.get("x") + ",y=" + ac.get("y") + ",x+y=" + (ac.x + ac.y);
+}
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionContext
+  @/@CreateVariables
+  sname=CreateVariables
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+//创建变量
+def bindings = actionContext.peek();
+bindings.put("v0", "Hello V0");
+println v0;    //Hello V0
+
+//Variables子节点创建的变量
+println v1;   //Hello V1.
+println v2;   //[x:1, y:2]
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=CreateVariables
+    @/@CreateVariables/@Variables
+    sname=Variables
+    sdescriptors=xworker.lang.actions.Inout/@Variables
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Variables
+      @/@CreateVariables/@Variables/@v1
+      sname=v1
+      stype=string
+      svalue=Hello V1.
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=v1
+      @/@CreateVariables/@Variables/@v2
+      sname=v2
+      SjsonText=
+#$@text#$@
+{
+   "x":1,"y":2
+}
+#$@text#$@
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.text.JsonActions/@parse
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=v2
+  @/@Varscope
+  sname=VarScope
+  schangeSelf=false
+  sinterpretationType=Self
+  sattributeTemplate=false
+  schildsAttributeTemplate=false
+  svarScope=Local
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdisableGlobalContext=false
+  sdebugLog=false
+  sdescriptors=xworker.lang.actions.Actions/@ActionGroup
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Varscope
+    @/@Varscope/@Variables
+    sname=Variables
+    sdescriptors=xworker.lang.actions.Inout/@Variables
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Variables
+      @/@Varscope/@Variables/@v1
+      sname=v1
+      stype=string
+      svalue=Hello V1.
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=v1
+    @/@Varscope/@actions
+    sname=actions
+    sdescriptors=xworker.lang.actions.Begin/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Varscope/@actions/@FileIterator
+      sname=FileIterator
+      sdir=.
+      svarName=file
+      sincludeDir=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.io.FileUtilActions/@FileIterator
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=FileIterator
+        @/@Varscope/@actions/@FileIterator/@ChildAction
+        sname=ChildAction
+        sdescriptors=xworker.io.FileUtilActions/@FileIterator/@ChildAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ChildAction
+          @/@Varscope/@actions/@FileIterator/@ChildAction/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          scode=println file.getName();
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+  @/@Modify Variable
+  sname=ModifyVariables
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+//修改局部变量，Modify local variables
+def bindings = actionContext.peek();
+bindings.peek().put("x", 1);
+
+//修改全局变量，Modify global variables
+actionContext.g().put("x", 1);
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Modify Variable

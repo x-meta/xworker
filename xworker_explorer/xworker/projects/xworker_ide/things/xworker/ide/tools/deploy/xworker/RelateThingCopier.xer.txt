@@ -1,0 +1,231 @@
+@xworker.ide.tools.deploy.xworker.RelateThingCopier
+sname
+RelateThingCopier
+slabel
+RelateThingCopier
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>指定一个路径（Project、ThingManager、Category或者Thing），把对应的事物或者事物相关的事物拷贝到指定的目录。</p>
+sid
+RelateThingCopier
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Project;
+import org.xmeta.ThingManager;
+import org.xmeta.Category;
+import org.xmeta.Thing;
+import org.xmeta.codes.XerThingCoder;
+
+def things = [:];
+
+//源路径
+def source = world.get(self.sourcePath);
+if(source == null){
+    log.info("RelateThingCopier: source is null, sourcePath=" + self.sourcePath);
+}
+
+//目标路径
+def targetFile = new File(self.targetPath);
+if(!targetFile.exists()){
+    targetFile.mkdirs();
+}
+
+if(source instanceof Project){
+    for(thingManager in source.getThingManagers()){
+        initThingManager(thingManager, things);
+    }
+}else if(source instanceof ThingManager){
+    initThingManager(source, things);
+}else if(source instanceof Category){
+    for(thing in source.getThings(true)){
+        initThing(thing, things);
+    }
+}
+
+XerThingCoder coder = new XerThingCoder();
+for(key in things.keySet()){
+    //log.info("" + key);
+    def thing = things.get(key);
+    String path = self.targetPath + "/" + thing.metadata.path.replace(':', '/').replace('.', '/') + ".xer";
+    File outputFile = new File(path);
+    if(!outputFile.exists()){
+        outputFile.getParentFile().mkdirs();
+    }
+     
+    FileOutputStream fout = new FileOutputStream(outputFile);
+    try{
+        coder.encode(thing, fout);
+    }finally{
+        fout.close();
+    }
+    
+    log.info(path);
+}
+
+def initThingManager(thingManager, things){
+    for(thing in thingManager.iterator("", true)){
+        initThing(thing, things);
+    }
+}
+
+def initThing(thing, things){
+    thing = thing.getRoot();
+    if(things.get(thing.metadata.path) == null){
+        //log.info("initThing=" + thing.metadata.path);
+        things.put(thing.metadata.path, thing);
+        
+        for(desc in thing.getDescriptors()){
+            initThing(desc, things);
+        }
+        for(ext in thing.getExtends()){
+            initThing(ext, things);
+        }
+        
+        for(child in thing.getChilds()){
+            initChildThing(child, things);
+        }
+    }
+}
+
+def initChildThing(thing, things){
+    for(desc in thing.getDescriptors()){
+        initThing(desc, things);
+    }
+    for(ext in thing.getExtends()){
+        initThing(ext, things);
+    }
+    
+    for(child in thing.getChilds()){
+        initChildThing(child, things);
+    }
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@labe
+sname
+labe
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+labe
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@sourcePath
+sname
+sourcePath
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+sourcePath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.RelateThingCopier/@targetPath
+sname
+targetPath
+sinputtype
+openWindow
+ssize
+60
+scolspan
+2
+sinputattrs
+xworker.lang.attributeEditors.openWins.DirectorySelector|message=%E9%80%89%E6%8B%A9%E4%BA%8B%E7%89%A9%E7%9A%84%E5%AF%BC%E5%87%BA%E7%9B%AE%E5%BD%95%EF%BC%8C%E5%AF%B9%E5%BA%94XWorker%E7%9A%84%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84project%E7%9B%AE%E5%BD%95%E3%80%82
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+targetPath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

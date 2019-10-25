@@ -1,0 +1,425 @@
+%1469502539603
+@
+sname=AppMenuTreeModel
+slabel=AppMenuTreeModel
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.app.model.tree.TreeModel
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=web.extjs
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+
+<p>Extjs的简单菜单树模型，用于编写快速和简单的Extjs应用。</p>
+
+<h3>根节点</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 第一个Node子节点即为根节点，通常根节点只有一个。</p>
+
+<h3>如何在界面中显示多个&ldquo;根&rdquo;节点</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 方法是在TreeModel中设置不显示根节点，这样初始显示的就是根节点下的其它节点了。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.app.model.tree.TreeModels
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@getRoot
+    sname=getRoot
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def node = self.getThing("Node@0");
+if(node != null){
+    return node.doAction("toNode", actionContext);
+}else{
+    return null;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getRoot
+    @/@actions/@getChilds
+    sname=getChilds
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def thing = world.getThing(id);
+if(thing == null){
+    if("__TreeNodeRootId__" == id){
+        def node = self.getThing("Node@0");
+        if(node != null){
+            thing = node;
+        }else{
+            return [];
+        }
+    }else{
+        return self.doAction("getRoot", actionContext);
+    }
+    //thing = self;
+}
+
+def nodes = [];
+for(child in thing.getChilds()){
+    def node = child.doAction("toNode", actionContext);
+    if(node != null){
+        nodes.add(node);
+    }
+}
+
+return nodes;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getChilds
+  @/@Node
+  sname=Node
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  sicon=icons/folder.png
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Node
+    @/@Node/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Node/@actions/@toNode
+      sname=toNode
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+
+import org.xmeta.Thing;
+
+def node = new Thing("xworker.app.model.tree.TreeNodeWithNoCheck");
+node.putAll(self.getAttributes());
+node.id = self.metadata.path;
+node.text = self.metadata.label;
+node.leaf = "" + (self.getChilds().size() == 0);
+
+return node;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=toNode
+    @/@Node/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Node/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Node/@icon
+    sname=icon
+    sshowLabel=true
+    ssize=50
+    sreadOnly=false
+    sdefault=icons/folder.png
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=icon
+    @/@Node/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@Node/@Node
+    sname=Node
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.app.view.extjs.application.AppMenuTreeModel/@Node
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=private
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Node
+    @/@Node/@RemoteWidget
+    sname=RemoteWidget
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.html.extjs.xw.remote.RemoteWidget
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=RemoteWidget
+      @/@Node/@RemoteWidget/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaDescriptor3/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@Node/@RemoteWidget/@actions/@toNode
+        sname=toNode
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+
+import org.xmeta.Thing;
+
+def node = new Thing("xworker.app.model.tree.TreeNodeWithNoCheck");
+node.putAll(self.getAttributes());
+node.id = self.metadata.path;
+node.text = self.metadata.label;
+node.leaf = "true";
+node.dataId = self.namespace;
+node.tabId = self.tabId;
+node.url = "do?sc=" + self.metadata.path;
+return node;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=toNode
+      @/@Node/@RemoteWidget/@name
+      sname=name
+      sshowLabel=true
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=name
+      @/@Node/@RemoteWidget/@label
+      sname=label
+      sshowLabel=true
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=label
+      @/@Node/@RemoteWidget/@tabId
+      sname=tabId
+      sshowLabel=true
+      ssize=50
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=tabId
+      @/@Node/@RemoteWidget/@icon
+      sname=icon
+      sshowLabel=true
+      ssize=50
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=icon
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description

@@ -1,0 +1,786 @@
+^1562585432636
+@
+sname
+UiNode
+slabel
+UiNode
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+programing.uiflow
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p><strong>UI流程节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 流程节点是可以显示在流程编辑界面的节点树中，添加到流程图后可以和其它节点管理，并且是可以执行的节点。</p>
+
+<p><strong>需要实现的方法</strong></p>
+
+<ul>
+	<li><strong>void flowRun(IFlow uiFlow, Thing flowNode)</strong><br />
+	执行节点。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>GraphNode createZestGraphNode(Graph graph, UiFlow uiFlow)</strong><br />
+	创建Draw2d的节点。<br />
+	&nbsp;</li>
+	<li><strong>void createZestGraphConnection(Graph graph, UIiFlow uiFlow, Map&lt;String, GraphNode&gt; graphNodes)</strong><br />
+	创建节点之间的链接。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;Map&lt;String, String&gt;&gt; getConnectionStats()</strong><br />
+	如果一个这个节点可以连多个其它节点，那么返回连接列表，比如IF的Then和Else。<br />
+	&nbsp;</li>
+	<li><strong>void updateConnection(Graph graph, Map&lt;String, String&gt; linkStartInfo)</strong><br />
+	连接其他节点是的操作。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.util.ThingIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@createZestGraphNode
+    sname
+    createZestGraphNode
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    createZestGraphNode
+    sdisableGlobalContext
+    false
+    Sdescription
+#$@text#$@
+<p>在流程编辑界面时创建ZestGraphNode，如果重写此方法可以实现自定以的节点样式。</p>
+
+<p><strong>返回值：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; org.eclipse.zest.core.widgets.GraphNode</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>self：Thing</strong><br />
+	节点自身的事物。<br />
+	&nbsp;</li>
+	<li><strong>graph: Graph</strong><br />
+	Zest的Graph对象。<br />
+	&nbsp;</li>
+	<li><strong>uiFlow: IFlow</strong><br />
+	流程对象。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createZestGraphNode
+    @/@actions/@createZestGraphConnection
+    sname
+    createZestGraphConnection
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    createZestGraphConnection
+    sdisableGlobalContext
+    false
+    Sdescription
+#$@text#$@
+<p>在流程编辑界面时创建连接对象，默认是通过自身的nextNode属性和Connection子节点找到连接的下级节点，然后创建节点。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>self：Thing</strong><br />
+	节点事物。<br />
+	&nbsp;</li>
+	<li><strong>graphNodes：Map&lt;String, GraphNode&gt;</strong><br />
+	节点对象的缓存，key是节点事物的路径。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    createZestGraphConnection
+    @/@actions/@getConnectionStarts
+    sname
+    getConnectionStarts
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    getConnectionStarts
+    sdisableGlobalContext
+    false
+    Sdescription
+#$@text#$@
+<p>在编辑界面中设置一个节点的连接时，会先弹出一个选择连接方式的窗口，这个窗口中的列表就是从这里获取的。</p>
+
+<p><strong>返回值：List&lt;Map&lt;String, String&gt;&gt;</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 连接列表。其中Map的参数有：</p>
+
+<ul>
+	<li><strong>name：String</strong><br />
+	名称。<br />
+	&nbsp;</li>
+	<li><strong>label: String</strong><br />
+	标签。<br />
+	&nbsp;</li>
+	<li><strong>type: String</strong><br />
+	类型，如果值为data，那么创建的连接时反向的。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Local
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getConnectionStarts
+    @/@actions/@updateConnection
+    sname
+    updateConnection
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    updateConnection
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>当设置了一个新连接或删除连接时调用的更新方法。</p>
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    updateConnection
+    @/@actions/@getVarForSave
+    sname
+    getVarForSave
+    sattributeName
+    varForSave
+    sdescription
+    <p>保存变量的变量名。</p>
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getVarForSave
+    @/@actions/@saveValue
+    sname
+    saveValue
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.flow.uiflow.UiFlowActions
+    smethodName
+    saveValue
+    sdisableGlobalContext
+    false
+    Sdescription
+#$@text#$@
+<p>保存变量的快捷方法。</p>
+
+<p><strong>返回值：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; void。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>Object value</strong><br />
+	要保存的值。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    saveValue
+      @/@actions/@saveValue/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@saveValue/@ins/@value
+        sname
+        value
+        stype
+        Object
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        value
+    @/@actions/@flowRun
+    sname
+    flowRun
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    Sdescription
+#$@text#$@
+<p>每一个节点都应实现flowRun方法，流程执行就是执行一个个节点的flowRun方法。</p>
+
+<p><strong>返回值：void</strong></p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>uiFlow: IFlow</strong><br />
+	流程对象。<br />
+	&nbsp;</li>
+	<li><strong>self: Thing</strong><br />
+	流程节点自身。</li>
+</ul>
+
+<p><strong>流程节点结束和流程的流转</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 流程节点结束后在flowRun方法中一定要调用uiFlow.nodeFinished(Thing flowNode, String nextNode）方法，流程的流向实际上是由节点控制的。</p>
+
+<p><strong>IFlow的一些工具方法</strong></p>
+
+<ul>
+	<li><strong>ActionContext runComposite(Thing flowNode, Thing composite)</strong><br />
+	运行一个Composite，返回Composite所用的新的变量上下文，在新的变量上下文中parentContext是流程的变量上下文。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    flowRun
+  @/@x
+  sname
+  x
+  sgroup
+  Node
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  x
+  @/@y
+  sname
+  y
+  sgroup
+  Node
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  y
+  @/@editor
+  sname
+  editor
+  sinputtype
+  select
+  sgroup
+  Node
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  form
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  editor
+    @/@editor/@form
+    sname
+    form
+    svalue
+    form
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    form
+    @/@editor/@thing
+    sname
+    thing
+    svalue
+    thing
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thing
+  @/@nextNodes
+  sname
+  nextNode
+  ssize
+  60
+  sgroup
+  Node
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>后续节点。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  nextNodes
+  @/@connections
+  sname
+  connections
+  sinputtype
+  textarea
+  sgroup
+  Node
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果有多个连接，那么可选连接的定义，格式：</p>
+
+<p>name1:label1,name2:label2,....,namen:labeln</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  connections
+  @/@varForSave
+  sname
+  varForSave
+  sgroup
+  VarForSave
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果有需要保存变量到全局上下文的话，那么一般在这里设置变量名，并且还可以重写getVarForSave这个方法。</p>
+
+<p>可以通过void saveValue(Object value)方法快速保存变量。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  varForSave

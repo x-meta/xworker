@@ -1,0 +1,185 @@
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow
+sname
+BackgroundFlow
+slabel
+BackgroundFlow
+sedit
+false
+seditOnException
+true
+seditOnFlowBroken
+false
+sdescription
+<p>事物管理器的背景事物流程。</p>
+sid
+BackgroundFlow
+sdescriptors
+xworker.lang.flow.ThingFlow
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@initThing
+sname
+initThing
+sdescriptors
+xworker.lang.flow.ThingFlow/@AThing
+sdescription
+<p>初始化数据，使下级流程能够的到必要的变量。</p>
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@initThing/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaThing/@actions
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@initThing/@actions/@runt
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.ActionContext;
+
+//log.info("background flow is running");
+
+//停止1秒
+Thread.sleep(2000);
+
+try{
+    //如果如没有设置display变量，退出流程
+    if(actionContext.get("display") == null) return "stop";
+    
+    //获取当前的Tab
+    def tabItem = explorerContext.centerTabFolder.getSelection();  
+    if(tabItem == null) return "success"; 
+    
+    display.asyncExec([
+        run : {
+            try{
+                 //当前Tab是否定义了事物流程
+                def backgroundFlowPath = tabItem.getData("backgroundFlow");
+                if(backgroundFlowPath != null){
+                    backgroundFlow = World.getInstance().getThing(backgroundFlowPath);
+                    ActionContext context = new ActionContext();
+                    context.put("tabItem", tabItem);
+                    context.put("explorerActions", explorerActions);
+    	            context.put("explorerContext", explorerContext);
+                 	context.put("thingFlowListener", thingFlowListener);
+                	context.put("display", display);
+		
+                    backgroundFlow.doAction("run", context);
+                }
+            }catch(Throwable t){
+                //屏蔽所有异常
+            }              
+        }] as Runnable);
+}catch(Throwable t){
+    log.error("background flow :" + t);
+}
+return "success";
+#$@text#$@
+sid
+runt
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success
+sname
+success
+stype
+DEFAULT
+sid
+success
+sdescriptors
+xworker.lang.flow.ThingFlow/@result
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep
+sname
+Sleep
+sedit
+false
+seditOnException
+true
+seditOnFlowBroken
+false
+soneInstance
+false
+sid
+Sleep
+sdescriptors
+xworker.lang.flow.ThingFlow/@result/@ThingFlow
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@SleepThing
+sname
+SleepThing
+sdescriptors
+xworker.lang.flow.ThingFlow/@AThing
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@SleepThing/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaThing/@actions
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@SleepThing/@actions/@sleep
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+log.info("sleep 2000");
+//停止2秒
+Thread.sleep(2000);
+
+return "success";
+#$@text#$@
+sid
+sleep
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@success
+sname
+success
+stype
+DEFAULT
+sid
+success
+sdescriptors
+xworker.lang.flow.ThingFlow/@result
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@success/@toRoot
+sname
+toRoot
+sedit
+false
+seditOnException
+true
+seditOnFlowBroken
+true
+sid
+toRoot
+sdescriptors
+xworker.lang.flow.ThingFlow/@result/@ThingFlow
+@xworker.ide.worldExplorer.swt.flows.BackgroundFlow/@success/@Sleep/@success/@toRoot/@53
+sname
+stop
+sid
+53
+sdescriptors
+xworker.lang.flow.ThingFlow/@result

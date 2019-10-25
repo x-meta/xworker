@@ -1,0 +1,135 @@
+^1416551820321
+@
+sname
+CheckStatusAll
+slabel
+CheckStatusAll
+sgroup
+monitor.linux.common
+smessage
+${result?if_exists}
+Scommand
+#$@text#$@
+#!/bin/bash
+
+#用途：监控服务器/获取服务器运行参数
+#脚本编辑时间：2014-10-16
+#
+#System:1数据获取时间/2服务器IP/3系统版本/4内核版本/5上线时间
+#CPU：6型号/7个数/8核数/9线程总数/10平均负载/11当前空闲cpu百份比值
+#内存：12总数/13已使用/14未使用/15已用百分比
+#swap：16总数/17已使用/18未使用/19已用百分比
+#hdd：20服务器物理连接硬盘数/21每块硬盘的[io负载]
+#partition:22每个分区的[挂载点/大小/已用/未用/已用百分比]
+#
+#Centos 6 默认没有iostat,需要安装yum -y install sysstat
+
+#1数据获取时间
+DATE=`date | sed 's/ //g'`
+#echo 1UpdateTime=$DATE,
+
+#2服务器IP：有的服务器不是eth0，有些单个网卡绑定了多个IP（美国一块网卡绑29个IP) | 有的服务器没外网IP就没区分
+server_ip=`ifconfig | grep 'inet addr' | grep -v '127.0.0.1' | head -n 1 | cut -f 2 -d ":" | cut -f 1 -d " "`
+#echo 2ServerIP=$server_ip,
+
+#3系统版本
+system_version=`cat /etc/redhat-release | sed 's/ /_/g'`
+#echo 3SystemVersion=$system_version,
+
+#4内核版本
+kernel_version=`cat /proc/version | cut -f 3 -d " "`
+#echo 4KernelVersion=$kernel_version,
+
+#5上线时间
+uptime=`uptime | cut -f 1 -d "," | cut -f 2 -d "" | sed 's/ //g'`
+#echo 5Uptime=$uptime,
+
+#6CPU型号
+cpu_model=`cat /proc/cpuinfo | grep name | cut -f 2 -d ":" | head -n 1 | sed 's/ //g'`
+#echo 6CPU_Model=$cpu_model,
+
+#7CPU个数
+cpu_num=`cat /proc/cpuinfo | grep 'physical id' | uniq |wc -l`
+#echo 7CPU_Num=$cpu_num,
+
+#8每颗CPU核心数
+cpu_core=`cat /proc/cpuinfo | grep 'cpu cores' | uniq | cut -f 2 -d ":" | sed 's/ //g'`
+#echo 8CPU_Core=$cpu_core,
+
+#9CPU线程总数
+cpu_processor=`cat /proc/cpuinfo | grep ^processor | wc -l`
+#echo 9CPU_Processor=$cpu_processor,
+
+#10系统15分钟内平均负载值
+cpu_15minload=`uptime | cut -f 6 -d "," | sed 's/ //g'`
+#echo 10CPU_Latest_15_mins_System_Load=$cpu_15minload,
+
+#11当前空闲cpu百份比 
+cpu_id=`top -b -n 1 | grep Cpu | awk '{print $5}' | cut -f 1 -d "."`  
+#echo 11CPU_Idlesse=$cpu_id,
+
+#12内存总数
+ram_total=`free -m | grep Mem | awk '{print $2}'`
+#echo 12Memory_Total=$ram_total,
+
+#13内存已用
+ram_used=`free -m | grep Mem | awk '{print $3}'`
+#echo 13Memory_Used=$ram_used,
+
+#14内存剩余
+ram_free=`free -m | grep Mem | awk '{print $4}'`
+#echo 14Memory_Free=$ram_free,
+
+#15内存已用百分比
+ram_per=`free -m |awk 'NR==2{rate=$3/$2;print rate*100"%"}'`
+#echo 15Memory_Used_Percent=$ram_per,
+
+#16Swap总数
+swap_total=`free -m | grep Swap | awk '{print $2}'`
+#echo 16SWAP_Total=$swap_total,
+
+#17Swap已用
+swap_used=`free -m | grep Swap | awk '{print $3}'`
+#echo 17SWAP_Used=$swap_used,
+
+#18Swap剩余
+swap_free=`free -m | grep Swap | awk '{print $4}'`
+#echo 18SWAP_Free=$swap_free,
+
+#19Swap已用百分比
+swap_per=`free -m |awk 'NR==4{rate=$3/$2;print rate*100"%"}'`
+#echo 19SWAP_Used_Percent:$swap_per,
+
+#20服务器物理连接硬盘数  Centos 6 fdisk -l 会显示 Disk identifier: 0x000898e3和LVM
+hdd_num=`fdisk -l 2>&1 | grep '^Disk' | grep -v identifier | grep sd[a-z] | wc -l`
+#echo 20HDD_num=$hdd_num,
+
+#21自带逗号.所有硬盘IO负载,有几块硬盘输出几个逗号,关键字HDD_IO_
+hdd_io=`iostat -x | grep '^sd' | grep -v 'sd[a-z][0-9]' |  awk '{print "HDD_IO_"$1"="$12"%,"}' | awk '{printf "%s", $1}'`
+#echo 21$hdd_io
+
+#22自带逗号.磁盘空间占用[挂载点/大小/已用/未用/已用百分比],关键字:P_Mounted_on,P_Size,P_Used,P_Free,P_Per
+partition=`df -hP | grep -v 'tmpfs' | grep -v boot | grep dev | awk '{print "P_Mounted_on="$6",P_Size="$2",P_Used="$3",P_Free="$4",P_Per="$5","}' | awk '{printf "%s", $1}'`
+#echo 22$partition
+
+#output:用英文逗号分隔
+echo "UpdateTime=$DATE,ServerIP=$server_ip,SystemVersion=$system_version,KernelVersion=$kernel_version,Uptime=$uptime,CPU_Model=$cpu_model,CPU_Num=$cpu_num,CPU_Core=$cpu_core,CPU_Processor=$cpu_processor,CPU_Latest_15_mins_System_Load=$cpu_15minload,CPU_Idlesse=$cpu_id,Memory_Total=$ram_total,Memory_Used=$ram_used,Memory_Free=$ram_free,Memory_Used_Percent=$ram_per,SWAP_Total=$swap_total,SWAP_Used=$swap_used,SWAP_Free=$swap_free,SWAP_Used_Percent:$swap_per,HDD_num=$hdd_num,$hdd_io$partition"
+#$@text#$@
+ssaveData
+false
+scompare
+false
+scompareOperator
+>
+sdescriptors
+xworker.app.monitor.tasks.linux.LinuxCheckTask
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.app.init.InitIndex
+sth_registMyChilds
+false
+sth_mark
+false

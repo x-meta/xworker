@@ -1,0 +1,424 @@
+%1565690465952
+@
+sname=CompositeEditor
+slabel=CompositeEditor
+Sdescription=
+#$@text#$@
+<p>Composite编辑器。在编辑器打开一个Composite事物，没有菜单、工具栏、概要和状态栏等。如果需要菜单等可以用Editor实现。</p>
+
+<p><strong>基本参数：</strong></p>
+
+<ul>
+	<li><strong>composite：</strong>Thing or Thing path string&nbsp;<br />
+	要打开的Composite事物。<br />
+	&nbsp;</li>
+	<li><strong>title: String </strong><br />
+	标题。可选。<br />
+	&nbsp;</li>
+	<li><strong>simpleTitle: String</strong><br />
+	简单标题。可选。<br />
+	&nbsp;</li>
+	<li><strong>icon: String or Image</strong><br />
+	图标。可选。</li>
+</ul>
+
+<p><strong>Composite要求</strong></p>
+
+<ul>
+	<li><strong>actions: ActionContainer</strong><br />
+	可以创建一个名为actions的ActionContainer,&nbsp;用来实现编辑器的相关功能。可以参看<a href="do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.swt.app.editors.NoopActionContainer">xworker.swt.app.editors.NoopActionContainer</a>的相关方法。<br />
+	&nbsp;</li>
+	<li><strong>void init(Map&lt;String, Object&gt; params)</strong><br />
+	actions的初始化方法。<br />
+	&nbsp;</li>
+	<li><strong>Outline（概要）</strong><br />
+	要实现Outline，可以在创建Composite或初始化时调用动作CreateOutline来创建，CreateOutline方法兼容XWorker的事务管理器和工作台。<br />
+	另外需要在actions方法中实现Control getOutline()方法，在这个方法里返回创建的Outline，如果存在的话。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@EditorComposite
+  sname=editorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=EditorComposite
+    @/@EditorComposite/@editorCompositeFillLayout
+    sname=editorCompositeFillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=editorCompositeFillLayout
+  @/@actions
+  sname=actions
+  sextends=xworker.swt.app.editors.NoopActionContainer
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@setContent
+    sname=setContent
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=setContent
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import java.io.File;
+
+//判断参数是否存在
+if(params == null){    
+    noParams(actionContext);
+    return;
+}
+
+//如果是路径转为事物
+if(params.composite instanceof String){
+    params.composite = world.getThing(params.composite);
+} 
+
+actionContext.g().put("compositeEditorParams", params);
+
+//创造Composite
+for(child in editorComposite.getChildren()){
+    child.dispose();
+}
+
+if(params.composite != null){
+    actionContext.peek().put("parent", editorComposite);
+    params.composite.doAction("create", actionContext);
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+      @/@actions/@setContent/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@setContent/@ActionDefined/@noParams
+        sname=noParams
+        sshell=ognl:EditorComposite.getShell()
+        sicon=ICON_WARNING
+        sbuttons=OK
+        stitle=lang:d=文件文本编辑器&FileTextEditor
+        smessage=lang:d=参数不存在，不能编辑文件！&en=Can not edit file, params not exists!
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=noParams
+    @/@actions/@isSameContent
+    sname=isSameContent
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=isSameContent
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("compositeEditorParams") == null){
+    return false;
+}
+
+if(actionContext.get("params") == null){
+    return false;
+}    
+
+//如果是路径转为事物
+if(params.composite instanceof String){
+    params.composite = world.getThing(params.composite);
+} 
+
+if(compositeEditorParams.composite == params.composite){
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@actions/@getSimpleTitle
+    sname=getSimpleTitle
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=getSimpleTitle
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("compositeEditorParams") != null){
+    if(compositeEditorParams.composite != null){
+        return compositeEditorParams.composite.getMetadata().getLabel();
+    }else{
+        return "No Composite";
+    }
+}else{
+    return "No Composite";
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@actions/@getTitle
+    sname=getTitle
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=getTitle
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("compositeEditorParams") != null){
+    if(compositeEditorParams.composite != null){
+        return compositeEditorParams.composite.getMetadata().getPath();
+    }else{
+        return "No Composite";
+    }
+}else{
+    return "No Composite";
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@actions/@doDispose
+    sname=doDispose
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=doDispose
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(editorComposite.isDisposed() == false){
+    editorComposite.dispose();
+}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doDispose
+    @/@actions/@doSave
+    sname=doSave
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=doSave
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//if(actionContext.get("editorActions") != null){
+//    editorActions.doAction("doSave", actionContext);
+//}
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doSave
+    @/@actions/@isDirty
+    sname=isDirty
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=isDirty
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//if(actionContext.get("editorActions") != null){
+//    return editorActions.doAction("isDirty", actionContext);
+//}
+
+return false;
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isDirty
+    @/@actions/@isDirty1
+    sname=getOutline
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=getOutline
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//if(actionContext.get("editorActions") != null){
+//    editorActions.doAction("getOutline", actionContext);
+//}
+
+return null;
+#$@text#$@
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isDirty1
+    @/@actions/@getIcon
+    sname=getIcon
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.editors.CompositeEditor
+    smethodName=getIcon
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon

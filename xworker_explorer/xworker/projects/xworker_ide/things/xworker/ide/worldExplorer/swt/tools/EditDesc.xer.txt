@@ -1,0 +1,245 @@
+^1497439991629
+@
+sname
+EditDesc
+slabel
+EditDesc
+sdescription
+<p>编辑事物的描述者。</p>
+scheckPermission
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import xworker.dataObject.DataObject;
+
+def addr = request.getRemoteAddr();
+if(addr == "0:0:0:0:0:0:0:1" || addr == "127.0.0.1"){
+    //本地IP地址可以直接使用
+}else{    
+    return;
+}
+
+def name = "description";
+def lang = requestBean.lang;
+if(lang != null && lang.length() > 0){
+    name = lang + "_" + name;
+}
+
+def page = world.getThing(requestBean.thingPath);
+if(requestBean.command == "save"){
+    def content = requestBean.content;
+    page.set(name, content);
+    page.save();
+}
+
+actionContext.getScope(0).put("value", page.getString(name));
+actionContext.getScope(0).put("lang", lang);
+return "success";
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    doAction
+  @/@view
+  sname
+  view
+  sbelongToHtml
+  false
+  stitle
+  editor
+  sstyle
+  default
+  shasHead
+  false
+  shasBottom
+  false
+  snoCache
+  false
+  SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors
+  xworker.http.controls.SimpleControl/@view
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  view
+    @/@view/@code
+    sname
+    code
+    Scode
+#$@text#$@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html>
+<head>
+	<title>SWT Kckeditor</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<!--<script type="text/javascript" src="fckeditor/2.6beta1/fckeditor.js"></script>-->
+	<script type="text/javascript" src="fckeditor/4_1/ckeditor.js"></script>
+	<script type="text/javascript">
+function getContents(){	
+	var oEditor = CKEDITOR.instances.data ;	
+	window.status = "html_edit_content:" + oEditor.getData();
+  	//alert(window.status) ;	
+}
+
+function setContents(html){
+    var oEditor = CKEDITOR.instances.data ;	
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    oEditor.setData(html);
+    //oEditor.SetHTML(html);
+    //var contentDiv = document.getElementById("data");
+    //contentDiv.value = html;
+}
+
+function setContentsFirst(html){
+    //var oEditor = FCKeditorAPI.GetInstance('data') ;
+    //oEditor.SetHTML(html);
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    var contentDiv = document.getElementById("data");
+    contentDiv.value = html;
+}
+
+function executeCommand( commandName ){
+	  var oEditor = FCKeditorAPI.GetInstance('data') ;
+
+	  // Execute the command.
+	  oEditor.Commands.GetCommand( commandName ).Execute() ;
+}
+
+function FCKeditor_OnComplete( editorInstance ){
+	  executeCommand("FitWindow");	  
+}
+</script>
+</head>
+<body>	
+	<form id="contentForm" name="contentForm" method="post" action="do" >
+	    <input type="hidden" name="sc" value="xworker.ide.worldExplorer.swt.tools.EditDesc"/>
+	     <input type="hidden" name="thingPath" value="${requestBean.thingPath}"/>
+	     <input type="hideen" name="lang" value="${lang?if_exists}"/>
+	     <input type="hidden" name="command" value="save"/>
+		<textarea  id="data" name="content" rows="20" cols="60">${(value?html)?if_exists}</textarea>
+ </form>		
+	<form id="contentForm" name="contentForm" method="post" action="do?sc=xworker.swt.xworker.HtmlEditorHttp/@showEditorHtml">
+	     <input type="hidden" name="editorContent"  id="editorContent" value=""/>
+	     <input type="button" value="返回" onclick="window.location.href='do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=${requestBean.thingPath?if_exists}'"/>
+	     <input type="button" value="默认" onclick="window.location.href='do?sc=xworker.ide.worldExplorer.swt.tools.EditDesc&thingPath=${requestBean.thingPath?if_exists}'"/>
+	     <input type="button" value="中文" onclick="window.location.href='do?sc=xworker.ide.worldExplorer.swt.tools.EditDesc&thingPath=${requestBean.thingPath?if_exists}&lang=zh'"/>
+	     <input type="button" value="英文" onclick="window.location.href='do?sc=xworker.ide.worldExplorer.swt.tools.EditDesc&thingPath=${requestBean.thingPath?if_exists}&lang=en'"/>
+	</form>
+	
+	<script language="javascript">    
+    var editor = CKEDITOR.replace('data',{ 
+filebrowserImageBrowseUrl : 'do?sc=xworker.app.orgweb.web.admin.FileBrowser',  
+filebrowserFlashBrowseUrl : 'do?sc=xworker.app.orgweb.web.admin.FileBrowser' 
+        });
+    editor.on('instanceReady',   // editor是CKEDITOR的一个实例
+                 function(event){
+                    event.editor.getCommand('maximize').exec();
+                  }
+    );    
+
+    //var oFCKeditor = new FCKeditor( 'data' ) ;    
+    //oFCKeditor.BasePath = "fckeditor/";
+    //oFCKeditor.ToolbarSet="${(requestBean.toolbarSet)?default("SwtEdit")}";
+    //oFCKeditor.ReplaceTextarea() ;    
+     
+</script>
+</body>
+</html>
+#$@text#$@
+    sdescriptors
+    xworker.html.base.container.childs/@code
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    code
+  @/@success
+  sname
+  success
+  stype
+  form
+  scontentType
+  text/html;charset=UTF-8
+  svalue
+  xworker.ide.worldExplorer.swt.tools.EditDesc/@view
+  sdescriptors
+  xworker.http.controls.SimpleControl/@result
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  success

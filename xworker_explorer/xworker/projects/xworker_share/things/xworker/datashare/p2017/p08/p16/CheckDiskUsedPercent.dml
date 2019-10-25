@@ -1,0 +1,579 @@
+%1560232103917
+@
+sname=CheckDiskUsedPercent
+slabel=CheckDiskUsedPercent
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=disk
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>查看磁盘空间的占用百分比。</p>
+
+<p><strong>问题</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 问题是一个独立的框架，可以在事物索引中查看problem分组。如果生成了问题，那么可以在问题中设置解决方法，并可以尝试解决该问题。</p>
+
+<ul>
+	<li><strong>生成问题的条件</strong><br />
+	如果检查产生了消息就会生成问题，对同一个会话(Session)生成的问题总是是唯一的。</li>
+	<li><strong>解决问题</strong><br />
+	如果resolveProblem=true，那么会调用问题的相关方法解决问题，然后再重新检查。</li>
+</ul>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>boolean filter(Thing sessionThing, String name, double percent, int level)</strong><br />
+	是否过滤，如果返回true，那么该条记录不加入到消息中。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.monitor.check.linux.LinuxCheckTasks
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@check
+    sname=check
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilAction;
+
+//执行检查
+def html = self.doAction("doCheck", actionContext);
+
+if(html != null && self.doAction("isGenerateProblem", actionContext)){
+    //生成问题
+    def label = sessionThing.getMetadata().getLabel() + "-磁盘百分比检查异常";
+    def thingPath = UtilAction.generatePath(self, sessionThing, "problem");
+    def problem = getProblem(actionContext, 
+            "label", label, 
+            "thingPath", thingPath,
+            "message", html,
+            "sessions", sessionThing.getMetadata().getPath());
+    if(problem.getStringBlankAsNull("sessions") == null){
+        problem.set("sessions", sessionThing.getMetadata().getPath());
+        problem.save();
+    }
+            
+    //设置问题的会话
+    if(self.doAction("isResolveProblem", actionContext)){
+        //尝试解决问题
+        problem.doAction("resolve", actionContext);
+        
+        //重新检查
+        html =  self.doAction("doCheck", actionContext);
+    }else{
+        //系统通知
+        problem.doAction("notify", actionContext);
+    }
+    html = html + "<br/><br/>问题路径：" + problem.getMetadata().getPath();
+    return html;
+}else{
+    return html;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=check
+      @/@actions/@check/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@check/@ActionDefined/@getProblem
+        sname=getProblem
+        sregist=false
+        sproblemName=CheckDiskUserPercent
+        sproblemLabel=var:label
+        sproblemDescriptor=xworker.problem.Problems/@LinuxProblem
+        sthingManager=_local
+        sthingPath=var:thingPath
+        smessage=var:message
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.problem.ProblemActins/@GetOrCreateProblem
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getProblem
+    @/@actions/@getInfoPercent
+    sname=getInfoPercent
+    sattributeName=infoPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getInfoPercent
+    @/@actions/@getWarningPercent
+    sname=getWarningPercent
+    sattributeName=warningPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getWarningPercent
+    @/@actions/@getErrorPercent
+    sname=getErrorPercent
+    sattributeName=errorPercent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetDouble
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getErrorPercent
+    @/@actions/@filter
+    sname=filter
+    stype=boolean
+    svalue=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=filter
+    @/@actions/@doCheck
+    sname=doCheck
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.data.DATA;
+import xworker.util.UtilAction;
+
+//执行df命令
+def result = exec(actionContext);
+
+def info = self.doAction("getInfoPercent", actionContext);
+def warn = self.doAction("getWarningPercent", actionContext);
+def error = self.doAction("getErrorPercent", actionContext);
+def msg = null;
+
+try{    
+    //println "server===========";
+    def strs = result.split("[\n]");
+    //println(result);
+    //println("line=" + strs.length);
+    for(int i=0; i<strs.length; i++){
+        def str = strs[i].trim();
+        def ss = str.split("[\t]");
+        //println("columsn=" + ss.length);
+        if(ss.length == 1){
+            continue;
+        }
+        
+        def perStr = ss[1].trim();
+        
+        perStr = perStr.substring(0, perStr.length() - 1);
+        //println("percent=" + perStr);
+        def percent = Double.parseDouble(perStr);
+        def name = ss[0].trim();
+        
+        //过滤
+        if(self.doAction("filter", actionContext, "name", name, "percent", percent)){
+            continue;
+        }
+        
+        //println(name + ":" + percent);
+        if(percent >= error){
+            //error的必然返回
+            msg = addToMsg(msg , "<font color=\"${DATA.COLOR_ERROR}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");        
+        }else if(percent >= warn){
+            if(level <= DATA.WARNING){
+                msg = addToMsg(msg ,  "<font color=\"${DATA.COLOR_WARNING}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+            }
+        }else if(percent >= info){
+            if(level <= DATA.INFO){
+                msg = addToMsg(msg , "<font color=\"${DATA.COLOR_INFO}E\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+            }
+        }else if(level == DATA.DEBUG){
+            msg = addToMsg(msg , "<font color=\"${DATA.COLOR_DEBUG}\"><b>" + name  + ":&nbsp;</b>" + percent + "%</font>");
+        }
+    }
+}catch(Exception e){
+    return "<pre>" + UtilAction.getCauseStackTrace(e) + "</pre>";
+}  
+
+return msg;
+
+def addToMsg(msg, message){
+    if(msg == null){
+        return message;
+    }else{
+        return msg + "</br>" + message;
+    }
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doCheck
+      @/@actions/@doCheck/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@doCheck/@ActionDefined/@exec
+        sname=exec
+        ssessionVar=session
+        scloseSession=false
+        srunBackground=false
+        scommand=df -P |awk '{print $1"\t"$5}' |grep "/dev"
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.net.jsch.Exec
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=exec
+    @/@actions/@isGenerateProblem
+    sname=isGenerateProblem
+    sattributeName=generateProblem
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isGenerateProblem
+    @/@actions/@isResolveProblem
+    sname=isResolveProblem
+    sattributeName=resolveProblem
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isResolveProblem
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@infoPercent
+  sname=infoPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=50
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=infoPercent
+  @/@warningPercent
+  sname=warningPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=90
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=warningPercent
+  @/@errorPercent
+  sname=errorPercent
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=95
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=errorPercent
+  @/@generateProblem
+  sname=generateProblem
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=generateProblem
+  @/@resolveProblem
+  sname=resolveProblem
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=resolveProblem
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label=动作
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name

@@ -1,0 +1,569 @@
+^1462429031269
+@
+sname
+AliceLearnActions
+slabel
+AliceLearnActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Alice学习相关的动作。</p>
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+actions
+@/@actions/@getConfig
+sname
+getConfig
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def config = XWorkerUtils.getThingIfNotExistsCopy("_local.xworker.config.AimlConfig",
+     "_local", "xworker.ai.chatterbean.AimlDefaultConfig")
+     
+return config;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+getConfig
+@/@actions/@learnLocal
+sname
+learnLocal
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+//获取配置
+def config = world.getAction("xworker.ai.chatterbean.AliceLearnActions/@actions/@getConfig").run(actionContext);
+
+def path = config.getStringBlankAsNull("local");
+def thing = world.getThing(path);
+if(thing == null){
+    return "AIML事物不存在，不能保存。";
+}
+
+def context = bot.getContext();
+def question = context.getRequests(4);
+def answer = context.getRequests(2);
+
+//获取分割的字符
+def qs = question.getSentences(0).normalized();
+def q = "";
+if(qs.length == 1){
+    q = qs[0];
+}else{
+    for(int i=0; i<qs.length - 1; i++){
+        if(i > 0){
+            q = q + " ";
+        }
+        q = q + qs[i];
+    }
+}
+
+//创建category
+def category = new Thing("xworker.ai.chatterbean.Aiml/@category");
+category.put("label", q);
+category.put("template", answer.getOriginal());
+thing.addChild(category);
+thing.save();
+
+//学习单个cateogry
+def aiml = new Thing("xworker.ai.chatterbean.Aiml");
+aiml.addChild(category, false);
+aiml.doAction("learn", actionContext, ["bot":bot]);
+
+return "好的我记住了，如果你说:" + question.getOriginal() + ", 那么我回答：" + answer.getOriginal() + 
+     ",记录在<a href=\"javascript:invoke('thing:" + path + "')\">"  + path + "。";
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+learnLocal
+@/@actions/@learnXWorker
+sname
+learnXWorker
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+//获取配置
+def config = world.getAction("xworker.ai.chatterbean.AliceLearnActions/@actions/@getConfig").run(actionContext);
+
+def path = config.getStringBlankAsNull("xworker");
+def thing = world.getThing(path);
+if(thing == null){
+    return "AIML事物不存在，不能保存。";
+}
+
+def context = bot.getContext();
+def question = context.getRequests(3);
+def answer = context.getRequests(1);
+
+//获取分割的字符
+def qs = question.getSentences(0).normalized();
+def q = "";
+if(qs.length == 1){
+    q = qs[0];
+}else{
+    for(int i=0; i<qs.length; i++){
+        if(i > 0){
+            q = q + " ";
+        }
+        q = q + qs[i];
+    }
+}
+
+//创建category
+def category = new Thing("xworker.ai.chatterbean.Aiml/@category");
+category.put("label", q);
+category.put("template", answer.getOriginal());
+thing.addChild(category);
+thing.save();
+
+//学习单个cateogry
+def aiml = new Thing("xworker.ai.chatterbean.Aiml");
+aiml.addChild(category, false);
+aiml.doAction("learn", actionContext, ["bot":bot]);
+
+return "好的我记住了，如果你说:" + question.getOriginal() + ", 那么我回答：" + answer.getOriginal() + 
+     ",记录在<a href=\"javascript:invoke('thing:" + path + "')\">"  + path + "。";
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+learnXWorker
+@/@actions/@learnWork
+sname
+learnWork
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+//获取配置
+def config = world.getAction("xworker.ai.chatterbean.AliceLearnActions/@actions/@getConfig").run(actionContext);
+
+def path = config.getStringBlankAsNull("work");
+def thing = world.getThing(path);
+if(thing == null){
+    return "AIML事物不存在，不能保存。";
+}
+
+def context = bot.getContext();
+def question = context.getRequests(4);
+def answer = context.getRequests(2);
+
+//获取分割的字符
+def qs = question.getSentences(0).normalized();
+def q = "";
+if(qs.length == 1){
+    q = qs[0];
+}else{
+    for(int i=0; i<qs.length; i++){
+        if(i > 0){
+            q = q + " ";
+        }
+        q = q + qs[i];
+    }
+}
+
+//创建category
+def category = new Thing("xworker.ai.chatterbean.Aiml/@category");
+category.put("label", q);
+category.put("template", answer.getOriginal());
+thing.addChild(category);
+thing.save();
+
+//学习单个cateogry
+def aiml = new Thing("xworker.ai.chatterbean.Aiml");
+aiml.addChild(category, false);
+aiml.doAction("learn", actionContext, ["bot":bot]);
+
+return "好的我记住了，如果你说:" + question.getOriginal() + ", 那么我回答：" + answer.getOriginal() + 
+     ",记录在<a href=\"javascript:invoke('thing:" + path + "')\">"  + path + "。";
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+learnWork
+@/@actions/@saveThing
+sname
+saveThing
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+
+//获取配置
+def config = XWorkerUtils.getThingIfNotExistsCopy(configPath,
+     thingManagerName, configForCopy)
+     
+def path = config.getStringBlankAsNull(type);
+if(path == null){
+    return "存储方式" + type + "没有设置，不能保存。";
+}
+def thing = XWorkerUtils.getThingIfNotExistsCreate(path, configThingManager, "xworker.ide.aiml.ThingList")
+if(thing == null){
+    return "事物配置不存在，不能保存。";
+}
+
+//查看事物是否已经存在
+boolean exists = false;
+def name = context.getRequests(2).getOriginal().trim();
+def thingPath = context.getRequests(1).getOriginal().trim();
+//println("name=" + name);
+//println("thingPath=" + thingPath);
+if(name == null || name.trim() == ""){
+    return "名字不能为空，不能添加和设置！";
+}
+
+//有可能是其它东西，如内容等，所以下面取消
+//def theThing = world.getThing(thingPath);
+//if(theThing == null){
+//    return "路径对应的事物为空，不能添加和设置！";
+//}
+
+def contentAttribute = actionContext.get("contentAttribute");
+if(contentAttribute == null || contentAttribute == ""){
+    contentAttribute = "path";
+}
+for(child in thing.getChilds()){
+    if(child.getString("label") == name){
+        exists = true;
+        child.put(contentAttribute, thingPath);
+    }
+}
+if(!exists){
+    def childThing = new Thing("xworker.ide.aiml.ThingList/@Thing");
+    childThing.put("label",  name);
+    childThing.put(contentAttribute, thingPath);
+    thing.addChild(childThing);
+}
+thing.save();
+
+return null;
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+saveThing
+@/@actions/@saveThing/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+ins
+@/@actions/@saveThing/@ins/@configThingManager
+sname
+configThingManager
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+configThingManager
+@/@actions/@saveThing/@ins/@configPath
+sname
+configPath
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+configPath
+@/@actions/@saveThing/@ins/@configForCopy
+sname
+configForCopy
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+configForCopy
+@/@actions/@saveThing/@ins/@thingManagerName
+sname
+thingManagerName
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+thingManagerName
+@/@actions/@saveThing/@ins/@type
+sname
+type
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+type

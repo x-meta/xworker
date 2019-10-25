@@ -1,0 +1,1 @@
+dml.cmd xworker.ide.db.dbindex.actions.IndexBuilder

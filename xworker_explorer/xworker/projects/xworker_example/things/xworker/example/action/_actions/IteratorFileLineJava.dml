@@ -1,0 +1,357 @@
+^1555313205998
+@
+sname
+IteratorFileLineJava
+slabel
+IteratorFileLineJava
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>动态模型原生支持Java的静态方法的调用，但相比脚本语言来说，用Java编写代码量比较大，但在下面的场合一般建议使用Java。</p>
+
+<ul>
+	<li><strong>对性能要求高的场合</strong><br />
+	如果一个动作是会被大量调用的基础动作，对其有性能要求，如作为Http框架的动作，那么建议使用Java编写。<br />
+	&nbsp;</li>
+	<li><strong>大型框架的实现</strong><br />
+	对于大型框架的实现也建议使用Java实现，也是因为性能的考虑，比如XWorker的SWT框架需要大量调用控件的create方法，所以一般也用Java实现。</li>
+</ul>
+
+<p><strong>对象动作</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 本动作也是一个对象动作，对象动作示例可以参看<a href="javascript:invoke('thing:xworker.example.action._actions.IteratorFileLine')">IteratorFileLine</a>。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@getFile
+    sname
+    getFile
+    sattributeName
+    file
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetFile
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getFile
+    @/@actions/@run1
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    false
+    suseInnerJava
+    false
+    sclassName
+    Run
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import org.xmeta.ActionException;
+
+public class Run{
+    public static void run(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        File file = (file) self.doAction("getFile", actionContext);
+        if(file == null){
+            throw new ActionException("File can't be null, action=" + self.metadata.path);
+        }
+        
+        FileInputStream fin = null;  
+        try {  
+            fin = new FileInputStream(file);  
+            BufferedReader br = new BufferedReader(new InputStreamReader(fin));  
+            String line = null;  
+            while ((line = br.readLine()) != null) {  
+                self.doAction("doLine", actionContext, "line", line);
+            }  
+        } catch (IOException e) {  
+            // TODO: handle exception  
+        } finally {  
+            try {  
+                if (fin != null) {  
+                    fin.close();  
+                }  
+            }  
+            catch (IOException e2) {  
+                // TODO: handle exception  
+            }  
+        }  
+    }
+}
+#$@text#$@
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    run1
+    @/@actions/@doLine
+    sname
+    doLine
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    println line;
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doLine
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@file
+  sname
+  file
+  ssize
+  60
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  file
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description

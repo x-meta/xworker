@@ -1,0 +1,1169 @@
+^1555402461979
+@
+sname
+GroovyAction
+slabel
+GroovyAction
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.Inout,xworker.lang.actions.Action
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing.action
+smodifier
+public
+sinheritDescription
+false
+sicon
+icons/file/groovy.gif
+Sdescription
+#$@text#$@
+<p>使用Groovy脚本定义的动作。</p>
+
+<p><strong>Script</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Groovy脚本编译后是groovy.lang.Script，运行的也是它，如果用Groovy编写的是普通的Java类，那么可以尝试用JavaAction来调用。</p>
+
+<p><strong>变量管理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量申明，Groovy脚本中自定义的变量都应该通过def 申明，未申明直接使用的变量会保存到变量上下文的全局变量栈中，可能会造成变量污染。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以直接使用变量上下文中的变量，需要自行管理变量上下文中的变量。变量上下文中的默认变量：</p>
+
+<ul>
+	<li><strong>actionContext: ActionContext</strong><br />
+	变量上下文自身。<br />
+	&nbsp;</li>
+	<li><strong>world: World</strong><br />
+	org.xmeta.World对象，事物模型的总容器。</li>
+</ul>
+
+<p><strong>Groovy脚本的编写方式</strong></p>
+
+<ul>
+	<li><strong>使用外部Groovy</strong><br />
+	在XWorker之外编写和编译的Groovy脚本。</li>
+	<li><strong>使用内部Groovy</strong><br />
+	在当前事物的事物管理器编写的*.groovy脚本文件。</li>
+	<li><strong>代码</strong><br />
+	直接写在动作中的Groovy脚本。</li>
+</ul>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    slabel
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.actions.GroovyAction
+    sclassName
+    GroovyAction
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sid
+    run
+    @/@actions/@getActionClass
+    sname
+    getActionClass
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    suseOuterJava
+    false
+    sclassName
+    GetActionClass
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+/*
+ * Copyright 2007-2008 The XWorker.org.
+ * 
+ * Licensed to the XWorker under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The XWorker licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import groovy.lang.Binding;
+import groovy.lang.Script;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+public class GetActionClass {
+	private static Logger log = LoggerFactory.getLogger(GetActionClass.class);	
+	
+	public static Object run(ActionContext context) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException{				
+		Thing actionThing = (Thing) context.get("actionThing");
+		if(actionThing == null){
+		    return null;
+		}
+		
+		World world = World.getInstance();
+		Action action = actionThing.getAction();		
+		if(action.actionClass == null || action.changed){
+			//查看代码是否需要重新编译			
+			boolean recompile = false;
+			if(action.changed){
+				recompile = true;
+			}
+			if(action.actionClass == null){
+				File classFile = new File(action.classFileName);
+				if(!classFile.exists()){
+					recompile = true;
+				}
+			}
+			
+			if(recompile){
+				//重新编译并装载脚本
+				org.codehaus.groovy.tools.Compiler compiler;
+				Properties prop = new Properties();
+				prop.setProperty("groovy.target.directory", world.getPath()
+						+ "/actionClasses");
+				prop.setProperty("groovy.classpath", action.getCompileClassPath());
+				CompilerConfiguration config = new CompilerConfiguration(prop);
+				//System.out.println(config.getClasspath());
+				compiler = new org.codehaus.groovy.tools.Compiler(config);
+				
+				//更新代码
+				File codeFile = new File(action.fileName + ".groovy");
+				if(!codeFile.exists()){
+					codeFile.getParentFile().mkdirs();
+				}
+				
+				FileOutputStream fout = new FileOutputStream(codeFile);
+				try{					
+					fout.write(("/*path:" + action.getThing().getMetadata().getPath() + "*/\n").getBytes());
+					fout.write(("package " + action.packageName + ";\n\n").getBytes());
+					fout.write(action.code.getBytes());
+					
+				}finally{
+					fout.close();
+				}
+				
+				//int dotIndex = action.className.lastIndexOf(".");			
+				//String compileClassName = action.className.substring(dotIndex + 1, action.className.length());
+				//compiler.compile(file);
+				try{
+					compiler.compile(codeFile);
+					//log.info("compile groovy " + action.getThing().getMetadata().getPath());
+					action.updateCompileTime();					
+				}catch(MultipleCompilationErrorsException me){
+					log.error("compile groovy code : " + action.getThing().getMetadata().getPath());
+					throw me;
+				}
+			}
+			action.changed = false;
+		}
+		
+		if(action.actionClass == null){
+			action.actionClass = action.classLoader.loadClass(action.className);	
+			java.lang.Compiler.compileClass(action.actionClass);
+		}
+
+		return action.actionClass;
+	}
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sid
+    getActionClass
+    @/@actions/@menu_setCodeAssistor
+    sname
+    menu_setCodeAssistor
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.actions.GroovyAction;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import xworker.util.XWorkerUtils;
+
+GroovyAction.addCodeAssistorCache(currentThing);
+
+def shell = addChildButton.getShell();
+def box = new MessageBox(shell, SWT.ICON_WARNING | SWT.OK);
+box.setText("代码辅助");
+box.setMessage("下次执行该方法时会初始化代码辅助中的类缓存，请记得执行它。");
+box.open();
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menu_setCodeAssistor
+  @/@name1
+  sname
+  name
+  slabel
+  名称
+  sgroup
+  Code
+  sgroupIndex
+  -100
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  name1
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  sgroup
+  Code
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Label
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@isSynchronized1
+  sname
+  isSynchronized
+  slabel
+  是否同步
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Synchronized
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  isSynchronized1
+  @/@throwException1
+  sname
+  throwException
+  slabel
+  抛出异常
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  ThrowException
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  throwException1
+  @/@useOtherAction1
+  sname
+  useOtherAction
+  slabel
+  引用其他动作
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  UseOtherAction
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  useOtherAction1
+  @/@otherActionPath1
+  sname
+  otherActionPath
+  slabel
+  引用动作路径
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Action
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  OtherActionPath
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  otherActionPath1
+  @/@varScope
+  sname
+  varScope
+  sinputtype
+  inputSelect
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  Local
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>变量的输出范围。</p>
+<p>脚本中可能含有一些脚本的全局变量，这些脚本的全局变量可以通过varScope参数设定输出到哪一个变量范围里，如果选择Local那么输出到当前的动作变量范围中，如果选择Global那么输出到全局变量范围里（ActionContext的底层变量范围），如果输入是动作路径，那么输出到相应动作的变量范围，如果是数字，那么输入到指定变量范围中，正数表示从0往上数，负数表示从顶部往下数。</p>
+<p>Groovy脚本默认的变量输出范围是全局。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  varScope
+    @/@varScope/@Local
+    sname
+    Local
+    slabel
+    Local
+    svalue
+    Local
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    Local
+    @/@varScope/@Global
+    sname
+    Global
+    slabel
+    Global
+    svalue
+    Global
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    Global
+  @/@disableGlobalContext
+  sname
+  disableGlobalContext
+  slabel
+  禁止全局上下文
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果一个动作是全局上下文的动作，那么应该禁止，否则会造成递归的无限循环。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  DisableGlobalContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  disableGlobalContext
+  @/@outterClassName
+  sname
+  outterClassName
+  slabel
+  使用外部Groovy
+  ssize
+  60
+  sgroup
+  Other
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果不为空说明Groovy代码是在XWorker之外编写的，是已经编译成Java类的，有可能是编译后打包到jar中的，这里需要执行Groovy类的全名。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  UseOuterGroovy
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  outterClassName
+  @/@innerClassName
+  sname
+  innerClassName
+  slabel
+  使用内部Groovy
+  ssize
+  60
+  sgroup
+  Other
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果不为空表面Groovy代码是编写到当前事物的事物管理中的，说明Groovy代码并不是写到Groovy动作中。</p>
+
+<p><strong>注意</strong></p>
+
+<p>只有FileThingManager才能够把Groovy脚本以文件的形式放到事物管理器下，其他事物管理者都没有此功能。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  UseInnerGroovy
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  innerClassName
+  @/@code1
+  sname
+  code
+  slabel
+  代码
+  sinputtype
+  codeEditor
+  scolspan
+  2
+  sgroup
+  Code
+  sshowLabel
+  true
+  sinputattrs
+  codeName=groovy codeType=groovy wrap=false fillBoth=true cols=70 rows=10
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sen_label
+  Code
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  code1
+  @/@description
+  sname
+  description
+  slabel
+  描述
+  sinputtype
+  html
+  scolspan
+  2
+  sgroup
+  Description
+  sgroupIndex
+  -90
+  sinputattrs
+  Width='80';Height='50';ToolbarSet="SwtEdit"
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Description
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuDefine
+      @/@sswtMenus/@menuDefine/@Groovy
+      sname
+      Groovy
+      slabel
+      Groovy
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      Groovy
+    @/@sswtMenus/@menuSetting
+    sname
+    menuSetting
+    stype
+    data
+    smenuType
+    Groovy
+    slabel
+    menuSetting
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuSetting
+      @/@sswtMenus/@menuSetting/@runAction
+      sname
+      runAction
+      slabel
+      执行
+      surl
+      xworker.lang.actions.ActionMenu/@actions/@runAction
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sid
+      runAction
+      @/@sswtMenus/@menuSetting/@split1
+      sname
+      split1
+      sisSplit
+      true
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sid
+      split1
+      @/@sswtMenus/@menuSetting/@setChangeStatus
+      sname
+      setChangeStatus
+      slabel
+      设置动作为更新
+      surl
+      xworker.lang.actions.ActionMenu/@actions/@setActionChanged
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sid
+      setChangeStatus
+      @/@sswtMenus/@menuSetting/@split2
+      sname
+      split2
+      sisSplit
+      true
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sid
+      split2
+      @/@sswtMenus/@menuSetting/@openPathDialog
+      sname
+      openPathDialog
+      slabel
+      查看代码&类路径
+      surl
+      xworker.lang.actions.ActionMenu/@actions/@viewCodeClassPath
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sid
+      openPathDialog
+      @/@sswtMenus/@menuSetting/@split3
+      sname
+      split3
+      sisSplit
+      true
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      split3
+      @/@sswtMenus/@menuSetting/@setCodeAssistor
+      sname
+      setCodeAssistor
+      slabel
+      下次执行时初始化代码辅助
+      surl
+      xworker.lang.actions.GroovyAction/@actions/@menu_setCodeAssistor
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      setCodeAssistor
+    @/@sswtMenus/@debugMenu
+    sname
+    debugMenu
+    smenuType
+    debug
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    debugMenu
+      @/@sswtMenus/@debugMenu/@setEditorBreakPoint
+      sname
+      editorBreakPoint
+      slabel
+      编辑断点
+      sshell
+      xworker.ide.worldExplorer.swt.actions.ActionDebugInfoEditor
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      setEditorBreakPoint
+      @/@sswtMenus/@debugMenu/@removeBreakPoint
+      sname
+      removeBreakPoint
+      slabel
+      移除断点
+      surl
+      xworker.lang.actions.ActionMenu/@actions/@removeBreakPoint
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      removeBreakPoint
+  @/@Variables
+  sname
+  Variables
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  private
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>Variables下的子节点会当作动作分别执行，动作的执行结果作为变量放入到变量上下文中，其中变量名是动作的名字。</p>
+
+<p>创建的变量范围仅限于GroovyAction的执行。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Variables
+    @/@Variables/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@Variables/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@Variables/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description

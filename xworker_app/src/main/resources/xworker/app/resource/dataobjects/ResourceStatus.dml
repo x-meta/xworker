@@ -1,0 +1,649 @@
+%1564993444972
+@
+sname=ResourceStatus
+slabel=资源状态
+stableName=tblResourceStatus
+sdataSource=xworker.app.resource.datasource.ResourceDataSource
+sshowSql=true
+squerySqlForQueryOnly=false
+skeepQuerySql=false
+Sdescription=
+#$@text#$@
+<h2>资源状态</h2>
+
+<p><strong>监控</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 设计资源状态的目的是监控，即显示在DataObjectContainer中，很容易的查看资源的状态。</p>
+
+<p><strong>资源标识</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;resourceId是主键，如要持久保存到数据库中，需要设置独一无二的资源标识。</p>
+
+<p><strong>资源处理器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;需要重写下面的方法。</p>
+
+<ul>
+	<li><strong>Control createSWT(DataObject theData, DataObjectBinder binder)</strong><br />
+	创建SWT的显示界面。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+seditCols=1
+spaging=false
+snoTotalCount=false
+spagineByCursor=false
+sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+LstoreAutoDestroy=false
+sstoreAutoLoad=false
+LstoreAutoSave=true
+LstoreBatch=true
+LstorePruneModifiedRecords=false
+LstoreRemoteSort=false
+LstoreRestful=false
+sstoreRoot='rows'
+sstoreSuccessProperty='success'
+sstoreTotalProperty='totalCount'
+sstoreMessageProperty='msg'
+sgridEditable=true
+sgridEditType=cell
+sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+spaging_afterPageText=页 共
+spaging_beforePageText=第
+Lpaging_displayInfo=false
+spaging_displayMsg=第{0}-第{1}条，共{2}条
+spaging_emptyMsg=没有数据
+spaging_firstText=首页
+spaging_lastText=最后一页
+spaging_nextText=下一页
+Lpaging_prependButtons=false
+spaging_prevText=上一页
+spaging_refreshText=刷新
+sgridColumnLocking=false
+sgridLockText='锁定'
+sgridUnlockText='解锁'
+scolumnGroup=false
+sgridCheckable=false
+sgridRowNumber=false
+sgridGrouping=false
+sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+sgridRowExpander=false
+sautoGenerateId=false
+sidGenerateType=action
+sidAction=generateId
+sstoreSortDir=ASC
+sautoInit=false
+sautoInitAction=beforeCreate
+scacheRelation=false
+scacheRelationMaxSize=1000
+scacheRelationReadnone=false
+safterCreated=false
+sonLoaded=false
+sbeforeUpdate=false
+safterUpdated=false
+sbeforeDelete=false
+safterDeleted=false
+sbeforeQuery=false
+safterQueryed=false
+sshowUserTask=false
+sen_label=Resource Status
+sdescriptors=xworker.dataObject.db.DbDataObject
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.dataObject.db.DbDataObject/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@createSwtControl
+    sname=createSwtControl
+    sthingPath=xworker.app.resource.swt.ResourceStatusShell/@DataObjectControl
+    sactionName=create
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ThingAction1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=createSwtControl
+    @/@actions/@getLevelColor
+    sname=getLevelColor
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//返回级别对应的颜色
+def colors = [
+    "muted": "#FFFFFF",
+    "primary":"#0080C0",
+    "success":"#D5FFD5",
+    "info":"#BBFFFF",
+    "warning":"#FFFFD5",
+    "danger":"#FFD9D9"
+];
+
+def color = colors.get(theData.getString("level"));
+if(color != null){
+    return color;
+}else{
+    return "#000000";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getLevelColor
+    @/@actions/@initIndexs
+    sname=initIndexs
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.dataObject.utils.DataObjectUtil;
+
+//初始化索引下的数据对象
+def datas = DataObjectUtil.query("xworker.app.resource.dataobjects.ResourceStatus", 
+				[indexThing:self.getMetadata().getPath()], actionContext);
+dataObjectList.setDataObjects(datas);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=initIndexs
+  @/@resourceId
+  sname=resourceId
+  slabel=资源标识
+  sfieldName=resourceId
+  stype=string
+  soptional=true
+  slength=128
+  skey=true
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=120
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=resourceId
+  @/@label
+  sname=name
+  slabel=名称
+  sfieldName=name
+  sgenerator=native
+  stype=string
+  soptional=true
+  slength=128
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=label
+  @/@background
+  sname=level
+  slabel=级别
+  sfieldName=level
+  sgenerator=native
+  stype=string
+  soptional=true
+  slength=20
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=select
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=background
+    @/@background/@muted
+    sname=muted
+    svalue=muted
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=muted
+    @/@background/@primary
+    sname=primary
+    svalue=primary
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=primary
+    @/@background/@success
+    sname=success
+    svalue=success
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=success
+    @/@background/@info
+    sname=info
+    svalue=info
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=info
+    @/@background/@warning
+    sname=warning
+    svalue=warning
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=warning
+    @/@background/@danger
+    sname=danger
+    svalue=danger
+    sdescriptors=xworker.dataObject.AttributeEditConfig/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=danger
+  @/@resourceHandler
+  sname=resourceHandler
+  slabel=资源处理器
+  sfieldName=resourceHandler
+  sgenerator=native
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  sdefault=xworker.app.resource.swt.DefaultResourceStatusHandler
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=dataSelector
+  ssize=60
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=300
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=resourceHandler
+  @/@indexThing
+  sname=indexThing
+  slabel=索引事物
+  sfieldName=indexThing
+  stype=string
+  soptional=true
+  slength=512
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=dataSelector
+  ssize=60
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=indexThing
+  @/@source
+  sname=source
+  slabel=源
+  sfieldName=source
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  Sdescription=
+#$@text#$@
+<p>生成资源状态的数据对象的事物。</p>
+#$@text#$@
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=dataSelector
+  ssize=60
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=source
+  @/@params
+  sname=params
+  slabel=参数
+  sfieldName=params
+  stype=string
+  soptional=true
+  slength=2048
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=textarea
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=300
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=params
+  @/@memo
+  sname=memo
+  slabel=备注
+  sfieldName=memo
+  sgenerator=native
+  stype=string
+  soptional=true
+  slength=2048
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sinputtype=html
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridShowEditor=false
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=memo

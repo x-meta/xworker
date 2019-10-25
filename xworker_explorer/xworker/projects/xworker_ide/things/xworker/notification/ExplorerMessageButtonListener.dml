@@ -1,0 +1,285 @@
+%1565856771313
+@
+sname=ExplorerMessageButtonListener
+slabel=ExplorerMessageButtonListener
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@isDisposed
+    sname=isDisposed
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    scode=return systemMessageItem.isDisposed();
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isDisposed
+    @/@actions/@updateSystemStatus
+    sname=updateSystemStatus
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.notification.NotificationManager;
+import org.xmeta.util.UtilString;
+import xworker.util.XWorkerUtils;
+
+def count = NotificationManager.getUnViewedCount();
+def labelThing = world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@SystemInfo/@systemMessageItem");
+
+def label = labelThing.getMetadata().getLabel();//UtilString.getString("lang:d=系统消息&en=System Notification", actionContext);
+if(count > 0){
+    systemMessageItem.setText(label + "（" + count + "）");
+}else{
+    systemMessageItem.setText(label);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=updateSystemStatus
+    @/@actions/@eventAdded
+    sname=added
+    swidgetForDisplay=mainComposite
+    stype=async
+    svariables=systemMessageItem,notification
+    scancelTaskOnWidgetDisposed=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=eventAdded
+      @/@actions/@eventAdded/@actions
+      sname=actions
+      sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@actions/@eventAdded/@actions/@doAction
+        sname=doAction
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.notification.NotificationManager;
+import org.xmeta.util.UtilString;
+import xworker.util.XWorkerUtils;
+
+def action = world.getAction("xworker.notification.ExplorerMessageButtonListener/@actions/@updateSystemStatus");
+action.run(actionContext);
+
+//紧急任务需要立即打开处理
+if(actionContext.get("notification") != null && notification.getLevel() == "urgent"){
+    openManager(actionContext, "shell", XWorkerUtils.getIDEShell());
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=doAction
+          @/@actions/@eventAdded/@actions/@doAction/@ActionDefined
+          sname=ActionDefined
+          sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ActionDefined
+            @/@actions/@eventAdded/@actions/@doAction/@ActionDefined/@openManager
+            sname=openManager
+            sparent=ognl:shell
+            sshellPath=xworker.notification.NotificationManager
+            ssingleInstance=true
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.swt.actions.ShellActionsNew/@OpenShell
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=openManager
+    @/@actions/@eventAdded1
+    sname=removed
+    swidgetForDisplay=mainComposite
+    stype=async
+    svariables=systemMessageItem
+    scancelTaskOnWidgetDisposed=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=eventAdded1
+      @/@actions/@eventAdded1/@actions
+      sname=actions
+      sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@actions/@eventAdded1/@actions/@doAction
+        sname=doAction
+        srefActionPath=xworker.notification.ExplorerMessageButtonListener/@actions/@updateSystemStatus
+        skeepSelf=true
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@RefAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=doAction
+    @/@actions/@eventAdded11
+    sname=updated
+    swidgetForDisplay=mainComposite
+    stype=async
+    svariables=systemMessageItem
+    scancelTaskOnWidgetDisposed=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=eventAdded11
+      @/@actions/@eventAdded11/@actions
+      sname=actions
+      sdescriptors=xworker.swt.actions.DisplayActions/@DisplayExec/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@actions/@eventAdded11/@actions/@doAction
+        sname=doAction
+        srefActionPath=xworker.notification.ExplorerMessageButtonListener/@actions/@updateSystemStatus
+        skeepSelf=true
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@RefAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=doAction

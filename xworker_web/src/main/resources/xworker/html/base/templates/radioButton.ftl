@@ -1,0 +1,2 @@
+<#import "common.ftl" as lib>
+<input type="radio" id="${object.name?if_exists}" name="${object.groupName?if_exists}" <@lib.showProperties names=["alt", "emsg", "class", "style"] dataObject=object/> value="${object.constantValue?if_exists}" <${r"#"}if "${object.constantValue?if_exists}" = "${object.value?if_exists}">checked</${r"#"}if> <#if object.disabled?exists && object.disabled == "true">disabled </#if><@lib.showEvent object=object/> ${object.otherAttributes?if_exists}>${object.description?if_exists}

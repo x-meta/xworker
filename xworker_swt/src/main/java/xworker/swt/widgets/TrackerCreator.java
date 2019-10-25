@@ -1,0 +1,58 @@
+/*******************************************************************************
+* Copyright 2007-2013 See AUTHORS file.
+ * 
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* 
+*   http://www.apache.org/licenses/LICENSE-2.0
+* 
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+******************************************************************************/
+package xworker.swt.widgets;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tracker;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.swt.util.SwtUtils;
+
+public class TrackerCreator {
+    public static Object create(ActionContext actionContext){
+        Thing self = (Thing) actionContext.get("self");
+		
+		//println binding;
+		int style = SwtUtils.getInitStyle(self.getMetadata().getPath());
+		
+		if(self.getBoolean("LEFT")){
+		    style |= SWT.LEFT;
+		}
+		if(self.getBoolean("RIGHT")){
+		    style |= SWT.RIGHT;
+		}
+		if(self.getBoolean("UP")){
+		    style |= SWT.UP;
+		}
+		if(self.getBoolean("DOWN")){
+		    style |= SWT.DOWN;
+		}
+		if(self.getBoolean("RESIZE")){
+		    style |= SWT.RESIZE;
+		}
+		
+		Composite parent = (Composite) actionContext.get("parent");
+		Tracker tracker = new Tracker(parent, style);
+		
+		//保存变量和创建子事物
+		actionContext.getScope(0).put(self.getString("name"), tracker);
+		
+		return tracker;       
+	}
+
+}

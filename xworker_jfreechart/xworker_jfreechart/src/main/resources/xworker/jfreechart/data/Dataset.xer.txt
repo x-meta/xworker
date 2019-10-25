@@ -1,0 +1,161 @@
+@xworker.jfreechart.data.Dataset
+sname
+Dataset
+slabel
+Dataset
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Dataset是DataStore的监听器。</p>
+sid
+Dataset
+@xworker.jfreechart.data.Dataset/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.jfreechart.data.Dataset/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import ognl.Ognl;
+
+//创建一个新的实例
+def thing = new Thing();
+thing.getAttributes().putAll(self.getAttributes());
+thing.put("extends", self.metadata.path);
+if(actionContext.get("__jfreeChartComposite__") != null){
+    //swt下的应用
+    thing.put("display", __jfreeChartComposite__.display);
+}
+
+//创建数据集
+def dataset = self.doAction("createDataset", actionContext);
+thing.put("dataset", dataset);
+
+//数据仓库
+def dataStore = null;
+if(self.dataStore != null && self.dataStore != ""){
+    dataStore = Ognl.getValue(self.dataStore, actionContext);
+}
+if(dataStore == null){
+    def dataStoreThing = self.get("DataStore@0");
+    if(dataStoreThing != null){
+         try{
+             actionContext.push(null).put("parent", dataset);
+             dataStore = dataStoreThing.doAction("create", actionContext);
+         }finally{
+             actionContext.pop();
+         }
+    }
+}
+if(dataStore == null){
+    def dataStoreThing = self.get("DataStores@0");
+    if(dataStoreThing != null && dataStoreThing.getChilds().size() > 0){
+        dataStoreThing = dataStoreThing.getChilds().get(0);
+    }
+    
+    if(dataStoreThing != null){
+         try{
+             actionContext.push(null).put("parent", dataset);
+             dataStore = dataStoreThing.doAction("create", actionContext);
+         }finally{
+             actionContext.pop();
+         }
+    }
+}
+
+if(dataStore != null){
+    dataStore.doAction("addListener", actionContext, ["listener": thing]);
+}
+
+return dataset;
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.jfreechart.data.Dataset/@dataStore
+sname
+dataStore
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+dataStore
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.jfreechart.data.Dataset/@DataStore
+sname
+DataStore
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.app.view.swt.data.DataStore
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+DataStore
+@xworker.jfreechart.data.Dataset/@DataStores
+sname
+DataStores
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.app.view.swt.data.DataStores
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+sid
+DataStores

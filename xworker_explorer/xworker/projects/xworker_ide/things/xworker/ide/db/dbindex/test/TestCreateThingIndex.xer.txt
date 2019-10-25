@@ -1,0 +1,46 @@
+@xworker.ide.db.dbindex.test.TestCreateThingIndex
+sname
+TestCreateThingIndex
+slabel
+TestCreateThingIndex
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+@xworker.ide.db.dbindex.test.TestCreateThingIndex/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.db.dbindex.test.TestCreateThingIndex/@actions/@createThingIndex
+sname
+createThingIndex
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thingIndexActions = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexActions");
+
+def category = world.get("xworker.ide.db.dbindex.test.things");
+for(thing in category.iterator(true)){
+    println "update thing index " + thing.metadata.path;
+    def thingIndex = thingIndexActions.doAction("updateThingIndex", actionContext, ["thing":thing]);
+    println thingIndex;
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

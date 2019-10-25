@@ -1,0 +1,832 @@
+^1548159656608
+@
+sname
+ThingIndex
+slabel
+ThingIndexActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@getThingId
+    sname
+    getThingIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+def pst = null;
+def rs = null;
+
+try{
+    def path = thing.getMetadata().getPath();
+    if(thing.isTransient()){
+        return null;
+    }
+    if(thing.parent == null || thing.getBoolean("th_createIndex") || actionContext.get("forceCreate") == true || thing.isThingByName("thing")){
+        //根事物或者指明要索引的才索引
+    }else{
+        return null;
+    }
+    //println "create Index path=" + thing.metadata.path;
+    
+    //获取事物的标识
+    pst = con.prepareStatement("select id,name,path,label,en_label,zh_label,lastModified from tblThings where path=?");
+    pst.setString(1, path);
+    rs = pst.executeQuery();
+    if(rs.next()){
+        def index = [:];
+        index.id = rs.getInt("id");        
+        index.path = rs.getString("path");
+        index.name = rs.getString("name");
+        index.label = rs.getString("label");
+        index.en_label = rs.getString("en_label");
+        index.zh_label = rs.getString("zh_label");
+        index.lastModified = rs.getTimestamp("lastModified");
+        return index;
+    }else{
+        //获取事物索引的序号
+        //pst = con.prepareStatement("select next value for tblThings_id FROM SYSIBM.SYSDUMMY1");
+        //rs = pst.executeQuery();
+        //rs.next();
+        //thingId = rs.getInt(1);
+        //rs.close();
+       // pst.close();
+        
+        //插入索引
+        def dataObject = new DataObject("xworker.ide.db.dbindex.dataObject.Things");
+        //pst = con.prepareStatement("insert into tblThings(path,name,label,
+        //en_label,zh_label,lastModified,isRoot) values(?,?,?,?,?,?,?)");
+        dataObject.put("path", getLimitStr(thing.metadata.path, 500));
+        dataObject.put("name", getLimitStr(thing.metadata.name, 48));
+        dataObject.put("label", getLimitStr(thing.label, 48));
+        dataObject.put("en_label", getLimitStr(thing.en_label, 48));
+        dataObject.put("zh_label", getLimitStr(thing.zh_label,48));
+        dataObject.put("lastModified", new java.sql.Timestamp(0));
+        dataObject.put("isRoot", (thing.parent == null || thing.parent == thing) ? 1 : 0);
+        dataObject.doAction("create", actionContext);
+
+        return dataObject;
+    }   
+}finally{
+    if(rs != null){
+        rs.close();                
+    }
+    
+    if(pst != null){
+        pst.close();
+    }
+}
+
+def getLimitStr(str, length){
+    if(str == null || str == ""){
+        return str;
+    }
+    
+    while(str.getBytes().length > length){
+        str = str.substring(0, str.length() - 1);
+    }
+    
+    def s = str;
+    return s;
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>返回事物的数据库索引，如果没有则创建一条记录，但不更新具体的关键、事物注册等索引。</p>
+<p>注意：瞬态事物不创建索引。</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    getThingId
+      @/@actions/@getThingId/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@getThingId/@contexts/@db
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        xworker.ide.db.datasource.XWorkerDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        db
+      @/@actions/@getThingId/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@getThingId/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        thing
+    @/@actions/@createThingIndex
+    sname
+    updateThingIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def action = world.getAction("xworker.ide.db.dbindex.actions.ThingIndexActions/@actions/@updateThingIndexNoContext");
+action.run(actionContext);
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>更新一个事物的索引。</p>
+<p>如果事物没有建立索引，那么建立一个索引，若有已有索引且事物已更新那么重新创建索引。</p>
+<p>更新事物的关键字索引和注册索引。</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    createThingIndex
+      @/@actions/@createThingIndex/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@createThingIndex/@contexts/@db
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        true
+        sdataSourcePath
+        xworker.ide.db.datasource.XWorkerDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        db
+      @/@actions/@createThingIndex/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@createThingIndex/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        thing
+        @/@actions/@createThingIndex/@ins/@rebulid
+        sname
+        rebulid
+        stype
+        boolean
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        rebulid
+    @/@actions/@deleteThingIndex
+    sname
+    deleteThingIndex
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def pst = null;
+def rs = null;
+
+try{
+    pst = con.prepareStatement("select id from tblThings where path like ?");
+    pst.setString(1, thing + "%");
+    rs = pst.executeQuery();
+    def thingIds = [];
+    while(rs.next()){
+        thingIds.add(rs.getInt("id"));
+    }
+    
+    rs.close();
+    for(thingId in thingIds){
+        pst.close();
+        
+        //删除相关的表中的数据
+        pst = con.prepareStatement("delete from tblThingRegists where thingId=? or registThingId=?");
+        pst.setInt(1, thingId);
+        pst.setInt(2, thingId);
+        pst.execute();
+        pst.close();
+        
+        pst = con.prepareStatement("delete from tblThingKeywords where thingId=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+        
+        pst = con.prepareStatement("delete from tblThingDescriptors where thingId=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+
+        pst = con.prepareStatement("delete from tblThings where id=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+       
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    deleteThingIndex
+      @/@actions/@deleteThingIndex/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@deleteThingIndex/@contexts/@db
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        true
+        sdataSourcePath
+        xworker.ide.db.datasource.XWorkerDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        db
+      @/@actions/@deleteThingIndex/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sth_createIndex
+      false
+      sid
+      ins
+        @/@actions/@deleteThingIndex/@ins/@thing
+        sname
+        thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sid
+        thing
+    @/@actions/@updateThingIndexNoContext
+    sname
+    updateThingIndexNoContext
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.ide.index.ThingIndexUtils;
+
+updateIndex(thing, con);
+
+def updateIndex(thing, con){
+    def pst = null;
+    def rs = null;
+    def debug = false;
+    
+    if(debug){
+        log.info("更新索引:" + thing.getMetadata().getPath());
+    }
+    try{        
+        def thingIndex = self.doAction("getThingIndexNoContext", actionContext, ["thing":thing]);
+        if(actionContext.get("rebulid") != true && thingIndex != null && thingIndex.lastModified.getTime() == thing.metadata.lastModified){
+            if(debug){
+                log.info("事物索引已经存在，不需要重新建立索引");
+            }
+            return thingIndex;
+        }
+        
+        def createIndex = false;
+        if(thing.parent == null || thing.getBoolean("th_createIndex") || thing.isThingByName("thing")){
+            //根事物或者指明要索引的才索引
+            createIndex = true;
+        }
+        if(createIndex){
+            def thingId = 0;
+            if(thingIndex != null){
+                if(debug){
+                    log.info("事物索引已经存在，先删除原有索引");
+                }
+                thingId = thingIndex.id;
+                if(thingId == null){
+                    return;
+                }
+                //删除全部索引，然后重新插入索引
+                pst = con.prepareStatement("delete from tblThingKeywords where thingId=?");
+                pst.setInt(1, thingId);
+                pst.execute();
+                pst.close();
+                pst = con.prepareStatement("delete from tblThingRegists where thingId=?");
+                pst.setInt(1, thingId);
+                pst.execute();
+                pst.close();
+                pst = con.prepareStatement("delete from tblThingDescriptors where thingId=?");
+                pst.setInt(1, thingId);
+                pst.execute();
+                pst.close();
+                
+                //更新事物索引
+                pst = con.prepareStatement("update tblThings set path=?,label=?,en_label=?,zh_label=?,lastModified=?,name=? where id=?");
+                pst.setString(1, getLimitStr(thing.metadata.path, 490));
+                pst.setString(2, getLimitStr(thing.label, 20));
+                pst.setString(3, getLimitStr(thing.en_label, 20));
+                pst.setString(4, getLimitStr(thing.zh_label, 20));
+                pst.setTimestamp(5, new java.sql.Timestamp(thing.metadata.lastModified));
+                pst.setString(6, getLimitStr(thing.metadata.name, 20));
+                pst.setInt(7, thingId);
+                pst.execute();
+                pst.close();
+            }else{
+                if(debug){
+                    log.info("事物索引不存在，创建新的索引");
+                }
+                
+                //插入索引           
+                def dataObject = new DataObject("xworker.ide.db.dbindex.dataObject.Things");
+                //pst = con.prepareStatement("insert into tblThings(path,name,label,
+                //en_label,zh_label,lastModified,isRoot) values(?,?,?,?,?,?,?)");
+                dataObject.put("path", getLimitStr(thing.metadata.path, 500));
+                dataObject.put("name", getLimitStr(thing.metadata.name, 48));
+                dataObject.put("label", getLimitStr(thing.label, 48));
+                dataObject.put("en_label", getLimitStr(thing.en_label, 48));
+                dataObject.put("zh_label", getLimitStr(thing.zh_label,48));
+                dataObject.put("lastModified", new java.sql.Timestamp(0));
+                dataObject.put("isRoot", (thing.parent == null || thing.parent == thing) ? 1 : 0);
+                dataObject.doAction("createWithCon", actionContext);
+                thingId = dataObject.get("id");
+            }
+           
+            //插入关键字
+            pst = con.prepareStatement("insert into tblThingKeywords(thingId, keyword) values(?,?)");
+            def keyContext = [:];
+            def keys =ThingIndexUtils.getKeywords(thing);            
+            for(keyword in keys){
+                addKeyword(thingId, keyword, keyContext, pst);    
+            }
+            /*
+            def keywords = thing.getString("th_keywords");
+            
+           
+            if(keywords != null && keywords != ""){
+                if(debug){
+                    log.info("插入关键字，keywords=" + keywords);
+                }
+                for(keyword in keywords.split("[,]")){    
+                    addKeyword(thingId, keyword, keyContext, pst);                         
+                }
+            }
+            //插入名字和标签关键字
+            pst.setInt(1, thingId);
+            pst.setString(2, getLimitStr(thing.metadata.name.toLowerCase(), 20));
+            pst.addBatch();
+            if(thing.label != null && thing.label != ""){
+                addKeyword(thingId, thing.label, keyContext, pst);    
+            }
+            if(thing.en_label != null && thing.en_label != ""){
+                addKeyword(thingId, thing.en_label, keyContext, pst);    
+            }
+            if(thing.zh_label != null && thing.zh_label != ""){
+                addKeyword(thingId, thing.zh_label, keyContext, pst); 
+            }
+            
+            //插入路径
+            for(path in thing.getMetadata().getPath().split("[.]")){
+                for(p in path.split("[@]")){
+                    for(pp in p.split("[/]")){
+                        addKeyword(thingId, pp, keyContext, pst); 
+                    }
+                }
+            }         
+            */
+            //println(keyContext);            
+            pst.executeBatch();
+            pst.close();
+            
+            //插入描述者列表
+            pst = con.prepareStatement("insert into tblThingDescriptors(thingId,descriptor) values(?,?)");
+            def allDescriptors = thing.getAllDescriptors();
+            for(descriptor in allDescriptors){
+                pst.setInt(1, thingId);
+                pst.setString(2, descriptor.metadata.path);
+                pst.addBatch();
+            }
+            if(allDescriptors.size() > 0){
+                pst.executeBatch();
+            }
+            pst.close();
+            
+            //插入注册信息
+            def registThingDefault = null;//ModelRegistor.getRegistorsPath(thing.getMetadata().getPath());
+            if(debug){
+                log.info("ModelRegistor=" + registThingDefault);
+            }
+            def registThing = thing.getStringBlankAsNull("th_registThing");
+            if(registThingDefault != null){
+                if(registThing == null){
+                    registThing = registThingDefault;
+                }else{
+                    registThing = registThing + "," + registThingDefault;
+                }
+            }
+            if(registThing != null && registThing != ""){   
+                if(debug){ 
+                    log.info("registThing=" + registThing);            
+                }
+                for(registStr in registThing.split("[,]")){
+                    def rts = registStr.split("[|]");
+                    if(rts.length == 1){
+                        continue;
+                    }
+                    
+                    def registType = rts[0];
+                    def registTh = world.getThing(rts[1]);
+                    if(registTh != null){
+                        if(debug){
+                            log.info("插入注册事物，regist=" + registType + ",registThing=" + registTh);
+                        }
+                        def registThingIndex = self.doAction("getThingIndexNoContext", actionContext, ["thing":registTh, "forceCreate":true]);
+                        if(debug){
+                            log.info("regist thing index=" + registThingIndex);
+                        }
+                        
+                        if(registThingIndex == null){
+                            
+                        }
+                        pst = con.prepareStatement("insert into tblThingRegists(thingId, registType,registThingId, thingPath, registThingPath) values(?,?,?,?,?)");
+                        pst.setInt(1, thingId);                        
+                        pst.setString(2, registType);
+                        pst.setInt(3, registThingIndex == null ? 0 : registThingIndex.id);
+                        pst.setString(4, getLimitStr(thing.metadata.path, 490));
+                        pst.setString(5, getLimitStr(rts[1], 490));
+                        pst.execute();
+                    }else{
+                        if(debug){
+                            log.info("注册到的事物不存在，不需要注册事物, registThingPath=" + rts[1]);
+                        }
+                    }
+                }
+            }else{
+                if(debug){
+                    log.info("注册类型不存在，不需要注册事物");
+                }
+            }
+            
+            //插入描述
+        }
+    }catch(Exception e){
+        //println(thing);
+        throw e;
+        //log.info("error", e);
+        //e.printStackTrace();
+    }finally{
+        if(rs != null){
+            rs.close();                
+        }
+        
+        if(pst != null){
+            pst.close();
+        }
+    }    
+    
+    for(child in thing.getChilds()){
+        updateIndex(child, con);
+    }
+}
+
+def addKeyword(thingId, keyword, keycontext, pst){
+    if(keycontext.get(keyword) != null){
+        return;
+    }else{
+         keycontext.put(keyword, keyword);
+    }
+    if(keyword == null || keyword == ""){
+        return;
+    }
+    
+    pst.setInt(1, thingId);
+    pst.setString(2, getLimitStr(keyword.toLowerCase(), 20));
+    pst.addBatch();
+}
+def getLimitStr(str, length){
+    if(str == null || str == ""){
+        return str;
+    }
+    
+    while(str.getBytes().length > length){
+        str = str.substring(0, str.length() - 1);
+    }
+    
+    def s = str;
+    return s;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    updateThingIndexNoContext
+    @/@actions/@getThingIndexNoContext
+    sname
+    getThingIndexNoContext
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+def pst = null;
+def rs = null;
+
+try{
+    def path = thing.getMetadata().getPath();
+    if(thing.isTransient()){
+        return null;
+    }
+    if(thing.parent == null || thing.getBoolean("th_createIndex") || actionContext.get("forceCreate") == true || thing.isThingByName("thing")){
+        //根事物或者指明要索引的才索引
+    }else{
+        return null;
+    }
+    //println "create Index path=" + thing.metadata.path;
+    
+    //获取事物的标识
+    pst = con.prepareStatement("select id,name,path,label,en_label,zh_label,lastModified from tblThings where path=?");
+    pst.setString(1, path);
+    rs = pst.executeQuery();
+    if(rs.next()){
+        def index = [:];
+        index.id = rs.getInt("id");        
+        index.path = rs.getString("path");
+        index.name = rs.getString("name");
+        index.label = rs.getString("label");
+        index.en_label = rs.getString("en_label");
+        index.zh_label = rs.getString("zh_label");
+        index.lastModified = rs.getTimestamp("lastModified");
+        return index;
+    }else{
+        //获取事物索引的序号
+        //pst = con.prepareStatement("select next value for tblThings_id FROM SYSIBM.SYSDUMMY1");
+        //rs = pst.executeQuery();
+        //rs.next();
+        //thingId = rs.getInt(1);
+        //rs.close();
+       // pst.close();
+        
+        //插入索引
+        def dataObject = new DataObject("xworker.ide.db.dbindex.dataObject.Things");
+        //pst = con.prepareStatement("insert into tblThings(path,name,label,
+        //en_label,zh_label,lastModified,isRoot) values(?,?,?,?,?,?,?)");
+        dataObject.put("path", getLimitStr(thing.metadata.path, 500));
+        dataObject.put("name", getLimitStr(thing.metadata.name, 48));
+        dataObject.put("label", getLimitStr(thing.label, 48));
+        dataObject.put("en_label", getLimitStr(thing.en_label, 48));
+        dataObject.put("zh_label", getLimitStr(thing.zh_label,48));
+        dataObject.put("lastModified", new java.sql.Timestamp(0));
+        dataObject.put("isRoot", (thing.parent == null || thing.parent == thing) ? 1 : 0);
+        dataObject.doAction("createWithCon", actionContext);
+
+        return dataObject;
+    }   
+}finally{
+    if(rs != null){
+        rs.close();                
+    }
+    
+    if(pst != null){
+        pst.close();
+    }
+}
+
+def getLimitStr(str, length){
+    if(str == null || str == ""){
+        return str;
+    }
+    
+    while(str.getBytes().length > length){
+        str = str.substring(0, str.length() - 1);
+    }
+    
+    def s = str;
+    return s;
+}
+#$@text#$@
+    Sdescription
+#$@text#$@
+<p>返回事物的数据库索引，如果没有则创建一条记录，但不更新具体的关键、事物注册等索引。</p>
+<p>注意：瞬态事物不创建索引。</p>
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThingIndexNoContext

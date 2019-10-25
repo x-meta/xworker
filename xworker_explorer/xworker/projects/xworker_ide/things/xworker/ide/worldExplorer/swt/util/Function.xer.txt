@@ -1,0 +1,226 @@
+@xworker.ide.worldExplorer.swt.util.Function
+sname
+Function
+sid
+Function
+slabel
+Function
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure
+@xworker.ide.worldExplorer.swt.util.Function/@editFunction
+sname
+editFunction
+slabel
+编辑
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+Scode
+#$@text#$@
+def functionDataObject = world.getThing("xworker.ide.worldExplorer.swt.util.Function");
+actions.doAction("openThing", ["thing":functionDataObject]);
+#$@text#$@
+sid
+editFunction
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core
+sname
+core
+slabel
+Core
+sid
+core
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@node
+@xworker.ide.worldExplorer.swt.util.Function/@core/@webbrowser
+sname
+webbrowser
+slabel
+Web Browser
+spath
+xworker.ide.worldExplorer.swt.util.WebBrowser/@shell/@mainComposite
+sid
+webbrowser
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@openComposite
+@xworker.ide.worldExplorer.swt.util.Function/@core/@groovyConsole
+sname
+groovyConsole
+slabel
+Groovy脚本控制台
+spath
+xworker.ide.worldExplorer.swt.dialogs.GroovyScriptDialog/@shell/@mainComposite
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@openComposite
+@xworker.ide.worldExplorer.swt.util.Function/@core/@garbage
+sname
+garbage
+slabel
+垃圾回收
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+Scode
+#$@text#$@
+System.gc();
+
+println "gc is ok";
+#$@text#$@
+sid
+garbage
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core/@clearThingCache
+sname
+clearThingCache
+slabel
+清除事物缓存
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+world.clearCache();
+
+println "所有项目的缓存已经清除，所有缓存将重新建立！";
+#$@text#$@
+sdescription
+<p>清除所有事物缓存，所有事物再次通过world访问时会重新读取。</p>
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core/@clearCacheAndFile
+sname
+clearCacheAndFile
+slabel
+清除事物和文件缓存
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+world.clearCache();
+
+def path = world.getPath();
+deleteFile(new File(path  + "/actionClasses"));
+deleteFile(new File(path  + "/actionSources"));
+deleteFile(new File(path  + "/work/forms"));
+
+println "所有缓存已经清除，所有类和界面将重新生成！";
+
+def deleteFile(dir){
+    if(dir.isFile()){
+        dir.delete();
+    }else{
+        for(f in dir.listFiles()){
+            deleteFile(f);
+        }
+        
+        dir.delete();
+    }
+}
+#$@text#$@
+sdescription
+<p>将清除所有的事物缓存及代码和类的文件，以及表单的临时缓存。</p>
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core/@clearI18nCache
+sname
+clearI18nCache
+slabel
+清除I18n缓存
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.UtilResource;
+
+UtilResource.clear();
+log.info("I18N cache is cleared");
+#$@text#$@
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core/@tetsPreformance
+sname
+tetsPreformance
+slabel
+性能测试
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@node
+@xworker.ide.worldExplorer.swt.util.Function/@core/@tetsPreformance/@getThings
+sname
+getThings
+slabel
+读取所有数据
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+for(project in world.getAllProjects()){
+	for(tm in project.getThingManagers()){
+		for(thing in tm.iterator("", true)){
+			Thing thing = iter.next();
+			
+			println thing.getMetadata().getPath();
+		}
+	}
+}
+
+println "All Things is loaded!";
+#$@text#$@
+sdescriptors
+xworker.ide.worldExplorer.swt.util.FunctionStructure/@function
+@xworker.ide.worldExplorer.swt.util.Function/@core/@tetsPreformance/@getThings/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+@xworker.ide.worldExplorer.swt.util.Function/@core/@tetsPreformance/@getThings/@contexts/@performance
+slabel
+读取所有事物
+sshowSecond
+false
+sname
+performance
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.PerformanceContext,xworker.lang.actions.Inout/@contexts/@context

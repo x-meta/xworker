@@ -1,0 +1,123 @@
+@xworker.draw2d.layout.GridLayout
+sname
+GridLayout
+slabel
+GridLayout
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.draw2d.layout.AbstractLayout
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>Lays out children into a Grid arrangement in which overall aligment and spacing can be configured, as well as specfic layout requirements for the each individual member of the GridLayout. This layout is a Draw2D port of the swt GridLayout. <code>GridLayout</code> has a number of configuration fields, and the Figures it lays out can have an associated layout data object, called <code>GridData</code> (similar to the swt GridData object). The power of <code>GridLayout</code> lies in the ability to configure <code>GridData</code> for each Figure in the layout.</p>
+<p>The following code creates a container Figure managed by a <code>GridLayout</code> with 2 columns, containing 3 RectangleFigure shapes, the last of which has been given further layout instructions. Note that it is the <code>GridLayout</code> method <code>setConstraint</code> that binds the child <code>Figure</code> to its layout <code>GridData</code> object.</p>
+<pre>
+ Figure container = new Figure();
+ GridLayout gridLayout = new GridLayout();
+ gridLayout.numColumns = 2;
+ container.setLayout(gridLayout);
+ 
+ Shape rect;
+ rect = new RectangleFigure();
+ container.add(rect);
+ 
+ rect = new RectangleFigure();
+ container.add(rect);
+ 
+ rect = new RectangleFigure();
+ GridData gridData = new GridData();
+ gridData.widthHint = 150;
+ layout.setConstraint(rect, gridData);
+ 
+ container.add(rect);
+ </pre>
+<p>The <code>numColumns</code> field is the most important field in a <code>GridLayout</code>. Widgets are laid out in columns from left to right, and a new row is created when <code>numColumns</code>+ 1 figures are added to the <code>Figure<code> parent container. </code></code></p>
+#$@text#$@
+sth_createIndex
+false
+@xworker.draw2d.layout.GridLayout/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.draw2d.layout.GridLayout/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.draw2d.GridLayout;
+
+def layout = new GridLayout(self.getInt("numColumns"), self.getBoolean("makeColumnsEqualWidth"));
+
+layout.setObserveVisibility(self.getBoolean("observeVisibility"));
+
+return layout;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.draw2d.layout.GridLayout/@numColumns
+sname
+numColumns
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.layout.GridLayout/@makeColumnsEqualWidth
+sname
+makeColumnsEqualWidth
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

@@ -1,0 +1,423 @@
+^1526348771847
+@
+sname
+HtmlContent
+slabel
+HTML内容
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>HTML内容，约定有一个toString方法，执行toString方法将返回一段字符串，如果上下文有lang参数，则返回对应的语言。</p>
+
+<p>还提供了一个httpDo方法，可以在浏览器中同多do?sc=&lt;path&gt;的方式直接打开，生成简单的网页。</p>
+
+<p>任何具有toString的方法的事物都可以作为文本内容事物，文本内容事物可以注册到TextContents下用于某些事物添加子节点时用。</p>
+
+<p><strong>HTML里加入新闻的方法</strong></p>
+
+<p>&nbsp;&nbsp; 加入代码：</p>
+
+<pre class="brush:xml;">
+&lt;div id=&quot;newsContent&quot; style=&quot;display: none;&quot;&gt;&amp;nbsp;&lt;/div&gt;</pre>
+
+<p>&lt;div id=&quot;newsContent&quot; style=&quot;display: none;&quot;&gt;&amp;nbsp;&lt;/div&gt;</p>
+#$@text#$@
+szh_label
+HTML内容
+sen_label
+HtmlContent
+sth_createIndex
+false
+sid
+HtmlContent
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sid
+  actions
+    @/@actions/@toString
+    sname
+    toString
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ui.session.Session;
+import org.xmeta.ui.session.SessionManager;
+
+def lang = actionContext.get("lang");
+
+def description = null;
+if(lang != null){
+    description = self.getString(lang + "_description");
+}
+
+if(description == null || description.trim() == ""){
+    description = self.getString("description");
+}
+
+if(description == null || description.trim() == ""){
+    description = self.metadata.description;
+}
+
+return description;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    toString
+      @/@actions/@toString/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sth_createIndex
+      false
+      sid
+      ins
+        @/@actions/@toString/@ins/@lang
+        sname
+        lang
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sth_createIndex
+        false
+        sid
+        lang
+    @/@actions/@httpDo
+    sname
+    httpDo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+response.sendRedirect("do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + self.getMetadata().getPath());
+return;
+#$@text#$@
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    httpDo
+  @/@name
+  sname
+  name
+  slabel
+  名称
+  sdescription
+  <p>内容的名字。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  sshowLabel
+  true
+  ssize
+  60
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  label
+    @/@label/@SwtObject
+    sname
+    SwtObject
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@SwtObject
+    sth_createIndex
+    false
+    sid
+    SwtObject
+  @/@zh_label
+  sname
+  zh_label
+  slabel
+  中文标签
+  sinputtype
+  text
+  ssize
+  40
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  zh_label
+  @/@en_label
+  sname
+  en_label
+  slabel
+  英文标签
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  en_label
+  @/@newsId
+  sname
+  newsCategory
+  slabel
+  新闻分类
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果不为空将从数据库获取新闻数据，并以news变量保存到全局变量上下文中。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  newsId
+  @/@newsCount
+  sname
+  newsCount
+  slabel
+  新闻数量
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  newsCount
+  @/@keywords
+  sname
+  keywords
+  sshowLabel
+  true
+  ssize
+  60
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  keywords
+  @/@text
+  sname
+  description
+  slabel
+  HTML内容
+  sinputtype
+  html
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  text
+  @/@zh_description
+  sname
+  zh_description
+  slabel
+  中文HTML内容
+  sinputtype
+  html
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  zh_description
+  @/@en_description
+  sname
+  en_description
+  slabel
+  英文HTML内容
+  sinputtype
+  html
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  en_description
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sextends
+  xworker.http.ControlSet/@swtMenus1
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  sswtMenus

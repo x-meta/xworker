@@ -1,0 +1,410 @@
+^1561968155843
+@
+sname
+Config
+slabel
+Config
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>XWorker事物管理器的初始化，包含：</p>
+
+<ul>
+	<li>各参数事物的初始化。</li>
+	<li>启动索引和后台任务等。</li>
+</ul>
+#$@text#$@
+snotXmlAttribute
+false
+sth_createIndex
+true
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@init
+    sname
+    init
+    slabel
+    init
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.util.ThingRegistor;
+import xworker.listeners.SwtMenuListener;
+import xworker.swt.design.Designer;
+
+//设计模式，界面可以双击鼠标中键弹出设计菜单
+Designer.setEnabled(true);
+
+//菜单监听，监听事物的变更
+SwtMenuListener swtMenuListener = SwtMenuListener.getInstance();
+world.registThingManagerListener("*", swtMenuListener);
+
+//_local事物管理器，如果没有创建
+if(world.getThingManager("_local") == null){
+    world.createThingManager("_local", null);
+}
+
+//全局配置
+def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+if(globalConfig == null){
+    globalConfig = new Thing("xworker.ide.config.decriptors.GlobalConfig");
+    globalConfig.name = "GlobalConfig";
+    globalConfig.saveAs("_local", "_local.xworker.config.GlobalConfig");
+}
+
+//调试和断点信息
+def ActionDebugInfo = world.getThing("_local.xworker.debug.ActionDebugInfo");
+if(ActionDebugInfo == null){
+    ActionDebugInfo = new Thing("xworker.lang.actions.ActionDebugInfo");
+    ActionDebugInfo.name = "ActionDebugInfo";
+    ActionDebugInfo.saveAs("_local", "_local.xworker.debug.ActionDebugInfo");
+}
+
+def FunctionDebugInfo = world.getThing("_local.xworker.debug.FunctionDebugInfo");
+if(FunctionDebugInfo == null){
+    FunctionDebugInfo = new Thing("xworker.lang.function.FunctionDebugInfo");
+    FunctionDebugInfo.name = "FunctionDebugInfo";
+    FunctionDebugInfo.saveAs("_local", "_local.xworker.debug.FunctionDebugInfo");
+}
+
+def ProjectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+if(ProjectSet == null){
+    ProjectSet = new Thing("xworker.ide.worldExplorer.things.ProjectSet");
+    ProjectSet.name = "ProjectSet";
+    ProjectSet.saveAs("_local", "_local.xworker.worldExplorer.ProjectSet");
+}
+
+
+//激活其他项目的事物菜单
+try{
+    //添加ShutdownHook
+    self.doAction("addShutdownHook", actionContext);
+    
+    for(manager in world.getThingManagers()){
+        def rootCategory = manager.getCategory(null);
+        if(rootCategory != null){
+            for(lv1Category in rootCategory.getCategorys()){
+                for(lv2Category in lv1Category.getCategorys()){
+                    //激活事物菜单
+                    String projectPath = lv1Category.getSimpleName() + "." + lv2Category.getSimpleName();
+                    world.getThing(projectPath + ".config.ProjectMenuSwt");                     
+                }
+            }
+        }
+    }   
+}catch(Exception e){
+    log.error("init projectMenuSwt error", e);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    init
+    @/@actions/@ShutdownHook
+    sname
+    addShutdownHook
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdescriptors
+    xworker.java.lang.RuntimeActions/@ShutdownHook
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    ShutdownHook
+      @/@actions/@ShutdownHook/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.java.lang.RuntimeActions/@ShutdownHook/@actions1
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@actions/@ShutdownHook/@actions/@doAction
+        sname
+        doAction
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+log.info("shutdown derby....");
+try{
+    java.sql.DriverManager.getConnection("jdbc:derby:;shutdown=true");
+}catch(Exception e){
+}
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        doAction
+          @/@actions/@ShutdownHook/@actions/@doAction/@ActionDefined
+          sname
+          ActionDefined
+          sdescriptors
+          xworker.lang.actions.Inout/@ActionDefined
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          ActionDefined
+            @/@actions/@ShutdownHook/@actions/@doAction/@ActionDefined/@log
+            sname
+            log
+            stagName
+            xworker.ide.config.Project/@actions/@ShutdownHook/@actions/@doAction
+            saction
+            true
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Local
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sdisableGlobalContext
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sid
+            log
+    @/@actions/@initBackground
+    sname
+    initBackground
+    slabel
+    initBackground
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import java.io.File;
+
+import org.xmeta.Thing;
+import xworker.listeners.SwtMenuListener;
+
+//菜单监听，监听事物的变更
+SwtMenuListener swtMenuListener = SwtMenuListener.getInstance();
+world.registThingManagerListener("*", swtMenuListener);
+
+//去掉project后新版本的初始化方法
+try{
+    for(manager in world.getThingManagers()){
+        def rootCategory = manager.getCategory(null);
+        if(rootCategory != null){
+            for(lv1Category in rootCategory.getCategorys()){
+                for(lv2Category in lv1Category.getCategorys()){
+                    //激活事物菜单
+                    String projectPath = lv1Category.getSimpleName() + "." + lv2Category.getSimpleName();
+                    world.getThing(projectPath + ".config.ProjectMenuSwt"); 
+                    
+                    Thing p = world.getThing(projectPath + ".config.Project");
+                    if(p != null){
+                        if(projectPath == "xworker.ide"){
+                             continue;
+                        }
+                    	try{
+                    		p.doAction("init", actionContext);
+                    	}catch(Exception e){
+                    		log.error("初始化项目" + projectPath + ".config.Project" + "失败", e);
+                    	}catch(Error ee){
+                    		log.error("初始化项目" + projectPath + ".config.Project" + "失败", ee);
+                    	}
+                    }
+                }
+            }
+        }
+    }
+}catch(Exception e){
+    log.error("init new project config error", e);
+}
+
+try{
+    //初始化各个项目
+    List projects = world.getProjects();
+    for(project in projects){
+        for(manager in project.getThingManagers()){
+            //激活事物菜单
+            world.getThing(project.getName() + ":" + manager.name + ":config.ProjectMenuSwt"); 
+            
+            Thing p = world.getThing(project.getName() + ":" + manager.name + ":config.Project");
+            if(p != null){
+                if(project.name == "xworker" && manager.name == "core"){
+                     continue;
+                }
+            	try{
+            		p.doAction("init", actionContext);
+            	}catch(Exception e){
+            		log.error("初始化项目" + project.getName() + "失败", e);
+            	}catch(Error ee){
+            		log.error("初始化项目" + project.getName() + "失败", ee);
+            	}
+            }
+        }
+    }
+}catch(Exception e){
+}
+
+//管理备份文件，删除时间超长的文件
+manageBackUpFiles(null);
+
+def manageBackUpFiles(File file){
+	if(file == null){	    
+		file = new File(world.getPath() + "/bakup/");
+		if(!file.exists() || file.isFile()){	
+		    //log.info("not exists");	
+			return;				
+		}
+	}
+		
+	if(file.isDirectory()){
+		for(File f : file.listFiles()){
+			manageBackUpFiles(f);
+		}
+			
+		if(file.listFiles().length == 0){
+			file.delete();
+		}
+	}else{
+		//删除10天以前的备份
+		//log.info(file.getName());
+		if((System.currentTimeMillis() - file.lastModified()) > 10 * 24 * 3600000){
+		    //log.info(file.getName());
+			file.delete();
+		}
+	}
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    initBackground

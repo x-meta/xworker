@@ -1,0 +1,786 @@
+^1547545997250
+@
+sname
+DefaultSecurityHandler
+slabel
+DefaultSecurityHandler
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>XWorker默认的安全处理器的实现，当校验一个权限时没有对应的处理器时使用默认安全处理器。</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 添加PermissionConfig子节点。为安全起见defaultAllow应该设置为false。</p>
+
+<p><strong>login方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; WEB客户端登录服务器的方法，需要实现，否则WEB设计器等可能无法登录。login方法会传入参数name和password，字符串类型。</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@defaultAllow
+  sname
+  defaultAllow
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>对于没有设置的权限的默认返回值，true是默认允许， false是默认禁止。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  defaultAllow
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@PermissionHandler
+  sname
+  PermissionConfig
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>权限的配置，用于设置权限是否通过或禁止。</p>
+
+<p><strong>匹配权限的参数</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当应用需要校验参数时，会传入下面的参数，PermissionConfig用来匹配是否可以用于给定权限的校验。</p>
+
+<ul>
+	<li><strong>type</strong><br />
+	类型。一般是指运行的场合，如WEB等。其中ALL类型可以匹配所有其它类型。<br />
+	&nbsp;</li>
+	<li><strong>permissionName</strong><br />
+	权限名字，不能为空。<br />
+	&nbsp;</li>
+	<li><strong>actionName</strong><br />
+	动作名称。不填匹配全部动作。<br />
+	&nbsp;</li>
+	<li><strong>pathRegex</strong><br />
+	路径的正则表达式。不填匹配全部路径。</li>
+</ul>
+
+<p><strong>校验规则</strong></p>
+
+<ol>
+	<li><strong>sessionName</strong><br />
+	如果sessionName不为空，那么会检查会话中是否有该属性，如果没有返回false，有则进行下一步判断。<br />
+	会话从引擎的会话中取，其次尝试从HttpSession中取。<br />
+	&nbsp;</li>
+	<li><strong>allow</strong><br />
+	权限是否允许或禁止。</li>
+</ol>
+
+<p><strong>其它</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 其它是一些辅助属性，如WEB下校验不通过是否调转到指定页面等。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  PermissionHandler
+    @/@PermissionHandler/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@PermissionHandler/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@PermissionHandler/@type
+    sname
+    type
+    sinputtype
+    select
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    type
+      @/@PermissionHandler/@type/@0
+      sname
+      0
+      slabel
+      ALL
+      svalue
+      0
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      0
+      @/@PermissionHandler/@type/@3
+      sname
+      3
+      slabel
+      APP
+      svalue
+      3
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      3
+      @/@PermissionHandler/@type/@1
+      sname
+      1
+      slabel
+      URL
+      svalue
+      1
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      1
+      @/@PermissionHandler/@type/@2
+      sname
+      2
+      slabel
+      URL_AC
+      svalue
+      2
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      2
+    @/@PermissionHandler/@permissionName
+    sname
+    permissionName
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    permissionName
+    @/@PermissionHandler/@actionName
+    sname
+    actionName
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    actionName
+    @/@PermissionHandler/@pathRegex
+    sname
+    pathRegex
+    sshowLabel
+    true
+    ssize
+    60
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    pathRegex
+    @/@PermissionHandler/@sessionName
+    sname
+    sessionName
+    sshowLabel
+    true
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    sessionName
+    @/@PermissionHandler/@allow
+    sname
+    allow
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    smodifier
+    public
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    allow
+    @/@PermissionHandler/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    description
+    @/@PermissionHandler/@redirectTo
+    sname
+    redirectTo
+    sshowLabel
+    true
+    ssize
+    60
+    sgroup
+    WEB
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    redirectTo
+    @/@PermissionHandler/@extjsMessage
+    sname
+    extjsMessage
+    sshowLabel
+    true
+    ssize
+    60
+    sgroup
+    WEB
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否返回Extjs的错误提示信息。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    extjsMessage
+    @/@PermissionHandler/@extjMessageType
+    sname
+    extjMessageType
+    sinputtype
+    select
+    sshowLabel
+    true
+    sgroup
+    WEB
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    extjMessageType
+      @/@PermissionHandler/@extjMessageType/@javascript
+      sname
+      javascript
+      svalue
+      javascript
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      javascript
+      @/@PermissionHandler/@extjMessageType/@data
+      sname
+      data
+      svalue
+      data
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute/@value
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      data
+    @/@PermissionHandler/@actions
+    sname
+    actions
+    slabel
+    Actions
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@thing
+    sextends
+    xworker.lang.actions.Actions
+    smany
+    true
+    seditCols
+    2
+    Sdescription
+#$@text#$@
+<p>动作集合，通过子节点可以添加各种动作，动作通常是一个可执行的程序。</p>
+<p>事物的第一个动作集合的子事物才可以作为事物的行为，第二个及其他动作集合就不能作为事物的行为使用了，事物的行为默认找第一个动作集合。</p>
+<p>事物的run方法一般是这个事物转化为动作之后执行的方法。</p>
+#$@text#$@
+    szh_label
+    动作
+    sth_createIndex
+    false
+    sid
+    actions
+      @/@PermissionHandler/@actions/@name
+      sname
+      name
+      sdescriptors
+      xworker.lang.MetaDescriptor2/@attribute
+      sid
+      name
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  Sdescription
+#$@text#$@
+<p>动作集合，通过子节点可以添加各种动作，动作通常是一个可执行的程序。</p>
+<p>事物的第一个动作集合的子事物才可以作为事物的行为，第二个及其他动作集合就不能作为事物的行为使用了，事物的行为默认找第一个动作集合。</p>
+<p>事物的run方法一般是这个事物转化为动作之后执行的方法。</p>
+#$@text#$@
+  szh_label
+  动作
+  sth_createIndex
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name

@@ -1,0 +1,360 @@
+%1562225952337
+@
+sname=Notification
+slabel=Notification
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.lang.system.message.Message,xworker.lang.actions.SelfAction
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=xworker.system.notification
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>&nbsp;&nbsp;&nbsp; 通知系统发送信息或者交互请求等。</p>
+
+<p><strong>等级</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 每一个事件都可以设置提示的等级，提示等级不同的事件一般在UI中用不同的颜色显示。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果等级是urgent，那么会立即弹出一个窗口让用户处理。</p>
+
+<p><strong>有效期（单位秒）</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 每一个事件都有有效期，过期的事件将被删除。</p>
+
+<p><strong>同步</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果选择sync，那么当前线程会等待通知被处理完毕，或等待超时。</p>
+
+<p>&nbsp;&nbsp;&nbsp; waitTime默认60秒，如果当前线程是IDE的线程，那么不会同步，主要是因为SWT是单线程的，同步会阻塞UI。</p>
+
+<p><strong>持久化</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果持久化为true，那么事件将保存，在系统重启后仍然可以看到。不过如果事件超时了仍会删除。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 需要注意，持久化后重新加载变量上下文等会发生变化，原有的变量上下文等不能恢复。</p>
+
+<p><strong>可以监听的事件</strong></p>
+
+<ul>
+	<li><strong>void onFinished(Notification notification)</strong><br />
+	结束的事件通知。请注意onFinished是被其它线程激发。<br />
+	一些交互数据可以保存到notification上，通过notification的setData（String key, &nbsp;Object value)和Object getData(String key);</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.event.EventIndex,child|xworker.lang.actions.Actions
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.notification.NotificationActions
+    smethodName=sendEvent
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@actions/@isPersistent
+    sname=isPersistent
+    sattributeName=persistent
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isPersistent
+    @/@actions/@getExpireTimeout
+    sname=getTimeout
+    sattributeName=timeout
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetLong
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getExpireTimeout
+    @/@actions/@onExpired
+    sname=onFinished
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onExpired
+    @/@actions/@getLevel
+    sname=getLevel
+    sattributeName=level
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getLevel
+    @/@actions/@isSync
+    sname=isSync
+    sattributeName=sync
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSync
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@priority
+  sname=level
+  sinputtype=select
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=priority
+    @/@priority/@primary
+    sname=primary
+    svalue=primary
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=primary
+    @/@priority/@success
+    sname=success
+    svalue=success
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=success
+    @/@priority/@info
+    sname=info
+    svalue=info
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=info
+    @/@priority/@warning
+    sname=warning
+    svalue=warning
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=warning
+    @/@priority/@danger
+    sname=danger
+    svalue=danger
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=danger
+    @/@priority/@urgent
+    sname=urgent
+    svalue=urgent
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=urgent
+  @/@persistent
+  sname=persistent
+  sinputtype=truefalse
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  sdescription=<p>如果为true，表示是持久的，将保存到数据库中。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=persistent
+  @/@sync
+  sname=sync
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=sync
+  @/@expireTimeout
+  sname=timeout
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=3600
+  sinheritDescription=false
+  sdescription=<p>单位秒，默认一个小时。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=expireTimeout

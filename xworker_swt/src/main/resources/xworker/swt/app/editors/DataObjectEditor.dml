@@ -1,0 +1,287 @@
+%1544428655526
+@
+sname=DataObjectEditor
+slabel=DataObjectEditor
+Sdescription=
+#$@text#$@
+<p>简单数据对象编辑器。</p>
+
+<p>固定按钮新建、编辑、删除和工具，如果要其它功能可以通过自定义编辑器等方式。</p>
+
+<p><strong>参数</strong></p>
+
+<ul>
+	<li><strong>dataObject </strong>:&nbsp;String or Thing&nbsp;<br />
+	要编辑的数据对象。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=dataObject
+sth_mark=false
+  @/@editorComposite
+  sname=editorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=editorComposite
+    @/@editorComposite/@editorCompositeFillLayout
+    sname=editorCompositeFillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=editorCompositeFillLayout
+    @/@editorComposite/@dataObjectEditor
+    sname=dataObjectEditor
+    squeryButton=true
+    snewButton=true
+    seditButton=true
+    seditBatchButton=false
+    sdeleteButton=true
+    sselectAllButton=false
+    sselectRerverseButton=false
+    stoolsButton=true
+    spagingToolbar=true
+    sactionContext=dataObjectContext
+    stableCheck=false
+    sdebug=false
+    sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectEditor
+    @/@editorComposite/@resources
+    sname=resources
+    sdescriptors=xworker.swt.Widgets/@Resource
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resources
+      @/@editorComposite/@resources/@iconImage
+      sname=iconImage
+      stype=Image
+      simageFile=icons/database_table.png
+      sdescriptors=xworker.swt.util.Resource/@Image
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=iconImage
+  @/@outlineComposite
+  sname=outlineComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@OutlineComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=outlineComposite
+    @/@outlineComposite/@outlineCompositeFillLayout
+    sname=outlineCompositeFillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=outlineCompositeFillLayout
+    @/@outlineComposite/@outlineBrowser
+    sname=outlineBrowser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=outlineBrowser
+  @/@actions
+  sname=actions
+  sextends=xworker.swt.app.editors.NoopActionContainer
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@setContent
+    sname=setContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def dataObject = params.dataObject;
+
+if(dataObject instanceof String){
+    dataObject = world.getThing(dataObject);
+}
+
+//设置数据对象
+actionContext.g().put("dataObject", dataObject);
+dataObjectEditor.doAction("setDataObject", actionContext, "dataObject", dataObject);
+
+//设置outline，如果存在
+if(actionContext.get("outlineBrowser") != null){
+    def url = XWorkerUtils.getThingDescUrl(dataObject);
+    outlineBrowser.setUrl(url);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+    @/@actions/@isSameContent
+    sname=isSameContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def dataObject = params.dataObject;
+
+if(dataObject instanceof String){
+    dataObject = world.getThing(dataObject);
+}
+
+return actionContext.get("dataObject") == dataObject;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@actions/@getIcon
+    sname=getIcon
+    svarName=iconImage
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getIcon
+    @/@actions/@getSimpleTitle
+    sname=getSimpleTitle
+    sexpression=dataObject.getMetadata().getLabel()
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Ongl
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@actions/@getTitle
+    sname=getTitle
+    sexpression=dataObject.getMetadata().getPath()
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Ongl
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle

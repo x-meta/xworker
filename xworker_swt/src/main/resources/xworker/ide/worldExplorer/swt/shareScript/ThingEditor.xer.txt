@@ -1,0 +1,235 @@
+^1546430898164
+@
+sname
+ThingEditorActions
+slabel
+ThingEditorActions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+  @/@scripts
+  sname
+  scripts
+  slabel
+  scripts
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  scripts
+    @/@scripts/@initOutline
+    sname
+    initOutline
+    slabel
+    initOutline
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Display;
+
+TreeItem item = null;
+if(itemIndex == null){
+    item = new TreeItem(tree, SWT.NONE);
+}else{
+    item = new TreeItem(tree, SWT.NONE, itemIndex);
+}
+ 
+//init(item, thing);       
+item.setData(thing);
+item.setText(thing.metadata.label + " (" + thing.thingName + ")");
+//item.setImage(Resources.getImage("dataObject.png"));
+    
+for(child in thing.childs){
+    init(item, child);
+}
+    
+item.setExpanded(true);
+return item;
+
+def init(treeItem, dataObj){
+    TreeItem childItem = new TreeItem(treeItem, SWT.NONE);
+    childItem.setData(dataObj);    
+    //childItem.setImage(Resources.getImage("dataObject.png"));
+    childItem.setText(dataObj.metadata.label + " (" + dataObj.thingName + ")");
+    for(child in dataObj.childs){
+        init(childItem, child);
+    }
+}
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    initOutline
+    @/@scripts/@refreshOutline
+    sname
+    refreshOutline
+    slabel
+    refreshOutline
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.eclipse.swt.SWT;
+
+import org.xmeta.ScriptObject;
+import org.xmeta.DataCenter;
+
+def refresh = {
+    outlineTree, treeItem, dataObject->
+        
+    DataCenter dataCenter = DataCenter.getInstance();
+    dataObject = dataCenter.getDataObject(dataObject.metadata.path);
+    def composite = outlineTree.getData("scrollComposite");
+    if(composite.getData("treeItem") == treeItem){
+        Binding bin = new Binding();
+        bin.setVariable("binding", bin);
+        bin.setVariable("dataObject", dataObject);
+        bin.setVariable("treeItem", treeItem);
+        
+        for(child in composite.getChildren()){
+            child.dispose();
+            composite.removeControl(child);
+        }
+        composite.setData("dataObject", dataObject);
+        composite.getContent().dispose();
+
+        bin.setVariable("parent", composite);
+        bin.setVariable("shell", composite.getShell());
+        def dcomposite = dataCenter.runScript("xworker.ide.config.webactions.editor.swt.Scripts/@scripts/@createDataObjectEditor", bin);
+        composite.setContent(dcomposite);
+        dcomposite.setSize(dcomposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    }
+    
+    //刷新
+    ScriptObject initScript = dataCenter.getScriptObject("xworker.ide.config.webactions.editor.swt.scripts.OutLine/@scripts/@initChildItem");
+    treeItem.removeAll();
+    initScript.call(treeItem, dataObject);   
+}
+
+return refresh;
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    refreshOutline
+    @/@scripts/@openDataListener
+    sname
+    openDataListener
+    slabel
+    openDataListener
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.util.SwtDialog;
+import xworker.swt.util.SwtDialogCallback;
+
+Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+def newShell = dialogObject.doAction("create", actionContext);
+
+def text = text;
+SwtDialog dialog = new SwtDialog(shell, newShell, actionContext);
+dialog.open([
+    disposed:{
+        result->
+        if(result != null) text.setText(result);
+    }
+] as SwtDialogCallback);
+/*
+def result = dialog.open();
+if(result != null)
+    text.setText(result);
+*/
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openDataListener
+    @/@scripts/@openDataSelector
+    sname
+    openDataSelector
+    slabel
+    openDataSelector
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.xmeta.DataObject;
+import org.xmeta.DataCenter;
+import org.xmeta.ScriptObject;
+import org.xmeta.plugin.view.swt.ShellDialog;
+
+def openSelector = {
+    shell, selectType ->
+    
+    DataCenter dataCenter = DataCenter.getInstance();
+    DataObject dialogObject = dataCenter.getDataObject("core.editor.swt.tools.DataObjectSelector/@shell");
+    Binding bin = new Binding();
+    bin.setVariable("parent", shell);
+    bin.setVariable("selectType", selectType);
+    def newShell = dialogObject.exec("create", bin);
+
+    ShellDialog dialog = new ShellDialog(shell, 0);
+    dialog.init(newShell, bin);
+    def result = dialog.open();
+    return result;
+}
+
+return openSelector;
+#$@text#$@
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    openDataSelector

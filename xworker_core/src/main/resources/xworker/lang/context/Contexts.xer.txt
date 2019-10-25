@@ -1,0 +1,251 @@
+^1566442985795
+@
+sname
+Contexts
+slabel
+Listeners
+sgroup
+actions
+sdescritporForNewThing
+xworker.message.MessageWithToolbar
+Sdescription
+#$@text#$@
+<h1>动作监听器</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 动作监听器是一种可以监听动作执行的事物。它可以在动作执行前、执行成功或执行异常时执行相应的init、suceess和exception方法，从而可以监控动作的执行。另外也增加了onDoAction方法可以监听事物行为的执行。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 动作监听器可以用于实现动作监听，动作调试、数据库资源创建和释放等等功能。</p>
+
+<h2>1.使用动作监听器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在一个动作下添加contexts（动作监听器或ActionListeners）子事物，既可以为该动作添加动作监听器。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 动作监听器本来叫做动作上下文，后改名为动作监听器，所以添加的是contexts子事物，标签是动作监听器（中文）或ActionListener(英文）。</p>
+
+<h2>2.全局动作监听器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过World.addGlobalActionListener(Thing listener, int index)方法添加一个全局动作监听器。</p>
+
+<p>&nbsp;&nbsp;&nbsp;全局动作监听器会监听系统的每一个动作的执行，如果动作上下文执行耗时过多那么它会让系统的整体速度慢下来。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如XWorker的动作调试功能是通过全局动作监听器实现的。</p>
+
+<h3>2.1.避免递归</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 为了避免递归，全局动作上下文的动作是不能被全局动作上下文监听的。</p>
+
+<h2>4.如何实现动作监听器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 实现了init、success、exception和onDoAction方法的事物都可以作为动作监听器。动作监听器应以child的方式注册到事物xworker.lang.context.Contexts下。</p>
+
+<h3>4.1.获取被监听的动作和变量上下文</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 动作监听器使用独立的变量上下文，在动作监听器的变量上下文中可以获取监控的动作和动作变量上下文。</p>
+
+<pre class="brush:java;">
+//被监听的动作的变量上下文
+ActionContext acContext = (ActionContext) actionContext.get(Action.str_parentContext);		
+//获取被监听的动作
+List&lt;Action&gt; actions = acContext.getActions();
+Action action = actions.get(actions.size() - 1);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 以上对init、sucess和exception方法有效。</p>
+
+<h3>4.2.获取被监听的事物、方法名称</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 监听事物执行动作时并没有使用独立的变量上下文，因此当前变量上下文就是事物执行动作时的变量上下文。</p>
+
+<pre class="brush:java;">
+//获取事物以及相应要执行的方法名称
+Thing thing = actionContext.getObject(&quot;thing&quot;);
+String actionName = actionContext.getObject(&quot;actionName&quot;);</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.lang.util.ThingIndex
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.util.ThingIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_fileMonitor
+false
+sth_mark
+false
+  @/@DataSouceActionContext
+  sname
+  DataSouceActionContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.db.jdbc.DataSouceActionContext
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  db
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  DataSouceActionContext
+  @/@HibernateContext
+  sname
+  HibernateContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.context.HibernateContext
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  db
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  HibernateContext
+  @/@PerformanceContext
+  sname
+  PerformanceContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.context.PerformanceContext
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  debug
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  PerformanceContext
+  @/@FileOutputStream
+  sname
+  FileOutputStream
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.io.FileOutputStream
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  io
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  FileOutputStream
+  @/@FileInputStream
+  sname
+  FileInputStream
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.io.FileInputStream
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  io
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  FileInputStream
+  @/@DebugContext
+  sname
+  DebugContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.context.DebugContext
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  debug
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  DebugContext
+  @/@ExecutorActionContext
+  sname
+  ExecutorActionContext
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.executor.ExecutorActionContext
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  ExecutorActionContext

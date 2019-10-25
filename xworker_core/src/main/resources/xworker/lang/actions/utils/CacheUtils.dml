@@ -1,0 +1,319 @@
+%1544599328403
+@
+sname=CacheUtils
+slabel=CacheUtils
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>缓存相关的工具类。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@GetCachedObjectOnThing
+  sname=GetCachedObjectOnThing
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=_actions.utils.cache
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>返回缓存对象，缓存的对象是绑定到当前动作事物上的。</p>
+
+<p><strong>加载缓存</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当缓存的对象为null时，或者超时时会执行doLoad方法加载缓存对象。</p>
+
+<p><strong>缓存对象的生命周期</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 读取缓存对象时创建，缓存对象保存到当前动作事物上，当当前事物修改、删除或者从内存中移除，那么缓存对象应该会被GC回收。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 由于事物模型是软引用对象（<strong>SoftReference）</strong>，因此在内存不足时可能会随时被GC回收。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Object doLoad()</strong><br />
+	加载缓存对象。<br />
+	&nbsp;</li>
+	<li><strong>long getReloadTime()</strong><br />
+	重新加载缓存对象的时间，用于刷新缓存对象，&lt;=0表示永不刷新。&nbsp;&nbsp;单位秒。<br />
+	&nbsp;</li>
+	<li><strong>boolean isLoadBackground()</strong><br />
+	是否在后台异步加载缓存对象，即执行doLoad()时启动一个线程。如果在后台异步加载，第一次获取缓存对象时通常返回null。<br />
+	&nbsp;</li>
+	<li><strong>Map&lt;String, Object&gt; getParams()</strong><br />
+	返回参数列表。后台加载时生效，后台加载时传入的变量。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=GetCachedObjectOnThing
+    @/@GetCachedObjectOnThing/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@GetCachedObjectOnThing/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.lang.actions.utils.CacheActions
+      smethodName=getCachedObjectOnThing
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@GetCachedObjectOnThing/@actions/@getParams
+      sname=getParams
+      sattributeName=params
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getParams
+      @/@GetCachedObjectOnThing/@actions/@getReloadTime
+      sname=getReloadTime
+      sattributeName=reloadTime
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetLong
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getReloadTime
+      @/@GetCachedObjectOnThing/@actions/@isLoadBackground
+      sname=isLoadBackground
+      sattributeName=loadBackground
+      sBoolean=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=isLoadBackground
+      @/@GetCachedObjectOnThing/@actions/@getParams1
+      sname=getParams
+      sattributeName=params
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getParams1
+      @/@GetCachedObjectOnThing/@actions/@doLoad
+      sname=doLoad
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doLoad
+    @/@GetCachedObjectOnThing/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@GetCachedObjectOnThing/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@GetCachedObjectOnThing/@reloadTime
+    sname=reloadTime
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sdefault=0
+    sinheritDescription=false
+    Sdescription=
+#$@text#$@
+<p>重新加载缓存的事件，单位秒。</p>
+#$@text#$@
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=reloadTime
+    @/@GetCachedObjectOnThing/@loadBackground
+    sname=loadBackground
+    sinputtype=truefalse
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sdefault=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=loadBackground
+    @/@GetCachedObjectOnThing/@params
+    sname=params
+    sinputtype=textarea
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=params
+    @/@GetCachedObjectOnThing/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

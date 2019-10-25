@@ -1,0 +1,236 @@
+%1566367995441
+@
+sname=FFmpegTools
+slabel=FFmpeg
+stype=composite
+sgroup=工具.媒体
+sicon=icons/application.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=false
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@Composite
+  sname=Composite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.xworker.ThingRegistThing/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=Composite
+    @/@Composite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=FillLayout
+    @/@Composite/@mainSashForm
+    sname=mainSashForm
+    sstyle=VERTICAL
+    sSMOOTH=false
+    sweights=60,40
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@SashForm
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=mainSashForm
+      @/@Composite/@mainSashForm/@ThingEditorGuide
+      sname=ThingEditorGuide
+      sdescriptor=xworker.tools.ffmpeg.FFmpeg
+      sdescriptors=xworker.swt.Widgets/@ThingEditorGuide
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ThingEditorGuide
+        @/@Composite/@mainSashForm/@ThingEditorGuide/@actions
+        sname=actions
+        sdescriptors=xworker.swt.xworker.ThingEditorGuide/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@Composite/@mainSashForm/@ThingEditorGuide/@actions/@complete
+          sname=complete
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.eclipse.swt.custom.CTabItem;
+import java.lang.ProcessBuilder;
+import org.xmeta.ActionContext;
+import org.xmeta.util.ExceptionUtil;
+
+def cmd = guide.getEditThing().doAction("getCmdArrayString", actionContext);
+//println "cmdis:" + cmd;
+//println guide.getEditThing();
+def cmdarray = cmd.split("[\n]");
+for(i=0; i<cmdarray.length; i++){
+    cmdarray[i] = cmdarray[i].trim();
+}
+if(cmdarray.length > 0){
+    def file = new File(cmdarray[0]);
+    def name = file.getName();
+    
+    def pb = new ProcessBuilder(cmdarray);
+    
+    def ac = new ActionContext();
+    ac.put("parent", processTabFodler);
+    def thing = world.getThing("xworker.tools.process.ProcessExecutor/@PreparedWidgets/@processTabFodler/@item");
+    thing.doAction("create", ac);
+    ac.item.setText(name);
+    processTabFodler.setSelection(ac.item);
+    
+    try{
+        def process =  pb.start();
+        ac.processConsole.doAction("setProcess", ac, "process", process);
+    }catch(Exception e){
+        def message = ExceptionUtil.toString(e);
+        ac.processConsole.doAction("setMessage", ac, "message", message);
+    }
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=complete
+            @/@Composite/@mainSashForm/@ThingEditorGuide/@actions/@complete/@Variables
+            sname=Variables
+            sdescriptors=xworker.lang.actions.Inout/@Variables
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Variables
+              @/@Composite/@mainSashForm/@ThingEditorGuide/@actions/@complete/@Variables/@codeText
+              sname=codeText
+              svarName=codeText
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GetParentContextValue
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=codeText
+              @/@Composite/@mainSashForm/@ThingEditorGuide/@actions/@complete/@Variables/@shell
+              sname=shell
+              svarName=shell
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GetParentContextValue
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=shell
+      @/@Composite/@mainSashForm/@processTabFodler
+      sname=processTabFodler
+      sstyle=TOP
+      sBORDER=true
+      sFLAT=false
+      sCLOSE=true
+      sSINGLE=false
+      sMRUVisible=false
+      ssimple=false
+      sdisposeControlOnItemClosed=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@CTabFolder
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=processTabFodler

@@ -1,0 +1,348 @@
+^1405331229047
+@
+sname
+BarChart
+slabel
+BarChart
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.jfreechart.chart.JFreeChart
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<div class="block">Creates an area chart with default settings. The chart object returned by this method uses a <a title="class in org.jfree.chart.plot" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/chart/plot/CategoryPlot.html"><code>CategoryPlot</code></a> instance as the plot, with a <a title="class in org.jfree.chart.axis" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/chart/axis/CategoryAxis.html"><code>CategoryAxis</code></a> for the domain axis, a <a title="class in org.jfree.chart.axis" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/chart/axis/NumberAxis.html"><code>NumberAxis</code></a> as the range axis, and an <a title="class in org.jfree.chart.renderer.category" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/chart/renderer/category/AreaRenderer.html"><code>AreaRenderer</code></a> as the renderer.</div>
+sth_createIndex
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.axis.CategoryLabelPositions;
+
+//创建数据集
+def dataset = self.doAction("getDataset", actionContext);
+
+//创建图表
+def orientation = PlotOrientation.VERTICAL;
+if(self.orientation == "HORIZONTAL"){
+    orientation = PlotOrientation.HORIZONTAL;
+}
+
+def chart = ChartFactory.createBarChart(self.title, self.categoryAxisLabel, 
+        self.valueAxisLabel, dataset, orientation, self.getBoolean("legend"), 
+        self.getBoolean("tooltips"), self.getBoolean("urls"));
+
+if(self.categoryLabelPositions != null && self.categoryLabelPositions != ""){
+    def domainAxis = chart.getPlot().getDomainAxis();
+    if(self.categoryLabelPositions == "STANDARD"){
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.STANDARD);
+    }else if(self.categoryLabelPositions == "DOWN_45"){
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
+    }else if(self.categoryLabelPositions == "UP_45"){
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+    }else if(self.categoryLabelPositions == "DOWN_90"){
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_90);
+    }else if(self.categoryLabelPositions == "UP_90"){
+        domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+    }
+}
+
+//初始化图表
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("chart", chart);
+    self.doAction("init", actionContext);
+    self.doAction("initCategoryPlot", actionContext);
+    
+    bindings.put("renderer", chart.getPlot().getRenderer());
+    for(renderer in self.get("Renderer@")){
+        renderer.doAction("init", actionContext);
+    }
+}finally{
+    actionContext.pop();
+}
+
+return chart;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@/@title
+sname
+title
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@categoryAxisLabel
+sname
+categoryAxisLabel
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@categoryLabelPositions
+sname
+categoryLabelPositions
+sextends
+xworker.jfreechart.chart.LineChart/@categoryLabelPositions
+sinputtype
+select
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@valueAxisLabel
+sname
+valueAxisLabel
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@orientation
+sname
+orientation
+sextends
+xworker.jfreechart.chart.plot.PlotOrientation/@value
+sinputtype
+select
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@legend
+sname
+legend
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@tooltips
+sname
+tooltips
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@urls
+sname
+urls
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@/@AomainAxis
+sname
+DomainAxis
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.jfreechart.chart.axis.CategoryAxis
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+sth_createIndex
+false
+@/@RangeAxis
+sname
+RangeAxis
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.jfreechart.chart.axis.NumberAxis
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+sth_createIndex
+false
+@/@AreaRenderer
+sname
+Renderer
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.jfreechart.chart.JFreeChart
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+true
+sth_createIndex
+false

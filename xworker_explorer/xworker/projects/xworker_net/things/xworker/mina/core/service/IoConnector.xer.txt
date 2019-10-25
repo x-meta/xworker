@@ -1,0 +1,283 @@
+@xworker.mina.core.service.IoConnector
+sname
+IoConnector
+slabel
+IoConnector
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.mina.core.service.IoService
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>Connects to endpoint, communicates with the server, and fires events to <a title="interface in org.apache.mina.core.service" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoHandler.html"><code>IoHandler</code></a>s.</p>
+<p>Please refer to <a href="http://mina.apache.org/report/trunk/apidocs/xref-xworker.examples/org/apache/mina/xworker.examples/netcat/Main.html">NetCat</a> xworker.example.</p>
+<p>You should connect to the desired socket address to start communication, and then events for incoming connections will be sent to the specified default <a title="interface in org.apache.mina.core.service" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoHandler.html"><code>IoHandler</code></a>.</p>
+<p>Threads connect to endpoint start automatically when <a href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoConnector.html#connect(java.net.SocketAddress)"><code>connect(SocketAddress)</code></a> is invoked, and stop when all connection attempts are finished.</p>
+<p>由于IoConnector代表的是客户端可以有多个实例，所以它的实例默认创建在当前动作上下文的全部变量中。</p>
+<p>继承该事物的具体事物可以实现createConnector方法用于创建Connector的实例，初始化方法有本事物完成。</p>
+#$@text#$@
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//创建实例
+def connector = self.doAction("createConnector", actionContext);
+if(connector == null){
+    return null;
+}
+
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("connector", connector);
+    self.doAction("init", actionContext);
+}finally{
+    actionContext.pop();
+}
+
+actionContext.getScope(0).put(self.metadata.name, connector);
+return connector;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@actions/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//IoService的初始化方法
+def action = world.getAction("xworker.mina.core.service.IoService/@actions/@init");
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("service", connector);
+    action.run(actionContext);
+}finally{
+    actionContext.pop();
+}
+
+def remoteAddress = null;
+def remoteAddressTh = self.get("remoteAddress@0");
+if(remoteAddressTh != null && remoteAddressTh.getChilds().size() > 0){
+    remoteAddress = remoteAddressTh.getChilds().get(0).doAction("create", actionContext);
+}
+
+def localAddress = null;
+def localAddressTh = self.get("localAddress@0");
+if(localAddressTh != null && localAddressTh.getChilds().size() > 0){
+    localAddress = localAddressTh.getChilds().get(0).doAction("create", actionContext);
+}
+
+if(self.connectTimeoutInMillis != null && self.connectTimeoutInMillis != ""){
+    connector.setConnectTimeoutMillis(self.getLong("connectTimeoutInMillis"));
+}
+if(self.connectTimeoutCheckInterval != null && self.connectTimeoutCheckInterval != ""){
+    connector.setConnectTimeoutCheckInterval(self.getLong("connectTimeoutCheckInterval"));
+}
+
+if(self.getBoolean("autoconnect")){
+    if(remoteAddress != null && localAddress != null){
+        connector.connect(remoteAddress, localAddress);
+    }else if(remoteAddress != null){
+        connector.connect(remoteAddress);
+    }
+}else if(remoteAddress != null){
+    connector.setDefaultRemoteAddress(remoteAddress);
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@actions/@init/@ins
+sisValidate
+false
+sname
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@actions/@init/@ins/@connector
+sname
+connector
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@connectTimeoutInMillis
+sname
+connectTimeoutInMillis
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@ConnectTimeoutCheckInterval
+sname
+connectTimeoutCheckInterval
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@autoconnect
+sname
+autoconnect
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+sdescription
+<p>是否在init(初始化）时连接。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@remoteAddress
+sname
+remoteAddress
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.java.net.SocketAddresses
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>只有第一个子节点生效。</p>
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@localAddress
+sname
+localAddress
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.java.net.SocketAddresses
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>只有第一个子事物生效。</p>
+sth_createIndex
+false
+@xworker.mina.core.service.IoConnector/@description
+sname
+description
+sinputtype
+html
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

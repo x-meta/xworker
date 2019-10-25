@@ -1,0 +1,968 @@
+^1408412363532
+@
+sname
+AimlHelp
+slabel
+AImlHelp
+stitle
+AIML帮助文档
+sdescriptors
+xworker.doc.structures.SimpleDoc
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root
+sname
+root
+slabel
+AIML文档
+sdescription
+<p>AIML标签文档。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base
+sname
+base
+slabel
+base
+Sdescription
+#$@text#$@
+<p>基本的标签。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@category
+sname
+category
+slabel
+category
+Sdescription
+#$@text#$@
+<p><strong>目录节点</strong>，每一个匹配语句的根节点，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;你 是 谁&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;我是Alice，很高兴见到你。&lt;/template&gt;
+&nbsp; &lt;/category&gt;&nbsp; </pre>
+
+<p>其中pattern是匹配的表达式，而template是要返回语句模板。</p>
+
+<p><strong>实际效果：</strong><br />
+我：你是谁？<br />
+Alice：我是Alice，很高兴见到你。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@pattern
+sname
+pattern
+slabel
+pattern
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>表示匹配模式</strong>，里面的内容必须大写，可以有星号* 或下划线_，但必须空格隔开，星号表示匹配所有，任意情况；下划线的意义跟星号一样，除了不能匹配字典里面Z后面的字母。 </span></p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@template
+sname
+template
+slabel
+template
+sdescription
+<p><strong>文本模板</strong>。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@think
+sname
+think
+slabel
+think
+Sdescription
+#$@text#$@
+<p><strong>包围set和get等的标签</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&lt;think&gt;&lt;set name=&quot;topic&quot;&gt;Me&lt;/set&gt;&lt;/think&gt; </pre>
+
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">放置在template元素里面，表示一旦用户的输入匹配到该category时，再回复应答的同时，给一个变量赋值，这里也就是把Me记再脑子里，以后就可以用&lt;get name=&rdquo;topic&rdquo;/&gt;来取出先前记住的内容。</span></p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@get
+sname
+get
+slabel
+get
+Sdescription
+#$@text#$@
+<p><strong>获取变量的值</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;你好&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 你好 &lt;get name=&quot;name&quot;/&gt;！
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 我的名字叫 Alice，你是谁？
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p><strong>实际效果：</strong></p>
+
+<p>我：你好<br />
+你好 Unknown Person！ 我的名字叫 Alice，你是谁？</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@set
+sname
+set
+slabel
+set
+Sdescription
+#$@text#$@
+<p><strong>设置属性的值</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;GREETING *&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nice to meet you, &lt;set name=&quot;name&quot;&gt;&lt;star/&gt;&lt;/set&gt;. :-)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;gossip&gt;&lt;get name=&quot;name&quot;/&gt; logged in.&lt;/gossip&gt;
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p><strong>实际效果：</strong></p>
+
+<p>我：GREETING magic_seek.<br />
+Alice：Nice to meet you, magic _ seek. :-)</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@input
+sname
+input
+slabel
+input
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>表示用户输入</strong>，比如：</span></p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;我 刚才 说 * 什么&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;你刚才说 &quot;&lt;input index=&quot;2&quot;/&gt;&quot;&lt;/template&gt;
+&nbsp; &lt;/category&gt;&nbsp; </pre>
+
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">&lt;input index=&quot;2&quot;/&gt;将输出用户倒数第2次的输入，Index属性的数字表示倒数第几句话，1：倒数第一句，2：倒数第2句，依此类推。 </span></p>
+
+<p><strong><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">实际效果：</span></strong></p>
+
+<p>我：我刚才说了什么？<br />
+Alice：你刚才说 &quot;greeting magic _ seek .&quot;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@that
+sname
+that
+slabel
+that
+Sdescription
+#$@text#$@
+<p><strong>机器人刚才说的话</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;你 刚才 说 了 什么&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;我刚才说了 &quot;&lt;that/&gt;&quot;。&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>我：你刚才说了什么？<br />
+我刚才说了 &quot;1+2+3+4&quot;。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@sr
+sname
+sr
+slabel
+sr
+sdescription
+<p><strong>Srai的缩写。</strong></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@srai
+sname
+srai
+slabel
+srai
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>刺激回复人工智能</strong>，表示&lt;srai&gt;里面的话会被当作是用户输入，从新查找匹配模式，直到找到非&lt;srai&gt;定义的回复。例如：&nbsp;</span></p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;HI YA&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;&lt;srai&gt;HELLO&lt;/srai&gt;&lt;/template&gt;
+&nbsp; &lt;/category&gt;
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;HELLO&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hello &lt;get name=&quot;name&quot;/&gt;!
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; My name is Alice, who are you?
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p><strong>实际效果：</strong></p>
+
+<p>我：hi ya<br />
+Alice：Hello magic _ seek! My name is Alice, who are you?</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@star
+sname
+star
+slabel
+star
+sdescription
+<p><strong>匹配输入的*，</strong><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">比如有一个匹配模式是&lt;pattern&gt;* 你 好 *&lt;pattern&gt;；注意，由于机器人解析器是外国人写的；而外国人每个单词之间一个空格，因为，我们写匹配的时候也要再每个汉字之间加上空格。这里pattern元素里的匹配模式是用*号表示任意匹配的，但在其他元素里面不能用*号，而用&lt;star/&gt;这个元素来表示。</span></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@thatstar
+sname
+thatstar
+slabel
+thatstar
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>&lt;thatstar index=&rdquo;n&rdquo;&gt;元素先前第n个机器人说过的星号部分的话</strong>，&lt;thatstar/&gt;等于&lt;thatstar index=&quot;1&quot;/&gt;。比如：</span></p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;DO THE THATSTAR EXAMPLE&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;Ok. It&#39;ll be a bit silly, though.&lt;/template&gt;
+&nbsp; &lt;/category&gt;
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;WHY SO&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;that&gt;IT WILL BE * THOUGH&lt;/that&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;This kind of arranged dialogue is always &lt;thatstar/&gt;.&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@topic
+sname
+topic
+slabel
+topic
+Sdescription
+#$@text#$@
+<p>设置主题，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;topic name=&quot;LIKE&quot;&gt;
+&nbsp;&nbsp;&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;pattern&gt;YES&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;that&gt;DO YOU LIKE CHEESE&lt;/that&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;template&gt;Good for you.&lt;think&gt;&lt;set name=&quot;topic&quot;&gt;*&lt;/set&gt;&lt;/think&gt;&lt;/template&gt;
+&nbsp;&nbsp;&nbsp; &lt;/category&gt;
+&nbsp; &lt;/topic&gt;
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;WHAT DO YOU WANT TO KNOW&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;Do you &lt;set name=&quot;topic&quot;&gt;like&lt;/set&gt; cheese?&lt;/template&gt;
+&nbsp; &lt;/category&gt;
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;YES&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;&quot;Yes&quot; what?&lt;/template&gt;
+&nbsp; &lt;/category&gt;
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;YES&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;that&gt;DO YOU LIKE CAKE&lt;/that&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;I couldn&#39;t care less.&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>我：WHAT DO YOU WANT TO KNOW<br />
+Alice：Do you like cheese?<br />
+我：yes<br />
+Alice：Good for you.</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@base/@topicstar
+sname
+topicstar
+slabel
+topicstar
+sdescription
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">．&lt;topicstar index=&rdquo;n&rdquo;&gt;元素用来得到先前倒数第n次谈论的主题。 </span></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@control
+sname
+control
+slabel
+control
+Sdescription
+#$@text#$@
+<p>控制类型的标签。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@control/@condition
+sname
+condition
+slabel
+condition
+Sdescription
+#$@text#$@
+<p><strong>根据条件判断返回值</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;FIRST BLOCK CONDITION TEST&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;think&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;set name=&quot;block.condition&quot;&gt;on&lt;/set&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/think&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;condition name=&quot;block.condition&quot; value=&quot;ON&quot;&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The block condition is working.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/condition&gt;
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>如上根据block.condition的值判断是否返回&lsquo;The block condition is working.&rsquo;。</p>
+
+<p>条件判断还可以根据多值判断，此时使用li，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;SIXTH BLOCK CONDITION TEST&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;think&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;set name=&quot;block.condition&quot;&gt;on&lt;/set&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/think&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The block condition
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;condition&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li name=&quot;block.condition&quot; value=&quot;OFF&quot;&gt;is not&lt;/li&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li&gt;is&lt;/li&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/condition&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; working.
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@control/@li
+sname
+li
+slabel
+li
+sdescription
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>类表：</strong>&lt;li&gt;&lt;/li&gt;元素可以在random元素或condition等元素当中使用；表是一个列表； </span></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@control/@random
+sname
+random
+slabel
+random
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>随机元素</strong>，一般和&lt;li&gt;一起使用，表示从列表里随机取一个。 比如：</span></p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;DO THE RANDOM EXAMPLE&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;random&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li&gt;This is the first random example.&lt;/li&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li&gt;This is the second random example.&lt;/li&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;li&gt;This is the third random example.&lt;/li&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/random&gt;
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@bot
+sname
+bot
+slabel
+bot
+Sdescription
+#$@text#$@
+<p>机器人相关的标签。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@bot/@bot
+sname
+bot
+slabel
+bot
+Sdescription
+#$@text#$@
+<p><strong>获取机器人的信息</strong>，如&lt;bot name=&quot;series&quot;/&gt;。</p>
+
+<p>机器人的信息在context中配置，如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;!-- The id is a unique string that identifies this context. --&gt;
+&nbsp; &lt;bot name=&quot;id&quot; value=&quot;test_cases&quot;/&gt;
+
+&nbsp; &lt;!-- Bot predicates are set at load time, and cannot be changed at runtime. --&gt;
+&nbsp; &lt;bot name=&quot;output&quot; value=&quot;Logs/gossip.txt&quot;/&gt;
+&nbsp; &lt;bot name=&quot;randomSeed&quot; value=&quot;1&quot;/&gt;
+&nbsp; &lt;bot name=&quot;series&quot; value=&quot;Alpha&quot;/&gt;
+&nbsp; &lt;bot name=&quot;version&quot; value=&quot;0.7.5 Alpha&quot;/&gt;
+</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@bot/@id
+sname
+id
+slabel
+id
+Sdescription
+#$@text#$@
+<p><strong>获取机器人的id</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;WHAT IS YOUR ID&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;My id is &lt;id/&gt;.&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@bot/@version
+sname
+version
+slabel
+version
+sdescription
+<p>获取机器人的版本号。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@bot/@size
+sname
+size
+slabel
+size
+Sdescription
+#$@text#$@
+<p><strong>目录的条数</strong>。比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;WHAT SIZE ARE YOU&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;I currently contain &lt;size/&gt; categories.&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>Alice：I currently contain 82 categories.</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat
+sname
+textFormat
+slabel
+textFormat
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat/@formal
+sname
+formal
+slabel
+formal
+Sdescription
+#$@text#$@
+<p><strong>英文首字母大写</strong>，对中文无效，比如：</p>
+
+<pre class="brush:xml;">
+&lt;formal&gt;jon baer&lt;/formal&gt; </pre>
+
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">那么回复将被格式化成首字母大写输出：Jon Baer，对中文无效。 </span></p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat/@sentence
+sname
+sentence
+slabel
+sentence
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>格式化句子</strong>，比如： </span><br />
+&nbsp;</p>
+
+<pre class="brush:xml;">
+&lt;sentence&gt;this is some kind of sentence test.&lt;/sentence&gt; </pre>
+
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">可以格式化成：This is some kind of sentence test.即把句子首字母大写。 </span></p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat/@lowercase
+sname
+lowercase
+slabel
+lowercase
+Sdescription
+#$@text#$@
+<p>把字母变成小写。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat/@uppercase
+sname
+uppercase
+slabel
+uppercase
+sdescription
+<p><strong>转成大写</strong>。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@textFormat/@text
+sname
+text
+slabel
+text
+sdescription
+<p><strong>输出文本？</strong></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@person3
+sname
+person
+slabel
+person
+Sdescription
+#$@text#$@
+<p>人称相关的标签。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@person3/@gender
+sname
+gender
+slabel
+gender
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>替换性别以及代名词</strong>，例如： </span></p>
+
+<pre class="brush:xml;">
+&lt;gender&gt;She told him to take a hike.&lt;/gender&gt; </pre>
+
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">将被替换成：He told her to take a hike，跟性别有关的单词都将被替换，中文怎么处理不是很清楚。 </span></p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@person3/@person
+sname
+person
+slabel
+person
+sdescription
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">&lt;person&gt;和&lt;person2&gt; 第一个是把第一人称转换成第3人称；第2个是把第一人称转成第2人称。&lt;person/&gt;等于 &lt;person&gt;&lt;star/&gt;&lt;/person&gt; </span></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@person3/@person2
+sname
+person2
+slabel
+person2
+sdescription
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)">&lt;person&gt;和&lt;person2&gt; 第一个是把第一人称转换成第3人称；第2个是把第一人称转成第2人称。&lt;person/&gt;等于 &lt;person&gt;&lt;star/&gt;&lt;/person&gt; </span></p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@xworker
+sname
+xworker
+slabel
+xworker
+sdescription
+<p>XWorker自定义的标签。</p>
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@xworker/@action
+sname
+action
+slabel
+action
+Sdescription
+#$@text#$@
+<p><strong>事物动作</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;打开 百度&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;&lt;action path=&quot;xworker.ai.aiml.actions.CommonActions/@OpenBaidu&quot;&gt;&lt;/action&gt;
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@util
+sname
+util
+slabel
+util
+Sdescription
+#$@text#$@
+<p>常用的工具标签。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@util/@date
+sname
+date
+slabel
+date
+Sdescription
+#$@text#$@
+<p><strong>返回当前日期</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;现在 几点 *&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;现在的时间是&lt;date/&gt;。&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>日期的格式在context.xml中配置。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@util/@system
+sname
+system
+slabel
+system
+Sdescription
+#$@text#$@
+<p>BeanShell的脚本。比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;PRINT THIS *&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;&lt;system&gt;result = &quot;&lt;star/&gt;&quot;;&lt;/system&gt;&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>我：PRINT THIS 1+2+3+4<br />
+Alice：1+2+3+4</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@util/@learn
+sname
+learn
+slabel
+learn
+Sdescription
+#$@text#$@
+<p><strong>装载 aiml配置文件</strong>，比如：</p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;LEARN THIS RESOURCE *&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;&lt;learn&gt;&lt;star/&gt;&lt;/learn&gt;Ok.&lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>学习*好的aiml文件。</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@root/@util/@gossip
+sname
+gossip
+slabel
+gossip
+Sdescription
+#$@text#$@
+<p><span style="background-color:rgb(255, 255, 255); color:rgb(0, 0, 0)"><strong>保存日志，</strong>元素用来把改元素里面的内容保存到gossip.log文件里，比如：</span></p>
+
+<pre class="brush:xml;">
+&nbsp; &lt;category&gt;
+&nbsp;&nbsp;&nbsp; &lt;pattern&gt;GREETING *&lt;/pattern&gt;
+&nbsp;&nbsp;&nbsp; &lt;template&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Nice to meet you, &lt;set name=&quot;name&quot;&gt;&lt;star/&gt;&lt;/set&gt;. :-)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;gossip&gt;&lt;get name=&quot;name&quot;/&gt; logged in.&lt;/gossip&gt;
+&nbsp;&nbsp;&nbsp; &lt;/template&gt;
+&nbsp; &lt;/category&gt;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors
+xworker.doc.structures.SimpleDoc/@DocNode/@DocNode
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

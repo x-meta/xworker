@@ -1,0 +1,251 @@
+^1393313179185
+@xworker.ide.worldExplorer.things.CommonFeatures
+sname
+CommonFeatures
+slabel
+CommonFeatures
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sdescription
+<p>事物管理器的共用功能。</p>
+sid
+CommonFeatures
+@xworker.ide.worldExplorer.things.CommonFeatures/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.worldExplorer.things.CommonFeatures/@actions/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.debug.Debuger;
+import xworker.swt.util.UtilBrowser;
+import xworker.swt.design.Designer;
+
+import org.xmeta.World;
+import org.xmeta.ActionContext;
+import org.xmeta.ThingManagerListener;
+
+/*
+//检查XWorker的数据库和表
+log.info("check xworker database");
+try{
+    def dbAdmin = world.getThing("xworker.ide.db.dbindex.actions.DbAdminActions");
+    dbAdmin.doAction("checkDb", actionContext);
+}catch(Exception e){
+    log.error("Check db error", e);
+}
+
+//Jetty服务器
+if(self.getBoolean("startJetty")){
+    try{
+        def jaction = world.getAction("xworker.ide.config.functions/@node2/@net/@startJettry");
+        jaction.run(actionContext);
+    }catch(Exception e){
+        log.error("Start Jetty Server error", e);
+    }
+}
+
+
+//Derby服务器
+if(self.getBoolean("startDerby")){
+    try{
+        def daction = world.getAction("xworker.ide.config.functions/@node2/@Database/@sartDerbyAt1527");
+        daction.run(actionContext);
+        
+        //检查数据库表
+        //def dbAdmin = world.getThing("xworker.ide.db.dbindex.actions.DbAdminActions");
+        //dbAdmin.doAction("checkDb", actionContext);
+    }catch(Exception e){
+        log.error("Start Derby Server error", e);
+    }
+}
+
+
+//enableDebug
+if(self.getBoolean("enableDebug")){
+    try{
+        def daction = world.getAction("xworker.ide.config.functions/@Debug/@node/@DebugEnable");
+        daction.run(actionContext);
+    }catch(Exception e){
+        log.error("Enable Debug error", e);
+    }
+}
+*/
+//enableSetDesign
+if(self.getBoolean("enableSwtDesign")){
+    try{
+        Designer.setEnabled(true);
+    }catch(Exception e){
+        log.error("Enable swt design error", e);
+    }
+}
+
+/*
+//背景线程
+if(self.getBoolean("startBackGround")){
+    try{
+        def bakThing = world.getThing("xworker.ide.worldExplorer.background.BackGroundTaskRunner");
+        bakThing.doAction("run");
+    }catch(Exception e){
+        log.error("Start background error", e);
+    }
+}
+*/
+
+//创建UtilBrowser
+if(self.getBoolean("createUtilBrowser")){
+    try{
+        //浏览器和编辑器的工具
+        utilBrowser = new UtilBrowser(shell.getDisplay(), actions);
+    }catch(Exception e){
+        log.error("Create UtilBrowser error", e);
+    }
+}
+
+//当保存事物是更新事物索引
+if(self.getBoolean("updateThingIndex")){
+    if(world.getData("__updateThingIndexListener") == null){
+        def listener = [
+            saved:{
+                thingManager, thing->
+                            
+                new Thread([
+                    run:{
+                        Thread.sleep(5000); //延迟5秒，防止可能存在的bug，现在经常保存时找不到子节点可能与此有关
+                        def ac = new ActionContext();
+                        def updater = World.getInstance().getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+                        updater.doAction("addIndexJob", ac, ["thing":thing]);
+                    }
+                ] as Runnable).start();
+                return;
+            },
+            loaded:{
+                thingManager, thing->
+            },
+            removed:{
+                thingManager, thing->
+            }
+        ] as ThingManagerListener;
+        
+        world.registThingManagerListener("*", listener);
+        world.setData("__updateThingIndexListener", listener);
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+init
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldExplorer.things.CommonFeatures/@enableDebug
+sname
+enableDebug
+sinputtype
+truefalse
+sdefault
+true
+sdescription
+<p>是否启动动作的调试。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+enableDebug
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.worldExplorer.things.CommonFeatures/@enableSwtDesign
+sname
+enableSwtDesign
+sinputtype
+truefalse
+sdefault
+true
+sdescription
+<p>是否启用SWT的设计调试。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+enableSwtDesign
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.worldExplorer.things.CommonFeatures/@createUtilBrowser
+sname
+createUtilBrowser
+sinputtype
+truefalse
+sdefault
+true
+sdescription
+<p>是否创建一个UtilBrowser。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+createUtilBrowser
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.worldExplorer.things.CommonFeatures/@updateThingIndex
+sname
+updateThingIndex
+sinputtype
+truefalse
+sdefault
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+updateThingIndex
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

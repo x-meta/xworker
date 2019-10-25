@@ -1,0 +1,1490 @@
+^1368444982503
+@xworker.ide.simpleapp.SimpleApplication
+sname
+SimpleApplication
+slabel
+SimpleApplication
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>SimpleApplication是简单应用，比如一些小工具等。</p>
+
+<p>凡是有run方法的事物都可以作为简单应用，也可以通过xworker.ide.simpleapp.SimpleApplication编写简单应用，SimpleApplication可以以子事物的方式注册到SimpleAppliations下，这样能够在简单应用管理界面中可以正确看到。</p>
+
+<p>运行简单应用的run方法时会传入如下参数：</p>
+
+<ul>
+	<li><strong>&nbsp;</strong><u><strong>parent</strong></u><br />
+	简单应用管理的界面shell。</li>
+	<li><u><strong>explorerContext</strong></u><br />
+	IDE的变量上下文。</li>
+	<li><u><strong>explorerActions</strong></u><br />
+	IDE的动作集合。</li>
+	<li><u><strong>&nbsp;explorerShell</strong></u><br />
+	一般是IDE的shell。</li>
+	<li><u><strong>&nbsp;utilBrowser</strong></u><br />
+	绑定浏览器的工具类。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sid
+FunctionStructure
+@xworker.ide.simpleapp.SimpleApplication/@node
+sname
+node
+slabel
+Node
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplication
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+node
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject
+sname
+openDataObject
+slabel
+Open Thing
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+openDataObject
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.util.UtilString;
+
+def thing = world.getThing(self.path);
+if(thing == null){
+    MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+    box.open();
+    return;
+}else{
+    def explorerActions = explorerActions;
+    explorerShell.display.asyncExec({
+        explorerActions.doAction("openThing", ["thing": thing]);
+    });
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@path
+sname
+path
+slabel
+Thing Path
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@openDataObject/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openComposite
+sname
+openComposite
+slabel
+Open SWT Composite
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+openComposite
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.util.UtilString;
+
+def viewObject = world.getThing(self.path);
+if(viewObject == null){
+    MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+    box.open();
+    return;
+}else{
+    def explorerActions = explorerActions;
+    def dataObj = self;
+    explorerShell.display.asyncExec({
+        explorerActions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":dataObj.metadata.label, "path":""]);
+    });
+    
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@path
+sname
+path
+slabel
+Composite Path
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@openComposite/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell
+sname
+openSwtShell
+slabel
+Open SWT Shell
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing,xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+openSwtShell
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.util.UtilString;
+import org.xmeta.ActionContext;
+
+import java.lang.ref.WeakReference;
+
+def dataObj = self;
+def viewObject = world.getThing(dataObj.path);
+if(viewObject == null){
+    MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+    box.open();
+    return;
+}else{
+    if(dataObj.getBoolean("singleInstance")){
+        def shellref = world.getData("functions_shell_" + viewObject.metadata.path); 
+        if(shellref != null && shellref.get() != null && !shellref.get().isDisposed()){
+            def shell = shellref.get();
+            
+            shell.getDisplay().asyncExec([
+                run : {
+                    shell.setVisible(true);
+                    shell.forceActive();                    
+                }] as Runnable);                
+            return;
+        }
+    }
+           
+    ActionContext ac = new ActionContext();
+    ac.put("parent", explorerShell);
+    ac.put("explorerContext", explorerContext);
+    ac.put("explorerActions", explorerActions);
+    ac.put("explorerShell", explorerShell);
+    ac.put("utilBrowser", utilBrowser);
+
+    if(!dataObj.getBoolean("anotherThread")){
+        explorerShell.display.asyncExec({
+            def shell = viewObject.doAction("create", ac);
+            
+            if(dataObj.getBoolean("singleInstance")){
+                def wr = new WeakReference(shell);
+                world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+            }
+            shell.open();
+        });
+    } else{
+       def currentActionContext = actionContext;
+       def world = world;
+       new Thread([
+            run : {
+                Thread.sleep(500);
+                ActionContext ac1 = new ActionContext(ac);
+                Display display = new Display ();
+                ac.put("parent", display);
+
+                def shell = viewObject.doAction("create", ac1);
+                if(dataObj.getBoolean("singleInstance")){
+                    def wr = new WeakReference(shell);
+                    world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+                }                
+                shell.open ();      
+                shell.forceActive();
+        	    while (!shell.isDisposed ()) {
+        	        if (!display.readAndDispatch ()) display.sleep ();
+        	    }
+        	    display.dispose ();
+            }] as Runnable).start();
+    }      
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@singleInstance
+sname
+singleInstance
+slabel
+Single Instance
+sinputtype
+truefalse
+sdefault
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+singleInstance
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@anotherThread
+sname
+anotherThread
+slabel
+Create Thread
+sinputtype
+truefalse
+sdefault
+true
+sdescription
+<p>是否运行于另一个线程，如果false那么在当前的线程中运行。</p>
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+anotherThread
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@path
+sname
+path
+slabel
+Shell Path
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@openSwtShell/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl
+sname
+htmlUrl
+slabel
+Html Url
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+htmlUrl
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def dataObj = self;
+def explorerActions = explorerActions;                                                                                           
+explorerShell.display.asyncExec({                                                                                            
+    explorerActions.doAction("openUrl", ["url":dataObj.url, "name":dataObj.name]);
+});
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@url
+sname
+url
+slabel
+Url
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+url
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@htmlUrl/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@WebControl
+sname
+WebControl
+slabel
+WebControl
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+WebControl
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.util.UtilString;
+import org.xmeta.ActionContext;
+
+def dataObj = self;
+def thing = world.getThing(dataObj.path);
+if(thing == null){
+    MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+    box.open();
+    return;
+}
+
+def globalCfg = world.getThing("_local.xworker.config.GlobalConfig");
+def httpServer = globalCfg.getString("webUrl");
+if(httpServer == null || httpServer == ""){
+   httpServer = "http.//localhost.9001/";
+}
+def url = httpServer + "do?sc=" + thing.metadata.path;
+
+def dataObj = self;
+def explorerActions = explorerActions;                                                                                           
+explorerShell.display.asyncExec({                                                                                            
+    explorerActions.doAction("openUrl", ["url":url, "name":thing.metadata.path]);
+});
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@path
+sname
+path
+slabel
+Path
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@WebControl/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@Thing
+sname
+Thing
+slabel
+动作事物
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>执行该事物的run方法，用于编写和执行脚本。</p>
+sid
+Thing
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@15120
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+15120
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@15120/@15121
+sname
+name
+sid
+15121
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@Thing/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor
+sname
+descriptorExecutor
+slabel
+描述事物运行器
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing,xworker.lang.MetaDescriptor3
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>通过给定的描述者编辑一个事物，可以执行这个事物的run方法或保存它。</p>
+sid
+thingExecutor
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.util.UtilString;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+def dataObj = self;
+def descriptor = world.getThing(dataObj.descriptorPath);
+if(descriptor == null){
+    MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists事物不存在：", actionContext) + dataObj.path);
+    box.open();
+    return;
+}
+
+ActionContext ac = new ActionContext();
+ac.put("parent", explorerShell);
+ac.put("explorerContext", explorerContext);
+ac.put("explorerActions", explorerActions);
+ac.put("explorerShell", explorerShell);
+ac.put("utilBrowser", utilBrowser);
+
+def shellThing = world.getThing("xworker.ide.simpleapp.ThingApplication/@shell");
+def shell = shellThing.doAction("create", ac);
+def thing = new Thing(dataObj.descriptorPath);
+ac.thingEditor.editorActions.doAction("setThing", ["thing":thing]);
+shell.open();
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@name
+sname
+name
+slabel
+Name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@label
+sname
+label
+slabel
+Label
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@path
+sname
+descriptorPath
+slabel
+描述者路径
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@thingExecutor/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing
+sname
+CreateNewThing
+slabel
+新建事物
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.ide.simpleapp.SimpleApplicationRegistor
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>指定描述者，用于创建新事物。</p>
+sid
+CreateNewThing
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+ActionContext ac = new ActionContext();
+ac.put("parent", explorerShell);
+ac.put("explorerContext", explorerContext);
+ac.put("explorerActions", explorerActions);
+ac.put("explorerShell", explorerShell);
+ac.put("utilBrowser", utilBrowser);
+
+def shellThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell");
+def newFileDialog = shellThing.doAction("create", ac);
+if(self.descriptorPath != null){
+    ac.descriptorText.setText(self.descriptorPath);
+    def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+    def webUrl = globalConfig.getString("webUrl");
+    ac.historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + self.descriptorPath);
+}
+newFileDialog.open();
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@name
+sname
+name
+slabel
+名称
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@label
+sname
+label
+slabel
+标签
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@descriptorPath
+sname
+descriptorPath
+slabel
+描述者路径
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+descriptorPath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@group
+sname
+group
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ide.simpleapp.SimpleApplication/@CreateNewThing/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.simpleapp.SimpleApplication/@description
+sname
+description
+slabel
+描述
+sinputtype
+html
+scolspan
+2
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+description
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

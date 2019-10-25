@@ -1,0 +1,313 @@
+%1502877171226
+@
+sname=ThingGuideNode
+slabel=ThingGuideNode
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>向导流程节点的定义。</p>
+
+<p><strong>变量上下文</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 节点使用自己的变量上下文，上下文包含相关界面控件以及thingGuide变量。</p>
+
+<p>&nbsp;&nbsp;&nbsp; thingGuide变量的Java对象常用方法：</p>
+
+<ul>
+	<li><strong>Thing getEditThing()</strong><br />
+	返回当前正在编辑的事物，若在事物编辑器中是起动向导时的那个节点。<br />
+	&nbsp;</li>
+	<li><strong>Thing getGuideThing()</strong><br />
+	返回向导事物。<br />
+	&nbsp;</li>
+	<li><strong>Composite getGuideComposite()</strong><br />
+	向导面板。<br />
+	&nbsp;</li>
+	<li><strong>void finishCurrentNode()</strong><br />
+	结束当前节点。<br />
+	&nbsp;</li>
+	<li><strong>void cancel()</strong><br />
+	终止当前向导。注意不是取消已经对事物的修改。<br />
+	&nbsp;</li>
+	<li><strong>void setNewGuideThing(Thing guideThing)</strong><br />
+	设置新的向导。<br />
+	&nbsp;</li>
+	<li><strong>void setNextNode(Thing nodeThing)</strong><br />
+	结束当前节点，进入下一个向导节点。</li>
+</ul>
+
+<p><strong>下个节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 向导的下一个节点是由当前向导节点决定的，通过getNextNode()方法返回要执行的下一个向导节点。</p>
+
+<p><strong>按钮设置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 默认有一个下一步（或完成）按钮，点击后触发节点结束，可以通过nextButtonLabel设置按钮的文本。也可以通过Buttons子节点添加其它新的按钮。&nbsp;&nbsp;&nbsp;</p>
+
+<p><strong>可以重写方法：</strong></p>
+
+<ul>
+	<li><strong>Composite create()</strong><br />
+	创建向导界面。<br />
+	&nbsp;</li>
+	<li>&nbsp;<strong>void inited()</strong><br />
+	初始化后的操作，在create(）方法执行后的操作。<br />
+	&nbsp;</li>
+	<li><strong>boolean nodeFinished()</strong><br />
+	节点结束时触发的事件。如果返回false，表示当前节点还未处理完毕或有错误，不自动进入下一个节点。<br />
+	&nbsp;</li>
+	<li><strong>Thing getNextNode(）</strong><br />
+	默认实现先从nextNode取，其次取第一个向导子节点，最后取平级或父级的下一个向导子节点。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@nodeFinished
+    sname=nodeFinished
+    sunimplementedException=false
+    Sdescription=
+#$@text#$@
+<p>在一个向导界面点击下一步时会触发当前节点的nodeFinished事件，节点在这里处理要处理的东西。</p>
+
+<p>如果返回false，表示不能结束节点。</p>
+#$@text#$@
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=nodeFinished
+    @/@actions/@getNextNode
+    sname=getNextNode
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.ide.utils.ThingGuideActions
+    smethodName=getNextNode
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getNextNode
+    @/@actions/@create
+    sname=create
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@inited
+    sname=inited
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=inited
+  @/@nextButtonLabel
+  sname=nextButtonLabel
+  sshowLabel=true
+  ssize=60
+  sgroup=Node
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=nextButtonLabel
+  @/@nextNode
+  sname=nextNode
+  sinputtype=dataSelector
+  sshowLabel=true
+  ssize=60
+  sgroup=Node
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=nextNode
+  @/@notRemoveGuideOnFinish
+  sname=notRemoveGuideOnFinish
+  sinputtype=truefalse
+  sshowLabel=true
+  sgroup=Node
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  sdescription=<p>当整个向导结束时是否清除向导的描述者，这样再编辑事物时就不会进入向导界面了。</p>
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=notRemoveGuideOnFinish
+  @/@Buttons
+  sname=Buttons
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Buttons
+    @/@Buttons/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Buttons/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Buttons/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@Buttons/@Button
+    sname=Button
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.swt.widgets.Button
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Button

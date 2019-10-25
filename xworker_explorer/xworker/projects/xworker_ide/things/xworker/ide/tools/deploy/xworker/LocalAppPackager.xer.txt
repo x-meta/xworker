@@ -1,0 +1,207 @@
+@xworker.ide.tools.deploy.xworker.LocalAppPackager
+sname
+LocalAppPackager
+slabel
+LocalAppPackager
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>本地应用打包器。</p>
+sid
+LocalAppPackager
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.GreenJava;
+import java.util.jar.Manifest;
+import java.io.File;
+
+Manifest man = new Manifest();
+def attributes = man.getMainAttributes();
+attributes.putValue("Main-Class", "org.xmeta.util.ThingRunner");
+GreenJava greenJava = new GreenJava(self.outputJar, man);
+
+//运行thing app
+greenJava.runThing(self.mainThing, "run");
+
+//添加必须的jar
+if(self.jarFileList != null){
+    for(jarFile in self.jarFileList.split("[\n]")){
+        if(jarFile.trim() != ""){
+            def jarFiles = jarFile.split("[,]");
+            if(jarFiles.length >= 2){
+                if(jarFiles[0].startsWith("\$")){
+                    jarFiles[0] = world.getPath() + jarFiles[0].substring(1, jarFiles[0].length());
+                }
+                if(jarFiles[1].startsWith("\$")){
+                    jarFiles[1] = world.getPath() + jarFiles[1].substring(1, jarFiles[1].length());
+                }
+                File rootFile = new File(jarFiles[0].trim());
+                File dirFile= new File(jarFiles[1].trim());
+           
+                if(rootFile.exists() && dirFile.exists()){
+                    greenJava.addDirectory(rootFile, dirFile);
+                }
+            }
+        }
+    }
+}
+
+greenJava.buildJar();
+
+//输出xer.ini
+greenJava.addEntry("xer.ini");
+greenJava.write("worldPath=.\n".getBytes());
+greenJava.write(("thingPath=" + self.mainThing + "\n").getBytes());
+greenJava.write("actionName=run\n".getBytes());
+
+//结束
+greenJava.close();
+println "本地应用打包完毕";
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@mainThing
+sname
+mainThing
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+mainThing
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@outputJar
+sname
+outputJar
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+outputJar
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.ide.tools.deploy.xworker.LocalAppPackager/@jarFileList
+sname
+jarFileList
+sinputtype
+textarea
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>如有多个使用换行分割，$表示world路径，如$\lib。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+jarFileList
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

@@ -1,0 +1,166 @@
+%1544583829641
+@
+sname=QuickSelfActionImpl
+slabel=动作的行为
+stype=thingControl
+sgroup=-9000|编程框架.-950|动作框架.-900|文档和教程
+sicon=icons/html.png
+sth_sortWeight=170
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=true
+sen_label=Define Action - Action behavior
+sen_group=-9000|Programing.-950|Action.-900|Dcouments
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@SimpleControl
+  sname=SimpleControl
+  scheckPermission=false
+  scheckLogin=false
+  sdescriptors=xworker.swt.xworker.ThingRegistThing/@SimpleControl
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SimpleControl
+    @/@SimpleControl/@actions
+    sname=actions
+    sdescriptors=xworker.http.controls.SimpleControl/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SimpleControl/@actions/@doAction
+      sname=doAction
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def thing = world.getThing("xworker.lang.actions.ActionUtil");
+_g.put("thing", thing);
+
+return "success";
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=doAction
+    @/@SimpleControl/@view
+    sname=view
+    sbelongToHtml=true
+    sdoctype=<!doctype html>
+    stitle=动作行为的快速实现
+    sstyle=default
+    shasHead=false
+    shasBottom=false
+    snoCache=false
+    SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors=xworker.http.controls.SimpleControl/@view
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=view
+      @/@SimpleControl/@view/@htmlCode
+      sname=htmlCode
+      ShtmlCode=
+#$@text#$@
+<h1>动作的行为</h1>
+
+<h2>1.参数的获取</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动作相当于函数，有时动作需要传入参数，比如一个获取文件内容的动作需要传入一个文件。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 参数传入的方法有很多种，比如调用动作时传入，或者是常量，或者打开对话框选择一个文件，或者通过表达式获取，或者需要执行一个动作来获取，而参数的类型有可能是String或File类型的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作的行为可以解决以上问题。</p>
+
+<h2>2.通过动作的行为获取参数</h2>
+
+<h3>2.1.实现方法</h3>
+
+<ul>
+	<li>在动作中设置一个属性。</li>
+	<li>定义个行为，这个行为通过该数据来获取参数。</li>
+	<li>行为的实现可以用下面列出的方法。&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<h3>2.2.使用方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在动作的属性里可以设置常量、变量或表达式等，如果通过属性设置不能满足要求，可以通过重写对应行为的方法来实现。</p>
+
+<h3>2.3.示例</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:invoke('thing:xworker.io.FileUtilActions/@thing')">ReadFileToString</a>是一个把文件内容读成字符串的方法，它的参数file和encoding是通过行为来获取的。</p>
+
+<h2>3<a id="_top" name="_top">.常用动作</a></h2>
+
+<p>&nbsp;&nbsp;&nbsp; 以下是常用的一些动作</p>
+#$@text#$@
+      sdescriptors=xworker.html.base.container.childs/@htmlCode
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=htmlCode
+      @/@SimpleControl/@view/@code
+      sname=code
+      Scode=
+#$@text#$@
+<ul>
+<#list thing.getChilds() as child>
+	<li><a href="#${child.metadata.name}">${child.metadata.label}</a></li>
+</#list>	
+	<li>&nbsp;</li>
+</ul>
+
+<#list thing.getChilds() as child>
+<h2><a id="#${child.metadata.name}" name="#${child.metadata.name}">${child.metadata.label}</a></h2>
+${child.metadata.description}
+<p><a href="#_top">返回顶部</a></p>
+</#list>
+#$@text#$@
+      sdescriptors=xworker.html.base.container.childs/@code
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=code
+    @/@SimpleControl/@success
+    sname=success
+    stype=form
+    scontentType=text/html;charset=UTF-8
+    svalue=xworker.lang.actions.doc.QuickSelfActionImpl/@SimpleControl/@view
+    sdescriptors=xworker.http.controls.SimpleControl/@result
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=success

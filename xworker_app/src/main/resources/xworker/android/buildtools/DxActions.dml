@@ -1,0 +1,285 @@
+%1501230976651
+@
+sname=DxActions
+slabel=DxActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@dex2jar
+  sname=directoryToDex
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=android.buildtools
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=dex2jar
+    @/@dex2jar/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@dex2jar/@actions/@run
+      sname=run
+      schangeSelf=true
+      sselfVarName=dx
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@ActionGroup
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+        @/@dex2jar/@actions/@run/@actions
+        sname=actions
+        sdescriptors=xworker.lang.actions.SelfAction/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@dex2jar/@actions/@run/@actions/@init
+          sname=init
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.ActionException;
+
+//局部变量范围
+def l = actionContext.l();
+//生成命令
+def cmds = [];
+
+//获取dx2jar的路径
+def cfg = world.getThing("xworker.android.buildtools.BuildToolsConfig");
+def dx2jarPath = cfg.doAction("getPath", actionContext);
+if(world.getOS() == "win32"){
+    cmds.add(dx2jarPath + "/dx.bat");
+}else{
+    cmds.add(dx2jarPath + "/dx.sh");
+}    
+cmds.add("--dex");
+
+//参数
+def djthing = dx.getDescriptor();
+for(attr in djthing.getChilds("attribute")){
+    if(attr.getStringBlankAsNull("reserve") == "none"){
+        continue;
+    }
+    
+    def name = attr.getMetadata().getName();
+    if(dx.getBoolean(name)){
+        cmds.add("-" + name);
+    }
+}
+
+//ouput
+def o = dx.doAction("getOutput", actionContext);
+if(o != null){
+    cmds.add("--output=" + o.getAbsolutePath());
+}
+
+def dir = dx.doAction("getDir", actionContext);
+if(dir == null){
+    throw new ActionException("dir can not be null, action=" + self.getMetadata().getPath());
+}
+cmds.add(dir.getAbsolutePath());
+def cmdArray = "";
+for(int i=0; i<cmds.size(); i++){
+    if(i > 0){
+        cmdArray = cmdArray + "\n";
+    }
+    cmdArray = cmdArray + cmds.get(i);
+}
+l.put("cmds", cmdArray);
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=init
+          @/@dex2jar/@actions/@run/@actions/@run1
+          sname=exec
+          ssync=false
+          stimeout=10000
+          scmdarray=var:cmds
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.java.lang.RuntimeActions/@Exec
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=run1
+      @/@dex2jar/@actions/@getOutput
+      sname=getOutput
+      sattributeName=output
+      snotNull=true
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetFile
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getOutput
+      @/@dex2jar/@actions/@getExceptionFile
+      sname=getDir
+      sattributeName=dir
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetFile
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getExceptionFile
+    @/@dex2jar/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sreserve=none
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@dex2jar/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sreserve=none
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@dex2jar/@output
+    sname=output
+    slabel=output
+    sinputtype=file
+    sshowLabel=true
+    ssize=60
+    sreadOnly=false
+    sreserve=none
+    sinheritDescription=false
+    sdescription=<p>output .jar file, default is $current_dir/[file-name]-dex2jar.jar</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=output
+    @/@dex2jar/@dir
+    sname=dir
+    sinputtype=filePath
+    sshowLabel=true
+    ssize=60
+    sreadOnly=false
+    sreserve=none
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dir

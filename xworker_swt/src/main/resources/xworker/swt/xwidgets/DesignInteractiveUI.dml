@@ -1,0 +1,185 @@
+%1479112297209
+@
+sname=DesignInteractiveUI
+slabel=DesignInteractiveUI
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.layout.LayoutDatas
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>设计交互界面，它创建一个具有FillLayout的Composite。当帮助小精灵点中它时可以出现各种帮助设计的工具等。</p>
+
+<p><strong>返回值：</strong>Composite。</p>
+
+<p><strong>保存的变量：</strong>Composite</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 其中Composite的getData()和getData(&quot;actionContext&quot;)是创建Composite时新建的变量上下文。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//创建新的变量上下文
+def ac = new ActionContext();
+ac.put("parentContext", actionContext);
+ac.put("parent", actionContext.parent);
+ac.put("thing", self);
+
+//创建面板
+def thing = world.getThing("xworker.swt.xwidgets.prototypes.DesignInterativeUIProto/@composite");
+def composite = thing.doAction("create", ac);
+
+//创建子节点
+actionContext.peek().put("parent", composite);
+for(child in self.getChilds()){
+    child.doAction("create", actionContext);
+}
+
+//创建InteraciveUI
+ac.peek().put("parent", composite);
+def uiThing = world.getThing("xworker.swt.xwidgets.prototypes.DesignInterativeUIProto/@interactiveUI");
+uiThing = uiThing.detach();
+uiThing.set("label", self.getMetadata().getLabel());
+uiThing.doAction("create", ac);
+
+//子节点生效
+ac.actions.doAction("initComposite", ac);
+//println(ac.keySet());
+
+composite.setData(ac);
+composite.setData("actionContext", ac);
+_g.put(self.getMetadata().getName(), composite);
+
+return composite;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Implements
+  sname=Implements
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Implements
+    @/@Implements/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Implements/@actions/@create
+      sname=create
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create

@@ -1,0 +1,219 @@
+%1479112194675
+@
+sname=shell
+stext=设计交互UI的原型
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+side=true
+sisIde=false
+sdesignDefaultOpen=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=DesignInterativeUIProto
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sxw_cl_global=false
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@interactiveUI
+  sname=interactiveUI
+  slabel=交互设计
+  sregistThing=xworker.swt.xwidgets.prototypes.DesignInteractiveUIIndex
+  sregistType=guide
+  sdescriptors=xworker.swt.Widgets/@InteractiveUI
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=interactiveUI
+  @/@composite
+  sname=composite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=composite
+    @/@composite/@compositeFillLayout
+    sname=compositeFillLayout
+    stype=SWT.HORIZONTAL
+    sxw_cl_global=false
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=compositeFillLayout
+    @/@composite/@actions1
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@composite/@actions1/@setComopsite
+      sname=setComposite
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+//获取Implements子节点
+def imples = thing.getThing("Implements@0");
+if(imples == null){
+    imples = new Thing("xworker.swt.xwidgets.DesignInteractiveUI/@Implements");
+    thing.addChild(imples);
+}
+
+//清空子节点
+for(child in imples.getChilds()){
+    imples.removeChild(child);
+}
+
+//添加新的子节点
+imples.addChild(compositeThing);
+
+//保存
+thing.save();
+
+//子节点生效
+actions.doAction("initComposite", actionContext);
+#$@text#$@
+      sdescription=<p>设置新的Composite。</p>
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=setComopsite
+        @/@composite/@actions1/@setComopsite/@ins
+        sisValidate=false
+        sname=ins
+        sdescriptors=xworker.lang.actions.Inout/@ins
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ins
+          @/@composite/@actions1/@setComopsite/@ins/@composite
+          sname=compositeThing
+          stype=Thing
+          stypeCheck=false
+          soptional=true
+          scheck=false
+          scheckLevel=exception
+          sdescriptors=xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=composite
+      @/@composite/@actions1/@initComposite
+      sname=initComposite
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//使用新的变量上下文
+def ac = new ActionContext();
+ac.put("parent", composite);
+ac.put("parentContext", actionContext);
+
+//清空容器
+for(control in composite.getChildren()){
+    control.dispose();
+}
+
+//创建实例
+def imples = thing.getThing("Implements@0");
+if(imples != null){
+    for(child in imples.getChilds()){
+        child.doAction("create", ac);
+    }
+}
+
+composite.layout();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=initComposite

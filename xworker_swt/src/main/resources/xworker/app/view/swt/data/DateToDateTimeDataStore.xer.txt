@@ -1,0 +1,1092 @@
+@xworker.app.view.swt.data.DateToDateTimeDataStore
+sname
+DateToDateTimeDataStore
+slabel
+DateToDateTimeDataStore
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.app.view.swt.data.DataStore
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>把日期一列分成日期和时间两列的数据仓库，比如把没小时的数据按天显示在一个图标中：</p>
+<p>源数据<br />
+日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;价格<br />
+2012-01-01&nbsp;&nbsp;12.00.01&nbsp;&nbsp; 5元<br />
+2012-01-01&nbsp;&nbsp;13.00.03&nbsp;&nbsp; 3元<br />
+2012-01-01&nbsp;&nbsp;15.23.12 &nbsp; 4元<br />
+2012-02-01&nbsp;&nbsp;12.00.01&nbsp; &nbsp;5元<br />
+2012-02-01&nbsp;&nbsp;13.00.03&nbsp;&nbsp; 4元<br />
+2012-02-01&nbsp;&nbsp;15.12.01 &nbsp; 5元</p>
+<p>目标数据<br />
+日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价格<br />
+2012-01-01&nbsp;&nbsp;12.00.01&nbsp;&nbsp; 5元<br />
+2012-01-01&nbsp;&nbsp;13.00.03&nbsp;&nbsp; 3元<br />
+2012-01-01&nbsp;&nbsp;15.23.12 &nbsp; 4元<br />
+2012-02-01&nbsp;&nbsp;12.00.01 &nbsp; 5元<br />
+2012-02-01&nbsp;&nbsp;13.00.03&nbsp;&nbsp; 4元</p>
+<p>额外的可以统计最大值、最小值和平均值，如果指定了它们的字段名则计算，算入每天的数据中。需要自定义数据对象，默认会存字段名为max,min,sum,count,avg四个统计字段。</p>
+#$@text#$@
+sid
+DateToDateTimeDataStore
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.eclipse.swt.widgets.Display;
+
+import ognl.Ognl;
+
+//数据仓库实例
+def store = store = new Thing("xworker.app.view.swt.data.DateToDateTimeDataStore");
+store.getAttributes().putAll(self.getAttributes());
+store.set("extends", self.metadata.path);
+store.put("listeners", []);
+store.put("config", self);
+store.put("dataLoaded", false);
+store.put("name", self.name);
+store.put("actionContext", actionContext);
+store.setData("actionContext", actionContext);
+store.display = Display.getCurrent();
+store.put("rowcolType", self.rowcolType);
+def cols = self.get("Cols@0");
+if(cols != null){
+    store.put("cols", cols.getChilds());
+}
+
+//数据对象
+def dataObject = world.getThing(self.dataObject);
+store.put("refDataObject", dataObject); //查询数据对象
+def dos = self.getThing("dataObjects@0");
+if(dos != null && dos.getChilds().size() > 0){
+    dataObject = dos.getChilds().get(0);
+}
+store.put("dataObject", dataObject);
+
+//如果引用的DataStore不为空，注册到引用的DataStore，引用的DataStore提供数据
+def refStore = null;
+if(self.storeRef != null && self.storeRef != ""){
+    refStore = Ognl.getValue(self.storeRef, actionContext);
+    if(refStore != null){
+        def listener = new Thing("xworker.app.view.swt.data.events.DateToDateTimeDataStoreListener");
+        listener.rowColStore = store;
+        refStore.doAction("addListener", actionContext, ["listener": listener]);
+    }
+}
+
+//如果引用的DataStore为空，使用自己的数据对象
+if(refStore == null){
+    //查询配置
+    def queryConfig = world.getThing(self.queryConfig);
+    if(queryConfig == null){
+        queryConfig = self.get("queryConfig@0");
+    }
+    store.put("queryConfig", queryConfig);
+    
+    //分页
+    def pageInfo = [:];
+    pageInfo.limit = 0;
+    pageInfo.start = 0;
+    if(self.paging == "extend"){
+        if(dataObject != null && dataObject.getBoolean("paging")){
+            pageInfo.limit = dataObject.getInt("pageSize", 50);
+            pageInfo.start = 0;
+        }
+    }else if(self.paging == "yes"){
+        pageInfo.limit = self.getInt("pageSize", 50);
+        pageInfo.start = 0;
+    }
+    if(self.storeSortField == "_extend"){
+        if(dataObject != null){
+            pageInfo.sort = dataObject.getString("storeSortField");
+            pageInfo.dir = dataObject.getString("storeSortDir");
+        }
+    }else{
+        pageInfo.sort = self.getString("storeSortField");
+        pageInfo.dir = self.getString("storeSortDir");
+    }
+    store.put("pageInfo", pageInfo);
+    
+    if(store.dataObject != null){
+        if(store.getBoolean("autoLoad")){
+            store.doAction("load", actionContext);
+        }
+    }
+    
+    //监听器
+    for(listeners in self.get("Listeners@")){
+        for(listener in listeners.get("Listener@")){
+            store.listeners.add(listener);
+        }
+    }
+    
+}
+
+actionContext.getScope(0).put(self.name, store);
+if(self.getBoolean("attachToParent") && store != null){
+    store.doAction("attach", actionContext, ["object":parent]);
+}
+
+return store;
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@reInit
+sname
+setDataObject
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+if(actionContext.get("dataObject") == null){
+    return;
+}
+
+def store = self;
+store.put("refDataObject", dataObject);
+
+//查询配置
+if(actionContext.get("queryConfig") != null){
+    store.put("queryConfig", queryConfig);
+}
+
+//分页
+def pageInfo = [:];
+pageInfo.limit = 0;
+pageInfo.start = 0;
+if(self.paging == "extend"){
+    if(dataObject != null && dataObject.getBoolean("paging")){
+        pageInfo.limit = dataObject.getInt("pageSize", 50);
+        pageInfo.start = 0;
+    }
+}else if(self.paging == "yes"){
+    pageInfo.limit = self.getInt("pageSize", 50);
+    pageInfo.start = 0;
+}
+if(self.storeSortField != "_extend"){
+    if(dataObject != null){
+        pageInfo.sort = dataObject.getString("storeSortField");
+        pageInfo.dir = dataObject.getString("storeSortDir");
+    }
+}else{
+    pageInfo.sort = self.getString("storeSortField");
+    pageInfo.dir = self.getString("storeSortDir");
+}
+store.put("pageInfo", pageInfo);
+
+//通知已更新
+self.doAction("reconfig", actionContext);
+
+if(store.refDataObject != null){
+    if(store.getBoolean("autoLoad")){
+        store.doAction("load", actionContext);
+    }
+}
+#$@text#$@
+sdescription
+<p>重新设置DataObject。</p>
+sid
+reInit
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@reInit/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@reInit/@ins/@dataObject
+sname
+dataObject
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@reInit/@ins/@queryConfig
+sname
+queryConfig
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+queryConfig
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@load
+sname
+load
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+def dataObject = self.refDataObject;
+if(dataObject == null){
+    log.warn("not dataobject");
+    return;
+}
+
+//查询配置
+def queryConfig = self.queryConfig;
+//分页信息
+def pageInfo = self.pageInfo;
+pageInfo.start = 0;
+
+//查询参数
+def params = actionContext.get("params");
+//log.info("params=" + params);
+if(params == null){
+    params = [:];
+}
+if(queryConfig != null){  //初始化主动抓取的参数值
+    queryConfig.doAction("initParamsSwt", actionContext);
+}
+
+self.pageInfo = pageInfo;
+self.params = params;
+
+//执行查询
+self.doAction("doLoad", actionContext);
+#$@text#$@
+sdescription
+<p>使用参数查询并装载数据。</p>
+sid
+load
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@load/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@load/@ins/@params
+sname
+params
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+params
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@load/@ins/@pageInfo
+sname
+pageInfo
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+pageInfo
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@reload
+sname
+reload
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+def dataObject = self.refDataObject;
+if(dataObject == null){
+    log.warn("not dataobject");
+    return;
+}
+
+//执行查询
+self.doAction("doLoad", actionContext);
+#$@text#$@
+sid
+reload
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@doLoad
+sname
+doLoad
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+def store = self;
+def acContext = actionContext;
+def event = ["doit":true];
+def log = log;
+
+store.doAction("fireEvent", actionContext, ["eventName":"beforeLoad", "event":event]);
+if(event.doit == false){
+    return;
+}
+        
+if(self.getBoolean("loadBackground")){
+    def runnable = [
+        run: {
+            DataObject.beginThreadCache();
+            try{
+                def records = store.refDataObject.doAction("query", acContext, ["conditionData":store.params, "conditionConfig":store.queryConfig, "pageInfo":store.pageInfo]);            
+                store.records = store.doAction("convert", actionContext, ["records": records, "cols": store.cols, "dataObject": store.dataObject]);
+            }finally{
+                DataObject.finishThreadCache();
+            }
+            //log.info("records=" + store.records);
+            store.put("dataLoaded", true);
+            
+            //如果是动态查询，重新初始化数据对象
+            initDataObject(store, acContext);
+            store.doAction("fireEvent", acContext, ["eventName": "onLoaded"]);
+            store.doAction("fireEvent", acContext, ["eventName":"afterLoaded"]);
+        }
+    ] as Runnable;
+    
+    new Thread(runnable).start();
+}else{
+    //执行查询
+    DataObject.beginThreadCache();
+    try{
+        self.records = store.refDataObject.doAction("query", actionContext, ["conditionData":store.params, "conditionConfig":store.queryConfig, "pageInfo":store.pageInfo]);
+    }finally{
+        DataObject.finishThreadCache();
+    }
+    self.put("dataLoaded", true);
+    
+    //如果是动态查询，重新初始化数据对象
+    initDataObject(store, actionContext);
+                         
+    //触发装载事件
+    self.doAction("fireEvent", actionContext, ["eventName": "onLoaded"]);
+    self.doAction("fireEvent", actionContext, ["eventName": "afterLoaded"]);
+}
+
+def initDataObject(store, acContext){
+     if(store.pageInfo.dynamicDataObject != null && store.pageInfo.dynamicDataObject != store.dynamicDataObject){
+         def oldDataObject = store.refDataObject;
+         try{
+             store.put("dynamicDataObject", store.pageInfo.dynamicDataObject);
+             store.put("refDataObject", store.pageInfo.dynamicDataObject);
+             store.doAction("reconfig", acContext);
+         }finally{
+             store.put("dataObject", oldDataObject);
+         }
+     }
+}
+#$@text#$@
+sid
+doLoad
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@rowToCols
+sname
+convert
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+
+def colRecords = [];
+def keyDatas = [:];
+def max = [:];
+def min = [:];
+def sum = [:];
+def count = [:];
+def dateKeys = [:];
+def dayFormat = new SimpleDateFormat(self.datePattern);
+def timeFormat = new SimpleDateFormat(self.timePattern);
+def dateField = self.dateField;
+def timeField = self.timeField;
+def valueField = self.valueField;
+for(record in records){
+    //日期、时间和值
+    def date = Ognl.getValue(dateField, record);
+    def value = Ognl.getValue(valueField, record);
+    def dateValue = "";    
+    def timeValue = "";
+    if(dateValue == null && self.getBoolean("trimNullDate")){
+        continue;
+    }
+    if(dateValue != null){
+         dateValue = dayFormat.format(date);
+         timeValue = timeFormat.format(date);
+    }
+    
+    //生成目标记录
+    dateKeys.put(dateValue, dateValue);
+    def colData = keyDatas.get(dateValue + "_" + timeValue);
+    if(colData == null){
+        colData = new DataObject(dataObject);
+        colData.put(dateField, dateValue);
+        colData.put(timeField, timeValue);
+        colData.put(valueField, value);
+        colData.setData("max", value);
+        colData.setData("min", value);
+        colData.setData("sum", value);
+        colData.setData("count", 1);
+        colRecords.add(colData);
+        keyDatas.put(dateValue + "_" + timeValue, colData);
+    }else{
+        colData.put(dateField, dateValue);
+        colData.put(timeField, timeValue);
+        colData.put(valueField, value);
+        if(colData.getData("max") < value){
+            colData.setData("max", value);
+        }
+        if(colData.getData("min") > value){
+            colData.setData("min", value);
+        }
+        colData.setData("sum", colData.getData("sum") + value);
+        colData.setData("count", colData.getData("count") + 1);
+    }
+    
+    //最大值，最小值等
+    if(max.get(dateValue) == null || max.get(dateValue) < value){
+        max.put(dateValue, value);
+    }
+    if(min.get(dateValue) == null |min.get(dateValue) > value){
+        min.put(dateValue, value);
+    }
+    if(sum.get(dateValue) == null){
+        sum.put(dateValue, value);
+    }else{
+        sum.put(dateValue, sum.get(dateValue) + value);
+    }
+    if(count.get(dateValue) == null){
+        count.put(dateValue, 1);
+    }else{
+        count.put(dateValue, count.get(dateValue) + 1);
+    }
+}
+
+//处理重复的数据
+for(data in colRecords){
+    data.put("max", data.getData("max"));
+    data.put("min", data.getData("min"));
+    data.put("sum", data.getData("sum"));
+    data.put("count", data.getData("count"));
+    data.put("avg", data.getData("sum") / data.getData("count"));
+    switch(self.repeatData){
+         case "last":
+             break;
+         case "max":
+             data.put(valueField, data.getData("max"));
+             break;
+         case "min":
+             data.put(valueField, data.getData("min"));
+             break;
+         case "avg":
+             data.put(valueField, data.getData("sum") / data.getData("count"));
+             break;
+         case "sum":
+             data.put(valueField, data.getData("sum"));
+             break;
+         case "count":
+             data.put(valueField, data.getData("count"));
+             break;
+    }
+}
+
+//总的数据
+for(dateValue in dateKeys.keySet()){
+    if(self.maxField != null && self.maxField != ""){
+        def data = new DataObject(dataObject);
+        data.put(dateField, dateValue);
+        data.put(timeField, self.maxField);
+        data.put(valueField, max.get(dateValue));
+        colRecords.add(data);
+    }
+    if(self.minField != null && self.minField != ""){
+        def data = new DataObject(dataObject);
+        data.put(dateField, dateValue);
+        data.put(timeField, self.minField);
+        data.put(valueField, min.get(dateValue));
+        colRecords.add(data);
+    }
+    if(self.sumField != null && self.sumField != ""){
+        def data = new DataObject(dataObject);
+        data.put(dateField, dateValue);
+        data.put(timeField, self.sumField);
+        data.put(valueField, sum.get(dateValue));
+        colRecords.add(data);
+    }
+    if(self.countField != null && self.countField != ""){
+        def data = new DataObject(dataObject);
+        data.put(dateField, dateValue);
+        data.put(timeField, self.countField);
+        data.put(valueField, count.get(dateValue));
+        colRecords.add(data);
+    }
+    if(self.avgField != null && self.avgField != ""){
+        def data = new DataObject(dataObject);
+        data.put(dateField, dateValue);
+        data.put(timeField, self.avgField);
+        data.put(valueField, sum.get(dateValue) / count.get(dateValue));
+        colRecords.add(data);
+    } 
+}
+
+log.info("records=" + colRecords);
+return colRecords;
+#$@text#$@
+sid
+rowToCols
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@rowToCols/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@rowToCols/@ins/@records
+sname
+records
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+records
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@rowToCols/@ins/@cols
+sname
+cols
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+cols
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@actions/@rowToCols/@ins/@dataObject
+sname
+dataObject
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@rowKey
+sname
+dateField
+slabel
+日期字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>新旧数据使用相同的字段名，转化后日期格式化为字符串。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowKey
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@datePattern
+sname
+datePattern
+slabel
+日期格式
+sreadOnly
+false
+sdefault
+yyyy-MM-dd
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+datePattern
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@rowCategoryField
+sname
+timeField
+slabel
+时间字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>时间字段为目标数据新生成的字段。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowCategoryField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@timePattern
+sname
+timePattern
+slabel
+时间格式
+sreadOnly
+false
+sdefault
+hh.MM.ss
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+timePattern
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@rowValueField
+sname
+valueField
+slabel
+值字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>新旧数据使用相同的字段名。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowValueField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@maxField
+sname
+maxField
+slabel
+最大值字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>为一个日期的max\min\avg\sum\count等。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+maxField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@minField
+sname
+minField
+slabel
+最小值字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+minField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@avgField
+sname
+avgField
+slabel
+平均值字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+avgField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@sumField
+sname
+sumField
+slabel
+累加字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+sumField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@countField
+sname
+countField
+slabel
+计数字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+countField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@storeRef1
+sname
+storeRef
+slabel
+引用数据仓库名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>如果不为空，那么加入一个监听器到引用的数据仓库上，使用引用的数据仓库的数据。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+storeRef1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData
+sname
+repeatData
+slabel
+重复数据处理方式
+sinputtype
+select
+sreadOnly
+false
+sdefault
+last
+sinheritDescription
+false
+sdescription
+<p>可能有多条数据日期格式化后的日期+时间是一样的，那么如何处理这些数据，last是取最后一个记录，为覆盖。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+repeatData
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@last
+sname
+last
+slabel
+last
+svalue
+last
+sid
+last
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@max
+sname
+max
+slabel
+max
+svalue
+max
+sid
+max
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@min
+sname
+min
+slabel
+min
+svalue
+min
+sid
+min
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@avg
+sname
+avg
+slabel
+avg
+svalue
+avg
+sid
+avg
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@sum
+sname
+sum
+slabel
+sum
+svalue
+sum
+sid
+sum
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@repeatData/@count
+sname
+count
+slabel
+count
+svalue
+count
+sid
+count
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.DateToDateTimeDataStore/@trimNullDate
+sname
+trimNullDate
+slabel
+过滤空日期
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+trimNullDate
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

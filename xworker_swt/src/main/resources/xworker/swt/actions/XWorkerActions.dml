@@ -1,0 +1,668 @@
+%1569574596865
+@
+sname=XWorkerActions
+slabel=XWorkerActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+sdescription=<p>XWorker提供的一些SWT相关的工具。</p>
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@OpenFavorite
+  sname=OpenFavorite
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=swt.xworker.favorite
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>打开收藏，收藏是通过事物注册器实现的，收藏的是事物模型。</p>
+
+<p><strong>需要重写的方法</strong></p>
+
+<ul>
+	<li><strong>void onSelected(Thing thing)</strong><br />
+	当选中了一个收藏时触发的事件。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=OpenFavorite
+    @/@OpenFavorite/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=actions
+      @/@OpenFavorite/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//用于打开窗口的shell
+def shell = self.doAction("getShell", actionContext);
+
+//索引事物
+def indexThing = self.doAction("getIndex", actionContext);
+
+//索引类型
+def type = self.doAction("getType", actionContext);
+
+//创建新事物的描述者
+def descriptor = self.doAction("getDescriptorForNewThing", actionContext);
+
+def ac = new ActionContext();
+ac.put("parent", shell);
+ac.put("parentContext", actionContext);
+ac.put("actionThing", self);
+
+def dialogThing = world.getThing("xworker.swt.actions.prototypes.FavoriteDialog");
+def dialogShell = dialogThing.doAction("create", ac);
+dialogShell.setVisible(true);
+
+ac.thingRegistor.doAction("init", ac, "thing", indexThing, "type", type, 
+        "keywords", "", "descritporForNewThing", descriptor);
+ac.thingRegistor.doAction("refresh", ac);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=run
+      @/@OpenFavorite/@actions/@getShell
+      sname=getShell
+      sattributeName=shell
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getShell
+      @/@OpenFavorite/@actions/@getIndex
+      sname=getIndex
+      sattributeName=index
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getIndex
+      @/@OpenFavorite/@actions/@getType
+      sname=getType
+      sattributeName=type
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getType
+      @/@OpenFavorite/@actions/@getDescriptorForNewThing
+      sname=getDescriptorForNewThing
+      sattributeName=descriptorForNewThing
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getDescriptorForNewThing
+      @/@OpenFavorite/@actions/@onSelected
+      sname=onSelected
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=onSelected
+    @/@OpenFavorite/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=name
+    @/@OpenFavorite/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=label
+    @/@OpenFavorite/@shell
+    sname=shell
+    ssize=50
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=shell
+    @/@OpenFavorite/@index
+    sname=index
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=index
+    @/@OpenFavorite/@type
+    sname=type
+    sextends=xworker.lang.MetaThing/@th_registThing
+    sinputtype=inputSelect
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=type
+    @/@OpenFavorite/@descriptorForNewThing
+    sname=descriptorForNewThing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=descriptorForNewThing
+    @/@OpenFavorite/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=description
+  @/@SaveAs
+  sname=SaveAs
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=swt.xworker.thing
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>事物模型的另存为对话框。</p>
+
+<p><strong>返回值：void</strong></p>
+
+<p>参数：</p>
+
+<ul>
+	<li><strong>thing: Thing</strong><br />
+	要保存的事物模型。</li>
+</ul>
+
+<p><strong>事件：</strong></p>
+
+<ul>
+	<li><strong>void ok(Thing thing)</strong><br />
+	另存为成功的事件，thing为已经修改后的事物模型。<br />
+	&nbsp;</li>
+	<li><strong>void cancel()</strong><br />
+	取消另存为的操作。&nbsp;</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>&nbsp;Shell getShell()</strong><br />
+	返回用于创建对话框的父Shell。<br />
+	&nbsp;</li>
+	<li><strong>Thing getThing()</strong><br />
+	要另存为的事物模型。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=SaveAs
+    @/@SaveAs/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=actions
+      @/@SaveAs/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+def shell = self.doAction("getShell", actionContext);
+
+def thing = self.doAction("getThing", actionContext);
+if(thing == null){
+    return;
+}
+
+def ac = new ActionContext();
+ac.put("parent", shell);
+ac.put("parentContext", actionContext);
+ac.put("actionThing", self);
+
+def dialogThing = world.getThing("xworker.ide.worldExplorer.swt.tools.SaveAsDialog");
+def newShell = dialogThing.doAction("create", ac);
+newShell.setVisible(true);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=run
+      @/@SaveAs/@actions/@getShell
+      sname=getShell
+      sattributeName=shell
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getShell
+      @/@SaveAs/@actions/@getThing
+      sname=getThing
+      sattributeName=thing
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=getThing
+      @/@SaveAs/@actions/@ok
+      sname=ok
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=ok
+      @/@SaveAs/@actions/@cancel
+      sname=cancel
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=cancel
+    @/@SaveAs/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=name
+    @/@SaveAs/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=label
+    @/@SaveAs/@shell
+    sname=shell
+    ssize=45
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=shell
+    @/@SaveAs/@thing
+    sname=thing
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=thing
+    @/@SaveAs/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=description

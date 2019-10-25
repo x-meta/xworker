@@ -1,0 +1,79 @@
+%1511834109648
+@
+sname=WebRTCTutorials
+slabel=MediaStream
+stype=thingDesc
+sgroup=JavaScript API
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+Sdescription=
+#$@text#$@
+<p><strong>获取视频流</strong></p>
+
+<pre class="brush:jscript;">
+var constraints = {video: true};
+
+function successCallback(stream) {
+  var video = document.querySelector(&quot;video&quot;);
+  video.src = window.URL.createObjectURL(stream);
+}
+
+function errorCallback(error) {
+  console.log(&quot;navigator.getUserMedia error: &quot;, error);
+}
+
+navigator.getUserMedia(constraints, successCallback, errorCallback);</pre>
+
+<p><strong>控制视频</strong></p>
+
+<pre class="brush:jscript;">
+video: {
+  mandatory: {
+    minWidth: 640,
+    minHeight: 360
+  },
+  optional [{
+    minWidth: 1280,
+    minHeight: 720
+  }]
+}</pre>
+
+<p><strong>获取音频</strong></p>
+
+<pre class="brush:jscript;">
+// Success callback when requesting audio input stream
+function gotStream(stream) {
+    var audioContext = new webkitAudioContext();
+
+    // Create an AudioNode from the stream
+    var mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+    // Connect it to the destination or any other node for processing!
+    mediaStreamSource.connect(audioContext.destination);
+}
+
+navigator.webkitGetUserMedia({audio:true}, gotStream);</pre>
+
+<p><strong>获取截屏</strong></p>
+
+<pre class="brush:jscript;">
+var constraints = {
+  video: {
+    mandatory: {
+      chromeMediaSource: &#39;screen&#39;
+    }
+  }
+};
+
+navigator.webkitGetUserMedia(constraints, gotStream);</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.things.p2017.p11.p28.WebRTCIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

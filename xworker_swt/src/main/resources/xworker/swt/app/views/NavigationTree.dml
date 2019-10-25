@@ -1,0 +1,234 @@
+%1552627995961
+@
+sname=shell
+stext=导航树
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=false
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=-1
+sheight=-1
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=NavigationTree
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@tree
+  sname=navTree
+  sselectStyle=SINGLE
+  sV_SCROLL=true
+  sH_SCROLL=true
+  sCHECK=false
+  sFULL_SELECTION=false
+  sHIDE_SELECTION=false
+  sBORDER=false
+  slineVisible=false
+  smultipleColumns=false
+  sheaderVisible=false
+  ssortIndicator=false
+  smoveableColumns=false
+  sheadImages=false
+  ssubImages=false
+  scheckSelection=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  slabel=导航菜单
+  sen_label=Navigation
+  sdescriptors=xworker.swt.Widgets/@Tree
+  sinheritDescription=false
+  sth_createIndex=true
+  sth_registThing=child|xworker.swt.app.Views
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sdescription=<p>导航树菜单。菜单的数据源使用Workbench的appTreeModel。</p>
+  sth_mark=false
+  sid=tree
+    @/@tree/@onSelection
+    sname=onSelection
+    sdescriptors=xworker.swt.widgets.Widget/@Event
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onSelection
+      @/@tree/@onSelection/@GroovyAction
+      sname=GroovyAction
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+def data = event.item.getData();
+data._source.doAction("run", actionContext);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=GroovyAction
+    @/@tree/@mavTreeMenu
+    sname=mavTreeMenu
+    sstyle=POP_UP
+    sNO_RADIO_GROUP=false
+    salign=LEFT_TO_RIGHT
+    svisible=true
+    senabled=true
+    sdescriptors=xworker.swt.widgets.Control/@Menu
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=mavTreeMenu
+      @/@tree/@mavTreeMenu/@mavTreeReloadItem
+      sname=mavTreeReloadItem
+      stext=lang:d=重新加载&en=Reload
+      sselected=false
+      senabled=true
+      sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=mavTreeReloadItem
+        @/@tree/@mavTreeMenu/@mavTreeReloadItem/@listeners
+        sname=listeners
+        sdescriptors=xworker.swt.events.Listeners/@listeners
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=listeners
+          @/@tree/@mavTreeMenu/@mavTreeReloadItem/@listeners/@Listener
+          sname=mavTreeReloadItemSelection
+          stype=Selection
+          sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=Listener
+            @/@tree/@mavTreeMenu/@mavTreeReloadItem/@listeners/@Listener/@GroovyAction
+            sname=GroovyAction
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+def treeModelThing =  parentContext.workbenchThing.getThing("AppTreeModel@0");
+if(treeModelThing != null){
+    def name = treeModelThing.getMetadata().getName();
+    def treeModel = actionContext.get(name);
+    //println treeModel;
+    if(treeModel != null){
+        treeModel.doAction("reload", actionContext);
+    }
+}
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=GroovyAction
+    @/@tree/@init
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+//编辑器容器
+actionContext.g().put("editorContainer", parentContext.editorContainer);
+
+//设置导航树模型
+Thing appTreeModel  = parentContext.workbenchThing.doAction("getAppTreeModel", parentContext);
+if(appTreeModel != null) {			
+    appTreeModel.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.swt.widgets.Widget/@Code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=init
+    @/@tree/@8535
+    sname=DataStores
+    sdescriptors=xworker.swt.Widgets/@DataStores
+    sinheritDescription=false
+    sth_author=__designer_auto_manager__
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=8535

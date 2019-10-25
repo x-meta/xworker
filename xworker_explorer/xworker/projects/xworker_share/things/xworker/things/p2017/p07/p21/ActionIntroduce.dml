@@ -1,0 +1,839 @@
+%1549158087579
+@
+sname=ActionIntroduce
+slabel=动作
+stype=swtGuide
+sgroup=-9000|编程框架.-950|动作框架.-900|文档和教程
+sicon=icons/application.png
+sth_sortWeight=-1100
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=false
+Sdescription=
+#$@text#$@
+<h1>动作</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 动作是一种模型，动作可以作为函数或对象的方法来执行。</p>
+
+<p>约定</p>
+
+<p>&nbsp;&nbsp;&nbsp; 理论上任何模型都可以转化为动作，但通常作为动作的模型都需要实现一个名为run的方法，</p>
+
+<p>是可以执行的模型，动作模型也是对象，动作的约定是有一个名为run的方法。比如下面的模型。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;ActionThing name=&quot;HelloWorld&quot; descriptors=&quot;xworker.lang.ActionThing&quot;&gt;
+    &lt;Println name=&quot;Println&quot; message=&quot;Hello World!&quot;&gt;&lt;/Println&gt;
+&lt;/ActionThing&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('run:xworker.example.action._actions.HelloWorld')">点击这里</a>执行上面的模型。</p>
+
+<h2>示例</h2>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('shell:xworker.example.action.ActionExampleRegist')">点击这里</a>打开动作的示例。</p>
+
+<h2>创建动作模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('createThing:xworker.lang.ActionThing')">点击这里</a>创建一个新的动作模型。</p>
+#$@text#$@
+sen_label=Action
+sen_group=-9000|Programing.-950|Action.-900|Dcouments
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+Sen_description=
+#$@text#$@
+<h1>Action</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Action is the model which can ben executed. For example, the following model.</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;ActionThing name=&quot;HelloWorld&quot; descriptors=&quot;xworker.lang.ActionThing&quot;&gt;
+    &lt;Println name=&quot;Println&quot; message=&quot;Hello World!&quot;&gt;&lt;/Println&gt;
+&lt;/ActionThing&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('run:xworker.example.action._actions.HelloWorld')">Click here</a>&nbsp;to execute this model.</p>
+
+<h2>Examples</h2>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('shell:xworker.example.action.ActionExampleRegist')">Click here</a>&nbsp;to open the examples of action.</p>
+
+<h2>Create an Action Model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('createThing:xworker.lang.ActionThing')">Click here</a>&nbsp;to create a new action model.</p>
+#$@text#$@
+sth_mark=false
+  @/@SwtGuide
+  sname=SwtGuide
+  sshowHeader=false
+  sdescriptors=xworker.swt.xworker.ThingRegistThing/@SwtGuide
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SwtGuide
+    @/@SwtGuide/@SimpleBrowser9
+    sname=SimpleBrowser
+    slabel=动作
+    stype=thingDoc
+    Sdescription=
+#$@text#$@
+<h1>动作</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 动作是一种可以作为函数和对象的方法来执行的模型。</p>
+
+<h2>1.org.xmeta.Action</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 动作对应的类是org.xmeta.Action。</p>
+
+<h2>2.获取动作</h2>
+
+<pre class="brush:as3;">
+import org.xmeta.Action;
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+//动作是通过模型可以转化而来
+Thing thing = world.getThing(xxx);
+Action action = thing.getAction();
+
+//也可以通过world获取动作，上面两行代码简化为如下
+Action action = world.getAction(xxx);
+</pre>
+
+<h2>3.执行动作</h2>
+
+<pre class="brush:groovy;">
+//执行动作
+action.run(new ActionContext());
+
+//使用Map传参
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+action.run(new ActionContext(), params);
+
+//使用Object[]传参
+action.run(new ActionContext(), &quot;param1&quot;, param1Value, &quot;param2&quot;, param2Value ...);</pre>
+
+<h2>4.作为对象的方法</h2>
+
+<pre class="brush:groovy;">
+//获取一个模型
+Thing thing = World.getInstance().getThing(xxx);
+
+//执行方法
+thing.doAction(actionName, new ActionContext());
+
+//使用Map传参
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+thing.doAction(actionName, new ActionContext(), params);
+
+//使用Object[]传参
+thing.doAction(actionName, new ActionContext(), &quot;param1&quot;, param1Value, &quot;param2&quot;, param2Value ...);</pre>
+
+<h2>5.函数和方法的区别</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动作可以当作函数也可以作为对象的方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动作作为对象的方法执行时，对象本身会以self变量放到变量上下文中，而直接把动作作为函数执行时，默认则不会，但是当一个动作继承了SelfAction模型，动作本身也会以self变量存放到变量上下文中。</p>
+
+<p>点击<strong>下一步按钮</strong>查看不同类型的动作。</p>
+#$@text#$@
+    sen_label=Action
+    sdescriptors=xworker.swt.guide.Guide/@SimpleBrowser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<h1>Action</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Action is a model that can be executed as&nbsp;a function or&nbsp;a&nbsp;method&nbsp;of object.</p>
+
+<h2>1.org.xmeta.Action</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The class corresponding to the action is org.xmeta.Action.</p>
+
+<h2>2.Get action</h2>
+
+<pre class="brush:as3;">
+import org.xmeta.Action;
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+//Actions can be transformed by models.
+Thing thing = world.getThing(xxx);
+Action action = thing.getAction();
+
+//Actions can also be retrieved from the world. The two lines above are simplified as follows
+Action action = world.getAction(xxx);
+</pre>
+
+<h2>3.Execute action</h2>
+
+<pre class="brush:groovy;">
+//execute ation
+action.run(new ActionContext());
+
+//Using Map to Pass References
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+action.run(new ActionContext(), params);
+
+//Use Object [] to pass parameters
+action.run(new ActionContext(), &quot;param1&quot;, param1Value, &quot;param2&quot;, param2Value ...);</pre>
+
+<h2>4.As methods of Object</h2>
+
+<pre class="brush:groovy;">
+//Get a model
+Thing thing = World.getInstance().getThing(xxx);
+
+//Execute method
+thing.doAction(actionName, new ActionContext());
+
+//Pass params by Map
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+thing.doAction(actionName, new ActionContext(), params);
+
+//Pass params by Object[]
+thing.doAction(actionName, new ActionContext(), &quot;param1&quot;, param1Value, &quot;param2&quot;, param2Value ...);</pre>
+
+<h2>5.The difference between function and method</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Actions themselves are equivalent to functions and can also be used as methods of objects.</p>
+
+<p>&nbsp;&nbsp;&nbsp; When an action is executed as a method of object, the object itself will be placed in the context of the variable with the self variable, while when the action is executed directly as a function, the default is not. However, when an action inherits the SelfAction model, the action itself will be stored in the context of the variable with the self variable.</p>
+
+<p>Click the <strong>next button</strong> to see different types of actions.</p>
+#$@text#$@
+    sth_mark=false
+    sid=SimpleBrowser9
+      @/@SwtGuide/@SimpleBrowser9/@Buttons
+      sname=Buttons
+      sdescriptors=xworker.swt.guide.Node/@Buttons
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Buttons
+        @/@SwtGuide/@SimpleBrowser9/@Buttons/@nextButton1
+        sname=nextButton
+        slabel=下一步
+        sen_label=Next
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton1
+    @/@SwtGuide/@JavaAction
+    sname=JavaAction
+    sbrowserLocation=topicBrowser
+    surlType=thingDoc
+    Sdescription=
+#$@text#$@
+<h1>JavaAction</h1>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction是动态模型引擎原生支持的动作模型，通过动态模型可以执行Java代码。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 其它类型的动作基本都是对象模型，它们都需要实现名为run的方法。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+    sdescriptors=xworker.swt.guide.Guide/@BrowserComposite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<h1>JavaAction</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Java Action is a native action model supported by dynamic model engine, through which Java code can be executed.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The other types of actions are basically object models, and they all need to implement a method called run.</p>
+#$@text#$@
+    sth_mark=false
+    sid=JavaAction
+      @/@SwtGuide/@JavaAction/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.guide.Guide/@BrowserComposite/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SwtGuide/@JavaAction/@Composite/@FillLayout
+        sname=FillLayout
+        stype=SWT.HORIZONTAL
+        sdescriptors=xworker.swt.Layouts/@FillLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=FillLayout
+        @/@SwtGuide/@JavaAction/@Composite/@ThingEditor
+        sname=ThingEditor
+        sthingPath=xworker.example.tutorial.actions.JavaActionExample
+        stitle=true
+        suseRootThing=false
+        ssaveActionContainer=false
+        sdescriptors=xworker.swt.Widgets/@ThingEditor
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ThingEditor
+      @/@SwtGuide/@JavaAction/@Buttons
+      sname=Buttons
+      sdescriptors=xworker.swt.guide.Node/@Buttons
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Buttons
+        @/@SwtGuide/@JavaAction/@Buttons/@nextButton
+        sname=nextButton
+        slabel=上一步
+        sen_label=Previous
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton
+        @/@SwtGuide/@JavaAction/@Buttons/@nextButton1
+        sname=nextButton
+        slabel=下一步
+        sen_label=Next
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton1
+    @/@SwtGuide/@BrowserComposite
+    sname=BrowserComposite
+    slabel=语言类动作
+    sbrowserLocation=topicBrowser
+    surlType=thingDoc
+    Sdescription=
+#$@text#$@
+<h1>语言类动作</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 语言类动作是执行其它语言代码的动作模型，在XWorker中典型的语言类动作GroovyAction。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 另外语言类动作虽然也是对象模型，但并不把自己的对象以变量名self放到变量上下文中。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 语言类动作一般使用JavaAction实现它的run方法。</p>
+#$@text#$@
+    sen_label=Linguistic Actions
+    sdescriptors=xworker.swt.guide.Guide/@BrowserComposite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<h1>Linguistic Actions</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Language action is an action model to execute other language codes. GroovyAction is a typical language action in XWorker.</p>
+
+<p>&nbsp;&nbsp;&nbsp; In addition, although language action is also an object model, it does not put its object in the context of variables with variable name self.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Language actions generally use JavaAction to implement its run method.</p>
+#$@text#$@
+    sth_mark=false
+    sid=BrowserComposite
+      @/@SwtGuide/@BrowserComposite/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.guide.Guide/@BrowserComposite/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder
+        sname=mainTabFolder
+        sstyle=TOP
+        sBORDER=false
+        sFLAT=false
+        sCLOSE=false
+        sSINGLE=false
+        sMRUVisible=false
+        ssimple=false
+        sdisposeControlOnItemClosed=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@CTabFolder
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=mainTabFolder
+          @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@exampleItem
+          sname=exampleItem
+          stext=GroovyExample
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=exampleItem
+            @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@exampleItem/@exampleEditor
+            sname=exampleEditor
+            sthingPath=xworker.example.action._actions.code.GroovyExample
+            stitle=true
+            suseRootThing=false
+            ssaveActionContainer=false
+            sdescriptors=xworker.swt.Widgets/@ThingEditor
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=exampleEditor
+          @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@grooyItem
+          sname=grooyItem
+          stext=GroovyAction
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=grooyItem
+            @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@grooyItem/@groovyEditor
+            sname=groovyEditor
+            sthingPath=xworker.lang.actions.GroovyAction
+            stitle=true
+            suseRootThing=false
+            ssaveActionContainer=false
+            sdescriptors=xworker.swt.Widgets/@ThingEditor
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=groovyEditor
+          @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@javaItem
+          sname=javaItem
+          stext=GroovyAction Java Code
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=javaItem
+            @/@SwtGuide/@BrowserComposite/@Composite/@mainTabFolder/@javaItem/@JavaSourceViewer
+            sname=JavaSourceViewer
+            sclassName=xworker.actions.GroovyAction
+            sdescriptors=xworker.swt.Widgets/@JavaSourceViewer
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=JavaSourceViewer
+        @/@SwtGuide/@BrowserComposite/@Composite/@FillLayout
+        sname=FillLayout
+        stype=SWT.HORIZONTAL
+        sdescriptors=xworker.swt.Layouts/@FillLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=FillLayout
+      @/@SwtGuide/@BrowserComposite/@Buttons
+      sname=Buttons
+      sdescriptors=xworker.swt.guide.Node/@Buttons
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Buttons
+        @/@SwtGuide/@BrowserComposite/@Buttons/@nextButton
+        sname=nextButton
+        slabel=上一步
+        sen_label=Previous
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton
+        @/@SwtGuide/@BrowserComposite/@Buttons/@nextButton1
+        sname=nextButton
+        slabel=下一步
+        sen_label=Next
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton1
+    @/@SwtGuide/@BrowserComposite1
+    sname=BrowserComposite
+    slabel=对象类动作
+    sbrowserLocation=topicBrowser
+    surlType=thingDoc
+    Sdescription=
+#$@text#$@
+<h1>对象类动作</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类动作是普通的对象模型，任何实现了run方法对象模型都可以作为动作。</p>
+
+<h2>self变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类动作执行时一般需要吧自己作为self变量，要实现这一点，对象类动作需要继承xworker.lang.actions.SelfAction模型。</p>
+
+<h2>参数</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类的动作可以通过它的方法和属性灵活的获取参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如左面现在演示是Println动作，它要打印的Message可以是message属性设置的常量，也可以是变量、ognl表达式和其它，也可以重写getMessage方法自行获取要打印的Message。</p>
+
+<h2>回调</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类的动作可以通过它的方法实现回调。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如一个对话框模型在点击了ok按钮之后执行它的ok方法，执行cancel按钮后执行它的cancel方法，用户只需要重写相应的方法就能处理回调信息。</p>
+
+<h2>动作流程</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 使用对象类的动作模型可以实现while、try/catch、siwtch、contine、break、return等等流程模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如何实现这种类型的模型可以参考XWorker已有的动作模型，找到对应的模型后可以打开相应的Java源码。</p>
+#$@text#$@
+    sen_label=Object type actions
+    sdescriptors=xworker.swt.guide.Guide/@BrowserComposite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<h1>Object type actions</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Object type action is a common object model. Any object model that implements run method can be used as an action.</p>
+
+<h2>self variable</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Object type actions generally need to&nbsp;put it self as self&nbsp;variables when they are executed. To achieve this, object typeactions need to inherit the xworker.lang. ctions.SelfAction model.</p>
+
+<h2>Parameters</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The action of an object type can obtain parameters flexibly through its methods and attributes.</p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, the demonstration on the left is a Println action, which can print Message as a constant set by the message attribute, as well as variables, ognl expressions, and others. It can also override the getMessage method to get the Message to print by itself.</p>
+
+<h2>Callback</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The actions of the object type can be called back through its methods.</p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, a dialog model executes its ok method after clicking the OK button and its cancel method after executing the cancel button. Users only need to rewrite the corresponding method to process the callback information.</p>
+
+<h2>Action flow</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Using the action model of object type, we can realize the process model of while, try/catch, siwtch, contine, break, return and so on.</p>
+
+<p>&nbsp;&nbsp;&nbsp; How to implement this type of model can refer to XWorker&#39;s existing action model and open the corresponding Java source code after finding the corresponding model.</p>
+#$@text#$@
+    sth_mark=false
+    sid=BrowserComposite1
+      @/@SwtGuide/@BrowserComposite1/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.guide.Guide/@BrowserComposite/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SwtGuide/@BrowserComposite1/@Composite/@FillLayout
+        sname=FillLayout
+        stype=SWT.HORIZONTAL
+        sdescriptors=xworker.swt.Layouts/@FillLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=FillLayout
+        @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder
+        sname=mainTabFolder
+        sstyle=TOP
+        sBORDER=false
+        sFLAT=false
+        sCLOSE=false
+        sSINGLE=false
+        sMRUVisible=false
+        ssimple=false
+        sdisposeControlOnItemClosed=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@CTabFolder
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=mainTabFolder
+          @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@exampleItem
+          sname=exampleItem
+          stext=PrintlnExample
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=exampleItem
+            @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@exampleItem/@exampleEditor
+            sname=exampleEditor
+            sthingPath=xworker.example.tutorial.actions.PrintlnExample
+            stitle=true
+            suseRootThing=false
+            ssaveActionContainer=false
+            sdescriptors=xworker.swt.Widgets/@ThingEditor
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=exampleEditor
+          @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@grooyItem
+          sname=printlnItem
+          stext=Println
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=grooyItem
+            @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@grooyItem/@groovyEditor
+            sname=printlnEditor
+            sthingPath=xworker.lang.actions.log.PrintActions/@Println
+            stitle=true
+            suseRootThing=false
+            ssaveActionContainer=false
+            sdescriptors=xworker.swt.Widgets/@ThingEditor
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=groovyEditor
+          @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@javaItem
+          sname=javaItem
+          stext=GroovyAction Java Code
+          sCLOSE=false
+          sdelayReload=false
+          sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=javaItem
+            @/@SwtGuide/@BrowserComposite1/@Composite/@mainTabFolder/@javaItem/@JavaSourceViewer
+            sname=JavaSourceViewer
+            sclassName=xworker.lang.actions.log.PrintActionsPrintlnCreator
+            sdescriptors=xworker.swt.Widgets/@JavaSourceViewer
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=JavaSourceViewer
+      @/@SwtGuide/@BrowserComposite1/@Buttons
+      sname=Buttons
+      sdescriptors=xworker.swt.guide.Node/@Buttons
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Buttons
+        @/@SwtGuide/@BrowserComposite1/@Buttons/@nextButton
+        sname=nextButton
+        slabel=上一步
+        sen_label=Previous
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton
+        @/@SwtGuide/@BrowserComposite1/@Buttons/@nextButton1
+        sname=nextButton
+        slabel=下一步
+        sen_label=Next
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton1
+    @/@SwtGuide/@SimpleBrowser
+    sname=SimpleBrowser
+    slabel=注册动作模型
+    stype=thingDoc
+    Sdescription=
+#$@text#$@
+<h1>注册动作模型</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 动作模型的总索引是xworker.lang.actions.Actions，新的动作模型可以以child方式注册到它下面。</p>
+#$@text#$@
+    sen_label=Regist an action model
+    sdescriptors=xworker.swt.guide.Guide/@SimpleBrowser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    Sen_description=
+#$@text#$@
+<h1>Regist an action model</h1>
+
+<p>The total index of the action model is xworker.lang.actions.Actions. The new action model can be registered under it in the type of child.</p>
+#$@text#$@
+    sth_mark=false
+    sid=SimpleBrowser
+      @/@SwtGuide/@SimpleBrowser/@Buttons
+      sname=Buttons
+      sdescriptors=xworker.swt.guide.Node/@Buttons
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Buttons
+        @/@SwtGuide/@SimpleBrowser/@Buttons/@nextButton
+        sname=nextButton
+        slabel=上一步
+        sen_label=Previous
+        sdescriptors=xworker.swt.guide.Buttons/@NextButton1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=nextButton
+        @/@SwtGuide/@SimpleBrowser/@Buttons/@GoButton
+        sname=GoButton
+        slabel=重新开始教程
+        sen_label=Restart Tutorial
+        sthingPath=xworker.things.p2017.p07.p21.ActionIntroduce/@SwtGuide/@SimpleBrowser9
+        sdescriptors=xworker.swt.guide.Buttons/@GoButton
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GoButton

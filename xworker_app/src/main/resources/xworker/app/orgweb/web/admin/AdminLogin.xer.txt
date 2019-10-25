@@ -1,0 +1,133 @@
+^1497247394657
+@
+sname
+AdminLogin
+slabel
+AdminLogin
+stitle
+HTML网站内容管理
+scompany
+xworker.org
+slogo
+/images/logo.png
+sloginedUrl
+do?sc=xworker.app.orgweb.web.Index
+ssessionAttributeName
+__orgWebAdmin__
+sdescriptors
+xworker.app.view.http.app.SimpleLogin
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.app.view.http.app.SimpleLogin/@actions1
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@loadUser
+    sname
+    loadUser
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.manong.MaNongServer;
+import org.xmeta.util.UtilThing;
+import org.xmeta.Thing;
+
+Thing config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.OrgwebConfig", "_local", "xworker.app.orgweb.utils.OrgwebConfig");
+
+//useAppLogin的已经取消了，没有相关代码
+if(false && config.getBoolean("useAppLogin")){
+    def action = world.getAction("xworker.app.orgweb.web.admin.AdminLoginApp/@actions/@loadUser");
+    return action.run(actionContext);
+}else{
+    def user = MaNongServer.login(name, password, con);
+    if(user == null || user.role != 1){
+        return null;
+    }else{
+        return user;
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    loadUser
+      @/@actions/@loadUser/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      contexts
+        @/@actions/@loadUser/@contexts/@con
+        sname
+        con
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        xworker.app.orgweb.datasource.OrgwebDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.lang.context.Contexts/@DataSouceActionContext
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        con

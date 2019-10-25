@@ -1,0 +1,207 @@
+^1384756476180
+@xworker.ui.function.swt.text.InputBooleanForm
+sname
+InputBooleanForm
+slabel
+InputBooleanForm
+sdescriptors
+xworker.lang.MetaDescriptor3,xworker.lang.function.Function
+smany
+true
+seditCols
+1
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>作用是再输入框输入一个文本。</p>
+suiHandlerId
+xworker_session_swt_dialogForm
+sselfCallback
+false
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.swt.text.InputBooleanForm/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.swt.text.InputBooleanForm/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.ui.function.FunctionCallback;
+import xworker.ui.function.FunctionManager;
+import xworker.ui.function.FunctionRequestUtil;
+
+//回调
+def functionRequest = request.getRequestMessage();
+if(message == "ok"){
+    FunctionRequestUtil.callbakMyselfOk(functionRequest, Boolean.parseBoolean(values.get("value")), actionContext);
+}else{
+    FunctionRequestUtil.callbakMyselfCancel(unctionRequest, Boolean.parseBoolean(values.get("value")), actionContext);
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.swt.text.InputBooleanForm/@actions/@requestCallback
+sname
+requestCallback
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import xworker.ui.function.FunctionRequest;
+import xworker.ui.function.FunctionRequestUtil;
+
+def descPath = FunctionRequestUtil.getUIDescriptionThing(uiRequest.getRequestMessage())getMetadata().getPath();
+def value = null;
+def callback = uiRequest.getRequestMessage();
+if(callback instanceof FunctionRequest){
+    def functionRequest = callback;
+    value = functionRequest.getValue();
+}else{
+    def param = callback.getParam();
+    value = param.getValue();
+}
+
+formThing.doAction("setValues", actionContext, ["values":["desc": descPath, "value": value]]);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.swt.text.InputBooleanForm/@desc
+sname
+desc
+sinputtype
+htmlDesc
+sshowLabel
+false
+sinputattrs
+height=200&style=FILL_HORIZONTAL
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false
+@xworker.ui.function.swt.text.InputBooleanForm/@name
+sname
+value
+stype
+boolean
+sinputtype
+truefalse
+sshowLabel
+true
+ssize
+60
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+sinvalidText
+请输入正确的数字！
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sregistMyChilds
+false
+sth_mark
+false

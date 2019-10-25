@@ -1,0 +1,161 @@
+%1563502547582
+@
+sname=Export
+slabel=Export
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def dataObject = session.getAttribute("export_dataObject");
+if(dataObject == null){
+    response.writer.println("DataObject is null, not export!");
+    return;
+}
+
+def conditionData = session.getAttribute("export_conditionData");
+def conditionConfig = session.getAttribute("export_conditionConfig");
+def type = session.getAttribute("export_type");
+def fileName = "export." + session.getAttribute("export_ext");
+def header = session.getAttribute("export_header");
+
+//设置附件
+setAttachment(actionContext, "fileName", fileName);
+
+//执行导出
+export(actionContext, "dataObject", dataObject,
+       "conditionData", conditionData,
+       "conditionConfig", conditionConfig,
+       "type", type,
+       "header", header);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=doAction
+      @/@actions/@doAction/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@doAction/@ActionDefined/@export
+        sname=export
+        sdataObjectPath=var:dataObject
+        sisServlet=false
+        sconditionData=var:conditionData
+        sconditionConfig=var:conditionConfig
+        stype=var:type
+        suseNameHeader=false
+        soutput=ognl:response.getOutputStream()
+        screatePageInfo=false
+        spageInfoVarName=pageInfo
+        spageInfoVarScope=Local
+        spageSize=50
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.dataObject.actions.DataObjectActions/@export
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=export
+          @/@actions/@doAction/@ActionDefined/@export/@actions
+          sname=actions
+          sdescriptors=xworker.dataObject.actions.DataObjectActions/@export/@actions1
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sid=actions
+            @/@actions/@doAction/@ActionDefined/@export/@actions/@isUseNameHeader
+            sname=isUseNameHeader
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            scode=return "true" == header;
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=isUseNameHeader
+        @/@actions/@doAction/@ActionDefined/@setAttachmenu
+        sname=setAttachment
+        sfileName=var:fileName
+        scontentType=application/octet-stream
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.http.actions.utils.HttpUtilActions/@SetAttachment
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=setAttachmenu

@@ -1,0 +1,341 @@
+^1410509909554
+@
+sname
+SaveAsFunctionFunction
+slabel
+SaveAsFunctionFunction
+sselfCallback
+false
+sdynamicParameter
+false
+sexecuteParameterMySelf
+false
+sisLocalVariableContainer
+false
+sunTrustValue
+false
+sdescription
+<p>把函数实例保存为函数原型。</p>
+sdescriptors
+xworker.lang.function.Function
+sth_createIndex
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+sth_mark
+false
+@/@actions/@doCheck
+sname
+doCheck
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thingName = actionContext.get("thingName");
+def category = actionContext.get("category");
+
+if(thingName == null || "" == thingName){
+    return "事物名称不能为空！";
+}
+
+if(category == null){
+    return "目录不存在，请选择存在的目录！";
+}
+
+
+def thing = category.getThing(thingName);
+if(thing != null){
+    return "事物已经存在，请选择其他事物名，path=" + category.getName() + "." + thingName;
+}
+
+return null;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_mark
+false
+@/@actions/@doFunction
+sname
+doFunction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def thingName = actionContext.get("thingName");
+def category = actionContext.get("category");
+def thing = actionContext.get("thing");
+def thingPath = thingName;
+if(category.getName() != null && category.getName() != ""){
+    thingPath = category.getName() + "." + thingPath;
+}
+def fnfn = world.getThing("xworker.lang.function.FunctionFunction");
+def newThing = new Thing("xworker.lang.function.FunctionFunction");
+//注册
+newThing.put("th_createIndex", "true");
+newThing.put("th_registThing", "child|xworker.lang.function.Functions");
+
+//参数
+def params = [];
+initParams(thing, params);
+for(param in params){
+    def p = new Thing("xworker.lang.function.Function/@thing");
+    p.set("name", param);
+    newThing.addChild(p);
+}
+newThing.put("name", thingName);
+//函数
+def functionChild = new Thing("xworker.lang.function.FunctionFunction/@Function");
+functionChild.addChild(thing.detach());
+newThing.addChild(functionChild);
+
+newThing.saveAs(category.getThingManager().getName(), thingPath);
+return newThing;
+
+def initParams(thing, params){
+    if(thing.isThing("xworker.ui.function.common.GetParameterValue")){
+        if(thing.getChilds().size() > 0){
+            def valueThing = thing.getChilds().get(0);
+            def name = valueThing.getString("value");
+            if(name != null && name !=""){
+                addParam(params, thing.getMetadata().getName());
+            }
+        }        
+    }
+    
+    for(child in thing.getChilds()){
+        initParams(child, params);
+    }
+}
+
+def addParam(params, name){
+    boolean have = false;
+    for(p in params){
+        if(p == name){
+            have = true;
+            break;
+        }
+    }
+    
+    if(!have){
+        params.add(name);
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_mark
+false
+@/@thing1
+sname
+thing
+slabel
+要保存的事物
+soptional
+false
+stype
+object
+sextends
+xworker.lang.function.Parameter
+Sdescription
+#$@text#$@
+<p><strong>保存事物-要保存的事物</strong></p>
+
+<p>需要保存的事物，相当于要把这个事物另存为其他事物。该事物保存时不会先detach，所以如果新的路径和老的路径都会访问到同一个实例，如果不注意可能会混乱。</p>
+
+<p>因此如要严格另存为一个事物，应先detach，如果是新建的事物则应该不受此影响。</p>
+#$@text#$@
+sdescriptors
+xworker.lang.function.Function/@thing
+sth_createIndex
+false
+sth_mark
+false
+@/@categoryPath
+sname
+category
+slabel
+目录
+soptional
+false
+stype
+string
+sextends
+xworker.lang.function.Parameter
+Sdescription
+#$@text#$@
+<p><strong>保存事物-&gt;选择要保存到的事物管理器和目录</strong></p>
+
+<p>请选择事物管理器和目录。事物管理器相当于项目，同一个项目的事物可以放到同一个事物管理器下，目录则是事物管理器下的事物分类目录。</p>
+
+<p>设置事物管理器时会同时设置目录，反之亦然。</p>
+#$@text#$@
+sdescriptors
+xworker.lang.function.Function/@thing
+sth_createIndex
+false
+sth_mark
+false
+@/@categoryPath/@selectThingManager
+sname
+categoryManager
+sfunctionPath
+xworker.ui.function.xworker.SelectCategoryFunction
+sisDescriptor
+true
+sdescriptors
+xworker.lang.function.Function/@thing/@BestFunction
+sth_createIndex
+false
+sth_mark
+false
+@/@thingName
+sname
+thingName
+slabel
+事物名称
+soptional
+false
+stype
+string
+sextends
+xworker.lang.function.Parameter
+Sdescription
+#$@text#$@
+<p><strong>保存事物-&gt;事物命名</strong></p>
+
+<p>请输入事物名称，事物名一般是文件名，事物名要符合文件名的规则。</p>
+#$@text#$@
+sdescriptors
+xworker.lang.function.Function/@thing
+sth_createIndex
+false
+sth_mark
+false
+@/@thingName/@BestFunction
+sname
+inputText
+sfunctionPath
+xworker.ui.function.swt.text.InputTextFunction
+sisDescriptor
+true
+sdescriptors
+xworker.lang.function.Function/@thing/@BestFunction
+sth_createIndex
+false
+sth_mark
+false
+@/@label
+sname
+label
+sshowLabel
+true
+ssize
+40
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.function.Function/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@description
+sname
+description
+sinputtype
+html
+sshowLabel
+true
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+snotXmlAttribute
+false
+sdescriptors
+xworker.lang.function.Function/@attribute
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

@@ -1,0 +1,2606 @@
+^1554888965408
+@
+sname
+Message
+slabel
+Message
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+xworker.message
+smodifier
+private
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>消息可以包含各种内容，一般作为功能之间的通信媒介。</p>
+
+<p><span style="color: rgb(255, 0, 0);"><strong>Deprecated</strong></span></p>
+
+<p>&nbsp;&nbsp;&nbsp; 已被xworker.lang.system.message.Message替代。</p>
+
+<p><strong>消息的功能</strong></p>
+
+<ul>
+	<li><strong>在SWT界面中展示</strong><br />
+	消息中的内容大多数可以在SWT下展示，在SWT的环境下调用消息的create方法可以创建相应的展示界面，其中parent: Composite的Layout应该是FillLayout。<br />
+	&nbsp;</li>
+	<li><strong>作为动作执行</strong><br />
+	消息也可以作为动作执行，执行时执行的是它的execute方法。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p><strong>约定-变量上下文</strong></p>
+
+<ul>
+	<li><strong>SWT独立的变量上下文</strong><br />
+	当执行消息的create方法创建SWT时，约定已经为消息创建的独立的变量上下文。<br />
+	&nbsp;</li>
+	<li><strong>messageContext</strong><br />
+	发送消息是发送者给的变量上下文，有可能为null。<br />
+	&nbsp;</li>
+	<li><strong>parentContext</strong><br />
+	消息管理器自己的变量上下文。</li>
+</ul>
+
+<p><strong>类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 大部分类型通过字面意思应该可以知道它是做什么的，大部分类型返回之是字符串或事物，通过code属性和Things子节点设置。下面是几种特殊一点的类型。</p>
+
+<ul>
+	<li><strong>groovy，code</strong><br />
+	要编辑的内容是消息自身，code属性的值是相关代码。<br />
+	&nbsp;</li>
+	<li><strong>thingRegist</strong><br />
+	code属性的值是字符串，格式为&lt;registType&gt;|&lt;registThing&gt;|&lt;descriptorPath&gt;。</li>
+</ul>
+
+<p><strong>自定义类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果想要实现自定义的类型，可以重写create方法。</p>
+
+<ul>
+	<li><strong>Control create()</strong><br />
+	符合swt的规范，parent变量是父Composite。</li>
+</ul>
+
+<p><strong>消息去重</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果String getId()方法相同，那么判定为同一个消息，默认实现是返回消息事物的路径。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.actions.Actions
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@create
+    sname
+    create
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//初始化变量等
+def type = self.getString("type");
+self.doAction("init", actionContext);
+
+//把自己也保存到全局变量上下文中
+_g.put("thingSelf", self);
+
+//content是在init方法中初始化的
+def content = actionContext.get("content");
+
+//如果没有内容显示一个空白
+if(content == null){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@noContent");
+    return thing.doAction("create", actionContext);
+}else{
+    actionContext.g().put("content", content);
+    self.doAction(type, actionContext, ["content": content, "execute":false]);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    create
+    @/@actions/@execute
+    sname
+    execute
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//初始化变量等
+def type = self.getString("type");
+self.doAction("init", actionContext);
+
+def content = actionContext.get("content");
+if(content == null && type == "thingDesc"){
+    content = self;
+}
+
+//如果没有内容显示一个空白
+if(content == null){
+    return;
+}else{
+    self.doAction(type, actionContext, ["content": content, "execute":true]);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    execute
+    @/@actions/@getContent
+    sname
+    init
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//获取类型
+def type = self.getString("type");
+if(type == null || "" == type){
+    type = "thingDesc";
+}
+
+//根据类型获取相对应的值
+switch(type){
+    case "url":    
+    case "textMessage":
+    case "htmlMessage":
+        _g.put("content", self.doAction("getString", actionContext));
+        //println "textMessage";
+        break;
+    case "thingRegist":
+        def content = self.doAction("getString", actionContext);
+        def ps = content.split("[|]");
+        if(ps.length < 2){
+            return;
+        }
+        actionContext.g().put("registType", ps[0]);
+        content = world.getThing(ps[1]);
+        if(ps.length >= 3){
+            actionContext.g().put("descriptor", ps[2]);
+        }else{
+            actionContext.g().put("descriptor", null);
+        }
+        break;
+    case "groovy":
+    case "code":
+        _g.put("content", self);
+        break;    
+    case "thingDesc":
+        _g.put("content", self.doAction("getThingSelf", actionContext));
+        break;
+    case "thingControl":
+    case "thingEditor":
+    case "composite":
+    case "shell":
+    case "uiFlow":
+    case "autoDemo":
+    case "swtGuide":
+    case "webDemo":
+    case "thingDemo":
+    case "action":
+    case "dataObjectEdtior":
+    case "dataObjectSelector":
+    case "dataObjectMultiSelector":    
+        _g.put("content", self.doAction("getThing", actionContext));
+        break;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getContent
+    @/@actions/@getId
+    sname
+    getId
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import xworker.util.UtilData;
+
+def ac = new ActionContext();
+String vs = self.getStringBlankAsNull("variables");
+if(vs == null) {
+}else {
+    ac.putAll(UtilData.getParams(vs, actionContext));
+}
+		
+self.doAction("init", ac);
+def content = ac.content;
+if(content instanceof Thing){
+    return self.doAction("getType") + "-" + content.getMetadata().getPath();
+}else{
+    return self.getMetadata().getPath();
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getId
+    @/@actions/@url
+    sname
+    url
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenUrl(content);
+    return;
+}
+
+//创建浏览器
+def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+def composite = thing.doAction("create", actionContext);
+
+//打开url
+browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":content]);
+//println(composite);
+return composite;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    url
+    @/@actions/@thingDesc
+    sname
+    thingDesc
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//打开url
+def url = XWorkerUtils.getThingDescUrl(content);
+
+if(execute){
+    XWorkerUtils.ideOpenUrl(url);
+    return;
+}
+
+//创建浏览器
+def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+def composite = thing.doAction("create", actionContext);
+browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":url]);
+
+return composite;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingDesc
+    @/@actions/@thingControl
+    sname
+    thingControl
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//打开url
+def url = XWorkerUtils.getWebControlUrl(content);
+if(execute){
+    XWorkerUtils.ideOpenUrl(url);
+    return;
+}
+
+//创建浏览器
+def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+def composite = thing.doAction("create", actionContext);
+browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":url]);
+
+return composite;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingControl
+    @/@actions/@composite
+    sname
+    composite
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenComposite(content, self.getMetadata().getLabel(), null);
+    return;
+}
+
+return content.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    composite
+    @/@actions/@uiFlow
+    sname
+    uiFlow
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@UiFlow").detach();
+    thing.put("uiFlow", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@UiFlow");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiFlow
+    @/@actions/@uiFunction
+    sname
+    uiFunction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@FunctionRunner").detach();
+    thing.put("functionPath", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@FunctionRunner");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiFunction
+    @/@actions/@autoDemo
+    sname
+    autoDemo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@AutoDemoComposite").detach();
+    thing.put("autoDemoPath", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@AutoDemoComposite");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    autoDemo
+    @/@actions/@swtDemo
+    sname
+    swtDemo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoSWT").detach();
+    thing.put("composite", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoSWT");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    swtDemo
+    @/@actions/@webDemo
+    sname
+    webDemo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoWeb").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoWeb");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    webDemo
+    @/@actions/@thingDemo
+    sname
+    thingDemo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoThing").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoThing");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingDemo
+    @/@actions/@shell
+    sname
+    shell
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.doAction("run", actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@shellComposite");
+    
+    def composite = thing.doAction("create", actionContext);
+    browser.setUrl(XWorkerUtils.getThingDescUrl(self));
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    shell
+    @/@actions/@thingEdtior
+    sname
+    thingEditor
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenThing(content);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingEditor");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingEdtior
+    @/@actions/@action
+    sname
+    action
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.getAction().run(actionContext, ["self": content]);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@actionTabFolder");
+    
+    def composite = thing.doAction("create", actionContext);   
+    
+    if(self.getBoolean("useTargetThingDoc")){
+        browser.setUrl(XWorkerUtils.getThingDescUrl(content));
+    }else{
+        browser.setUrl(XWorkerUtils.getThingDescUrl(self));
+    }
+    actionText.setText(content.metadata.path); 
+    thingEditor.editorActions.doAction("setThing", actionContext, "thing", content);
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    action
+    @/@actions/@groovy
+    sname
+    groovy
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.getAction().run(actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@groovyComposite");
+    
+    def composite = thing.doAction("create", actionContext);  
+    def code =  content.getString("code");
+    if(code == null){
+        code = "";
+    }
+    codeText.setText(code); 
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    groovy
+    @/@actions/@run
+    sname
+    run
+    slabel
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.actions.GroovyAction
+    sclassName
+    GroovyAction
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sid
+    run
+    @/@actions/@thingRegist
+    sname
+    thingRegist
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingRegist").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    thing.put("registType", registType);
+    thing.put("descritporForNewThing", descriptor);
+    thing.put("label", self.getMetadata().getLabel());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingRegist");
+    
+    return thing.doAction("create", actionContext);  
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingRegist
+    @/@actions/@dataObjectEditor
+    sname
+    dataObjectEditor
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectEditor");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectEditor
+    @/@actions/@dataObjectSelected
+    sname
+    dataObjectSelected
+    sunimplementedException
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectSelected
+    @/@actions/@dataObjectSelector
+    sname
+    dataObjectSelector
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectSelector");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectSelector
+    @/@actions/@dataObjectMultiSelector
+    sname
+    dataObjectMultiSelector
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectMultiSelector");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectMultiSelector
+    @/@actions/@code
+    sname
+    code
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import ognl.Ognl;
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    //content.getAction().run(actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@codeComposite");
+    
+    def composite = thing.doAction("create", actionContext);  
+    
+    //代码着色
+    def codeType = content.getString("codeType");    
+    def colorer = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText/@Colorer").detach();
+    colorer.put("codeType", codeType);
+    colorer.put("codeName", codeType);
+    actionContext.peek().put("parent", codeText);
+    colorer.doAction("create", actionContext);
+    
+    def code =  content.getString("code");
+    if(code == null){
+        code = "";
+    }
+    codeText.setText(code); 
+    
+    try{
+        def styledTextForInsert = Ognl.getValue(content.getString("styledTextForInsert"), actionContext);
+        if(styledTextForInsert != null){
+            actionContext.g().put("styledTextForInsert", styledTextForInsert);
+        }else{
+            insertButton.dispose();
+        }
+    }catch(Exception e){
+        log.warn("get styledTextForInsert error", e);
+        insertButton.dispose();
+    }
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    code
+    @/@actions/@swtGuide
+    sname
+    swtGuide
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+
+def thing = new Thing("xworker.swt.guide.GuideComposite");
+thing.put("guide", content.getMetadata().getPath());
+
+if(execute){
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}
+
+return thing.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    swtGuide
+    @/@actions/@getString
+    sname
+    getString
+    sattributeName
+    code
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getString
+    @/@actions/@getThing
+    sname
+    getThing
+    sattributeName
+    code
+    schildThingName
+    Things
+    schildThingFirstChild
+    true
+    sreturnSelf
+    false
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThing
+    @/@actions/@getThings
+    sname
+    getThings
+    sattributeName
+    code
+    schildThingName
+    Things
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThings
+    @/@actions/@getThingSelf
+    sname
+    getThingSelf
+    sattributeName
+    code
+    schildThingName
+    Things
+    schildThingFirstChild
+    true
+    sreturnSelf
+    true
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getThingSelf
+    @/@actions/@htmlMessage
+    sname
+    htmlMessage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//打开url
+if(execute){
+    //XWorkerUtils.ideOpenUrl(url);
+    return;
+}
+
+//创建浏览器
+def thing = world.getThing("xworker.message.prototype.MessagePrototypes/@browser");
+def browser = thing.doAction("create", actionContext);
+browser.setText(content, true);
+
+return browser;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    htmlMessage
+    @/@actions/@textMessage
+    sname
+    textMessage
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+//创建浏览器
+def thing = world.getThing("xworker.message.prototype.MessagePrototypes/@text");
+def text = thing.doAction("create", actionContext);
+text.setText(content);
+
+return text;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    textMessage
+    @/@actions/@getLabel
+    sname
+    getLabel
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return self.getMetadata().getLabel();
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getLabel
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  Sdescription
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label
+  动作
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  Sen_description
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name
+  @/@type
+  sname
+  type
+  sinputtype
+  select
+  sgroup
+  Message
+  sshowLabel
+  true
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  thingDesc
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  type
+    @/@type/@url
+    sname
+    url
+    svalue
+    url
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    url
+    @/@type/@thingDesc
+    sname
+    thingDesc
+    svalue
+    thingDesc
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingDesc
+    @/@type/@thingControl
+    sname
+    thingControl
+    svalue
+    thingControl
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingControl
+    @/@type/@thingEditor
+    sname
+    thingEditor
+    svalue
+    thingEditor
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingEditor
+    @/@type/@thingRegist
+    sname
+    thingRegist
+    svalue
+    thingRegist
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingRegist
+    @/@type/@composite
+    sname
+    composite
+    svalue
+    composite
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    composite
+    @/@type/@shell
+    sname
+    shell
+    svalue
+    shell
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    shell
+    @/@type/@uiFlow
+    sname
+    uiFlow
+    svalue
+    uiFlow
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiFlow
+    @/@type/@uiFunction
+    sname
+    uiFunction
+    svalue
+    uiFunction
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiFunction
+    @/@type/@autoDemo
+    sname
+    autoDemo
+    svalue
+    autoDemo
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    autoDemo
+    @/@type/@swtDemo
+    sname
+    swtDemo
+    svalue
+    swtDemo
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    swtDemo
+    @/@type/@swtGuide
+    sname
+    swtGuide
+    svalue
+    swtGuide
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    swtGuide
+    @/@type/@webDemo
+    sname
+    webDemo
+    svalue
+    webDemo
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    webDemo
+    @/@type/@thingDemo
+    sname
+    thingDemo
+    svalue
+    thingDemo
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingDemo
+    @/@type/@action
+    sname
+    action
+    svalue
+    action
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    action
+    @/@type/@groovy
+    sname
+    groovy
+    svalue
+    groovy
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    groovy
+    @/@type/@dataObjectEditor
+    sname
+    dataObjectEditor
+    svalue
+    dataObjectEditor
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectEditor
+    @/@type/@dataObjectSelector
+    sname
+    dataObjectSelector
+    svalue
+    dataObjectSelector
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectSelector
+    @/@type/@dataObjectMultiSelector
+    sname
+    dataObjectMultiSelector
+    svalue
+    dataObjectMultiSelector
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    dataObjectMultiSelector
+    @/@type/@code
+    sname
+    code
+    slabel
+    code
+    svalue
+    code
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    code
+    @/@type/@textMessage
+    sname
+    textMessage
+    svalue
+    textMessage
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    textMessage
+    @/@type/@htmlMessage
+    sname
+    htmlMessage
+    svalue
+    htmlMessage
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    htmlMessage
+  @/@variables
+  sname
+  variables
+  ssize
+  60
+  sgroup
+  Message
+  sshowLabel
+  true
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>从发送者的变量上下文中带入到消息的变量上下文中的变量，如有多个使用英文逗号分割。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  variables
+  @/@content
+  sname
+  code
+  sinputtype
+  textarea
+  sgroup
+  Message
+  sshowLabel
+  true
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>根据type的不同来设置相应的内容。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  content
+  @/@Things
+  sname
+  Things
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  sdescription
+  <p>这里放消息相关的格式事物，如面板、窗口的定义等，还可以放置其它在这里没有定义过的事物。</p>
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Things
+    @/@Things/@Composite
+    sname
+    Composite
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.swt.widgets.Composite
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    Composite
+    @/@Things/@UiFlow
+    sname
+    UiFlow
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.lang.flow.uiflow.UiFlow
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    UiFlow
+    @/@Things/@SimpleControl
+    sname
+    SimpleControl
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.http.controls.SimpleControl
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    SimpleControl
+    @/@Things/@SwtGuide
+    sname
+    SwtGuide
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.swt.guide.Guide
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    SwtGuide
+    @/@Things/@ActionThing
+    sname
+    ActionThing
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.lang.ActionThing
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    ActionThing
+    @/@Things/@Shell
+    sname
+    Shell
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.swt.widgets.Shell
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    Shell

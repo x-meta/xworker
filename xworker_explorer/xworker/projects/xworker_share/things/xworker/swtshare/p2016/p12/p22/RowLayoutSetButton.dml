@@ -1,0 +1,132 @@
+%1499839059338
+@
+sname=RowLayoutSetButton
+stext=GridLayoutSettingButton
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=false
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=RowLayoutSetButton
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@setButton
+  sname=setButton
+  stext=设置布局数据
+  stype=SWT.PUSH
+  sflat=false
+  sborder=false
+  sselected=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Button
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=setButton
+    @/@setButton/@onSelection
+    sname=onSelection
+    sdescriptors=xworker.swt.widgets.Widget/@Event
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onSelection
+      @/@setButton/@onSelection/@GroovyAction
+      sname=GroovyAction
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.swt.util.SwtDialog;
+
+
+//创建对话框
+def ac = new ActionContext();
+ac.put("parent", event.widget.getShell());
+def thing = world.getThing("xworker.swtshare.p2016.p12.p22.RowLayoutSetDataDialog");
+def shell = thing.doAction("create", ac);
+
+//设置表单数据
+def control = event.widget.getData();
+def gridData = control.get("gridData");
+if(gridData != null){
+    ac.thingForm.doAction("setValues", ac, "values", gridData.getAttributes());
+}
+
+def result = SwtDialog.open(shell, ac);
+if(result != null){
+    if(gridData == null){
+        gridData = new Thing("xworker.swt.layout.RowData");   
+        control.put("gridData", gridData);     
+    }
+    
+    gridData.getAttributes().putAll(result);
+ 
+    //重新刷新演示
+    actions.doAction("reinitDemo", actionContext);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=GroovyAction

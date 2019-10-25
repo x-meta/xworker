@@ -1,0 +1,1302 @@
+@xworker.mina.filter.IoFilter
+sname
+IoFilter
+slabel
+IoFilter
+sdescriptors
+xworker.lang.MetaDescriptor3,xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>A filter which intercepts <a title="interface in org.apache.mina.core.service" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/service/IoHandler.html"><code>IoHandler</code></a> events like Servlet filters. Filters can be used for these purposes:</p>
+<ul>
+    <li>Event logging,</li>
+    <li>Performance measurement,</li>
+    <li>Authorization,</li>
+    <li>Overload control,</li>
+    <li>Message transformation (e.g. encryption and decryption, ...),</li>
+    <li>and many more.</li>
+</ul>
+<p><strong>Please NEVER implement your filters to wrap <a title="interface in org.apache.mina.core.session" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/session/IoSession.html"><code>IoSession</code></a>s.</strong> Users can cache the reference to the session, which might malfunction if any filters are added or removed later.</p>
+#$@text#$@
+sid
+IoFilter
+@xworker.mina.filter.IoFilter/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.mina.filter.IoFilter/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.apache.mina.core.filterchain.IoFilter;
+import org.xmeta.ActionContext;
+
+def self = self;
+def ac = new ActionContext();
+ac.put("context", actionContext);
+def filter = [
+    destroy:{
+        self.doAction("destroy", ac);
+    },
+    
+    exceptionCaught:{
+        nextFilter,session,cause->
+        self.doAction("exceptionCaught", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "cause":cause
+        ]);
+    },
+    
+    filterClose:{
+        nextFilter,session->
+        self.doAction("filterClose", ac, [
+            "nextFilter":nextFilter,
+            "session":session
+        ]);
+    },
+    
+    filterSetTrafficMask:{
+        nextFilter,session,trafficMask->
+        self.doAction("filterSetTrafficMask", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "trafficMask":trafficMask,
+        ]);
+    },
+    
+    filterWrite:{
+        nextFilter,session,writeRequest->
+        self.doAction("filterWrite", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "writeRequest":writeRequest,
+        ]);
+    },
+    
+    init:{
+        self.doAction("init", ac);
+    },
+    
+    messageReceived:{
+        nextFilter,session,message->
+        self.doAction("messageReceived", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "message":message,
+        ]);
+    },
+    
+    messageSent:{
+        nextFilter,session,writeRequest->
+        self.doAction("messageSent", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "writeRequest":writeRequest
+        ]);
+    },
+    
+    onPreAdd:{
+        parent,name,nextFilter->
+        self.doAction("onPreAdd", ac, [
+            "parent":parent,
+            "name":name,
+            "nextFilter":nextFilter
+        ]);
+    },
+    
+    onPostAdd:{
+        parent,name,nextFilter->
+        self.doAction("onPostAdd", ac, [
+            "parent":parent,
+            "name":name,
+            "nextFilter":nextFilter
+        ]);
+    },
+    
+    onPreRemove:{
+        parent,name,nextFilter->
+        self.doAction("onPreRemove", ac, [
+            "parent":parent,
+            "name":name,
+            "nextFilter":nextFilter
+        ]);
+    },
+    
+    onPostRemove:{
+        parent,name,nextFilter->
+        self.doAction("onPostRemove", ac, [
+            "parent":parent,
+            "name":name,
+            "nextFilter":nextFilter
+        ]);
+    },
+    
+    sessionCreated:{
+        nextFilter,session->
+        self.doAction("sessionCreated", ac, [
+            "nextFilter":nextFilter,
+            "session":session
+        ]);
+    },
+    
+    sessionOpened:{
+        nextFilter,session->
+        self.doAction("sessionOpened", ac, [
+            "nextFilter":nextFilter,
+            "session":session
+        ]);
+    },
+    
+    sessionClosed:{
+        nextFilter,session->
+        self.doAction("sessionClosed", ac, [
+            "nextFilter":nextFilter,
+            "session":session
+        ]);
+    },
+    
+    sessionIdle:{
+        nextFilter,session,status->
+        self.doAction("sessionIdle", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "status":status
+        ]);
+    },
+    
+    exceptionCaught:{
+        nextFilter,session,cause->
+        self.doAction("exceptionCaught", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "cause":cause
+        ]);
+    },
+    
+    messageReceived:{
+        nextFilter,session,message->
+        self.doAction("messageReceived", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "message":message
+        ]);
+    },
+    
+    messageSent:{
+        nextFilter,session,message->
+        self.doAction("messageSent", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "message":message
+        ]);
+    },
+    
+    filterClose:{
+        nextFilter,session->
+        self.doAction("filterClose", ac, [
+            "nextFilter":nextFilter,
+            "session":session
+        ]);
+    },
+    
+    filterWrite:{
+        nextFilter,session,writeRequest->
+        self.doAction("filterWrite", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "writeRequest":writeRequest
+        ]);
+    },
+    
+    filterSetTrafficMask:{
+        nextFilter,session,trafficMask->
+        self.doAction("filterSetTrafficMask", ac, [
+            "nextFilter":nextFilter,
+            "session":session,
+            "trafficMask":trafficMask
+        ]);
+    },
+    
+    ,
+    
+    toString:{
+        return "mina filter: " + self.metadata.label;
+    }
+] as IoFilter;
+
+actionContext.getScope(0).put(self.metadata.name, filter);
+if(actionContext.get("parent") != null){
+    parent.getFilterChain().addLast(self.metadata.name, filter);
+}
+return filter;
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@sessionCreated
+sname
+sessionCreated
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.sessionCreated(session);
+sid
+sessionCreated
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@sessionCreated/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@sessionCreated/@ins/@nextFilter
+sname
+nextFilter
+stype
+IoFilter.NextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionCreated/@ins/@session
+sname
+session
+stype
+org.apache.mina.core.session.IoSession
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionOpened
+sname
+sessionOpened
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.sessionOpened(session);
+sid
+sessionOpened
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@sessionOpened/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@sessionOpened/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionOpened/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionClosed
+sname
+sessionClosed
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.sessionClosed(session);
+sid
+sessionClosed
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@sessionClosed/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@sessionClosed/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionClosed/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionIdle
+sname
+sessionIdle
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.sessionIdle(session, status);
+sid
+sessionIdle
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@sessionIdle/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@sessionIdle/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionIdle/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@sessionIdle/@ins/@status
+sname
+status
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+status
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@exceptionCaught
+sname
+exceptionCaught
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.exceptionCaught(session, cause);
+sid
+exceptionCaught
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@exceptionCaught/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@exceptionCaught/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@exceptionCaught/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@exceptionCaught/@ins/@cause
+sname
+cause
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+cause
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageReceived
+sname
+messageReceived
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.messageReceived(session, message);
+sid
+messageReceived
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@messageReceived/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@messageReceived/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageReceived/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageReceived/@ins/@message
+sname
+message
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+message
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageReceived/@ins/@param
+sname
+param
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+param
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageSent
+sname
+messageSent
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.messageSent(session, writeRequest);
+sid
+messageSent
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@messageSent/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@messageSent/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageSent/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@messageSent/@ins/@writeRequest
+sname
+writeRequest
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+writeRequest
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterWrite
+sname
+filterWrite
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.filterWrite(session, writeRequest);
+sid
+filterWrite
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@filterWrite/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@filterWrite/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterWrite/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterWrite/@ins/@writeRequest
+sname
+writeRequest
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+writeRequest
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterClose
+sname
+filterClose
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.filterClose(session);
+sid
+filterClose
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@filterClose/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@filterClose/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterClose/@ins/@session
+sname
+session
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+session
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@filterSetTrafficMask
+sname
+filterSetTrafficMask
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+nextFilter.filterSetTrafficMask(session, trafficMask);
+sid
+filterSetTrafficMask
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@destroy
+sname
+destroy
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+destroy
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+init
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@onPostAdd
+sname
+onPostAdd
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+onPostAdd
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@onPostAdd/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@onPostAdd/@ins/@parent
+sname
+parent
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+parent
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPostAdd/@ins/@name
+sname
+name
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+name
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPostAdd/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPostRemove
+sname
+onPostRemove
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+onPostRemove
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@onPostRemove/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@onPostRemove/@ins/@parent
+sname
+parent
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+parent
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPostRemove/@ins/@name
+sname
+name
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+name
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPostRemove/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreAdd
+sname
+onPreAdd
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+onPreAdd
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@onPreAdd/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@onPreAdd/@ins/@parent
+sname
+parent
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+parent
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreAdd/@ins/@name
+sname
+name
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+name
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreAdd/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreRemove
+sname
+onPreRemove
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return;
+sid
+onPreRemove
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.mina.filter.IoFilter/@actions/@onPreRemove/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.mina.filter.IoFilter/@actions/@onPreRemove/@ins/@parent
+sname
+parent
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+parent
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreRemove/@ins/@name
+sname
+name
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+name
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@actions/@onPreRemove/@ins/@nextFilter
+sname
+nextFilter
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+nextFilter
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.mina.filter.IoFilter/@name1
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.mina.filter.IoFilter/@label1
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.mina.filter.IoFilter/@actions1
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+actions1
+@xworker.mina.filter.IoFilter/@actions1/@name
+sname
+name
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute

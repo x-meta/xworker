@@ -1,0 +1,201 @@
+@xworker.ide.db.TesetThingIndexDb
+sname
+TesetThingIndexDb
+slabel
+TesetThingIndexDb
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sid
+TesetThingIndexDb
+@xworker.ide.db.TesetThingIndexDb/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.ide.db.TesetThingIndexDb/@actions/@query
+sname
+query
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+import xworker.dataObject.utils.DbUtil;
+
+import org.xmeta.Thing;
+
+def pst = null;
+def rs = null;
+try{
+    def sql = "";
+    def keys = ["abcd","efg"];
+    if(keys != null){
+        sql = "select distinct thingId from (select thingId, count(*) as cnt from tblThingKeywords where ";
+        for(int i=0; i<keys.size(); i++){
+            if(i != 0){
+                sql = sql + " and ";
+            }
+            
+            sql = sql + "keyword like ?";
+        }
+        sql = sql + " group by thingId) as k0 where cnt >= " + keys.size();
+    }
+    
+    if(keys == null){
+        sql = "select name, path, label,en_label,zh_label from tblThings";
+    }else{
+        sql = "select s0.name, s0.path, s0.label,s0.en_label,s0.zh_label from tblThings s0, (" + sql + ") s1 where s0.id=s1.thingId";
+    }
+    
+    pst = con.prepareStatement(sql);
+    index = 1;
+    for(key in keys){
+        pst.setString(index, key);
+        index++;
+    }
+    pst.executeQuery();
+    pst.close();
+    con.close();
+    return;
+
+    log.info("sql=" + sql);
+    if(pageInfo != null && pageInfo.limit != 0){
+        //分页查询
+        def countSql = "select count(*) from (" + sql + ") as t";
+        //log.info(countSql);
+        pst = con.prepareStatement(countSql);
+        def index = 1;
+        for(key in keys){
+            pst.setString(index, key + "%");
+            index++;
+        }
+        rs = pst.executeQuery();
+        rs.next();
+        pageInfo.totalCount = rs.getInt(1);
+        rs.close();
+        pst.close();
+        
+        //分页的sql    
+        sql = "SELECT * FROM ( SELECT ROW_NUMBER() OVER() AS rownum, t.*  FROM (" + sql + " order by name) t) AS tmp WHERE rownum >= ? AND rownum < ?";
+    }
+    
+    log.info(sql);
+    pst = con.prepareStatement(sql);
+    index = 1;
+    for(key in keys){
+        pst.setString(index, key + "%");
+        index++;
+    }
+
+    if(pageInfo != null && pageInfo.limit != 0){
+        def start = pageInfo.start + 1;
+        pst.setInt(index, start);
+        pst.setInt(index + 1, start + pageInfo.limit);
+    }
+    rs = pst.executeQuery();
+    def datas = [];
+    def tmpThing = new Thing();
+    while(rs.next()){
+        def dobj = new DataObject("xworker.ide.db.dbindex.app.swt.ThingQueryerByKeyword/@shell/@mainComposite/@sashForm/@searchComposite/@dataTable/@store/@dataObjects/@DbDataObject");
+        dobj.setInited(false);
+        dobj.put("path", rs.getString("path"));
+        tmpThing.set("label", rs.getString("label"));        
+        tmpThing.set("name", rs.getString("name"));
+        tmpThing.set("en_label", rs.getString("en_label"));
+        tmpThing.set("zh_label", rs.getString("zh_label"));
+        dobj.put("name", tmpThing.metadata.label);
+        dobj.setInited(true);;
+        datas.add(dobj);
+    }
+    
+    return datas;
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.db.TesetThingIndexDb/@actions/@query/@contexts
+sname
+contexts
+sid
+contexts
+slabel
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+@xworker.ide.db.TesetThingIndexDb/@actions/@query/@contexts/@dataSource
+sname
+dataSource
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.ide.db.datasource.XWorkerDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sid
+dataSource
+sdescriptors
+xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+@xworker.ide.db.TesetThingIndexDb/@actions/@query/@contexts/@PerformanceContext
+slabel
+query
+sshowSecond
+false
+sname
+PerformanceContext
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sid
+PerformanceContext
+sdescriptors
+xworker.lang.context.Contexts/@PerformanceContext

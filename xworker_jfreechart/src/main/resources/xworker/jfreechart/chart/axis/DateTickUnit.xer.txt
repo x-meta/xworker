@@ -1,0 +1,256 @@
+@xworker.jfreechart.chart.axis.DateTickUnit
+sname
+DateTickUnit
+slabel
+DateTickUnit
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<div class="block">A tick unit for use by subclasses of <a title="class in org.jfree.chart.axis" href="http://www.jfree.org/jfreechart/api/javadoc/org/jfree/chart/axis/DateAxis.html"><code>DateAxis</code></a>. Instances of this class are immutable.</div>
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.jfree.chart.axis.DateTickUnit;
+import org.jfree.chart.axis.DateTickUnitType;
+
+import ognl.Ognl;
+
+import java.text.SimpleDateFormat;
+
+if(self.type == "Var"){
+    return Ognl.getValue(self.varName, actionContext);
+}
+
+def unitType = getUnitType(self.unitType);
+def multiple = self.getInt("multiple");
+def rollUnitType = getUnitType(self.rollUnitType);
+def rollMultiple = self.getInt("rollMultiple");
+def formatter = self.formatter;
+if(rollUnitType == null && (formatter == null || formatter == "")){
+    return new DateTickUnit(unitType, multiple);
+}else if(rollUnitType == null){
+    return new DateTickUnit(unitType, multiple, new SimpleDateFormat(formatter));
+}else{
+    return new DateTickUnit(unitType, multiple, rollUnitType, rollMultiple, new SimpleDateFormat(formatter));
+}
+
+
+def getUnitType(value){
+    switch(value){
+        case "DAY":
+            return DateTickUnitType.DAY;
+        case "HOUR":
+            return DateTickUnitType.HOUR;
+        case "MILLISECOND":
+            return DateTickUnitType.MILLISECOND;
+        case "MINUTE":
+            return DateTickUnitType.MINUTE;
+        case "MONTH":
+            return DateTickUnitType.MONTH;
+        case "SECOND":
+            return DateTickUnitType.SECOND;
+        case "YEAR":
+            return DateTickUnitType.YEAR;
+    }
+    
+    return null;
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@type
+sname
+type
+sinputtype
+select
+sreadOnly
+false
+sdefault
+Var
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@type/@Var
+sname
+Var
+svalue
+Var
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@type/@Create
+sname
+DateTickUnit
+svalue
+DateTickUnit
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@varName
+sname
+varName
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@unitType
+sname
+unitType
+sextends
+xworker.jfreechart.chart.axis.DateTickUnitType/@value
+sinputtype
+select
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@multiple
+sname
+multiple
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@rollUnitType
+sname
+rollUnitType
+sextends
+xworker.jfreechart.chart.axis.DateTickUnitType/@value
+sinputtype
+select
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@rollMultiple
+sname
+rollMultiple
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.jfreechart.chart.axis.DateTickUnit/@formatter
+sname
+formatter
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

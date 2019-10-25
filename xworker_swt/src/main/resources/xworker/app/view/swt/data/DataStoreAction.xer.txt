@@ -1,0 +1,943 @@
+^1493285182105
+@
+sname
+DataStoreAction
+slabel
+DataStoreAction
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+xworker.app_swt.dataStore
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>在动作中通过配置方便使用<a href="javascript:invoke('thing:xworker.app.view.local.swt.data.DataStore')">DataStore</a>。</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registThing
+child|xworker.lang.actions.Actions
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import ognl.Ognl;
+import ognl.OgnlException;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.List;
+
+//初始化数据仓库
+def storeName = self.get("storeName");
+if(storeName == null || "" == storeName){
+    log.warn("DataStoreAction: data store name not defiend");
+    return "failure";
+}
+
+def store = Ognl.getValue(storeName, actionContext);
+if(store == null){
+    log.warn("DataStoreAction: data store not exists, store=" + storeName);
+    return "failure";
+}
+
+//方法
+def method = self.get("method");
+if(method == null || method == ""){
+    log.warn("DataStoreAction: method not defiend");    
+    return "failure";
+}
+
+if(method == "commit"){
+    //提交已修改的记录
+    store.doAction("commit", actionContext);
+    return "success";
+}else{
+    //其他方法和记录有关
+    def recordSource = self.get("recordSource");
+    def record = null;
+    
+    if(recordSource == "DataObjectForm"){
+        //从表单中取数据
+        def form = Ognl.getValue(self.get("recordName"), actionContext);
+        if(form != null){
+            def vs = form.doAction("getValues", actionContext);
+            record = form.getData("values");
+            if(record != null && vs != null){
+                for(key in vs.keySet()){
+                    record.put(key, vs.get(key));
+                }
+            }else{
+                record = vs;
+            }
+        }
+    }else if(recordSource == "DataObjectTable"){
+        //从表格中去数据
+        def table = Ognl.getValue(self.get("recordName"), actionContext);
+        if(table != null){
+            record = [];
+            if((table.getStyle() & SWT.CHECK) == SWT.CHECK){
+                //取多选框选中的记录
+                for(item in table.getItems()){
+                    if(item.getChecked()){
+                        record.add(item.getData());
+                    }
+                }
+            }
+            if(record.size() == 0){
+               //取当前表格选中的记录
+                for(item in table.getSelection()){
+                    record.add(item.getData());
+                }
+            }
+        }
+    }else if(recordSource == "Variable"){
+        //从变量中取
+        record = Ognl.getValue(self.get("recordName"), actionContext);
+    }
+    
+    if(record == null && (method != "query" && method != "openCreateForm")){
+        //记录为空，不能操作
+        log.warn("DataStoreAction: record is null");
+        return "failure";
+    }
+    
+    //log.info("record=" + record);
+    def isList = record instanceof List;
+    switch(method){
+       case "openCreateForm":
+            //打开创建表单
+            store.doAction("openCreateForm", actionContext, ["values": record]);
+            return "success";
+        case "openEditForm":
+            if(isList){
+                if(record.size() > 0){
+                    //暂时不支持同时编辑多个
+                    store.doAction("openEditForm", actionContext, ["record":record.get(0)]);
+                }else{
+                    openWarning(self.noRecordMessage);
+                }
+            }else{
+                store.doAction("openEditForm", actionContext, ["record":record]);
+            }
+            break;
+        case "query":
+            if(isList){
+                if(record.size() > 0){
+                    store.doAction("load", actionContext, ["params":record.get(0)]);
+                }else{
+                    store.doAction("load", actionContext);
+                }
+            }else{
+                store.doAction("load", actionContext, ["params":record]);
+            }
+            break;
+        case "remove":
+            if(!self.getBoolean("deleteConfirm") || (self.getBoolean("deleteConfirm") && confirm(self.getString("deleteMessage")))){
+                if(isList && record.size() > 0){          
+                    store.doAction("remove", actionContext, ["records":record]);
+                }else{
+                    store.doAction("remove", actionContext, ["record":record]);
+                }
+                
+                return "success";
+            }
+            break;
+        case "removeBatch":
+            if(!self.getBoolean("removeBatchConfirm") || (self.getBoolean("removeBatchConfirm") && confirm(self.getString("removeBatchMessage")))){
+                if(isList){
+                    if(record.size() > 0){
+                        store.doAction("removeBatch", actionContext, ["params":record.get(0)]);
+                    }else{
+                        store.doAction("removeBatch", actionContext);
+                    }
+                }else{
+                    store.doAction("removeBatch", actionContext, ["params":record]);
+                }
+                
+                return "success";
+            }
+            break;
+        case "insert":
+            if(!self.getBoolean("insertConfirm") || (self.getBoolean("insertConfirm") && confirm(self.getString("insertMessage")))){
+                if(isList && record.size() > 0){          
+                    store.doAction("insert", actionContext, ["records":record]);
+                }else{
+                    store.doAction("insert", actionContext, ["record":record]);
+                }
+            }
+            break;
+       case "update":
+            if(!self.getBoolean("updateConfirm") || (self.getBoolean("updateConfirm") && confirm(self.getString("updateMessage")))){
+                if(isList && record.size() > 0){          
+                    store.doAction("update", actionContext, ["records":record]);
+                }else{
+                    store.doAction("update", actionContext, ["record":record]);
+                }
+            }
+            break;
+        case "updateBatch":
+            if(!self.getBoolean("updateBatchConfirm") || (self.getBoolean("updateBatchConfirm") && confirm(self.getString("updateBatchMessage")))){
+                def theData = Ognl.getValue(self.batchUpdateData, actionContext);
+                if(isList){
+                    if(record.size() > 0){
+                        store.doAction("updateBatch", actionContext, ["params":record.get(0), "record":theData]);
+                    }else{
+                        store.doAction("updateBatch", actionContext, ["record":theData]);
+                    }
+                }else{
+                    store.doAction("updateBatch", actionContext, ["params":record, "record":theData]);
+                }
+                
+                return "success";
+            }
+            break;
+    }    
+}
+return "success";
+
+def openWarning(message){
+    //SWT的窗体的父
+    def display = Display.getCurrent();
+    if(display == null){
+        return;
+    }
+    def parent = display.getActiveShell();
+    if(parent == null){
+        parent = display;
+    }
+    
+    def box = new MessageBox(parent, SWT.OK | SWT.ICON_WARNING);
+    box.setText("操作提示");
+    box.setMessage(message);
+    box.open();
+}
+
+def confirm(message){
+    //SWT的窗体的父
+    def display = Display.getCurrent();
+    if(display == null){
+        return;
+    }
+    def parent = display.getActiveShell();
+    if(parent == null){
+        parent = display;
+    }
+    
+    def box = new MessageBox(parent, SWT.OK | SWT.CANCEL | SWT.ICON_WARNING);
+    box.setText("操作提示");
+    box.setMessage(message);
+    if(box.open() == SWT.OK){
+        return true;
+    }else{
+        return false;
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sid
+    run
+  @/@name
+  sname
+  name
+  sdescription
+  <p>数据仓库（DataStore）实例的变量名称，从actionContext中取。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@storeName
+  sname
+  storeName
+  sinputtype
+  openWindow
+  ssize
+  40
+  scolspan
+  2
+  sinputattrs
+  xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.app.view.swt.data.DataStore,returnType=name
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  storeName
+  @/@method
+  sname
+  method
+  sinputtype
+  select
+  Sdescription
+#$@text#$@
+<ul>
+    <li>openCreateForm<br />
+    打开一个创建记录的对话框。<br />
+    &nbsp;</li>
+    <li>openEditForm<br />
+    打开一个编辑记录的对话框。<br />
+    &nbsp;</li>
+    <li>commit<br />
+    提交脏数据。<br />
+    &nbsp;</li>
+    <li>remove<br />
+    删除指定的记录。<br />
+    &nbsp;</li>
+    <li>insert<br />
+    插入新纪录。<br />
+    &nbsp;</li>
+    <li>update<br />
+    更新记录。</li>
+</ul>
+#$@text#$@
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  method
+    @/@method/@openCreateForm
+    sname
+    openCreateForm
+    slabel
+    创建窗口
+    svalue
+    openCreateForm
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    openCreateForm
+    @/@method/@openEditForm
+    sname
+    openEditForm
+    slabel
+    编辑窗口
+    svalue
+    openEditForm
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    openEditForm
+    @/@method/@query
+    sname
+    query
+    slabel
+    查询
+    svalue
+    query
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    query
+    @/@method/@commit
+    sname
+    commit
+    slabel
+    提交
+    svalue
+    commit
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    commit
+    @/@method/@insert
+    sname
+    insert
+    slabel
+    插入
+    svalue
+    insert
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    insert
+    @/@method/@update
+    sname
+    update
+    slabel
+    更新
+    svalue
+    update
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    update
+    @/@method/@remove
+    sname
+    remove
+    slabel
+    删除
+    svalue
+    remove
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    remove
+    @/@method/@updateBatch
+    sname
+    updateBatch
+    slabel
+    批量更新
+    svalue
+    updateBatch
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    updateBatch
+    @/@method/@removeBatch
+    sname
+    removeBatch
+    slabel
+    批量删除
+    svalue
+    removeBatch
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    removeBatch
+  @/@recordSource
+  sname
+  recordSource
+  sinputtype
+  select
+  sinheritDescription
+  false
+  sdescription
+  <p>记录来源，当查询、编辑、删除、插入和更新时条件和要操作的记录从哪里来。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  recordSource
+    @/@recordSource/@form
+    sname
+    DataObjectForm
+    slabel
+    DataObjectForm
+    svalue
+    DataObjectForm
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    form
+    @/@recordSource/@DataObjectTable
+    sname
+    DataObjectTable
+    slabel
+    DataObjectTable
+    svalue
+    DataObjectTable
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    DataObjectTable
+    @/@recordSource/@Variable
+    sname
+    Variable
+    slabel
+    Variable
+    svalue
+    Variable
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    Variable
+  @/@recordName
+  sname
+  recordName
+  sshowLabel
+  true
+  ssize
+  60
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>使用Ognl表达式，表示数据来源。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  recordName
+  @/@batchUpdateData
+  sname
+  batchUpdateData
+  slabel
+  批量更新数据源
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>批量更新时要更新的数据，是一个数据对象。</p>
+<p>使用Ognl表达式。</p>
+#$@text#$@
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  batchUpdateData
+  @/@confirm
+  sname
+  deleteConfirm
+  slabel
+  删除确认
+  sinputtype
+  truefalse
+  sdefault
+  true
+  sdescription
+  <p>删除记录是是否提示并确认。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  confirm
+  @/@crateConfirm
+  sname
+  crateConfirm
+  slabel
+  创建确认
+  sinputtype
+  truefalse
+  sdefault
+  false
+  sdescription
+  <p>新增记录时确认。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  crateConfirm
+  @/@updateConfirm
+  sname
+  updateConfirm
+  slabel
+  更新确认
+  sinputtype
+  truefalse
+  sdefault
+  false
+  sdescription
+  <p>更新记录时确认。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  updateConfirm
+  @/@commitConfirm
+  sname
+  commitConfirm
+  slabel
+  提交确认
+  sinputtype
+  truefalse
+  sdefault
+  false
+  sdescription
+  <p>提交时确认。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  commitConfirm
+  @/@updateBatchConfirm
+  sname
+  updateBatchConfirm
+  slabel
+  批量更新确认
+  sinputtype
+  truefalse
+  sdefault
+  true
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  updateBatchConfirm
+  @/@removeBatchConfirm
+  sname
+  removeBatchConfirm
+  slabel
+  批量删除确认
+  sinputtype
+  truefalse
+  sdefault
+  true
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  removeBatchConfirm
+  @/@deleteMessage
+  sname
+  deleteMessage
+  slabel
+  删除提示语
+  ssize
+  60
+  scolspan
+  2
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  deleteMessage
+  @/@createMessage
+  sname
+  createMessage
+  slabel
+  创建提示语
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  createMessage
+  @/@updateMessage
+  sname
+  updateMessage
+  slabel
+  更新提示语
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  updateMessage
+  @/@commitMessage
+  sname
+  commitMessage
+  slabel
+  提交提示语
+  ssize
+  60
+  scolspan
+  2
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  commitMessage
+  @/@noRecordMessage
+  sname
+  noRecordMessage
+  slabel
+  无记录提示语
+  ssize
+  60
+  scolspan
+  2
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  noRecordMessage
+  @/@type
+  sname
+  interpretationType
+  slabel
+  解释方式
+  sinputtype
+  text
+  sgroup
+  action
+  sdefault
+  Self
+  sdescription
+  <p>不要修改默认值。</p>
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  type
+  @/@Result
+  sname
+  Result
+  slabel
+  结果处理
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.Result
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sdescription
+  <p>作为动作的一部分，如果主动作执行完后根据返回值（字符串）决定执行哪一个结果，结果中的每一个事物都是以doAction(&quot;run&quot;, actionContext)方式执行，result中的程序的self变量为自身，而不是调用者。</p>
+  sen_label
+  Result
+  sid
+  Result
+  @/@updateBatchMessage
+  sname
+  updateBatchMessage
+  slabel
+  批量更新提示语
+  ssize
+  60
+  scolspan
+  2
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  updateBatchMessage
+  @/@removeBatchMessage
+  sname
+  removeBatchMessage
+  slabel
+  批量删除提示语
+  ssize
+  60
+  scolspan
+  2
+  sinheritDescription
+  false
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  removeBatchMessage

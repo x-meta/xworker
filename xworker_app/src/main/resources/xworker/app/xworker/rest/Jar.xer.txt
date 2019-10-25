@@ -1,0 +1,158 @@
+^1498527248874
+@
+sname
+Jar
+slabel
+Jar
+sdescription
+<p>通过Class获取class所在的jar。</p>
+sdescriptors
+xworker.http.controls.REST
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@GET
+  sname
+  GET
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.controls.REST/@GET
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  GET
+    @/@GET/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@GET/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.app.xworker.DeployActionClassLoader;
+
+def remoteAddr = request.getRemoteAddr();
+def config = world.getThing("xworker.ide.config.decriptors.GlobalConfig");
+def ipLimit = config.getStringBlankAsNull("restIpLimits");
+if(ipLimit == null){
+    ipLimit = "127.*|192.*|0.*";
+}
+if(remoteAddr.matches(ipLimit)){
+    try{
+        def clsName = requestBean.get("class");
+        if(clsName == null || clsName == ""){
+            response.setStatus(404);
+            return;
+        }
+        
+        //def action = world.getAction("xworker.app.xworker.rest.Jar/@GET/@actions/@doAction");
+        //def loader = action.getClassLoader();
+        def loader = DeployActionClassLoader.getInstance();
+        String jarFilePath = null;
+
+        try{
+            cls = loader.loadClass(clsName);
+            jarFilePath = cls.getProtectionDomain().getCodeSource().getLocation().getFile();  
+        }catch(Exception e){
+            //如org/apache/derby/loc/m12_zh.properties找不到
+            //以下代码也无效
+            def url = loader.findResource("/" + clsName);
+            jarFilePath = url.getFile(); 
+        }
+
+        // URL Decoding  
+        jarFilePath = java.net.URLDecoder.decode(jarFilePath, "UTF-8"); 	
+        
+        def file = new File(jarFilePath);
+        if(file.isDirectory()){
+            //是类路径
+            file = new File(file, clsName.replace('.', '/') + ".class");
+        }
+        response.setHeader("fileName", file.getName());
+        response.setContentLength((int) file.length());
+        def bytes = new byte[4096];
+        def fin = new FileInputStream(file);
+        def out = response.getOutputStream();
+        try{
+            def length = -1;
+            while((length = fin.read(bytes)) != -1){
+                out.write(bytes, 0, length);
+            }
+            out.flush();
+        }finally{
+            fin.close();
+        }
+        
+        //Thread.sleep(2000);
+    }catch(Exception e){
+        //log.info("error", e);
+        response.setStatus(404);
+    }
+}else{
+    response.setStatus(403);
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      doAction

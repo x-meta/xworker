@@ -1,0 +1,381 @@
+^1472802791944
+@
+sname
+DBManager
+slabel
+DBManager
+ssingleInstance
+true
+scloseable
+true
+suseRef
+false
+sdescriptors
+xworker.app.view.swt.app.workbentch.Editor
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@Control
+  sname
+  Control
+  sdescriptors
+  xworker.app.view.swt.app.workbentch.Editor/@Control
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  Control
+    @/@Control/@DataObjectEditCompoiste
+    sname
+    DataObjectEditCompoiste
+    sdataObject
+    xworker.app.db.dataobject.DataSource
+    squeryButton
+    true
+    snewButton
+    true
+    seditButton
+    true
+    seditBatchButton
+    false
+    sdeleteButton
+    true
+    sselectAllButton
+    false
+    sselectRerverseButton
+    false
+    spagingToolbar
+    true
+    sactionContext
+    dataObjectContext
+    stableCheck
+    false
+    sdebug
+    false
+    sdescriptors
+    xworker.app.view.swt.Items/@DataObjectEditCompoiste
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    DataObjectEditCompoiste
+      @/@Control/@DataObjectEditCompoiste/@Buttons
+      sname
+      Buttons
+      sdescriptors
+      xworker.app.view.swt.widgets.DataObjectEditCompoiste/@Buttons
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      Buttons
+        @/@Control/@DataObjectEditCompoiste/@Buttons/@49632
+        sname
+        testBtn
+        stext
+        测试
+        stype
+        SWT.PUSH
+        sflat
+        false
+        sborder
+        false
+        sselected
+        false
+        scapture
+        false
+        senabled
+        false
+        sredraw
+        true
+        svisible
+        true
+        sxw_cl_global
+        false
+        sdescriptors
+        xworker.swt.Widgets/@Button
+        sth_createIndex
+        false
+        sid
+        49632
+          @/@Control/@DataObjectEditCompoiste/@Buttons/@49632/@4964
+          sname
+          RowData
+          sexclude
+          false
+          swidth
+          80
+          sheight
+          -1
+          sdescriptors
+          xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex
+          false
+          sid
+          4964
+          @/@Control/@DataObjectEditCompoiste/@Buttons/@49632/@4965
+          sname
+          Listeners
+          sdescriptors
+          xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex
+          false
+          sid
+          4965
+            @/@Control/@DataObjectEditCompoiste/@Buttons/@49632/@4965/@4966
+            sname
+            deleteBtnSelection
+            stype
+            Selection
+            sdescriptors
+            xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex
+            false
+            sid
+            4966
+              @/@Control/@DataObjectEditCompoiste/@Buttons/@49632/@4965/@4966/@GroovyAction
+              sname
+              GroovyAction
+              sisSynchronized
+              false
+              sthrowException
+              true
+              suseOtherAction
+              false
+              svarScope
+              Local
+              sdisableGlobalContext
+              false
+              Scode
+#$@text#$@
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.SWT;
+
+def data = dataObjectContext.dataTable.getSelection()[0].getData();
+if(data.getLong("checkoutTimeout") == 0){
+    showMessage("测试前请先设置checkoutTimeout（毫秒），否则有可能一直等待！", SWT.ICON_INFORMATION);
+    return;
+}
+
+try{
+    def con = data.doAction("getConnection", actionContext);
+    if(con != null){
+        showMessage("测试连接成功！", SWT.ICON_INFORMATION);
+        con.close();
+        return;
+    }else{
+        showMessage("测试连接失败，连接返回null！", SWT.ICON_WARNING);
+        return;
+    }
+}catch(Exception e){
+    log.info("Test Connection error", e);
+    showMessage("测试连接发生错误，message=" + e.getMessage(), SWT.ICON_ERROR);
+    return;
+}
+
+def showMessage(msg, style){
+    def box = new MessageBox(testBtn.getShell(), style | SWT.OK);
+    box.setText("测试连接");
+    box.setMessage(msg);
+    box.open();
+}
+#$@text#$@
+              sinterpretationType
+              Action
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sdescriptors
+              xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              GroovyAction
+        @/@Control/@DataObjectEditCompoiste/@Buttons/@496321
+        sname
+        saveAllButton
+        stext
+        全部保存为事物
+        stype
+        SWT.PUSH
+        sflat
+        false
+        sborder
+        false
+        sselected
+        false
+        scapture
+        false
+        senabled
+        true
+        sredraw
+        true
+        svisible
+        true
+        sxw_cl_global
+        false
+        sdescriptors
+        xworker.swt.Widgets/@Button
+        sth_createIndex
+        false
+        sid
+        496321
+          @/@Control/@DataObjectEditCompoiste/@Buttons/@496321/@4964
+          sname
+          RowData
+          sexclude
+          false
+          swidth
+          120
+          sheight
+          -1
+          sdescriptors
+          xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex
+          false
+          sid
+          4964
+          @/@Control/@DataObjectEditCompoiste/@Buttons/@496321/@4965
+          sname
+          Listeners
+          sdescriptors
+          xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex
+          false
+          sid
+          4965
+            @/@Control/@DataObjectEditCompoiste/@Buttons/@496321/@4965/@4966
+            sname
+            deleteBtnSelection
+            stype
+            Selection
+            sdescriptors
+            xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex
+            false
+            sid
+            4966
+              @/@Control/@DataObjectEditCompoiste/@Buttons/@496321/@4965/@4966/@GroovyAction
+              sname
+              GroovyAction
+              sisSynchronized
+              false
+              sthrowException
+              true
+              suseOtherAction
+              false
+              svarScope
+              Local
+              sdisableGlobalContext
+              false
+              Scode
+#$@text#$@
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.SWT;
+
+for(item in dataObjectContext.dataTable.getItems()){
+    def data = item.getData();
+    data.doAction("saveToDataSourceThing", actionContext, ["theData": data]);
+    println(data);
+}
+
+def box = new MessageBox(testBtn.getShell(), SWT.OK);
+box.setText("保存数据源事物");
+box.setMessage("已保存！");
+box.open();
+#$@text#$@
+              sinterpretationType
+              Action
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_mark
+              false
+              sid
+              GroovyAction
+      @/@Control/@DataObjectEditCompoiste/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.app.view.swt.widgets.DataObjectEditCompoiste/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Control/@DataObjectEditCompoiste/@actions/@tableSelection
+        sname
+        tableSelection
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        scode
+        testBtn.setEnabled(true);
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        tableSelection

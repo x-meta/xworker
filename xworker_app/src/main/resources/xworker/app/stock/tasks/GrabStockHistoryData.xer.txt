@@ -1,0 +1,341 @@
+^1415610215032
+@
+sname
+GrabStockHistoryData
+slabel
+GrabStockHistoryData
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@grabAllStockHistoryData
+sname
+grabAllStockHistoryData
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def thing = world.getThing("xworker.app.stock.tasks.GrabStockHistoryData");
+def stockCodes = thing.doAction("getAllStockCodes", actionContext);
+
+for(stockCode in stockCodes){
+    log.info("grab stock history data " + stockCode);
+    thing.doAction("grabStockCode", actionContext, ["stockCode": stockCode]);
+}
+
+log.info("all stock grabed");
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@getAllStockCodes
+sname
+getAllStockCodes
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.utils.DataObjectUtil;
+
+return DataObjectUtil.query("xworker.app.stock.dataobjects.StockCode", null, actionContext);
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@grabStockCode
+sname
+grabStockCode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.monitor.http.HttpRequest;
+import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+import org.xmeta.util.UtilData;
+
+def thing = world.getThing("xworker.app.stock.tasks.GrabStockHistoryData");
+def tradeMarket = stockCode.get("tradeMarket");
+def url = "http://table.finance.yahoo.com/table.csv?s=" + stockCode.code + "." + tradeMarket;
+def result = HttpRequest.request(url);
+
+if(result.statusCode == 200){
+    def datas = result.content;
+    def maxDayDate = thing.doAction("getStockMaxDay", actionContext);
+    def sf = new SimpleDateFormat("yyyy-MM-dd");
+    
+    def pst = null;
+    def sql = "insert into tblstockhistoryday(stockCode,tradeDate,open,hight,low,close,volume,adjClose) values(?,?,?,?,?,?,?,?)";
+    
+    try {
+
+        pst = con.prepareStatement(sql);
+        int count = 0;
+        for(data in datas.split("[\n]")){
+            if(data == "" || data.startsWith("Date")){
+                continue;
+            }
+            
+            def ds = data.split("[,]");
+            def date = sf.parse(ds[0]);
+            if(maxDayDate == null || date.getTime() > maxDayDate.getTime()){
+                pst.setString(1, stockCode.code);
+                pst.setTimestamp(2, new java.sql.Timestamp(date.getTime()));
+                pst.setDouble(3, UtilData.getDouble(ds[1], 0));
+                pst.setDouble(4, UtilData.getDouble(ds[2], 0));
+                pst.setDouble(5, UtilData.getDouble(ds[3], 0));
+                pst.setDouble(6, UtilData.getDouble(ds[4], 0));
+                pst.setLong(7, UtilData.getLong(ds[5], 0));
+                pst.setDouble(8, UtilData.getDouble(ds[6], 0));
+            
+                pst.addBatch();
+                count++;
+                if(count >= 2000){
+                    pst.executeBatch();
+                    count = 0;
+                }                
+             }
+        }
+        
+        if(count > 0){
+            pst.executeBatch();
+        }
+    }catch(Exception e){
+        log.info("inert stock error", e);
+    }finally{
+        if(pst != null){
+            pst.close();
+        }
+    }
+
+    log.info("stockcode grabed: " + stockCode);
+}else{
+    log.info("grab stock error " + result.statusCode + " " + url);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@grabStockCode/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@grabStockCode/@contexts/@DataSouceActionContext
+sname
+DataSouceActionContext
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.app.stock.datasource.StockDatasource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@getStockMaxDay
+sname
+getStockMaxDay
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//返回股票代码的最大日期
+def sql = "select max(tradeDate) from tblstockhistoryday where stockCode=?";
+def pst = con.prepareStatement(sql);
+pst.setString(1, stockCode.code);
+def rs = pst.executeQuery();
+try{
+    if(rs.next()){
+        return rs.getDate(1);
+    }else{
+        return null;
+    }
+}finally{
+    rs.close();
+    pst.close();
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@getStockMaxDay/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@getStockMaxDay/@contexts/@DataSouceActionContext
+sname
+DataSouceActionContext
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+xworker.app.stock.datasource.StockDatasource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false

@@ -1,0 +1,64 @@
+%1547021636804
+@
+sname=SelfDefineAttributeEditor
+slabel=自定义属性编辑器
+stype=thingDesc
+sgroup=事物编辑器.表单.自定义
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+Sdescription=
+#$@text#$@
+<h2>自定义属性编辑器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 如果属性的输入方式选择是自定义的，那么可以在属性的SwtObject子节点的inputEditor中设置自定义的编辑器模型。</p>
+
+<h3>inputEditor的主要方法</h3>
+
+<ul>
+	<li><strong>Control create(Thing attribute, boolean isThingEditor, FormModifyListener modifyListener) </strong><br />
+	用于创建编辑器的控件。默认实现里会遍历每一个子节点并执行create方法，返回最后一个子节点的create时返回的对象。<br />
+	<span style="color:rgb(255, 140, 0)">注意在输入控件中添加modifyListener。</span><br />
+	&nbsp;</li>
+	<li><strong>Thing createModel()</strong><br />
+	Model是用于从编辑控件上赋值和取值的模型。默认返回null，当返回null时使用表单默认生成的模型。</li>
+</ul>
+
+<h3>复合编辑器</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如果create方法返回的是Text、Combo、CCombo等等基本输入控件，那么表单已经提供了对控件赋值和取值的方法，但如果是自定义的复杂的复合控件，那么则需要提供对编辑器的赋值和取值的方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用下面两种方法。</p>
+
+<ul>
+	<li><strong>__attribute_inputControl__</strong><br />
+	在返回的Control中设置__attribute_inputControl__属性，如setData(&quot;__attribute_inputControl__&quot;, editControl)，其中editoControl是Text、Combo、CCombo等等表单默认可以处理的控件。<br />
+	&nbsp;</li>
+	<li><strong>__attribute_actionContainer__</strong><br />
+	在返回的Control中设置__attribute_actionContainer__属性，如setData(&quot;__attribute_actionContainer__&quot;, actions)，其中actions是ActionContainer，ActionContianer需要实现getValue和setValue两个方法。</li>
+</ul>
+
+<h3>ActionContainer</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 如果设置了__attribute_actionContainer__，ActionConainer需要实现的方法如下。</p>
+
+<ul>
+	<li><strong>Control getControl()</strong><br />
+	可选。返回表单可以处理的基本控件。作用通上面的设置__attribute_inputControl__属性。<br />
+	&nbsp;</li>
+	<li><strong>Object getValue()</strong><br />
+	返回编辑器当前的值。<br />
+	&nbsp;</li>
+	<li><strong>void setValue(Thing model, Object value, String viewPattern, String editPattern)</strong><br />
+	为编辑器设置一个值。model是表单模型，value是要编辑的值，viewPattern和edit</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

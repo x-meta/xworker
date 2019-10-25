@@ -1,0 +1,98 @@
+^1474869607481
+@
+sname
+SwtImage
+slabel
+SwtImage
+Sdescription
+#$@text#$@
+<p>显示一个SWT控件的图片。</p>
+
+<p>参数：path，SWT控件事物的路径。</p>
+#$@text#$@
+scheckPermission
+false
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@do
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.swt.util.SwtUtils;
+
+def path = SwtUtils.saveImageToWebroot(requestBean.control);
+if(path != null){
+    response.setContentType("image/png");
+    def fin = new FileInputStream(path);
+    def out = response.getOutputStream();
+    def bytes = new byte[2048];
+    def length = -1;
+    while((length = fin.read(bytes)) != -1){
+        out.write(bytes, 0, length);
+        //println("xxxxxxxxx");
+    }
+    fin.close();	
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    do

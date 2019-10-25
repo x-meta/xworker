@@ -1,0 +1,112 @@
+^1501817110323
+@
+sname
+HttpServletTask
+slabel
+HttpServletTask
+sgroup
+xworker.ide.background
+senable
+true
+scallback
+false
+scallbackCancel
+false
+ssingleInstance
+true
+ssaveAsGlobalVar
+false
+Sdescription
+#$@text#$@
+<p>检查和更新ServletMapping，每10秒1次。</p>
+
+<p><span style="color:rgb(255, 0, 0)"><strong>常驻任务，请勿关闭。</strong></span></p>
+#$@text#$@
+sschedule
+true
+sdelay
+0
+speriod
+10000
+sfixedRate
+false
+stimeUnit
+MILLISECONDS
+sfixTime
+false
+scalculatePassCount
+false
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.task.Task
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.task.TaskIndex
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.ide.worldExplorer.background.BackGroundTask/@actions
+  sid
+  actions
+    @/@actions/@run
+    sname
+    doTask
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.http.HttpServletDo;
+import xworker.http.HttpActionMappingServlet;
+
+def cfg = world.getThing("_local.xworker.config.GlobalConfig");
+if(cfg != null){
+	HttpServletDo.debug = cfg.getBoolean("webDebug");
+}
+
+HttpActionMappingServlet.initMappings();
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    run

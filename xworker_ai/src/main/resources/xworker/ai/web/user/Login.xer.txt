@@ -1,0 +1,119 @@
+^1397057168187
+@xworker.ai.web.user.Login
+sname
+Login
+slabel
+Login
+sdescriptors
+xworker.http.controls.SimpleControl
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@xworker.ai.web.user.Login/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@xworker.ai.web.user.Login/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.manong.MaNongServer;
+
+def userName = request.getParameter("name");
+def password = request.getParameter("password");
+def user = MaNongServer.login(userName, password, con);
+def script = null;
+if(user == null){
+    script = "Ext.Msg.alert('登录失败', '用户名/密码错误！');";
+}else{
+    script = "Ext.xworker.login = '" + user.name + "';" + 
+        "Ext.xworker.loginNickName = '" + user.nickname + "';" + 
+        "Ext.getCmp('loginWindow').hide();";
+}
+
+def result = """
+{
+    success: true,
+    script: "${script}"
+}""";
+println(result);
+response.setContentType("text/plain; charset=utf-8");
+response.getWriter().println(result);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@xworker.ai.web.user.Login/@actions/@doAction/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sth_createIndex
+false
+sth_mark
+false
+@xworker.ai.web.user.Login/@actions/@doAction/@contexts/@con
+sname
+con
+sconnectionName
+con
+stransaction
+true
+sdataSourcePath
+_local.xworker.db.XWorkerWebDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sth_createIndex
+false
+sth_mark
+false

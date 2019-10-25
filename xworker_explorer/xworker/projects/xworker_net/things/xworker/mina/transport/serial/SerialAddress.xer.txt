@@ -1,0 +1,680 @@
+@xworker.mina.transport.serial.SerialAddress
+sname
+SerialAddress
+slabel
+SerialAddress
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>An address for a serial port communication.</p>
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.apache.mina.transport.serial.SerialAddress;
+import org.apache.mina.transport.serial.SerialAddress.DataBits;
+import org.apache.mina.transport.serial.SerialAddress.StopBits;
+import org.apache.mina.transport.serial.SerialAddress.Parity;
+import org.apache.mina.transport.serial.SerialAddress.FlowControl;
+
+def name = self.serialName;
+def bauds = self.getInt("bauds");
+def dataBits = null;
+switch(self.dataBits){
+    case "5":
+        dataBits = DataBits.DATABITS_5;
+        break;
+    case "6":
+        dataBits = DataBits.DATABITS_6;
+        break;
+    case "7":
+        dataBits = DataBits.DATABITS_7;
+        break;
+    default:
+        dataBits = DataBits.DATABITS_8;
+        break;
+}
+def stopBits = null;
+switch(self.stopBits){
+    case "2":
+        stopBits = StopBits.BITS_2;
+        break;
+    case "1_5":
+        stopBits = StopBits.BITS_1_5;
+        break;
+    default:
+        stopBits = StopBits.BITS_1;
+        break;
+}
+def parity = null;
+switch(self.parity){
+    case "EVEN":
+        parity = Parity.EVEN;
+        break;
+    case "MARK":
+        parity = Parity.MARK;
+        break;
+    case "ODD":
+        parity = Parity.ODD;
+        break;
+    case "SPACE":
+        parity = Parity.SPACE;
+        break;
+    default:
+        parity = Parity.NONE;
+        break;
+}
+def flowControl = null;
+switch(self.flowControl){
+    case "RTSCTS_IN":
+        flowControl = FlowControl.RTSCTS_IN;
+        break;
+    case "RTSCTS_IN_OUT":
+        flowControl = FlowControl.RTSCTS_IN_OUT;
+        break;
+    case "RTSCTS_OUT":
+        flowControl = FlowControl.RTSCTS_OUT;
+        break;
+    case "XONXOFF_IN":
+        flowControl = FlowControl.XONXOFF_IN;
+        break;
+    case "XONXOFF_IN_OUT":
+        flowControl = FlowControl.XONXOFF_IN_OUT;
+        break;
+    case "XONXOFF_OUT":
+        flowControl = FlowControl.XONXOFF_OUT;
+        break;
+    default:
+        flowControl = FlowControl.NONE;
+        break;        
+}
+
+return new SerialAddress(name, bauds, dataBits, stopBits, parity, flowControl);
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@serialName
+sname
+serialName
+slabel
+端口名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>name of the device, COM1 COM2 for Windows, /dev/ttyS0 for Unix</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds
+sname
+bauds
+slabel
+波特率
+sinputtype
+inputSelect
+sreadOnly
+false
+sdefault
+4800
+sinheritDescription
+false
+sdescription
+<p>baud rate for the communication</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@600
+sname
+600
+slabel
+600
+svalue
+600
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@1200
+sname
+1200
+slabel
+1200
+svalue
+1200
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@2400
+sname
+2400
+slabel
+2400
+svalue
+2400
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@4800
+sname
+4800
+slabel
+4800
+svalue
+4800
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@9600
+sname
+9600
+slabel
+9600
+svalue
+9600
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@14400
+sname
+14400
+slabel
+14400
+svalue
+14400
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@19200
+sname
+19200
+slabel
+19200
+svalue
+19200
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@28800
+sname
+28800
+slabel
+28800
+svalue
+28800
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@38400
+sname
+38400
+slabel
+38400
+svalue
+38400
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@56000
+sname
+56000
+slabel
+56000
+svalue
+56000
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@57600
+sname
+57600
+slabel
+57600
+svalue
+57600
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@115200
+sname
+115200
+slabel
+115200
+svalue
+115200
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@128000
+sname
+128000
+slabel
+128000
+svalue
+128000
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@bauds/@256000
+sname
+256000
+slabel
+256000
+svalue
+256000
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@dataBits
+sname
+dataBits
+slabel
+数据位
+sinputtype
+select
+sreadOnly
+false
+sdefault
+8
+sinheritDescription
+false
+sdescription
+<p>&nbsp;number of data bits per bytes</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@dataBits/@5
+sname
+5
+slabel
+5
+svalue
+5
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@dataBits/@6
+sname
+6
+slabel
+6
+svalue
+6
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@dataBits/@7
+sname
+7
+slabel
+7
+svalue
+7
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@dataBits/@8
+sname
+8
+slabel
+8
+svalue
+8
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@stopBits
+sname
+stopBits
+slabel
+结束位
+sreadOnly
+false
+sdefault
+1
+sinheritDescription
+false
+sdescription
+<p>&nbsp;number of stop bits</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@stopBits/@1
+sname
+1
+slabel
+1
+svalue
+1
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@stopBits/@1_5
+sname
+1_5
+slabel
+1_5
+svalue
+1_5
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@stopBits/@2
+sname
+2
+slabel
+2
+svalue
+2
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity
+sname
+parity
+slabel
+奇偶校验
+sreadOnly
+false
+sdefault
+NONE
+sinheritDescription
+false
+sdescription
+<p>parity used</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity/@EVEN
+sname
+EVEN
+slabel
+EVEN
+svalue
+EVEN
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity/@MARK
+sname
+MARK
+slabel
+MARK
+svalue
+MARK
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity/@NONE
+sname
+NONE
+slabel
+NONE
+svalue
+NONE
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity/@ODD
+sname
+ODD
+slabel
+ODD
+svalue
+ODD
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@parity/@SPACE
+sname
+SPACE
+slabel
+SPACE
+svalue
+SPACE
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl
+sname
+flowControl
+slabel
+流控制
+sreadOnly
+false
+sdefault
+NONE
+sinheritDescription
+false
+sdescription
+<p>flow control used</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@NONE
+sname
+NONE
+slabel
+NONE
+svalue
+NONE
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@RTSCTS_IN
+sname
+RTSCTS_IN
+slabel
+RTSCTS_IN
+svalue
+RTSCTS_IN
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@RTSCTS_IN_OUT
+sname
+RTSCTS_IN_OUT
+slabel
+RTSCTS_IN_OUT
+svalue
+RTSCTS_IN_OUT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@RTSCTS_OUT
+sname
+RTSCTS_OUT
+slabel
+RTSCTS_OUT
+svalue
+RTSCTS_OUT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@XONXOFF_IN
+sname
+XONXOFF_IN
+slabel
+XONXOFF_IN
+svalue
+XONXOFF_IN
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@XONXOFF_IN_OUT
+sname
+XONXOFF_IN_OUT
+slabel
+XONXOFF_IN_OUT
+svalue
+XONXOFF_IN_OUT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.transport.serial.SerialAddress/@flowControl/@XONXOFF_OUT
+sname
+XONXOFF_OUT
+slabel
+XONXOFF_OUT
+svalue
+XONXOFF_OUT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false

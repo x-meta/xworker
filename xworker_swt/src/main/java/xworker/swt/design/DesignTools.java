@@ -1,0 +1,532 @@
+package xworker.swt.design;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.nebula.widgets.cdatetime.CDateTime;
+import org.eclipse.nebula.widgets.opal.calculator.Calculator;
+import org.eclipse.nebula.widgets.opal.calculator.CalculatorCombo;
+import org.eclipse.nebula.widgets.opal.titledseparator.TitledSeparator;
+import org.eclipse.nebula.widgets.pgroup.PGroup;
+import org.eclipse.nebula.widgets.pshelf.PShelf;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.CBanner;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.DateTime;
+import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.ExpandBar;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.swt.design.tools.CTabFolderDesignTools;
+import xworker.swt.design.tools.CompositeDesignTools;
+import xworker.swt.design.tools.CoolBarDesignTools;
+import xworker.swt.design.tools.ExpandBarDesignTools;
+import xworker.swt.design.tools.GroupDesignTool;
+import xworker.swt.design.tools.PGroupTools;
+import xworker.swt.design.tools.PShelfTools;
+import xworker.swt.design.tools.SashFormDesignTools;
+import xworker.swt.design.tools.ShellDesignTools;
+import xworker.swt.design.tools.TabFolderDesignTools;
+import xworker.swt.design.tools.ToolBarDesignTools;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.widgets.ShellCreator;
+import xworker.util.StringUtils;
+import xworker.util.UtilData;
+
+/**
+ * DesignTools是SWT设计器的工具类。
+ * 
+ * @See DesignDialog 设计对话框
+ * @See DesignToolDialog 设计对话框的动作
+ * @author zyx
+ *
+ */
+@SuppressWarnings("deprecation")
+public class DesignTools {
+	public static final int ABOVE = 1;
+	public static final int BELOW = 2;
+	public static final int INSIDE = 3;
+	public static final int REPLACE = 4;
+	public static final int UPDATE = 5;
+	
+	/** 控件的工具*/
+	private static Map<Class<?>, IDesignTool<?>> tools = new HashMap<Class<?>, IDesignTool<?>>();
+	/** 不能插入子控件的但继承于Composite的类 */
+	private static Map<Class<?>, Class<?>> unInsertables = new HashMap<Class<?>, Class<?>>();
+	/** 可以包含布局的类 */
+	private static Map<Class<?>, Class<?>> hasLayouts = new HashMap<Class<?>, Class<?>>();
+	static{
+		tools.put(CTabFolder.class, new CTabFolderDesignTools());
+		tools.put(TabFolder.class, new TabFolderDesignTools());
+		tools.put(CoolBar.class, new CoolBarDesignTools());
+		tools.put(ToolBar.class, new ToolBarDesignTools());
+		tools.put(Composite.class, new CompositeDesignTools());
+		tools.put(Group.class, new GroupDesignTool());
+		tools.put(SashForm.class, new SashFormDesignTools());
+		tools.put(ExpandBar.class, new ExpandBarDesignTools());
+		tools.put(Shell.class, new ShellDesignTools());
+		tools.put(PGroup.class, new PGroupTools());
+		tools.put(PShelf.class, new PShelfTools());
+		
+		unInsertables.put(Canvas.class, Canvas.class);
+		unInsertables.put(Decorations.class, Decorations.class);
+		unInsertables.put(Browser.class, Browser.class);
+		unInsertables.put(CBanner.class, CBanner.class);
+		unInsertables.put(CCombo.class, CCombo.class);
+		unInsertables.put(Combo.class, Combo.class);
+		unInsertables.put(DateTime.class, DateTime.class);
+		
+		unInsertables.put(Spinner.class, Spinner.class);
+		unInsertables.put(Table.class, Table.class);
+		unInsertables.put(Tree.class, Tree.class);
+		unInsertables.put(ViewForm.class, ViewForm.class);
+		
+		//nebula
+		unInsertables.put(Calculator.class, Calculator.class);
+		unInsertables.put(CalculatorCombo.class, CalculatorCombo.class);
+		unInsertables.put(CDateTime.class, CDateTime.class);
+		unInsertables.put(TitledSeparator.class, TitledSeparator.class);
+		try{
+			Class<?> cls = Class.forName("org.eclipse.swt.ole.win32.OleClientSite");
+			unInsertables.put(cls, cls);
+			cls = Class.forName("org.eclipse.swt.ole.win32.OleFrame");
+			unInsertables.put(cls, cls);
+		}catch(Exception e){			
+		}
+		registUnInsertable("org.eclipse.swt.custom.TableTree");
+		registUnInsertable("org.eclipse.swt.custom.StyledText");
+		
+		
+		hasLayouts.put(Composite.class, Composite.class);
+		hasLayouts.put(Shell.class, Shell.class);
+		hasLayouts.put(Group.class, Group.class);
+	}
+	
+	/**
+	 * 注册继承了Composite，但是不能添加子节点的控件。
+	 * 
+	 * @param className
+	 */
+	public static void registUnInsertable(String className) {
+		try {
+			Class<?> cls = Class.forName(className);
+			unInsertables.put(cls, cls);
+		}catch(Exception e) {			
+		}
+	}
+	
+	/**
+	 * 注册一个设计工具。
+	 * 
+	 * @param cls
+	 * @param tool
+	 */
+	public static void registDesignTool(Class<?> cls, IDesignTool<?> tool) {
+		tools.put(cls, tool);		
+	}
+	
+	/**
+	 * 注册一个继承于Composite的容器，使用hasLayout参数指明是否有布局。
+	 * 
+	 * @param cls
+	 * @param hasLayout
+	 */
+	public static void registContainer(Class<? extends Composite> cls, boolean hasLayout) {
+		if(hasLayout) {
+			hasLayouts.put(cls, cls);
+		}else {
+			unInsertables.put(cls, cls);
+		}
+	}
+	
+	/**
+	 * 返回当前控件是否有布局。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static boolean hasLayout(Control control){
+		if(control == null){
+			return false;
+		}
+		
+		Class<?> ctrClass = control.getClass();
+		return hasLayouts.get(ctrClass) != null;
+	}
+	
+	public static void addToParentThing(Thing parentThing, Thing itemThing, Thing controlThing, int actionType){
+		if(controlThing == null){
+			parentThing.addChild(itemThing);
+		}else{
+			int index = parentThing.getChilds().indexOf(controlThing);
+			
+			if(index != -1){
+				if(actionType == REPLACE){
+					parentThing.removeChild(index);				
+				}else if(actionType == BELOW){
+					index++;
+				}
+				parentThing.addChild(itemThing, index);
+			}else{
+				parentThing.addChild(itemThing);
+			}
+		}
+		parentThing.save();
+	}
+	
+	/**
+	 * 返回当前控件是否是容器。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static boolean isContainer(Control control){
+		if(control == null){
+			return false;
+		}
+		
+		//在Creator下创建的，默认也不能添加子节点
+		if(Designer.getCreator(control) != null) {
+			return false;
+		}
+		
+		if(!(control instanceof Composite)){
+			return false;
+		}else{			
+			return unInsertables.get(control.getClass()) == null;
+		}
+	}
+	
+	public static boolean checkInsertAble(Composite parent, Control control){
+		if(parent == null){
+			showErrorMessage("lang:d=不能操作，当前控件是Shell。" +
+					"&en=Cannot operate. The current control is a Shell.");
+			return false;
+		}
+		
+		Thing parentThing = Designer.getThing(parent);
+		Thing controlThing = Designer.getThing(control);
+		if(controlThing == null){
+			control.dispose();
+			SwtUtils.layout(parent);
+			return false;
+		}
+		
+		Thing pthing = controlThing.getParent();
+		while(pthing != null){
+			if(pthing == parentThing){
+				return true;
+			}
+			
+			pthing = pthing.getParent();
+		}
+				
+		//System.out.println(pthing);
+		//System.out.println(parentThing);
+		showErrorMessage("lang:d=不能操作，父控件和子控件不是一个模型。" +
+				"&en=Cannot operate. The parent control and child control are not in a same model.");
+		return false;
+	}
+	
+	public static void showErrorMessage(String message){
+		Shell parent = Designer.getDesignerDialogShell();
+		String title = getLangString("lang:d=SWT设计器&en=SWT Deisnger");
+		String msg = getLangString(message);
+		
+		MessageBox box = new MessageBox(parent, SWT.OK | SWT.ICON_ERROR);
+		box.setText(title);
+		box.setMessage(msg);		
+		SwtUtils.openDialog(box, null, Designer.getControlActionContext(parent));
+	}
+	
+	public static String getLangString(String msg){
+		try {
+			return StringUtils.getString(msg, null);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据当前控件中插入一个新的控件，可以在当前控件之前(ABOVE)、之后(BELOW)、之中（INSIDE)或替换(REPLACE)。
+	 * 
+	 * @param control       当前控件
+	 * @param controlThing  子控件
+	 * @param actionType    插入类型，ABOVE、BELOW、INSIDE、REPLACE
+	 * @return
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static Control insert(Control control, Thing controlThing, int actionType){
+		Thing thing = controlThing.detach();
+		Composite parent = getRealParent(control);//control.getParent();
+		IDesignTool tool = null;
+		if(actionType == REPLACE || actionType == ABOVE || actionType == BELOW){
+			if(!checkInsertAble(parent, control)){
+				return null;
+			}
+			
+			tool = tools.get(parent.getClass());
+			if(!checkTool(tool, parent)){
+				return null;
+			}
+		}
+		
+		Control newControl = null;
+		if(actionType == REPLACE){
+			SwtUtils.trimLayoutData(parent, thing);
+			newControl = tool.replace(parent, control, thing);			
+		}else if(actionType == ABOVE || actionType == BELOW ){
+			SwtUtils.trimLayoutData(parent, thing);
+			newControl = tool.insertAboveOrBelow(parent, control, thing, actionType);
+		}else if(actionType == INSIDE){
+			if(!isContainer(control)){
+				showErrorMessage("lang:d=当前控件不是容器。" +	"&en=Current control is not a container.");
+				return null;
+			}
+			tool = tools.get(control.getClass());
+			if(!checkTool(tool, parent)){
+				return null;
+			}
+			
+			SwtUtils.trimLayoutData((Composite) control, thing);
+			newControl = tool.insert((Composite) control, thing);
+		}
+		
+		return newControl;
+		/*if(newControl != null){
+			Designer.setCurrentDesignControl(newControl);
+		}*/
+	}
+	
+	/**
+	 * 把源控件移动到目标控件的相对位置处。
+	 * 
+	 * @param sourceControl
+	 * @param targetControl
+	 * @param actionType
+	 * @param copy
+	 * @param parentContext
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void move(Control sourceControl, Control targetControl, int actionType, boolean copy, ActionContext parentContext){
+		if(sourceControl instanceof Shell){
+			showErrorMessage("lang:d=不能移动Shell。" +
+					"&en=Can not move Shell.");
+			return;
+		}
+		
+		Thing sourceThing = Designer.getThing(sourceControl);
+		Thing thing = sourceThing.detach();
+		
+		Composite parent = getRealParent(targetControl);//.getParent();
+		SwtUtils.trimLayoutData(parent, thing);
+		
+		IDesignTool tool = null;
+		if(actionType == REPLACE || actionType == ABOVE || actionType == BELOW){
+			if(!checkInsertAble(parent, targetControl)){
+				return;
+			}
+			
+			tool = tools.get(parent.getClass());
+			if(!checkTool(tool, parent)){
+				return;
+			}
+		}
+		
+		Control newControl = null;
+		if(actionType == REPLACE){
+			newControl = tool.replace(parent, targetControl, thing);
+			
+		}else if(actionType == ABOVE || actionType == BELOW ){
+			newControl = tool.insertAboveOrBelow(parent, targetControl, thing, actionType);
+		}else if(actionType == INSIDE){
+			if(!isContainer(targetControl)){
+				showErrorMessage("lang:d=当前控件不是容器。" +
+						"&en=Current control is not a container.");
+				return;
+			}
+			tool = tools.get(targetControl.getClass());
+			if(!checkTool(tool, parent)){
+				return;
+			}
+			newControl = tool.insert((Composite) targetControl, thing);
+		}
+		
+		//移动返回主页
+		//parentContext.g().put("toolActions", null);
+		//ActionContainer actions = parentContext.getObject("actions");
+		//actions.doAction("reInit");
+		Shell shell = parentContext.getObject("shell");
+		if(!shell.isDisposed()){
+		    shell.forceActive();
+		}		
+		
+		if(!copy){
+			remove(sourceControl, false);			
+		}
+		
+		if(newControl != null){
+			Designer.setCurrentDesignControl(newControl);
+		}
+	}
+	
+	/**
+	 * 通过事物更新所有已经在运行的窗口中使用该事物创建的控件。
+	 * 
+	 * @param controlThing
+	 */
+	public static void updateAllControls(Thing controlThing) {
+		List<Widget> widgets = Designer.getWidgets(controlThing.getMetadata().getPath());
+		if(widgets != null) {
+			for(Widget widget : widgets) {
+				if(widget == null || widget.isDisposed()) {
+					continue;
+				}
+				
+				//不要更新编辑器的
+				if(widget instanceof Control) {
+					final Control control = (Control) widget;
+					widget.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							try {
+								if(!UtilData.isTrue(control.getData(Designer.DATA_ISATTRIBUTE))) {
+									update(control, false);
+								}
+							}catch(Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 更新指定的控件，获取控件事物重新创建或更新控件。
+	 * 
+	 * @param control
+	 */
+	public static void update(Control control) {
+		update(control, true);
+	}
+			
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void update(Control control, boolean setCurrentControl){
+		if(control instanceof Shell){
+			//Shell特殊处理
+			Thing thing = Designer.getThing(control);
+			ActionContext  actionContext = Designer.getActionContext(control);
+			actionContext.peek().put("self", thing);
+			actionContext.peek().put("shell", control);
+			ShellCreator.update(actionContext);
+			if(setCurrentControl) {
+				Designer.setCurrentDesignControl(control);
+			}
+			return;
+		}
+		
+		Composite parent = getRealParent(control);//.getParent();
+		if(parent == null){
+			showErrorMessage("lang:d=不能操作，当前控件是Shell。" +
+					"&en=Cannot operate. The current control is a Shell.");
+			return;
+		}
+		
+		IDesignTool tool = tools.get(parent.getClass());
+		if(!checkTool(tool, parent)){
+			return;
+		}
+		
+		Control newControl = tool.update(parent, control);
+		if(newControl != null && setCurrentControl){
+			Designer.setCurrentDesignControl(newControl);
+		}
+	}
+	
+	public static void remove(Control control){
+		remove(control, true);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void remove(Control control, boolean autoSelectNextControl){
+		if(control instanceof Shell){
+			//Shell特殊处理
+			Thing thing = Designer.getThing(control);
+			Thing parentThing = thing.getParent();
+			if(parentThing != null){
+				parentThing.removeChild(thing);
+				parentThing.save();
+			}else{
+				thing.remove();
+			}
+			control.dispose();
+			return;
+		}
+		
+		Composite parent = getRealParent(control);//control.getParent();
+		if(!checkInsertAble(parent, control)){
+			return;
+		}
+		
+		IDesignTool tool = tools.get(parent.getClass());
+		if(!checkTool(tool, parent)){
+			return;
+		}
+		
+		Control newControl = tool.remove(parent, control);
+		if(newControl != null && autoSelectNextControl){
+			Designer.setCurrentDesignControl(newControl);
+		}
+	}
+	
+	public static boolean checkTool(IDesignTool<?> tool, Composite parent){
+		if(tool == null){
+			String name = parent.getClass().getSimpleName(); 
+			showErrorMessage("lang:d=不支持对" + name+"的操作。" +
+					"&en=Not support operations for " + name + ".");
+			return false;
+		}else{
+			return true;
+		}
+	}
+		
+	public static Composite getRealParent(Control control){
+		if(control == null || control.isDisposed()) {
+			return null;
+		}
+		
+		Composite parent = control.getParent();
+		if(parent == null) {
+			return null;
+		}
+		
+		Composite p = (Composite) parent.getData(Designer.DATA_DESIGNER_REAL_PARENT);
+		if(p != null) {
+			return p;
+		}else {
+			return parent;
+		}
+	}
+}

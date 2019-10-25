@@ -1,0 +1,125 @@
+%1545989435450
+@
+sname=VideoWeb
+slabel=VideoWeb
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def thing = world.getThing(requestBean.thing);
+
+if(thing == null){
+    response.writer.println("video thing not exists!");
+    return "noThing";
+}else{
+    actionContext.g().put("data", thing);
+    return "success";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doAction
+  @/@view
+  sname=view
+  sbelongToHtml=true
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+<style>
+html,body{
+height: 100%;
+width: 100%;
+overflow-x:hidden;
+overflow-y:hidden;
+padding: 0px;
+margin: 0px;
+}
+
+
+</style>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=view
+    @/@view/@code
+    sname=code
+    Scode=
+#$@text#$@
+<video style="width= 100%; height=100%; object-fit: fill"
+       <#if data.getBoolean("autoplay")> autoplay="autoplay"</#if>
+       <#if data.getBoolean("controls")> controls="controls"</#if>
+       <#if data.getBoolean("loop")> loop="loop"</#if>
+       <#if data.getBoolean("muted")> muted="muted"</#if>
+       <#if data.getBoolean("preload")> preload="preload"</#if>
+       poster="${data.poster?if_exists}"
+       <#if requestBean.src?exists>
+       src="${requestBean.src}"
+       <#else>
+       src="${data.src?if_exists}"
+       </#if> width="100%" height="100%">
+    <#list data.getChilds("source") as source>
+    <source src="${source.src?if_exists}" type="${source.type?if_exists}"/>
+    </#list>
+${data.notSupportText?if_exists}       
+</video>
+#$@text#$@
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@success
+  sname=success
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.swt.html.prototypes.VideoWeb/@view
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=success

@@ -1,0 +1,842 @@
+%1555917472971
+@
+sname=JeasyRuleEngine
+slabel=JeasyRuleEngine
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.lang.actions.SelfAction
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=ai.rules
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>jeasy的简单规则引擎。<a href="https://github.com/j-easy/easy-rules">https://github.com/j-easy/easy-rules</a></p>
+
+<p><strong>基本知识</strong></p>
+
+<ul>
+	<li><strong>Facts</strong><br />
+	是一个Map&lt;String, Object&gt;。<br />
+	&nbsp;</li>
+	<li><strong>Rule</strong><br />
+	类似于if&nbsp;then，Rule的boolean if()方法是条件， void then()是执行动作。即if() then()。<br />
+	&nbsp;</li>
+	<li><strong>引擎</strong><br />
+	default是默认的，执行一次。inference会反复执行，直到没有满足条件的Rule。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>void initFacts(Facts facts, Rules rules)</strong><br />
+	初始化facts。&nbsp;</li>
+</ul>
+
+<p><strong>&nbsp;注意：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在XWorker的事物管理器或其它UI里，使用inference引擎时最好后台执行，因为它可能会一直执行下去，只要存在满足条件的规则。&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@run
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.ai.rules.easyrule.ThingRuleEngine
+    smethodName=run
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=run
+    @/@actions/@initFacts
+    sname=initFacts
+    sunimplementedException=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=initFacts
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@engine
+  sname=engine
+  sinputtype=select
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=default
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>引擎。</p>
+
+<p><strong>default</strong></p>
+
+<p><!--StartFragment-->This implementation handles a set of rules with unique name. Rules are fired according to their natural order which is priority by default.<!--EndFragment--></p>
+
+<p><strong>interence</strong></p>
+
+<p><!--StartFragment-->Rules are selected based on given facts and fired according to their natural order which is priority by default. The engine continuously selects and fires rules until no more rules are applicable.<!--EndFragment--></p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=engine
+    @/@engine/@default
+    sname=default
+    svalue=default
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=default
+    @/@engine/@inference
+    sname=inference
+    svalue=inference
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=inference
+  @/@skipOnFirstAppliedRule
+  sname=skipOnFirstAppliedRule
+  sinputtype=truefalseselect
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=skipOnFirstAppliedRule
+  @/@skipOnFirstFailedRule
+  sname=skipOnFirstFailedRule
+  sinputtype=truefalseselect
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=skipOnFirstFailedRule
+  @/@skipOnFirstNonTriggeredRule
+  sname=skipOnFirstNonTriggeredRule
+  sinputtype=truefalseselect
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=skipOnFirstNonTriggeredRule
+  @/@priorityThreshold
+  sname=priorityThreshold
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=priorityThreshold
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Rule
+  sname=Rule
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>需要实现的方法：</p>
+
+<ul>
+	<li><strong>boolean if(Facts facts)</strong><br />
+	对应于规则的条件(when)，返回是否满足规则可以执行的条件。<br />
+	&nbsp;</li>
+	<li><strong>void then(Facts facts)</strong><br />
+	对应于规则的执行(then)，执行规则。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Rule
+    @/@Rule/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@Rule/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.ai.rules.easyrule.ThingRuleEngine
+      smethodName=createRule
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+    @/@Rule/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@Rule/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@Rule/@priority
+    sname=priority
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=priority
+    @/@Rule/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@Rule/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@Rule/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@RuleListener
+  sname=RuleListener
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p><strong>可以重写的方法</strong>：</p>
+
+<ul>
+	<li><strong>void afterEvaluate(Rule rule, Facts facts, boolean evaluationResult)</strong><br />
+	Triggered after the evaluation of a rule.<br />
+	&nbsp;</li>
+	<li><strong>boolean beforeEvaluate(Rule rule, Facts facts)</strong><br />
+	Triggered before the evaluation of a rule.<br />
+	&nbsp;</li>
+	<li><strong>void beforeExecute(Rule rule, Facts facts)</strong><br />
+	Triggered before the execution of a rule.<br />
+	&nbsp;</li>
+	<li><strong>void onFailure(Rule rule, Facts facts, java.lang.Exception exception)</strong><br />
+	Triggered after a rule has failed.<br />
+	&nbsp;</li>
+	<li><strong>void onSuccess(Rule rule, Facts facts)</strong><br />
+	Triggered after a rule has been executed successfully.</li>
+</ul>
+
+<p><!--StartFragment--></p>
+
+<p><!--StartFragment--><!--StartFragment--></p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=RuleListener
+    @/@RuleListener/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@RuleListener/@actions/@afterEvaluate
+      sname=afterEvaluate
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=afterEvaluate
+      @/@RuleListener/@actions/@beforeEvaluate
+      sname=beforeEvaluate
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=beforeEvaluate
+      @/@RuleListener/@actions/@beforeExecute
+      sname=beforeExecute
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=beforeExecute
+      @/@RuleListener/@actions/@onFailure
+      sname=onFailure
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onFailure
+      @/@RuleListener/@actions/@onSuccess
+      sname=onSuccess
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=onSuccess
+      @/@RuleListener/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.ai.rules.easyrule.ThingRuleEngine
+      smethodName=createRuleListener
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+    @/@RuleListener/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@RuleListener/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@RuleListener/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@RuleListener/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@RuleListener/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@RuleEngineListener
+  sname=RuleEngineListener
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>可以重写下面的方法：</p>
+
+<ul>
+	<li><strong>void afterExecute(Rules rules, Facts facts)</strong><br />
+	Triggered after executing the rule set When this listener is used with a InferenceRulesEngine, this method will be triggered after the execution of each candidate rule set in each iteration.<br />
+	&nbsp;</li>
+	<li><strong>void beforeEvaluate(Rules rules, Facts facts)</strong><br />
+	Triggered before evaluating the rule set.</li>
+</ul>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=RuleEngineListener
+    @/@RuleEngineListener/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@RuleEngineListener/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.ai.rules.easyrule.ThingRuleEngine
+      smethodName=createRulesEngineListener
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=create
+      @/@RuleEngineListener/@actions/@afterExecute
+      sname=afterExecute
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=afterExecute
+      @/@RuleEngineListener/@actions/@beforeEvaluate
+      sname=beforeEvaluate
+      sunimplementedException=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=beforeEvaluate
+    @/@RuleEngineListener/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@RuleEngineListener/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@RuleEngineListener/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@RuleEngineListener/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@RuleEngineListener/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name

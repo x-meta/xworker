@@ -1,0 +1,518 @@
+%1554794790598
+@
+sname=ProblemActins
+slabel=ProblemActions
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+sdescription=<p>问题相关的动作。</p>
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registThing=child|xworker.lang.actions.Actions
+sth_registMyChilds=true
+sth_registDisabled=false
+sth_mark=false
+  @/@GetOrCreateProblem
+  sname=GetOrCreateProblem
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=problem
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>获取一个问题，如果没有则创建一个。</p>
+
+<p><strong>问题</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 问题是一种事物，表示存在某种问题，需要处理。问题通常是其它操作产生的，比如在监控模块里，检查出现了问题时。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=GetOrCreateProblem
+    @/@GetOrCreateProblem/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@GetOrCreateProblem/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import ognl.Ognl;
+
+//是否注册
+def regist = self.doAction("isRegist", actionContext);
+
+def thingPath = self.doAction("getThingPath", actionContext)
+def thing = world.getThing(thingPath);
+if(thing != null){
+    //使用新的标签和说明文档
+    thing.put("label", self.doAction("getProblemLabel", actionContext));
+    thing.put("description", self.doAction("getMessage", actionContext));
+    
+    if(regist){
+        thing.put("th_createIndex", "true");
+        thing.put("th_registThing", "child|xworker.problem.ProblemInstances");
+        thing.put("group", self.getString("group"));
+    }
+    thing.save();
+    
+    return thing;
+}
+
+//不存在，创建一个新的
+thing = new Thing(self.doAction("getProblemDescriptor", actionContext));
+thing.put("name", self.doAction("getProblemName", actionContext));
+thing.put("label", self.doAction("getProblemLabel", actionContext));
+thing.put("description", self.doAction("getMessage", actionContext));
+if(regist){
+    thing.put("th_createIndex", "true");
+    thing.put("th_registThing", "child|xworker.problem.ProblemInstances");
+    thing.put("group", self.getString("group"));
+}
+//设置其他属性
+def attrs = self.getStringBlankAsNull("attributes");
+if(attrs != null){
+    for(attrDef1 in attrs.split("[\n]")){
+        attrDef1 = attrDef1.trim();
+        for(attrDef in attrDef1.split("[,]")){
+            def name = attrDef;
+            def valueExpr = attrDef;
+            def index = attrDef.indexOf("=");
+            if(index != -1){
+                name = attrDef.substring(0, index);
+                valueExpr = attrDef.substring(index + 1, attrDef.length());               
+            }
+            try{
+                def value = Ognl.getValue(valueExpr, actionContext);
+                thing.put(name, value);
+            }catch(Exception e){
+                log.info("Get problem attrbiute value error, path=" 
+                     + self.getMetadata().getPath(), e);
+            }
+        }
+    }
+}
+
+def thingManager = self.doAction("getThingManager", actionContext);
+thing.saveAs(thingManager, thingPath);
+
+return thing;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@GetOrCreateProblem/@actions/@getProblemName
+      sname=getProblemName
+      sattributeName=problemName
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getProblemName
+      @/@GetOrCreateProblem/@actions/@getProblemLabel
+      sname=getProblemLabel
+      sattributeName=problemLabel
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getProblemLabel
+      @/@GetOrCreateProblem/@actions/@getProblemDescriptor
+      sname=getProblemDescriptor
+      sattributeName=problemDescriptor
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getProblemDescriptor
+      @/@GetOrCreateProblem/@actions/@getThingManager
+      sname=getThingManager
+      sattributeName=thingManager
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThingManager
+      @/@GetOrCreateProblem/@actions/@getThingPath
+      sname=getThingPath
+      sattributeName=thingPath
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThingPath
+      @/@GetOrCreateProblem/@actions/@getMessage
+      sname=getMessage
+      sattributeName=message
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getMessage
+      @/@GetOrCreateProblem/@actions/@isRegist
+      sname=isRegist
+      sattributeName=regist
+      sBoolean=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=isRegist
+    @/@GetOrCreateProblem/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@GetOrCreateProblem/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@GetOrCreateProblem/@regist
+    sname=regist
+    sinputtype=truefalse
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sdefault=false
+    sinheritDescription=false
+    sdescription=<p>是否注册到问题实例中。</p>
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=regist
+    @/@GetOrCreateProblem/@group
+    sname=group
+    ssize=50
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=group
+    @/@GetOrCreateProblem/@problemName
+    sname=problemName
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=problemName
+    @/@GetOrCreateProblem/@problemLabel
+    sname=problemLabel
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=problemLabel
+    @/@GetOrCreateProblem/@problemDescriptor
+    sname=problemDescriptor
+    sinputtype=openWindow
+    ssize=60
+    sshowLabel=true
+    smodifier=public
+    sinputattrs=xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.problem.Problems
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=problemDescriptor
+    @/@GetOrCreateProblem/@thingManager
+    sname=thingManager
+    sinputtype=select
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sdefault=_local
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    sdataStore=xworker.ide.data.datastore.XWorkerDataStores/@ThingManagerDataStore
+    snotXmlAttribute=false
+    srelationValueField=name
+    srelationLabelField=label
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingManager
+    @/@GetOrCreateProblem/@thingPath
+    sname=thingPath
+    ssize=60
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingPath
+    @/@GetOrCreateProblem/@message
+    sname=message
+    sinputtype=textarea
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=message
+    @/@GetOrCreateProblem/@attributes
+    sname=attributes
+    sinputtype=textarea
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    Sdescription=
+#$@text#$@
+<p>创建新的问题时设置到事物中的属性。</p>
+
+<p>使用name=value的格式，其中name是问题事物的属性名，value是ognl表达式，从ActionContext上取值。如有多个使用英文逗号或换行分割。</p>
+#$@text#$@
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attributes
+    @/@GetOrCreateProblem/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

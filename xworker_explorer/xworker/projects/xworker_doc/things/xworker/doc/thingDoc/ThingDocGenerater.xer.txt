@@ -1,0 +1,213 @@
+@xworker.doc.thingDoc.ThingDocGenerater
+sname
+ThingDocGenerater
+slabel
+ThingDocGenerater
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+sid
+ThingDocGenerater
+@xworker.doc.thingDoc.ThingDocGenerater/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.doc.thingDoc.ThingDocGenerater/@actions/@generate
+sname
+generate
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def plugins = world.getPlugIns();
+
+def trees = [];
+
+for(plugIn in plugins){
+    for(factory in plugIn.getThingManagers()){
+        def dataObjects = factory.getThings("", "core.things.lang.MetaDescriptor3", true);        
+        for(dataObject in dataObjects){
+            println ("add " + dataObject.metadata.path);
+            add(trees, dataObject);
+        }
+    }
+}
+
+def menuObj = world.getThing("core.doc.thingDoc.ThingDoc/@XWorker");
+menuObj.childs.clear();
+for(obj in trees){
+    print "xxxxxxx";
+    menuObj.addChild(obj);
+}
+menuObj.save();
+println "add xworker obj docs end!";
+
+def add(trees, dataObject){
+    String path = dataObject.metadata.path;
+    path = path.replace(':', '.');
+ 
+    def pths = path.split("[.]");
+    currentObjs = trees;
+    int index = 0;
+    for(p in pths){
+        
+        if(index == pths.length - 1){
+            //最后一级,加入数据对象
+            Thing obj = new Thing("xworker.html.base.component.menu/@menuItem");
+            obj.target = "main";
+            obj.name = dataObject.metadata.name;
+            obj.label = dataObject.metadata.label;
+            obj.url = "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@view&thing=" + dataObject.metadata.path;
+            currentObjs.add(obj);
+            return;
+        }else{
+            boolean have = false;
+			for(curObj in currentObjs){
+			    if(curObj.name == p){
+			        have = true;
+			        currentObjs = curObj.childs;
+			    }
+			}
+			
+			if(!have){
+			    Thing obj = new Thing("xworker.html.base.component.menu/@menuItem");
+			    obj.name = p;
+			    obj.label = p;
+			    obj.target = "main";
+			    currentObjs.add(obj);
+			    currentObjs = obj.childs;
+			}
+        }
+        
+        index ++;
+        //println p;
+    }
+}
+#$@text#$@
+sid
+generate
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.doc.thingDoc.ThingDocGenerater/@actions/@generateToFile
+sname
+generateToFile
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import java.io.File;
+
+def menuObj = world.getThing("xworker.doc.thingDoc.ThingDoc/@XWorker");
+
+Thing template = new Thing("xworker.lang.util.TextTemplate");
+template.path = "ui:worldExplorer/swt/http/thingDoc.ftl";
+template.outputEncoding = "UTF-8";
+template.templateEncoding = "UTF-8";
+//template.dataVariableName = "_root";
+template.type = "freemarker";
+def context = [:];
+
+generate(menuObj.childs, context, template);
+println "generate html file end!";
+    
+def generateToFile(dataObject, context, template){
+    if(context.get(dataObject) != null){
+        return;
+    }
+    
+    context.put(dataObject, "123");
+    String path = dataObject.metadata.path;
+    String filePath = path.replace(':', '.');
+    filePath = filePath.replace('/', '_');
+    filePath = filePath.replace('@', '.');
+    filePath = filePath.replace('.', '/');
+    String relatePath = "";
+    int i = 0;
+    for(f in filePath.split("[/]")){
+        if(i == 0){
+            i++;
+            continue;
+        }
+        relatePath = relatePath + "../";
+    }
+    
+    filePath = "webroot/doc/xworker/" + filePath + ".html";
+    java.io.File htmlFile = new File(filePath);
+    //println htmlFile;
+    File parentFile = htmlFile.getParentFile();
+    if(!parentFile.exists()){
+        parentFile.mkdirs();
+    }
+            
+    
+    try{
+        def tcontext = ["dataObject":dataObject,
+            "out":new FileOutputStream(htmlFile),
+            "relatePath":relatePath];
+        template.output = "out";
+        ActionContext ac = new ActionContext();
+        ac.putAll(tcontext);
+        template.doAction("process", ac);
+    }catch(Exception e){
+        e.printStackTrace();
+    }
+    println path;
+    
+    for(desc in dataObject.descriptors){
+        generateToFile(desc, context, template);
+    }
+    
+    generateChilds(dataObject, context, template);
+}
+
+def generateChilds(dataObject, context, template){
+    for(child in dataObject.childs){
+        generateToFile(child, context, template);
+    }
+}
+
+def generate(trees, context, template){    
+    for(node in trees){
+        if(node.url != null && node.url != ""){
+            //产生文件
+            def urls = node.url.split("[=]");
+            String path = urls[urls.length - 1];
+            def dataObject = world.getThing(path);
+            generateToFile(dataObject, context, template);
+        }else{
+            generate(node.childs, context, template);
+        }
+    }        
+}
+#$@text#$@
+sid
+generateToFile
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

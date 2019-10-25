@@ -1,0 +1,762 @@
+%1529486719106
+@
+sname=FormControlShell
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=false
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=-1
+sheight=-1
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=FormControlShell
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@8828
+  sname=buttonComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sid=8828
+    @/@8828/@8829
+    sname=buttonCompositeGridData
+    sstyle=FILL_HORIZONTAL
+    shorizontalIndent=0
+    swidth=-1
+    sheight=-1
+    shorizontalAlignment=END
+    sverticalAlignment=CENTER
+    shorizontalSpan=1
+    sverticalSpan=1
+    sgrabExcessHorizontalSpace=false
+    sgrabExcessVerticalSpace=false
+    sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+    sid=8829
+    @/@8828/@8830
+    sname=buttonCompositeRowLayout
+    sfill=false
+    sjustify=false
+    smarginWidth=0
+    smarginHeight=0
+    smarginLeft=3
+    smarginTop=3
+    smarginRight=3
+    smarginBottom=3
+    spack=true
+    sspacing=3
+    stype=SWT.HORIZONTAL
+    swrap=true
+    sdescriptors=xworker.swt.Layouts/@RowLayout
+    sid=8830
+    @/@8828/@8831
+    sname=insertButton
+    stext=lang:d=插入组件&en=Insert Component
+    stype=SWT.PUSH
+    sflat=false
+    sborder=false
+    sselected=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Button
+    sth_createIndex=false
+    sid=8831
+      @/@8828/@8831/@8832
+      sname=RowData
+      sexclude=false
+      swidth=130
+      sheight=-1
+      sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+      sth_createIndex=false
+      sid=8832
+      @/@8828/@8831/@8833
+      sname=Listeners
+      sdescriptors=xworker.swt.widgets.Widget/@Listeners
+      sth_createIndex=false
+      sid=8833
+        @/@8828/@8831/@8833/@8834
+        sname=insertButtonSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sth_createIndex=false
+        sid=8834
+          @/@8828/@8831/@8833/@8834/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import xworker.swt.design.InjectableComposite;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+import xworker.util.StringUtils;
+
+//获取要插入的组件
+def control = formControlThing.doAction("getControl", actionContext);
+def title = StringUtils.getString("lang:d=插入控件&en=Insert Component", actionContext);
+if(control != null){
+    if(InjectableComposite.isHasChild(actionContext)){
+        def box = new MessageBox(buttonComposite.getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
+        box.setText(title);
+        box.setMessage(StringUtils.getString("lang:d=组件已存在，是否要替换？替换后不可恢复!&en=The component already exists. Do you want to replace it? Cannot be restored after substitution!", actionContext));
+        if(SWT.CANCEL == box.open()){
+            return;
+        }
+    }
+    
+    InjectableComposite.setChild(control, actionContext);
+}else{
+    def box = new MessageBox(buttonComposite.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+    box.setText(title);
+    box.setMessage(StringUtils.getString("lang:d=不能插入组件，getInsertControl方法返回null。&en=Cannot insert components. The getInsertControl method returns null.", actionContext));
+    box.open();
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+  @/@formComposite
+  sname=formComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=formComposite
+    @/@formComposite/@formCompositeGridLayout
+    sname=formCompositeGridLayout
+    smakeColumnsEqualWidth=false
+    smarginWidth=5
+    smarginHeight=5
+    smarginLeft=0
+    smarginTop=0
+    smarginRight=0
+    smarginBottom=0
+    shorizontalSpacing=5
+    sverticalSpacing=5
+    sdescriptors=xworker.swt.Layouts/@GridLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=formCompositeGridLayout
+    @/@formComposite/@thingForm
+    sname=thingForm
+    scolumn=1
+    sH_SCROLL=true
+    sV_SCROLL=true
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    sdescriptors=xworker.swt.Widgets/@ThingForm
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingForm
+      @/@formComposite/@thingForm/@thingFormGridData
+      sname=thingFormGridData
+      sstyle=FILL_BOTH
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingFormGridData
+  @/@formDemoComposite
+  sname=formDemoComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=formDemoComposite
+    @/@formDemoComposite/@formDemoCompositeGridLayotu
+    sname=formDemoCompositeGridLayout
+    smakeColumnsEqualWidth=false
+    smarginWidth=5
+    smarginHeight=5
+    smarginLeft=0
+    smarginTop=0
+    smarginRight=0
+    smarginBottom=0
+    shorizontalSpacing=5
+    sverticalSpacing=5
+    sdescriptors=xworker.swt.Layouts/@GridLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=formDemoCompositeGridLayotu
+    @/@formDemoComposite/@formDemoSash
+    sname=formDemoSash
+    sstyle=VERTICAL
+    sSMOOTH=false
+    sweights=50,50
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@SashForm
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=formDemoSash
+      @/@formDemoComposite/@formDemoSash/@formDemoSashGridData
+      sname=formDemoSashGridData
+      sstyle=FILL_BOTH
+      shorizontalIndent=0
+      swidth=-1
+      sheight=-1
+      shorizontalAlignment=BEGINNING
+      sverticalAlignment=CENTER
+      shorizontalSpan=1
+      sverticalSpan=1
+      sgrabExcessHorizontalSpace=false
+      sgrabExcessVerticalSpace=false
+      sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=formDemoSashGridData
+      @/@formDemoComposite/@formDemoSash/@composite
+      sname=formDemoComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=composite
+        @/@formDemoComposite/@formDemoSash/@composite/@formDemoCompositeGridLayout
+        sname=formDemoCompositeGridLayout
+        smakeColumnsEqualWidth=false
+        smarginWidth=5
+        smarginHeight=5
+        smarginLeft=0
+        smarginTop=0
+        smarginRight=0
+        smarginBottom=0
+        shorizontalSpacing=5
+        sverticalSpacing=5
+        sdescriptors=xworker.swt.Layouts/@GridLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=formDemoCompositeGridLayout
+        @/@formDemoComposite/@formDemoSash/@composite/@demoCompoiste
+        sname=demoComposite
+        sBORDER=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Composite
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=demoCompoiste
+          @/@formDemoComposite/@formDemoSash/@composite/@demoCompoiste/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@formDemoComposite/@formDemoSash/@composite/@demoCompoiste/@demoCompositeFillLayout
+          sname=demoCompositeFillLayout
+          stype=SWT.HORIZONTAL
+          sdescriptors=xworker.swt.Layouts/@FillLayout
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=demoCompositeFillLayout
+        @/@formDemoComposite/@formDemoSash/@composite/@2927
+        sname=buttonComposite
+        sBORDER=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Composite
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=2927
+          @/@formDemoComposite/@formDemoSash/@composite/@2927/@2928
+          sname=buttonCompositeGridData
+          sstyle=FILL_HORIZONTAL
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=END
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sid=2928
+          @/@formDemoComposite/@formDemoSash/@composite/@2927/@2929
+          sname=buttonCompositeRowLayout
+          sfill=false
+          sjustify=false
+          smarginWidth=0
+          smarginHeight=0
+          smarginLeft=3
+          smarginTop=3
+          smarginRight=3
+          smarginBottom=3
+          spack=true
+          sspacing=3
+          stype=SWT.HORIZONTAL
+          swrap=true
+          sdescriptors=xworker.swt.Layouts/@RowLayout
+          sid=2929
+          @/@formDemoComposite/@formDemoSash/@composite/@2927/@2930
+          sname=demoButton
+          stext=lang:d=查看运行结果&en=View Execute Result
+          stype=SWT.PUSH
+          sflat=false
+          sborder=false
+          sselected=false
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Button
+          sth_createIndex=false
+          sid=2930
+            @/@formDemoComposite/@formDemoSash/@composite/@2927/@2930/@2931
+            sname=RowData
+            sexclude=false
+            swidth=-1
+            sheight=-1
+            sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+            sth_createIndex=false
+            sid=2931
+            @/@formDemoComposite/@formDemoSash/@composite/@2927/@2930/@2932
+            sname=Listeners
+            sdescriptors=xworker.swt.widgets.Widget/@Listeners
+            sth_createIndex=false
+            sid=2932
+              @/@formDemoComposite/@formDemoSash/@composite/@2927/@2930/@2932/@2933
+              sname=demoButtonSelection
+              stype=Selection
+              sref=xworker.swt.design.prototype.FormControlShell/@formDemoComposite/@actions/@showDemo
+              sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+              sth_createIndex=false
+              sid=2933
+      @/@formDemoComposite/@formDemoSash/@thingForm
+      sname=thingForm
+      scolumn=1
+      sH_SCROLL=true
+      sV_SCROLL=true
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      sdescriptors=xworker.swt.Widgets/@ThingForm
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingForm
+        @/@formDemoComposite/@formDemoSash/@thingForm/@actions
+        sname=actions
+        sdescriptors=xworker.swt.xworker.ThingForm/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@formDemoComposite/@formDemoSash/@thingForm/@actions/@modified
+          sname=modified
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+if(formControlThing.getBoolean("autoDemo")){
+    actions.doAction("showDemo", actionContext);
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=modified
+    @/@formDemoComposite/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@formDemoComposite/@actions/@showDemo
+      sname=showDemo
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//获取设置的事物
+def controlThing = formControlThing.doAction("getDemo", actionContext);
+
+//查看示例
+for(child in demoComposite.getChildren()){
+    child.dispose();
+}
+
+actionContext.peek().put("parent", demoComposite);
+controlThing.doAction("create", actionContext);
+demoComposite.layout();
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=showDemo
+  @/@noFormThingBrowser
+  sname=noFormThingBrowser
+  sdescription=<p>表单事物没有设置。</p>
+  sdescriptors=xworker.swt.Widgets/@ThingDescripitonBrowser
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=noFormThingBrowser
+  @/@treeModelButton
+  sname=setChildButton
+  stext=lang:d=设置树模型&en=Set Tree Model
+  stype=SWT.PUSH
+  sflat=false
+  sborder=false
+  sselected=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.design.FormControl/@Buttons/@Button
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=treeModelButton
+    @/@treeModelButton/@onSelection
+    sname=onSelection
+    sdescriptors=xworker.swt.widgets.Widget/@Event
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onSelection
+      @/@treeModelButton/@onSelection/@ThingEditorDialog
+      sname=ThingEditorDialog
+      stitle=TreeModels
+      sshell=ognl:event.widget.getShell()
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.swt.actions.DialogActions/@ThingEditorDialog
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ThingEditorDialog
+        @/@treeModelButton/@onSelection/@ThingEditorDialog/@actions
+        sname=actions
+        sdescriptors=xworker.lang.actions.SelfAction/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@treeModelButton/@onSelection/@ThingEditorDialog/@actions/@getThing
+          sname=getThing
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def descriptor = event.widget.getData("descriptor");
+def childModel = null;
+for(child in childs){
+    if(child.getDescriptor().getMetadata().getPath() == descriptor){
+        childModel = child;
+        break;
+    }
+}
+if(childModel == null){
+    childModel = new Thing(descriptor);
+    childs.add(childModel);
+}
+
+return childModel;
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=getThing
+          @/@treeModelButton/@onSelection/@ThingEditorDialog/@actions/@ok
+          sname=ok
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          scode=actions.doAction("showDemo", actionContext);
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=ok
+          @/@treeModelButton/@onSelection/@ThingEditorDialog/@actions/@getTitle
+          sname=getTitle
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          scode=return event.widget.getText();
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=getTitle

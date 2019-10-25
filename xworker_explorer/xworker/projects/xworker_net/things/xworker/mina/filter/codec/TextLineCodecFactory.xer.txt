@@ -1,0 +1,186 @@
+@xworker.mina.filter.codec.TextLineCodecFactory
+sname
+TextLineCodecFactory
+slabel
+TextLineCodecFactory
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>A <a title="interface in org.apache.mina.filter.codec" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/filter/codec/ProtocolCodecFactory.html"><code>ProtocolCodecFactory</code></a> that performs encoding and decoding between a text line data and a Java string object. This codec is useful especially when you work with a text-based protocols such as SMTP and IMAP.</p>
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import java.nio.charset.Charset;
+
+def factory = null;
+if(self.charset != null && self.charset != ""){
+    def charset = Charset.forName(self.charset);
+    def encodingDelimiter = getString(self.encodingDelimiter);
+    def decodingDelimiter = getString(self.decodingDelimiter);
+    factory = new TextLineCodecFactory(charset, encodingDelimiter, decodingDelimiter);
+}else{
+    factory = new TextLineCodecFactory();
+}
+actionContext.getScope(0).put(self.metadata.name, factory);
+return factory;
+
+
+def getString(str){
+    if(str == "\\n"){
+        return "\n";
+    }else if(str == "\\f"){
+        return "\f";
+    }else if(str == "\\t"){
+        return "\t";
+    }else if(str == "\\r"){
+        return "\r";
+    }else if(str == "\\b"){
+        return "\b";
+    }else{
+        return str;
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@encodingDelimiter
+sname
+encodingDelimiter
+sreadOnly
+false
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">特殊字符</span></p>
+<ul>
+    <li style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">走纸换页：</span><span style="font-size: 9pt"> \f </span></li>
+    <li style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">换行：\</span><span style="font-size: 9pt">n </span></li>
+    <li style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">换栏符：\</span><span style="font-size: 9pt">t </span></li>
+    <li style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">回车：\</span><span style="font-size: 9pt">r </span></li>
+    <li style="text-align: left; line-height: 14.25pt; color: black"><span style="font-size: 9pt">回退符：\</span><span style="font-size: 9pt">b </span></li>
+</ul>
+<p>只有输入了charset，delimiter才会生效。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@decodingDelimiter
+sname
+decodingDelimiter
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.codec.TextLineCodecFactory/@charset
+sname
+charset
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

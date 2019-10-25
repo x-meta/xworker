@@ -1,0 +1,1058 @@
+@xworker.app.view.swt.data.RowVsColDataStore
+sname
+RowVsColDataStore
+slabel
+RowVsColDataStore
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.app.view.swt.data.DataStore
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>行和列可以互换的数据仓库，比如可以互换如下数据：</p>
+<p>行数据<br />
+日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 水果&nbsp; &nbsp;价格&nbsp; 价格涨幅<br />
+2012-01-01&nbsp; &nbsp;苹果&nbsp;&nbsp;&nbsp; 5元&nbsp;&nbsp; 1%<br />
+2012-01-01&nbsp; &nbsp;梨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3元&nbsp;&nbsp; -1%<br />
+2012-01-01&nbsp;&nbsp; 西瓜&nbsp;&nbsp;&nbsp; 4元&nbsp;&nbsp; 2%<br />
+2012-02-01&nbsp;&nbsp; 苹果&nbsp;&nbsp;&nbsp; 5元&nbsp;&nbsp; 0%<br />
+2012-02-01&nbsp;&nbsp; 梨&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4元&nbsp;&nbsp; 1%<br />
+2012-02-01&nbsp;&nbsp;&nbsp;西瓜&nbsp;&nbsp;&nbsp; 5元&nbsp;&nbsp; 1%</p>
+<p>列数据<br />
+日期&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;苹果&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;梨&nbsp;&nbsp;&nbsp;&nbsp; 西瓜 苹果价格涨幅 梨价格涨幅 西瓜价格涨幅<br />
+2012-01-01&nbsp;&nbsp; 5元&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3元&nbsp;&nbsp;&nbsp; 4元&nbsp;&nbsp;&nbsp; 1%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2%<br />
+2012-02-01&nbsp;&nbsp; 5元&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4元&nbsp;&nbsp;&nbsp;&nbsp;5元&nbsp;&nbsp;&nbsp; 0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1%</p>
+<p>以上行数据和列数据可以互换，其中日期是<strong>关键字</strong>，价格是<strong>值字段</strong>，价格涨幅是<strong>拷贝字段</strong>，水果（苹果、梨和西瓜）是<strong>分类字段</strong>。</p>
+<p>关键字如有多个使用使用英文逗号隔开，拷贝字段在列定义中定义，其他字段只能有一个。</p>
+<p><strong>其他注意事项</strong></p>
+<p>该数据仓库会使用到转换后的数据对象，需要通过添加数据对象子事物定义自己的数据对象，自定义的数据对象对应转化后的数据对象，不是原始查询用的数据对象，如果要指定查询的数据对象只能通过在属性中设置。</p>
+<p>分页数据可能会混乱。</p>
+#$@text#$@
+sid
+RowVsColDataStore
+@xworker.app.view.swt.data.RowVsColDataStore/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.eclipse.swt.widgets.Display;
+
+import ognl.Ognl;
+
+//数据仓库实例
+def store = store = new Thing("xworker.app.view.swt.data.RowVsColDataStore");
+store.getAttributes().putAll(self.getAttributes());
+store.set("extends", self.metadata.path);
+store.put("listeners", []);
+store.put("config", self);
+store.put("dataLoaded", false);
+store.put("name", self.name);
+store.put("actionContext", actionContext);
+store.setData("actionContext", actionContext);
+store.display = Display.getCurrent();
+store.put("rowcolType", self.rowcolType);
+def cols = self.get("Cols@0");
+if(cols != null){
+    store.put("cols", cols.getChilds());
+}
+
+//数据对象
+def dataObject = world.getThing(self.dataObject);
+store.put("refDataObject", dataObject); //查询数据对象
+def dos = self.getThing("dataObjects@0");
+if(dos != null && dos.getChilds().size() > 0){
+    dataObject = dos.getChilds().get(0);
+}
+store.put("dataObject", dataObject);
+
+//如果引用的DataStore不为空，注册到引用的DataStore，引用的DataStore提供数据
+def refStore = null;
+if(self.storeRef != null && self.storeRef != ""){
+    refStore = Ognl.getValue(self.storeRef, actionContext);
+    if(refStore != null){
+        def listener = new Thing("xworker.app.view.swt.data.events.RowVsColDataStoreListener");
+        listener.rowColStore = store;
+        refStore.doAction("addListener", actionContext, ["listener": listener]);
+    }
+}
+
+//如果引用的DataStore为空，使用自己的数据对象
+if(refStore == null){
+    //查询配置
+    def queryConfig = world.getThing(self.queryConfig);
+    if(queryConfig == null){
+        queryConfig = self.get("queryConfig@0");
+    }
+    store.put("queryConfig", queryConfig);
+    
+    //分页
+    def pageInfo = [:];
+    pageInfo.limit = 0;
+    pageInfo.start = 0;
+    if(self.paging == "extend"){
+        if(dataObject != null && dataObject.getBoolean("paging")){
+            pageInfo.limit = dataObject.getInt("pageSize", 50);
+            pageInfo.start = 0;
+        }
+    }else if(self.paging == "yes"){
+        pageInfo.limit = self.getInt("pageSize", 50);
+        pageInfo.start = 0;
+    }
+    if(self.storeSortField == "_extend"){
+        if(dataObject != null){
+            pageInfo.sort = dataObject.getString("storeSortField");
+            pageInfo.dir = dataObject.getString("storeSortDir");
+        }
+    }else{
+        pageInfo.sort = self.getString("storeSortField");
+        pageInfo.dir = self.getString("storeSortDir");
+    }
+    store.put("pageInfo", pageInfo);
+    
+    if(store.dataObject != null){
+        if(store.getBoolean("autoLoad")){
+            store.doAction("load", actionContext);
+        }
+    }
+    
+    //监听器
+    for(listeners in self.get("Listeners@")){
+        for(listener in listeners.get("Listener@")){
+            store.listeners.add(listener);
+        }
+    }
+    
+}
+
+actionContext.getScope(0).put(self.name, store);
+if(self.getBoolean("attachToParent") && store != null){
+    store.doAction("attach", actionContext, ["object":parent]);
+}
+
+return store;
+#$@text#$@
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@reInit
+sname
+setDataObject
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+if(actionContext.get("dataObject") == null){
+    return;
+}
+
+def store = self;
+store.put("refDataObject", dataObject);
+
+//查询配置
+if(actionContext.get("queryConfig") != null){
+    store.put("queryConfig", queryConfig);
+}
+
+//分页
+def pageInfo = [:];
+pageInfo.limit = 0;
+pageInfo.start = 0;
+if(self.paging == "extend"){
+    if(dataObject != null && dataObject.getBoolean("paging")){
+        pageInfo.limit = dataObject.getInt("pageSize", 50);
+        pageInfo.start = 0;
+    }
+}else if(self.paging == "yes"){
+    pageInfo.limit = self.getInt("pageSize", 50);
+    pageInfo.start = 0;
+}
+if(self.storeSortField != "_extend"){
+    if(dataObject != null){
+        pageInfo.sort = dataObject.getString("storeSortField");
+        pageInfo.dir = dataObject.getString("storeSortDir");
+    }
+}else{
+    pageInfo.sort = self.getString("storeSortField");
+    pageInfo.dir = self.getString("storeSortDir");
+}
+store.put("pageInfo", pageInfo);
+
+//通知已更新
+self.doAction("reconfig", actionContext);
+
+if(store.refDataObject != null){
+    if(store.getBoolean("autoLoad")){
+        store.doAction("load", actionContext);
+    }
+}
+#$@text#$@
+sdescription
+<p>重新设置DataObject。</p>
+sid
+reInit
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@reInit/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@reInit/@ins/@dataObject
+sname
+dataObject
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@reInit/@ins/@queryConfig
+sname
+queryConfig
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+queryConfig
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@load
+sname
+load
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+def dataObject = self.refDataObject;
+if(dataObject == null){
+    log.warn("not dataobject");
+    return;
+}
+
+//查询配置
+def queryConfig = self.queryConfig;
+//分页信息
+def pageInfo = self.pageInfo;
+pageInfo.start = 0;
+
+//查询参数
+def params = actionContext.get("params");
+//log.info("params=" + params);
+if(params == null){
+    params = [:];
+}
+if(queryConfig != null){  //初始化主动抓取的参数值
+    queryConfig.doAction("initParamsSwt", actionContext);
+}
+
+self.pageInfo = pageInfo;
+self.params = params;
+
+//执行查询
+self.doAction("doLoad", actionContext);
+#$@text#$@
+sdescription
+<p>使用参数查询并装载数据。</p>
+sid
+load
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@load/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@load/@ins/@params
+sname
+params
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+params
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@load/@ins/@pageInfo
+sname
+pageInfo
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+pageInfo
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@reload
+sname
+reload
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//数据对象
+def dataObject = self.refDataObject;
+if(dataObject == null){
+    log.warn("not dataobject");
+    return;
+}
+
+//执行查询
+self.doAction("doLoad", actionContext);
+#$@text#$@
+sid
+reload
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@doLoad
+sname
+doLoad
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+def store = self;
+def acContext = actionContext;
+def event = ["doit":true];
+def log = log;
+
+store.doAction("fireEvent", actionContext, ["eventName":"beforeLoad", "event":event]);
+if(event.doit == false){
+    return;
+}
+        
+if(self.getBoolean("loadBackground")){
+    def runnable = [
+        run: {
+            DataObject.beginThreadCache();
+            try{
+                def records = store.refDataObject.doAction("query", acContext, ["conditionData":store.params, "conditionConfig":store.queryConfig, "pageInfo":store.pageInfo]);            
+                if(store.rowcolType == "rowToCol"){
+                    store.records = store.doAction("rowToCols", actionContext, ["records": records, "cols": store.cols, "dataObject": store.dataObject]);
+                }else if(store.rowcolType == "colToRow"){
+                    store.records = store.doAction("colToRows", actionContext, ["records": records, "cols": store.cols, "dataObject": store.dataObject]);
+                } else {
+                    store.records = [];
+                }         
+            }finally{
+                DataObject.finishThreadCache();
+            }
+            //log.info("records=" + store.records);
+            store.put("dataLoaded", true);
+            
+            //如果是动态查询，重新初始化数据对象
+            initDataObject(store, acContext);
+            store.doAction("fireEvent", acContext, ["eventName": "onLoaded"]);
+            store.doAction("fireEvent", acContext, ["eventName":"afterLoaded"]);
+        }
+    ] as Runnable;
+    
+    new Thread(runnable).start();
+}else{
+    //执行查询
+    DataObject.beginThreadCache();
+    try{
+        self.records = store.refDataObject.doAction("query", actionContext, ["conditionData":store.params, "conditionConfig":store.queryConfig, "pageInfo":store.pageInfo]);
+    }finally{
+        DataObject.finishThreadCache();
+    }
+    self.put("dataLoaded", true);
+    
+    //如果是动态查询，重新初始化数据对象
+    initDataObject(store, actionContext);
+                         
+    //触发装载事件
+    self.doAction("fireEvent", actionContext, ["eventName": "onLoaded"]);
+    self.doAction("fireEvent", actionContext, ["eventName": "afterLoaded"]);
+}
+
+def initDataObject(store, acContext){
+     if(store.pageInfo.dynamicDataObject != null && store.pageInfo.dynamicDataObject != store.dynamicDataObject){
+         def oldDataObject = store.refDataObject;
+         try{
+             store.put("dynamicDataObject", store.pageInfo.dynamicDataObject);
+             store.put("refDataObject", store.pageInfo.dynamicDataObject);
+             store.doAction("reconfig", acContext);
+         }finally{
+             store.put("dataObject", oldDataObject);
+         }
+     }
+}
+#$@text#$@
+sid
+doLoad
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@rowToCols
+sname
+rowToCols
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+import xworker.dataObject.DataObject;
+
+if(actionContext.get("cols") == null){
+    log.info("RowVsColDataStore.rowToCols: cols is null, no records converted");
+    return [];
+}
+
+if(actionContext.get("records") == null){
+    log.info("RowVsColDataStore.rowToCols: records is null, no records converted");
+    return [];
+}
+
+def colRecords = [];
+def keyDatas = [:];
+for(record in records){
+    //列数据
+    def keyValue = null;
+    for(rowKey in self.rowKey.split("[,]")){
+        if(keyValue != null){
+            keyValue = "" + keyValue + "-" + Ognl.getValue(rowKey, record);
+        }else{
+            keyValue = Ognl.getValue(rowKey, record);
+        }        
+    }
+    def colData = keyDatas.get(keyValue);
+    if(colData == null){
+        colData = new DataObject(dataObject);
+        for(rowKey in self.rowKey.split("[,]")){
+            colData.put(rowKey, Ognl.getValue(rowKey, record));
+        }
+        colRecords.add(colData);
+        keyDatas.put(keyValue, colData);
+    }
+    
+    //放入分类的值
+    def category = Ognl.getValue(self.rowCategoryField, record);
+    def value = Ognl.getValue(self.rowValueField, record);
+    for(col in cols){
+        if(category == col.label){
+            colData.put(col.name, value);
+            //拷贝列
+            for(copyField in col.get("copyField@")){
+                def copyValue = Ognl.getValue(copyField.rowField);
+                colData.put(copyField.colField, copyValue);
+            }
+        }
+    }
+}
+
+return colRecords;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+rowToCols
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@rowToCols/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@rowToCols/@ins/@records
+sname
+records
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+records
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@rowToCols/@ins/@cols
+sname
+cols
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+cols
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@rowToCols/@ins/@dataObject
+sname
+dataObject
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@colToRows
+sname
+colToRows
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+import xworker.dataObject.DataObject;
+
+if(actionContext.get("cols") == null){
+    log.info("RowVsColDataStore.colToRows: cols is null, no records converted");
+    return [];
+}
+
+if(actionContext.get("records") == null){
+    log.info("RowVsColDataStore.colToRows: records is null, no records converted");
+    return [];
+}
+
+def rowRecords = [];
+def keyDatas = [:];
+for(record in records){
+    //列数据    
+    def keyValue = null;
+    for(rowKey in self.rowKey.split("[,]")){
+        if(keyValue != null){
+            keyValue = "" + keyValue + "-" + Ognl.getValue(rowKey, record);
+        }else{
+            keyValue = Ognl.getValue(rowKey, record);
+        }        
+    }
+    for(col in cols){        
+        def value = Ognl.getValue(col.name, record);
+        def rowData = new DataObject(dataObject);
+        for(rowKey in self.rowKey.split("[,]")){
+            rowData.put(rowKey, Ognl.getValue(rowKey, record));
+        }
+        rowData.put(self.rowCategoryField, col.label);
+        rowData.put(self.rowValueField, value);
+        //拷贝列
+        for(copyField in col.get("copyField@")){
+            def copyValue = Ognl.getValue(copyField.colField);
+            colData.put(copyField.rowField, copyValue);
+        }
+        rowRecords.add(rowData);
+    }
+}
+
+return rowRecords;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+colToRows
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@colToRows/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@colToRows/@ins/@records
+sname
+records
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+records
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@colToRows/@ins/@cols
+sname
+cols
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+cols
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@actions/@colToRows/@ins/@dataObject
+sname
+dataObject
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+dataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@xworker.app.view.swt.data.RowVsColDataStore/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@label
+sname
+label
+slabel
+标签
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@rowcolType
+sname
+rowcolType
+slabel
+类型
+sinputtype
+select
+sreadOnly
+false
+sdefault
+rowToCol
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowcolType
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@rowcolType/@rowToCol
+sname
+rowToCol
+slabel
+行转列
+svalue
+rowToCol
+sid
+rowToCol
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.RowVsColDataStore/@rowcolType/@colToRow
+sname
+colToRow
+slabel
+列转行
+svalue
+colToRow
+sid
+colToRow
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+@xworker.app.view.swt.data.RowVsColDataStore/@rowKey
+sname
+rowKey
+slabel
+关键字字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>可以指定原数据对象的一个或者多个属性（多个属性用英文逗号隔开）作为关键字，通常是日期字段。也可以通过重载getKey(data)实现自定义获取关键字的方法。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowKey
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@rowCategoryField
+sname
+rowCategoryField
+slabel
+行分类字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowCategoryField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@rowValueField
+sname
+rowValueField
+slabel
+行值字段名
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowValueField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@storeRef
+sname
+storeRef
+slabel
+引用数据仓库名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>如果不为空，那么加入一个监听器到引用的数据仓库上，使用引用的数据仓库的数据。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+storeRef
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows
+sname
+Cols
+slabel
+列定义列表
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>行转列的行列定义，子事物列表为如何把一个行映射成列。</p>
+sid
+ColRows
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol
+sname
+Col
+slabel
+列定义
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>行转列时取该行名字段的值和列名称对比，如果相同去行值字段的值作为列的值，列转行时把列名称放到行名字段中，把列值放到行值字段中。</p>
+sid
+RowCol
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>列数据的分类的字段名。如分类apple（苹果）</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>对应行数据中行分类字段的值，如苹果。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol/@copyField
+sname
+copyField
+slabel
+拷贝字段
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sinheritDescription
+false
+sdescription
+<p>行数据和列数据中需要拷贝的字段，如示例中的价格涨幅字段。</p>
+sid
+copyField
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol/@copyField/@rowField
+sname
+rowField
+slabel
+行字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>行数据中的字段名</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+rowField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.app.view.swt.data.RowVsColDataStore/@ColRows/@RowCol/@copyField/@colField
+sname
+colField
+slabel
+列字段名
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>列数据中的字段名。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+colField
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

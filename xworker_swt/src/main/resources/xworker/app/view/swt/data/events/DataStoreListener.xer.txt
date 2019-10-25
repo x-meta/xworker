@@ -1,0 +1,375 @@
+^1528770412733
+@
+sname
+DataStoreListener
+slabel
+DataStoreListener
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p><strong>异步执行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据仓库支持异步加载数据，因此一般调用display.asyncExec()来处理事件。</p>
+
+<p><strong>DataStoreListener主要事件如下：</strong></p>
+
+<ul>
+	<li><strong>onReconfig(Thing store)</strong><br />
+	数据库仓重新配置了，如设置了新的数据对象。</li>
+	<li><strong>onLoaded(Thing store)</strong><br />
+	数据仓库重新加载数据了，即数据已经加载完毕。</li>
+	<li><strong>onDataChanged(Thing store, List&lt;DataObject&gt; records)</strong><br />
+	数据发送变化了，通常是被修改了。</li>
+	<li><strong>beforeLoad(Thing store)</strong><br />
+	加载数据之间的事件，加载数据可能会比较耗时，可以在这里加入提示。</li>
+	<li><strong>onInsert(Thing store, List&lt;DataObject&gt; records)</strong><br />
+	数据插入了。</li>
+	<li><strong>onUpdate(Thing store, List&lt;DataObject&gt; records)</strong><br />
+	数据更新了。</li>
+	<li><strong>onRemove(Thing store, List&lt;DataObject&gt; records)</strong><br />
+	数据删除了。</li>
+</ul>
+
+<p><strong>绑定SWT控件和添加监听的示例代码</strong></p>
+
+<pre class="brush:java;">
+	public static void attachToList(ActionContext actionContext){
+		Thing self = (Thing) actionContext.get(&quot;self&quot;);
+		org.eclipse.swt.widgets.List object = (org.eclipse.swt.widgets.List) actionContext.get(&quot;object&quot;);
+		
+		//添加一个表格数据仓库监听
+		Thing listener = new Thing(&quot;xworker.app.view.swt.data.events.ListDataStoreListener&quot;);
+		listener.put(&quot;combo&quot;, object);
+		listener.put(&quot;store&quot;, self);
+
+		//先调用监听初始化
+		listener.doAction(&quot;onReconfig&quot;, actionContext, UtilMap.toMap(&quot;store&quot;, self));
+
+		//加入到监听器中
+		self.doAction(&quot;addListenerToFirst&quot;, actionContext, UtilMap.toMap(&quot;listener&quot;, listener));
+
+		//把监听和自身添加到table中以备后用
+		object.setData(&quot;storeListener&quot;, listener);
+		object.setData(&quot;store&quot;, self);
+
+		DataStoreDisposeListener.attach(object);
+	}</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@reconfig
+    sname
+    onReconfig
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    reconfig
+      @/@actions/@reconfig/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@reconfig/@ins/@store
+        sname
+        store
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        store
+    @/@actions/@loaded
+    sname
+    onLoaded
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    loaded
+      @/@actions/@loaded/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@loaded/@ins/@store
+        sname
+        store
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        store
+    @/@actions/@onSetValueAt
+    sname
+    onDataChanged
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    onSetValueAt
+      @/@actions/@onSetValueAt/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@onSetValueAt/@ins/@store
+        sname
+        store
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        store
+    @/@actions/@beforeLoad
+    sname
+    beforeLoad
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    beforeLoad
+    @/@actions/@onInsert
+    sname
+    onInsert
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    onInsert
+      @/@actions/@onInsert/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@onInsert/@ins/@records
+        sname
+        records
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        records
+        @/@actions/@onInsert/@ins/@index
+        sname
+        index
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        index
+    @/@actions/@onUpdate
+    sname
+    onUpdate
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    onUpdate
+      @/@actions/@onUpdate/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@onUpdate/@ins/@records
+        sname
+        records
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        records
+        @/@actions/@onUpdate/@ins/@index
+        sname
+        index
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        index
+    @/@actions/@onRemove
+    sname
+    onRemove
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    onRemove
+      @/@actions/@onRemove/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@onRemove/@ins/@records
+        sname
+        records
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        records
+        @/@actions/@onRemove/@ins/@index
+        sname
+        index
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        index

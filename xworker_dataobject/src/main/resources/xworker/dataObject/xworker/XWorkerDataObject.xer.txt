@@ -1,0 +1,1214 @@
+^1411381541308
+@
+sname
+XWorkerDataObject
+slabel
+XWorkerDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.DataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>查询和管理XWorker中的事物。</p>
+<p>可以查询和管理事物的任意属性，其中.label、.path、.thingName、.descriptor、.attributeName、.extends是特别的参数，分别可以对标签、路径、事物名、描述者和属性名等映射。这些查询的方法也是特殊的，这些查询使用特定的查询条件。这些属性是只读属性。</p>
+<p><strong>需要注意的地方</strong></p>
+<p><strong>&nbsp;&nbsp;&nbsp; </strong>事物数据对象一般不同过关键字存储，查找出一个数据对象后事物的路径保存到DataObject的data中(dataObject.setData(&quot;thingPath&quot;, thing.getMetadata().getPath())。</p>
+<p><strong>删除</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 会删除查询出来的事物，在不是很明确的情况下，容易误删，且无法恢复。</p>
+<p><strong>创建</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 会创建到查询范围下，如果查询范围是目录在当前目录下创建事物，如果查询范围是事物，那么创建一个子事物。注意创建时给数据对象设置descriptors属性，以定类别。</p>
+<p>&nbsp;&nbsp;&nbsp; 创建如果是目录，那么在找到的第一个目录下创建，如果是jar等可能会失败。在事物创建下也有可能有此情况。</p>
+<p>&nbsp;</p>
+#$@text#$@
+sid
+SearchThingDataObject
+@/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.dataObject.thing.ThingDataObject/@actions
+@/@actions/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.World;
+import org.xmeta.Category;
+import org.xmeta.ThingManager;
+import org.xmeta.Thing;
+
+import xworker.dataObject.DataObject;
+
+import ognl.Ognl;
+
+def matchedDatas = [];
+
+def conditionConfig = actionContext.get("conditionConfig");
+def conditionData = actionContext.get("conditionData");
+
+//事物的查找范围
+def thingScopePath = null;
+if(conditionData != null){
+    try{
+        thingScopePath = Ognl.getValue("thingScopePath", conditionData);
+    }catch(Exception e){
+    }
+}
+if(thingScopePath == null || thingScopePath == ""){
+    thingScopePath = self.thingScopePath;
+}
+def thingScope = world.get(thingScopePath);
+if(thingScope == null && (thingScopePath == null || thingScopePath == "")){
+    thingScope = world;
+}
+def excludePathes = [];
+def excludePath = self.getString("excludePath");
+if(excludePath != null && "" != excludePath){
+    for(exPath in excludePath.split("[,]")){
+        excludePathes.add(exPath);
+    }
+}
+
+def includeChildThing = self.getBoolean("includeChildThing");
+//log.info("includeChildThing=" + includeChildThing);
+if(thingScope instanceof World){
+     for(thingManager in world.getThingManagers()){
+        if(self.getBoolean("includeChildCategory")){
+            for(thing in thingManager.iterator("", true)){
+                searchThing(thing, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+            }
+        }else{
+            for(thing in thingManager.iterator("", false)){
+                searchThing(thing, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+            }
+        }
+    }
+}else if(thingScope instanceof ThingManager || thingScope instanceof Category){
+    if(self.getBoolean("includeChildCategory")){
+        for(thing in thingScope.iterator("", true)){
+            searchThing(thing, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+        }
+    }else{
+        for(thing in thingScope.iterator("", false)){
+            searchThing(thing, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+        }
+
+    }
+}else if(thingScope instanceof Thing){
+    if(self.getBoolean("includePath")){
+        searchThing(thingScope, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+    }else{
+        for(child in thingScope.childs){
+            searchThing(child, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+        }
+    }
+}
+
+if(actionContext.get("pageInfo") != null){
+    //是否排序
+    if(pageInfo.sort != null && pageInfo.sort != ""){
+        matchedDatas.sort(){ a,b->   
+            def av = a == null ? null : a.get(pageInfo.sort);
+            def bv = b == null ? null : b.get(pageInfo.sort);
+            if(av == null && bv == null){
+                return 0;
+            }else if(av == null && bv != null){
+                return pageInfo.dir == "DESC" ? 1 : -1;
+            }else if(av != null && bv == null){
+                return pageInfo.dir == "DESC" ? -1 : 1;
+            }else{
+                return pageInfo.dir == "DESC" ? -av.compareTo(bv) : av.compareTo(bv);
+            }            
+        }   	
+    
+    }
+    pageInfo.totalCount = matchedDatas.size();
+    if(pageInfo.limit > 0){
+        if(pageInfo.start > matchedDatas.size()){
+            pageInfo.start = matchedDatas.size();
+        }
+        def toIndex = pageInfo.start + pageInfo.limit;
+        if(toIndex > matchedDatas.size()){ 
+            toIndex = matchedDatas.size();
+        }
+        def startIndex = pageInfo.start;
+        if(startIndex < 0){
+            startIndex = 0;
+        }    
+        pageInfo.datas = matchedDatas.subList(pageInfo.start, toIndex);
+    }else{
+        pageInfo.datas = matchedDatas;
+    }
+    return pageInfo.datas;
+}else{
+    return matchedDatas;
+}
+
+def isExclude(excludePathes, path){
+    for(exPath in excludePathes){
+         if(path.startsWith(exPath)){
+             return true;
+         }
+    }
+    
+    return false;
+}
+
+//查找一个事物以及其子事物
+def searchThing(thing, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes){    
+    if(isExclude(excludePathes, thing.getMetadata().getPath())){
+        return;
+    }
+    //log.info("search thing: " + thing.metadata.path);
+    if(isMatchThing(thing, conditionConfig, conditionData)){
+        matchedDatas.add(createDataObjectFormThing(self,thing));
+    }
+        
+    if(includeChildThing){
+        for(child in thing.childs){            
+            searchThing(child, conditionConfig, conditionData, matchedDatas, includeChildThing, excludePathes);
+        }
+    }
+}
+
+//从事物中创建数据对象
+def createDataObjectFormThing(self, thing){
+    def dataObject = new DataObject(self);    
+    dataObject.setData("thingPath", thing.getMetadata().getPath());
+    for(attribute in self.get("attribute@")){
+        def propertyPath = attribute.propertyPath;
+        if(propertyPath == ".name"){
+            dataObject.put(attribute.name, thing.metadata.name);
+        }else if(propertyPath == ".label"){
+            dataObject.put(attribute.name, thing.metadata.label);
+        }else if(propertyPath == ".path"){
+            //log.info("thing=" + thing);
+            dataObject.put(attribute.name, thing.metadata.path);
+        }else if(propertyPath == ".description"){
+            dataObject.put(attribute.name, thing.metadata.description);
+        }else if(propertyPath == ".thingName"){
+            def thingNames = "";
+            for(tname in thing.getThingNames()){
+                if(thingNames != ""){
+                    thingNames = thingNames + ",";
+                }
+                thingNames = thingNames + tname;
+            }
+            dataObject.put(attribute.name, tthingNames);
+        }else if(propertyPath == ".descriptor"){
+            def descs = "";
+            for(descriptor in thing.getDescriptors()){
+                if(descs != ""){
+                    descs = descs + ",";
+                }
+                descs = descs + descriptor.metadata.path;
+            }
+            dataObject.put(attribute.name, descs);
+        }else if(propertyPath == ".extend"){
+            def exts = "";
+            for(ext in thing.getExtends()){
+                if(exts != ""){
+                    exts = exts + ",";
+                }
+                exts = exts + ext.metadata.path;
+            }
+            dataObject.put(attribute.name, exts);
+        }else if(propertyPath == ".attributeName"){
+            def atrName = "";
+            for(atr in thing.getAllAttributesDescriptors()){
+                if(atrName != ""){
+                    atrName = atrName + ",";
+                }
+                   
+                atrName = atrName + atr.metadata.name;
+            }
+            dataObject.put(attribute.name, atrName);
+        }else{
+            def value = null;
+            switch(attribute.type){
+                case "string":
+                    value = thing.getString(propertyPath);
+                    break;
+                case "byte":
+                    value = thing.getByte(propertyPath);
+                    break;
+                case "short":
+                    value = thing.getShort(properyPath);
+                    break;
+                case "int":
+                    value = thing.getInt(propertyPath);
+                    break;
+                case "long":
+                    value = thing.getLong(propertyPath);
+                    break;
+                case "float":
+                    value = thing.getFloat(propertyPath);
+                    break;
+                case "double":
+                    value = thing.getDouble(propertyPath);
+                    break;
+                case "boolean":
+                    value = thing.getBoolean(propertyPath);
+                    break;
+                case "date":
+                case "datatime":
+                case "time":
+                    value = thing.getDate(propertyPath);
+                    break;
+                case "byte[]":
+                    value = thing.getBytes(propertyPath);
+                    break;                
+                default:
+                    value = thing.get(propertyPath);
+                    break;
+            }
+            
+            dataObject.put(attribute.name, value);
+        }
+    }   
+    return dataObject;
+}
+
+//是否是符合条件的事物
+def isMatchThing(thing, conditionConfig, conditionData){
+    if(conditionConfig == null){
+        return true;
+    }else{
+        def result = conditionConfig.doAction("isMatch", actionContext, ["condition":conditionData, "data":thing]);        
+        if(result == false && conditionData != null && conditionData.descriptor != null){
+            boolean ok = false;
+            for(desc in thing.getAllDescriptors()){
+                if(desc.getBoolean("isDescriptorForOpenWindow")){
+                    ok = true;
+                }
+            }
+            if(ok){
+                return thing.doAction("isDescriptorForOpenWindow", actionContext, ["descriptor": conditionData.descriptor]);
+            }
+        }
+        
+        return result;
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@query/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@/@actions/@query/@ins/@conditionConfig
+sname
+conditionConfig
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+conditionConfig
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@/@actions/@query/@ins/@conditionData
+sname
+conditionData
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+conditionData
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@/@actions/@query/@ins/@thingScopePath
+sname
+thingScopePath
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sid
+thingScopePath
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@/@actions/@getMappingFields
+sname
+getMappingFields
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def datas = [];
+datas.add(["colName":".label", "colTitle":"标签"]);
+datas.add(["colName":".path", "colTitle":"路径"]);
+datas.add(["colName":".thingName", "colTitle":"事物名"]);
+datas.add(["colName":".descriptor", "colTitle":"描述者"]);
+datas.add(["colName":".attributeName", "colTitle":"属性名"]);
+return datas;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+getMappingFields
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@isMappingAble
+sname
+isMappingAble
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return true;
+Sdescription
+#$@text#$@
+<p>返回属性是否可以映射，比如数据库数据对象、CSV数据对象和Excel等数据对象的属性适合表字段、CSV或Excel的列映射的。</p>
+<p>如果不能映射，直接抛出有说明文字的异常。</p>
+<p>映射用于快速编辑属性。</p>
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+isMappingAble
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@getMappingAttributeName
+sname
+getMappingAttributeName
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return "propertyPath";
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+getMappingAttributeName
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@create
+sname
+doCreate
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionException;
+import org.xmeta.Thing;
+import org.xmeta.Category;
+
+if(actionContext.get("theData") == null){
+    throw new ActionException("Can not create thing, dataobject is null, theData variable not exists");
+}
+
+//创建事物
+def thing = new Thing();
+def thingPath = null;
+//设置值
+for(attribute in self.get("attribute@")){
+    def propertyPath = attribute.getString("propertyPath");
+    def name = attribute.getString("name");
+    if(propertyPath == null || propertyPath == ""){
+        continue;
+    }
+    
+    if(propertyPath.startsWith(".")){    
+        //以下是非事物的属性，而是事物的元数据
+        if(propertyPath == ".label" || propertyPath == ".thingName" ||
+            propertyPath = ".attributeName" || propertyPath == ".extends"){
+             continue;
+        }
+        
+        if(propertyPath == ".path"){
+            thingPath = theData.get(name); //事物的创建路径
+            continue;
+        }
+        
+        if(propertyPath == ".descriptor"){
+            thing.set("descriptors", theData.get(name)); //事物的描述者
+            continue;
+        }
+    }
+    
+    thing.put(propertyPath, theData.get(name));
+}
+
+if(thingPath != null){
+    thing.saveTo(thingPath);
+}
+def scopeObj = world.get(self.thingScopePath);
+if(scopeObj instanceof Category){
+    def oldThing = scopeObj.getThing(thing.metadata.name);
+    if(oldThing != null){
+        throw new ActionException("Can not create thing, thing already exists, paht=" + oldThing.getMetadata().getPath());
+    }
+    
+    thing.getMetadata().setCategory(scopeObj);
+    thing.save();
+}else if(scopeObj instanceof Thing){
+    scopeObj.addChild(scopeObj);
+    scopeObj.save();
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+create
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@update
+sname
+doUpdate
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionException;
+
+if(actionContext.get("theData") == null){
+    throw new ActionException("Can not update thing, dataobject is null, theData variable not exists");
+}
+
+def thingPath = theData.getData("thingPath");
+if(thingPath == null){
+    throw new ActionException("Can not update thing, thingPath is null, theData.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def thing = world.getThing(thingPath);
+if(thing == null){
+    throw new ActionException("Can not update thing, thing is null, path=" + thingPath);
+}
+
+//设置值
+for(attribute in self.get("attribute@")){
+    def propertyPath = attribute.getString("propertyPath");
+    def name = attribute.getString("name");
+    if(propertyPath == null || propertyPath == ""){
+        continue;
+    }
+    
+    if(propertyPath.startsWith(".")){
+        //以下是非事物的属性，而是事物的元数据
+        if(propertyPath == ".label" || propertyPath == ".path" || 
+            propertyPath == ".thingName" || propertyPath == ".descriptor" ||
+            propertyPath == ".attributeName" || propertyPath == ".extends"){
+             continue;
+        }
+    }
+    
+    thing.put(propertyPath, theData.get(name));
+}
+
+//保存事物
+thing.save();
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+update
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@delete
+sname
+doDelete
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionException;
+
+if(actionContext.get("theData") == null){
+    throw new ActionException("Can not delete thing, dataobject is null, theData variable not exists");
+}
+
+def thingPath = theData.getData("thingPath");
+if(thingPath == null){
+    throw new ActionException("Can not delete thing, thingPath is null, theData.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def thing = world.getThing(thingPath);
+if(thing == null){
+    throw new ActionException("Can not delete thing, thing is null, path=" + thingPath);
+}
+
+//删除本事物
+thing.remove();
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+delete
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@moveUp
+sname
+moveUp
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.XWorkerExcepition;
+
+if(actionContext.get("theData") == null){
+    throw new XWorkerException("Can not moveup thing, dataobject is null, theData variable not exists");
+}
+
+def thingPath = theData.getData("thingPath");
+if(thingPath == null){
+    throw new XWorkerException("Can not moveup thing, thingPath is null, theData.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def thing = world.getThing(thingPath);
+if(thing == null){
+    throw new XWorkerException("Can not moveup thing, thing is null, path=" + thingPath);        
+}
+
+if(actionContext.get("refDataObject") == null){
+    throw new XWorkerException("Can not moveup thing, thing is null, ref dataobject not exists.");        
+}
+
+def refThingPath = refDataObject.getData("thingPath");
+if(refThingPath == null){
+    throw new XWorkerException("Can not moveup thing, refthingPath is null, refDataObject.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def refThing = world.getThing(refThingPath);
+if(refThing == null){
+    throw new XWorkerException("Can not moveup thing, refthing is null, path=" + refThingPath);  
+}
+
+if(refThing.getParent() == null || refThing.getParent() != thing.getParent()){
+    throw new XWorkerException("Can not moveup thing, refthing is root thing or thing and refthing has different parent");
+}
+
+def parent = thing.getParent();
+def childs = parent.getChilds();
+for(int i=0; i<childs.size(); i++){
+    def child = childs.get(i);
+    if(child == thing){
+        break; //已经在前面的了，无需移动
+    }
+    if(child == refThing){
+        childs.remove(thing);
+        childs.addChild(i, thing);
+        parent.save();
+        break;
+    }
+}
+#$@text#$@
+sdescription
+<p>移动到指定节点的上面，查找范围必须是事物。</p>
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+moveUp
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@moveUp/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@/@actions/@moveUp/@ins/@refDataObject
+sname
+refDataObject
+slabel
+参考事物
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescription
+<p>移动到此对象的上面。</p>
+sid
+refDataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@/@actions/@moveDown
+sname
+moveDown
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.ActionException;
+
+if(actionContext.get("theData") == null){
+    throw new ActionException("Can not movedown thing, dataobject is null, theData variable not exists");
+}
+
+def thingPath = theData.getData("thingPath");
+if(thingPath == null){
+    throw new ActionException("Can not movedown thing, thingPath is null, theData.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def thing = world.getThing(thingPath);
+if(thing == null){
+    throw new ActionException("Can not movedown thing, thing is null, path=" + thingPath);        
+}
+
+if(actionContext.get("refDataObject") == null){
+    throw new ActionException("Can not movedown thing, thing is null, ref dataobject not exists.");        
+}
+
+def refThingPath = refDataObject.getData("thingPath");
+if(refThingPath == null){
+    throw new ActionException("Can not movedown thing, refthingPath is null, refDataObject.getData(\"thingPath\") is null, can not find original thing");
+}
+
+def refThing = world.getThing(refThingPath);
+if(refThing == null){
+    throw new ActionException("Can not movedown thing, refthing is null, path=" + refThingPath);  
+}
+
+if(refThing.getParent() == null || refThing.getParent() != thing.getParent()){
+    throw new ActionException("Can not movedown thing, refthing is root thing or thing and refthing has different parent");
+}
+
+def parent = thing.getParent();
+def childs = parent.getChilds();
+def move = false;
+for(int i=0; i<childs.size(); i++){
+    def child = childs.get(i);
+    if(child == refThing){
+        if(move == false){
+            break; //已经在后面的了，无需移动
+        }else{
+            childs.remove(thing);
+            childs.add(i, thing);
+            parent.save();
+        }
+    }
+    if(child == thing){
+        move = true;
+    }
+}
+#$@text#$@
+sdescription
+<p>移动到指定节点的下方，查找范围必须是事物。</p>
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+moveDown
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions/@moveDown/@ins
+sisValidate
+false
+sname
+ins
+sid
+ins
+slabel
+ins
+sdescriptors
+xworker.lang.actions.Inout/@ins
+@/@actions/@moveDown/@ins/@refDataObject
+sname
+refDataObject
+slabel
+参考事物
+stypeCheck
+false
+soptional
+true
+scheck
+false
+scheckLevel
+exception
+sdescription
+<p>移动到此对象的下面。</p>
+sid
+refDataObject
+sdescriptors
+xworker.lang.actions.Inout/@ins/@param
+@/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@childThing
+sname
+includeChildThing
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>是否查询子事。</p>
+<p>如果true，查询所有子事物，包括子事物的子事物，如果fase且查询范围是目录那么查询目录下的事物，不查询事物的子事物，如果查询范围是一个事物，那么只查询这个事物的第一级子事物。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+childThing
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@includeChildCategory
+sname
+includeChildCategory
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+includeChildCategory
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@includePath
+sname
+includePath
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+true
+sinheritDescription
+false
+sdescription
+<p>如果路径指向的是事物，那么是否包含这个事物。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+includePath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@selectThingOpenWindow
+sname
+selectThingOpenWindow
+sinputtype
+truefalse
+sreadOnly
+false
+sdefault
+false
+sinheritDescription
+false
+sdescription
+<p>如果为true，那么如果查询条件中有descriptor并且目标事物设置了selectThingOpenWindow为true，那么会调用目标事物的isDescriptorForOpenWindow方法。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+sth_mark
+false
+@/@path
+sname
+thingScopePath
+sinputtype
+dataSelector
+ssize
+60
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>用于查找事物的范围。</p>
+<p>如果查询参数中包含thingScopePath属性，那么替换该字段的值。</p>
+#$@text#$@
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+path
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@excludePath
+sname
+excludePath
+sinputtype
+textarea
+scolspan
+2
+sreadOnly
+false
+sinheritDescription
+false
+sdescription
+<p>不包含的路径，可以有多个，使用','号隔开，事物的路径以此路径为开头的都被排除。</p>
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+excludePath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@attribute
+sname
+attribute
+slabel
+Attribute
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.Attribute
+smany
+true
+seditCols
+2
+Sdescription
+#$@text#$@
+<p>属性映射，Map的键值是key，值是value。</p>
+<p>如：key对应的键值，value.name对应value的name属性。</p>
+#$@text#$@
+sid
+attribute
+@/@attribute/@propertyPath
+sname
+propertyPath
+ssize
+60
+scolspan
+2
+sgroup
+Attribute
+Sdescription
+#$@text#$@
+<p>Ognl表达式，映射到事物上的属性。</p>
+<p>其中.label、.path、.thingName、.descriptor、.extend、.attributeName是特别的参数，分别可以对标签、路径、事物名、描述者和属性名等映射。其中thingName、descriptor、extend和attributeName有多个值，作为数据对象的属性映射时只返回第一个，其中attributeName作为属性映射时只返回null，这些属性通常用于搜索事物。</p>
+#$@text#$@
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+propertyPath
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@thing
+sname
+thing
+slabel
+Thing
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.RelationDataObject
+smany
+true
+seditCols
+2
+sdescription
+<p>与其他数据对象有关联的属性或属性列表。</p>
+sid
+thing
+@/@actions1
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+actions1
+@/@actions1/@name
+sname
+name
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute

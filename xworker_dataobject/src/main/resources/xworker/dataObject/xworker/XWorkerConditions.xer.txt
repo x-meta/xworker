@@ -1,0 +1,632 @@
+^1369916769427
+@xworker.dataObject.xworker.XWorkerConditions
+sname
+XWorkerConditions
+slabel
+SearchThingConditions
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>查询事物的特殊条件，子事物会注册到查询条件的子事物下。</p>
+sid
+SearchThingConditions
+@xworker.dataObject.xworker.XWorkerConditions/@LabelCondition
+sname
+LabelCondition
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.query.Condition
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>事物的标签查询条件。</p>
+sid
+LabelCondition
+@xworker.dataObject.xworker.XWorkerConditions/@LabelCondition/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.XWorkerConditions/@LabelCondition/@actions/@isMatch
+sname
+isMatch
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.xmeta.Thing;
+
+def result = true;
+if(self.dataName != null && self.dataName != ""){
+    //获取查询参数值
+    def cValue = null;
+    cValue = Ognl.getValue(self.dataName, condition);
+    if(cValue == null){
+        cValue = self.value;
+    }
+    if(cValue == ""){
+        cValue = null;
+    }
+    
+    //数据参数值
+    def value = null;
+    if(data instanceof Thing){
+        value = data.metadata.label;
+    }
+    
+    def UtilCondition = world.getActionClass("xworker.dataObject.query.UtilCondition", actionContext);   
+    //比较
+    if(cValue instanceof String && cValue != null){
+        result = false;
+        for(cChildValue in cValue.split("[,]")){
+            result = UtilCondition.isMatch(value, cValue, self.getByte("operator"), self.type, self.pattern,
+                 self.getBoolean("ignoreNull"), actionContext);
+            if(result){
+                break;
+            }
+        }
+    }else{
+        result = UtilCondition.isMatch(value, cValue, self.getByte("operator"), self.type, self.pattern,
+                 self.getBoolean("ignoreNull"), actionContext);
+    }  
+}
+
+if(result == false){
+    return false;
+}else{
+    //判断子条件
+    for(child in self.childs){
+        def joinType = child.join;
+        if(joinType == "or"){
+            result = result | child.doAction("isMatch", actionContext);
+        }else{
+            result = result & child.doAction("isMatch", actionContext);
+        }
+        
+        if(!result){
+            return false;
+        }
+    }
+}
+
+return result;
+#$@text#$@
+sid
+isMatch
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.XWorkerConditions/@ThingNameCondition
+sname
+ThingNameCondition
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing,xworker.lang.MetaDescriptor3/@actions
+sextends
+xworker.dataObject.query.Condition
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>事物的事物名查询条件。</p>
+sid
+ThingNameCondition
+@xworker.dataObject.xworker.XWorkerConditions/@ThingNameCondition/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.XWorkerConditions/@ThingNameCondition/@actions/@isMatch
+sname
+isMatch
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.xmeta.Thing;
+
+if(!(data instanceof Thing)){   //不是事物不比较
+    return false;
+}
+
+def result = true;
+if(self.dataName != null && self.dataName != ""){
+    //获取查询参数值
+    def cValue = null;
+    cValue = Ognl.getValue(self.dataName, condition);
+    if(cValue == null){
+        cValue = self.value;
+    }
+    if(cValue == ""){
+        cValue = null;
+    }
+    
+    //数据参数值
+    def thingNames = data.getThingNames();
+    
+    def UtilCondition = world.getActionClass("xworker.dataObject.query.UtilCondition", actionContext);   
+    //比较
+    if(cValue instanceof String && cValue != null){
+        result = false;
+        for(cChildValue in cValue.split("[,]")){
+            for(thingName in thingNames){
+                result = UtilCondition.isMatch(thingName, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+                if(result){
+                    break;
+                }
+            }
+            if(result){
+                break;
+            }
+        }
+    }else{
+        for(thingName in thingNames){
+            result = UtilCondition.isMatch(thingName, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+            if(result){
+                break;
+            }
+        }
+    }  
+}
+
+if(result == false){
+    return false;
+}else{
+    //判断子条件
+    for(child in self.childs){
+        def joinType = child.join;
+        if(joinType == "or"){
+            result = result | child.doAction("isMatch", actionContext);
+        }else{
+            result = result & child.doAction("isMatch", actionContext);
+        }
+        
+        if(!result){
+            return false;
+        }
+    }
+}
+
+return result;
+#$@text#$@
+sid
+isMatch
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.XWorkerConditions/@DescriptorCondition
+sname
+DescriptorCondition
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.query.Condition
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>事物的描述者（结构）的查询条件。</p>
+sid
+DescriptorCondition
+@xworker.dataObject.xworker.XWorkerConditions/@DescriptorCondition/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.XWorkerConditions/@DescriptorCondition/@actions/@isMatch
+sname
+isMatch
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.xmeta.Thing;
+
+import xworker.dataObject.query.UtilCondition;
+
+if(!(data instanceof Thing)){   //不是事物不比较
+    return false;
+}
+
+def result = true;
+if(self.dataName != null && self.dataName != ""){
+    //获取查询参数值
+    def cValue = null;
+    cValue = Ognl.getValue(self.dataName, condition);
+    if(cValue == null){
+        cValue = self.value;
+    }
+    if(cValue == ""){
+        cValue = null;
+    }
+    
+    //数据参数值
+    def datas = [];
+    for(descriptor in data.getAllDescriptors()){
+        datas.add(descriptor.metadata.path);
+    }
+    
+    //比较
+    if(cValue instanceof String && cValue != null){
+        result = false;
+        //for(dataValue in datas){
+        //   log.info("dataValue=" + dataValue);
+        // }
+        for(cChildValue in cValue.split("[,]")){
+            for(dataValue in datas){
+                result = UtilCondition.isMatch(dataValue, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+                if(result){
+                    break;
+                }
+            }
+            if(result){
+                break;
+            }
+        }
+        //log.info("" + result + ",value=" + cValue + ",data=" + data);
+    }else{
+        for(dataValue in datas){
+            result = UtilCondition.isMatch(dataValue, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+            if(result){
+                break;
+            }
+        }
+    }  
+}
+
+if(result == false){
+    return false;
+}else{
+    //判断子条件
+    for(child in self.childs){
+        def joinType = child.join;
+        if(joinType == "or"){
+            result = result | child.doAction("isMatch", actionContext);
+        }else{
+            result = result & child.doAction("isMatch", actionContext);
+        }
+        
+        if(!result){
+            return false;
+        }
+    }
+}
+
+return result;
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+isMatch
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.XWorkerConditions/@PathCondition
+sname
+PathCondition
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.query.Condition
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>事物的路径的查询条件。</p>
+sid
+PathCondition
+@xworker.dataObject.xworker.XWorkerConditions/@PathCondition/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.XWorkerConditions/@PathCondition/@actions/@isMatch
+sname
+isMatch
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.xmeta.Thing;
+
+if(!(data instanceof Thing)){
+    return false;
+}
+
+def result = true;
+if(self.dataName != null && self.dataName != ""){
+    //获取查询参数值
+    def cValue = null;
+    cValue = Ognl.getValue(self.dataName, condition);
+    if(cValue == null){
+        cValue = self.value;
+    }
+    if(cValue == ""){
+        cValue = null;
+    }
+    
+    //数据参数值
+    def value = data.metadata.path;
+    def UtilCondition = world.getActionClass("xworker.dataObject.query.UtilCondition", actionContext);   
+    //比较
+    if(cValue instanceof String && cValue != null){
+        result = false;
+        for(cChildValue in cValue.split("[,]")){
+            result = UtilCondition.isMatch(value, cValue, self.getByte("operator"), self.type, self.pattern,
+                 self.getBoolean("ignoreNull"), actionContext);
+            if(result){
+                break;
+            }
+        }
+    }else{
+        result = UtilCondition.isMatch(value, cValue, self.getByte("operator"), self.type, self.pattern,
+                 self.getBoolean("ignoreNull"), actionContext);
+    }  
+}
+
+if(result == false){
+    return false;
+}else{
+    //判断子条件
+    for(child in self.childs){
+        def joinType = child.join;
+        if(joinType == "or"){
+            result = result | child.doAction("isMatch", actionContext);
+        }else{
+            result = result & child.doAction("isMatch", actionContext);
+        }
+        
+        if(!result){
+            return false;
+        }
+    }
+}
+
+return result;
+#$@text#$@
+sid
+isMatch
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.dataObject.xworker.XWorkerConditions/@AttributeCondition
+sname
+AttributeCondition
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.dataObject.query.Condition
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>事物的属性名的查询条件。</p>
+sid
+AttributeCondition
+@xworker.dataObject.xworker.XWorkerConditions/@AttributeCondition/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.dataObject.xworker.XWorkerConditions/@AttributeCondition/@actions/@isMatch
+sname
+isMatch
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+import org.xmeta.Thing;
+
+if(!(data instanceof Thing)){   //不是事物不比较
+    return false;
+}
+
+def result = true;
+if(self.dataName != null && self.dataName != ""){
+    //获取查询参数值
+    def cValue = null;
+    cValue = Ognl.getValue(self.dataName, condition);
+    if(cValue == null){
+        cValue = self.value;
+    }
+    if(cValue == ""){
+        cValue = null;
+    }
+    
+    //数据参数值
+    def datas = [];
+    for(descriptor in data.getDescriptors()){
+        for(attr in descriptor.get("attribute@")){
+            if(!datas.contain(attr.name)){
+                datas.add(attr.name);
+            }
+        }
+    }
+    
+    def UtilCondition = world.getActionClass("xworker.dataObject.query.UtilCondition", actionContext);   
+    //比较
+    if(cValue instanceof String && cValue != null){
+        result = false;
+        for(cChildValue in cValue.split("[,]")){
+            for(dataValue in datas){
+                result = UtilCondition.isMatch(dataValue, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+                if(result){
+                    break;
+                }
+            }
+            if(result){
+                break;
+            }
+        }
+    }else{
+        for(dataValue in datas){
+            result = UtilCondition.isMatch(dataValue, cValue, self.getByte("operator"), self.type, self.pattern,
+                     self.getBoolean("ignoreNull"), actionContext);
+            if(result){
+                break;
+            }
+        }
+    }  
+}
+
+if(result == false){
+    return false;
+}else{
+    //判断子条件
+    for(child in self.childs){
+        def joinType = child.join;
+        if(joinType == "or"){
+            result = result | child.doAction("isMatch", actionContext);
+        }else{
+            result = result & child.doAction("isMatch", actionContext);
+        }
+        
+        if(!result){
+            return false;
+        }
+    }
+}
+
+return result;
+#$@text#$@
+sid
+isMatch
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction

@@ -1,0 +1,176 @@
+%1469619274838
+@
+sname=GrabStockCurrentData
+slabel=GrabStockCurrentData
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>抓取当前股票信息的相关动作。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@loadRealData
+    sname=getDataFromSina
+    suri=template:http://hq.sinajs.cn/list=${code}
+    Sdescription=
+#$@text#$@
+<p>从新浪获取股票的当前数据，参数code，如code=sh600003。</p>
+#$@text#$@
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=true
+    sreturnVarName=realData
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.httpclient.HttpGet
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=loadRealData
+      @/@actions/@loadRealData/@ins
+      sisValidate=false
+      sname=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ins
+        @/@actions/@loadRealData/@ins/@code
+        sname=code
+        slabel=股票代码
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=code
+    @/@actions/@dataToDataObject
+    sname=dataToDataObject
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import java.text.SimpleDateFormat;
+
+import xworker.dataObject.DataObject;
+
+//新浪的股票实时数据转化为数据对象
+//var hq_str_sh510050="50ETF,2.228,2.227,2.215,2.232,2.172,2.210,2.211,292617112,644322778.000,18100,2.210,794600,2.208,15300,2.206,5000,2.205,32900,2.203,18400,2.211,50000,2.212,67300,2.213,589900,2.214,190500,2.215,2016-07-27,15:00:00,00";
+def ls = dataStr.split("[,]");
+def data = new DataObject("xworker.app.stock.dataobjects.StockRealTimeData");
+data.put("stockCode", code);
+data.put("open", Double.valueOf(ls[1]));
+data.put("close", Double.valueOf(ls[2]));
+data.put("price", Double.valueOf(ls[3]));
+data.put("max", Double.valueOf(ls[4]));
+data.put("low", Double.valueOf(ls[5]));
+data.put("bidBuy", Double.valueOf(ls[6]));
+data.put("bidSell", Double.valueOf(ls[7]));
+data.put("exchangeCount", Double.valueOf(ls[8]));
+data.put("exchangeMoney", Double.valueOf(ls[9]));
+data.put("buy1Count", Double.valueOf(ls[10]));
+data.put("buy1Price", Double.valueOf(ls[11]));
+data.put("buy2Count", Double.valueOf(ls[12]));
+data.put("buy2Price", Double.valueOf(ls[13]));
+data.put("buy3Count", Double.valueOf(ls[14]));
+data.put("buy3Price", Double.valueOf(ls[15]));
+data.put("buy4Count", Double.valueOf(ls[16]));
+data.put("buy4Price", Double.valueOf(ls[17]));
+data.put("buy5Count", Double.valueOf(ls[18]));
+data.put("buy5Price", Double.valueOf(ls[19]));
+data.put("sell1Count", Double.valueOf(ls[20]));
+data.put("sell1Price", Double.valueOf(ls[21]));
+data.put("sell2Count", Double.valueOf(ls[22]));
+data.put("sell2Price", Double.valueOf(ls[23]));
+data.put("sell3Count", Double.valueOf(ls[24]));
+data.put("sell3Price", Double.valueOf(ls[25]));
+data.put("sell4Count", Double.valueOf(ls[26]));
+data.put("sell4Price", Double.valueOf(ls[27]));
+data.put("sell5Count", Double.valueOf(ls[28]));
+data.put("sell5Price", Double.valueOf(ls[29]));
+def sf = new SimpleDateFormat("yyyy-MM-dd");
+data.put("dataDate", sf.parse(ls[30]));
+sf = new SimpleDateFormat("HH:mm:ss");
+data.put("dataTime", sf.parse(ls[31]));
+
+return data;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataToDataObject
+    @/@actions/@test
+    sname=test
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def self = actionContext.get("self");
+if(self == null){
+    self = world.getThing("xworker.app.stock.tasks.GrabStockCurrentData");
+}
+
+def dataStr = self.doAction("getDataFromSina", actionContext, ["code":"sh600007"]);
+println(dataStr);
+
+def data = self.doAction("dataToDataObject", actionContext, [
+    "code":"sh600007", "dataStr":dataStr]);
+println(data);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=test

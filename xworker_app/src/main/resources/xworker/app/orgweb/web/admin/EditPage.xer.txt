@@ -1,0 +1,288 @@
+^1526347341904
+@
+sname
+EditPage
+slabel
+EditPage
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import xworker.dataObject.DataObject;
+
+def addr = request.getRemoteAddr();
+if(addr == "0:0:0:0:0:0:0:1" || addr == "127.0.0.1"){
+    //本地IP地址可以直接使用
+}else if(session.getAttribute("__orgWebAdmin__") == null){    
+    response.sendRedirect("do?sc=xworker.app.orgweb.web.admin.AdminLogin");
+    return;
+}
+
+def page = world.getThing(requestBean.thingPath);
+if(requestBean.command == "save"){
+    def content = requestBean.content;
+    if(requestBean.lang == "en"){
+        page.set("en_description", content);
+    }else{
+        page.set("description", content);
+    }
+    page.save();
+}
+
+if(requestBean.lang == "en"){
+    actionContext.getScope(0).put("value", page.getString("en_description"));
+}else{
+    actionContext.getScope(0).put("value", page.getString("description"));
+}    
+return "success";
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    doAction
+      @/@actions/@doAction/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      contexts
+        @/@actions/@doAction/@contexts/@DataSouceActionContext
+        sname
+        DataSouceActionContext
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        xworker.app.orgweb.datasource.OrgwebDataSource
+        sconflicting
+        ignore
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.lang.context.Contexts/@DataSouceActionContext
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        DataSouceActionContext
+  @/@view
+  sname
+  view
+  sbelongToHtml
+  false
+  sdoctype
+  <!doctype html>
+  stitle
+  editor
+  sstyle
+  default
+  shasHead
+  false
+  shasBottom
+  false
+  snoCache
+  false
+  SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors
+  xworker.http.controls.SimpleControl/@view
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  view
+    @/@view/@code
+    sname
+    code
+    Scode
+#$@text#$@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN">
+<html>
+<head>
+	<title>SWT Kckeditor</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<!--<script type="text/javascript" src="fckeditor/2.6beta1/fckeditor.js"></script>-->
+	<script type="text/javascript" src="fckeditor/4_1/ckeditor.js"></script>
+	<script type="text/javascript">
+function getContents(){	
+	var oEditor = CKEDITOR.instances.data ;	
+	window.status = "html_edit_content:" + oEditor.getData();
+  	//alert(window.status) ;	
+}
+
+function setContents(html){
+    var oEditor = CKEDITOR.instances.data ;	
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    oEditor.setData(html);
+    //oEditor.SetHTML(html);
+    //var contentDiv = document.getElementById("data");
+    //contentDiv.value = html;
+}
+
+function setContentsFirst(html){
+    //var oEditor = FCKeditorAPI.GetInstance('data') ;
+    //oEditor.SetHTML(html);
+    
+    html = html.replace(new RegExp("&_n_;","gm"), "\n");
+    html = html.replace(new RegExp("&_r_;","gm"), "\r");
+    html = html.replace(new RegExp("&_quot_;","gm"), "\"");
+    var contentDiv = document.getElementById("data");
+    contentDiv.value = html;
+}
+
+function executeCommand( commandName ){
+	  var oEditor = FCKeditorAPI.GetInstance('data') ;
+
+	  // Execute the command.
+	  oEditor.Commands.GetCommand( commandName ).Execute() ;
+}
+
+function FCKeditor_OnComplete( editorInstance ){
+	  executeCommand("FitWindow");	  
+}
+</script>
+</head>
+<body>	
+	<form id="contentForm" name="contentForm" method="post" action="do" >
+	    <input type="hidden" name="sc" value="xworker.app.orgweb.web.admin.EditPage"/>
+	     <input type="hidden" name="thingPath" value="${requestBean.thingPath}"/>
+	     <input type="hidden" name="command" value="save"/>
+	     <input type="hidden" name="id" value="${requestBean.id}"/>
+	     <input type="hidden" name="backUrl" value="${requestBean.backUrl}"/>
+	     <input type="hidden" name="lang" value="${requestBean.lang?if_exists}"/>
+		<textarea  id="data" name="content" rows="20" cols="60">${(value?html)?if_exists}</textarea>
+ </form>
+	<form id="contentForm" name="contentForm" method="post" action="do?sc=xworker.swt.xworker.HtmlEditorHttp/@showEditorHtml">
+	     <input type="hidden" name="editorContent"  id="editorContent" value=""/>
+      <input type="button" value="返回" onclick="window.location.href='${requestBean.backUrl}'"/>
+	     <input type="button" value="默认" onclick="window.location.href='do?sc=xworker.app.orgweb.web.admin.EditPage&thingPath=${requestBean.thingPath?if_exists}&id=${requestBean.id}&backUrl=${requestBean.backUrl?url("utf-8")}'"/>
+	     <input type="button" value="英文" onclick="window.location.href='do?sc=xworker.app.orgweb.web.admin.EditPage&thingPath=${requestBean.thingPath?if_exists}&id=${requestBean.id}&backUrl=${requestBean.backUrl?url("utf-8")}&lang=en'"/>
+
+	</form>
+
+	<script language="javascript">    
+var editor = CKEDITOR.replace('data',{ 
+filebrowserImageBrowseUrl : 'do?sc=xworker.app.orgweb.web.admin.FileBrowser',  
+filebrowserFlashBrowseUrl : 'do?sc=xworker.app.orgweb.web.admin.FileBrowser',
+allowedContent : true  
+        });
+    editor.on('instanceReady',   // editor是CKEDITOR的一个实例
+                 function(event){
+                    event.editor.getCommand('maximize').exec();
+                  }
+    );    
+
+    //var oFCKeditor = new FCKeditor( 'data' ) ;    
+    //oFCKeditor.BasePath = "fckeditor/";
+    //oFCKeditor.ToolbarSet="${(requestBean.toolbarSet)?default("SwtEdit")}";
+    //oFCKeditor.ReplaceTextarea() ;         
+</script>
+</body>
+</html>
+#$@text#$@
+    sdescriptors
+    xworker.html.base.container.childs/@code
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    code
+  @/@success
+  sname
+  success
+  stype
+  form
+  scontentType
+  text/html;charset=UTF-8
+  svalue
+  xworker.app.orgweb.web.admin.EditPage/@view
+  sdescriptors
+  xworker.http.controls.SimpleControl/@result
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  success

@@ -1,0 +1,589 @@
+^1446537234260
+@
+sname
+PackageDataObject
+slabel
+PackageDataObject
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.dataObject.DataObject
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>遍历XWorker的classPath下的所有Java包。</p>
+sid
+PackageDataObject
+@/@actions1
+sname
+actions
+sid
+actions1
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@/@actions1/@query
+sname
+doQuery
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import ognl.Ognl;
+
+//获取数据实例
+def instance = self.doAction("getPackages", actionContext);
+
+def matchedDatas = [];
+//log.info("instance=" + instance);
+//从实例中查询匹配的数据
+if(actionContext.get("conditionConfig") == null){
+    //没有条件，返回全部
+    for(child in instance){        
+        def dobj = child;
+        dobj = self.doAction("createDataObjectFromObject", actionContext, ["data":child, "descriptor":self]);
+        //log.info("dobj=" + dobj);
+        if(dobj != null){
+            matchedDatas.add(dobj);
+        }
+    }
+}else{
+    for(child in instance){
+        def dobj = child;
+        dobj = self.doAction("createDataObjectFromObject", actionContext, ["data":child, "descriptor":self]);
+
+        if(dobj != null){
+            def matched = conditionConfig.doAction("isMatch", actionContext, ["condition":conditionData, "data":dobj]);        
+            //log.info("matched=" + matched);
+            if(matched){
+                matchedDatas.add(dobj);
+            }        
+        }
+    }
+}
+
+if(actionContext.get("pageInfo") != null){
+    //是否排序
+    if(pageInfo.sort != null && pageInfo.sort != ""){
+        matchedDatas.sort(){ a,b->   
+            def av = a == null ? null : a.get(pageInfo.sort);
+            def bv = b == null ? null : b.get(pageInfo.sort);
+            if(av == null && bv == null){
+                return 0;
+            }else if(av == null && bv != null){
+                return pageInfo.dir == "DESC" ? 1 : -1;
+            }else if(av != null && bv == null){
+                return pageInfo.dir == "DESC" ? -1 : 1;
+            }else{
+                return pageInfo.dir == "DESC" ? -av.compareTo(bv) : av.compareTo(bv);
+            }            
+        }   	
+    
+    }
+    pageInfo.totalCount = matchedDatas.size();
+    if(pageInfo.limit > 0){
+        if(pageInfo.start > matchedDatas.size()){
+            pageInfo.start = matchedDatas.size();
+        }
+        def toIndex = pageInfo.start + pageInfo.limit;
+        if(toIndex > matchedDatas.size()){ 
+            toIndex = matchedDatas.size();
+        }
+        def startIndex = pageInfo.start;
+        if(startIndex < 0){
+            startIndex = 0;
+        }    
+        pageInfo.datas = matchedDatas.subList(pageInfo.start, toIndex);
+    }else{
+        pageInfo.datas = matchedDatas;
+    }
+    return pageInfo.datas;
+}else{
+    if(actionContext.get("pageInfo") != null){
+        pageInfo.totalCount = matchedDatas.size();
+        pageInfo.datas = matchedDatas;
+    }
+    return matchedDatas;
+}
+#$@text#$@
+sinterpretationType
+Action
+ssaveReturn
+false
+sid
+query
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions1/@isMappingAble
+sname
+isMappingAble
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return true;
+Sdescription
+#$@text#$@
+<p>返回属性是否可以映射，比如数据库数据对象、CSV数据对象和Excel等数据对象的属性适合表字段、CSV或Excel的列映射的。</p>
+<p>如果不能映射，直接抛出有说明文字的异常。</p>
+<p>映射用于快速编辑属性。</p>
+#$@text#$@
+sid
+isMappingAble
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions1/@getMappingFields
+sname
+getMappingFields
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+//获取全部的表
+def datas = [];
+datas.add(["colName":"name", "colTitle":"包名"]);
+
+return datas;
+#$@text#$@
+sid
+getMappingFields
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions1/@getMappingAttributeName
+sname
+getMappingAttributeName
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+scode
+return "propertyPath";
+sid
+getMappingAttributeName
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions1/@getAttributeDescriptor
+sname
+getAttributeDescriptor
+stype
+string
+svalue
+xworker.dataObject.java.PackageDataObject/@attribute
+sinterpretationType
+Self
+svarScope
+Local
+sid
+getAttributeDescriptor
+sdescriptors
+xworker.lang.actions.Actions/@ValueFactory
+@/@actions1/@PackageGetter
+sname
+PackageGetter
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+suseOuterJava
+false
+sclassName
+PackageGetter
+smethodName
+run
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import org.xmeta.World;
+
+import org.xmeta.ActionContext;
+
+public class PackageGetter {
+    public static Object run(ActionContext actionContext){
+        return null;
+    }
+    
+	/**
+	 * 从文件中读取包。
+	 * 
+	 * @param packages
+	 * @param file
+	 * @param parentPackage
+	 */
+	public static void getFormFile(List<String> packages, File file, String parentPackage){
+		if(file.isDirectory()){
+			String packageName = parentPackage == null ? file.getName() : parentPackage + "." + file.getName();
+			packageName = packageName.replace('/', '.');
+			if(packageName.endsWith(".")){
+			    packageName = packageName.substring(0, packageName.length() - 1);
+			}
+			if(!packages.contains(packageName)){
+				packages.add(packageName);
+				
+				for(File childFile : file.listFiles()){
+					getFormFile(packages, childFile, packageName);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 从jar或者zip中读取。
+	 * 
+	 * @param packages
+	 * @param context
+	 * @param file
+	 * @param parentPackage
+	 * @throws IOException 
+	 */
+	public static void getFromZip(List<String> packages, File file, String parentPackage) throws IOException{
+		JarFile jarFile = new JarFile(file);   
+        Enumeration<JarEntry> enumeration = jarFile.entries();   
+        while (enumeration.hasMoreElements()) {   
+            JarEntry jarEntry = (JarEntry) enumeration.nextElement();
+            if(jarEntry.isDirectory()){
+            	String packageName = parentPackage == null ? jarEntry.getName() : parentPackage + "." + jarEntry.getName();
+            	packageName = packageName.replace('/', '.');
+            	if(packageName.endsWith(".")){
+    			    packageName = packageName.substring(0, packageName.length() - 1);
+    			}
+    			if(!packages.contains(packageName)){
+    				packages.add(packageName);
+    			}
+            }else{
+            	String jarEntryName = jarEntry.getName();    
+            	if(jarEntryName.lastIndexOf("/") != -1){
+	            	String packageName = jarEntryName.substring(0, jarEntryName.lastIndexOf("/"));
+	            	packageName = packageName.replace('/', '.');
+	            	if(packageName.endsWith(".")){
+        			    packageName = packageName.substring(0, packageName.length() - 1);
+        			}
+	            	if(!packages.contains(packageName)){
+	    				packages.add(packageName);
+	    			}
+            	}
+            }
+        }
+        jarFile.close();
+	}
+	
+	/**
+	 * 读取World下所有的包。
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<String> getPackages() throws IOException{		
+		List<String> packages = new ArrayList<String>();
+		
+		World world = World.getInstance();
+		String classpath = world.getClassLoader().getClassPath();
+		String[] classpaths = classpath.split("[" + File.pathSeparator + "]"); 
+		
+		for(String path : classpaths){
+			File file = new File(path);
+			if(file.exists()){
+				if(file.isDirectory()){
+					getFormFile(packages, file, null);
+				}else{
+					String fileName = file.getName().toLowerCase();
+					if(fileName.endsWith(".jar") || fileName.endsWith(".zip")){
+						getFromZip(packages, file, null);
+					}
+				}
+			}
+		}
+		
+		//获取java的包
+		URL javaUrl = world.getClassLoader().getResource("java/util/Map.class");
+		String protocol = javaUrl.getProtocol();
+		if("jar".equals(protocol)){
+			URL jarUrl = new URL(javaUrl.getPath());   
+            String path = jarUrl.getPath();
+            path = path.substring(0, path.indexOf("!"));
+            getFromZip(packages, new File(URLDecoder.decode(path, "utf-8")), null);
+		}else if("file".equals(protocol)){
+			String path = javaUrl.getPath();
+			path = path.substring(0, path.indexOf("!"));
+			File file = new File(path);
+			if(file.exists()){
+				if(file.isDirectory()){
+					getFormFile(packages, file, null);
+				}else{
+					String fileName = file.getName().toLowerCase();
+					if(fileName.endsWith(".jar") || fileName.endsWith(".zip")){
+						getFromZip(packages, file, null);
+					}
+				}
+			}
+		}
+		
+		return packages;
+	}
+}
+#$@text#$@
+sid
+PackageGetter
+sdescriptors
+xworker.lang.actions.Actions/@JavaAction
+@/@actions1/@getPackages
+sname
+getPackages
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+//包的列表缓存在world中
+def packages = world.getData("xworker.dataObject.java.PackageDataObject");
+if(packages != null){
+    return packages;
+}else{
+    //def cls = world.getActionClass("xworker.dataObject.java.PackageDataObject/@actions1/@PackageGetter", actionContext);
+    packages = xworker.java.assist.JavaClassCache.getAllPackages();
+    packages.sort(){ a,b->   
+            return a.compareTo(b);       
+        }   	
+    
+    def pks = [];
+    for(pk in packages){
+        def dataObject = new DataObject("xworker.dataObject.java.PackageDataObject");
+        dataObject.put("name", pk);
+        pks.add(dataObject);
+    }
+    world.setData("xworker.dataObject.java.PackageDataObject", pks);
+    return pks;
+}
+#$@text#$@
+Sdescription
+#$@text#$@
+<p>返回所有包的列表。</p>
+<p>结构是：</p>
+<p>[ [&quot;name&quot;:xxx]];</p>
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sid
+getPackages
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@actions1/@clearCache1
+sname
+clearCache
+sobject
+world
+smethod
+setData
+sdescription
+<p>清空缓存，下次取包时重新初始化包列表。</p>
+sinterpretationType
+Self
+svarScope
+Local
+sid
+clearCache1
+sdescriptors
+xworker.lang.actions.Actions/@MethodCall
+@/@actions1/@clearCache1/@key
+sname
+key
+stype
+string
+svalue
+xworker.dataObject.java.PackageDataObject
+sinterpretationType
+Self
+svarScope
+Local
+sid
+key
+sdescriptors
+xworker.lang.actions.MethodCall/@ValueFactory
+@/@actions1/@clearCache1/@value
+sname
+value
+stype
+null
+sinterpretationType
+Self
+svarScope
+Local
+sid
+value
+sdescriptors
+xworker.lang.actions.MethodCall/@ValueFactory
+@/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sid
+label
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@/@attribute
+sname
+attribute
+slabel
+Attribute
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.Attribute
+smany
+true
+seditCols
+2
+Sdescription
+#$@text#$@
+<p>属性映射，Map的键值是key，值是value。</p>
+<p>如：key对应的键值，value.name对应value的name属性。</p>
+#$@text#$@
+sid
+attribute
+@/@attribute/@propertyPath
+sname
+propertyPath
+ssize
+60
+scolspan
+2
+sgroup
+Attribute
+sdescription
+<p>Ognl表达式，从数据上获取值。</p>
+sid
+propertyPath
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute
+@/@thing
+sname
+thing
+slabel
+Thing
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.dataObject.RelationDataObject
+smany
+true
+seditCols
+2
+sdescription
+<p>与其他数据对象有关联的属性或属性列表。</p>
+sid
+thing
+@/@actions
+sname
+actions
+slabel
+Actions
+sdescriptors
+xworker.lang.MetaDescriptor2/@thing
+sextends
+xworker.lang.actions.Actions
+sid
+actions
+@/@actions/@name
+sname
+name
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor2/@attribute

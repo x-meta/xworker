@@ -1,0 +1,77 @@
+package xworker.swt.xworker.codeassist.objectassists;
+
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import javassist.CtClass;
+import javassist.CtField;
+import javassist.CtMethod;
+import xworker.java.assist.Javaassist;
+import xworker.java.assist.ParameterInfo;
+import xworker.lang.VariableDesc;
+import xworker.swt.xworker.ClassUtils;
+import xworker.swt.xworker.CodeAssitContent;
+import xworker.swt.xworker.codeassist.ObjectAssistor;
+
+public class ClassAssistor implements ObjectAssistor{
+	private static Logger logger = LoggerFactory.getLogger(ClassAssistor.class);
+	
+	@Override
+	public List<CodeAssitContent> getContents(VariableDesc var, Thing thing, ActionContext actionContext) {
+		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
+		initContents(var.getClassName(), list);
+		
+		return list;
+	}
+	
+	public static void initContents(String className, List<CodeAssitContent> list) {
+		try {			
+			CtClass ctClass = ClassUtils.get(className);
+			if(ctClass != null){
+				for(CtField field : ctClass.getFields()){
+					if((field.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC){
+						list.add(new CodeAssitContent(field.getName(), field.getName() + ": " + field.getType().getName(), "fieldImage"));
+					}
+				}
+				
+				for(CtMethod method : ctClass.getMethods()){
+					if((method.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC){
+						List<ParameterInfo> params = Javaassist.getParameterInfo(method);
+						String label = method.getName() + "(";
+						String methodName = method.getName() + "(";
+						for(int i=0; i<params.size(); i++){
+							methodName = methodName + params.get(i).getName();
+							String type = params.get(i).getType();
+							int lastIndex = type.lastIndexOf(".");
+							if(lastIndex != -1){
+								type = type.substring(lastIndex + 1, type.length());
+							}
+							label = label + type + " " + params.get(i).getName();
+							if(i < params.size() - 1){
+								methodName = methodName + ", ";
+								label = label + ", ";
+							}
+						}
+						
+						CtClass rcls = method.getReturnType();
+						String rtype = "void";
+						if(rcls != null){
+							rtype = rcls.getSimpleName();
+						}
+						methodName = methodName + ")";
+						label = label + "): " + rtype;
+						list.add(new CodeAssitContent(methodName, label, "methodImage"));
+					}
+				}
+			}
+		}catch(Exception e) {
+			logger.warn("Get class content error, " + e.getMessage());
+		}
+	}
+}

@@ -1,0 +1,125 @@
+^1474967846678
+@
+sname
+Move
+slabel
+Move
+scheckPermission
+false
+scheckLogin
+true
+sloginAttribute
+__orgWebAdmin__
+sloginUrl
+do?sc=xworker.app.orgweb.web.admin.AdminLogin
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.http.controls.SimpleControl/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@doAction
+    sname
+    doAction
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.app.orgweb.ContentTreeManager;
+import xworker.dataObject.DataObject;
+
+def id = Integer.parseInt(requestBean.id);
+def action = requestBean.action;
+def contentTree = ContentTreeManager.getContentTree(id);
+if(contentTree != null){
+    def parent = contentTree.getParent();
+    if(parent != null){
+        def childs = parent.getChilds();
+        for(int i=0; i<childs.size(); i++){
+             if(childs.get(i) == contentTree){
+                 def index = -1;
+                 if("up" == action){
+                     index = i - 1;
+                 }else if("down" == action){
+                     index = i + 1;
+                 }
+                 
+                 if(index != -1 && index < childs.size()){
+                     //交换
+                     def c = childs.get(index);
+                     def obj1 = new DataObject("xworker.app.orgweb.dataobjects.ContentTree");
+                     obj1.set("tid", contentTree.getId());
+                     obj1.set("orderWeight", c.getOrderWeight());
+                     def obj2 = new DataObject("xworker.app.orgweb.dataobjects.ContentTree");
+                     obj2.set("tid", c.getId());
+                     obj2.set("orderWeight", contentTree.getOrderWeight());
+                     obj1.update(actionContext);
+                     obj2.update(actionContext);
+                     break;
+                 }
+             }
+        }
+    }
+    
+    if(requestBean.showParent == "true" && parent != null){
+        response.sendRedirect("do?sc=xworker.app.orgweb.web.Index&refresh=true&id=" + parent.getId());    
+    }else{
+        response.sendRedirect("do?sc=xworker.app.orgweb.web.Index&refresh=true&id=" + id);    
+    }
+}else{
+    response.writer.println("ContentTree is null, id=" + id);
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    doAction

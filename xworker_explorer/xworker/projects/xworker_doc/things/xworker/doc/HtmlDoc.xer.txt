@@ -1,0 +1,479 @@
+^1399536697196
+@
+sname
+HtmlDoc
+slabel
+HtmlDoc
+sid
+HtmlDoc
+sdescriptors
+xworker.http.ControlSet
+@/@index
+sname
+index
+sid
+index
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@index/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@index/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+//response.sendRedirect("do?sc=xworker.orgweb.ModuleWeb/@index");
+return "success";
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+doAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@index/@indexPage
+sname
+indexPage
+sbelongToHtml
+false
+sstyle
+default
+sotherHeads
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+sid
+indexPage
+slabel
+indexPage
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+@/@index/@indexPage/@code
+sname
+code
+Scode
+#$@text#$@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<html>
+<head>
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8">
+<title>XWorker Things Document</title>
+</head>
+
+<frameset rows="50,*" cols="*" frameborder="1" border="1" framespacing="0" resize="yes">
+  <frame title='头框架' scrolling="no" noresize  marginwidth="0" marginheight="0" name="header" src="do?sc=xworker.doc.HtmlDoc/@head">
+  <frameset rows="*" cols="250,*" resize="yes"  frameborder="1" border="1" framespacing="2">
+      <frame title='任务导航框架' marginwidth="0" marginheight="0" resize="yes" onload="this.focus()" name="navigator" src="do?sc=xworker.doc.HtmlDoc/@menu">
+      <frame title='工作区框架'   marginwidth="0" marginheight="0" resize="yes" name="main" src="do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=xworker.doc.Index">
+  </frameset>
+</frameset>
+</html>
+#$@text#$@
+sid
+code
+sdescriptors
+xworker.html.base.container.childs/@code
+@/@index/@success
+sname
+success
+stype
+form
+scontentType
+text/html;
+svalue
+xworker.doc.HtmlDoc/@index/@indexPage
+sid
+success
+slabel
+success
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+@/@head
+sname
+head
+sid
+head
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@head/@headPage
+sname
+headPage
+sbelongToHtml
+true
+sstyle
+default
+SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="css/thingDoc.css" TITLE="Style">
+</style>
+#$@text#$@
+sid
+headPage
+slabel
+headPage
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+@/@head/@headPage/@htmlCode
+sname
+htmlCode
+ShtmlCode
+#$@text#$@
+<table border="0" cellpadding="3" cellspacing="3" style="width:100%">
+	<tbody>
+		<tr>
+			<td style="background-color: rgb(200, 200, 200);"><strong><span style="font-size:large">&nbsp;文档和示例</span></strong></td>
+		</tr>
+		<tr>
+			<td style="text-align: right;"><span style="font-size:12px"><a href="http://www.apache.org/licenses/LICENSE-2.0" target="main">协议</a> <a href="do?sc=xworker.doc.xworker.Index/@about" target="main">关于</a><strong>&nbsp;</strong></span></td>
+		</tr>
+	</tbody>
+</table>
+
+<p>&nbsp;</p>
+#$@text#$@
+sid
+htmlCode
+sdescriptors
+xworker.html.base.container.childs/@htmlCode
+@/@head/@success
+sname
+success
+stype
+form
+scontentType
+text/html;
+svalue
+xworker.doc.HtmlDoc/@head/@headPage
+sid
+success
+slabel
+success
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+@/@menu
+sname
+menu
+sid
+menu
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@menu/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@/@menu/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def menuObject = world.getThing("xworker.doc.HtmlDoc/@XWorker");
+menuObject = menuObject.detach();
+
+//Core项目的放在第一位
+def docCore = world.getThing("xworker.ide.config.Doc");
+if(docCore != null){
+    for(child in docCore.childs){
+        menuObject.childs.add(child);
+    }
+}
+
+def projectMenu = null;
+for(thingManager in world.getThingManagers()){
+    def rootCategory = thingManager.getCategory("");
+    if(rootCategory == null){
+        continue;
+    }
+    for(lv1Category in rootCategory.getCategorys()){
+        for(lv2Category in lv1Category.getCategorys()){
+            def doc = world.getThing(lv2Category.getName() + ".config.Doc");                    
+            if(doc != null && doc != docCore){
+                println(doc.getMetadata().getPath());
+                if(projectMenu == null){
+                    projectMenu = new Thing("xworker.lang.Menu");
+                    projectMenu.put("name", thingManager.getName());
+                    projectMenu.put("label", "<b>" + thingManager.getName() + "</b>");
+                    menuObject.childs.add(projectMenu);
+                }
+                for(child in doc.childs){
+                    projectMenu.childs.add(child);
+                }
+            }
+        }
+    }
+}
+
+menus = menuObject;
+
+//menus = menus.detach();
+//makeUrl(menus.childs);
+
+def makeUrl(menus){
+    for(menu in menus){
+        String url = menu.url;
+        if(url == null || url == ""){           
+        }else{        
+            def urls = url.split("[=]");
+            String path = urls[urls.length - 1];
+            String filePath = path.replace(':', '.');
+            filePath = filePath.replace('/', '_');
+            filePath = filePath.replace('@', '.');
+            filePath = filePath.replace('.', '/');
+        
+            menu.url = filePath + ".html";
+            //println menu.url;
+        }
+        
+        makeUrl(menu.childs);  
+    }
+}
+
+return "success";
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+doAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@menu/@forms
+sname
+forms
+sbelongToHtml
+false
+sstyle
+default
+sotherHeads
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+sid
+forms
+slabel
+forms
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+@/@menu/@forms/@code
+sname
+code
+Scode
+#$@text#$@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/editor/css/fck_editorarea.css" TITLE="Style"/>
+<title>功能菜单树</title>
+
+<!-- The xtree script file -->
+<script src="${request.contextPath}/js/xtree.js"></script>
+<LINK REL ="stylesheet" TYPE="text/css" HREF="${request.contextPath}/js/xtree.css" TITLE="Style"/>
+
+<!-- Modify this file to change the way the tree looks -->
+<link type="text/css" rel="stylesheet" href="${request.contextPath}/css/xtree.css">
+<base target="main">
+</head>
+
+<body class="navtree">
+#$@text#$@
+sid
+code
+sdescriptors
+xworker.html.base.container.childs/@code
+@/@menu/@forms/@treeMenu
+sname
+treeMenu
+slabel
+菜单
+svalues
+menus
+sincludeRoot
+true
+sdisplay
+tree
+scheckAble
+false
+starget
+main
+sid
+treeMenu
+sdescriptors
+xworker.html.base.container.childs/@menu
+@/@menu/@forms/@code1
+sname
+code
+Scode
+#$@text#$@
+</body>
+</html>
+<#macro showTree trees node checkAble="false">
+<#if checkAble == "false">
+    <#list trees as menu>
+    var ${node}_${menu_index}  = new WebFXTreeItem('${menu.label?if_exists}', '${menu.url?if_exists}');
+    <#if menu.target?exists && menu.target != "">
+    ${node}_${menu_index}.target = '${menu.target}';
+    <#else>
+    ${node}_${menu_index}.target = 'main';
+    </#if>
+    ${node}.add(${node}_${menu_index});
+    <#if menu.allChilds?exists>
+    <@showTree trees=menu.allChilds node="${node}_${menu_index}"/>
+    </#if>
+    </#list>
+<#else>
+    <#list trees as menu>
+    var ${node}_${menu_index}  = new CheckableTreeItem('${menu.name?if_exists}', '${menu.label?if_exists}', '${menu.url?if_exists}', true, false, 'checkParentNodes(${node}_${menu_index}, true, false);checkChildNodes(${node}_${menu_index}, true, true)');
+    <#if menu.target?exists && menu.target != "">
+    ${node}_${menu_index}.target = '${menu.target}';
+    <#else>
+    ${node}_${menu_index}.target = 'main';
+    </#if>
+    ${node}.add(${node}_${menu_index});
+    <#if menu.allChilds?exists>
+    <@showTree trees=menu.allChilds node="${node}_${menu_index}" checkAble=checkAble/>
+    </#if>
+    </#list>
+</#if>    
+</#macro>
+#$@text#$@
+sid
+code1
+sdescriptors
+xworker.html.base.container.childs/@code
+@/@menu/@success
+sname
+success
+stype
+form
+scontentType
+text/html;
+svalue
+xworker.doc.HtmlDoc/@menu/@forms
+sid
+success
+slabel
+success
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+@/@doc
+sname
+doc
+sid
+doc
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@/@doc/@forms
+sname
+forms
+sbelongToHtml
+true
+sstyle
+default
+SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="css/thingDoc.css" TITLE="Style">
+</style>
+#$@text#$@
+sid
+forms
+slabel
+forms
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+@/@doc/@forms/@htmlCode
+sname
+htmlCode
+ShtmlCode
+#$@text#$@
+<p><span style="font-size: small"><strong>XWorker文档</strong><span style="font-size: xx-small"><strong><a href="javascript:void(0)">edit</a></strong></span></span></p>
+<p>&nbsp;</p>
+#$@text#$@
+sid
+htmlCode
+sdescriptors
+xworker.html.base.container.childs/@htmlCode
+@/@doc/@success
+sname
+success
+stype
+form
+scontentType
+text/html;
+svalue
+xworker.doc.HtmlDoc/@doc/@forms
+sid
+success
+slabel
+success
+sdescriptors
+xworker.http.controls.SimpleControl/@result
+@/@XWorker
+sname
+XWorker
+slabel
+主页
+sincludeRoot
+false
+sdisplay
+menu
+scheckAble
+false
+starget
+main
+surl
+do?sc=xworker.doc.Index
+sid
+XWorker
+sdescriptors
+xworker.html.base.container.childs/@menu

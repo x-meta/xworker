@@ -1,0 +1,287 @@
+^1460093666377
+@
+sname
+IndexUtils
+slabel
+IndexUtils
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+actions
+@/@actions/@removeNotExistsIndex
+sname
+removeNotExistsIndex
+sthingPath
+xworker.tools.IndexUtils
+saction
+checkAndRemoveIndex
+Sdescription
+#$@text#$@
+<p>启动新的进程来删除不存在事物索引。</p>
+#$@text#$@
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.ExecuteXWorkerProcess
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+removeNotExistsIndex
+@/@actions/@removeIndex
+sname
+checkAndRemoveIndex
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def pst = null;
+def rs = null;
+try{
+    pst = con.prepareStatement("select * from tblThings");
+    rs = pst.executeQuery();
+    while(rs.next()){
+         def path = rs.getString("path");
+         if(world.getThing(path) == null){
+              println("thing not exists, delete index: " + path);
+              self.doAction("deleteIndex", actionContext, ["thing": path]);
+         }
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+removeIndex
+@/@actions/@removeIndex/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+contexts
+@/@actions/@removeIndex/@contexts/@DataSouceActionContext
+sname
+DataSouceActionContext
+sconnectionName
+con
+stransaction
+false
+sdataSourcePath
+_local.xworker.db.XWorkerIDEDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+DataSouceActionContext
+@/@actions/@deleteIndex
+sname
+deleteIndex
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def pst = null;
+def rs = null;
+
+try{
+    pst = con.prepareStatement("select id from tblThings where path like ?");
+    pst.setString(1, thing);
+    rs = pst.executeQuery();
+    def thingIds = [];
+    while(rs.next()){
+        thingIds.add(rs.getInt("id"));
+    }
+    
+    rs.close();
+    for(thingId in thingIds){
+        pst.close();
+        
+        //删除相关的表中的数据
+        pst = con.prepareStatement("delete from tblThingRegists where thingId=? or registThingId=?");
+        pst.setInt(1, thingId);
+        pst.setInt(2, thingId);
+        pst.execute();
+        pst.close();
+        
+        pst = con.prepareStatement("delete from tblThingKeywords where thingId=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+        
+        pst = con.prepareStatement("delete from tblThingDescriptors where thingId=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+
+        pst = con.prepareStatement("delete from tblThings where id=?");
+        pst.setInt(1, thingId);
+        pst.execute();
+        pst.close();
+       
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+deleteIndex

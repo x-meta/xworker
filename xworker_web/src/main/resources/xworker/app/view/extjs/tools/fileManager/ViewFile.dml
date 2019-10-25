@@ -1,0 +1,150 @@
+%1519465865589
+@
+sname=ViewFile
+slabel=ViewFile
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def IMG =  [ "bmp", "jpg", "jpeg", "png", "tiff", "gif", "pcx", "tga", "exif", "fpx", "svg", "psd",
+"cdr", "pcd", "dxf", "ufo", "eps", "ai", "raw", "wmf" ];
+
+def path =requestBean.path;
+def index = path.lastIndexOf(".");
+if(index != -1){
+    def ext = path.substring(index + 1, path.length()).toLowerCase();
+    if(isImage(ext, IMG)){
+        return "image";
+    }
+}
+
+return "unknown";
+
+def isImage(ext, IMG){
+    for(e in IMG){
+        if(e == ext){
+            return true;
+        }
+    }
+    return false;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=doAction
+  @/@imageView
+  sname=imageView
+  sbelongToHtml=true
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=imageView
+    @/@imageView/@code
+    sname=code
+    scode=<img src="${requestBean.path?if_exists}"/>
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@unkownView
+  sname=unkownView
+  sbelongToHtml=true
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=unkownView
+    @/@unkownView/@code
+    sname=code
+    scode=文件不能预览。
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@image
+  sname=image
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.app.view.extjs.tools.fileManager.ViewFile/@imageView
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=image
+  @/@unknown
+  sname=unknown
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.app.view.extjs.tools.fileManager.ViewFile/@unkownView
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=unknown

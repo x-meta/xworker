@@ -1,0 +1,525 @@
+^1469503164110
+@
+sname
+SimpleApp1
+slabel
+SimpleApp1
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.app.view.http.app.SimpleLogin,xworker.app.view.extjs.widgets.app.TitleTreeApp
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+xworker.app
+smodifier
+public
+sinheritDescription
+false
+sicon
+icons/application_side_tree.png
+Sdescription
+#$@text#$@
+<p>一个有登录页面有树菜单和工作区的简单的Extjs应用。</p>
+
+<h3>树菜单的设置</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 通过menuTreeLoader属性设置，或者通过添加子事物TreeModels来设置。默认不显示树模型的根节点。</p>
+
+<h3>菜单节点和事件</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 点击菜单的事件处理在menuTreeClick的属性中，默认代码是通过菜单节点的设置在工作区打开一个TabItem，可以修改代码实现其它需求，而菜单节点的设置依赖具体需求。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在工作区打开TabItem中，菜单节点的设置主要有：</p>
+
+<ul>
+	<li><strong>tabId</strong><br />
+	在那个TabItem中打开，如果已存在相同ID的TabItem，那么就会在这个TabItem中打开。</li>
+	<li><strong>dataId</strong><br />
+	作为远程控件的namespace的名称。</li>
+	<li><strong>id</strong><br />
+	树节点自身的id号。</li>
+	<li><strong>url</strong><br />
+	远程控件的地址，一般是do?sc=xxx。</li>
+</ul>
+
+<h3>登录</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 作为一个需要先登录的应用，可以重写loadUser方法实现自定义的用户验证，参数name和password，成功返回用户的实体，失败返回null或跑出异常等。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.html.extjs.ExtJs
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sid
+  actions
+    @/@actions/@httpDo
+    sname
+    doLogined
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.app.view.extjs.application.simple1.SimpleApp1Actions
+    smethodName
+    doLogined
+    sdisableGlobalContext
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Local
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    httpDo
+    @/@actions/@loadUser
+    sname
+    loadUser
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//简单的登录校验
+if(requestBean.name == self.username && requestBean.password == self.password){
+    return ["name": self.userName, "password":self.password];
+}else{
+    return null;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    loadUser
+  @/@name
+  sname
+  name
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  name
+  @/@kabek
+  sname
+  label
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  kabek
+  @/@title
+  sname
+  title
+  sinputtype
+  text
+  ssize
+  60
+  scolspan
+  2
+  sinputattrs
+  codeName= codeType= wrap=false fillBoth=true cols= rows=200
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>内容中不能含有单引号'，如果有请使用转义的单引号，Javascript字符串规则，最后的字符串外面是单引号包围的。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  title
+  @/@menuTreeLoader
+  sname
+  menuTreeLoader
+  stype
+  string
+  sinputtype
+  openWindow
+  sshowLabel
+  true
+  ssize
+  60
+  scolspan
+  2
+  sinputattrs
+  xworker.html.extjs.xworker.editor.EditTreeLoaderUrlOpenWindow/@shell
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<div class="short">The URL from which to request a Json string which specifies an array of node definition objects representing the chil...</div>
+
+<div class="short">&nbsp;</div>
+
+<div class="short">一个URL可以返回树节点的Json格式的数据，XWorker提供了一个把数据转化为Json的结构，通过点击后面的*按钮设置。</div>
+
+<div class="short">&nbsp;</div>
+
+<ul>
+	<li><strong>TreeModel</strong><br />
+	见xworker.app.model.tree.TreeModel.<br />
+	&nbsp;</li>
+	<li><strong>Data</strong><br />
+	Json数据的格式可以参看事物<a href="javascript:invoke('thing:xworker.app.model.tree.TreeNode')">xworker.app.model.tree.TreeNode</a>.</li>
+</ul>
+
+<div class="short">&nbsp;</div>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  menuTreeLoader
+  @/@simpleLogin
+  sname
+  simpleLogin
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  simpleLogin
+  @/@company
+  sname
+  company
+  sshowLabel
+  true
+  ssize
+  60
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  company
+  @/@logo
+  sname
+  logo
+  sshowLabel
+  true
+  ssize
+  60
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sdefault
+  /images/logo.png
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  logo
+  @/@sessionAttributeName
+  sname
+  sessionAttributeName
+  sshowLabel
+  true
+  ssize
+  40
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果htttpsesion中的这个属性不为空，表示已登录，否则表示未登录。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  sessionAttributeName
+  @/@loginedUrl
+  sname
+  loginedUrl
+  sshowLabel
+  true
+  ssize
+  60
+  sgroup
+  unused
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>登录成功后要跳转到的页面。可以通过重载getLoginedUrl方法返回自定义的登陆成功的页面。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  loginedUrl
+  @/@tbar
+  sname
+  tbar
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.html.extjs.Ext.Panel/@25354
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sid
+  tbar
+  @/@username
+  sname
+  username
+  sshowLabel
+  true
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sdefault
+  admin
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  username
+  @/@password
+  sname
+  password
+  sshowLabel
+  true
+  sgroup
+  SimpleLogin
+  sreadOnly
+  false
+  sdefault
+  admin
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  password

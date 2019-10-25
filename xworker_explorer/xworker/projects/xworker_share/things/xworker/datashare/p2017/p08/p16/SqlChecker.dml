@@ -1,0 +1,410 @@
+%1503475604043
+@
+sname=SqlChecker
+slabel=SqlChecker
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=sql
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>数据库检查器。</p>
+
+<p><strong>设置数据源</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过向导<strong>(Guide)</strong>来设置数据源。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.monitor.check.Checkers
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@check
+    sname=check
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.data.DATA;
+import xworker.util.UtilAction;
+
+//获取数据源事物
+def dataSources = self.doAction("getDataSources", actionContext);
+//检查任务列表
+def tasks = self.doAction("getSqlCheckTasks", actionContext);
+//println dataSources;
+
+def msgs = [
+];
+def hasMsg = false;
+for(dataSource in dataSources){
+    def con = null;
+    def path = dataSource.getMetadata().getPath();
+    def label = dataSource.getMetadata().getLabel();
+
+    def dsMsgs = [
+        "dataSource": dataSource,
+        "label":label,
+        "path":path,
+        "tasks":[]
+    ];
+    msgs.add(dsMsgs);
+    try{
+        con = dataSource.doAction("getConnection", actionContext);
+        if(con != null){
+            //检查任务
+            for(task in tasks){                
+                try{
+                    def msg = task.doAction("check", actionContext, 
+                            "dataSource", dataSource, "con", con,
+                            "level", level);
+                    if(msg != null){
+                        dsMsgs.tasks.add([
+                                  "msg":  msg,
+                                  "task": task.getMetadata().getLabel(),
+                                  "taskThing": task]);
+                        hasMsg = true;
+                    }   
+                }catch(Exception e){
+                     dsMsgs.tasks.add([
+                               "task": task.getMetadata().getLabel(),
+                               "taskThing": task,
+                               "msg": 
+                                      "<pre>" + UtilAction.getCauseStackTrace(e) + 
+                                      "</pre>"]); 
+                     hasMsg = true;
+                }     
+                        
+            }           
+        }else{
+            dsMsgs.msg = noConnection(actionContext);
+            hasMsg = true;
+        }
+    }catch(Exception e){ 
+        dsMsgs.msg = "<pre>" + UtilAction.getCauseStackTrace(e) + "</pre>";
+        hasMsg = true;   
+    }finally{
+        if(con != null){
+            con.close();
+        }
+    }
+}
+
+if(hasMsg == false){
+    //没有内容不发送
+    return null;
+}else{
+    //println msgs;
+    return toHtml(actionContext, "messages", msgs, "checker", self);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=check
+      @/@actions/@check/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@check/@ActionDefined/@toHtml
+        sname=toHtml
+        stype=freemarker
+        svarScope=Local
+        stemplateEncoding=UTF-8
+        soutputEncoding=UTF-8
+        StemplateCode=
+#$@text#$@
+<h2>${checker.metadata.label}</h2>
+&nbsp;&nbsp;&nbsp;&nbsp;${checker.metadata.path}
+<hr style="height:3px;border:none;border-top:3px double red;" />
+<#list messages as msg>
+<#if 0 < msg.tasks?size || msg.msg?exists>
+<h3>${msg.label}</h3>
+&nbsp;&nbsp;&nbsp;&nbsp;${msg.path}
+<#if msg.msg?exists>
+<br/>
+${msg.msg}
+</#if>
+<#if 0 < msg.tasks?size>
+<table class="datatable">
+  <tr>
+    <th>任务(Task)</th>  
+    <th>消息(Message)</th>
+  </tr>
+  <#list msg.tasks as task>
+  <tr>
+     <td>${task.taskThing.metadata.label}</td>
+     <td>${task.msg}</td>
+  </tr>
+  </#list>
+</table>
+</#if>
+</#if>
+</#list>
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.text.TextTemplate
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=toHtml
+    @/@actions/@getDataSources
+    sname=getDataSources
+    sattributeName=dataSources
+    schildThingName=DataSource
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getDataSources
+    @/@actions/@getSqlCheckTasks
+    sname=getSqlCheckTasks
+    sattributeName=sqlCheckTasks
+    schildThingName=SqlCheckTasks
+    schildThingOnly=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetThins
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSqlCheckTasks
+  @/@name
+  sname=name
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@sqlCheckTasks
+  sname=sqlCheckTasks
+  sshowLabel=true
+  ssize=50
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=sqlCheckTasks
+  @/@dataSources
+  sname=dataSources
+  sinputtype=textarea
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=dataSources
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@DataSource
+  sname=DataSource
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.db.jdbc.DataSource
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=DataSource
+  @/@SqlCheckTasks
+  sname=SqlCheckTasks
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.monitor.check.sql.SqlCheckTasks
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  sdescription=<p>在这里设置要检查的SQL任务。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SqlCheckTasks
+    @/@SqlCheckTasks/@name
+    sname=name
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SqlCheckTasks/@label
+    sname=label
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SqlCheckTasks/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description

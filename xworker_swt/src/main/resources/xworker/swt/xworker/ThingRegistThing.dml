@@ -1,0 +1,3930 @@
+%1571206585602
+@
+sname=QuickFunction
+slabel=快速功能
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+sicon=icons/application_cascade.png
+Sdescription=
+#$@text#$@
+<p><strong>快速功能</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 快速功能是在事物注册器中快速创建功能的事物模型，它可以实现多种功能。</p>
+
+<p><strong>类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 要显示的内容的类型。</p>
+
+<ul>
+	<li><strong>url</strong><br />
+	在WEB浏览器中打开一个url。&nbsp;</li>
+	<li><strong>thingDesc</strong><br />
+	在WEB浏览器中打开一个事物的文档。</li>
+	<li><strong>thingControl</strong><br />
+	在WEB浏览器中打开一个WEB应用。</li>
+	<li><strong>thingEditor</strong><br />
+	事物编辑器。</li>
+	<li><strong>thingRegist</strong><br />
+	事物注册器，在path中设置，如:child|xxxxxx|desc|openMethod|displayType。其中child是注册类型，xxxxx是注册到的事物地址；desc是创建事物时的默认描述者；openMethod是默认打开方式，如thingDesc等；displayType是显示方式，有TabFolder和Composite两种。</li>
+	<li><strong>composite</strong><br />
+	打开一个SWT的面板。</li>
+	<li><strong>shell</strong><br />
+	打开一个SWT窗口。</li>
+	<li><strong>uiFlow</strong><br />
+	打开一个界面流程应用。</li>
+	<li><strong>uiFunction</strong><br />
+	打开一个交互函数。</li>
+	<li><strong>autoDemo</strong><br />
+	打开一个自动演示。</li>
+	<li><strong>swtDemo</strong><br />
+	打开一个SWT演示。</li>
+	<li><strong>webDemo</strong><br />
+	打开一个WEB应用演示。</li>
+	<li><strong>thingDemo</strong><br />
+	打开一个事物演示。</li>
+	<li><strong>action</strong><br />
+	执行一个动作。</li>
+	<li><strong>groovy</strong><br />
+	可以修改和执行的groovy脚本。</li>
+	<li><strong>dataObjectEditor</strong><br />
+	编辑一个数据对象</li>
+	<li><strong>dataObjectSelector</strong><br />
+	编辑和选择一个数据对象的数据，需要实现void dataObjectSelected(DataObject data)方法。</li>
+	<li><strong>dataObjectMultiSelector</strong><br />
+	编辑并可以选择多个数据对象，需要实现void dataObjectSelected(List&lt;DataObject&gt; datas)方法。</li>
+	<li><strong>code</strong><br />
+	代码，显示一段代码，可以通过codeType指定代码着色。</li>
+</ul>
+
+<p><strong>获取要打开的内容的方法</strong></p>
+
+<p>&nbsp;&nbsp; 首先通过path获取，除了url其它基本都当作事物的路径，如果path为空，那么获取第一个子事物作为要演示的内容。</p>
+
+<p><strong>配合命令使用</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果是在命令下，那么可以实现execute方法，这样在命令中双击可以执行。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sen_label=QuickFunction
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_thingRegistViewer=self
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//log.info("self=" + self);
+//初始化变量等
+def type = self.getString("type");
+self.doAction("init", actionContext);
+//把自己也保存到全局变量上下文中
+actionContext.g().put("thingSelf", self);
+
+def content = actionContext.get("content");
+//log.info("type:" + type + "，　content:" + content);
+
+//如果没有内容显示一个空白
+if(content == null){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@noContent");
+    return thing.doAction("create", actionContext);
+}else{
+    actionContext.g().put("content", content);
+    self.doAction(type, actionContext, ["content": content, "execute":false]);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@execute
+    sname=execute
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+//初始化变量等
+def type = self.getString("type");
+self.doAction("init", actionContext);
+
+def content = actionContext.get("content");
+if(content == null && type == "thingDesc"){
+    content = self;
+}
+
+//如果没有内容显示一个空白
+if(content == null){
+    return;
+}else{
+    self.doAction(type, actionContext, ["content": content, "execute":true]);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=execute
+    @/@actions/@init
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//值是单行字符串的
+def stringType = ["url"];
+//值是self的
+def selfType = ["groovy", "code", "html"];
+//值是regsit的
+def registType = ["thingRegist"];
+//如果content=null，那么使用默认自己的
+def nullSelf = ["thingDesc"];
+
+//获取内容
+def content = null;
+def type = self.getString("type");
+if(isType(type, stringType)){
+    //值是单行字符串类型的
+    content = self.doAction("getString", actionContext);
+}else if(isType(type, selfType)){
+    //值是自己的
+    content = self;
+}else if(isType(type, registType)){
+    //值是注册类型的
+    content = self.getStringBlankAsNull("path");
+    if(content == null){
+        return;
+    }        
+    def ps = content.split("[|]");
+    if(ps.length < 2){
+        return;
+    }
+    actionContext.g().put("registType", ps[0]);
+    content = world.getThing(ps[1]);
+    if(ps.length >= 3){
+        actionContext.g().put("descriptor", ps[2]);
+        if(ps.length >= 4){
+            actionContext.g().put("contentDefaultOpenMethod", ps[3]);
+        }else{
+            actionContext.g().put("contentDefaultOpenMethod", null);
+        }
+        if(ps.length >= 5){
+            actionContext.g().put("contentDisplayType", ps[4]);  
+        }else{
+            actionContext.g().put("contentDisplayType", "Composite");      
+        }
+    }else{
+        if(content != null && content.getDescriptor().getMetadata().getPath() == "xworker.lang.util.ThingIndex"){
+            //如果事物是ThingIndex，使用ThingIndex自身的设置
+            log.info("contentDisplayType=" + content.get("contentDisplayType"));
+            actionContext.g().put("descriptor", content.get("descritporForNewThing"));
+            actionContext.g().put("contentDefaultOpenMethod", content.get("contentDefaultOpenMethod"));
+            actionContext.g().put("contentDisplayType", content.get("contentDisplayType"));            
+        }else{
+            actionContext.g().put("descriptor", null);
+            actionContext.g().put("contentDefaultOpenMethod", "thingDesc");
+            actionContext.g().put("contentDisplayType", "Composite");            
+        }
+    }
+}else{
+    //默认都是事物类型
+    content = self.doAction("getThing", actionContext);
+    //取第一个子事物
+    if(content == null && self.getChilds().size() > 0){
+        content = self.getChilds().get(0);
+    }
+}
+
+if(content == null && isType(type, nullSelf)){
+    //如果content为null，那么默认使用self的
+    content = self;
+}
+
+actionContext.g().put("content", content);
+
+def isType(type, types){
+    for(t in types){
+        if(type == t){
+            return true;
+        }
+    }
+    
+    return false;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=init
+      @/@actions/@init/@Variables
+      sname=Variables
+      sdescriptors=xworker.lang.actions.Inout/@Variables
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=Variables
+        @/@actions/@init/@Variables/@log
+        sname=log
+        stagName=xworker.swt.xworker.ThingRegistThing/@actions/@init
+        saction=true
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=log
+    @/@actions/@url
+    sname=url
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenUrl(content);
+    return;
+}
+
+if(self.getBoolean("simpleBrowser")){
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@simpleBrowser");
+    def browser = thing.doAction("create", actionContext);
+    
+    //打开url
+    browser.setUrl(content);
+    //println(composite);
+    return browser;
+}else{
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+    def composite = thing.doAction("create", actionContext);
+    
+    //打开url
+    browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":content]);
+    //println(composite);
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=url
+    @/@actions/@thingDesc
+    sname=thingDesc
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//打开url
+def url = XWorkerUtils.getThingDescUrl(content);
+
+if(execute){
+    XWorkerUtils.ideOpenUrl(url);
+    return;
+}
+
+if(self.getBoolean("simpleBrowser")){
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@simpleBrowser");
+    def browser = thing.doAction("create", actionContext);
+    
+    //打开url
+    browser.setUrl(url);
+    //println(composite);
+    return browser;
+}else{
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+    def composite = thing.doAction("create", actionContext);
+    browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":url]);
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingDesc
+    @/@actions/@thingControl
+    sname=thingControl
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//打开url
+def url = XWorkerUtils.getWebControlUrl(content);
+if(execute){
+    XWorkerUtils.ideOpenUrl(url);
+    return;
+}
+
+if(self.getBoolean("simpleBrowser")){
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@simpleBrowser");
+    def browser = thing.doAction("create", actionContext);
+    
+    //打开url
+    browser.setUrl(url);
+    //println(composite);
+    return browser;
+}else{
+    //创建浏览器
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@browser");
+    def composite = thing.doAction("create", actionContext);
+    browser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":url]);
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingControl
+    @/@actions/@composite
+    sname=composite
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenComposite(content, self.getMetadata().getLabel(), null);
+    return;
+}
+
+return content.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=composite
+    @/@actions/@uiFlow
+    sname=uiFlow
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@UiFlow").detach();
+    thing.put("uiFlow", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@UiFlow");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uiFlow
+    @/@actions/@uiFunction
+    sname=uiFunction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@FunctionRunner").detach();
+    thing.put("functionPath", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@FunctionRunner");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uiFunction
+    @/@actions/@autoDemo
+    sname=autoDemo
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@AutoDemoComposite").detach();
+    thing.put("autoDemoPath", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@AutoDemoComposite");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=autoDemo
+    @/@actions/@swtDemo
+    sname=swtDemo
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoSWT").detach();
+    thing.put("composite", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoSWT");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=swtDemo
+    @/@actions/@webDemo
+    sname=webDemo
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoWeb").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoWeb");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=webDemo
+    @/@actions/@thingDemo
+    sname=thingDemo
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoThing").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@DemoThing");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingDemo
+    @/@actions/@shell
+    sname=shell
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.doAction("run", actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@shellComposite");
+    
+    def composite = thing.doAction("create", actionContext);
+    browser.setUrl(XWorkerUtils.getThingDescUrl(self));
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=shell
+    @/@actions/@thingEdtior
+    sname=thingEditor
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    XWorkerUtils.ideOpenThing(content);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingEditor");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEdtior
+    @/@actions/@action
+    sname=action
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.getAction().run(actionContext, ["self": content]);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@actionTabFolder");
+    
+    def composite = thing.doAction("create", actionContext);   
+    
+    if(self.getBoolean("useTargetThingDoc")){
+        browser.setUrl(XWorkerUtils.getThingDescUrl(content));
+    }else{
+        browser.setUrl(XWorkerUtils.getThingDescUrl(self));
+    }
+    actionText.setText(content.metadata.path); 
+    thingEditor.editorActions.doAction("setThing", actionContext, "thing", content);
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=action
+    @/@actions/@groovy
+    sname=groovy
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    content.getAction().run(actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@groovyComposite");
+    
+    def composite = thing.doAction("create", actionContext);  
+    def code =  content.getString("code");
+    if(code == null){
+        code = "";
+    }
+    codeText.setText(code); 
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=groovy
+    @/@actions/@run
+    sname=run
+    slabel=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    souterClassName=xworker.actions.GroovyAction
+    sclassName=GroovyAction
+    smethodName=run
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sid=run
+    @/@actions/@thingRegist
+    sname=thingRegist
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingRegist").detach();
+    thing.put("thing", content.getMetadata().getPath());
+    thing.put("registType", registType);
+    thing.put("descritporForNewThing", descriptor);
+    thing.put("label", self.getMetadata().getLabel());
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@thingRegist");
+    
+    return thing.doAction("create", actionContext);  
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegist
+    @/@actions/@dataObjectEditor
+    sname=dataObjectEditor
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectEditor");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectEditor
+    @/@actions/@dataObjectSelected
+    sname=dataObjectSelected
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectSelected
+    @/@actions/@dataObjectSelector
+    sname=dataObjectSelector
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectSelector");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectSelector
+    @/@actions/@dataObjectMultiSelector
+    sname=dataObjectMultiSelector
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    return;
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectMultiSelector");
+    return thing.doAction("create", actionContext);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectMultiSelector
+    @/@actions/@code
+    sname=code
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import ognl.Ognl;
+import xworker.util.XWorkerUtils;
+
+if(execute){
+    //content.getAction().run(actionContext);
+}else{
+    def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@codeComposite");
+    
+    def composite = thing.doAction("create", actionContext);  
+    
+    //代码着色
+    def codeType = content.getString("codeType");    
+    def colorer = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText/@Colorer").detach();
+    colorer.put("codeType", codeType);
+    colorer.put("codeName", codeType);
+    actionContext.peek().put("parent", codeText);
+    colorer.doAction("create", actionContext);
+    
+    def code =  content.getString("code");
+    if(code == null){
+        code = "";
+    }
+    codeText.setText(code); 
+    
+    try{
+        def styledTextForInsert = getStyledTextForInsert(actionContext, "styledTextForInsert", content.getString("styledTextForInsert"));
+        if(styledTextForInsert == null){
+            styledTextForInsert = Ognl.getValue(content.getString("styledTextForInsert"), actionContext);
+        }
+        if(styledTextForInsert != null){
+            actionContext.g().put("styledTextForInsert", styledTextForInsert);
+        }else{
+            insertButton.dispose();
+        }
+    }catch(Exception e){
+        log.warn("get styledTextForInsert error", e);
+        insertButton.dispose();
+    }
+    
+    return composite;
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+      @/@actions/@code/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@code/@ActionDefined/@getStyledTextForInsert
+        sname=getStyledTextForInsert
+        svarName=var:styledTextForInsert
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GetParentContextValue
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getStyledTextForInsert
+    @/@actions/@swtGuide
+    sname=swtGuide
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+
+def thing = new Thing("xworker.swt.guide.GuideComposite");
+thing.put("guide", content.getMetadata().getPath());
+
+if(execute){
+    XWorkerUtils.ideOpenComposite(thing);
+    return;
+}
+
+return thing.doAction("create", actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=swtGuide
+    @/@actions/@getThing
+    sname=getThing
+    sattributeName=path
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getThing
+    @/@actions/@getString
+    sname=getString
+    sattributeName=path
+    schildThingFirstChild=false
+    sreturnSelf=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getString
+    @/@actions/@html
+    sname=html
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//创建浏览器
+def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@simpleBrowser");
+def browser = thing.doAction("create", actionContext);
+
+//打开html
+if(content != null){
+    def html = content.doAction("getCode", actionContext);
+    if(html != null){
+        browser.setText(html);
+    }
+}
+//println(composite);
+return browser;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=html
+    @/@actions/@getCode
+    sname=getCode
+    sattributeName=code
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=getCode
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@type
+  sname=type
+  sinputtype=select
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=url
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=type
+    @/@type/@url
+    sname=url
+    svalue=url
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=url
+    @/@type/@thingDesc
+    sname=thingDesc
+    svalue=thingDesc
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingDesc
+    @/@type/@thingControl
+    sname=thingControl
+    svalue=thingControl
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingControl
+    @/@type/@thingEditor
+    sname=thingEditor
+    svalue=thingEditor
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEditor
+    @/@type/@thingRegist
+    sname=thingRegist
+    svalue=thingRegist
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegist
+    @/@type/@composite
+    sname=composite
+    svalue=composite
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=composite
+    @/@type/@shell
+    sname=shell
+    svalue=shell
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=shell
+    @/@type/@uiFlow
+    sname=uiFlow
+    svalue=uiFlow
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uiFlow
+    @/@type/@uiFunction
+    sname=uiFunction
+    svalue=uiFunction
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=uiFunction
+    @/@type/@autoDemo
+    sname=autoDemo
+    svalue=autoDemo
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=autoDemo
+    @/@type/@swtDemo
+    sname=swtDemo
+    svalue=swtDemo
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=swtDemo
+    @/@type/@swtGuide
+    sname=swtGuide
+    svalue=swtGuide
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=swtGuide
+    @/@type/@webDemo
+    sname=webDemo
+    svalue=webDemo
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=webDemo
+    @/@type/@thingDemo
+    sname=thingDemo
+    svalue=thingDemo
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingDemo
+    @/@type/@action
+    sname=action
+    svalue=action
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=action
+    @/@type/@groovy
+    sname=groovy
+    svalue=groovy
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=groovy
+    @/@type/@dataObjectEditor
+    sname=dataObjectEditor
+    svalue=dataObjectEditor
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectEditor
+    @/@type/@dataObjectSelector
+    sname=dataObjectSelector
+    svalue=dataObjectSelector
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectSelector
+    @/@type/@dataObjectMultiSelector
+    sname=dataObjectMultiSelector
+    svalue=dataObjectMultiSelector
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectMultiSelector
+    @/@type/@code
+    sname=code
+    slabel=code
+    svalue=code
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+    @/@type/@html
+    sname=html
+    svalue=html
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=html
+  @/@path
+  sname=path
+  sinputtype=dataSelector
+  ssize=60
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=path
+  @/@group
+  sname=group
+  ssize=60
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=group
+  @/@group1
+  sname=icon
+  sinputtype=inputSelect
+  ssize=60
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=icons/folder_table.png
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=group1
+    @/@group1/@Word
+    sname=Word
+    svalue=icons/font.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Word
+    @/@group1/@Folder
+    sname=Folder
+    svalue=icons/folder_table.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Folder
+    @/@group1/@Html
+    sname=Html
+    svalue=icons/html.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Html
+    @/@group1/@Url
+    sname=Url
+    svalue=icons/world.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Url
+    @/@group1/@Application
+    sname=Application
+    svalue=icons/application.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Application
+    @/@group1/@Tools
+    sname=Tools
+    svalue=icons/wrench.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Tools
+    @/@group1/@Help
+    sname=Help
+    svalue=icons/help.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Help
+    @/@group1/@Example
+    sname=Example
+    svalue=icons/application_view_icons.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Example
+    @/@group1/@Setting
+    sname=Setting
+    svalue=icons/server_edit.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Setting
+    @/@group1/@Guide
+    sname=Guide
+    svalue=icons/user_comment.png
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Guide
+  @/@sortWeight
+  sname=th_sortWeight
+  slabel=排序权重
+  sinheritDescription=false
+  sdescription=<p>排序时的权重，比如显示在树节点中时。</p>
+  LvalidateOnBlur=false
+  LallowDecimals=false
+  LallowNegative=false
+  sen_label=Sort Weight
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=sortWeight
+  @/@codeType
+  sname=codeType
+  sgroup=Code
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=codeType
+  @/@styledTextForInsert
+  sname=styledTextForInsert
+  ssize=60
+  sgroup=Code
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=parentContext.parentContext.codeText
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>用于获取可以插入代码的Text或StyledText控件。如果存在，界面上会有一个<strong>插入(Insert)</strong>按钮。</p>
+
+<p><strong>获取方法：</strong></p>
+
+<ul>
+	<li>先从父变量上下文中获取（递归）</li>
+	<li>如果没有，使用Ognl表达式从当前变量上下文获取。&nbsp;<br />
+	&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=styledTextForInsert
+  @/@code
+  sname=code
+  sinputtype=textarea
+  sgroup=Code
+  sshowLabel=true
+  sinputattrs=codeName=java codeType=java wrap=false fillBoth=true cols= rows=
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=code
+  @/@useTargetThingDoc
+  sname=useTargetThingDoc
+  sinputtype=truefalse
+  sshowLabel=true
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>使用目标的事物文档。</p>
+
+<p>比如像事物动作等会显示一个事物文档，此时可以选择用快速功能的文档，还是使用目标动作的文档。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=useTargetThingDoc
+  @/@simpleBrowser
+  sname=simpleBrowser
+  sinputtype=truefalse
+  sshowLabel=true
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>当type=url、thingDesc或Control时是否使用简单的浏览器。</p>
+
+<p>完整的浏览器有地址栏，可以同时显示多个网页等。简单浏览器只是一个Browser控件，没有地址栏等等。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=simpleBrowser
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  Sdescription=
+#$@text#$@
+<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>
+#$@text#$@
+  szh_label=动作
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>
+#$@text#$@
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name
+  @/@composite
+  sname=composite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.widgets.Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=composite
+    @/@composite/@resources
+    sname=resources
+    sdescriptors=xworker.swt.Widgets/@Resource
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=resources
+      @/@composite/@resources/@I18nResource
+      sname=I18nResource
+      sdescriptors=xworker.swt.util.Resource/@I18nResource
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=I18nResource
+        @/@composite/@resources/@I18nResource/@executeButton
+        sname=executeButton
+        slabel=执行
+        sen_label=Execute
+        sdescriptors=xworker.lang.util.I18nResource/@resource
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=executeButton
+        @/@composite/@resources/@I18nResource/@saveButton
+        sname=saveButton
+        slabel=保存
+        sen_label=Save
+        sdescriptors=xworker.lang.util.I18nResource/@resource
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=saveButton
+    @/@composite/@noContent
+    sname=noContent
+    sBORDER=false
+    stype=HORIZONTAL
+    salignment=LEFT
+    stext=没有设置要显示的内容，请通过path或子事物来设置。
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Label
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=noContent
+    @/@composite/@browser
+    sname=browser
+    sdescriptors=xworker.swt.Widgets/@WebBrowser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=browser
+    @/@composite/@UiFlow
+    sname=UiFlow
+    suiFlow=var:content
+    sautoStart=true
+    stype=editor
+    sdescriptors=xworker.swt.Widgets/@UiFlow
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=UiFlow
+    @/@composite/@FunctionRunner
+    sname=FunctionRunner
+    sfunctionPath=var:content
+    sdescriptors=xworker.swt.Widgets/@FunctionRunner
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FunctionRunner
+    @/@composite/@AutoDemoComposite
+    sname=AutoDemoComposite
+    sautoDemoPath=var:content
+    sdefaultRunDemo=false
+    sdescriptors=xworker.swt.Widgets/@AutoDemoComposite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=AutoDemoComposite
+    @/@composite/@DemoSWT
+    sname=DemoSWT
+    scomposite=var:content
+    sdescriptors=xworker.swt.Widgets/@DemoTabFolder
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=DemoSWT
+    @/@composite/@DemoWeb
+    sname=DemoWeb
+    sthing=var:content
+    sdescriptors=xworker.swt.Widgets/@DemoWeb
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=DemoWeb
+    @/@composite/@DemoThing
+    sname=DemoThing
+    sthing=var:content
+    sdescriptors=xworker.swt.Widgets/@DemoThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=DemoThing
+    @/@composite/@shellComposite
+    sname=shellComposite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=shellComposite
+      @/@composite/@shellComposite/@gridLayout
+      sname=gridLayout
+      smakeColumnsEqualWidth=false
+      smarginWidth=5
+      smarginHeight=5
+      smarginLeft=0
+      smarginTop=0
+      smarginRight=0
+      smarginBottom=0
+      shorizontalSpacing=5
+      sverticalSpacing=5
+      sdescriptors=xworker.swt.Layouts/@GridLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=gridLayout
+      @/@composite/@shellComposite/@browser
+      sname=browser
+      sMOZILLA=false
+      sWEBKIT=false
+      sjavascriptEnabled=true
+      sdescriptors=xworker.swt.Widgets/@Browser
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=browser
+        @/@composite/@shellComposite/@browser/@browserGridData
+        sname=browserGridData
+        sstyle=FILL_BOTH
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=browserGridData
+        @/@composite/@shellComposite/@browser/@UtilBrowser
+        sname=UtilBrowser
+        sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=UtilBrowser
+      @/@composite/@shellComposite/@61104
+      sname=buttonComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sid=61104
+        @/@composite/@shellComposite/@61104/@61105
+        sname=buttonCompositeGridData
+        sstyle=FILL_HORIZONTAL
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=END
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sid=61105
+        @/@composite/@shellComposite/@61104/@61106
+        sname=buttonCompositeRowLayout
+        sfill=false
+        sjustify=false
+        smarginWidth=0
+        smarginHeight=0
+        smarginLeft=3
+        smarginTop=3
+        smarginRight=3
+        smarginBottom=3
+        spack=true
+        sspacing=3
+        stype=SWT.HORIZONTAL
+        swrap=true
+        sdescriptors=xworker.swt.Layouts/@RowLayout
+        sid=61106
+        @/@composite/@shellComposite/@61104/@61107
+        sname=openButton
+        stext=打开窗口
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sth_createIndex=false
+        sid=61107
+          @/@composite/@shellComposite/@61104/@61107/@61108
+          sname=RowData
+          sexclude=false
+          swidth=80
+          sheight=-1
+          sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex=false
+          sid=61108
+          @/@composite/@shellComposite/@61104/@61107/@61109
+          sname=Listeners
+          sdescriptors=xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex=false
+          sid=61109
+            @/@composite/@shellComposite/@61104/@61107/@61109/@61110
+            sname=openButtonSelection
+            stype=Selection
+            sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex=false
+            sid=61110
+              @/@composite/@shellComposite/@61104/@61107/@61109/@61110/@OpenShell
+              sname=OpenShell
+              sparent=ognl:openButton.getShell()
+              sshellPath=var:content
+              ssingleInstance=false
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.swt.actions.ShellActionsNew/@OpenShell
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=OpenShell
+    @/@composite/@thingEditor
+    sname=thingEditor
+    sthingPath=var:content
+    stitle=true
+    suseRootThing=true
+    sdescriptors=xworker.swt.Widgets/@ThingEditor
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingEditor
+    @/@composite/@actionTabFolder
+    sname=actionTabFolder
+    sstyle=TOP
+    sBORDER=false
+    sFLAT=false
+    sCLOSE=false
+    sSINGLE=false
+    sMRUVisible=false
+    ssimple=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@CTabFolder
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actionTabFolder
+      @/@composite/@actionTabFolder/@executeTabItem
+      sname=executeTabItem
+      stext=执行
+      sCLOSE=false
+      sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=executeTabItem
+        @/@composite/@actionTabFolder/@executeTabItem/@actionComposite
+        sname=actionComposite
+        sBORDER=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Composite
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actionComposite
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@compositeGridLayout
+          sname=compositeGridLayout
+          snumColumns=2
+          smakeColumnsEqualWidth=false
+          smarginWidth=5
+          smarginHeight=5
+          smarginLeft=0
+          smarginTop=0
+          smarginRight=0
+          smarginBottom=0
+          shorizontalSpacing=5
+          sverticalSpacing=5
+          sdescriptors=xworker.swt.Layouts/@GridLayout
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=compositeGridLayout
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@browser
+          sname=browser
+          sMOZILLA=false
+          sWEBKIT=false
+          sjavascriptEnabled=true
+          sdescriptors=xworker.swt.Widgets/@Browser
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=browser
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@browser/@UtilBrowser
+            sname=UtilBrowser
+            sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=UtilBrowser
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@browser/@browserGridData
+            sname=browserGridData
+            sstyle=FILL_HORIZONTAL
+            shorizontalIndent=0
+            swidth=-1
+            sheight=200
+            shorizontalAlignment=BEGINNING
+            sverticalAlignment=CENTER
+            shorizontalSpan=2
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=browserGridData
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@actionLabel
+          sname=actionLabel
+          sBORDER=false
+          sstyle=WRAP
+          stype=VERTICAL
+          sshadow=SHADOW_OUT
+          salignment=LEFT
+          stext=动作：
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Label
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=actionLabel
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@actionText
+          sname=actionText
+          sstyle=SINGLE
+          sH_SCROLL=false
+          sV_SCROLL=false
+          sWRAP=false
+          sREAD_ONLY=true
+          sPASSWORD=false
+          sSEARCH=false
+          sCANCEL=false
+          sBORDER=true
+          salign=LEFT
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Text
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=actionText
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@actionText/@actionTextGridData
+            sname=actionTextGridData
+            sstyle=FILL_HORIZONTAL
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=BEGINNING
+            sverticalAlignment=CENTER
+            shorizontalSpan=1
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=actionTextGridData
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031
+          sname=buttonComposite
+          sBORDER=false
+          sH_SCROLL=false
+          sV_SCROLL=false
+          sNO_BACKGROUND=false
+          sNO_FOCUS=false
+          sNO_MERGE_PAINTS=false
+          sNO_REDRAW_RESIZE=false
+          sNO_RADIO_GROUP=false
+          sEMBEDDED=false
+          sDOUBLE_BUFFERED=false
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Composite
+          sid=15031
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15032
+            sname=buttonCompositeGridData
+            sstyle=FILL_HORIZONTAL
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=END
+            sverticalAlignment=CENTER
+            shorizontalSpan=2
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sid=15032
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15033
+            sname=buttonCompositeRowLayout
+            sfill=false
+            sjustify=false
+            smarginWidth=0
+            smarginHeight=0
+            smarginLeft=3
+            smarginTop=3
+            smarginRight=3
+            smarginBottom=3
+            spack=true
+            sspacing=3
+            stype=SWT.HORIZONTAL
+            swrap=true
+            sdescriptors=xworker.swt.Layouts/@RowLayout
+            sid=15033
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15034
+            sname=executeButton
+            stext=执行
+            stype=SWT.PUSH
+            sflat=false
+            sborder=false
+            sselected=false
+            scapture=false
+            senabled=true
+            sredraw=true
+            svisible=true
+            sdescriptors=xworker.swt.Widgets/@Button
+            sth_createIndex=false
+            sid=15034
+              @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15034/@15035
+              sname=RowData
+              sexclude=false
+              swidth=80
+              sheight=-1
+              sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+              sth_createIndex=false
+              sid=15035
+              @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15034/@15036
+              sname=Listeners
+              sdescriptors=xworker.swt.widgets.Widget/@Listeners
+              sth_createIndex=false
+              sid=15036
+                @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15034/@15036/@15037
+                sname=executeButtonSelection
+                stype=Selection
+                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+                sth_createIndex=false
+                sid=15037
+                  @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@15034/@15036/@15037/@GroovyAction
+                  sname=GroovyAction
+                  sisSynchronized=false
+                  sthrowException=true
+                  suseOtherAction=false
+                  svarScope=Local
+                  sdisableGlobalContext=false
+                  Scode=
+#$@text#$@
+def result = content.getAction().run(actionContext, ["self": content]);
+viewer.doAction("setObject", actionContext, ["object": result]);
+#$@text#$@
+                  sinterpretationType=Action
+                  screateLocalVarScope=false
+                  ssaveReturn=false
+                  sdebugLog=false
+                  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_mark=false
+                  sid=GroovyAction
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@150341
+            sname=executeBackgroundButton
+            stext=后台执行
+            stype=SWT.PUSH
+            sflat=false
+            sborder=false
+            sselected=false
+            scapture=false
+            senabled=true
+            sredraw=true
+            svisible=true
+            sdescriptors=xworker.swt.Widgets/@Button
+            sth_createIndex=false
+            sid=150341
+              @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@150341/@15035
+              sname=RowData
+              sexclude=false
+              swidth=80
+              sheight=-1
+              sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+              sth_createIndex=false
+              sid=15035
+              @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@150341/@15036
+              sname=Listeners
+              sdescriptors=xworker.swt.widgets.Widget/@Listeners
+              sth_createIndex=false
+              sid=15036
+                @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@150341/@15036/@15037
+                sname=executeBackgroundButtonSelection
+                stype=Selection
+                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+                sth_createIndex=false
+                sid=15037
+                  @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@15031/@150341/@15036/@15037/@GroovyAction
+                  sname=GroovyAction
+                  sisSynchronized=false
+                  sthrowException=true
+                  suseOtherAction=false
+                  svarScope=Local
+                  sdisableGlobalContext=false
+                  Scode=
+#$@text#$@
+//后台的变量
+def display = actionText.getDisplay();
+def actionContext = actionContext;
+def content = content;
+def viewer = viewer;
+
+//启动新的线程执行
+new Thread({
+    display.asyncExec({
+        viewer.doAction("setObject", actionContext, ["object": "正在执行，请稍后...."]);
+    }); 
+    
+    def result = content.getAction().run(actionContext, ["self": content]);
+    display.asyncExec({
+        viewer.doAction("setObject", actionContext, ["object": result]);
+    });    
+}).start();
+#$@text#$@
+                  sinterpretationType=Action
+                  screateLocalVarScope=false
+                  ssaveReturn=false
+                  sdebugLog=false
+                  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_mark=false
+                  sid=GroovyAction
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@resultLabel
+          sname=resultLabel
+          sBORDER=false
+          stype=HORIZONTAL
+          sshadow=SHADOW_IN
+          salignment=LEFT
+          stext=结果：
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Label
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=resultLabel
+          @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@viewer
+          sname=viewer
+          sH_SCROLL=true
+          sV_SCROLL=true
+          sNO_BACKGROUND=false
+          sNO_FOCUS=false
+          sNO_MERGE_PAINTS=false
+          sNO_REDRAW_RESIZE=false
+          sNO_RADIO_GROUP=false
+          sEMBEDDED=false
+          sDOUBLE_BUFFERED=false
+          sdescriptors=xworker.swt.Widgets/@ObjectViewer
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=viewer
+            @/@composite/@actionTabFolder/@executeTabItem/@actionComposite/@viewer/@viewerGridData
+            sname=viewerGridData
+            sstyle=FILL_BOTH
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=BEGINNING
+            sverticalAlignment=CENTER
+            shorizontalSpan=1
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=viewerGridData
+      @/@composite/@actionTabFolder/@thingTabItem
+      sname=thingTabItem
+      stext=事物
+      sCLOSE=false
+      sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=thingTabItem
+        @/@composite/@actionTabFolder/@thingTabItem/@thingEditor
+        sname=thingEditor
+        stitle=true
+        suseRootThing=true
+        sdescriptors=xworker.swt.Widgets/@ThingEditor
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=thingEditor
+    @/@composite/@groovyComposite
+    sname=groovyComposite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=groovyComposite
+      @/@composite/@groovyComposite/@groovyCompositeFillLayout
+      sname=groovyCompositeFillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=groovyCompositeFillLayout
+      @/@composite/@groovyComposite/@mainSashForm
+      sname=mainSashForm
+      sstyle=VERTICAL
+      sSMOOTH=false
+      sweights=70,40
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@SashForm
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=mainSashForm
+        @/@composite/@groovyComposite/@mainSashForm/@codeComposite
+        sname=codeComposite
+        sBORDER=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Composite
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=codeComposite
+          @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeCompositeGridLayout
+          sname=codeCompositeGridLayout
+          smakeColumnsEqualWidth=false
+          smarginWidth=5
+          smarginHeight=5
+          smarginLeft=0
+          smarginTop=0
+          smarginRight=0
+          smarginBottom=0
+          shorizontalSpacing=5
+          sverticalSpacing=5
+          sdescriptors=xworker.swt.Layouts/@GridLayout
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=codeCompositeGridLayout
+          @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText
+          sname=codeText
+          sstyle=MULTI
+          sFULL_SELECTION=false
+          sREAD_ONLY=false
+          sWRAP=false
+          sH_SCROLL=true
+          sV_SCROLL=true
+          sBORDER=false
+          salign=LEFT
+          sNO_BACKGROUND=false
+          sNO_FOCUS=false
+          sNO_MERGE_PAINTS=false
+          sNO_REDRAW_RESIZE=false
+          sNO_RADIO_GROUP=false
+          sEMBEDDED=false
+          sDOUBLE_BUFFERED=false
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@StyledText
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=codeText
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText/@codeTextGridData
+            sname=codeTextGridData
+            sstyle=FILL_BOTH
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=BEGINNING
+            sverticalAlignment=CENTER
+            shorizontalSpan=1
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.Commons/@GridData
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=codeTextGridData
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText/@Colorer
+            sname=Colorer
+            scodeName=java
+            scodeType=java
+            sdescriptors=xworker.swt.custom.StyledText/@Colorer
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=Colorer
+          @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856
+          sname=buttonComposite
+          sBORDER=false
+          sH_SCROLL=false
+          sV_SCROLL=false
+          sNO_BACKGROUND=false
+          sNO_FOCUS=false
+          sNO_MERGE_PAINTS=false
+          sNO_REDRAW_RESIZE=false
+          sNO_RADIO_GROUP=false
+          sEMBEDDED=false
+          sDOUBLE_BUFFERED=false
+          scapture=false
+          senabled=true
+          sredraw=true
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@Composite
+          sid=18856
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18857
+            sname=buttonCompositeGridData
+            sstyle=FILL_HORIZONTAL
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=END
+            sverticalAlignment=CENTER
+            shorizontalSpan=1
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sid=18857
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18858
+            sname=buttonCompositeRowLayout
+            sfill=false
+            sjustify=false
+            smarginWidth=0
+            smarginHeight=0
+            smarginLeft=3
+            smarginTop=3
+            smarginRight=3
+            smarginBottom=3
+            spack=true
+            sspacing=3
+            stype=SWT.HORIZONTAL
+            swrap=true
+            sdescriptors=xworker.swt.Layouts/@RowLayout
+            sid=18858
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18859
+            sname=executeButton
+            stext=label:xworker.swt.xworker.ThingRegistThing/@composite/@resources/@I18nResource/@executeButton
+            stype=SWT.PUSH
+            sflat=false
+            sborder=false
+            sselected=false
+            scapture=false
+            senabled=true
+            sredraw=true
+            svisible=true
+            sdescriptors=xworker.swt.Widgets/@Button
+            sth_createIndex=false
+            sid=18859
+              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18859/@18860
+              sname=RowData
+              sexclude=false
+              swidth=80
+              sheight=-1
+              sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+              sth_createIndex=false
+              sid=18860
+              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18859/@18861
+              sname=Listeners
+              sdescriptors=xworker.swt.widgets.Widget/@Listeners
+              sth_createIndex=false
+              sid=18861
+                @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18859/@18861/@18862
+                sname=executeButtonSelection
+                stype=Selection
+                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+                sth_createIndex=false
+                sid=18862
+                  @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@18859/@18861/@18862/@GroovyAction
+                  sname=GroovyAction
+                  sisSynchronized=false
+                  sthrowException=true
+                  suseOtherAction=false
+                  svarScope=Local
+                  sdisableGlobalContext=false
+                  Scode=
+#$@text#$@
+content.set("code", codeText.getText());
+//content.save();
+
+def obj = content.getAction().run(actionContext);
+viewer.doAction("setObject", actionContext, ["object":obj]);
+#$@text#$@
+                  sinterpretationType=Action
+                  screateLocalVarScope=false
+                  ssaveReturn=false
+                  sdebugLog=false
+                  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_mark=false
+                  sid=GroovyAction
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591
+            sname=saveButton
+            stext=label:xworker.swt.xworker.ThingRegistThing/@composite/@resources/@I18nResource/@saveButton
+            stype=SWT.PUSH
+            sflat=false
+            sborder=false
+            sselected=false
+            scapture=false
+            senabled=true
+            sredraw=true
+            svisible=true
+            sdescriptors=xworker.swt.Widgets/@Button
+            sth_createIndex=false
+            sid=188591
+              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18860
+              sname=RowData
+              sexclude=false
+              swidth=80
+              sheight=-1
+              sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+              sth_createIndex=false
+              sid=18860
+              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861
+              sname=Listeners
+              sdescriptors=xworker.swt.widgets.Widget/@Listeners
+              sth_createIndex=false
+              sid=18861
+                @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861/@18862
+                sname=executeButtonSelection
+                stype=Selection
+                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+                sth_createIndex=false
+                sid=18862
+                  @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861/@18862/@GroovyAction
+                  sname=GroovyAction
+                  sisSynchronized=false
+                  sthrowException=true
+                  suseOtherAction=false
+                  svarScope=Local
+                  sdisableGlobalContext=false
+                  Scode=
+#$@text#$@
+content.set("code", codeText.getText());
+content.save();
+#$@text#$@
+                  sinterpretationType=Action
+                  screateLocalVarScope=false
+                  ssaveReturn=false
+                  sdebugLog=false
+                  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_mark=false
+                  sid=GroovyAction
+        @/@composite/@groovyComposite/@mainSashForm/@viewer
+        sname=viewer
+        sH_SCROLL=true
+        sV_SCROLL=true
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        sdescriptors=xworker.swt.Widgets/@ObjectViewer
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=viewer
+    @/@composite/@thingRegist
+    sname=thingRegist
+    sthing=var:content
+    sregistType=var:registType
+    sparent=false
+    ssearchByKeywords=true
+    sshowContent=true
+    scontentDisplayType=var:contentDisplayType
+    scontentDefaultOpenMethod=var:contentDefaultOpenMethod
+    sshowDescBrowser=true
+    sdescBrowserRight=true
+    sautoLoad=true
+    scache=true
+    scheck=false
+    sdescritporForNewThing=var:descriptor
+    sdescritporChilds=false
+    sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegist
+      @/@composite/@thingRegist/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@composite/@thingRegist/@actions/@defaultSelected
+        sname=defaultSelected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+if(thing != null){
+    thing.doAction("execute", actionContext);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=defaultSelected
+    @/@composite/@dataObjectEditor
+    sname=dataObjectEditor
+    sdataObject=var:content
+    squeryButton=true
+    snewButton=true
+    seditButton=true
+    seditBatchButton=false
+    sdeleteButton=true
+    sselectAllButton=false
+    sselectRerverseButton=false
+    stoolsButton=true
+    spagingToolbar=true
+    sactionContext=dataObjectContext
+    stableCheck=false
+    sdebug=false
+    sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectEditor
+    @/@composite/@dataObjectSelector
+    sname=dataObjectSelector
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectSelector
+      @/@composite/@dataObjectSelector/@compositeGridLayout
+      sname=compositeGridLayout
+      smakeColumnsEqualWidth=false
+      smarginWidth=5
+      smarginHeight=5
+      smarginLeft=0
+      smarginTop=0
+      smarginRight=0
+      smarginBottom=0
+      shorizontalSpacing=5
+      sverticalSpacing=5
+      sdescriptors=xworker.swt.Layouts/@GridLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=compositeGridLayout
+      @/@composite/@dataObjectSelector/@dataObjectEditor
+      sname=dataObjectEditor
+      sdataObject=var:content
+      squeryButton=true
+      snewButton=true
+      seditButton=true
+      seditBatchButton=false
+      sdeleteButton=true
+      sselectAllButton=false
+      sselectRerverseButton=false
+      stoolsButton=true
+      spagingToolbar=true
+      sactionContext=dataObjectContext
+      stableCheck=false
+      sdebug=false
+      sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=dataObjectEditor
+        @/@composite/@dataObjectSelector/@dataObjectEditor/@actions
+        sname=actions
+        sdescriptors=xworker.app.view.swt.widgets.DataObjectEditCompoiste/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@composite/@dataObjectSelector/@dataObjectEditor/@actions/@tableSelection
+          sname=tableSelection
+          smethod=enable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=tableSelection
+          @/@composite/@dataObjectSelector/@dataObjectEditor/@actions/@onStoreLoaded
+          sname=onStoreLoaded
+          smethod=disable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onStoreLoaded
+          @/@composite/@dataObjectSelector/@dataObjectEditor/@actions/@tableDeleted
+          sname=tableDeleted
+          smethod=disable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=tableDeleted
+        @/@composite/@dataObjectSelector/@dataObjectEditor/@GridData
+        sname=GridData
+        sstyle=FILL_BOTH
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GridData
+      @/@composite/@dataObjectSelector/@12795
+      sname=buttonComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sid=12795
+        @/@composite/@dataObjectSelector/@12795/@12796
+        sname=buttonCompositeGridData
+        sstyle=FILL_HORIZONTAL
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=END
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sid=12796
+        @/@composite/@dataObjectSelector/@12795/@12797
+        sname=buttonCompositeRowLayout
+        sfill=false
+        sjustify=false
+        smarginWidth=0
+        smarginHeight=0
+        smarginLeft=3
+        smarginTop=3
+        smarginRight=3
+        smarginBottom=3
+        spack=true
+        sspacing=3
+        stype=SWT.HORIZONTAL
+        swrap=true
+        sdescriptors=xworker.swt.Layouts/@RowLayout
+        sid=12797
+        @/@composite/@dataObjectSelector/@12795/@12798
+        sname=selectButton
+        stext=选择
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=false
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sth_createIndex=false
+        sid=12798
+          @/@composite/@dataObjectSelector/@12795/@12798/@12799
+          sname=RowData
+          sexclude=false
+          swidth=80
+          sheight=-1
+          sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex=false
+          sid=12799
+          @/@composite/@dataObjectSelector/@12795/@12798/@12800
+          sname=Listeners
+          sdescriptors=xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex=false
+          sid=12800
+            @/@composite/@dataObjectSelector/@12795/@12798/@12800/@12801
+            sname=selectButtonSelection
+            stype=Selection
+            sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex=false
+            sid=12801
+              @/@composite/@dataObjectSelector/@12795/@12798/@12800/@12801/@GroovyAction
+              sname=GroovyAction
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+def item = dataObjectContext.dataTable.getSelection()[0];
+def data = item.getData();
+
+thingSelf.doAction("dataObjectSelected", actionContext, ["data": data]);
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=GroovyAction
+    @/@composite/@dataObjectMultiSelector
+    sname=dataObjectMultiSelector
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjectMultiSelector
+      @/@composite/@dataObjectMultiSelector/@compositeGridLayout
+      sname=compositeGridLayout
+      smakeColumnsEqualWidth=false
+      smarginWidth=5
+      smarginHeight=5
+      smarginLeft=0
+      smarginTop=0
+      smarginRight=0
+      smarginBottom=0
+      shorizontalSpacing=5
+      sverticalSpacing=5
+      sdescriptors=xworker.swt.Layouts/@GridLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=compositeGridLayout
+      @/@composite/@dataObjectMultiSelector/@dataObjectEditor
+      sname=dataObjectEditor
+      sdataObject=var:content
+      squeryButton=true
+      snewButton=true
+      seditButton=true
+      seditBatchButton=false
+      sdeleteButton=true
+      sselectAllButton=false
+      sselectRerverseButton=false
+      stoolsButton=true
+      spagingToolbar=true
+      sactionContext=dataObjectContext
+      stableCheck=true
+      sdebug=false
+      sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=dataObjectEditor
+        @/@composite/@dataObjectMultiSelector/@dataObjectEditor/@actions
+        sname=actions
+        sdescriptors=xworker.app.view.swt.widgets.DataObjectEditCompoiste/@actions1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@composite/@dataObjectMultiSelector/@dataObjectEditor/@actions/@tableSelection
+          sname=tableSelection
+          smethod=enable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=tableSelection
+          @/@composite/@dataObjectMultiSelector/@dataObjectEditor/@actions/@onStoreLoaded
+          sname=onStoreLoaded
+          smethod=disable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onStoreLoaded
+          @/@composite/@dataObjectMultiSelector/@dataObjectEditor/@actions/@tableDeleted
+          sname=tableDeleted
+          smethod=disable
+          scontrolList=selectButton
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.actions.ControlActions/@Enabled
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=tableDeleted
+        @/@composite/@dataObjectMultiSelector/@dataObjectEditor/@GridData
+        sname=GridData
+        sstyle=FILL_BOTH
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GridData
+      @/@composite/@dataObjectMultiSelector/@12795
+      sname=buttonComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sid=12795
+        @/@composite/@dataObjectMultiSelector/@12795/@12796
+        sname=buttonCompositeGridData
+        sstyle=FILL_HORIZONTAL
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=END
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sid=12796
+        @/@composite/@dataObjectMultiSelector/@12795/@12797
+        sname=buttonCompositeRowLayout
+        sfill=false
+        sjustify=false
+        smarginWidth=0
+        smarginHeight=0
+        smarginLeft=3
+        smarginTop=3
+        smarginRight=3
+        smarginBottom=3
+        spack=true
+        sspacing=3
+        stype=SWT.HORIZONTAL
+        swrap=true
+        sdescriptors=xworker.swt.Layouts/@RowLayout
+        sid=12797
+        @/@composite/@dataObjectMultiSelector/@12795/@12798
+        sname=selectButton
+        stext=选择
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=false
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sth_createIndex=false
+        sid=12798
+          @/@composite/@dataObjectMultiSelector/@12795/@12798/@12799
+          sname=RowData
+          sexclude=false
+          swidth=80
+          sheight=-1
+          sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex=false
+          sid=12799
+          @/@composite/@dataObjectMultiSelector/@12795/@12798/@12800
+          sname=Listeners
+          sdescriptors=xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex=false
+          sid=12800
+            @/@composite/@dataObjectMultiSelector/@12795/@12798/@12800/@12801
+            sname=selectButtonSelection
+            stype=Selection
+            sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex=false
+            sid=12801
+              @/@composite/@dataObjectMultiSelector/@12795/@12798/@12800/@12801/@GroovyAction
+              sname=GroovyAction
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+def datas = [];
+for(item in dataObjectContext.dataTable.getItems()){
+    if(item.getChecked()){
+        def data = item.getData();
+        datas.add(data);
+    }
+}
+
+thingSelf.doAction("dataObjectSelected", actionContext, ["datas": datas]);
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=GroovyAction
+    @/@composite/@codeComposite
+    sname=codeComposite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=codeComposite
+      @/@composite/@codeComposite/@codeCompositeGridLayout
+      sname=codeCompositeGridLayout
+      smakeColumnsEqualWidth=false
+      smarginWidth=5
+      smarginHeight=5
+      smarginLeft=0
+      smarginTop=0
+      smarginRight=0
+      smarginBottom=0
+      shorizontalSpacing=5
+      sverticalSpacing=5
+      sdescriptors=xworker.swt.Layouts/@GridLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=codeCompositeGridLayout
+      @/@composite/@codeComposite/@codeText
+      sname=codeText
+      sstyle=MULTI
+      sFULL_SELECTION=false
+      sREAD_ONLY=false
+      sWRAP=false
+      sH_SCROLL=true
+      sV_SCROLL=true
+      sBORDER=false
+      salign=LEFT
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@StyledText
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=codeText
+        @/@composite/@codeComposite/@codeText/@codeTextGridData
+        sname=codeTextGridData
+        sstyle=FILL_BOTH
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=BEGINNING
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.Commons/@GridData
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=codeTextGridData
+        @/@composite/@codeComposite/@codeText/@TextEditor
+        sname=TextEditor
+        sdescriptors=xworker.swt.custom.StyledText/@TextEditor
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=TextEditor
+      @/@composite/@codeComposite/@7543
+      sname=buttonComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sid=7543
+        @/@composite/@codeComposite/@7543/@7544
+        sname=buttonCompositeGridData
+        sstyle=FILL_HORIZONTAL
+        shorizontalIndent=0
+        swidth=-1
+        sheight=-1
+        shorizontalAlignment=END
+        sverticalAlignment=CENTER
+        shorizontalSpan=1
+        sverticalSpan=1
+        sgrabExcessHorizontalSpace=false
+        sgrabExcessVerticalSpace=false
+        sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+        sid=7544
+        @/@composite/@codeComposite/@7543/@7545
+        sname=buttonCompositeRowLayout
+        sfill=false
+        sjustify=false
+        smarginWidth=0
+        smarginHeight=0
+        smarginLeft=3
+        smarginTop=3
+        smarginRight=3
+        smarginBottom=3
+        spack=true
+        sspacing=3
+        stype=SWT.HORIZONTAL
+        swrap=true
+        sdescriptors=xworker.swt.Layouts/@RowLayout
+        sid=7545
+        @/@composite/@codeComposite/@7543/@7546
+        sname=insertButton
+        stext=插入
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sth_createIndex=false
+        sid=7546
+          @/@composite/@codeComposite/@7543/@7546/@7547
+          sname=RowData
+          sexclude=false
+          swidth=80
+          sheight=-1
+          sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex=false
+          sid=7547
+          @/@composite/@codeComposite/@7543/@7546/@7548
+          sname=Listeners
+          sdescriptors=xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex=false
+          sid=7548
+            @/@composite/@codeComposite/@7543/@7546/@7548/@7549
+            sname=insertButtonSelection
+            stype=Selection
+            sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex=false
+            sid=7549
+              @/@composite/@codeComposite/@7543/@7546/@7548/@7549/@GroovyAction
+              sname=GroovyAction
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+if(actionContext.get("styledTextForInsert") != null){
+    styledTextForInsert.insert(codeText.getText());
+}
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=GroovyAction
+        @/@composite/@codeComposite/@7543/@75461
+        sname=saveButton
+        stext=保存
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sth_createIndex=false
+        sid=75461
+          @/@composite/@codeComposite/@7543/@75461/@7547
+          sname=RowData
+          sexclude=false
+          swidth=80
+          sheight=-1
+          sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+          sth_createIndex=false
+          sid=7547
+          @/@composite/@codeComposite/@7543/@75461/@7548
+          sname=Listeners
+          sdescriptors=xworker.swt.widgets.Widget/@Listeners
+          sth_createIndex=false
+          sid=7548
+            @/@composite/@codeComposite/@7543/@75461/@7548/@7549
+            sname=insertButtonSelection
+            stype=Selection
+            sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+            sth_createIndex=false
+            sid=7549
+              @/@composite/@codeComposite/@7543/@75461/@7548/@7549/@GroovyAction
+              sname=GroovyAction
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+content.put("code", codeText.getText());
+content.save();
+
+def box = new MessageBox(codeText.getShell(), SWT.OK | SWT.ICON_INFORMATION);
+box.setText("保存代码");
+box.setMessage("保存成功！");
+box.open();
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=GroovyAction
+    @/@composite/@simpleBrowser
+    sname=simpleBrowser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=simpleBrowser
+      @/@composite/@simpleBrowser/@UtilBrowser
+      sname=UtilBrowser
+      sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=UtilBrowser
+  @/@Composite
+  sname=Composite
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.widgets.Composite
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Composite
+  @/@UiFlow
+  sname=UiFlow
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.flow.uiflow.UiFlow
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=UiFlow
+  @/@SimpleControl
+  sname=SimpleControl
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.http.controls.SimpleControl
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SimpleControl
+  @/@Shell
+  sname=Shell
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.widgets.Shell
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Shell
+  @/@SwtGuide
+  sname=SwtGuide
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.guide.Guide
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SwtGuide
+  @/@ActionThing
+  sname=ActionThing
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.ActionThing
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ActionThing

@@ -1,0 +1,1 @@
+java -cp "./target/test-classes/" Test ./xworker/ %1 %2 %3 %4 %5

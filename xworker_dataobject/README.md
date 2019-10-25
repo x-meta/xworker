@@ -1,0 +1,2 @@
+#xworker_dataobject
+XWorker的dataobject项目是对数据的映射和管理的项目，比如映射数据库的表实现增删改查等。

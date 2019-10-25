@@ -1,0 +1,409 @@
+@xworker.mina.filter.statistic.ProfilerTimerFilter
+sname
+ProfilerTimerFilter
+slabel
+ProfilerTimerFilter
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>This class will measure the time it takes for a method in the <a title="class in org.apache.mina.core.filterchain" href="http://mina.apache.org/report/trunk/apidocs/org/apache/mina/core/filterchain/IoFilterAdapter.html"><code>IoFilterAdapter</code></a> class to execute.</p>
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@actions1
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@actions1/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.apache.mina.filter.statistic.ProfilerTimerFilter;
+import org.apache.mina.core.session.IoEventType;
+
+import java.util.concurrent.TimeUnit;
+
+def timeUnit = null;
+switch(self.timeUnit){
+    case "MICROSECONDS":
+        timeUnit = TimeUnit.MICROSECONDS;
+        break;
+    case "MILLISECONDS":
+        timeUnit = TimeUnit.MILLISECONDS;
+        break;
+    case "NANOSECONDS":
+        timeUnit = TimeUnit.NANOSECONDS;
+        break;
+    case "SECONDS":
+        timeUnit = TimeUnit.SECONDS;
+        break;
+    default:
+        timeUnit = TimeUnit.MILLISECONDS;
+        break;        
+}
+
+def eventTypes = [];
+if(self.getBoolean("CLOSE")){
+    eventTypes.add(IoEventType.CLOSE);
+}
+if(self.getBoolean("EXCEPTION_CAUGHT")){
+    eventTypes.add(IoEventType.EXCEPTION_CAUGHT);
+}
+if(self.getBoolean("MESSAGE_RECEIVED")){
+    eventTypes.add(IoEventType.MESSAGE_RECEIVED);
+}
+if(self.getBoolean("MESSAGE_SENT")){
+    eventTypes.add(IoEventType.MESSAGE_SENT);
+}
+if(self.getBoolean("SESSION_CLOSED")){
+    eventTypes.add(IoEventType.SESSION_CLOSED);
+}
+if(self.getBoolean("SESSION_CREATED")){
+    eventTypes.add(IoEventType.SESSION_CREATED);
+}
+if(self.getBoolean("SESSION_IDLE")){
+    eventTypes.add(IoEventType.SESSION_IDLE);
+}
+if(self.getBoolean("SESSION_OPENED")){
+    eventTypes.add(IoEventType.SESSION_OPENED);
+}
+if(self.getBoolean("WRITE")){
+    eventTypes.add(IoEventType.WRITE);
+}
+
+def filter = null;
+if(timeUnit == null && eventTypes.size() == 0){
+    filter = new ProfilerTimerFilter();
+}else if(timeUnit != null && eventTypes.size() == 0){
+    filter = new ProfilerTimerFilter(timeUnit);
+}else if(timeUnit != null && timeUnit.size() > 0){
+    filter = new ProfilerTimerFilter(timeUnit, eventTypes as IoEventType[]);
+}
+
+actionContext.getScope(0).put(self.metadata.name, filter);
+if(actionContext.get("parent") != null){
+    parent.getFilterChain().addLast(self.metadata.name, filter);
+}
+return filter;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@timeUnit
+sname
+timeUnit
+sinputtype
+select
+sreadOnly
+false
+sdefault
+MILLISECONDS
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@timeUnit/@MICROSECONDS
+sname
+MICROSECONDS
+slabel
+MICROSECONDS
+svalue
+MICROSECONDS
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@timeUnit/@MILLISECONDS
+sname
+MILLISECONDS
+slabel
+MILLISECONDS
+svalue
+MILLISECONDS
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@timeUnit/@NANOSECONDS
+sname
+NANOSECONDS
+slabel
+NANOSECONDS
+svalue
+NANOSECONDS
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@timeUnit/@SECONDS
+sname
+SECONDS
+slabel
+SECONDS
+svalue
+SECONDS
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@CLOSE
+sname
+CLOSE
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@EXCEPTION_CAUGHT
+sname
+EXCEPTION_CAUGHT
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@MESSAGE_RECEIVED
+sname
+MESSAGE_RECEIVED
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@MESSAGE_SENT
+sname
+MESSAGE_SENT
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@SESSION_CLOSED
+sname
+SESSION_CLOSED
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@SESSION_CREATED
+sname
+SESSION_CREATED
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@SESSION_IDLE
+sname
+SESSION_IDLE
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@SESSION_OPENED
+sname
+SESSION_OPENED
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.mina.filter.statistic.ProfilerTimerFilter/@WRITE
+sname
+WRITE
+sinputtype
+truefalse
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

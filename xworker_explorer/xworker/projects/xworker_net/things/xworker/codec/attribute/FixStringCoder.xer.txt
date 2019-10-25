@@ -1,0 +1,178 @@
+@xworker.codec.attribute.FixStringCoder
+sname
+FixStringCoder
+slabel
+FixStringCoder
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.codec.Coder
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>长度固定的字符串。</p>
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@actions/@encode
+sname
+encode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def size = self.getInt("size");
+def bytes = new byte[size];
+def str = data;
+if(self.propertyPath == null || self.propertyPath == ""){
+    str = self.getString("defaultValue");
+}
+if(str == null){
+    str = "";
+}
+def bs = null;
+if(self.charset != null && self.charset != ""){
+    bs = str.getBytes(self.charset);
+}else{
+    bs = str.getBytes();
+}
+
+for(int i=0; i<bytes.length; i++){
+    if(i < bs.length){
+        bytes[i] = bs[i];
+    }
+}
+
+buffer.put(bytes);
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@actions/@decode
+sname
+decode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def size = self.getInt("size");
+def bytes = new byte[size];
+buffer.get(bytes);
+
+if(self.charset != null && self.charset != ""){
+    return new String(bytes, self.charset);
+}else{
+    return new String(bytes);
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@size
+sname
+size
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.codec.attribute.FixStringCoder/@charset
+sname
+charset
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false

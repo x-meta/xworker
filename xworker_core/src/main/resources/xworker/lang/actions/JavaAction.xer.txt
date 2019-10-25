@@ -1,0 +1,664 @@
+^1541147210468
+@
+sname
+JavaAction
+slabel
+JavaAction
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.Action
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+thing.action
+smodifier
+public
+sinheritDescription
+false
+sicon
+icons/file/java.gif
+Sdescription
+#$@text#$@
+<p><strong>JavaAction</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction的作用是执行Java代码，JavaAction是基本的动作，其它类型的动作模型最后也是靠JavaAction来解释执行。</p>
+
+<p><strong>调用Java的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是通过调用Java的方法来实现的。</p>
+
+<ul>
+	<li><strong>固定参数的Java方法</strong><br />
+	如: public static String run(ActionContext actionContext)，参数固定为ActionContext，返回值类型和是否是静态不限。<br />
+	&nbsp;</li>
+	<li><strong>多个参数的Java方法</strong><br />
+	由于通过发射有时不能正确获取参数的名字，而参数名是从变量上下文取变量的，所以需要通过注解来说明，如下面的示例：<br />
+	<strong>@ActionParams(names=&quot;p1,p2,p3&quot;)</strong><br />
+	public static String run(Object p1,&nbsp;String p2,&nbsp; int p3, ActionContext actionContext)<br />
+	最后一个参数如果是ActionContext，那么可以不用再注解里说明。<br />
+	&nbsp;</li>
+	<li><strong>非静态方法</strong><br />
+	非静态方法执行时必须要有一个所属的对象，因此需要下面的注解。<br />
+	<strong>@ActionClass(creator=&quot;xxx&quot;)</strong>，可选，针对类的，creator用于指明一个实例化对象的方法，实例化对象的方法必须是静态的且参数固定为ActionCotnext。<br />
+	<strong>@ActionField(name=&quot;xxx&quot;)</strong>，针对属性，标记在执行被调用的方法前，从变量上下文中取xxx变量为其赋值。</li>
+</ul>
+
+<p><strong>外部Java</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是指在Java项目中或者已经打包到类库中的Java类，常用该方法。</p>
+
+<p><strong>内部Java</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是指在当前事物模型的管理器下编写的Java代码。很少使用，很久没测是否功能还正常。</p>
+
+<p><strong>Java代码</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 直接在当前模型里编写Java代码。很少使用，很久没测是否功能还正常。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.util.DescriptorsIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sen_description
+<p>Java action.</p>
+sth_mark
+false
+  @/@name
+  sname
+  name
+  slabel
+  名称
+  sgroup
+  Code
+  sgroupIndex
+  -100
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  name
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  sgroup
+  Code
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Label
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@isSynchronized
+  sname
+  isSynchronized
+  slabel
+  是否同步
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Synchronized
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  isSynchronized
+  @/@throwException
+  sname
+  throwException
+  slabel
+  抛出异常
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Throw Exception
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  throwException
+  @/@useOtherAction
+  sname
+  useOtherAction
+  slabel
+  引用其他动作
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Reference to Other Action
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  useOtherAction
+  @/@otherActionPath
+  sname
+  otherActionPath
+  slabel
+  引用动作路径
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Action
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Referenced Action path
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  otherActionPath
+  @/@useOuterJava
+  sname
+  useOuterJava
+  slabel
+  使用外部Java
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  scolspan
+  2
+  sgroup
+  Code
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>是否是类库下的Java类，比如编译并打包在jar中的java类。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Reference outer Java
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  useOuterJava
+  @/@useInnerJava
+  sname
+  useInnerJava
+  slabel
+  使用内部Java
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sgroup
+  Code
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果使用内部Java，那么Java的源码是和事物放在一起的，事物管理器的目录就是Java源码的路径。</p>
+
+<p><strong>注：</strong></p>
+
+<p>只对文件类型的事物管理器有效。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  UseInnerJava
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  useInnerJava
+  @/@outerClassName
+  sname
+  outerClassName
+  slabel
+  Java类全名
+  sinputtype
+  openWindow
+  sshowLabel
+  true
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Code
+  sinputattrs
+  xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>在使用外部Java或内部Java时需要填写，如果Java代码直接写到本事物中则不需要。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Referenced Class Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  outerClassName
+  @/@className
+  sname
+  className
+  slabel
+  类名
+  sgroup
+  Code
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>代码所表示的Java类名。如：User。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Class Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  className
+  @/@methodName
+  sname
+  methodName
+  slabel
+  方法名称
+  sinputtype
+  openWindow
+  sshowLabel
+  true
+  ssize
+  40
+  sgroup
+  Code
+  sinputattrs
+  xworker.swt.xworker.attributeEditor.openWins.MethodSelector/@shell|classAttributeName=outerClassName
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>要调用的方法名称。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Method Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  methodName
+  @/@disableGlobalContext
+  sname
+  disableGlobalContext
+  slabel
+  禁止全局上下文
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果一个动作是全局上下文的动作，那么应该禁止，否则会造成递归的无限循环。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Disable Gloable Context
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>If this aciton is global action must diable global context.</p>
+  sid
+  disableGlobalContext
+  @/@description
+  sname
+  description
+  slabel
+  描述
+  sinputtype
+  html
+  scolspan
+  2
+  sgroup
+  Description
+  sgroupIndex
+  -90
+  sinputattrs
+  Width='100';Height='80';ToolbarSet="SwtEdit"
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Description
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  description
+  @/@code
+  sname
+  code
+  slabel
+  代码
+  sinputtype
+  codeEditor
+  scolspan
+  2
+  sgroup
+  Code
+  sinputattrs
+  rows="10" cols="50" codeName="Java" codeType="Java"
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Code
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  code
+  @/@swtMenus
+  sname
+  swtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sextends
+  xworker.lang.actions.ActionMenu/@swtMenus
+  sid
+  swtMenus
+    @/@swtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuDefine
+      @/@swtMenus/@menuDefine/@Java
+      sname
+      Java
+      slabel
+      Java
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      Java
+    @/@swtMenus/@menuSetting
+    sname
+    menuSetting
+    smenuType
+    Java
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    menuSetting
+      @/@swtMenus/@menuSetting/@openJavaSource
+      sname
+      openJavaSource
+      slabel
+      打开Java源码
+      surl
+      xworker.lang.actions.ActionMenu/@actions/@openJavaSource
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      openJavaSource
+  @/@attributeTemplate
+  sname
+  attributeTemplate
+  slabel
+  属性模板
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为true，那么可以在属性中使用freemarker模板，在动作执行前会把有模板的属性生成具体属性。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  AttributeTemplate
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  attributeTemplate

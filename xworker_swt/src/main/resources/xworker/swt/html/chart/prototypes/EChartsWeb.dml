@@ -1,0 +1,137 @@
+%1563874692903
+@
+sname=EChartsWeb
+slabel=EChartsWeb
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@view
+  sname=view
+  sbelongToHtml=true
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<#if requestBean.jsUrl?exists>
+<script src="${requestBean.jsUrl}"></script>
+<#else>
+<script src="${request.contextPath}/js/charts/echarts/echarts.min.js"></script>
+</#if>
+<#if requestBean.jqueryUrl?exists>
+<script src="${requestBean.jqueryUrl}"></script>
+<#else>
+<script src="${request.contextPath}/js/jquery/jquery-2.0.3.min.js"></script>
+</#if>
+<style type="text/css">
+body {
+
+    //width:100%;
+    //height:100%;
+    min-height: 100%;
+    display:block;position:absolute;left:0px;top:0px;width:100%;height:100%;overflow:hidden;
+}
+
+</style>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=view
+    @/@view/@code
+    sname=code
+    Scode=
+#$@text#$@
+<div id="swtChart" style="width:100%;height:100%;"></div>
+<script language="javascript">
+var swtChart = echarts.init(document.getElementById('swtChart'));
+
+load();
+update();
+
+setTimeout(function (){
+    window.onresize = function () {
+        swtChart.resize();
+    }
+},200)
+
+function load(){
+    if(typeof(getScript) != "undefined"){
+        executeScript(true);
+    }else{
+        setTimeout(load, 200);
+    }
+}
+
+function update(){
+    setTimeout(update, 500);
+    if(typeof(getScript) == "undefined"){
+        return;
+    }
+    
+    try{
+        var script = getOption();
+        if(script){
+            eval(script);        
+        }
+    }catch(exception){
+        alert(exception);
+    }
+}
+
+function executeScript(clear){
+    try{
+        //alert(noclear);
+        if(clear == true){
+            swtChart.clear();
+        }
+        var script = getScript();
+        if(script){
+            eval(script);        
+        }
+    }catch(exception){
+        alert(exception);
+    }
+}
+
+function resize(){
+    //swtChart.resize();
+}
+
+document.oncontextmenu= function(){
+    self.event.returnValue=false
+    return false;
+}
+</script>
+#$@text#$@
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@success
+  sname=success
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.swt.html.chart.prototypes.EChartsWeb/@view
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=success

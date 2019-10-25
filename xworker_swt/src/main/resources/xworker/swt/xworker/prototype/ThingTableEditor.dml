@@ -1,0 +1,493 @@
+%1502107286744
+@
+sname=shell
+stext=事物表格编辑器
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=false
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=400
+sheight=500
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=ThingTableEditor
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@shellFillLayout
+  sname=shellFillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=shellFillLayout
+  @/@mainComposite
+  sname=mainComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=mainComposite
+    @/@mainComposite/@compositeFillLayout
+    sname=compositeFillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=compositeFillLayout
+    @/@mainComposite/@actionsTable
+    sname=attributesTable
+    sselectStyle=SINGLE
+    sV_SCROLL=true
+    sH_SCROLL=true
+    sCHECK=false
+    sFULL_SELECTION=true
+    sHIDE_SELECTION=true
+    sBORDER=false
+    slineVisible=true
+    smultipleColumns=true
+    sheaderVisible=true
+    ssortIndicator=true
+    smoveableColumns=true
+    sheadImages=false
+    ssubImages=false
+    sVIRTUAL=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    svisible=true
+    sdescriptors=xworker.swt.Widgets/@Table
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actionsTable
+      @/@mainComposite/@actionsTable/@attrPathColumn
+      sname=attrPathColumn
+      stext=lang:d=名称&en=Name
+      swidth=150
+      sdescriptors=xworker.swt.xworker.DataTable/@TableColumn
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=attrPathColumn
+      @/@mainComposite/@actionsTable/@acTypeLabel
+      sname=attrTypeColumn
+      stext=lang:d=值&en=Value
+      swidth=100
+      sdescriptors=xworker.swt.widgets.Table/@TableColumn
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=acTypeLabel
+      @/@mainComposite/@actionsTable/@attrDefineInTableColumn
+      sname=attrDefineInTableColumn
+      stext=lang:d=定义在&en=Defined In
+      swidth=250
+      sdescriptors=xworker.swt.widgets.Table/@TableColumn
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=attrDefineInTableColumn
+      @/@mainComposite/@actionsTable/@listeners
+      sname=listeners
+      sdescriptors=xworker.swt.events.Listeners/@listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=listeners
+        @/@mainComposite/@actionsTable/@listeners/@extendsTableSelection
+        sname=actionsTableSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=extendsTableSelection
+          @/@mainComposite/@actionsTable/@listeners/@extendsTableSelection/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//获取选中的事物路径
+def item = event.widget.getSelection()[0];
+
+//在浏览器中显示文档
+def attribute = world.getThing(item.getData().path);
+//outlineBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+
+editorThing.doAction("attributeSelected", parentContext, "attribute", attribute);
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GroovyAction
+        @/@mainComposite/@actionsTable/@listeners/@extendsTableDefaultSelection
+        sname=actionsTableDefaultSelection
+        stype=DefaultSelection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=extendsTableDefaultSelection
+          @/@mainComposite/@actionsTable/@listeners/@extendsTableDefaultSelection/@1614
+          sname=attriuteDefaultSelectionGroovy
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.swt.util.SwtDialog;
+
+//属性的描述者
+def name = event.item.getData("name");
+def descriptor = thing.getAttributeDescriptor(name);
+
+if(descriptor != null){
+    def ac = new ActionContext();
+    ac.put("parent", attributesTable.getShell());
+    ac.put("thing", thing.getRoot().getMetadata().getPath());
+    ac.put("currentThing", thing);
+    ac.put("ec", actionContext);
+    
+    def desthing = new Thing("xworker.lang.MetaDescriptor3");
+    desthing.addChild(descriptor.detach());
+    
+    def newThing = new Thing(desthing.getMetadata().getPath());
+    newThing.put(name, thing.get(name));
+    
+    def shellThing = world.getThing("xworker.ide.worldExplorer.swt.command.EditAttributeShell");
+    def shell = shellThing.doAction("create", ac);
+    shell.setText("编辑属性-" + descriptor.getMetadata().getName() 
+              + "(" + descriptor.getMetadata().getLabel() + ")");
+    ac.thingForm.doAction("setThing", ac, ["thing": newThing]);
+    shell.pack();
+    shell.open();
+    ac.thingForm.doAction("setFocus", ac);
+    
+    def dialog = new SwtDialog(shell, ac);
+    def result = dialog.open();
+    if(result != null){
+        thing.put(name, result.get(name));  
+        _g.put("modified", true);
+        editorThing.doAction("modify", parentContext, "modify", true);              
+    }
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=1614
+    @/@mainComposite/@actions
+    sname=actions
+    sdescriptors=xworker.swt.Widgets/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@mainComposite/@actions/@setThing
+      sname=setThing
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TableItem;
+
+_g.put("thing", thing);
+_g.put("modified", false);
+
+//动作文档
+//if(thing.getThingName() == "Shell"){
+//    actionContext.printStackTrace();
+//}
+def actionThings = thing.getAllAttributesDescriptors();
+attributesTable.removeAll();
+def acs = [];
+def acss = [:];
+def acds = [:];
+for(ac in actionThings){
+    def name = ac.metadata.name;
+    def label = ac.metadata.label;
+    if(label != name){
+        label = name + "(" + label + ")";
+    }
+    acs.add(name);
+    acss.put(name, ac.metadata.path);
+    def acDescriptor = ac.getParent().getMetadata().getLabel();
+    acds.put(name, acDescriptor);
+    //值
+    def value = thing.getStringBlankAsNull(name);
+    if(value == null){
+        value = "";
+    }
+    acds.put("type_" + name, value);
+    
+    acds.put("label_" + name, label);
+}
+Collections.sort(acs);
+
+//按描述者分组
+def dess = [];
+def desc = [:];
+for(descrptor in thing.getDescriptors()){
+    def name =  descrptor.getMetadata().getName();
+    dess.add(name);
+    desc.put(name, name);
+}
+for(ac in acs){
+    def name = acds.get(ac);
+    if(desc.get(name) != null){
+        continue;
+    }
+    
+    dess.add(name);
+    desc.put(name,name);
+}
+
+//for(des in dess){
+    for(ac in acs){
+ //       if(acds.get(ac) == des){
+            def titem = new TableItem(attributesTable, SWT.NONE);
+            titem.setText([ac, acds.get("type_" + ac), acds.get(ac)] as String[]);
+            titem.setData(["path":acss.get(ac)]);
+            titem.setData("name", ac);
+//        }
+  //  }
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=setThing
+        @/@mainComposite/@actions/@setThing/@ins
+        sisValidate=false
+        sname=ins
+        sdescriptors=xworker.lang.actions.Inout/@ins
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ins
+          @/@mainComposite/@actions/@setThing/@ins/@thing
+          sname=thing
+          stype=org.xmeta.Thing
+          stypeCheck=false
+          soptional=true
+          scheck=false
+          scheckLevel=exception
+          sdescriptors=xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=thing
+      @/@mainComposite/@actions/@getThing
+      sname=getThing
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=return actionContext.get("thing");
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getThing
+      @/@mainComposite/@actions/@getControl
+      sname=getControl
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=return mainComposite;
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getControl
+      @/@mainComposite/@actions/@save
+      sname=save
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+if(actionContext.get("thing") != null){
+    thing.save();
+    
+    _g.put("modified", false);
+    editorThing.doAction("modify", parentContext, "modify", false);
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=save
+      @/@mainComposite/@actions/@isModified
+      sname=isModified
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      scode=return modified;
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=isModified
+  @/@init
+  sname=init
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+def thing = world.getThing("xworker.swt.xworker.prototype.ThingTableEditor");
+
+actions.doAction("setThing", actionContext, "thing", thing);
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sdescriptors=xworker.swt.widgets.Widget/@Code
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=init

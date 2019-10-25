@@ -1,0 +1,223 @@
+%1568809504293
+@
+sname=mainComposite
+sBORDER=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_FOCUS=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=ThingRegistViewer
+scapture=false
+senabled=true
+sredraw=true
+spack=false
+svisible=true
+sdescriptors=xworker.swt.widgets.Composite
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Views
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=xworker
+sth_fileMonitor=false
+Sdescription=
+#$@text#$@
+<p>事物注册器浏览器。</p>
+
+<p><strong>默认选择事件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当选默认选择了一个事物模型后会打开编辑。如果viewThing节点实现了&nbsp;<strong>defaultSelected(Thing thing, EditorContainer editorContainer)</strong>方法，那么会使用它来替换默认的选择事件。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>thing： Thing or String</strong><br />
+	注册事物。<br />
+	&nbsp;</li>
+	<li><strong>type: String</strong><br />
+	注册类型。默认为child。<br />
+	&nbsp;</li>
+	<li><strong>keywords: String</strong><br />
+	初始的查询关键字。可以为null。<br />
+	&nbsp;</li>
+	<li><strong>descritporForNewThing: String</strong><br />
+	用于创建新事物的描述者，可以为null。&nbsp;&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>title: String</strong><br />
+	标题。<br />
+	&nbsp;</li>
+	<li><strong>icon: String</strong><br />
+	图标。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=FillLayout
+  @/@thingRegistor
+  sname=thingRegistor
+  sregistType=child
+  sparent=false
+  ssearchByKeywords=true
+  sshowContent=false
+  scontentDisplayType=TabFolder
+  sforceUseDefaultOpenMethod=false
+  sshowDescBrowser=false
+  sdescBrowserRight=false
+  sautoLoad=false
+  scache=true
+  scheck=false
+  sdescritporForNewThing=xworker.swt.xworker.ThingRegistThing
+  sdescritporChilds=false
+  sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=thingRegistor
+    @/@thingRegistor/@actions
+    sname=actions
+    sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=actions
+      @/@thingRegistor/@actions/@defaultSelection
+      sname=defaultSelected
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+if(thing != null){
+    if(viewThing.getActionThing("defaultSelected") != null){
+        viewThing.doAction("defaultSelected", "thing", thing, "editorContainer",
+              parentContext.editorContainer,
+             "path", thing.getMetadata().getPath());
+    }else{
+        openThingEditor(actionContext, "thing", thing, "editorContainer",
+              parentContext.editorContainer,
+              "path", thing.getMetadata().getPath());
+    }
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=defaultSelection
+        @/@thingRegistor/@actions/@defaultSelection/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@thingRegistor/@actions/@defaultSelection/@ActionDefined/@openThingEditor
+          sname=openThingEditor
+          seditorContainer=var:editorContainer
+          sid=var:path
+          seditor=xworker.swt.app.editors.ThingEditor
+          Sparams=
+#$@text#$@
+{
+    thing:"var:thing"
+}
+#$@text#$@
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.swt.app.AppActions/@OpenEditor
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+  @/@init
+  sname=init
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+import xworker.swt.util.SwtUtils;
+
+if(actionContext.get("params") != null){
+    if(params.thing instanceof String){
+         //如果事物是路径，获取实际失误
+         params.thing = world.getThing(params.thing);
+    }
+
+    //执行事物注册器的初始化    
+    thingRegistor.doAction("init", actionContext, params);
+    
+    if(params.title != null){
+        //Item的标题
+        viewItem.setText(params.title);
+    }
+    
+    if(params.icon != null){
+        //图标
+        def icon = SwtUtils.createImage(mainComposite, params.icon, actionContext);
+        
+        if(icon != null){
+             viewItem.setImage(icon);
+        }
+    }
+}
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sdescriptors=xworker.swt.widgets.Widget/@Code
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=init

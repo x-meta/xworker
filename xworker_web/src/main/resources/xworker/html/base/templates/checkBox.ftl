@@ -1,0 +1,2 @@
+<#import "common.ftl" as lib>
+<input type="checkbox" id="${object.name?if_exists}" name="${object.name}" <@lib.showProperties names=["alt", "emsg", "class", "style"] dataObject=object/> <#if object.disabled?exists && object.disabled == "true">disabled </#if>value="${object.value?if_exists}" <#if object.expression?exists && object.expression != ""><${r"#"}if ${object.expression}>checked</${r"#"}if></#if> <@lib.showEvent object=object/> ${object.otherAttributes?if_exists}> ${object.description?if_exists}

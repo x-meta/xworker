@@ -1,0 +1,167 @@
+@xworker.java.awt.ObjectFactory
+sname
+ObjectFactory
+slabel
+ObjectFactory
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+suseOuterJava
+false
+sclassName
+ObjectFactory
+smethodName
+run
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.image.CropImageFilter;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.io.File;
+import java.net.URL;
+import java.util.Map;
+
+import ognl.Ognl;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.ActionContext;
+
+import org.xmeta.util.UtilString;
+
+public class ObjectFactory {
+	private static Logger logger = LoggerFactory.getLogger(ObjectFactory.class);
+	
+
+	/**
+	 * 从一个Image事物中创建图像。
+	 * 
+	 * @param imageThing
+	 * @param actionContext
+	 * @return
+	 * @throws Exception
+	 */
+	public static Image createImage(Thing imageThing, ActionContext actionContext) throws Exception{
+		return createImage(imageThing.getAttributes(), actionContext);
+	}
+	
+	/**
+	 * 从一个参数字符串中创建图像。
+	 * 
+	 * @param paramStr
+	 * @param actionContext
+	 * @return
+	 * @throws Exception
+	 */
+    public static Image createImage(String paramStr, ActionContext actionContext) throws Exception{
+    	if(paramStr == null || "".equals(paramStr.trim())){
+			return null;
+		}
+    	
+    	Map<String, String> values = UtilString.getParams(paramStr, "&");
+    	
+    	return createImage(values, actionContext);
+    }
+    
+	/**
+	 * 创建图片。
+	 * 
+	 * @param params
+	 * @param actionContext
+	 * @return
+	 * @throws Exception
+	 */
+	public static Image createImage(Map<String, ?> values, ActionContext actionContext) throws Exception{
+		String imageVarName = (String) values.get("imageVarName");
+		if(UtilString.isNotNull(imageVarName)){
+			return (Image) Ognl.getValue(imageVarName, actionContext);
+		}
+		
+		//首先看是否是file或url
+		if("true".equals("isVar")){
+			String filePath = (String) values.get("file");
+			if(filePath != null && !"".equals(filePath)){
+				File file = (File) Ognl.getValue(filePath, actionContext);
+				if(file != null){
+					return Toolkit.getDefaultToolkit().createImage(file.getAbsolutePath());
+				}else{
+					logger.info("createImage, file is null, file=" + filePath);
+					return null;
+				}
+			}
+			
+			String url = (String) values.get("url");
+			if(url != null && !"".equals(url)){
+				URL u = (URL) Ognl.getValue(url, actionContext);
+				if(u != null){
+					return Toolkit.getDefaultToolkit().createImage(u);
+				}else{
+					logger.info("createImage, url is null, url=" + url);
+					return null;
+				}
+			}
+		}else{
+			String filePath = (String) values.get("file");
+			if(filePath != null && !"".equals(filePath)){
+				return Toolkit.getDefaultToolkit().createImage(filePath);
+			}
+			
+			String url = (String) values.get("url");
+			if(url != null && !"".equals(url)){				
+				return Toolkit.getDefaultToolkit().createImage(new URL(url));
+			}
+		}
+		
+		//判断是否从字节中创建
+		String bytesStr =(String)  values.get("bytes");
+		if(bytesStr != null && !"".equals(bytesStr)){
+			byte[] bytes = (byte[]) Ognl.getValue(bytesStr, actionContext);
+			if(bytes != null){
+				String imageoffset = (String) values.get("imageoffset");
+				String imageLength = (String) values.get("imageLength");
+				if(UtilString.isNull(imageoffset) || UtilString.isNull(imageLength)){
+					return Toolkit.getDefaultToolkit().createImage(bytes);
+				}else{
+					return Toolkit.getDefaultToolkit().createImage(bytes, Integer.parseInt(imageoffset), Integer.parseInt(imageLength));
+				}
+			}else{
+				logger.info("createImage: bytes is null, bytes=" + bytesStr);
+				return null;
+			}
+		}
+		
+		//从其他图片中抓取
+		if(!UtilString.isNull((String) values.get("sourceImage"))){
+			Image sourceImage = (Image) Ognl.getValue(values.get("sourceImage"), actionContext);
+			if(sourceImage != null){
+				int x = Integer.parseInt((String) values.get("x"));
+				int y = Integer.parseInt((String) values.get("y"));
+				int width = Integer.parseInt((String) values.get("width"));
+				int height = Integer.parseInt((String) values.get("height"));
+				ImageFilter smallCropFilter =new CropImageFilter(x,y,width,height);
+			    return Toolkit.getDefaultToolkit().createImage(new FilteredImageSource(sourceImage.getSource(),smallCropFilter));      
+			}else{
+				logger.info("crateImage: sourceImage is null, sourceImage=" + values.get("sourceImage"));
+				return null;
+			}
+		}else{
+			return null;
+		}
+	}
+	
+	public static Object run(ActionContext actionContext){
+		return null;
+	}
+}
+#$@text#$@
+sid
+ObjectFactory
+sdescriptors
+xworker.lang.actions.JavaAction

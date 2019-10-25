@@ -1,0 +1,122 @@
+^1403658090886
+@
+sname
+Regist
+slabel
+Regist
+sdescriptors
+xworker.http.controls.SimpleControl
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.manong.MaNongServer;
+
+println(request.getParameterMap());
+def userName = request.getParameter("name");
+def password = request.getParameter("password");
+def nickName = request.getParameter("nickName");
+def email = request.getParameter("email");
+def user = MaNongServer.registUser(userName, password, nickName, email, con);
+def script = null;
+if(user.get("status") != "1"){
+    script = "Ext.Msg.alert('登录失败', '" + user.get("message") + "');";
+}else{
+    script = "Ext.xworker.login = '" + userName + "';" + 
+        "Ext.xworker.loginNickName = '" + nickName + "';" + 
+        "Ext.getCmp('registWindow').hide();";
+}
+
+def result = """
+{
+    success: true,
+    script: "${script}"
+}""";
+//println(result);
+response.setContentType("text/plain; charset=utf-8");
+response.getWriter().println(result);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@actions/@doAction/@contexts
+sname
+contexts
+sdescriptors
+xworker.lang.actions.Inout/@contexts
+sth_createIndex
+false
+sth_mark
+false
+@/@actions/@doAction/@contexts/@con
+sname
+con
+sconnectionName
+con
+stransaction
+true
+sdataSourcePath
+_local.xworker.db.XWorkerWebDataSource
+sconflicting
+ignore
+sdisable
+false
+sonError
+ignore
+spreventError
+false
+sinherit
+true
+sdescriptors
+xworker.lang.context.Contexts/@DataSouceActionContext
+sth_createIndex
+false
+sth_mark
+false

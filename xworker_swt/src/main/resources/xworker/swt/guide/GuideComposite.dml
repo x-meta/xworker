@@ -1,0 +1,197 @@
+%1528873918455
+@
+sname=GuideComposite
+slabel=GuideComposite
+sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.swt.layout.LayoutDatas
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p>SWT向导面板。</p>
+
+<p><strong>保存变量和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 保存的是xworker.swt.guide.Guide对象，返回的是Composite。</p>
+
+<p><strong>示例</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; <a href="javascript:invoke('shell:xworker.example.swt.guide.TestGuide')">TestGuide</a></p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+import xworker.swt.guide.Guide;
+import xworker.swt.design.Designer;
+
+//创建变量上下文
+def ac = new ActionContext();
+ac.put("parent", parent);
+ac.put("parentContext", actionContext);
+
+//创建面板
+def thing = world.getThing("xworker.swt.guide.prototypes.GuideShell/@mainComposite");
+def composite = null;
+Designer.pushCreator(self);
+try{
+    composite = thing.doAction("create", ac);
+}finally{
+    Designer.popCreator();
+}
+actionContext.peek().put("parent", composite);
+for(child in self.getChilds()){
+    child.doAction("create", actionContext);
+}
+
+//创建向导
+def guideThing = self.doAction("getGuide", actionContext);
+def guide = new Guide(ac.contentComposite, ac.buttonComposite, guideThing, ac);
+guide.next();
+
+actionContext.g().put(self.getMetadata().getName(), guide);
+Designer.attachCreator(composite, self.getMetadata().getPath(), actionContext);
+return composite;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=create
+    @/@actions/@getGuide
+    sname=getGuide
+    sattributeName=guide
+    schildThingName=Guide
+    schildThingFirstChild=false
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getGuide
+  @/@name
+  sname=name
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@guide
+  sname=guide
+  sinputtype=dataSelector
+  sshowLabel=true
+  ssize=60
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=guide
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=description
+  @/@Guide
+  sname=Guide
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.guide.Guide
+  smany=true
+  seditCols=2
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Guide
