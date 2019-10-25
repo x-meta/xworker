@@ -4,56 +4,56 @@ call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install core
-cd ../../xworker_core/
+cd ../../xworker/xworker_core/
 call mvn install  -D maven.javadoc.skip=true
 pause
 
 echo install dataobject
-cd ../xworker_dataobject/xworker_dataobject/
+cd ../xworker_dataobject/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install web
-cd ../../xworker_web/xworker_web/
+cd ../xworker_web/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install swt
-cd ../../xworker_swt/
+cd ../xworker_swt/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install app
-cd ../xworker_app/xworker_app/
+cd ../xworker_app/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install function
-cd ../../xworker_function/xworker_function/
+cd ../xworker_function/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install ai
-cd ../../xworker_ai/xworker_ai/
+cd ../xworker_ai/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install jfreechart
-cd ../../xworker_jfreechart/xworker_jfreechart/
+cd ../xworker_jfreechart/
 call mvn install -D maven.javadoc.skip=true
 pause
 
 echo install uiflow
-cd ../../xworker_uiflow/xworker_uiflow/
+cd ../xworker_uiflow/
 call mvn install -D maven.javadoc.skip=true -Dgpg.skip
 pause
 
 echo package misc
-cd ../../xworker_misc/xworker_misc/
+cd ../xworker_misc/
 call mvn package -D maven.javadoc.skip=true
 pause
 
 echo package explorer
-cd ../../xworker_explorer/xworker_explorer/
+cd ../xworker_explorer/
 call mvn package -D maven.javadoc.skip=true
 pause

@@ -1,5 +1,5 @@
 echo install core
-cd ../xworker_core/
+cd ./xworker_core/
 call mvn deploy
 
 echo install dataobject
