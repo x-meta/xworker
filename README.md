@@ -1,4 +1,6 @@
-#xworker_explorer
-事物管理器项目是事物模型的管理和编辑器，它是事物模型编程的IDE。
+XWorker
+============
 
-![输入图片说明](http://git.oschina.net/uploads/images/2016/0623/192549_72e935b0_493262.png "在这里输入图片标题")
+XWorker是动态模型的开发平台和应用平台，详情可以参看https://www.xworker.org.IDE。
+
+![事物管理器](http://git.oschina.net/uploads/images/2016/0623/192549_72e935b0_493262.png "模型管理器")
