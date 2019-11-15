@@ -8,25 +8,38 @@ public class BooleanActions {
 	public static boolean isNull(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		return self.doAction("getValue", actionContext) == null;
+		Object value = getValue(self, actionContext);
+		return value == null;
 	}
 	
 	public static boolean isNotNull(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		return self.doAction("getValue", actionContext) != null;
+		Object value = getValue(self, actionContext);
+		return value != null;
+	}
+	
+	public static Object getValue(Thing self, ActionContext actionContext) {
+		ActionsFilter actions = new ActionsFilter(self.getChilds(), "value");
+		if(actions.exists("value")) {
+			return actions.run("value", actionContext, false);
+		}else {
+			return self.doAction("getValue", actionContext);
+		}
 	}
 	
 	public static boolean isTrue(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		return UtilData.isTrue(self.doAction("getValue", actionContext));
+		Object value = getValue(self, actionContext);
+		return UtilData.isTrue(value);
 	}
 	
 	public static boolean isNotTrue(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		return !UtilData.isTrue(self.doAction("getValue", actionContext));
+		Object value = getValue(self, actionContext);
+		return !UtilData.isTrue(value);
 	}
 	
 	public static boolean and(ActionContext actionContext){

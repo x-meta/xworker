@@ -24,6 +24,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.util.UtilMap;
 
 public class IoUtilsActions {
 	public static Object buffer(ActionContext actionContext) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException{
@@ -191,7 +192,25 @@ public class IoUtilsActions {
 			int index = 0;
 			while(iterator.hasNext()){
 				String line = iterator.next();
-				self.doAction("handleLine", actionContext, "line", line, "line_index", index, "line_has_next", iterator.hasNext());
+				for(Thing child : self.getChilds()) {
+					child.getAction().run(actionContext, UtilMap.toMap("line", line, "line_index", index, "line_has_next", iterator.hasNext()), true);
+					int status = actionContext.getStatus();
+					if(status != ActionContext.RUNNING) {
+						break;
+					}
+				}
+				
+				int status = actionContext.getStatus();
+				if(status == ActionContext.CONTINUE) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					continue;
+				}else if(status == ActionContext.BREAK) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					break;
+				}else if(status != ActionContext.RUNNING){
+					break;
+				}
+				
 				index++;
 			}
 		}finally{

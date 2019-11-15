@@ -1,4 +1,4 @@
-%1566290331589
+%1573797658566
 @
 sname=SwtExamples
 sdescription=<p>示例现在统一索引到xworker.example.ExamplesIndex下。</p>
@@ -2251,6 +2251,12 @@ sth_mark=false
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  Sen_description=
+#$@text#$@
+<h2>SimpleStateMachineComposite</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Composite based on simple state machine. Simulate user login and registration interface, and switch interface through status.</p>
+#$@text#$@
   sth_mark=false
   sid=SimpleStateMachineSWT
   @/@Panel
@@ -2318,3 +2324,186 @@ sth_mark=false
   sth_fileMonitor=false
   sth_mark=false
   sid=SsytemConsole
+  @/@Browser
+  sname=Browser
+  stype=swtDemo
+  spath=xworker.example.swt.ractors.BrowserExample/@mainComposite
+  sgroup=swt.Reactors
+  sicon=icons/application.png
+  sstyledTextForInsert=parentContext.parentContext.codeText
+  suseTargetThingDoc=false
+  ssimpleBrowser=false
+  Sdescription=
+#$@text#$@
+<h1>数据响应器示例</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 在Text中输入一个URL地址，然后按回车，会在下面的浏览器中打开该网址。</p>
+
+<h2>示例说明</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在本示例中，数据响应器模型是Controls节点下的DataReactors，本示例中数据响应器的规则如下。</p>
+
+<pre class="brush:plain;">
+urlText?defaultSelection=true
+urlText &gt; browser</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在这个规则里，urlText监听DefaultSelection事件，它把urlText的文本传递给browser控件，browser控件接收到文本后最为URL打开。</p>
+
+<h2>数据响应器简介</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 数据响应器是基于数据变化的事件流的，如选择了数据、更新了数据、增加了数据等等，控件可以响应这些数据变化的事件，并作出自己的处理。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sdescriptors=xworker.swt.xworker.ThingRegistThings/@ThingRegistThing
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  Sen_description=
+#$@text#$@
+<h1>DataReactor Example</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Enter a URL address in text and press enter to open it in the browser below.</p>
+
+<h2>Example explanation</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; In this example, the DataReactor model is DataReactors node under the&nbsp;Controls node, and the rules of the DataReactor in this example are as follows.</p>
+
+<pre class="brush:plain;">
+urlText?defaultSelection=true
+urlText &gt; browser</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; In this example, the data responder model is datareactors under the controls node, and the rules of the data responder in this example are as follows.</p>
+
+<h2>Introduction to&nbsp;DataReactor</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The DataReactor is based on the event flow of data changes, such as selecting data, updating data, adding data, etc. the control can respond to these data changes and make its own processing.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sth_mark=false
+  sid=Browser
+  @/@DataObjectEditor
+  sname=DataObjectEditor
+  stype=swtDemo
+  spath=xworker.example.swt.ractors.DataObjectEditor/@maimComposite
+  sgroup=swt.Reactors
+  sicon=icons/application.png
+  sstyledTextForInsert=parentContext.parentContext.codeText
+  suseTargetThingDoc=false
+  ssimpleBrowser=false
+  Sdescription=
+#$@text#$@
+<h1>编辑器示例</h1>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 使用数据响应器可以简化复杂的控件之间的关系。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;比如在本示例中，编辑按钮和删除按钮在表格未选中记录时应该变灰，选中记录时应该变的可用。通常处理这些关系需要很多代码，而使用数据响应器可以简化为如下。</p>
+
+<pre class="brush:plain;">
+#按钮的功能定义
+queryButton?fire=selected&amp;monitorStatus=false
+newButton?fire=added
+editButton?fire=updated
+deleteButton?fire=removed
+table?type=dataStore
+dataStore?control=table
+
+#响应链
+queryForm &gt; queryButton
+queryButton,newButton,editButton,deleteButton &gt; dataStore
+table &gt; editButton,deleteButton
+dataStore &gt; table</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sdescriptors=xworker.swt.xworker.ThingRegistThings/@ThingRegistThing
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  Sen_description=
+#$@text#$@
+<h1>Editor example</h1>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Using DataReactor can simplify the relationship between complex controls.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For example, in this example, the Edit button and delete button should be grayed out when the record is not selected in the table, and should be available when the record is selected. It usually takes a lot of code to handle these relationships, and using&nbsp;the&nbsp;&nbsp;DataReactor can be simplified as follows.</p>
+
+<pre class="brush:plain;">
+#Function definition of button
+queryButton?fire=selected&amp;monitorStatus=false
+newButton?fire=added
+editButton?fire=updated
+deleteButton?fire=removed
+table?type=dataStore
+dataStore?control=table
+
+#Response chain
+queryForm &gt; queryButton
+queryButton,newButton,editButton,deleteButton &gt; dataStore
+table &gt; editButton,deleteButton
+dataStore &gt; table</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sth_mark=false
+  sid=DataObjectEditor
+  @/@EditorExample
+  sname=EditorExample
+  stype=swtDemo
+  spath=xworker.example.swt.ractors.EditorExample/@mainComposite
+  sgroup=swt.Reactors
+  sicon=icons/application.png
+  sstyledTextForInsert=parentContext.parentContext.codeText
+  suseTargetThingDoc=false
+  ssimpleBrowser=false
+  Sdescription=
+#$@text#$@
+<h1>过滤器示例</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 本示例是一个编辑器，选中左边树中的节点，在CTabFolder中可以打开相应的编辑器。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 本示例的数据响应器的规则如下。</p>
+
+<pre class="brush:plain;">
+#为tree增加过滤器，source过滤器取tree.getData()._source属性
+tree?|source
+
+#把tree指向CTabFolder
+tree &gt; cTabFolder</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sdescriptors=xworker.swt.xworker.ThingRegistThings/@ThingRegistThing
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  Sen_description=
+#$@text#$@
+<h1>Filter example</h1>
+
+<p>&nbsp;&nbsp;&nbsp; This example is an editor. Select the node in the left tree to open the corresponding editor in CTabFolder.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The rules for the DataReactor in this example are as follows.</p>
+
+<pre class="brush:plain;">
+#Add a filter to the tree. The source filter takes the tree.getData()._source attribute.
+tree?|source
+
+#Point tree to cTabFolder
+tree &gt; cTabFolder</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+  sth_mark=false
+  sid=EditorExample

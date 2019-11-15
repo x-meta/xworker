@@ -434,6 +434,11 @@ public class ThingEditorChildActions {
 		        }
 		    }
 		    
+		    if("private".equals(des.getStringBlankAsNull("modifier"))){
+		    	//private的不显示
+		    	continue;
+		    }
+		    
 		    //过滤关键字
 		    String[] keys = keyword.split("[ ]");
 		    boolean addok = true;

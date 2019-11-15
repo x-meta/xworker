@@ -20,46 +20,85 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.util.UtilData;
+
 public class DoCreator {
 	static World world = World.getInstance();
 
 	public static Object run(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 
-		Object result = "success";
-		boolean while_ = true;
+		Object result = null;		
 		actionContext.peek().setVarScopeFlag();//.isVarScopeFlag = true; //一个新的局部变量范围
-		Thing childActions = self.getThing("ChildAction@0"); 
-		do {
-			for (Thing child : childActions.getChilds()) {
-				Action action = world.getAction(child);
-				if (action != null) {
-					result = action.run(actionContext, null, true);
+		Thing childActions = self.getThing("ChildAction@0");
+		
+		if(childActions == null) {
+			Object condition = null;
+			do {
+				Thing conditionThing = null;
+				for(Thing child : self.getChilds()) {
+					if("condition".equals(child.getMetadata().getName())) {
+						if(conditionThing == null) {
+							conditionThing = child;
+						}						
+					}else {
+						result = child.getAction().run(actionContext, null, true);
+					}
+					
+					int sint = actionContext.getStatus();
+					if (sint != ActionContext.RUNNING) {
+						break;
+					}
 				}
-
-				int sint = actionContext.getStatus();
-				if (sint != ActionContext.RUNNING) {
+				
+				//判断循环的状态
+				if (actionContext.getStatus() == ActionContext.BREAK) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					break;
+				} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+					actionContext.setStatus(ActionContext.RUNNING);
+				} else if (actionContext.getStatus() != ActionContext.RUNNING) {
+					break;
+				}else if(ActionContext.EXCEPTION == actionContext.getStatus()){
 					break;
 				}
-			}
-
-			//判断循环的状态
-			if (actionContext.getStatus() == ActionContext.BREAK) {
-				actionContext.setStatus(ActionContext.RUNNING);
-				break;
-			} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
-				actionContext.setStatus(ActionContext.RUNNING);
-			} else if (actionContext.getStatus() != ActionContext.RUNNING) {
-				break;
-			}else if(ActionContext.EXCEPTION == actionContext.getStatus()){
-				break;
-			}
-			// }while(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(self,
-			// "code", actionContext, self.getMetadata().getPath())));
-			//执行自己的while方法判断是否while条件成立
-			while_ = IfCreator.checkCondition(self, actionContext);			
-		} while (while_);
-
+				
+				if(conditionThing != null) {
+					condition = conditionThing.getAction().run(actionContext, null, false);
+				}				
+			}while(UtilData.isTrue(condition));
+		}else {		
+			boolean while_ = true;
+			do {
+				for (Thing child : childActions.getChilds()) {
+					Action action = world.getAction(child);
+					if (action != null) {
+						result = action.run(actionContext, null, true);
+					}
+	
+					int sint = actionContext.getStatus();
+					if (sint != ActionContext.RUNNING) {
+						break;
+					}
+				}
+	
+				//判断循环的状态
+				if (actionContext.getStatus() == ActionContext.BREAK) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					break;
+				} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+					actionContext.setStatus(ActionContext.RUNNING);
+				} else if (actionContext.getStatus() != ActionContext.RUNNING) {
+					break;
+				}else if(ActionContext.EXCEPTION == actionContext.getStatus()){
+					break;
+				}
+				// }while(UtilAction.returnTrueFalse(UtilAction.runAsGroovy(self,
+				// "code", actionContext, self.getMetadata().getPath())));
+				//执行自己的while方法判断是否while条件成立
+				while_ = IfCreator.checkCondition(self, actionContext);			
+			} while (while_);
+		}
 		return result;
 	}
 

@@ -118,7 +118,7 @@ public class ThingDataStoreListener {
 	public static Thing attach(final Thing store, DataStoreListener listener, final ActionContext actionContext) {
 		Control control = listener.getControl();
 		if(control == null || control.isDisposed()) {
-			Executor.warn(TAG, "Control is null or disposed");
+			Executor.warn(TAG, "Control is null or disposed, can not add DataStoreListener");
 			return null;
 		}
 		
@@ -127,13 +127,15 @@ public class ThingDataStoreListener {
 		self.setData("control", control);
 		
 		store.doAction("addListener", actionContext, "listener", self);
-		control.addListener(SWT.Dispose, new Listener() {
-
-			@Override
-			public void handleEvent(Event event) {
-				store.doAction("removeListener", actionContext, "listener", self);
-			}			
-		});
+		if(control != null && control.isDisposed()) {
+			control.addListener(SWT.Dispose, new Listener() {
+	
+				@Override
+				public void handleEvent(Event event) {
+					store.doAction("removeListener", actionContext, "listener", self);
+				}			
+			});
+		}
 		
 		return self;
 	}

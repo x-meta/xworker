@@ -13,19 +13,27 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.PageInfo;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.util.ThingCompositeCreator;
 
 public class PagingToolbar {
 	public static Object create(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
-		Control parent = (Control) actionContext.get("parent");
+		//Control parent = (Control) actionContext.get("parent");
 		World world = World.getInstance();		
 
 		//创建PageToolbar
-		ActionContext ac = new ActionContext();
+		/*ActionContext ac = new ActionContext();
 		ac.put("parent", parent);
-		ac.put("parentActionContext", actionContext);
+		ac.put("parentActionContext", actionContext);*/
+		
 		Thing compositeThing = world.getThing("xworker.app.view.swt.widgets.PagingToolbar/@pagingComposite");
-		Composite composite = (Composite) compositeThing.doAction("create", ac);
+		ThingCompositeCreator creator = SwtUtils.createCompositeCreator(self, actionContext);
+		creator.setCompositeThing(compositeThing);
+		Composite composite = creator.create();
+		ActionContext ac = creator.getNewActionContext();
+		
+		//Composite composite = (Composite) compositeThing.doAction("create", ac);
 		ToolItem beforePageItem = (ToolItem) ac.get("beforePageItem");
 		ToolItem afterPageItem = (ToolItem) ac.get("afterPageItem");		
 		Label beforePageLabel = (Label) ac.get("beforePageLabel");
@@ -55,6 +63,7 @@ public class PagingToolbar {
 		    infoLabel.setText(emptyMsg);
 		}
 
+		/*
 		Bindings bindings = ac.push(null);
 		bindings.put("parent", composite);
 		try{
@@ -63,13 +72,14 @@ public class PagingToolbar {
 		    }
 		}finally{
 		    ac.pop();
-		}
+		}*/
 
 		//创建PageToolbar事物
 		Thing pageToolbar = new Thing("xworker.app.view.swt.widgets.PagingToolbar");
 		pageToolbar.getAttributes().putAll(self.getAttributes());
 		pageToolbar.set("extends", self.getMetadata().getPath());
 		pageToolbar.set("context", ac);
+		pageToolbar.put("composite", composite);
 		ac.put("pageToolbar", pageToolbar);
 
 		//和DataStore绑定
@@ -84,6 +94,11 @@ public class PagingToolbar {
 
 		actionContext.getScope(0).put(self.getMetadata().getName(), pageToolbar);
 		return composite;
+	}
+	
+	public static Object getControl(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		return self.get("composite");
 	}
 	
 	public static void setToolTip(Thing pageToolbar, String name, Object item, String tip){

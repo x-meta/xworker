@@ -26,6 +26,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelUtil;
 
 public class DataStoreTreeModelCreator {
@@ -131,6 +132,7 @@ public class DataStoreTreeModelCreator {
             node.put("cls", OgnlUtil.getValue(self.getString("clsField"), data));
         }
         node.put("data", data);
+        node.put(TreeModel.Source, data);
         
         return node;
     }

@@ -493,7 +493,12 @@ public class UtilData {
 		 //return org.xmeta.util.UtilData.getData(thing, attributeName, actionContext);
 	 }
 	 
-	 public static Object getData( String value, ActionContext actionContext) throws OgnlException, IOException{	
+	 public static Object getData(String value, ActionContext actionContext) throws OgnlException, IOException{
+		 Object object = actionContext.get(value);
+		 if(object != null) {
+			 return object;
+		 }
+		 
 		 if(value.startsWith("template:")){
 			 return StringUtils.getString(value, actionContext);
 		 }

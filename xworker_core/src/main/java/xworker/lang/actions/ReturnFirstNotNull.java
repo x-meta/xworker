@@ -21,7 +21,6 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 public class ReturnFirstNotNull {
-	   @SuppressWarnings("unchecked")
 		public static Object run(ActionContext actionContext){
 	        Thing self = (Thing) actionContext.get("self");
 	        
@@ -36,29 +35,19 @@ public class ReturnFirstNotNull {
 	        }
 	        
 	        Object result = null;
-	        for(Thing actions :(List<Thing>) self.get("actions@")){
-	            //log.info("Action: " + actions);
-	            for(Thing action : actions.getChilds()){      
-	                result = action.getAction().run(actionContext, null, true);
-	                if(result != null){
-	                	return result;
-	                }
-	                
-	                if(ActionContext.RETURN == actionContext.getStatus() || 
-	                    ActionContext.CANCEL == actionContext.getStatus() || 
-	                    ActionContext.BREAK == actionContext.getStatus() || 
-	                    ActionContext.EXCEPTION == actionContext.getStatus()){
-	                    break;
-	                }
-	            } 
-	            
-	            if(ActionContext.RETURN == actionContext.getStatus() || 
-	                ActionContext.CANCEL == actionContext.getStatus() || 
-	                ActionContext.BREAK == actionContext.getStatus() || 
-	                ActionContext.EXCEPTION == actionContext.getStatus()){
-	                break;
-	            }
-	        }
+            for(Thing action : self.getChilds()){      
+                result = action.getAction().run(actionContext, null, false);
+                if(result != null){
+                	return result;
+                }
+                
+                if(ActionContext.RETURN == actionContext.getStatus() || 
+                    ActionContext.CANCEL == actionContext.getStatus() || 
+                    ActionContext.BREAK == actionContext.getStatus() || 
+                    ActionContext.EXCEPTION == actionContext.getStatus()){
+                    break;
+                }
+            } 	            	    
 	        
 	        return result;
 	    }

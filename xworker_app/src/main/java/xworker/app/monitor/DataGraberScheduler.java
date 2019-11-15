@@ -31,6 +31,9 @@ public class DataGraberScheduler implements Runnable{
 		this.lastModified = thing.getMetadata().getLastModified();
 		this.delay = thing.getLong("delay");
 		this.interval = thing.getLong("interval");
+		if(this.interval == 0) {
+			this.interval = thing.getLong("period");
+		}
 	}
 	
 	private void setFuture(Future<DataGraberScheduler> future){
@@ -81,6 +84,9 @@ public class DataGraberScheduler implements Runnable{
 		
 		//时间间隔
 		long interval = self.getLong("interval");
+		if(interval <= 0){
+			interval = self.getLong("period");   //有一些模型使用的是period
+		}
 		if(interval <= 0){
 			throw new ActionException("interval can not less 0, thing=" + self.getMetadata().getPath());
 		}

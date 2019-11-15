@@ -262,6 +262,7 @@ public class ThingRegistTreeModelActions {
 				return node;
 			}
 			node = new HashMap<String, Object>();
+			node.put(TreeModel.Source, treeModel);
 			TreeModelUtil.setAttributes(treeModel, path, node);
 			node.put("text", name);
 			if(thing == null){

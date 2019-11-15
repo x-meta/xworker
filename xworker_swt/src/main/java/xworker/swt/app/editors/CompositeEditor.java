@@ -10,7 +10,9 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
+import org.xmeta.util.UtilMap;
 
+import xworker.swt.app.IEditor;
 import xworker.swt.util.SwtUtils;
 import xworker.util.UtilData;
 
@@ -179,5 +181,19 @@ public class CompositeEditor {
 	
 	public static Object getOutline(ActionContext actionContext) {
 		return invokeEditorActions("getOutline", actionContext);
+	}
+	
+	public static Map<String, Object> createDataParams(ActionContext actionContext){
+		Object data = actionContext.getObject("data");
+		if(data instanceof Thing) {
+			Thing thing = (Thing) data;
+			if(thing.isThing("xworker.swt.widgets.Composite")) {
+				return UtilMap.toMap("composite", data, 
+						IEditor.EDITOR_THING, World.getInstance().getThing("xworker.swt.app.editors.CompositeEditor"),
+						IEditor.EDITOR_ID, "Composite:" + thing.getMetadata().getPath());
+			}
+		}
+		
+		return null;
 	}
 }

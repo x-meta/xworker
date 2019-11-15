@@ -121,8 +121,8 @@ public class ThingTreeModelActions {
 	
 	public static Map<String, Object> toTreeNode(Thing thing, Thing treeModel, List<String> includeThingNames,
 				List<String> excludeThingNames, ActionContext actionContext){
-		Map<String, Object> node = new HashMap<String, Object>();
-		TreeModelUtil.setAttributes(treeModel, thing.getMetadata().getPath(), node);
+		Map<String, Object> node = new HashMap<String, Object>();		
+		TreeModelUtil.setAttributes(treeModel, thing.getMetadata().getPath(), node);		
 		node.put("text", thing.getMetadata().getLabel());
 		String icon = thing.getStringBlankAsNull("icon");
 		if(icon == null){
@@ -161,7 +161,7 @@ public class ThingTreeModelActions {
 				node.put("childs", childNodes);
 			}
 		}
-		node.put("_source", thing);
+		node.put(TreeModel.Source, thing);
 		
 		return node;
 	}

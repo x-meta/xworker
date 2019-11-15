@@ -7,13 +7,20 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.app.view.swt.data.DataStore;
 import xworker.util.UtilData;
 
 public class EditDataObjectDialog {
 	public static void okButtonAction(ActionContext actionContext){
 		Thing form = (Thing) actionContext.get("form");
 		Shell shell = (Shell) actionContext.get("shell");
-		Thing dataStore = (Thing) actionContext.get("dataStore");
+		Object ds = actionContext.get("dataStore");
+		Thing dataStore = null;//(Thing) actionContext.get("dataStore");
+		if(ds instanceof DataStore) {
+			dataStore = ((DataStore) ds).getStore();
+		}else {
+			dataStore = (Thing) ds;
+		}
 		ActionContext parentContext = (ActionContext) actionContext.get("parentContext");
 
 		Object result = form.doAction("getDataObject", actionContext);

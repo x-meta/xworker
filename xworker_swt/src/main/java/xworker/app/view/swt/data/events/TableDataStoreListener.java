@@ -366,7 +366,8 @@ public class TableDataStoreListener {
 			public void run(){
 				try{
 					DSSelectionListener.removeRecords(table, records);
-			        for(DataObject record : records){
+					for(int i=0; i<records.size(); i++) {
+						DataObject record = records.get(i);	
 			            for(TableItem item : table.getItems()){
 			                DataObject itemRecord = (DataObject) item.getData("_store_record");
 			                if(record == itemRecord){
@@ -403,7 +404,8 @@ public class TableDataStoreListener {
 		SwtStoreUtils.runAsync(store, table.getDisplay(), new Runnable(){
 			public void run(){
 				try{
-			        for(DataObject record : records){
+					for(int i=0; i<records.size(); i++) {
+						DataObject record = records.get(i);					
 			            for(TableItem item : table.getItems()){
 			                DataObject itemRecord = (DataObject) item.getData("_store_record");
 			                if(record == itemRecord){
@@ -451,7 +453,8 @@ public class TableDataStoreListener {
 		SwtStoreUtils.runAsync(store, table.getDisplay(), new Runnable(){
 			public void run(){
 				try{
-			        for(DataObject record : records){
+					for(int i=0; i<records.size(); i++) {
+						DataObject record = records.get(i);	
 			        	createItem(self, table, record, index, actionContext);
 			        	/*
 			            String[] texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));

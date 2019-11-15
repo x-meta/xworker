@@ -51,6 +51,7 @@ public class XWorkerModelCreator {
         node.put("index", index);
         node.put("dataId", index.getPath());
         node.put("tabId", index.getType());
+        node.put(TreeModel.Source, index);
         
         return node;
     }
@@ -109,6 +110,7 @@ public class XWorkerModelCreator {
              node.put("data", index);
              node.put("dataId", index.getPath());
              node.put("tabId", index.getType());
+             node.put(TreeModel.Source, index);
             // node.put("id", value)
             
             nodes.add(node);

@@ -124,6 +124,7 @@ public class PageToolbarDataStoreListener {
 			                pageText.setText("" + currentPage);
 			            }else{
 			                pageTextItem.setEnabled(false);
+			                pageText.setText("1");
 			            }
 			            if(currentPage < totalPage){
 			                nextPageItem.setEnabled(true);
@@ -136,7 +137,7 @@ public class PageToolbarDataStoreListener {
 			            
 			            String afterPageText = pageToolbar.doAction("getAfterPageText", actionContext);
 			            if(afterPageText != null && !"".equals(afterPageText)){
-			                afterPageLabel.setText(pageToolbar.getString("afterPageText").replace("{0}", "" + totalPage));
+			                afterPageLabel.setText(afterPageText.replace("{0}", "" + totalPage));
 			                afterPageLabel.pack();
 			                afterPageItem.setWidth(afterPageLabel.getSize().x + 5);
 			            }

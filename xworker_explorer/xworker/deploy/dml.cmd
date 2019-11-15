@@ -93,7 +93,8 @@ rem set JAVA_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,su
 rem Setup the java endorsed dirs
 rem set XWORKER_ENDORSED_DIRS=%XWORKER_HOME%\lib\endorsed
 
-call "%XWORKER_HOME%\dml.conf.cmd"
+if exist %XWORKER_HOME%\dml.conf.cmd  call "%XWORKER_HOME%\dml.conf.cmd"
+
 
 rem echo ===============================================================================
 rem echo.

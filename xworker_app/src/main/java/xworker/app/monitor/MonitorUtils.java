@@ -131,6 +131,9 @@ public class MonitorUtils {
 		} catch (ParseException e) {
 		}
 		
+		if(interval == 0) {
+			interval = 60000;
+		}
 		return new Date(date + delay + (current / interval) * interval);
 	}
 	

@@ -36,7 +36,7 @@ import xworker.swt.util.SwtUtils;
 
 public class DataObjectForm implements DataObjectListener, DisposeListener, DataStoreSelectionListener{
 	private static Logger logger = LoggerFactory.getLogger(DataObjectForm.class);
-	private static final String KEY_DATAOBJECTFORM = "dataObjectForm";
+	public static final String KEY_DATAOBJECTFORM = "dataObjectForm";
 	/** 为了避免数据对象回填数据修改表单的值 */
 	private static ThreadLocal<ThingFormModifyListener> updater = new ThreadLocal<ThingFormModifyListener>();
 	
@@ -213,7 +213,9 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 				return;
 			}
 			
-		    modifyListener.setEnabled(false);
+			if(modifyListener != null) {
+				modifyListener.setEnabled(false);
+			}
 			String type = actionContext.getObject("formType");
 			if(type == null || "".equals(type)){
 			   type = formThing.getString("formType");
@@ -362,7 +364,9 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 				}
 			}
 	    }finally {
-	    	modifyListener.setEnabled(true);
+	    	if(modifyListener != null) {
+	    		modifyListener.setEnabled(true);
+	    	}
 	    }
 	}
 	
@@ -714,7 +718,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		}
 	}
 	
-	static class ThingFormModifyListener extends EditorModifyListener{
+	public static class ThingFormModifyListener extends EditorModifyListener{
     	Object defaultModifyObj;
     	/** 原生的表单事物 */
     	Thing self;

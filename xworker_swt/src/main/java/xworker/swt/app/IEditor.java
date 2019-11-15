@@ -9,6 +9,12 @@ import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 
 public interface IEditor {
+	/** 用于Editor.createDataParams()时在Map中存放Editor模型的值 */
+	public static final String EDITOR_THING = "__IEidtor_thing__";
+	
+	/** 用于Editor.createDataParams()时在Map中存放Editor的id值 */
+	public static final String EDITOR_ID = "__IEditor_id__";
+	
 	/**
 	 * 设置编辑器要编辑的内容。参数有编辑器自行定义。
 	 * 
@@ -56,18 +62,51 @@ public interface IEditor {
 	 */
 	public Composite getOutline();
 	
+	/**
+	 * 执行销毁操作。
+	 */
 	public void doDispose();
 	
+	/**
+	 * 返回编辑器的菜单配置。
+	 * 
+	 * @return
+	 */
 	public Thing getMenuConfig();
 	
+	/**
+	 * 返回编辑器的工具栏配置。
+	 * 
+	 * @return
+	 */
 	public Thing getCoolBarConfig();
 	
+	/**
+	 * 返回编辑器的状态栏配置。
+	 * 
+	 * @return
+	 */
 	public Thing getStatusBarConfig();
 	
+	/**
+	 * 返回编辑器事物本身。
+	 * 
+	 * @return
+	 */
 	public Thing getEditor();
 	
+	/**
+	 * 返回编辑器自己的动作容器。
+	 * 
+	 * @return
+	 */
 	public ActionContainer getActions();
 	
+	/**
+	 * 返回编辑器自己的变量上下文。
+	 * 
+	 * @return
+	 */
 	public ActionContext getActionContext();
 		
 	/**

@@ -27,6 +27,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelUtil;
 import xworker.util.UtilFileIcon;
 
@@ -129,6 +130,7 @@ public class FileTreeModelCreator {
         TreeModelUtil.setAttributes(self, id, node);
         node.put("text", fileName);
         node.put("icon", icon);
+        node.put(TreeModel.Source, file);
         if(file.isDirectory()){
             node.put("leaf", "false");
         }else{

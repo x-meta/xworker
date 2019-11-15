@@ -89,6 +89,13 @@ public interface IEditorContainer {
 	public List<IEditor> getEditors();
 	
 	/**
+	 * 返回编辑器容器自己的Composite。
+	 * 
+	 * @return
+	 */
+	public Composite getComposite();
+	
+	/**
 	 * 返回所有编辑器。
 	 * 
 	 * @param dirty 是否编辑器处于未保存状态

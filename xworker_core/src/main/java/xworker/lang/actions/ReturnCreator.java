@@ -23,9 +23,16 @@ public class ReturnCreator {
 	public static Object run(ActionContext actionContext) throws Exception{	    
 	    //设置动作上下文的状态为RETURN
 	    actionContext.setStatus(ActionContext.RETURN);
-	    
+	    	    
 	    //取返回值
-        Thing self = (Thing) actionContext.get("self");        
+        Thing self = (Thing) actionContext.get("self");
+        
+        for(Thing child : self.getChilds()) {
+        	if("value".equals(child.getMetadata().getName())) {
+        		return child.getAction().run(actionContext, null, false);
+        	}
+        }
+        
         String variable = self.getString("variable");
         if(variable != null && !"".equals(variable.trim())){
             if(variable.startsWith("\"")){

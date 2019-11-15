@@ -20,6 +20,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.annotation.ActionParams;
 import org.xmeta.util.ActionContainer;
+import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
@@ -45,6 +46,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		super(actionContext);
 				
 		Thing containerThing = World.getInstance().getThing("xworker.swt.app.prototypes.CTabFolderEditorContainer/@cTabFolder");
+		containerContext.peek().put("parent", tabFolder);
 		for(Thing child : containerThing.getChilds()) {
 			child.doAction("create", containerContext);
 		}
@@ -88,6 +90,11 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		updateEditorStatus(editor, item);
 		
 		thing.doAction("editorModified", actionContext, "editor", editor);
+	}
+	
+	@Override
+	public Composite getComposite() {
+		return tabFolder;
 	}
 	
 	@Override
@@ -135,6 +142,11 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		editorContext.put("parentContext", containerContext);
 		editorContext.put("parent", tabFolder);		
 		editorContext.put("editorContainer", this);
+		
+		if(UtilData.isTrue(editor.doAction("hasComposite", editorContext)) == false) {
+			editor.doAction("setContent", editorContext, "params", params);
+			return null;			
+		}
 		
 		//创建条目
 		CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);

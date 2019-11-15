@@ -461,6 +461,15 @@ public class DataObject extends HashMap<String, Object> {
 		}
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof DataObject) {
+			return equals((DataObject) o);
+		}else {
+			return false;
+		}
+	}
+
 	/**
 	 * 比较是否与另一个数据对象是相同的。比较描述者和主键。
 	 * 
@@ -901,5 +910,26 @@ public class DataObject extends HashMap<String, Object> {
 
 	public void setWrappedObject(Object wrappedObject) {
 		this.wrappedObject = wrappedObject;
+	}
+
+	@Override
+	public String toString() {
+		//优先返回标签字段的内容
+		Thing descriptor = this.getMetadata().getDescriptor();
+		if(descriptor != null) {
+			String labelField = descriptor.getStringBlankAsNull("displayName");
+			if(labelField != null) {
+				return getString(labelField); 
+			}			
+		}
+		 
+		//其次返回第一个主键的值
+		Object[][] keys = this.getMetadata().getKeyAndDatas();
+		if(keys != null && keys.length > 0) {
+			return String.valueOf(keys[0][1]);
+		}
+		
+		//按照HashMap的toString()方法
+		return super.toString();
 	}
 }

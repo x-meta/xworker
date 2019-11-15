@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
 import xworker.swt.util.SwtUtils;
 
@@ -23,7 +24,13 @@ public class NewDataObjectDialog {
 		String message = actionContext.getObject("message");
 		Shell shell = actionContext.getObject("shell");
 		Boolean insert = actionContext.getObject("insert");
-		Thing dataStore = actionContext.getObject("dataStore");
+		Object ds = actionContext.get("dataStore");
+		Thing dataStore = null;//(Thing) actionContext.get("dataStore");
+		if(ds instanceof DataStore) {
+			dataStore = ((DataStore) ds).getStore();
+		}else {
+			dataStore = (Thing) ds;
+		}
 		ActionContext parentContext = actionContext.getObject("parentContext");
 		Boolean continueEdit = actionContext.getBoolean("continueEdit");
 		Object initDataObject = actionContext.get("initDataObject");

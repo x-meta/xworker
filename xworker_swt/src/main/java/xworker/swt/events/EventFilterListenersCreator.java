@@ -16,6 +16,7 @@
 package xworker.swt.events;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -164,10 +165,23 @@ public class EventFilterListenersCreator {
 
 		if (acttionType != TYPE_FILTER) {
 			try {
-				Object parentObj = actionContext.get("parent");
-				if (parentObj instanceof Widget) {
-					Widget parent = (Widget) parentObj;
-					parent.addListener(type, lis);
+				List<String> bindList = listener.doAction("getBindTo", actionContext);
+				if(bindList == null || bindList.size() == 0) {
+					//默认绑定到父控件
+					Object parentObj = actionContext.get("parent");
+					if (parentObj instanceof Widget) {
+						Widget parent = (Widget) parentObj;
+						parent.addListener(type, lis);
+					}
+				}else {
+					//绑定到指定的控件上
+					for(String bindName : bindList) {
+						Object parentObj = actionContext.get(bindName);
+						if (parentObj instanceof Widget) {
+							Widget parent = (Widget) parentObj;
+							parent.addListener(type, lis);
+						}
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -201,7 +215,7 @@ public class EventFilterListenersCreator {
 
 		// System.out.println(listener.getString("name"));
 		if (saveGlobalValue) {
-			actionContext.getScope(0).put(listener.getString("name"), lis);
+			actionContext.getScope(0).put(listener.getMetadata().getName(), lis);
 		}
 
 	}

@@ -54,36 +54,64 @@ public class IfCreator {
         List<Thing> statements = null;
         actionContext.peek().setVarScopeFlag();//.isVarScopeFlag = true; //一个新的局部变量范围
                 
-        if(UtilData.isTrue(self.doAction("condition", actionContext, null, true))){
-        	Thing childActions = self.getThing("Then@0"); 
-    		if(childActions != null){
-    			statements = childActions.getChilds();
-    		}
-        }else{
-        	Thing elseObj = self.getThing("Else@0");
-        	if(elseObj != null){
-    			statements = elseObj.getChilds();
-    		}
+        Thing childActions = self.getThing("Then@0"); 
+        Thing elseObj = self.getThing("Else@0");
+                        
+        if(childActions == null && elseObj == null ) {
+        	//版本2修改了IF模型的规则
+        	Thing condition = null;
+        	Thing then = null;
+        	Thing elset = null;
+        	for(Thing child : self.getChilds()) {
+        		if("condition".equals(child.getMetadata().getName().toLowerCase())) {
+        			condition = child;
+        		}else if("then".equals(child.getMetadata().getName().toLowerCase())) {
+        			then = child;
+        		}else if("else".equals(child.getMetadata().getName().toLowerCase())) {
+        			elset = child;
+        		}
+        	}
+        	
+        	if(condition != null && UtilData.isTrue(condition.getAction().run(actionContext, null, false))) {
+        		if(then != null) {
+        			return then.getAction().run(actionContext, null, true);
+        		}
+        	}else if(elset != null) {
+        		return elset.getAction().run(actionContext, null, true);
+        	}
+        	
+        	return null;
+        }else {
+        	//旧版的代码
+	        if(UtilData.isTrue(self.doAction("condition", actionContext, null, false))){
+	    		if(childActions != null){
+	    			statements = childActions.getChilds();
+	    		}
+	        }else{
+	        	if(elseObj != null){
+	    			statements = elseObj.getChilds();
+	    		}
+	        }
+	        Object o = new Object();
+	        o.toString();
+	                       	
+	    	if(statements != null){
+	    		Object result = null;
+	    		for(Thing child : statements){
+	                Action action = world.getAction(child);
+	                if(action != null){
+	                    result = action.run(actionContext, null, true);
+	                }      
+	                
+					if(actionContext.getStatus() != ActionContext.RUNNING){
+						break;
+					}
+	            }
+	    		
+	    		return result;
+	    	}else{
+	    		return null;
+	    	}
         }
-        Object o = new Object();
-        o.toString();
-                       	
-    	if(statements != null){
-    		Object result = null;
-    		for(Thing child : statements){
-                Action action = world.getAction(child);
-                if(action != null){
-                    result = action.run(actionContext, null, true);
-                }      
-                
-				if(actionContext.getStatus() != ActionContext.RUNNING){
-					break;
-				}
-            }
-    		
-    		return result;
-    	}else{
-    		return null;
-    	}
     }
 }

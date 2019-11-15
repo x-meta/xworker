@@ -1,4 +1,4 @@
-%1570527895965
+%1573543246234
 @
 sname=Editor
 slabel=Editor
@@ -10,9 +10,47 @@ smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>编辑器。可以分别编写编辑器的相关组件，它们共用同一个变量上下文。</p>
+<p><strong>编辑器</strong></p>
 
-<p><strong>变量约定：</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 通常是用于编辑数据的组件。编辑器的组成如下：</p>
+
+<ul>
+	<li><strong>主编辑区域</strong>，见EditorComposite子节点。</li>
+	<li><strong>菜单</strong>，见MenuConfig子节点。</li>
+	<li><strong>工具栏</strong>，见CoolBarConfig子节点。</li>
+	<li><strong>状态栏</strong>，见StatusBarConfig子节点。</li>
+	<li><strong>动作容器</strong>，见ActionContainer子节点。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个编辑器无界面，比如系统编辑是在操作系统里打开文件，此时应重写方法hasComposite()并返回false，同时应实现setConent方法。</p>
+
+<p><strong>打开编辑器的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 编辑器是由EditorContainer.openEditor(String id, Thing editor, Map&lt;String, Object&gt; params)方法打开的，会根据Editor模型自动创建相关控件，OpenEditor方法返回的是IEditor对象。</p>
+
+<p><strong>设置编辑内容的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过IEditor.setContent(Map&lt;String, Object&gt; params)方法设置要编辑的内容。</p>
+
+<p><strong>编辑器的实现</strong></p>
+
+<ol>
+	<li><strong>SWT控件</strong>，通过子节点编写编辑区、菜单、工具栏和状态栏等SWT控件模型，编辑区一定要设置，其它没有则可以不用设置。</li>
+	<li><strong>方法和行为</strong>，通过ActionContainer子节点实现编辑器的行为，有哪些行为可以参看ActionContainer子节点的文档。</li>
+</ol>
+
+<p><strong>创建数据参数</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 编辑器通常可以用来编辑数据，要想通过指定数据打开对应的编辑器，编辑器需要实现下面的方法：</p>
+
+<ul>
+	<li><strong>Map&lt;String, Object&gt; createDataParams(Object data)</strong><br />
+	根据数据创建打开编辑器的相关参数。如果不支持编辑该数据，那么应返回null。</li>
+</ul>
+
+<p><strong>变量上下文</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 编辑器可以使用下面公共的变量，SWT控件和ActionContainer等等都使用同一个变量上下文。：</p>
 
 <ul>
 	<li><strong>parentContext: ActionContext</strong><br />
@@ -47,9 +85,7 @@ Sdescription=
 	由编辑器调用，通过编辑器容器编辑器正在编辑的内容已修改。</li>
 </ul>
 
-<p><strong>实现Editor的方法：</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 参看相关子节点。</p>
+<p>&nbsp;</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -112,6 +148,99 @@ sth_mark=false
     sth_registDisabled=false
     sth_mark=false
     sid=editorChanged
+    @/@actions/@createDataParams
+    sname=createDataParams
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=createDataParams
+    @/@actions/@hasComposite
+    sname=hasComposite
+    stype=boolean
+    svalue=true
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@ValueFactory
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=hasComposite
+    @/@actions/@setContent
+    sname=setContent
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=setContent
+      @/@actions/@setContent/@ins
+      sisValidate=false
+      sname=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=ins
+        @/@actions/@setContent/@ins/@params
+        sname=params
+        stype=java.util.Map
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=params
   @/@name
   sname=name
   sshowLabel=true
@@ -146,6 +275,37 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=label
+  @/@priority
+  sname=priority
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=0
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>通过数据打开匹配的编辑器时，会使用编辑器的createDataParams方法来判断编辑器是否支持编辑该数据，如果支持怎返回打开编辑器所需的参数。</p>
+
+<p>如果多个编辑器都可以编辑一个数据，那么可以通过本字段来设置那个优先实现，priority的<strong>数字越小优先级越高</strong>。</p>
+
+<p><strong>越是特殊的编辑器，优先级应该设置越高。</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如特殊的Composite模型编辑器 &gt; Composite模型编辑器 &gt; 模型编辑器的优先级。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=priority
   @/@description
   sname=description
   sinputtype=html
@@ -402,7 +562,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -423,7 +582,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -444,7 +602,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -469,7 +626,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -753,7 +909,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -775,7 +930,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -797,7 +951,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -991,7 +1144,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -1013,7 +1165,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -1035,7 +1186,6 @@ sth_mark=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false

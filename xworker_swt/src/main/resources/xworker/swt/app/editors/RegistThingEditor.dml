@@ -1,7 +1,8 @@
-%1565774190660
+%1573615337308
 @
 sname=RegistThingEditor
 slabel=RegistThingEditor
+spriority=-500
 Sdescription=
 #$@text#$@
 <p>事物注册器中注册的事物的编辑器。</p>
@@ -10,7 +11,7 @@ Sdescription=
 
 <ul>
 	<li><strong>thing: String或Thing</strong><br />
-	要参看的食物。&nbsp;&nbsp;</li>
+	要参看的事物。&nbsp;&nbsp;</li>
 </ul>
 
 <p>&nbsp;</p>
@@ -23,6 +24,52 @@ sth_registMyChilds=false
 sth_registDisabled=false
 sgroup=xworker
 sth_mark=false
+  @/@actions1
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@createDataParams
+    sname=createDataParams
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.swt.app.IEditor;
+
+if(data instanceof Thing){
+    if(data.isThing("xworker.swt.xworker.ThingRegistSelector")){
+        def params = ["thing": data];
+        params.put(IEditor.EDITOR_THING, world.getThing("xworker.swt.app.editors.RegistThingEditor"));
+        params.put(IEditor.EDITOR_ID, "ThingRegist:" + data.getMetadata().getPath());
+        return params;
+    }
+}
+
+return null;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=createDataParams
   @/@EditorComposite
   sname=EditorComposite
   sBORDER=false
@@ -942,7 +989,6 @@ if(actionContext.get("thing") != null){
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false

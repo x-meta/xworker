@@ -1,4 +1,4 @@
-%1571366456051
+%1572676384022
 @
 sname=MQTTClientViewer
 sBORDER=false
@@ -232,7 +232,6 @@ actions.doAction("checkConnection", actionContext);
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -1395,7 +1394,6 @@ synchronized(logRecords){
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -1427,7 +1425,6 @@ synchronized(logRecords){
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -1449,7 +1446,6 @@ synchronized(logRecords){
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -1570,6 +1566,8 @@ if(actionContext.g().get("client") != null){
         connectButton.setText(UtilData.getString("lang:d=连接&en=Connect", actionContext));
         sendButton.setEnabled(false);
     }
+    connectButton.setEnabled(true);
+    settingButton.setEnabled(true);
 }else{
     connectButton.setEnabled(false);
     settingButton.setEnabled(false);
@@ -1580,6 +1578,7 @@ if(actionContext.g().get("client") != null){
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -1621,6 +1620,46 @@ if(topics != null){
     sth_fileMonitor=false
     sth_mark=false
     sid=reInitClient
+    @/@actions/@init
+    sname=doInit
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.UtilData;
+
+//用在Workbench中的打开
+def thing = params.thing;
+def closeOnDispose = params.closeOnDispose;
+actionContext.g().put("closeOnDispose",closeOnDispose);
+
+if(thing != null){
+    actionContext.g().put("client", thing);
+    //添加监听器
+    client.doAction("addListener", actionContext, "listener", actions);
+    
+    //设置
+    actions.doAction("reInitClient", actionContext);
+}
+
+actions.doAction("checkConnection", actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=init
   @/@init
   sname=init
   sisSynchronized=false
@@ -1632,7 +1671,8 @@ if(topics != null){
 #$@text#$@
 import xworker.util.UtilData;
 
-if(actionContext.get("thing") != null){
+def thing = actionContext.get("thing");
+if(thing != null){
     actionContext.g().put("client", thing);
     //添加监听器
     client.doAction("addListener", actionContext, "listener", actions);
@@ -1646,6 +1686,7 @@ actions.doAction("checkConnection", actionContext);
   sinterpretationType=Action
   screateLocalVarScope=false
   ssaveReturn=false
+  sswitchResult=false
   sdebugLog=false
   sdescriptors=xworker.swt.widgets.Widget/@Code
   sinheritDescription=false
@@ -1688,11 +1729,16 @@ actions.doAction("checkConnection", actionContext);
 //关闭对MQTTCLient的监听
 if(actionContext.get("client") != null){
     client.doAction("removeListener", actionContext, "listener", actions);
+    
+    if(actionContext.get("closeOnDispose") == true){
+        client.doAction("close", actionContext);
+    }
 }
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false

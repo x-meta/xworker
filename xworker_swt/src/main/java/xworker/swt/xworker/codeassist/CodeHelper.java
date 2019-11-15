@@ -14,6 +14,7 @@ import xworker.swt.xworker.CodeAssitContent;
 import xworker.swt.xworker.codeassist.objectassists.ActionAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ActionContainerAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ClassAssistor;
+import xworker.swt.xworker.codeassist.objectassists.DataObjectAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ThingAssistor;
 import xworker.swt.xworker.codeassist.textassists.CachedVariableTextAssistor;
 import xworker.swt.xworker.codeassist.textassists.VariableDescTextAssistor;
@@ -44,6 +45,7 @@ public class CodeHelper {
 		objectAssists.put("thing", new ThingAssistor());
 		objectAssists.put("actionContainer", new ActionContainerAssistor());
 		objectAssists.put("action", new ActionAssistor());
+		objectAssists.put("dataObject", new DataObjectAssistor());
 		
 		//变量提供者
 		variableProviders.add(new ImportClassProvider());

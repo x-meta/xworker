@@ -400,12 +400,12 @@ public class ActionUtils {
 				if(splitLine) {
 					for(String line : value.split("[\n]")) {						
 						for(String v : line.split("[" + delimiter + "]")) {
-							list.add(v);
+							list.add(v.trim());
 						}
 					}
 				}else {
 					for(String v : value.split("[" + delimiter + "]")) {
-						list.add(v);
+						list.add(v.trim());
 					}
 				}
 				return list;
@@ -455,12 +455,12 @@ public class ActionUtils {
 				if(splitLine) {
 					for(String line : value.split("[\n]")) {						
 						for(String v : line.split("[" + delimiter + "]")) {
-							list.add(v);
+							list.add(v.trim());
 						}
 					}
 				}else {
 					for(String v : value.split("[" + delimiter + "]")) {
-						list.add(v);
+						list.add(v.trim());
 					}
 				}
 				String[] array = new String[list.size()];

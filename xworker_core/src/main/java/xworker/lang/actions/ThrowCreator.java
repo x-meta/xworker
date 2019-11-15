@@ -17,14 +17,17 @@ package xworker.lang.actions;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
-import org.xmeta.util.OgnlUtil;
 
 public class ThrowCreator {
 	public static Object run(ActionContext actionContext) throws Exception{	    
         Thing self = (Thing) actionContext.get("self");        
-        //String value = self.getString("value");
-        //System.out.println("Throw value=" + value);
-        Object throwed = OgnlUtil.getValue(self.getString("value"), actionContext);//UtilAction.runAsGroovy(self, "value", actionContext, self.getMetadata().getPath());
+        Object throwed = null;
+        for(Thing child : self.getChilds()) {
+        	if("value".equals(child.getMetadata().getName())) {
+        		throwed = child.getAction().run(actionContext, null, false);
+        		break;
+        	}
+        }
         actionContext.setThrowedObject(throwed);
         actionContext.setStatus(ActionContext.EXCEPTION);
         

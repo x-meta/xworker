@@ -72,6 +72,57 @@ public class DesignShellActions {
 	}
 	
 	/**
+	 * 在一棵树上初始化控件对应的事物下的事件和动作模型。只支持常见的类型。
+	 * 
+	 * @param tree
+	 * @param control
+	 * @param actionContext
+	 */
+	public static void initEventsAndActions(Tree tree, Control control, ActionContext actionContext) {
+		String thingPath = (String) control.getData("_designer_thingPath");
+		Thing thing = World.getInstance().getThing(thingPath);
+		if(thing == null){
+			return;
+		}
+		
+		//thing = thing.getRoot();
+		
+		//初始化树节点
+		initEventsAndActions(tree, thing, actionContext);
+		
+		//打开第一级树节点
+		for(TreeItem treeItem : tree.getItems()) {
+			treeItem.setExpanded(true);
+		}
+	}
+	
+	private static void initEventsAndActions(Tree tree, Thing thing, ActionContext actionContext) {
+		String[] actionsThings = new String[] {"xworker.swt.events.Listeners/@listeners",
+				"xworker.swt.events.Listeners/@listenersPrepared",
+				"xworker.swt.widgets.Widget/@Code",
+				"xworker.swt.widgets.Widget/@RunAction",
+				"xworker.swt.widgets.Widget/@Event",
+				"xworker.swt.util.Code",
+				"xworker.swt.Widgets/@actions"};
+		
+		boolean ok = false;
+		for(String ac : actionsThings) {
+			if(thing.isThing(ac)) {
+				ok = true;
+				break;
+			}
+		}
+		
+		if(!ok) {
+			for(Thing child : thing.getChilds()) {
+				initEventsAndActions(tree, child, actionContext);
+			}
+		}else {
+			XWorkerTreeUtil.showThingOnTree(tree, thing, actionContext);
+		}
+	}
+	
+	/**
 	 * 控件的设计树。
 	 * 
 	 * @param actionContext

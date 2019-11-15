@@ -13,6 +13,8 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.app.view.swt.widgets.form.DataObjectForm;
+import xworker.app.view.swt.widgets.form.DataObjectForm.ThingFormModifyListener;
 import xworker.dataObject.DataObject;
 import xworker.swt.design.Designer;
 
@@ -52,6 +54,15 @@ public class ObjectForm {
 			
 			actionContext.getScope(0).put(self.getMetadata().getName(), form);
 			Designer.attachCreator(composite, self.getMetadata().getPath(), actionContext);
+			
+			Object defaultModifyObj = null;//defaultModify == null ? null : actionContext.get(defaultModify);
+			ThingFormModifyListener modifyListener = new ThingFormModifyListener(composite, self, form, defaultModifyObj, actionContext);
+			form.setData("defaultModify", modifyListener);
+			
+			//表单对象和设置监听等
+			DataObjectForm dataObjectForm = new DataObjectForm(self, form, modifyListener, actionContext);
+			composite.addDisposeListener(dataObjectForm);
+			form.setData(DataObjectForm.KEY_DATAOBJECTFORM, dataObjectForm);
 			
 			Object obj = self.doAction("getEditObject", actionContext);
 			if(obj != null){

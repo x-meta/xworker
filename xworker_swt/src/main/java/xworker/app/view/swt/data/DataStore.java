@@ -968,6 +968,13 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		        ((Composite) object).setData("storeListener", listener);
 		        ((Composite) object).setData("store", self);
 		    }
+		}else if(object instanceof Thing) {
+			Thing thing = (Thing) object;
+			String thingName = thing.getThingName();
+			if("PagingToolbar".equals(thingName)) {
+				//绑定到分页组件
+				thing.doAction("setStore", actionContext, "store", self);
+			}
 		}
 	}
 	

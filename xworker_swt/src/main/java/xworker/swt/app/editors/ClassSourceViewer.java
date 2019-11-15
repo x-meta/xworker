@@ -1,9 +1,13 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
+import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
+
+import xworker.swt.app.IEditor;
 
 public class ClassSourceViewer {
 	public static void setContent(ActionContext actionContext) {
@@ -64,5 +68,19 @@ public class ClassSourceViewer {
 		}
 
 		return className.equals(cName);
+	}
+	
+	public static Map<String, Object> createDataParams(ActionContext actionContext){
+		Object data = actionContext.get("data");
+		if(data instanceof Class<?>) {
+			Class<?> cls = (Class<?>) data;
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("className", data);
+			params.put(IEditor.EDITOR_THING, World.getInstance().getThing("xworker.swt.app.editors.ClassSourceViewer"));
+			params.put(IEditor.EDITOR_ID, "Class:" + cls.getName());
+			return params;
+		}
+		
+		return null;
 	}
 }

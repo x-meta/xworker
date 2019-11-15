@@ -17,9 +17,12 @@ package xworker.lang.actions;
 
 import java.util.List;
 
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
+
+import xworker.util.UtilAction;
 
 public class BeginCreator {
     @SuppressWarnings("unchecked")
@@ -49,6 +52,9 @@ public class BeginCreator {
         	}
         }*/
         
+        return UtilAction.runChildActions(self.getChilds(), actionContext, true);
+        
+        /*
         //执行子动作
         for(Thing actions :(List<Thing>) self.get("actions@")){
             //log.info("Action: " + actions);
@@ -72,7 +78,15 @@ public class BeginCreator {
             }
         }
         
-        return result;
+        return result;*/
     }
 
+    public static Object runSubActions(ActionContext actionContext) {
+    	//原来的子动作列表，现在也作为普通动作来执行了，但因为没有继承SelfAction，因此需要寻找真正的模型
+    	List<Action> actions = actionContext.getActions();
+    	Action action = actions.get(actions.size() - 2);
+    	
+    	Thing self = action.getThing();
+    	return UtilAction.runChildActions(self.getChilds(), actionContext, true);
+    }
 }

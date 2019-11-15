@@ -11,6 +11,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
+import org.xmeta.util.UtilData;
 
 import xworker.swt.app.IEditor;
 import xworker.swt.app.editors.EditorImpl;
@@ -43,6 +44,15 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 				setActive(editorImpl);
 				return editorImpl;
 			}
+		}
+		
+		if(UtilData.isTrue(editor.doAction("hasComposite", this.actionContext)) == false) {
+			ActionContext editorContext = new ActionContext();
+			editorContext.put("parentContext", containerContext);
+			editorContext.put("parent", composite);		
+			editorContext.put("editorContainer", this);
+			editor.doAction("setContent", editorContext, "params", params);
+			return null;			
 		}
 		
 		//编辑器不存在，创建一个
@@ -173,6 +183,11 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		EditorImpl impl = (EditorImpl) editor;
 		impl.doDispose();
 		editors.remove(impl);
+	}
+
+	@Override
+	public Composite getComposite() {
+		return composite;
 	}
 
 }

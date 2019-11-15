@@ -1,7 +1,19 @@
-%1544431013993
+%1573615313845
 @
 sname=JdbcExplorer
 slabel=JdbcExplorer
+spriority=-1000
+Sdescription=
+#$@text#$@
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>dataSource: String or Thing</strong><br />
+	数据源事物。&nbsp;</li>
+</ul>
+
+<p>&nbsp; &nbsp;&nbsp;</p>
+#$@text#$@
 sdescriptors=xworker.swt.app.Editor
 sinheritDescription=false
 sth_createIndex=true
@@ -10,6 +22,52 @@ sth_registMyChilds=false
 sth_registDisabled=false
 sgroup=sql
 sth_mark=false
+  @/@actions1
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@createDataParams
+    sname=createDataParams
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.swt.app.IEditor;
+
+if(data instanceof Thing){
+   if(data.isThing("xworker.db.jdbc.DataSource")){
+       def params = ["dataSource": data];
+       params.put(IEditor.EDITOR_THING, world.getThing("xworker.swt.app.editors.JdbcExplorer"));
+       params.put(IEditor.EDITOR_ID,  "DataSource:" + data.getMetadata().getPath());
+       return params;
+   }
+}
+
+return null;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=createDataParams
   @/@EditorComposite
   sname=EditorComposite
   sBORDER=false
@@ -225,7 +283,6 @@ if(thing != null){
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -465,7 +522,6 @@ if(actionContext.get("dataSource") != null){
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false

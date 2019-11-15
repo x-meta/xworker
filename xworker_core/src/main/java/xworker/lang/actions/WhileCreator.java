@@ -20,6 +20,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.util.UtilData;
+
 public class WhileCreator {
 	static World world = World.getInstance();
     
@@ -27,31 +29,41 @@ public class WhileCreator {
         Thing self = (Thing) actionContext.get("self");
         
         actionContext.peek().setVarScopeFlag();//.isVarScopeFlag = true;
-        Object result = "success";        
-        while(IfCreator.checkCondition(self, actionContext)){
-        	Thing childActions = self.getThing("ChildAction@0"); 
-        	for (Thing child : childActions.getChilds()) {
-				Action action = world.getAction(child);
-				if (action != null) {
-					result = action.run(actionContext, null, true);
+        Object result = null;
+        
+        Thing childActions = self.getThing("ChildAction@0");
+        if(childActions == null) {
+        	//新的版本
+        	ActionsFilter actions = new ActionsFilter(self.getChilds(), "condition");
+        	while(actions.exists("condition") && UtilData.isTrue(actions.run("condition", actionContext, false))) {
+        		result = actions.runList(actionContext, true);
+        	}
+        }else {
+	        while(IfCreator.checkCondition(self, actionContext)){
+	        	 
+	        	for (Thing child : childActions.getChilds()) {
+					Action action = world.getAction(child);
+					if (action != null) {
+						result = action.run(actionContext, null, true);
+					}
+	
+					int sint = actionContext.getStatus();
+					if (sint != ActionContext.RUNNING) {
+						break;
+					}
 				}
-
-				int sint = actionContext.getStatus();
-				if (sint != ActionContext.RUNNING) {
+	
+				//判断循环的状态
+				if (actionContext.getStatus() == ActionContext.BREAK) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					break;
+				} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+					actionContext.setStatus(ActionContext.RUNNING);
+					continue;
+				} else if (actionContext.getStatus() != ActionContext.RUNNING) {
 					break;
 				}
-			}
-
-			//判断循环的状态
-			if (actionContext.getStatus() == ActionContext.BREAK) {
-				actionContext.setStatus(ActionContext.RUNNING);
-				break;
-			} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
-				actionContext.setStatus(ActionContext.RUNNING);
-				continue;
-			} else if (actionContext.getStatus() != ActionContext.RUNNING) {
-				break;
-			}
+	        }
         }
             
         return result;      

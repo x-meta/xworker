@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.swt.custom.StackLayout;
@@ -121,6 +123,10 @@ public class JavaSourceViewer {
 			stackLayout.topControl = codeViewer.getControl();
 		}else {
 			stackLayout.topControl = noSourceComposite;			
+			ActionContainer classContentViewer = actionContext.getObject("classContentViewer");
+			if(classContentViewer != null) {
+				classContentViewer.doAction("setClass", actionContext, "cls", className);
+			}
 		}
 		
 		mainComposite.layout();
@@ -141,5 +147,16 @@ public class JavaSourceViewer {
 		}
 		
 		return new String(bout.toByteArray());
+	}
+	
+	public static Map<String, Object> createDataParams(ActionContext actionContext){
+		Object data = actionContext.getObject("data");
+		if(data instanceof Class<?>) {
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("className", data);
+			return params;
+		}
+		
+		return null;
 	}
 }

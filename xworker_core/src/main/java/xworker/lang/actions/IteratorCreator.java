@@ -88,39 +88,36 @@ public class IteratorCreator {
             //int size = c.size();
             //bindings.put(dataName + "_index", i);
             //bindings.put(dataName + "_size", size);
-            Thing childActions = self.getThing("ChildAction@0"); 
-            if(childActions != null){
-	            while(iter.hasNext()){           
-	                Object b = iter.next(); 
-	                bindings.put(dataName + "_index", i);
-	                boolean hasNext = iter.hasNext();
-	                bindings.put(dataName + "_hasNext", hasNext);
-	                bindings.put(dataName + "_has_next", hasNext);
-	                bindings.put(dataName, b);
-	                //System.out.println("dataName=" + dataName + ",=" + b);
-	                for(Thing child : childActions.getChilds()){
-	                    //System.out.println(child.getMetadata().getPath());
-	                    result = child.getAction().run(actionContext, null, true);
-	                   
-	        		    int sint = actionContext.getStatus();
-	    	    	    if(sint != ActionContext.RUNNING){
-	    				    break;
-	    			    }
-	                }
-	                
-	                int status = actionContext.getStatus();	            
-	                if(status == ActionContext.BREAK){
-	                    actionContext.setStatus(ActionContext.RUNNING);
-	                    break;
-	                }else if(status == ActionContext.CONTINUE){
-	                    actionContext.setStatus(ActionContext.RUNNING);
-	                    continue;
-	                }else if(status == ActionContext.RETURN){
-	              	    break;
-	                }
-	                
-	                i++;
-	            }
+            while(iter.hasNext()){           
+                Object b = iter.next(); 
+                bindings.put(dataName + "_index", i);
+                boolean hasNext = iter.hasNext();
+                bindings.put(dataName + "_hasNext", hasNext);
+                bindings.put(dataName + "_has_next", hasNext);
+                bindings.put(dataName, b);
+                //System.out.println("dataName=" + dataName + ",=" + b);
+                for(Thing child : self.getChilds()){
+                    //System.out.println(child.getMetadata().getPath());
+                    result = child.getAction().run(actionContext, null, true);
+                   
+        		    int sint = actionContext.getStatus();
+    	    	    if(sint != ActionContext.RUNNING){
+    				    break;
+    			    }
+                }
+                
+                int status = actionContext.getStatus();	            
+                if(status == ActionContext.BREAK){
+                    actionContext.setStatus(ActionContext.RUNNING);
+                    break;
+                }else if(status == ActionContext.CONTINUE){
+                    actionContext.setStatus(ActionContext.RUNNING);
+                    continue;
+                }else if(status == ActionContext.RETURN){
+              	    break;
+                }
+                
+                i++;
             }
             
             return result;

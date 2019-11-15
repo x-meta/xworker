@@ -58,28 +58,9 @@ public class ThingFormCreator {
 		if(defaultSelection != null && !"".equals(defaultSelection)){
 		    ac.put(defaultSelection, actionContext.get(defaultSelection));
 		}*/
-		ac.put("defaultSelection", new Listener() {
-			Event lastEvent;
-			
-			@Override
-			public void handleEvent(Event event) {
-				if(lastEvent == event) {
-					return;
-				}else {
-					lastEvent = event;
-				}
-				try {
-					//Widget widget = event.widget;
-					//Listener[] listeners = widget.getListeners(SWT.DefaultSelection);
-					//System.out.println(listeners);
-					//System.out.println(event);
-					self.doAction("defaultSelection", (ActionContext) ac.get("parentContext"), "event", event);
-				}catch(Exception e) {
-					logger.warn("DefaultSelection exception, form=" + self.getMetadata().getPath(), e);
-				}
-			}
-			
-		});
+		
+		ThingForm thingForm = new ThingForm();
+		ac.put("defaultSelection", thingForm);
 		
 		//创建面板		
 		Thing compositeThing = world.getThing("xworker.swt.xworker.ThingForm/@composite");		
@@ -100,13 +81,13 @@ public class ThingFormCreator {
 		form.setData("composite", composite);
 		//取消了从外部传入ModifyListener的方法
 		//String defaultModify = self.getStringBlankAsNull("defaultModify");
-		Object defaultModifyObj = null;//defaultModify == null ? null : actionContext.get(defaultModify);
+		Object defaultModifyObj = thingForm;//defaultModify == null ? null : actionContext.get(defaultModify);
 		ThingFormModifyListener modifyListener = new ThingFormModifyListener(self, defaultModifyObj, actionContext);
 		form.setData("defaultModify", modifyListener);
 		form.set("defaultSelection", "defaultSelection");
 		form.set("defaultModify", "defaultModify");
 		ac.put("defaultModify", modifyListener);
-		
+		thingForm.setForm(form);
 		
 		/*
 	    if(defaultModify != null){

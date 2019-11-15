@@ -28,6 +28,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelUtil;
 
 public class DataTreeModelCreator {
@@ -129,7 +130,7 @@ public class DataTreeModelCreator {
         TreeModelUtil.setAttributes(self, id, node);
         node.put("icon", getValue(data, self.getString("iconName")));
         node.put("cls", getValue(data, self.getString("clsName")));
-        
+        node.put(TreeModel.Source, data);
         return node;
     }
     

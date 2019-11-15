@@ -26,6 +26,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelUtil;
 
 public class ListTreeModelCreator {
@@ -93,6 +94,7 @@ public class ListTreeModelCreator {
         node.put("text", OgnlUtil.getValue(self.getString("textField"), data));
         TreeModelUtil.copyAttributesToNodeData(data, node);
         node.put("data", data);
+        node.put(TreeModel.Source, data);
         
         return node;
     }
