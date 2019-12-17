@@ -10,7 +10,7 @@ XWorker的官网是[XWorker官网](https://www.xworker.org)，可以在官网上
 
 比如下面的XML代码是一个模型程序。
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 
 <Shell name="HelloWorld" descriptors="xworker.swt.widgets.Shell" text="Hello World" RESIZE="true"
