@@ -20,7 +20,7 @@ XWorker
 </Shell>
 ```
     The above model is a SWT application, and the screenshot after running is as follows.
-![SWT](https://images.gitee.com/uploads/images/2019/1217/164635_22cd7199_493262.png "SWT")
+![SWT](https://www.xworker.org/files/2019/0724/065539rundml.png "SWT")
 
 ## Compiling and running xworker
 ### Compile
@@ -33,7 +33,7 @@ XWorker
 ### Run 
     After the compilation, run xworker.ide.XWorkerExplorer under xworker_explorer project. The screenshot of xworker after running is as follows.
 
-![ThingManager](http://git.oschina.net/uploads/images/2016/0623/192549_72e935b0_493262.png "ThingManager")
+![ThingManager](https://www.xworker.org/images/2016/0926/170000thingexplorer2.png "ThingManager")
 
 ### Package
     You can run mvn_install_nopause.cmd in xworker directory to package xworker. The packed xworker is in xworker_explorer/target/xworker directory.
