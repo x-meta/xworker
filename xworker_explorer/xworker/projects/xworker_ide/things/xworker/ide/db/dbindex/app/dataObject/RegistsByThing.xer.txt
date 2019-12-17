@@ -1,4 +1,4 @@
-^1552527024574
+^1574159883682
 @
 sname
 RegisByThing
@@ -177,7 +177,7 @@ if(thing != null){
     def thingIndex = world.getThing("xworker.lang.util.ThingIndex");
     addPath(paths, thing.metadata.path, context);    
     //log.info("noDescriptor=" + actionContext.get("noDescriptor"));
-    if(actionContext.get("noDescriptor") == true){
+    if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
     }else{        
         for(desc in thing.getAllDescriptors()){            
             if(desc != thingIndex){
@@ -186,13 +186,17 @@ if(thing != null){
         }
     }
         
-    for(ext in thing.getAllExtends()){
-        if(ext != thingIndex){
-            addExcludes(ext, context);
+    if(thing.getBoolean("th_registQueryOnlySelf") == false){
+        for(ext in thing.getAllExtends()){
+            if(ext != thingIndex){
+                addExcludes(ext, context);
+            }
         }
     }
 
-    if(actionContext.get("noDescriptor") == true){
+    //println "RegsitByThing:" + thing.getMetadata().getPath()
+    //println "    noDescriptor=" + actionContext.get("noDescriptor");
+    if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
     }else{        
         for(desc in thing.getAllDescriptors()){            
             if(desc != thingIndex){
@@ -413,6 +417,8 @@ def addPath(paths, path, context){
     false
     ssaveReturn
     false
+    sswitchResult
+    false
     sdebugLog
     false
     sdescriptors
@@ -437,8 +443,6 @@ def addPath(paths, path, context){
         false
         sdataSourcePath
         self.dataSource
-        sconflicting
-        ignore
         sdisable
         false
         sonError
@@ -590,8 +594,6 @@ println rs.getInt(1);
         false
         sdataSourcePath
         self.dataSource
-        sconflicting
-        ignore
         sdisable
         false
         sonError

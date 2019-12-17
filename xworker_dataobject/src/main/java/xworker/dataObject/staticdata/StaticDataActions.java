@@ -1,5 +1,7 @@
 package xworker.dataObject.staticdata;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
@@ -40,9 +42,11 @@ public class StaticDataActions {
 		Map<String, Object> keyValues = self.doAction("getKeyValues", actionContext);
 		Object[] keys = new Object[keyValues.size() * 2];
 		int index=0;
+		List<String> keyNames = new ArrayList<String>();
 		for(String key : keyValues.keySet()) {
 			keys[index] = key;
 			keys[index + 1] = keyValues.get(key);
+			keyNames.add(key);
 			
 			index = index + 2;
 		}
@@ -61,7 +65,7 @@ public class StaticDataActions {
 			
 			//执行创建
 			list.add(data);
-			data.create(actionContext);			
+			data.createIfNotExists(keyNames, actionContext);			
 		}else if(UtilData.isTrue(self.doAction("isUpdate", actionContext))) {
 			Map<String, Object> attributes = self.doAction("getAttributes", actionContext);
 			if(attributes != null) {

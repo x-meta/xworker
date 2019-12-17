@@ -71,7 +71,8 @@ public class XWorkerEntryPoint extends AbstractEntryPoint {
 			//actionContext.putAll(RWT.getRequest().getParameterMap());
 			actionContext.put("rootShell", parent.getShell());
 			actionContext.put("httpRequest", RWT.getRequest());
-			actionContext.put("httpSession", RWT.getUISession().getHttpSession());		
+			actionContext.put("httpSession", RWT.getUISession().getHttpSession());
+			//RWT.getRequest().getH
 			
 			app.doAction("init", actionContext);
 			

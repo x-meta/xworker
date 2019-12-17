@@ -18,6 +18,7 @@ package xworker.swt.widgets;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -70,6 +71,10 @@ public class TreeCreator {
 		    checkSelectionThing.doAction("create", actionContext);
 		}
 		actionContext.peek().remove("parent");
+		
+		Action action = World.getInstance().getAction("xworker.swt.widgets.Control/@actions/@init");
+		actionContext.peek().put("control", tree);
+		action.run(actionContext);  
 		
 		Designer.attach(tree, self.getMetadata().getPath(), actionContext);
 		return tree;       

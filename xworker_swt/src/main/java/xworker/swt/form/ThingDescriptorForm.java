@@ -229,7 +229,7 @@ public class ThingDescriptorForm {
 	public static Composite createThingSingleColumnForm(Thing thing, Thing descriptor, String defaultSelection, String defaultModifyListener, Composite parent, ActionContext context){
 		//long start = System.currentTimeMillis();
 		Thing self = thing;
-
+		
 		int style = SWT.NONE;		        				
 		Composite composite = new Composite(parent, style);
 		
@@ -244,6 +244,7 @@ public class ThingDescriptorForm {
 		
 		//查看描述者是否自定了编辑表单		
 		Thing swtEditor = descriptor.getThing("SwtEditSetting@0/SwtEditor@0");
+		boolean formNoLabel = descriptor.getBoolean("formNoLabel");
 		/**
 		 * 取消ThingGuide，2017-07-13，原有方法侵入了事物的属性
 		if(swtEditor == null && "xworker.lang.ThingGuide".equals(descriptor.getMetadata().getPath())){
@@ -359,7 +360,7 @@ public class ThingDescriptorForm {
 				CTabItem baseItem = new CTabItem(tabFolder, SWT.NONE);
 				baseItem.setText(UtilString.getString("res:res.w_exp:baseAttribute:基础属性", context));
 				ScrolledComposite itemComposite = ThingDescriptorForm.createScrolledForm(tabFolder, rootList, 
-						descriptor, numColumns, _width, _height, _width, editorActionContext);
+						descriptor, formNoLabel, numColumns, _width, _height, _width, editorActionContext);
 				baseItem.setControl(itemComposite);
 			}
 			
@@ -367,12 +368,13 @@ public class ThingDescriptorForm {
 				CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 				item.setText((String) groups.get(i).get("name"));
 				ScrolledComposite itemComposite = ThingDescriptorForm.createScrolledForm(tabFolder, (List<Thing>) groups.get(i).get("childs"), 
-						descriptor, numColumns, _width, _height, _width, editorActionContext);
+						descriptor, formNoLabel, numColumns, _width, _height, _width, editorActionContext);
 				item.setControl(itemComposite);
 			}
 			tabFolder.setSelection(0);			
 		}else{
-			ScrolledComposite itemComposite = ThingDescriptorForm.createScrolledForm(mainComposite, rootList,	descriptor, numColumns, _width, _height, _width, editorActionContext);
+			ScrolledComposite itemComposite = ThingDescriptorForm.createScrolledForm(mainComposite, rootList,descriptor,
+					formNoLabel, numColumns, _width, _height, _width, editorActionContext);
 			GridData itemCompositeGridData = new GridData(GridData.FILL_BOTH);
 			itemCompositeGridData.horizontalSpan = 2;
 			itemComposite.setLayoutData(itemCompositeGridData);
@@ -422,7 +424,7 @@ public class ThingDescriptorForm {
 		return composite;
 	}
 	
-	private static ScrolledComposite createScrolledForm(Composite parent, List<Thing> fields, Thing descriptor, int numColumns, int _width, int _height, int width, ActionContext  editorActionContext) {
+	private static ScrolledComposite createScrolledForm(Composite parent, List<Thing> fields, Thing descriptor, boolean formNoLabel, int numColumns, int _width, int _height, int width, ActionContext  editorActionContext) {
 		ScrolledComposite itemComposite = new ScrolledComposite(parent, SWT.NONE | SWT.H_SCROLL | SWT.V_SCROLL);
 		itemComposite.setExpandHorizontal(true);
 		itemComposite.setExpandVertical(true);
@@ -459,7 +461,7 @@ public class ThingDescriptorForm {
 		baseComposite.setLayout(baseCompositeGridLayout);
 		
 		//List<Thing> fields = (List<Thing>) groups.get(i).get("childs");
-		createInput(descriptor, fields, baseComposite, numColumns, _width, _height, width, editorActionContext);
+		createInput(descriptor, fields, baseComposite, formNoLabel, numColumns, _width, _height, width, editorActionContext);
 		//baseComposite.layout();
 		baseComposite.layout();
 		baseComposite.setSize(baseComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -595,6 +597,7 @@ public class ThingDescriptorForm {
 		
 		FillLayout fillLaout = new FillLayout();
 		composite.setLayout(fillLaout);				
+		boolean formNoLabel = structObject.getBoolean("formNoLabel");
 		int numColumns = column == -1 ? structObject.getInt("editCols", 2) * 2 : column * 2;
 		if(numColumns < 1) {
 			numColumns = 2;
@@ -771,7 +774,7 @@ public class ThingDescriptorForm {
 				baseCompositeGridLayout.numColumns = numColumns;
 				baseComposite.setLayout(baseCompositeGridLayout);
 								
-				createInput(structObject, rootList, baseComposite, numColumns, _width, _height, width, editorActionContext);
+				createInput(structObject, rootList, baseComposite, formNoLabel, numColumns, _width, _height, width, editorActionContext);
 				baseItem.setControl(baseComposite);
 			}
 			
@@ -793,12 +796,12 @@ public class ThingDescriptorForm {
 				groupLabel1.addPaintListener(groupPaintListener);*/
 				
 				List<Thing> fields = (List<Thing>) groups.get(i).get("childs");
-				createInput(structObject, fields, itemComposite, numColumns, _width, _height, width, editorActionContext);
+				createInput(structObject, fields, itemComposite, formNoLabel, numColumns, _width, _height, width, editorActionContext);
 				
 				item.setControl(itemComposite);
 			}  
 		}else{
-			createInput(structObject, rootList, mainComposite, numColumns, _width, _height, width, editorActionContext);			
+			createInput(structObject, rootList, mainComposite, formNoLabel, numColumns, _width, _height, width, editorActionContext);			
 		}
 		
 		Thing editorExtends = structObject.getThing("SwtEditSetting@0/SwtEditorExtends@0");
@@ -848,7 +851,7 @@ public class ThingDescriptorForm {
 		return !"private".equals(attribute.getString("modifier"));
 	}
 	
-	public static void createInput(Thing formThing, List<Thing> fs, Composite mainComposite, int numColumns, int _width, int _height, int width, ActionContext context){
+	public static void createInput(Thing formThing, List<Thing> fs, Composite mainComposite, boolean formNoLabel, int numColumns, int _width, int _height, int width, ActionContext context){
 		List<AttributeEditorBind> binds = new ArrayList<AttributeEditorBind>();
 		context.put("_binds", binds);
 		
@@ -887,7 +890,7 @@ public class ThingDescriptorForm {
 		    			AttributeEditorFactory.createAttributeEditor(formThing, f, xgridData, context);
 		    	if(editor != null) {
 		    		editor.setWidthHeight(_width, _height);
-		    		editor.create(mainComposite, modifyListener, defaultSelection);
+		    		editor.create(mainComposite, modifyListener, defaultSelection, formNoLabel);
 		    	}
 		    }
 		}

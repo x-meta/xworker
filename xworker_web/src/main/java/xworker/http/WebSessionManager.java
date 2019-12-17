@@ -20,18 +20,19 @@ public class WebSessionManager extends SessionManager{
 	private Session session;
 	
 	public void setSession(HttpServletRequest req, ActionContext actionContext) {
-		if(HttpUtils.isLocalHost(req)) {
-			//本机的使用默认会话
-			session =  SessionManager.getDefaultSessionManager().get(actionContext);
-		}else {
-			WebSession session = (WebSession) req.getSession().getAttribute(KEY);
-			if(session == null) {
+		WebSession session = (WebSession) req.getSession().getAttribute(KEY);
+		if(session == null) {
+			if(HttpUtils.isLocalHost(req)) {
+				//本机的使用默认会话
+				Session parent =  SessionManager.getDefaultSessionManager().get(actionContext);
+				session = new WebSession(parent);
+			} else {
 				session = new WebSession(req.getSession());
-				req.getSession().setAttribute(KEY, session);
 			}
-			
-			this.session = session;
+			req.getSession().setAttribute(KEY, session);
 		}
+		
+		this.session = session;
 	}
 	
 	@Override

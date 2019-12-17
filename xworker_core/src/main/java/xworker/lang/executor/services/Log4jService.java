@@ -2,6 +2,7 @@ package xworker.lang.executor.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.spi.LocationAwareLogger;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -10,123 +11,124 @@ import xworker.lang.executor.ExecutorService;
 
 public class Log4jService implements ExecutorService{
 	byte level = Executor.INFO;
+	static final String FQCN = Executor.class.getName();
 	
 	private void log(byte level, String TAG, String message) {
-		Logger logger = LoggerFactory.getLogger(TAG);
+		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
 		byte realLevel = getLevel(logger, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.trace(message);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, message, null, null);			
 			break;
 		case Executor.DEBUG:
-			logger.debug(message);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, message, null, null);
 			break;
 		case Executor.INFO:
-			logger.info(message);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, message, null, null);
 			break;
 		case Executor.WARN:
-			logger.warn(message);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, message, null, null);
 			break;
 		case Executor.ERROR:
-			logger.error(message);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, message, null, null);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String message, Throwable t) {
-		Logger logger = LoggerFactory.getLogger(TAG);
+		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
 		byte realLevel = getLevel(logger, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.trace(message, t);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, message, null, t);
 			break;
 		case Executor.DEBUG:
-			logger.debug(message, t);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, message, null, t);
 			break;
 		case Executor.INFO:
-			logger.info(message, t);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, message, null, t);
 			break;
 		case Executor.WARN:
-			logger.warn(message, t);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, message, null, t);
 			break;
 		case Executor.ERROR:
-			logger.error(message, t);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, message, null, t);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String format, Object arg) {
-		Logger logger = LoggerFactory.getLogger(TAG);
+		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
 		byte realLevel = getLevel(logger, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.trace(format, arg);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, new Object[] {arg}, null);
 			break;
 		case Executor.DEBUG:
-			logger.debug(format, arg);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, new Object[] {arg}, null);
 			break;
 		case Executor.INFO:
-			logger.info(format, arg);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, new Object[] {arg}, null);
 			break;
 		case Executor.WARN:
-			logger.warn(format, arg);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, new Object[] {arg}, null);
 			break;
 		case Executor.ERROR:
-			logger.error(format, arg);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, new Object[] {arg}, null);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String format, Object arg1, Object arg2) {
-		Logger logger = LoggerFactory.getLogger(TAG);
+		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
 		byte realLevel = getLevel(logger, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.trace(format, arg1, arg2);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, new Object[] {arg1, arg2}, null);
 			break;
 		case Executor.DEBUG:
-			logger.debug(format, arg1, arg2);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, new Object[] {arg1, arg2}, null);
 			break;
 		case Executor.INFO:
-			logger.info(format, arg1, arg2);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, new Object[] {arg1, arg2}, null);
 			break;
 		case Executor.WARN:
-			logger.warn(format, arg1, arg2);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, new Object[] {arg1, arg2}, null);
 			break;
 		case Executor.ERROR:
-			logger.error(format, arg1, arg2);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, new Object[] {arg1, arg2}, null);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String format,  Object... arguments) {
-		Logger logger = LoggerFactory.getLogger(TAG);
+		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
 		byte realLevel = getLevel(logger, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.trace(format, arguments);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, arguments, null);
 			break;
 		case Executor.DEBUG:
-			logger.debug(format, arguments);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, arguments, null);
 			break;
 		case Executor.INFO:
-			logger.info(format, arguments);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, arguments, null);
 			break;
 		case Executor.WARN:
-			logger.warn(format, arguments);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, arguments, null);
 			break;
 		case Executor.ERROR:
-			logger.error(format, arguments);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, arguments, null);
 			break;
 		}
 	}

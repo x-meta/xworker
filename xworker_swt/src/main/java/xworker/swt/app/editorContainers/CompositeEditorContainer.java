@@ -56,11 +56,13 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		}
 		
 		//编辑器不存在，创建一个
-		EditorImpl editorImpl = new EditorImpl(editor, id, this.containerContext);
+		EditorImpl editorImpl = new EditorImpl(this, editor, id, this.containerContext);
 		editorImpl.create(composite);
 		editorImpl.setContent(params);
 		editors.add(editorImpl);
 		setActive(editorImpl);
+		
+		this.fireOnCreated(editorImpl);
 		
 		//判断是否超过了上限
 		int maxEditors = thing.getInt("maxEditors");
@@ -115,6 +117,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		if(editor.getActions() != null) {
 			editor.getActions().doAction("onActive", editor.getActionContext());
 		}		
+		
+		this.fireOnActive(editor);
 	}
 	
 	private EditorImpl getEditor(ActionContainer editorActions) {
@@ -183,6 +187,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		EditorImpl impl = (EditorImpl) editor;
 		impl.doDispose();
 		editors.remove(impl);
+		
+		this.fireOnDisposed(editor);
 	}
 
 	@Override

@@ -1,58 +1,103 @@
 package xworker.app.view.swt.data;
 
-import java.util.List;
-
-import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 
 import xworker.dataObject.DataObject;
-import xworker.dataObject.swt.bind.BinderItem;
-import xworker.dataObject.swt.bind.DataObjectBinder;
-import xworker.lang.executor.Executor;
 
 public class StaticDataObject {
-	private static final String TAG = "StaticDataObject";
-	public static Object create(ActionContext actionContext) {
+	//private static final String TAG = "StaticDataObject";
+	
+	public static DataObject createDataObject(Thing self, Thing dataObjectDesc, ActionContext actionContext) {
+		DataObject data = new DataObject(dataObjectDesc);
+		
+		//初始化的值
+		for(Thing child : self.getChilds()) {
+			if(child.isThing("xworker.app.view.swt.data.StaticDataObject/@InitialValues")) {
+				data.putAll(child.getAttributes());
+			}
+		}
+		
+		//执行数据对象自己的初始化方法
+		data.init(actionContext);
+		
+		//使用文本设置的值
+		String attributes = self.doAction("getAttributes", actionContext);
+		if(attributes != null) {
+			data.setAttributes(attributes, actionContext);
+		}
+				
+		return data;
+	}
+	
+	public static DataObject getStaticDataObject(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
-		DataObject dataObject = null;
-		String key = "StaticDataObject";
-		Thing staticThing = self.doAction("getStaticThing", actionContext);
+		DataObject dataObject = null;		
+		String scope = self.doAction("getScope", actionContext);
 		Thing dataDesc = self.doAction("getDataObject", actionContext);
-		if(staticThing == null) {
-			staticThing = dataDesc;
-		}
-		if(staticThing != null) {
-			if(staticThing.isThing("xworker.dataObject.staticdata.StaticDataObject")) {
-				dataObject = staticThing.doAction("getData", actionContext);
-			}else {
-				dataObject = staticThing.getStaticData(key);
-			}
-		}
+		String key = "StaticDataObject:" + dataDesc.getMetadata().getPath();
 		
-		if(dataObject == null) {
-			if(dataDesc != null) {
-				String scope = self.doAction("getScope", actionContext);
-				if("world".equals(scope)) {
-					if(dataObject == null) {
-						dataObject = new DataObject(dataDesc);
-						dataObject.init(actionContext);
-						staticThing.setStaticData(key, dataObject);
-					}
-				}else {
-					dataObject = actionContext.getObject(dataDesc.getMetadata().getPath());
-					if(dataObject == null) {
-						dataObject = new DataObject(dataDesc);
-						dataObject.init(actionContext);
-						actionContext.g().put(dataDesc.getMetadata().getPath(), dataObject);
-					}
-				}
-			}else {
-				dataObject = new DataObject();
-			}
-		}
+		World world = World.getInstance();
 		
+		if("world".equals(scope)) {
+			//系统全局的
+			dataObject = world.getData(key);
+			if(dataObject == null) {
+				dataObject = createDataObject(self, dataDesc, actionContext);
+				world.setData(key, dataObject);
+			}
+		}else if("thing".equals(scope)) {
+			//事物全局的
+			Thing staticThing = self.doAction("getStaticThing", actionContext);
+			if(staticThing == null) {
+				staticThing = dataDesc;
+			}
+			
+			dataObject = staticThing.getStaticData(key);
+			if(dataObject == null) {
+				dataObject = createDataObject(self, dataDesc, actionContext);
+				staticThing.setStaticData(key, dataObject);
+			}
+		}else {
+			//保存变量上下文，总是创建
+			dataObject = createDataObject(self, dataDesc, actionContext);
+		}		
+		
+		return dataObject;
+	}
+	
+	public static void removeStaticDataObject(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		String scope = self.doAction("getScope", actionContext);
+		Thing dataDesc = self.doAction("getDataObject", actionContext);
+		String key = "StaticDataObject:" + dataDesc.getMetadata().getPath();
+		
+		World world = World.getInstance();
+		
+		if("world".equals(scope)) {
+			//系统全局的
+			world.setData(key, null);
+		}else if("thing".equals(scope)) {
+			//事物全局的
+			Thing staticThing = self.doAction("getStaticThing", actionContext);
+			if(staticThing == null) {
+				staticThing = dataDesc;
+			}
+			
+			staticThing.setStaticData(key, null);
+		}
+	}
+	
+	public static Object create(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		DataObject dataObject = self.doAction("getStaticDataObject", actionContext);
+		
+		actionContext.g().put(self.getMetadata().getName(), dataObject);
+		/*
+		 * 2019-11-20 取消了绑定的功能，要实现绑定可以通过DataObjectBinder或Reactors框架
 		DataObjectBinder binder = new DataObjectBinder(dataObject, (Control) actionContext.get("parent"), actionContext);
 		if(self.getBoolean("bindToParent")) {
 			Object parent = actionContext.get("parent");
@@ -81,10 +126,10 @@ public class StaticDataObject {
 					Executor.warn(TAG, "Create BinderItem error, path=" + child.getMetadata().getPath(), e);					
 				}
 			}
-		}
+		}*/
 				
 		actionContext.g().put(self.getMetadata().getName(), dataObject);		
-		actionContext.g().put(self.getMetadata().getName() + "Binder", binder);
+		//actionContext.g().put(self.getMetadata().getName() + "Binder", binder);
 		return dataObject;
 	}
 	

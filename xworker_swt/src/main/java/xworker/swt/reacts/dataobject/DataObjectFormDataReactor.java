@@ -9,6 +9,7 @@ import org.xmeta.Thing;
 import xworker.app.view.swt.widgets.form.DataObjectForm;
 import xworker.app.view.swt.widgets.form.DataObjectFormListener;
 import xworker.dataObject.DataObject;
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.DataReactorUtils;
 import xworker.swt.reacts.WidgetDataReactor;
 
@@ -24,7 +25,7 @@ public class DataObjectFormDataReactor extends WidgetDataReactor implements Data
 	}
 
 	@Override
-	public void widgetDoOnSelected(List<Object> datas) {
+	public void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
 		if(dataObjects.size() > 0) {
 			form.setDataObject(dataObjects.get(0));
@@ -32,24 +33,28 @@ public class DataObjectFormDataReactor extends WidgetDataReactor implements Data
 	}
 
 	@Override
-	public void widgetDoOnUnselected() {
+	public void widgetDoOnUnselected(DataReactorContext context) {
 		form.setDataObject((DataObject) null); 
 	}
 
 	@Override
-	public void widgetDoOnAdded(int index, List<Object> datas) {
+	public void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnRemoved(List<Object> datas) {
+	public void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnUpdated(List<Object> datas) {
+	public void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnLoaded(List<Object> datas) {
+	public void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
+		List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
+		if(dataObjects.size() > 0) {
+			form.setDataObject(dataObjects.get(0));
+		}
 	}
 
 	public static void create(ActionContext actionContext) {
@@ -72,12 +77,12 @@ public class DataObjectFormDataReactor extends WidgetDataReactor implements Data
 	@Override
 	public void onSetDataObject(DataObjectForm dataObjectForm, DataObject dataObject) {
 		this.dataObject = dataObject;
-		this.fireSelected(DataReactorUtils.toObjectList(dataObject));
+		this.fireSelected(DataReactorUtils.toObjectList(dataObject), getContext());
 	}
 
 	@Override
 	public void onMidified(DataObjectForm dataObjectForm) {
 		DataObject data = form.getDataObject();
-		this.fireUpdated(DataReactorUtils.toObjectList(data));
+		this.fireUpdated(DataReactorUtils.toObjectList(data), getContext());
 	}
 }

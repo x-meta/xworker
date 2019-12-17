@@ -1,7 +1,16 @@
-%1546495694751
+%1575958347655
 @
 sname=WebBrowserEditor
 slabel=WebBrowserEditor
+spriority=0
+SexampleParams=
+#$@text#$@
+{
+    url:"xworker.things.p2018.p11.p08.SwtTutorials/@SwtGuide/@SimpleBrowser1",
+    type:"thing",
+    simple:"true"
+}
+#$@text#$@
 Sdescription=
 #$@text#$@
 <p>Web浏览器，打开一个URL。</p>
@@ -11,9 +20,26 @@ Sdescription=
 <p><strong>参数：</strong></p>
 
 <ul>
-	<li><strong>url</strong><br />
-	浏览器要打开的URL地址。</li>
+	<li><strong>url: String</strong><br />
+	浏览器要打开的URL地址。<br />
+	&nbsp;</li>
+	<li><strong>simple: String(true/<strong>false)</strong></strong><br />
+	是否使用简单浏览器。默认false。<br />
+	&nbsp;</li>
+	<li><strong>type:&nbsp;String(url/thing/control)</strong><br />
+	类型，thing是浏览事物文档，control是用模型编写的WEB应用。默认url。</li>
 </ul>
+
+<p><strong>示例参数：</strong></p>
+
+<pre class="brush:jscript;">
+{
+    url:&quot;xworker.things.p2018.p11.p08.SwtTutorials/@SwtGuide/@SimpleBrowser1&quot;,
+    type:&quot;thing&quot;,
+    simple:&quot;true&quot;
+}</pre>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
 #$@text#$@
 sdescriptors=xworker.swt.app.Editor
 sinheritDescription=false
@@ -46,16 +72,6 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=EditorComposite
-    @/@EditorComposite/@FillLayout
-    sname=FillLayout
-    stype=SWT.HORIZONTAL
-    sdescriptors=xworker.swt.Layouts/@FillLayout
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=FillLayout
     @/@EditorComposite/@webBrowser
     sname=webBrowser
     sdescriptors=xworker.swt.Widgets/@WebBrowser
@@ -65,6 +81,43 @@ sth_mark=false
     sth_registDisabled=false
     sth_mark=false
     sid=webBrowser
+    @/@EditorComposite/@browser
+    sname=browser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=browser
+      @/@EditorComposite/@browser/@UtilBrowser
+      sname=UtilBrowser
+      sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=UtilBrowser
+    @/@EditorComposite/@stackLayout
+    sname=stackLayout
+    stopControl=browser
+    sdescriptors=xworker.swt.Layouts/@StackLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=stackLayout
   @/@actions
   sname=actions
   sdescriptors=xworker.swt.app.Editor/@ActionContainer
@@ -83,20 +136,47 @@ sth_mark=false
     sdisableGlobalContext=false
     Scode=
 #$@text#$@
-import java.io.File;
+import xworker.util.XWorkerUtils;
 
 //判断参数是否存在
 if(params == null){    
     return;
 }
 
-if(params.url != null){
-    webBrowser.scripts.doAction("openUrl", actionContext, ["name":"new", "url":params.url]);
+//url
+def url = params.url;
+if(params.type == "thing"){
+    url = XWorkerUtils.getThingDescUrl(url);
+}else if(params.type == "control"){
+    def thing = url;
+    if(thing instanceof String){
+        thing = world.getThing(thing);
+    }
+    url = XWorkerUtils.getWebControlUrl(thing);
+}
+
+def name = params.name;
+if(name == null || name == ""){
+    name = "new";
+}
+
+if(url != null && url != ""){
+   if(params.simple != "true" || params.simple == null){
+       webBrowser.scripts.doAction("openUrl", actionContext, 
+               ["name":name, "url":url]);
+       stackLayout.topControl = webBrowser.mainComposite;
+       EditorComposite.getLayout();
+   }else{
+       browser.setUrl(url);
+       stackLayout.topControl = browser;
+       EditorComposite.getLayout();
+   }
 }
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -234,7 +314,6 @@ return null;
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -256,7 +335,6 @@ return null;
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false

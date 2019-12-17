@@ -17,12 +17,14 @@ import xworker.app.view.swt.data.ThingDataStoreListener;
 import xworker.dataObject.DataObject;
 import xworker.swt.reacts.DataReactorUtils;
 import xworker.swt.reacts.DataReactor;
+import xworker.swt.reacts.DataReactorContext;
 
 public class DataStoreDataReactor extends DataReactor implements DataStoreListener {
 	private static Logger logger = LoggerFactory.getLogger(DataStoreDataReactor.class);
 	
 	DataStore dataStore = null;
 	Control control;
+	ThreadLocal<DataReactorContext> contextLocal = new ThreadLocal<DataReactorContext>();
 	
 	public DataStoreDataReactor(Thing dataStore, Thing self, ActionContext actionContext) {
 		super(self, actionContext);
@@ -31,9 +33,10 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 		this.control = self.doAction("getControl", actionContext);
 		ThingDataStoreListener.attach(this.dataStore.getStore(), this, actionContext);
 	}
-
+	
 	@Override
-	protected void doOnSelected(List<Object> datas) {
+	protected void doOnSelected(List<Object> datas, DataReactorContext context) {
+		contextLocal.set(context);
 		List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
 		DataObject params = null;
 		if(dataObjects != null && dataObjects.size() > 0) {
@@ -48,12 +51,14 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 	}
 
 	@Override
-	protected void doOnUnselected() {
+	protected void doOnUnselected(DataReactorContext context) {
+		contextLocal.set(context);
 		dataStore.load(new HashMap<String, Object>());
 	}
 
 	@Override
-	protected void doOnAdded(int index, List<Object> datas) {
+	protected void doOnAdded(int index, List<Object> datas, DataReactorContext context) {
+		contextLocal.set(context);
 		try {
 			//打开新建数据对象的对话框
 			String title = UtilString.getString("lang:d=新建&en=New ", actionContext);
@@ -75,7 +80,7 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 	}
 
 	@Override
-	protected void doOnRemoved(List<Object> datas) {
+	protected void doOnRemoved(List<Object> datas, DataReactorContext context) {
 		if(datas == null || datas.size() == 0) {
 			logger.info("Datas is null or blank, does not open delete dialog");
 			return;
@@ -107,7 +112,7 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 	}
 
 	@Override
-	protected void doOnUpdated(List<Object> datas) {
+	protected void doOnUpdated(List<Object> datas, DataReactorContext context) {
 		try {
 			List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
 			if(dataObjects.size() == 0) {
@@ -131,8 +136,12 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 		}
 	}
 
+	public DataReactorContext getContext() {
+		return contextLocal.get();
+	}
+	
 	@Override
-	protected void doOnLoaded(List<Object> datas) {
+	protected void doOnLoaded(List<Object> datas, DataReactorContext context) {
 	}
 
 	private List<Object> toObjectList(List<DataObject> records){
@@ -145,32 +154,32 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 	}
 	@Override
 	public void onInsert(Thing store, int index, List<DataObject> records) {
-		this.fireAdded(index, toObjectList(records)); 
+		this.fireAdded(index, toObjectList(records), getContext()); 
 	}
 
 	@Override
 	public void onLoaded(Thing store, List<DataObject> records) {
-		this.fireLoaded(toObjectList(records));
+		this.fireLoaded(toObjectList(records), getContext());
 	}
 
 	@Override
 	public void onReconfig(Thing store) {
-		this.fireUnselected();
+		this.fireUnselected(getContext());
 	}
 
 	@Override
 	public void onRemove(Thing store, List<DataObject> records) {
-		this.fireRemoved(toObjectList(records));
+		this.fireRemoved(toObjectList(records), getContext());
 	}
 
 	@Override
 	public void onUpdate(Thing store, List<DataObject> records) {
-		this.fireUpdated(toObjectList(records));
+		this.fireUpdated(toObjectList(records), getContext());
 	}
 
 	@Override
 	public void beforeLoad(Thing store) {
-		this.fireUnselected();
+		this.fireUnselected(getContext());
 	}
 
 	@Override

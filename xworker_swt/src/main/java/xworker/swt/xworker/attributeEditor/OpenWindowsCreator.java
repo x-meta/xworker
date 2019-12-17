@@ -484,8 +484,8 @@ public class OpenWindowsCreator {
     	Thing codeForm = (Thing) actionContext.get("codeForm");
     	Map<String, Object> values = (Map<String, Object>) codeForm.doAction("getValues", actionContext);
     	actionContext.getScope(0).put("result", 
-    	      "Width=" + values.get("Width" + ";Height=" + values.get("Height") + 
-    	      ";ToolbarSet=" +  values.get("ToolbarSet") + ";fillBoth=" + values.get("fillBoth")));
+    	      "Width=" + values.get("Width") + ";Height=" + values.get("Height") + 
+    	      ";ToolbarSet=" +  values.get("ToolbarSet") + ";fillBoth=" + values.get("fillBoth"));
     	((Shell) actionContext.get("html")).dispose();
     }
     
@@ -493,7 +493,7 @@ public class OpenWindowsCreator {
     	String value = (String) actionContext.get("value");
     	Thing codeForm = (Thing) actionContext.get("codeForm");
     	if(actionContext.get("value") != null){
-    	    Map<String, String> params = UtilString.getParams(value, " ");
+    	    Map<String, String> params = UtilString.getParams(value, ";");
     	    if(params != null){
     	        codeForm.doAction("setValues", actionContext, UtilMap.toMap(new Object[]{"values", params}));
     	    }

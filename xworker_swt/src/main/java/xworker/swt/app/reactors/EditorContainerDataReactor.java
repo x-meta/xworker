@@ -11,6 +11,7 @@ import org.xmeta.Thing;
 import xworker.swt.app.DataEditorProvider;
 import xworker.swt.app.IEditor;
 import xworker.swt.app.IEditorContainer;
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class EditorContainerDataReactor extends WidgetDataReactor{
@@ -25,7 +26,7 @@ public class EditorContainerDataReactor extends WidgetDataReactor{
 	}
 
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		if(datas.size() > 0) {
 			Object data = datas.get(0);
 			

@@ -50,7 +50,7 @@ public class EnviromentChecker extends SecurityChecker{
 		if(permission == null) {
 			this.setSecurityHandler(securityHandler);
 		}else {
-			PermissionChecker pc = getPermissionChecker(permission);
+			PermissionChecker pc = getPermissionChecker(permission);			
 			if(action == null && pathRegex == null) {
 				pc.setSecurityHandler(securityHandler);
 			}else {
@@ -59,6 +59,16 @@ public class EnviromentChecker extends SecurityChecker{
 		}
 	}
 	
+	public List<String> getPermissions(){
+		List<String> list = new ArrayList<String>();
+		for(String key : permissions.keySet()) {
+			list.add(String.valueOf(key));
+		}
+		
+		Collections.sort(list);
+		return list;
+	}
+
 	/**
 	 * 通过权限的名字返回权限校验器，如果不
 	 * 

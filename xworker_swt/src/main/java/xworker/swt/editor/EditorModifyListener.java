@@ -61,7 +61,8 @@ public class EditorModifyListener implements ModifyListener, SetableModifyListen
 	public boolean isEnable() {
 		Boolean en = enable.get();
 		if(en == null) {
-			return false;
+			//原先是false，RWT下DataObjectBinder示例不生效，现在改成true, 2019-12-12
+			return true;
 		}
 		return en;
 	}

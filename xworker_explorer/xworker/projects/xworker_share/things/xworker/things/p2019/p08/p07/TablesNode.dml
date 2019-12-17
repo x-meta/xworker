@@ -1,4 +1,4 @@
-%1565165192559
+%1576119197340
 @
 sname=TablesNode
 slabel=表
@@ -9,9 +9,12 @@ sth_createIndex=true
 sth_registThing=command|xworker.app.db.manager.DbToolsComposites
 sth_registMyChilds=false
 sth_registDisabled=false
+sth_noThingRegistViewer=true
 sicon=icons/org/eclipse/swt/widgets/TableColumn.gif
 sth_fileMonitor=false
+sth_deprecated=false
 sth_mark=false
+sth_registQueryOnlySelf=false
   @/@actions
   sname=actions
   sdescriptors=xworker.swt.xworker.ThingRegistDynamicNode/@actions1
@@ -38,7 +41,7 @@ def con = dataSource.doAction("getConnection", actionContext);
 def tables = [];
 try{
     def metadata = con.getMetaData();
-    def rs = metadata.getTables(null, null, null, ["TABLE"] as String[]);
+    def rs = metadata.getTables(null, metadata.getUserName(), null, ["TABLE"] as String[]);
     while(rs.next()){
         def tableName = rs.getString("TABLE_NAME");
         def table = new Thing("xworker.things.p2019.p08.p07.TableNode");
@@ -54,6 +57,7 @@ return tables;
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -82,7 +86,6 @@ return tables;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false

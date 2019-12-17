@@ -1,8 +1,8 @@
 package xworker.swt.reacts;
 
-import java.awt.Composite;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -10,6 +10,7 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -18,12 +19,19 @@ import org.eclipse.swt.widgets.Tree;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
 import xworker.swt.app.IEditorContainer;
+import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
+import xworker.swt.app.editorContainers.CompositeEditorContainer;
 import xworker.swt.reacts.creators.BrowserDataReactorCreator;
 import xworker.swt.reacts.creators.CComboDataReactorCreator;
 import xworker.swt.reacts.creators.CTabFolderDataReactorCreator;
 import xworker.swt.reacts.creators.ComboDataReactorCreator;
 import xworker.swt.reacts.creators.CompositeDataReactorCreator;
+import xworker.swt.reacts.creators.DataItemContainerDataReactorCreator;
+import xworker.swt.reacts.creators.DataObjectDataReactorCreator;
+import xworker.swt.reacts.creators.DataObjectListDataReactorCreator;
 import xworker.swt.reacts.creators.EditorContainerDataReactorCreator;
 import xworker.swt.reacts.creators.ListDataReactorCreator;
 import xworker.swt.reacts.creators.SelectionDataReactorCreator;
@@ -35,15 +43,41 @@ import xworker.swt.reacts.datas.CollectionDataReactor;
 import xworker.swt.reacts.filters.FileFilter;
 import xworker.swt.reacts.filters.SourceDataFilter;
 import xworker.swt.reacts.filters.ThingFilter;
+import xworker.swt.xwidgets.DataItemContainer;
 
 
 public class DataReactorFactory {
 	//private static Logger logger = LoggerFactory.getLogger(DataReactorFactory.class);
 	private static Map<Class<?>, DataReactorCreator> creators = new HashMap<Class<?>, DataReactorCreator>();
 	private static Map<String, DataFilter> filters = new HashMap<String, DataFilter>();
+	/**
+	 * 初始时需要加载的数据响应器，自动创建加入。
+	 */
+	private static ThreadLocal<List<DataReactor>> autoLoadLocal = new ThreadLocal<List<DataReactor>>();
+	/** 设计缺陷，一开时没考虑把名字传进来，通过ThreadLocal弥补　*/
+	private static ThreadLocal<String> dataReactorNameLocal = new ThreadLocal<String>();
 	
 	static {
 		initReactors();
+	}
+	
+	public static void setDataReactorName(String name) {
+		dataReactorNameLocal.set(name);
+	}
+	
+	public static String getDataReactorName() {
+		return dataReactorNameLocal.get();
+	}
+	
+	public static void setAutoLoadLocal(List<DataReactor> dataReactors) {
+		autoLoadLocal.set(dataReactors);
+	}
+	
+	public static void addToAutoLoad(DataReactor dataReactor) {
+		List<DataReactor> list = autoLoadLocal.get();
+		if(list != null && dataReactor != null) {
+			list.add(dataReactor);
+		}
 	}
 	
 	public static void initReactors() {
@@ -69,7 +103,12 @@ public class DataReactorFactory {
 		creators.put(Tree.class, new TreeDataReactorCreator());
 		creators.put(CTabFolder.class, new CTabFolderDataReactorCreator());
 		creators.put(IEditorContainer.class, new EditorContainerDataReactorCreator());
+		creators.put(CTabFolderEditorContainer.class, new EditorContainerDataReactorCreator());
+		creators.put(CompositeEditorContainer.class, new EditorContainerDataReactorCreator());
 		creators.put(Composite.class, new CompositeDataReactorCreator());
+		creators.put(DataObjectList.class, new DataObjectListDataReactorCreator());
+		creators.put(DataItemContainer.class, new DataItemContainerDataReactorCreator());
+		creators.put(DataObject.class, new DataObjectDataReactorCreator());
 		
 		//初始化Filter
 		filters.put("thing", new ThingFilter());
@@ -106,6 +145,12 @@ public class DataReactorFactory {
 				DataReactor reactor = new DataReactor(thing, actionContext);
 				reactor.getDatas().add(control);
 				dataReactor = reactor;
+				
+				//需要自动加载
+				List<DataReactor> load = autoLoadLocal.get();
+				if(load != null) {
+					load.add(reactor);
+				}
 			}
 			
 			//logger.warn("Can not create DataReactor, Creator not exists, class=" + control.getClass());

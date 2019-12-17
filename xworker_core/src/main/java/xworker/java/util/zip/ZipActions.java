@@ -7,14 +7,15 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import ognl.OgnlException;
-
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 
+import ognl.OgnlException;
+
 public class ZipActions {
-	/**s
+	
+	/**
 	 * ZIP压缩文件。
 	 * 
 	 * @param actionContext

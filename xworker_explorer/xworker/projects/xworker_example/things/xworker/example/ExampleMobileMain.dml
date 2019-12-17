@@ -1,0 +1,542 @@
+%1574066531880
+@
+sname=shell
+stext=lang:d=示例&en=Examples
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=1024
+sheight=768
+scenterScreen=true
+spack=false
+smaximized=true
+sfullScreen=true
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=ExampleMobileMain
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@mainMenu
+  sname=mainMenu
+  sstyle=BAR
+  sNO_RADIO_GROUP=false
+  salign=LEFT_TO_RIGHT
+  svisible=true
+  senabled=true
+  sdescriptors=xworker.swt.widgets.Control/@Menu
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=mainMenu
+    @/@mainMenu/@viewExampleItem
+    sname=viewExampleItem
+    stext=lang:d=打开示例&En=Open Example
+    sselected=false
+    senabled=false
+    sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=viewExampleItem
+      @/@mainMenu/@viewExampleItem/@listeners
+      sname=listeners
+      sdescriptors=xworker.swt.events.Listeners/@listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=listeners
+        @/@mainMenu/@viewExampleItem/@listeners/@viewExampleItemSelection
+        sname=viewExampleItemSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=viewExampleItemSelection
+          @/@mainMenu/@viewExampleItem/@listeners/@viewExampleItemSelection/@GroovyAction
+          sname=GroovyAction
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.xmeta.util.UtilString;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+if(stackLayout.topControl == contentComposite){
+     stackLayout.topControl = mainSashForm;
+     shell.layout();     
+     
+     viewExampleItem.setText(UtilString.getString("lang:d=打开示例&en=Open Example", actionContext));
+}else{
+    def path = thing.getMetadata().getPath();
+    
+    //清空内容面板
+    for(child in contentComposite.getChildren()){
+        child.dispose();
+    }
+    
+    //创建内容
+    def ac = new ActionContext();
+    ac.put("parent", contentComposite);
+    thing.doAction("create", ac);
+    contentComposite.layout();
+    
+    stackLayout.topControl = contentComposite;
+    shell.layout();
+    
+    viewExampleItem.setText(UtilString.getString("lang:d=返回&en=Return", actionContext));
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sid=GroovyAction
+    @/@mainMenu/@languageMenuItem
+    sname=languageMenuItem
+    stext=中文/English
+    sselected=false
+    senabled=true
+    sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=languageMenuItem
+      @/@mainMenu/@languageMenuItem/@listeners
+      sname=listeners
+      sdescriptors=xworker.swt.events.Listeners/@listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=listeners
+        @/@mainMenu/@languageMenuItem/@listeners/@languageMenuItemSelection
+        sname=languageMenuItemSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=languageMenuItemSelection
+          @/@mainMenu/@languageMenuItem/@listeners/@languageMenuItemSelection/@changeLanguage
+          sname=changeLanguage
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import java.util.Locale;
+
+import org.xmeta.util.UtilResource;
+import org.xmeta.ui.session.SessionManager;
+
+import xworker.util.XWorkerUtils;
+
+boolean zh = true;
+
+def session = SessionManager.getSession(null);
+def locale = session.getLocale();
+if(locale != null && !locale.getLanguage().equals(new Locale("en").getLanguage())){
+    zh = true;
+}else{
+    zh = false;
+}
+
+if(zh == true){
+    Locale l = new Locale("en", "US");
+    session.setLocale(l);
+    session.setI18nResource(UtilResource.getInstance(l));
+}else{
+    Locale l = new Locale("zh", "CN");
+    session.setLocale(l);
+    session.setI18nResource(UtilResource.getInstance(l));
+}
+
+//重新启动Workbench
+def thing =  world.getThing("xworker.example.ExampleMobileMain");
+shell.dispose();
+thing.doAction("run", actionContext);
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=changeLanguage
+    @/@mainMenu/@languageMenuItem1
+    sname=pcMenuItem
+    stext=lang:d=PC版&en=PC
+    sselected=false
+    senabled=true
+    sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=languageMenuItem1
+      @/@mainMenu/@languageMenuItem1/@listeners
+      sname=listeners
+      sdescriptors=xworker.swt.events.Listeners/@listeners
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=listeners
+        @/@mainMenu/@languageMenuItem1/@listeners/@languageMenuItemSelection
+        sname=pcMenuItemSelection
+        stype=Selection
+        sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=languageMenuItemSelection
+          @/@mainMenu/@languageMenuItem1/@listeners/@languageMenuItemSelection/@changeLanguage
+          sname=toPc
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+//重新启动Workbench
+def thing =  world.getThing("xworker.example.ExampleMain");
+shell.dispose();
+thing.doAction("run", actionContext);
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=changeLanguage
+  @/@ServerPushSession
+  sname=ServerPushSession
+  sinterval=2000
+  sdescriptors=xworker.swt.widgets.Composite/@ServerPushSession
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=ServerPushSession
+  @/@contentComposite
+  sname=contentComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Composite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=contentComposite
+    @/@contentComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=FillLayout
+  @/@mainSashForm
+  sname=mainSashForm
+  sstyle=VERTICAL
+  sSMOOTH=false
+  sweights=60,40
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@SashForm
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=mainSashForm
+    @/@mainSashForm/@thingRegist
+    sname=thingRegist
+    sthing=xworker.example.ExamplesIndex
+    sregistType=child
+    sparent=false
+    ssearchByKeywords=true
+    skeywords=var:key
+    sshowContent=false
+    scontentDisplayType=Composite
+    sforceUseDefaultOpenMethod=false
+    sshowDescBrowser=false
+    sdescBrowserRight=false
+    sautoLoad=true
+    scache=true
+    scheck=false
+    sdescritporForNewThing=xworker.swt.xworker.ThingRegistThing
+    sdescritporChilds=false
+    sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=thingRegist
+      @/@mainSashForm/@thingRegist/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@mainSashForm/@thingRegist/@actions/@selected
+        sname=selected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+if(actionContext.get("thing") != null){
+    def url = XWorkerUtils.getThingDescUrl(thing);
+    browser.setUrl(url);
+    
+    actionContext.g().put("thing", thing);
+    viewExampleItem.setEnabled(true);    
+}else{
+   viewExampleItem.setEnabled(false);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=selected
+        @/@mainSashForm/@thingRegist/@actions/@loaded
+        sname=loaded
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def thing = null;
+if(actionContext.get("first") == null){
+    actionContext.g().put("first", false);
+    
+    if(actionContext.get("path") != null){
+        for(tthing in things){
+            //println tthing.getMetadata().getPath();
+            if(tthing.getMetadata().getPath() == path){
+                thing = tthing;
+                break;
+            }
+        }
+    }
+}
+
+//println path;
+//println thing;
+if(thing != null){
+    def url = XWorkerUtils.getThingDescUrl(thing);
+    browser.setUrl(url);
+    
+    thingRegist.doAction("selectThing", actionContext, "thing", thing);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=loaded
+        @/@mainSashForm/@thingRegist/@actions/@defaultSelected
+        sname=defaultSelected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+if(actionContext.get("thing") != null){
+    def url = XWorkerUtils.getThingDescUrl(thing);
+    browser.setUrl(url);
+    
+    actionContext.g().put("thing", thing);
+    viewExampleItem.setEnabled(true);    
+    
+    def action = world.getAction("xworker.example.ExampleMobileMain/@mainMenu/@viewExampleItem/@listeners/@viewExampleItemSelection/@GroovyAction");
+    action.run(actionContext);
+}else{
+    viewExampleItem.setEnabled(false);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=defaultSelected
+    @/@mainSashForm/@browser
+    sname=browser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=browser
+      @/@mainSashForm/@browser/@UtilBrowser
+      sname=UtilBrowser
+      sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=UtilBrowser
+  @/@stackLayout
+  sname=stackLayout
+  stopControl=mainSashForm
+  sdescriptors=xworker.swt.Layouts/@StackLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=stackLayout

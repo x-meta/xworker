@@ -1,4 +1,4 @@
-%1573626788771
+%1576226742110
 @
 sname=DataReactors
 slabel=DataReactors
@@ -13,30 +13,23 @@ Sdescription=
 #$@text#$@
 <p><strong>数据响应框架</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 在数据数据时，控件之间关系通常是相似或固定的。比如在管理数据的界面，当表格选中一条记录时，编辑按钮会变得可用，当表格未选中记录时，编辑按钮变得不可用。</p>
+<p>&nbsp; &nbsp; 数据响应器框架是一个界面的控制框架，它通过控件的指向来实现控件之间的控制。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 既然在处理数据时，控件之间存在某些固定的关系，那么是否可以找到一个方法简化编写处理数据的界面呢？数据响应框架可以解决这个问题。</p>
+<p>&nbsp;&nbsp;&nbsp; 比如把输入URL地址的文本框指向浏览器，就能实现在文本框中输入一个地址，然后在浏览器中显示该网页的功能。</p>
 
 <p><strong>实现方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 数据响应框架是通过监听数据的变化而实现的，比如编辑按钮监听到有数据选中了，那么就变得可用，如果监听到没有数据选中，则变得不可用。</p>
+<p>&nbsp;&nbsp;&nbsp; 控件或组件响应数据的变化事件，根据事件做出适合的行为。比如编辑按钮监听到有数据选中了，那么就变得可用，如果监听到没有数据选中，则变得不可用。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 目前可以监听以下事件：</p>
+<p>&nbsp;&nbsp;&nbsp; 目前可以监听以下事件：增加数据、修改数据、移除数据、选择数据、没有选择数据和加载数据。</p>
 
-<ul>
-	<li>增加数据</li>
-	<li>修改数据</li>
-	<li>移除数据</li>
-	<li>选择数据</li>
-	<li>没有选择数据</li>
-	<li>加载数据</li>
-</ul>
+<p><strong>有效性</strong></p>
 
-<p><strong>事件的响应链</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 控件对数据的响应一般有一个默认的实现。如果需要的功能并不是默认时，可能就得不到想要的结果，此时可以使用自定义的数据响应器。方法是添加响应的子节点。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 能够监听数据变化的对象叫做数据响应器，数据的变化事件是由数据响应器触发的，当数据变化的时间触发时会传递到下级数据响应器，下级数据响应器可以处理事件或出发新的事件，从而形成事件的响应链。</p>
+<p><strong>过滤器</strong></p>
 
-<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; 数据响应器支持过滤器。过滤器用在触发数据的变化事件时，过滤器可以实现转换和过滤数据等功能，也可以过滤和转换事件的类型等。</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -131,6 +124,65 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=getRules
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@Variables
+    sname=Variables
+    spassive=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Variables
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=Variables
+      @/@VariablesDescs/@Variables/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Variables/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=actions
+        @/@VariablesDescs/@Variables/@actions/@create
+        sname=create
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.swt.reacts.DataReactors
+        smethodName=createVariablesDescs
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=create
   @/@name
   sname=name
   sshowLabel=true
@@ -209,7 +261,13 @@ sth_mark=false
 <p><strong>Rules的格式</strong></p>
 
 <pre class="brush:php;">
-#注释
+#注释，如：
+#这是一个注释
+
+#数据响应器定义，名字时变量名，如控件名等，?后跟参数，|后时过滤器
+editButton?fire=selected|source
+
+//指向规则
 a1,a2....&gt;b1,b2....
 </pre>
 
@@ -592,3 +650,98 @@ a1,a2....&gt;b1,b2....
   sth_fileMonitor=false
   sth_mark=false
   sid=SelectionDataReactor
+  @/@ObjectViewerDataReactor
+  sname=ObjectViewerDataReactor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.reactors.xworker.ObjectViewerDataReactor
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=xworker
+  smodifier=private
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=ObjectViewerDataReactor
+  @/@DataItemContainerDataReactor
+  sname=DataItemContainerDataReactor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.reactors.xwidgets.DataItemContainerDataReactor
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=xwidgets
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=DataItemContainerDataReactor
+  @/@DataObjectDataReactor
+  sname=DataObjectDataReactor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.reactors.datas.DataObjectDataReactor
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=datas
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=DataObjectDataReactor
+  @/@DataObjectListDataReactor
+  sname=DataObjectListDataReactor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.reactors.datas.DataObjectListDataReactor
+  smany=true
+  seditCols=2
+  sinitialization=false
+  sgroup=datas
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=DataObjectListDataReactor
+  @/@AbstractDataReactor
+  sname=AbstractDataReactor
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.swt.reactors.AbstractDataReactor
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=AbstractDataReactor

@@ -52,6 +52,9 @@ public class ToolBarCreator {
 		Composite parent = (Composite) actionContext.get("parent");
 		ToolBar bar = new ToolBar (parent, style);
 		
+		actionContext.peek().put("control", bar);
+		ControlCreator.init(actionContext);
+		
 		//保存变量和创建子事物
 		actionContext.getScope(0).put(self.getString("name"), bar);
 		actionContext.peek().put("parent", bar);

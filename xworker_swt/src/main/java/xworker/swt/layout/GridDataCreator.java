@@ -15,7 +15,6 @@
 ******************************************************************************/
 package xworker.swt.layout;
 
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
@@ -24,9 +23,14 @@ import org.xmeta.Thing;
 import xworker.swt.util.UtilSwt;
 
 public class GridDataCreator {
+	//public static final String TAG = GridDataCreator.class.getName();
+	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
-		
+    	Control parent = (Control) actionContext.get("parent");
+    	//if(!(parent.getParent().getLayout() instanceof GridLayout)) {
+	    //	Executor.warn(TAG, "Parent layout is " + parent.getParent().getLayout() + ", can not create GridData, path=" + self.getMetadata().getPath());	    	
+	    //}
 		int style = -1;
 		String selfStyle = self.getString("style");
 		if("FILL_BOTH".equals(selfStyle)){
@@ -58,7 +62,7 @@ public class GridDataCreator {
 		}
 		String horizontalAlignment = self.getString("horizontalAlignment");
 		if(!"BEGINNING".equals(horizontalAlignment)){
-			if("BEGINNING".equals(horizontalAlignment)){
+			if("BEGINNING_".equals(horizontalAlignment)){
 				data.horizontalAlignment = GridData.BEGINNING;
 			}else if("CENTER".equals(horizontalAlignment)){
 				data.horizontalAlignment = GridData.CENTER;
@@ -73,7 +77,7 @@ public class GridDataCreator {
 		if(!"CENTER".equals(verticalAlignment)){
 			if("BEGINNING".equals(verticalAlignment)){
 				data.verticalAlignment = GridData.BEGINNING;
-			}else if("CENTER".equals(verticalAlignment)){
+			}else if("CENTER_".equals(verticalAlignment)){
 				data.verticalAlignment = GridData.CENTER;
 			}else if("END".equals(verticalAlignment)){
 				data.verticalAlignment = GridData.END;
@@ -94,14 +98,9 @@ public class GridDataCreator {
 		if(verticalSpan != 1){
 		    data.verticalSpan = verticalSpan;
 		}
-		
-		Control parent = (Control) actionContext.get("parent");
+				
 	    parent.setLayoutData(data);
 	    	    
-	    if(parent.getParent().getLayout() instanceof FillLayout) {
-	    	System.out.println("GridDataCreator : grid data error");
-	    }
-		
 		actionContext.getScope(0).put(self.getString("name"), data);
 		return data;       
     }

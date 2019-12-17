@@ -494,10 +494,12 @@ public class UtilData {
 	 }
 	 
 	 public static Object getData(String value, ActionContext actionContext) throws OgnlException, IOException{
-		 Object object = actionContext.get(value);
+		 /*
+		  * 该方法被注释掉了，默认返回的是value，如果要取变量，那么明确要用var:等
+		  * Object object = actionContext.get(value);
 		 if(object != null) {
 			 return object;
-		 }
+		 }*/
 		 
 		 if(value.startsWith("template:")){
 			 return StringUtils.getString(value, actionContext);

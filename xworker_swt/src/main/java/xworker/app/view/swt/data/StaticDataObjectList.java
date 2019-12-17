@@ -2,56 +2,84 @@ package xworker.app.view.swt.data;
 
 import org.eclipse.swt.widgets.Table;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObjectList;
 import xworker.lang.executor.Executor;
 
 public class StaticDataObjectList {
+	private static DataObjectList createDataObjectList(Thing self, Thing dataDesc, ActionContext actionContext) {
+		DataObjectList dataObjectList = new DataObjectList(dataDesc);
+		Thing initAction = self.doAction("getInitAction", actionContext);
+		if(initAction != null) {
+		    initAction.getAction().run(actionContext, "self", self, "dataObjectList", dataObjectList);	
+		}
+		
+		//执行初始化操作
+		self.doAction("init", actionContext, "dataObjectList", dataObjectList);
+		
+		return dataObjectList;
+	}
+	
+	public static void removeDataObjectList(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		Thing staticThing = self.doAction("getStaticThing", actionContext);
+		Thing dataDesc = self.doAction("getDataObject", actionContext);
+		if(dataDesc == null) {
+			return;
+		}
+		if(staticThing == null) {
+			staticThing = self;
+		}else if(staticThing.isThing("xworker.dataObject.staticdata.StaticDataObjectList")) {
+			return;
+		}
+		
+		//创建或返回数据对象列表		
+		String staticKey = "StaticDataObjectList：" + dataDesc.getMetadata().getPath();
+		String scope = self.doAction("getScope", actionContext);
+		if("world".equals(scope)){
+			World.getInstance().setData(staticKey, null);
+		}else if("thing".equals(scope)) {
+			staticThing.setStaticData(staticKey, null);
+		}
+	}
+	
 	public static DataObjectList getDataObjectList(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
 		DataObjectList dataObjectList = null;
 		Thing staticThing = self.doAction("getStaticThing", actionContext);
 		Thing dataDesc = self.doAction("getDataObject", actionContext);
+		if(dataDesc == null) {
+			throw new ActionException("DataDesc can not be null, path=" + self.getMetadata().getPath());
+		}
 		if(staticThing == null) {
 			staticThing = self;
 		}else if(staticThing.isThing("xworker.dataObject.staticdata.StaticDataObjectList")) {
 			return staticThing.doAction("getData", actionContext);
 		}
 		
-		String staticKey = "StaticDataObjectList";
-		if(staticThing != null) {
+		//创建或返回数据对象列表		
+		String staticKey = "StaticDataObjectList：" + dataDesc.getMetadata().getPath();
+		String scope = self.doAction("getScope", actionContext);
+		if("world".equals(scope)){
+			dataObjectList = World.getInstance().getData(staticKey);
+			if(dataObjectList ==null) {
+				dataObjectList = createDataObjectList(self, dataDesc, actionContext);
+				World.getInstance().setData(staticKey, dataObjectList);
+			}
+		}else if("thing".equals(scope)) {
 			dataObjectList = staticThing.getStaticData(staticKey);
-		}
-		
-		if(dataObjectList == null) {			
-			if(dataDesc != null) {
-				String scope = self.doAction("getScope", actionContext);
-				if("world".equals(scope)) {
-					if(dataObjectList == null) {
-						dataObjectList = new DataObjectList(dataDesc);
-						staticThing.setStaticData(staticKey, dataObjectList);
-					}
-				}else {
-					dataObjectList = actionContext.getObject(dataDesc.getMetadata().getPath());
-					if(dataObjectList == null) {
-						dataObjectList = new DataObjectList(dataDesc);
-						actionContext.g().put(dataDesc.getMetadata().getPath(), dataObjectList);
-					}
-				}
-			}else {
-				dataObjectList = new DataObjectList();
+			if(dataObjectList ==null) {
+				dataObjectList = createDataObjectList(self, dataDesc, actionContext);
+				staticThing.setStaticData(staticKey, dataObjectList);
 			}
-			
-			Thing initAction = self.doAction("getInitAction", actionContext);
-			if(initAction != null) {
-			    initAction.getAction().run(actionContext, "self", self, "dataObjectList", dataObjectList);	
-			}
-			
-			//执行初始化操作
-			self.doAction("init", actionContext, "dataObjectList", dataObjectList);
+		}else {
+			dataObjectList = createDataObjectList(self, dataDesc, actionContext);
 		}
 		
 		return dataObjectList;

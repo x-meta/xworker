@@ -1,6 +1,9 @@
 package xworker.security;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -9,6 +12,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilThing;
+
+import xworker.lang.Configuration;
 
 /**
  * 安全管理器。
@@ -34,6 +39,9 @@ public class SecurityManager {
 	
 	//初始化默认的权限处理。
 	static {
+		//初始化配置
+		Configuration.init();
+		
 		try{
 			Thing defaultSecurityManager = World.getInstance().getThing("xworker.lang.security.DefaultSecurityManager");
 			try{		
@@ -51,6 +59,16 @@ public class SecurityManager {
 			logger.error("Init defaultSecurityManager error", e);
 		}
 	}
+	
+	public static List<String> getEnvs(){
+		List<String> list = new ArrayList<String>();
+		for(String key : envCheckers.keySet()) {
+			list.add(String.valueOf(key));
+		}
+		
+		Collections.sort(list);
+		return list;		
+	}	
 	
 	public static EnviromentChecker getEnviromentChecker(String env) {
 		synchronized(envCheckers) {
@@ -73,7 +91,7 @@ public class SecurityManager {
      */
 	public static void registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler, ActionContext actionContet){		
 		EnviromentChecker envc = getEnviromentChecker(env);
-		envc.setSecurityHandler(permission, action, pathRegex, handler);;
+		envc.setSecurityHandler(permission, action, pathRegex, handler);
 	}
 
 	/**
@@ -93,7 +111,11 @@ public class SecurityManager {
 					env, permission, action, path);
 			return false;
 		}else {
-			return envc.doCheck(env, permission, action, path, actionContext);
+			boolean result = envc.doCheck(env, permission, action, path, actionContext);
+			if(result == false) {
+				logger.info("Check return false: " + permission + ", " + action + ", " + path);
+			}
+			return result;
 		}
 	}
 	

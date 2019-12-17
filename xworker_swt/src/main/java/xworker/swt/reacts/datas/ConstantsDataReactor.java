@@ -7,6 +7,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.swt.reacts.DataReactor;
+import xworker.swt.reacts.DataReactorFactory;
 
 public class ConstantsDataReactor extends DataReactor{
 
@@ -20,7 +21,7 @@ public class ConstantsDataReactor extends DataReactor{
 			datas.add(values);
 		}
 		
-		fireLoaded();
+		DataReactorFactory.addToAutoLoad(this);
 	}
 	
 	public void setValues(List<Object> values) {

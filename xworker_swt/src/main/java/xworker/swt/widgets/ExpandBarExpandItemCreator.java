@@ -28,6 +28,8 @@ import org.xmeta.util.UtilString;
 import xworker.swt.design.Designer;
 
 public class ExpandBarExpandItemCreator {
+	public static final String EXPAND_ITEM = "__ExpandBarItem__";
+	
     public static Object create(ActionContext actionContext){
         Thing self = (Thing) actionContext.get("self");
         
@@ -61,8 +63,9 @@ public class ExpandBarExpandItemCreator {
         actionContext.peek().put("parent", actionContext.get("parent"));
         for(Thing child : self.getAllChilds()){
             Control control = (Control) child.doAction("create", actionContext);
-            item.setControl(control);
-            height += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;    
+            item.setControl(control);            
+            height += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+            control.setData("__ExpandBarItem__", item);
         }
         actionContext.peek().remove("parent");
         

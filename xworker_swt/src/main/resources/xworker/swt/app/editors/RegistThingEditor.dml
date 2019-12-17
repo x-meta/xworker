@@ -1,8 +1,14 @@
-%1573615337308
+%1575959509574
 @
 sname=RegistThingEditor
 slabel=RegistThingEditor
 spriority=-500
+SexampleParams=
+#$@text#$@
+{
+    thing:"xworker.things.p2016.p11.p22.ModelTheory"
+}
+#$@text#$@
 Sdescription=
 #$@text#$@
 <p>事物注册器中注册的事物的编辑器。</p>
@@ -47,7 +53,7 @@ import org.xmeta.Thing;
 import xworker.swt.app.IEditor;
 
 if(data instanceof Thing){
-    if(data.isThing("xworker.swt.xworker.ThingRegistSelector")){
+    if(data.isThing("xworker.swt.xworker.ThingRegistThing")){
         def params = ["thing": data];
         params.put(IEditor.EDITOR_THING, world.getThing("xworker.swt.app.editors.RegistThingEditor"));
         params.put(IEditor.EDITOR_ID, "ThingRegist:" + data.getMetadata().getPath());
@@ -621,7 +627,7 @@ def viewer = thing;
 if(actionContext.get("forceUseDefaultOpenMethod") == false){
     viewer = getViewer(thing);
 }
-log.info("viewer = " + viewer);
+//log.info("viewer = " + viewer);
 def contentDefaultOpenMethod = null;
 if(viewer != null || (contentDefaultOpenMethod != null 
     && contentDefaultOpenMethod != ""
@@ -675,6 +681,7 @@ def getViewer_(thing, path){
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -683,6 +690,41 @@ def getViewer_(thing, path){
     sth_registDisabled=false
     sth_mark=false
     sid=setContent
+      @/@actions/@setContent/@Variables
+      sname=Variables
+      sdescriptors=xworker.lang.actions.Inout/@Variables
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=Variables
+        @/@actions/@setContent/@Variables/@log
+        sname=log
+        stagName=xworker.swt.app.editors.RegistThingEditor/@actions/@setContent
+        saction=true
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=log
     @/@actions/@openBrowserTab
     sname=openBrowserTab
     sisSynchronized=false

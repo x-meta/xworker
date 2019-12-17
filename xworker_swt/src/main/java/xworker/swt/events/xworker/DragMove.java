@@ -11,6 +11,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.swt.util.SwtUtils;
+
 /**
  * 向一个控件注册实现鼠标拖拽的事件，即鼠标左键按下开始拖拽，放开则停止拖拽。
  * 
@@ -116,7 +118,9 @@ public class DragMove implements MouseListener, MouseMoveListener{
 		Control control = (Control) actionContext.get("parent");
 		DragMove dragMove = new DragMove(self, actionContext);
 		control.addMouseListener(dragMove);
-		control.addMouseMoveListener(dragMove);
+		if(SwtUtils.isRWT() == false) {
+			control.addMouseMoveListener(dragMove);
+		}
 	}
 
 	public int getX() {

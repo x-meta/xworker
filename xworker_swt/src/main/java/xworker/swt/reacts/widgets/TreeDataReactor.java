@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class TreeDataReactor extends WidgetDataReactor implements Listener{
@@ -47,9 +48,9 @@ public class TreeDataReactor extends WidgetDataReactor implements Listener{
 		}
 		
 		if(datas.size() > 0) {
-			this.fireSelected(datas);
+			this.fireSelected(datas, getContext());
 		}else {
-			this.fireUnselected();
+			this.fireUnselected(getContext());
 		}
 	}
 	
@@ -64,27 +65,27 @@ public class TreeDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {	
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {	
 	}
 
 	@Override
-	protected void widgetDoOnUnselected() {
+	protected void widgetDoOnUnselected(DataReactorContext context) {
 	}
 	
 	@Override
-	protected void widgetDoOnAdded(int index, List<Object> datas) {
+	protected void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	protected void widgetDoOnRemoved(List<Object> datas) {
+	protected void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	protected void widgetDoOnUpdated(List<Object> datas) {
+	protected void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	protected void widgetDoOnLoaded(List<Object> datas) {
+	protected void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
 	}
 
 	public static Object create(ActionContext actionContext) {

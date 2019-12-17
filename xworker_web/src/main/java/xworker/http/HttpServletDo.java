@@ -37,6 +37,8 @@ import org.xmeta.World;
 import org.xmeta.ui.session.SessionManager;
 import org.xmeta.util.ThingRegistor;
 
+import xworker.lang.Configuration;
+
 /**
  * 执行事物的Servlet。
  * 
@@ -166,6 +168,22 @@ public class HttpServletDo extends HttpServlet{
 		}else{
 			log.info("allowUnderLine=false");
 		}
+		
+		//默认的profile
+		String configurationProfile = config.getInitParameter("configurationProfile");
+		if(configurationProfile != null) {
+			Configuration.setProfile(configurationProfile);
+		}
+		
+		//配置模型，如果存在执行它的init方法
+		String configurationPath = config.getInitParameter("configuration");
+		if(configurationPath != null) {
+			Thing configuration = World.getInstance().getThing(configurationPath);
+			if(configuration != null) {
+				configuration.doAction("init");
+			}
+		}		
+		
 	}
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

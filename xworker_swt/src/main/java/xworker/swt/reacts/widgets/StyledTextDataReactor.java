@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class StyledTextDataReactor  extends WidgetDataReactor implements Listener{
@@ -37,14 +38,14 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 			//没有前置Reactor或者datas为空
 			String textStr = text.getText().trim();
 			if("".equals(textStr)) {
-				fireUnselected();
+				fireUnselected(getContext());
 			}else {
 				datas = new ArrayList<Object>();
 				datas.add(textStr);
-				fireSelected(datas);
+				fireSelected(datas, getContext());
 			}
 		}else {
-			fireSelected(datas);
+			fireSelected(datas, getContext());
 		}
 	}
 
@@ -53,7 +54,7 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 	}
 	
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {		
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {		
 		boolean append = isAppend();
 		if(append) {
 			for(Object data : datas) {
@@ -81,32 +82,32 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 	}
 	
 	@Override
-	protected void widgetDoOnUnselected() {
+	protected void widgetDoOnUnselected(DataReactorContext context) {
 		if(!isAppend()) {
 			text.setText("");
 		}
 	}
 
 	@Override
-	protected void widgetDoOnAdded(int index, List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	@Override
-	protected void widgetDoOnRemoved(List<Object> datas) {
+	protected void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 		if(!isAppend()) {
 			resetText();
 		}
 	}
 
 	@Override
-	protected void widgetDoOnUpdated(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	@Override
-	protected void widgetDoOnLoaded(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	public static Object create(ActionContext actionContext) {

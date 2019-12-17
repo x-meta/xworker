@@ -168,6 +168,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		
 		this.sourceDatas  = sourceDatas;
 		this.sourceDatas.addListener(sourceListener);
+		this.datas.clear();
 		
 		this.reload();
 	}
@@ -396,20 +397,22 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		    //store.put("removedRecords", dataStore.removedRecords);
 		    
 		    //数据对象
-		    Thing dataObject = world.getThing(self.getString("dataObject"));
+		    Thing dataObject =self.doAction("getDataObject", actionContext);
+		    /*world.getThing(self.getString("dataObject"));
 		    if(dataObject == null){
 		        Thing dos = self.getThing("dataObjects@0");
 		        if(dos != null && dos.getChilds().size() > 0){
 		            dataObject = dos.getChilds().get(0);
 		        }
-		    }
+		    }*/
 		    store.put("dataObject", dataObject);
 		    
 		    //查询配置
-		    Thing queryConfig = world.getThing(self.getString("queryConfig"));
+		    Thing queryConfig = self.doAction("getQueryConfig", actionContext);
+		    /*world.getThing(self.getString("queryConfig"));
 		    if(queryConfig == null){
 		        queryConfig = self.getThing("queryConfig@0");
-		    }
+		    }*/
 		    store.put("queryConfig", queryConfig);
 		    
 		    //分页

@@ -24,6 +24,7 @@ import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
+import xworker.swt.app.IEditorContainer;
 import xworker.swt.app.editors.EditorImpl;
 
 public class CTabFolderEditorContainer extends AbstractEditorContianer implements  CTabFolder2Listener, SelectionListener{
@@ -78,7 +79,12 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 			return getEditorUtils(editItem);
 		}else {		
 			//创建编辑器
-			return createEditor(id, editor, params);
+			IEditor editor_ = createEditor(id, editor, params);
+			if(editor_ != null) {
+				this.fireOnCreated(editor_);
+			}
+			
+			return editor_;
 		}
 	}
 	
@@ -163,7 +169,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		ActionContainer actions = editorContext.getObject("actions");
 		item.setData(EDITOR_ACTIONS, actions);
 		
-		EditorImpl editorUtil = new EditorImpl(editor, actions, editorContext);
+		EditorImpl editorUtil = new EditorImpl(this, editor, actions, editorContext);
 		item.setData(EDITOR, editorUtil);
 		
 		//EditorImpl editorUtil = getEditorUtils(item);
@@ -273,7 +279,9 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		//触发编辑器的onActive事件
 		if(editor.getActions() != null) {
 			editor.getActions().doAction("onActive", editor.getActionContext());
-		}		
+		}
+		
+		this.fireOnActive(editor);
 	}
 	
 	private EditorImpl getEditorUtils(CTabItem item) {
@@ -371,6 +379,8 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		editor.doDispose();
 		
 		editors.remove(item);
+		
+		this.fireOnDisposed(editor);
 	}
 
 	@Override
@@ -437,4 +447,22 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		actions.doAction("close", this.containerContext, "item", item, "editor", editor, "shell", tabFolder.getShell(),
 				"container", this);
 	}
+
+
+
+	@Override
+	public void stateChanged(IEditorContainer editorContainer, IEditor editor) {
+		super.stateChanged(editorContainer, editor);
+		
+		for(CTabItem item : tabFolder.getItems()) {
+			if(editor == getEditorUtils(item)) {
+				//可能会执行两次，因此editorModified事件也做了同样的事
+				this.updateEditorStatus((EditorImpl) editor, item);
+				break;
+			}
+		}
+		
+	}
+	
+	
 }

@@ -21,6 +21,12 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	public static final String OBJECT = "object";
 	public static final String ACTIONCONTAINER = "actionContainer";
 	public static final String ACTION = "action";
+	/** 作用范围，全局 */
+	public static final byte SCOPE_GLOBAL = 0;
+	/** 作用范围，只对当前节点生效 */
+	public static final byte SCOPE_NODE = 1;
+	/** 作用范围，只对当前节点及其子节点生效 */
+	public static final byte SCOPE_NODE_AND_CHILDS = 2;
 	
 	String name;
 	
@@ -32,7 +38,13 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	
 	boolean passive = false;
 	
+	byte scope = SCOPE_GLOBAL;
+	
 	public VariableDesc(String name, String type, String className, Thing thing) {
+		this(name, type, className, thing, SCOPE_GLOBAL);
+	}
+	
+	public VariableDesc(String name, String type, String className, Thing thing, byte scope) {
 		if("_thingName_".equals(name) && thing != null) {
 			this.name = thing.getMetadata().getName();
 		}else {
@@ -41,8 +53,17 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		this.type = type;
 		this.className = className;
 		this.thing = thing;
+		this.scope = scope;
 	}
-	
+		
+	public byte getScope() {
+		return scope;
+	}
+
+	public void setScope(byte scope) {
+		this.scope = scope;
+	}
+
 	public boolean isPassive() {
 		return passive;
 	}
@@ -194,8 +215,9 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		String type = self.doAction("getType", actionContext);
 		String className = self.doAction("getClassName", actionContext);
 		Thing thing = self.doAction("getThing", actionContext);
+		byte scope = self.getByte("scope");
 		
-		VariableDesc var = new VariableDesc(name, type, className, thing);
+		VariableDesc var = new VariableDesc(name, type, className, thing, scope);
 		var.setPassive(self.getBoolean("passive"));
 		
 		return var;
@@ -218,21 +240,21 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		
 		Map<String, String> context = new HashMap<String, String>();
 		if(passive) {
-			getVariableDescs(thing, passive, context, vars, actionContext, true);
-			getVariableDescs(thing, passive, context, vars, actionContext, false);
+			getVariableDescs(thing, passive, context, vars, actionContext, true, thing);
+			getVariableDescs(thing, passive, context, vars, actionContext, false, thing);
 		}else {
 			//变量定义的优先级，当前节点优先，然后向上遍历到根节点
 			Thing temp = thing;
 			while(temp != null) {
 				//优先获取当前事物模型的
-				getVariableDescs(temp, passive, context, vars, actionContext, true);
+				getVariableDescs(temp, passive, context, vars, actionContext, true, thing);
 				temp = temp.getParent();
 			}
 			
 			temp = thing;
 			while(temp != null) {
 				//其次获取描述者和继承的事物的定义
-				getVariableDescs(temp, passive, context, vars, actionContext, false);
+				getVariableDescs(temp, passive, context, vars, actionContext, false, thing);
 				temp = temp.getParent();
 			}
 		}
@@ -248,29 +270,29 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	 * @param vars
 	 * @param actionContext
 	 */
-	private static void getVariableDescs(Thing thing,  boolean passive, Map<String, String> context, List<VariableDesc> vars, ActionContext actionContext, boolean onlySelf) {
+	private static void getVariableDescs(Thing thing,  boolean passive, Map<String, String> context, List<VariableDesc> vars, ActionContext actionContext, boolean onlySelf, Thing originThing) {
 		if(thing == null) {
 			return;
 		}
 				
 		if(onlySelf) {
 			//获取自身的
-			initVariableDescs(thing, passive, thing, context, vars, actionContext);
+			initVariableDescs(thing, passive, thing, context, vars, actionContext, originThing);
 		}else {
 			//获取描述者的
 			for(Thing desc : thing.getAllDescriptors()) {
-				initVariableDescs(desc, passive, thing, context, vars, actionContext);
+				initVariableDescs(desc, passive, thing, context, vars, actionContext, originThing);
 			}
 			
 			//获取继承的
 			for(Thing ext : thing.getAllExtends()) {
-				initVariableDescs(ext, passive, thing, context, vars, actionContext);
+				initVariableDescs(ext, passive, thing, context, vars, actionContext, originThing);
 			}
 		}
 		
 		//获取子节点
 		for(Thing child : thing.getChilds()) {
-			getVariableDescs(child, passive, context, vars, actionContext, onlySelf);
+			getVariableDescs(child, passive, context, vars, actionContext, onlySelf, originThing);
 		}
 	}
 	
@@ -347,7 +369,7 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	 * @param actionContext
 	 */
 	@SuppressWarnings("unchecked")
-	private static void initVariableDescs(Thing thing, boolean passive, Thing currentThing, Map<String, String> context, List<VariableDesc> vars, ActionContext actionContext) {
+	private static void initVariableDescs(Thing thing, boolean passive, Thing currentThing, Map<String, String> context, List<VariableDesc> vars, ActionContext actionContext, Thing originThing) {
 		if(thing == null) {
 			return;
 		}
@@ -376,11 +398,16 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 				if(desc.getBoolean("passive") == passive) {
 					Object result = desc.doAction("create", actionContext, "thing", currentThing);
 					if(result instanceof VariableDesc) {
-						addVariables((VariableDesc) result, passive, vars, context);					
+						VariableDesc var = (VariableDesc) result;
+						if(checkScope(currentThing, originThing, var)) {
+							addVariables(var, passive, vars, context);			
+						}
 					}else if(result instanceof List) {
 						List<VariableDesc> list = (List<VariableDesc>) result;
 						for(VariableDesc var : list) {
-							addVariables(var, passive, vars, context);
+							if(checkScope(currentThing, originThing, var)) {
+								addVariables(var, passive, vars, context);
+							}
 						}
 					}				
 				}
@@ -390,6 +417,43 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		}
 	}
 
+	/**
+	 * 检查变量的作用范围。
+	 * 
+	 * @param thing
+	 * @param originThing
+	 * @param var
+	 * @return
+	 */
+	private static boolean checkScope(Thing thing, Thing originThing, VariableDesc var) {
+		if(var.getScope() == SCOPE_GLOBAL) {
+			return true;
+		}
+		
+		if(var.getScope() == SCOPE_NODE) {
+			if(thing == originThing) {
+				return true;
+			}else {
+				return false;
+			}
+		}
+		
+		if(var.getScope() == SCOPE_NODE_AND_CHILDS) {
+			Thing parent = thing;
+			while(parent != null) {
+				if(parent == thing) {
+					return true;
+				}
+				
+				parent = parent.getParent();
+			}
+			
+			return false;
+		}
+		
+		return true;
+	}
+	
 	private static void addVariables(VariableDesc varDesc, boolean passive, List<VariableDesc> vars, Map<String, String> context) {
 		if(varDesc != null) {
 			String name = varDesc.getName();

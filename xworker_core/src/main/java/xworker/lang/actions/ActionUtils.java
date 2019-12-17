@@ -36,12 +36,35 @@ import org.xmeta.util.UtilString;
 
 import freemarker.template.TemplateException;
 import ognl.OgnlException;
+import xworker.lang.Configuration;
 import xworker.util.StringUtils;
 import xworker.util.UtilData;
 import xworker.util.UtilTemplate;
 import xworker.util.XWorkerUtils;
 
 public class ActionUtils {
+	/**
+	 * 执行一个事物模型的行为和名字为name的子节点。先执行动作，后执行名字为name的子节点，如果名字为name的子节点存在，
+	 * 那么把子节点转为动作执行，且返回执行结果，否则返回动作的结果。
+	 * 
+	 * @param thing
+	 * @param name
+	 * @param actionContext
+	 * @param params
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T executeActionAndChild(Thing thing, String name, ActionContext actionContext, Object ... params) {
+		Object obj = thing.doAction(name, actionContext, params);
+		for(Thing child : thing.getChilds()) {
+			if(child.getMetadata().getName().equals(name)) {
+				obj = child.getAction().run(actionContext, params);
+			}
+		}
+		
+		return (T) obj;
+	}
+	
 	public static Boolean getBoolean(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
@@ -152,6 +175,13 @@ public class ActionUtils {
 		}
 		
 		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		if(obj instanceof String && self.getBoolean("variable")) {
+			Object var = actionContext.get((String) obj);
+			if(var != null) {
+				obj = var;
+			}
+		}
+		
 		if(obj == null && self.getBoolean("notNull")){
 			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
 		}
@@ -178,7 +208,11 @@ public class ActionUtils {
 				}
 				
 				Object obj = UtilData.getData(realSelf, attributeName, actionContext);
-				list.add(obj);
+				if(obj instanceof Collection) {
+					list.addAll((Collection<?>) obj);
+				}else {
+					list.add(obj);
+				}
 			}
 		}
 		
@@ -1177,4 +1211,18 @@ public class ActionUtils {
 		return catetgory;
 	}
 	
+	public static Thing getConfiguration(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String name = realSelf.getStringBlankAsNull(self.getString("attributeName"));
+		String descriptor = self.getString("configDescriptor");
+		
+		Thing config = Configuration.getConfiguration(name, descriptor, realSelf, actionContext);
+		if(config == null && self.getBoolean("notNull")){
+			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
+		}
+		
+		return config;
+	}
 }

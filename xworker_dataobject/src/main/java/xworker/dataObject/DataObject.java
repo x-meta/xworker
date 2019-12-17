@@ -166,6 +166,70 @@ public class DataObject extends HashMap<String, Object> {
 		return listeners;
 	}
 	
+	/**
+	 * 设置多个属性。
+	 * 
+	 * attributs字符串的格式：<br/>
+	 * name=value的格式，默认一行设置一个属性
+	 * #或//是注释
+	 * 三个连续的引号（""")是具有换行的文本，结尾也是三个连续的引号
+	 * 支持var:、ognl:等表达式
+	 * 
+	 * @param attributes
+	 * @param actionContext
+	 */
+	public void setAttributes(String attributes, ActionContext actionContext) {
+		if(attributes == null || "".equals(attributes)) {
+			return;
+		}
+		
+		String[] lines = attributes.split("[\n]");
+		for(int i=0; i<lines.length; i++) {
+			String line = lines[i];
+			if(line.startsWith("#") || line.startsWith("//")) {
+				//注释
+				continue;
+			}
+			
+			int index = line.indexOf("=");
+			if(index == -1) {
+				//没有设置属性
+				continue;
+			}			
+			String name = line.substring(0, index).trim();
+			String value = line.substring(index + 1, line.length()).trim();
+			if(value.startsWith("\"\"\"")){
+				//多行文本
+				value = value.substring(3, value.length());
+				if(value.endsWith("\"\"\"")) {
+					//单行文本，就结束了
+					value = value.substring(0, value.length() - 3);
+				} else {
+					//是多行文本
+					for(int n = i + 1; n < lines.length; n++) {
+						String strLine = lines[n];
+						int endIndex = strLine.indexOf("\"\"\"");
+						if(endIndex != -1) {
+							value = value + "\n" + strLine.substring(0, endIndex);
+							i = n;
+							break;
+						}else {
+							value = value + "\n" + strLine; 
+						}
+					}
+				}
+			}
+			
+			Object v = value;
+			if(value.indexOf("\n") == -1 && value.indexOf(":") != -1) {
+				//有可能是var: ognl: 等表达式
+				v = UtilData.getData(value, actionContext);
+			}
+			this.put(name, v);
+		}
+		
+	}
+	
 	@Override
 	public Object put(String key, Object value) {
 		return put(key, value, true);
@@ -737,7 +801,7 @@ public class DataObject extends HashMap<String, Object> {
 	public Object doAction(String name, ActionContext actionContext, Object...params) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		for(int i = 0; i<params.length; i++) {
-			if(i < params.length - 2) {
+			if(i < params.length - 1) {
 				map.put(String.valueOf(params[i]), params[i + 1]);
 			}
 			i++;

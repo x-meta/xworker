@@ -25,7 +25,11 @@ public class MqttActions {
 		if(client != null && client.isConnected()) {
 			return client;
 		}else if(client != null) {
-			client.close();
+			try {
+				client.disconnect();
+				client.close();
+			}catch(Exception e) {				
+			}
 		}
 		
 		MqttConnectOptions options = new MqttConnectOptions();  
@@ -67,7 +71,7 @@ public class MqttActions {
 			for(String topic : topics) {
 				topic = topic.trim();
 				if(!"".equals(topic)) {
-					client.subscribe(topic);
+					//client.subscribe(topic);
 				}
 			}
 		}

@@ -1,7 +1,14 @@
-%1546047626322
+%1575895405431
 @
 sname=VideoPlayer
 slabel=VideoPlayer
+spriority=0
+SexampleParams=
+#$@text#$@
+{
+    src:"https://www.xworker.org/files/2019/0902/100756helloworld.mp4"
+}
+#$@text#$@
 Sdescription=
 #$@text#$@
 <p>使用HTML的video标签播放视频。</p>
@@ -196,17 +203,20 @@ if(params.title != null){
     actionContext.g().put("title", params.title);
 }
 
-if(params.desc != null && browser != null){
-    def desc = params.desc;
-    def url = XWorkerUtils.getThingDescUrl(desc);
-    browser.setUrl(url);
-}else{
-    browser.setText("");
+if(actionContext.get("browser") != null){
+    if(params.desc != null && browser != null){
+        def desc = params.desc;
+        def url = XWorkerUtils.getThingDescUrl(desc);
+        browser.setUrl(url);
+    }else {
+        browser.setText("");
+    }
 }
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -293,7 +303,6 @@ return "Video";
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false

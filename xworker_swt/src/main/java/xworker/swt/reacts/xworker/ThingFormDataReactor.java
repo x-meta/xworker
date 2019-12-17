@@ -7,6 +7,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.DataReactorUtils;
 import xworker.swt.reacts.WidgetDataReactor;
 import xworker.swt.xworker.ThingForm;
@@ -14,7 +15,7 @@ import xworker.swt.xworker.ThingFormListener;
 
 public class ThingFormDataReactor extends WidgetDataReactor implements ThingFormListener {
 	ThingForm form;
-	
+		
 	public ThingFormDataReactor(ThingForm form, Thing self, ActionContext actionContext) {
 		super(form.getControl(), self, actionContext);
 		this.form = form;
@@ -23,7 +24,8 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void widgetDoOnSelected(List<Object> datas) {
+	public void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
+		
 		if(datas != null && datas.size() > 0) {
 			for(Object obj : datas) {
 				if(obj instanceof Thing) {
@@ -54,23 +56,23 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 	}
 
 	@Override
-	public void widgetDoOnUnselected() {		
+	public void widgetDoOnUnselected(DataReactorContext context) {		
 	}
 
 	@Override
-	public void widgetDoOnAdded(int index, List<Object> datas) {
+	public void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnRemoved(List<Object> datas) {
+	public void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnUpdated(List<Object> datas) {
+	public void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
 	}
 
 	@Override
-	public void widgetDoOnLoaded(List<Object> datas) {
+	public void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
 	}
 
 	public static void create(ActionContext actionContext) {
@@ -93,13 +95,13 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 	@Override
 	public void modified(ThingForm thingForm) {
 		Object values = thingForm.getValues();
-		this.fireUpdated(DataReactorUtils.toObjectList(values));
+		this.fireUpdated(DataReactorUtils.toObjectList(values), getContext());
 	}
 
 	@Override
 	public void defaultSelection(ThingForm thingForm) {
 		Object values = thingForm.getValues();
-		this.fireSelected(DataReactorUtils.toObjectList(values));
+		this.fireSelected(DataReactorUtils.toObjectList(values), null);
 	}
 
 }

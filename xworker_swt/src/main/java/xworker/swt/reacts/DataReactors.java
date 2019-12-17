@@ -1,70 +1,86 @@
 package xworker.swt.reacts;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.VariableDesc;
+import xworker.lang.executor.Executor;
+
 public class DataReactors {
+	private static final String TAG = "DataReactors";
 	public static void create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
-		//先创建子节点
-		actionContext.peek().put("parent", null);
-		for(Thing child : self.getChilds()) {
-			child.doAction("create", actionContext);
-		}
-		
-		//解析规则
-		String rules = self.doAction("getRules", actionContext);
-		if(rules != null) {
-			for(String line : rules.split("[\n]")) {
-				line = line.trim();
-				if("".equals(line) || line.startsWith("#")) {
-					//过滤空行和注解
-					continue;
-				}
-				
-				//目前只接收a,b,c,d或a>b,c,d这样的两种格式
-				int index = line.indexOf(">");
-				String first, second = null;
-				if(index != -1) {
-					first = line.substring(0, index);
-					second = line.substring(index + 1, line.length());
-				}else {
-					first = line;
-				}
-				
-				List<DataReactor> firstReactors = getOrCreateDataReactors(first, actionContext);
-				List<DataReactor> secondReactors = getOrCreateDataReactors(second, actionContext);
-				for(DataReactor f : firstReactors) {
-					for(DataReactor s : secondReactors) {
-						f.addNextReator(s);
+		List<DataReactor> loadList = new ArrayList<DataReactor>();
+		DataReactorFactory.setAutoLoadLocal(loadList);
+		try {
+			//先创建子节点
+			actionContext.peek().put("parent", null);
+			for(Thing child : self.getChilds()) {
+				child.doAction("create", actionContext);
+			}
+			
+			//解析规则
+			String rules = self.doAction("getRules", actionContext);
+			if(rules != null) {
+				for(String line : rules.split("[\n]")) {
+					line = line.trim();
+					if("".equals(line) || line.startsWith("#")) {
+						//过滤空行和注解
+						continue;
+					}
+					
+					//目前只接收a,b,c,d或a>b,c,d这样的两种格式
+					int index = line.indexOf(">");
+					String first, second = null;
+					if(index != -1) {
+						first = line.substring(0, index);
+						second = line.substring(index + 1, line.length());
+					}else {
+						first = line;
+					}
+					
+					List<DataReactor> firstReactors = getOrCreateDataReactors(first, actionContext);
+					List<DataReactor> secondReactors = getOrCreateDataReactors(second, actionContext);
+					for(DataReactor f : firstReactors) {
+						for(DataReactor s : secondReactors) {
+							f.addNextReator(s);
+						}
 					}
 				}
 			}
-		}
-		
-		//加载指定的
-		List<String> fireLoadReactors = self.doAction("getFireLoadReactors", actionContext);
-		if(fireLoadReactors != null) {
-			for(String name : fireLoadReactors) {
-				if(name == null) {
-					continue;
-				}
-				name = name.trim();
-				
-				Object reactor = actionContext.get(name);
-				if(reactor instanceof DataReactor) {
-					((DataReactor) reactor).fireLoaded();
-				}else if(reactor == null) {
-					reactor = actionContext.get(name + "DataReactor");
+			
+			//加载指定的
+			List<String> fireLoadReactors = self.doAction("getFireLoadReactors", actionContext);
+			if(fireLoadReactors != null) {
+				for(String name : fireLoadReactors) {
+					if(name == null) {
+						continue;
+					}
+					name = name.trim();
+					
+					Object reactor = actionContext.get(name);
 					if(reactor instanceof DataReactor) {
-						((DataReactor) reactor).fireLoaded();
+						((DataReactor) reactor).fireLoaded(null);
+					}else {
+						reactor = actionContext.get(name + "DataReactor");
+						if(reactor instanceof DataReactor) {
+							((DataReactor) reactor).fireLoaded(null);
+						}
 					}
 				}
 			}
+			
+			for(DataReactor dataReactor : loadList) {
+				dataReactor.fireLoaded(null);
+			}
+		}finally {
+			DataReactorFactory.setAutoLoadLocal(null);
 		}
 	}
 	
@@ -100,19 +116,93 @@ public class DataReactors {
 				if(reac instanceof DataReactor) {
 					reactors.add((DataReactor) reac);
 					continue;
-				}
+				}  
 				
 				if(reac == null) {
+					DataReactorFactory.setDataReactorName(name);
 					DataReactor reactor = DataReactorFactory.create(action, ss, control, actionContext);
 					if(reactor != null) {
 						actionContext.g().put(name + "DataReactor", reactor);
 						reactors.add(reactor);
 						continue;
+					} else {
+						Executor.info(TAG,  "Cant not create DataReactor, name=" + name + ", contorl=" + control);
 					}
 				}
 			}
 		}
 		
 		return reactors;
+	}
+	
+	
+	public static List<VariableDesc> createVariablesDescs(ActionContext actionContext){
+		List<VariableDesc> vars = new ArrayList<VariableDesc>();
+		Thing thing = actionContext.getObject("thing");
+		//过滤自己的子节点创建的DataReactor
+		Map<String, String> context = new HashMap<String, String>();
+		initDataReactorDescs(thing, context);
+		
+		String rules = thing.doAction("getRules", actionContext);
+		if(rules != null) {
+			for(String line : rules.split("[\n]")) {
+				line = line.trim();
+				if("".equals(line) || line.startsWith("#")) {
+					//过滤空行和注解
+					continue;
+				}
+				
+				//目前只接收a,b,c,d或a>b,c,d这样的两种格式
+				int index = line.indexOf(">");
+				String first, second = null;
+				if(index != -1) {
+					first = line.substring(0, index);
+					second = line.substring(index + 1, line.length());
+				}else {
+					first = line;
+				}
+				
+				initDataReactorDescs(first, vars, context);
+				initDataReactorDescs(second, vars, context);
+			}
+		}
+		
+		return vars;
+	}
+	
+	private static void initDataReactorDescs(Thing thing, Map<String, String> context) {
+		for(Thing child : thing.getChilds()) {
+			String name = child.getMetadata().getName();
+			context.put(name, name);
+			
+			initDataReactorDescs(child, context);
+		}
+	}
+	
+	private static void initDataReactorDescs(String str, List<VariableDesc> vars, Map<String, String> context){
+		if(str != null) {
+			String strs[] = str.split("[,]");
+			for(String s : strs) {
+				s = s.trim();
+				if("".equals(s)) {
+					continue;
+				}
+				
+				String[] ss = s.split("[|]"); 				
+				String[] ns = ss[0].split("[?]");
+				String name = ns[0].trim();
+				
+				if("".equals(name)) {
+					continue;
+				}
+				
+				if(context.get(name) == null) {
+					name = name + "DataReactor";
+					vars.add(VariableDesc.create(name, DataReactor.class));
+					context.put(name, name);					
+				}
+			}
+		}
+		
 	}
 }

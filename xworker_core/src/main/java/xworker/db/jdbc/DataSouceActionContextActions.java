@@ -28,17 +28,19 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 
-import ognl.OgnlException;
+import xworker.lang.Configuration;
 
 public class DataSouceActionContextActions {
 	private static Logger log = LoggerFactory.getLogger(DataSouceActionContextActions.class);
 	
-	public static Thing getDataSource(String dsPath, ActionContext acContext){
+	public static Thing getDataSource(Thing self, String dsPath, ActionContext acContext){
 		World world = World.getInstance();
 		Object dataSourceThing = null;
+		Thing realSelf = null;
 		if(dsPath.startsWith("self.")){
 		    dsPath = dsPath.substring(5, dsPath.length());
-		    dsPath = ((Thing) acContext.get("self")).getString(dsPath);
+		    realSelf= (Thing) acContext.get("self");
+		    dsPath = realSelf.getString(dsPath);
 		}
 		
 		if(dsPath.startsWith("action.")){
@@ -101,6 +103,9 @@ public class DataSouceActionContextActions {
 				}
 			}
 			
+		}else if(dsPath.startsWith("_c_.")) {
+			dsPath = dsPath.substring(4, dsPath.length());
+			dataSourceThing = Configuration.getConfiguration(dsPath, "xworker.db.jdbc.DataSource", realSelf != null ? realSelf : self, acContext);
 		}
 
 		if(dataSourceThing == null){
@@ -137,7 +142,7 @@ public class DataSouceActionContextActions {
 		}
 		String dsPath = self.getString("dataSourcePath");
 		
-		dataSourceThing = getDataSource(dsPath, acContext);
+		dataSourceThing = getDataSource(self, dsPath, acContext);
 
 		if(dataSourceThing != null){
 		    //数据库总是使用继承

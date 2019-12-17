@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DIRNAME=`dirname "$0"`
 PROGNAME=`basename "$0"`
@@ -38,7 +38,7 @@ fi
 # Reduce the RMI GCs to once per hour for Sun JVMs.
 JAVA_OPTS="$JAVA_OPTS -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.net.preferIPv4Stack=true  -Dfile.encoding=UTF-8"
 configSh="./dml.conf.sh"
-if [ ! -f "$configSh"]; then
+if [ -f "$configSh" ]; then
    source "$configSh"
 fi
 

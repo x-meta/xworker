@@ -1,0 +1,200 @@
+%1575894872081
+@
+sname=EditorViewer
+sBORDER=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_FOCUS=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=EditorViewer
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Composite
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+sth_registQueryOnlySelf=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=FillLayout
+  @/@mainTabFolder
+  sname=mainTabFolder
+  sstyle=TOP
+  sBORDER=false
+  sFLAT=false
+  sCLOSE=false
+  sSINGLE=false
+  sMRUVisible=false
+  ssimple=false
+  sdisposeControlOnItemClosed=false
+  suseItemTopRightControl=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@CTabFolder
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=mainTabFolder
+    @/@mainTabFolder/@exampleItem
+    sname=exampleItem
+    stext=lang:d=示例&en=Example
+    sCLOSE=false
+    sdelayReload=false
+    sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=exampleItem
+      @/@mainTabFolder/@exampleItem/@contentComposite
+      sname=contentComposite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.swt.Widgets/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=contentComposite
+    @/@mainTabFolder/@documentItem
+    sname=documentItem
+    stext=lang:d=文档&en=Document
+    sCLOSE=false
+    sdelayReload=false
+    sdescriptors=xworker.swt.custom.CTabFolder/@CTabItem
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=documentItem
+      @/@mainTabFolder/@documentItem/@browser
+      sname=browser
+      sMOZILLA=false
+      sWEBKIT=false
+      sjavascriptEnabled=true
+      sdescriptors=xworker.swt.Widgets/@Browser
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=browser
+        @/@mainTabFolder/@documentItem/@browser/@UtilBrowser
+        sname=UtilBrowser
+        sdescriptors=xworker.swt.browser.Browser/@UtilBrowser
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=UtilBrowser
+  @/@editorContainer
+  sname=editorContainer
+  sparent=var:contentComposite
+  smaxEditors=0
+  smaxEditorsSaveOnClose=true
+  sdescriptors=xworker.swt.Widgets/@EditorContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=editorContainer
+  @/@init
+  sname=init
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Local
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+//设置文档
+if(actionContext.get("thing") != null){
+    //显示文档
+    browser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+    
+    //打开编辑器
+    def params = thing.doAction("getExampleParams", actionContext);
+    editorContainer.openEditor("example:" + thing.getMetadata().getPath(), thing, params);
+}
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sswitchResult=false
+  sdebugLog=false
+  sdescriptors=xworker.swt.widgets.Widget/@Code
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=init

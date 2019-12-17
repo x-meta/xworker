@@ -112,14 +112,18 @@ public class UtilAction {
 	}
 	
 	/**
-	 * 把一组动作当作子动作执行，判断RETURN、BREAK、EXCEPTION、CONTINUE等状态。
+	 * 把一组动作当作子动作执行，判断RETURN、BREAK、EXCEPTION、CONTINUE等状态，执行结束时设置状态为RUNNING。
 	 * 
 	 * @param actionThings 动作列表
 	 * @param actionContext 变量上下文
 	 * @return 执行的结果
 	 */
 	public static Object runChildActions(List<Thing> actionThings, ActionContext actionContext){
-		return runChildActions(actionThings, actionContext, true);
+		try {
+			return runChildActions(actionThings, actionContext, true);
+		}finally {
+			actionContext.setStatus(ActionContext.RUNNING);
+		}
 	}
 	
 	/**

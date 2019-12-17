@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class BrowserDataReactor extends WidgetDataReactor{
@@ -22,7 +23,7 @@ public class BrowserDataReactor extends WidgetDataReactor{
 	}
 
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		if(datas != null && datas.size() > 0) {
 			String text = String.valueOf(datas.get(0));
 			
@@ -35,8 +36,8 @@ public class BrowserDataReactor extends WidgetDataReactor{
 	}
 
 	@Override
-	protected void widgetDoOnLoaded(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	public static Object create(ActionContext actionContext) {

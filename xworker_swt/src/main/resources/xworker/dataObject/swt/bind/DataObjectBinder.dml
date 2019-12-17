@@ -1,4 +1,4 @@
-%1573007106090
+%1576300214424
 @
 sname=DataObjectBinder
 sdescriptors=xworker.lang.MetaDescriptor3
@@ -10,11 +10,21 @@ smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>数据对象和控件的绑定器，监听数据对象的变化，并把变化传递给控件。</p>
+<p><strong>数据对象绑定器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以把一个数据对象的属性和控件的属性绑定在一起，当修改数据对象的属性时控件相对应的属性也会发生变化，也可以从控件上获取对应的属性值填充到数据对象中。</p>
 
 <p><strong>返回值和保存变量</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 返回和保存的是DataObjectBinder对象，如果是引用则不保存变量。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;返回和保存的是DataObjectBinder对象，如果是引用则不保存变量。</p>
+
+<p>使用方法</p>
+
+<p>&nbsp;</p>
+
+<p>和控件的绑定器，监听数据对象的变化，并把变化传递给控件。</p>
+
+<p>&nbsp;</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -25,6 +35,7 @@ sth_registDisabled=false
 sth_fileMonitor=false
 sth_deprecated=false
 sth_mark=false
+sth_registQueryOnlySelf=false
   @/@actions
   sname=actions
   sdescriptors=xworker.lang.MetaDescriptor3/@actions
@@ -145,6 +156,107 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=getUpdateInterval1
+    @/@actions/@getRules
+    sname=getRules
+    sattributeName=rules
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getRules
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@Variables
+    sname=Variables
+    spassive=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Variables
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=Variables
+      @/@VariablesDescs/@Variables/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Variables/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=actions
+        @/@VariablesDescs/@Variables/@actions/@create
+        sname=create
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.dataObject.swt.bind.DataObjectBinder
+        smethodName=createVarDescs
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=create
+    @/@VariablesDescs/@var
+    sname=var
+    svarName=_thingName_
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=xworker.dataObject.swt.bind.DataObjectBinder
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=var
   @/@name
   sname=name
   sshowLabel=true
@@ -280,6 +392,40 @@ sth_mark=false
   sth_fileMonitor=false
   sth_mark=false
   sid=updateInterval
+  @/@rules
+  sname=rules
+  sinputtype=textarea
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>绑定规则。</p>
+
+<ul>
+	<li><strong>一行一个规则。</strong></li>
+	<li><strong># //开头的是注释。</strong></li>
+	<li><strong>widgetName:attributeName&gt;bindType,bindType</strong><br />
+	一行只能一个控件，控件后用:分割，后面是数据对象属性和绑定类型的匹配，如name&gt;text，即属性name绑定到控件的text上，如果名字和绑定类型相同，可以不用写属性名，如button:background。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=rules
   @/@description
   sname=description
   sinputtype=html

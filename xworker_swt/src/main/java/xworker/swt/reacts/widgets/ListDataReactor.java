@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class ListDataReactor  extends WidgetDataReactor implements Listener{
@@ -38,14 +39,14 @@ public class ListDataReactor  extends WidgetDataReactor implements Listener{
 		}
 		
 		if(ds.size() > 0) {			
-			this.fireSelected(ds);
+			this.fireSelected(ds, getContext());
 		}else {
-			this.fireUnselected();
+			this.fireUnselected(getContext());
 		}
 	}
 	
 	@Override
-	public void widgetDoOnSelected(List<Object> datas) {
+	public void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		List<Integer> indices = new ArrayList<Integer>();
 		if(datas != null & datas.size() > 0) {
 			for(Object data : datas) {
@@ -68,7 +69,7 @@ public class ListDataReactor  extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	public void widgetDoOnUnselected() {
+	public void widgetDoOnUnselected(DataReactorContext context) {
 		list.setSelection(new int[0]);
 	}
 
@@ -81,29 +82,29 @@ public class ListDataReactor  extends WidgetDataReactor implements Listener{
 	}
 	
 	@Override
-	public void widgetDoOnAdded(int index, List<Object> datas) {
+	public void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
 		reInitCombo();
 	}
 
 	@Override
-	public void widgetDoOnRemoved(List<Object> datas) {
+	public void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 		reInitCombo();
 		
 		if(this.getDatas().size() == 0) {
-			this.fireUnselected();
+			this.fireUnselected(context);
 		}
 	}
 
 	@Override
-	public void widgetDoOnUpdated(List<Object> datas) {
+	public void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
 		reInitCombo();
 	}
 
 	@Override
-	public void widgetDoOnLoaded(List<Object> datas) {
+	public void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
 		reInitCombo();
 		
-		this.fireUnselected();
+		this.fireUnselected(context);
 	}
 	
 	public static Object create(ActionContext actionContext) {

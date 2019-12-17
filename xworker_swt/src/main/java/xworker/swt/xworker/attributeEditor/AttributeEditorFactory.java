@@ -11,6 +11,7 @@ import xworker.swt.xworker.attributeEditor.editors.DefaultAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.FontSelectAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.HtmlAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.HtmlDescAttributeEditor;
+import xworker.swt.xworker.attributeEditor.editors.ImageAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.InputSelectAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.PathSelectorAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.RadioAttributeEditor;
@@ -53,6 +54,8 @@ public class AttributeEditorFactory {
 			return new ColorpickerAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("fontSelect".equals(inputType)) {
 			return new FontSelectAttributeEditor(formThing, attribute, gridData, actionContext);
+		}else if("image".equals(inputType)){
+			return new ImageAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else {
 			return new DefaultAttributeEditor(formThing, attribute, gridData, actionContext);
 		}

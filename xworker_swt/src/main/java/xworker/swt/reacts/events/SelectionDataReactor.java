@@ -3,6 +3,7 @@ package xworker.swt.reacts.events;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
@@ -14,7 +15,9 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
+import xworker.swt.reacts.widgets.ComboDataReactor;
 
 public class SelectionDataReactor extends WidgetDataReactor implements Listener{	
 	private static Logger logger = LoggerFactory.getLogger(SelectionDataReactor.class);
@@ -29,7 +32,7 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 
 	
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		if(self.getBoolean("monitorStatus")) {
 			if(this.datas == null || this.datas.size() == 0) {
 				this.setWidgetEnabled(false);
@@ -41,28 +44,28 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnUnselected() {
+	protected void widgetDoOnUnselected(DataReactorContext context) {
 		this.setWidgetEnabled(false);
 	}
 
 	@Override
-	protected void widgetDoOnAdded(int index, List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	@Override
-	protected void widgetDoOnRemoved(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	@Override
-	protected void widgetDoOnUpdated(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 	@Override
-	protected void widgetDoOnLoaded(List<Object> datas) {
-		widgetDoOnSelected(datas);
+	protected void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
+		widgetDoOnSelected(datas, context);
 	}
 
 
@@ -75,17 +78,17 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 			//触发下级响应起的动作
 			String fire = self.getString("fire");
 			if("added".equals(fire)) {
-				this.fireAdded(-1, datas);
+				this.fireAdded(-1, datas, getContext());
 			}else if("selected".equals(fire)) {
-				this.fireSelected(datas);
+				this.fireSelected(datas, getContext());
 			}else if("unselected".equals(fire)) {
-				this.fireUnselected();
+				this.fireUnselected(getContext());
 			}else if("updated".equals(fire)) {
-				this.fireUpdated(datas);
+				this.fireUpdated(datas, getContext());
 			}else if("removed".equals(fire)) {
-				this.fireRemoved(datas);
+				this.fireRemoved(datas, getContext());
 			}else if("loaded".equals(fire)) {
-				this.fireLoaded(datas);
+				this.fireLoaded(datas, getContext());
 			}
 			
 			
@@ -122,4 +125,16 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 		} 
 	}
 
+	public static SelectionDataReactor create(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		Widget Widget = self.doAction("getBindTo", actionContext);
+		if(Widget != null) {
+			SelectionDataReactor reactor = new SelectionDataReactor(Widget, self, actionContext);
+			actionContext.g().put(self.getMetadata().getName(), reactor);
+			return reactor;
+		}else {
+			logger.warn("Widget is null, can not create SelectionDataReactor, thing=" + self.getMetadata().getPath());
+			return null;
+		}		
+	}
 }

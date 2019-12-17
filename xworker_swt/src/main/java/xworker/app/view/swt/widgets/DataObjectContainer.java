@@ -61,7 +61,11 @@ public class DataObjectContainer implements DataStoreListener{
 			}
 			
 		};
-		sc.setCompositeThing(World.getInstance().getThing("xworker.app.view.swt.widgets.prototype.DataObjectContainer/@scrollComposite"));
+		sc.setCompositeThing(World.getInstance().getThing("xworker.app.view.swt.widgets.prototype.DataObjectContainer/@scrollComposite"));		
+		Thing replaceComposite = self.getThing("ScrolledComposite@0");
+		if(replaceComposite != null) {
+			sc.setReplaceCompositeThing(replaceComposite);
+		}
 		
 		Composite com = sc.create();
 		

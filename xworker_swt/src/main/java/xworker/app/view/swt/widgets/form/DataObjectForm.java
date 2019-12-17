@@ -56,6 +56,42 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		modifyListener.setDataObjectForm(this);
 	}
 	
+	/**
+	 * 校验表单，返回校验的结果。
+	 * 
+	 * @return
+	 */
+	public boolean isValidate() {
+		return UtilData.isTrue(form.doAction("validate", actionContext));
+	}
+	
+	/**
+	 * 这是创建后的表单模型实例。
+	 * 
+	 * @return
+	 */
+	public Thing getFormThing() {
+		return form;
+	}
+	
+	/**
+	 * 这是原始的表单模型。
+	 * 
+	 * @return
+	 */
+	public Thing getSelfThing() {
+		return self;
+	}
+	
+	/**
+	 * 返回表单所在的变量上下文。
+	 * 
+	 * @return
+	 */
+	public ActionContext getActionContext() {
+		return actionContext;
+	}
+	
 	public void addListener(DataObjectFormListener listener) {
 		if(listeners == null) {
 			listeners = new ArrayList<DataObjectFormListener>();
@@ -95,12 +131,20 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		    }
 		}
 
-		//创建面板
-		Thing compositeThing = world.getThing("xworker.swt.widgets.Composite");
+		//创建面板		
 		Composite composite = null;
 		Designer.pushCreator(self);
 		try{
-			composite = (Composite) compositeThing.run("create", actionContext);
+			Thing compositeThing = self.getThing("Composite@0");
+			if(compositeThing == null) {
+				compositeThing = world.getThing("xworker.swt.widgets.Composite");
+				composite = (Composite) compositeThing.run("create", actionContext);
+			}else {
+				compositeThing = compositeThing.detach();
+				compositeThing.put("name", self.getMetadata().getName());
+				composite = (Composite) compositeThing.doAction("create", actionContext);
+			}
+			
 		}finally {
 			Designer.popCreator();
 		}
@@ -114,6 +158,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		form.set("extends", self.getMetadata().getPath());
 		form.put("H_SCROLL","true");//self.H_SCROLL;
 		form.put("V_SCROLL", "true");//self.V_SCROLL;
+		//form.put("BORDER", self.get("BORDER"));
 		form.setData("defaultSelection",  new Listener() {
 			Event lastEvent;
 			
@@ -167,6 +212,9 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		    bindings.put("parent", composite);
 		    bindings.put("dataObjectForm", form);
 		    for(Thing child : self.getChilds()){
+		    	if("Composite".equals(child.getThingName())) {
+		    		continue;
+		    	}
 		        child.doAction("create", actionContext);
 		    }
 		}finally{
@@ -208,6 +256,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 
 			if(dobj == null) {
 				parentComposite.layout();
+				parentComposite.getParent().layout();
 				self.setData("formContext", null);
 				self.setData("model", null);
 				return;
@@ -304,6 +353,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 			    //self.H_SCROLL = "true";
 			    //self.V_SCROLL = "true";
 			    Composite composite = ThingDescriptorForm.createForm(actionContext);
+			    
 			    //def ac = new ActionContext();
 			    //ac.put("parent", composite);    
 			    //for(child in formThing.getChilds()){
@@ -333,6 +383,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 			    }
 			    
 			    ((Composite) self.getData("parent")).layout();
+			    ((Composite) self.getData("parent")).getParent().layout();
 			}finally{
 			    actionContext.pop();
 			}
@@ -669,7 +720,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 	 * @param dataObject
 	 */
 	public void setDataObject(DataObject dataObject) {
-		form.doAction("setDataObject", actionContext, "dataObject", dataObject);
+		form.doAction("setDataObject", actionContext, "dataObject", dataObject);		
 	}
 	
 	/**

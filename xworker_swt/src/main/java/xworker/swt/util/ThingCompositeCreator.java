@@ -19,6 +19,7 @@ public class ThingCompositeCreator {
 	Thing self;
 	ActionContext actionContext;
 	Thing compositeThing;
+	Thing replaceComposite;
 	ActionContext newActionContext;
 	List<String> childFilters = new ArrayList<String>();
 	
@@ -31,10 +32,32 @@ public class ThingCompositeCreator {
 		newActionContext.put("parent", actionContext.get("parent"));
 	}
 	
+	/**
+	 * 设置模板模型。
+	 * 
+	 * @param compositeThing
+	 */
 	public void setCompositeThing(Thing compositeThing) {
 		this.compositeThing = compositeThing;
 	}
 	
+	/**
+	 * ThingCompositeCreator使用独立的变量上下文，在这里可以定义这个变量 
+	 * 
+	 * @param newActionContext
+	 */
+	public void setNewActionContext(ActionContext newActionContext) {
+		this.newActionContext = newActionContext;
+	}
+	
+	/**
+	 * 设置替换模板模型的根节点的模型。
+	 * 
+	 * @param styleCompositeThing
+	 */
+	public void setReplaceCompositeThing(Thing replaceComposite) {
+		this.replaceComposite = replaceComposite;
+	}
 	
 	public ActionContext getNewActionContext() {
 		return newActionContext;
@@ -66,7 +89,20 @@ public class ThingCompositeCreator {
 		Object obj = null;
 		Designer.pushCreator(self);
 		try {
-			obj = compositeThing.doAction("create", newActionContext);
+			Thing thing = compositeThing;
+			if(replaceComposite != null) {
+				//替换第一个子节点,
+				thing = replaceComposite.detach();
+				thing.put("name", compositeThing.getMetadata().getName());
+				thing.getMetadata().setPath(compositeThing.getMetadata().getPath());
+				
+				//复制子节点，但不改变子节点的所属
+				for(Thing child : compositeThing.getChilds()) {
+					thing.addChild(child, false);
+				}
+			}
+			
+			obj = thing.doAction("create", newActionContext);
 			if(obj instanceof Control) {
 				Designer.attachCreator((Control) obj, self.getMetadata().getPath(), actionContext);
 			}

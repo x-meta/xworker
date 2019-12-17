@@ -7,8 +7,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -19,7 +17,7 @@ import xworker.util.UtilTemplate;
 import xworker.util.XWorkerUtils;
 
 public class CodeViewerRWT {
-	private static Logger logger = LoggerFactory.getLogger(CodeViewerRWT.class);
+	//private static Logger logger = LoggerFactory.getLogger(CodeViewerRWT.class);
 	
 	public static void setCodeActions(ActionContext actionContext) throws Throwable{
 		Browser browser = actionContext.getObject("browser");

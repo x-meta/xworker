@@ -1,4 +1,4 @@
-%1568807698356
+%1575613035973
 @
 sname=shell
 stext=注册事物选择器
@@ -350,7 +350,6 @@ if(thing != null){
           svarScope=Local
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
           sdisableGlobalContext=false
@@ -371,7 +370,6 @@ if(thing != null){
           svarScope=Local
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
           sdisableGlobalContext=false
@@ -416,79 +414,26 @@ if(thing != null){
         sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
         sth_createIndex=false
         sid=2620
-          @/@2610/@2617/@2619/@2620/@Begin
-          sname=Begin
-          schangeSelf=false
+          @/@2610/@2617/@2619/@2620/@Dispose
+          sname=Dispose
+          scontrolList=shell
           sinterpretationType=Self
           sattributeTemplate=false
           schildsAttributeTemplate=false
           svarScope=Local
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
           sdisableGlobalContext=false
           sdebugLog=false
-          sdescriptors=xworker.lang.actions.Actions/@ActionGroup
+          sdescriptors=xworker.swt.actions.ControlActions/@Dispose
           sinheritDescription=false
           sth_createIndex=false
           sth_registMyChilds=false
           sth_registDisabled=false
           sth_mark=false
-          sid=Begin
-            @/@2610/@2617/@2619/@2620/@Begin/@actions
-            sname=actions
-            sdescriptors=xworker.lang.actions.SelfAction/@actions1
-            sinheritDescription=false
-            sth_createIndex=false
-            sth_registMyChilds=false
-            sth_registDisabled=false
-            sth_mark=false
-            sid=actions
-              @/@2610/@2617/@2619/@2620/@Begin/@actions/@NOOP
-              sname=NOOP
-              sunimplementedException=false
-              sdescriptors=xworker.lang.actions.Actions/@NOOP
-              sinterpretationType=Self
-              sattributeTemplate=false
-              schildsAttributeTemplate=false
-              svarScope=Global
-              sisSynchronized=false
-              sthrowException=true
-              suseOtherAction=false
-              screateLocalVarScope=false
-              ssaveReturn=true
-              sreturnVarName=result
-              sdisableGlobalContext=false
-              sdebugLog=false
-              sinheritDescription=false
-              sth_createIndex=false
-              sth_registMyChilds=false
-              sth_registDisabled=false
-              sth_mark=false
-              sid=NOOP
-              @/@2610/@2617/@2619/@2620/@Begin/@actions/@Dispose
-              sname=Dispose
-              scontrolList=shell
-              sinterpretationType=Self
-              sattributeTemplate=false
-              schildsAttributeTemplate=false
-              svarScope=Local
-              sisSynchronized=false
-              sthrowException=true
-              suseOtherAction=false
-              screateLocalVarScope=false
-              ssaveReturn=false
-              sdisableGlobalContext=false
-              sdebugLog=false
-              sdescriptors=xworker.swt.actions.ControlActions/@Dispose
-              sinheritDescription=false
-              sth_createIndex=false
-              sth_registMyChilds=false
-              sth_registDisabled=false
-              sth_mark=false
-              sid=Dispose
+          sid=Dispose
   @/@init
   sname=init
   sisSynchronized=false
@@ -522,8 +467,17 @@ if(thing == null){
 }
 
 def thingRegist = null;
+def defaultViewer = null;
+// println "viewType=" + params.viewType;
+// println "thing=" + thing;
 if(params.viewType == "thingEditor"){
     thingRegist = thingRegist2;    
+}else if(params.viewType == "default" || params.viewType == null){
+    defaultViewer = getViewer(thing);
+    //println "defaultViewer=" + defaultViewer;
+    thingRegist = thingRegist1;
+    stackLayout.topControl = thingRegist1.doAction("getRootControl");
+    registComposite.layout();
 }else{
     thingRegist = thingRegist1;
     stackLayout.topControl = thingRegist1.doAction("getRootControl");
@@ -536,12 +490,59 @@ thingRegist.doAction("init", actionContext, "thing", thing,
 if(params.viewType != null && params.viewType != "" &&  params.viewType != "default"){   
     thingRegist.getActionContext().put("contentDefaultOpenMethod", params.viewType);
     thingRegist.getActionContext().put("forceUseDefaultOpenMethod", true);
-}       
+}  
+thingRegist.getActionContext().put("defaultViewer", defaultViewer);  
 thingRegist.doAction("refresh");
+
+def getViewer(thing){
+    //首先取自己的
+    if(thing.getThingName() == "ThingIndex"){
+        def path = thing.getStringBlankAsNull("defaultViewer");
+        viewer = getViewer_(thing, path);
+        if(viewer != null){
+            return viewer;
+        }
+    }
+    //println thing;
+    def viewer = getViewer_(thing, thing.getStringBlankAsNull("th_thingRegistViewer"));
+    
+    if(viewer == null){
+        for(desc in thing.getAllDescriptors()){
+            //println desc;
+            viewer = getViewer_(thing, desc.getStringBlankAsNull("th_thingRegistViewer"));
+            if(viewer != null){
+                return viewer;
+            }
+        }
+    }
+
+    if(viewer == null){
+        for(extd in thing.getAllExtends()){
+            // println "exted:" extd;
+            viewer = getViewer_(thing, extd.getStringBlankAsNull("th_thingRegistViewer"));
+            if(viewer != null){
+                return viewer;
+            }
+        }
+    }
+    
+    return viewer;
+}
+
+def getViewer_(thing, path){
+    if(path == null){
+        return null;
+    }else if(path == "self"){
+        return thing;
+    }else{
+        return world.getThing(path);
+    }
+}
 #$@text#$@
   sinterpretationType=Action
   screateLocalVarScope=false
   ssaveReturn=false
+  sswitchResult=false
   sdebugLog=false
   sdescriptors=xworker.swt.widgets.Widget/@Code
   sinheritDescription=false

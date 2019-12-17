@@ -1,4 +1,4 @@
-%1564045819975
+%1574159898650
 @
 sname=RegistTask
 slabel=RegistTask
@@ -42,11 +42,15 @@ sth_mark=false
 import xworker.util.ThingUtils;
 import xworker.lang.executor.Executor;
 
-def things = ThingUtils.searchRegistThings(self, "child", [], actionContext);
+def things = ThingUtils.searchRegistThings(self, "child", [], false, true, actionContext);
+
+//println "RegistTask:" + self.getMetadata().getPath() + ":" + things.size();
 for(thing in things){
     try{
         //println self.getMetadata().getPath();
-        thing.getAction().run(actionContext);
+        if(thing != null){
+            //thing.getAction().run(actionContext);
+        }
     }catch(Exception e){
         Executor.error(TAG, "Execute regist task  action error, action=" + thing.metadata.path, e);
     }
@@ -55,6 +59,7 @@ for(thing in things){
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -82,7 +87,6 @@ for(thing in things){
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false

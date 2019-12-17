@@ -45,7 +45,7 @@ public class IdNameDataReactor extends DataReactor{
 			}
 						
 		}
-		fireLoaded();
+		fireLoaded(null);
 	}
 	
 	public static Object create(ActionContext actionContext) {

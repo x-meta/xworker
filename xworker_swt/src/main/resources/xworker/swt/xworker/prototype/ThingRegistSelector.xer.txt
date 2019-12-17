@@ -1,4 +1,4 @@
-^1571897587479
+^1576116473537
 @
 sname
 shell
@@ -8770,13 +8770,13 @@ import org.xmeta.Thing;
 import org.xmeta.ActionContext;
 
 import xworker.util.ThingUtils;
-import xworker.lang.Executor;
 import xworker.lang.executor.Executor;
 import xworker.swt.util.XWorkerTreeUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
 
+def TAG = "xworker.swt.xworker.prototype.ThingRegistSelector.p182904628.thingTreeSelection";
 //设置菜单状态
 actions.doAction("menuDetect", actionContext);
 
@@ -8788,24 +8788,37 @@ actions.doAction("menuDetect", actionContext);
 def item = event.item;//thingTree.getSelection()[0];
 def data = item.getData();
 if(data instanceof Thing){
-    //动态子节点
+    //动态子节点等特殊节点
     if(data.getThingName() == "ThingRegistDynamicNode"){
         initDynamicNode(item, data, actionContext);
         //return;
-    }
-    
-    //log.info("thing=" + data);
-    if(data.getThingName() == "ReferenceIndex"){
+    }else if(data.getThingName() == "ReferenceIndex"){
         def thing = world.getThing(data.getString("thingPath"));
         if(thing != null){
             data = thing;
         }
     }
+    
+    //是否不显示界面，默认都是false
+    //Executor.info(TAG, "thing=" + data);
+    def noViewer = data.getBoolean("th_noThingRegistViewer");
+    //println noViewer;
+    if(noViewer == true){
+        return;
+    }
+    
+    //显示查看界面
     //log.info("thing=" + data);  
     //获取查看选中的事物的查看器，查看器是Thing，如果没有设置使用默认的
     //默认的参看openCompositeTab的if(swtThing == null){代码
     def viewer = null;
-    if(actionContext.get("forceUseDefaultOpenMethod") == false){
+   
+    if(viewer == null){
+        viewer = actionContext.get("defaultViewer");
+        //println "defualtViewer:" + viewer;
+    }
+    
+    if(viewer == null && actionContext.get("forceUseDefaultOpenMethod") == false){
         //从事物本身获取查看器
         viewer = getViewer(data);
     }
@@ -8814,10 +8827,7 @@ if(data instanceof Thing){
         //从索引事物上获取查看器
         viewer = world.getThing(thing.getString("defaultViewer"));
     }
-    //println thing;
-    if(viewer == null){
-        viewer = actionContext.get("defaultViewer");
-    }
+    //println viewer;    
     
     //Executor.info("ThingRegistor", "viewer = " + viewer);
     def contentDefaultOpenMethod = actionContext.get("contentDefaultOpenMethod");
@@ -8833,10 +8843,12 @@ if(data instanceof Thing){
         actions.doAction("openBrowserTab", actionContext, "thing", data, "acContext", actionContext);            
     }
     
+    //触发事件等
     if(actionContext.get("downButton") != null){// && data.getThingName() == "ThingIndex"){
         downButton.setEnabled(true);
     }
     controlThing.doAction("selected", parentContext, ["thing": data, "item": item]);
+   
 }else{
     controlThing.doAction("selected", parentContext, ["thing": null, "item": item]);
     if(actionContext.get("descBrowser") != null){
@@ -8918,6 +8930,8 @@ def getViewer_(thing, path){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -9677,8 +9691,6 @@ def getPreItem(thingTree, item){
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -9741,8 +9753,6 @@ def getPreItem(thingTree, item){
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -9799,8 +9809,6 @@ def getPreItem(thingTree, item){
             false
             sthrowException
             true
-            suseOtherAction
-            false
             screateLocalVarScope
             false
             ssaveReturn
@@ -9842,8 +9850,6 @@ def getPreItem(thingTree, item){
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -10282,8 +10288,6 @@ actions.doAction("selectGroup", actionContext, ["group": group]);
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -10902,8 +10906,6 @@ def getChecked(item, things){
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -11397,6 +11399,51 @@ actions.doAction("search", actionContext);
     false
     sid
     setThings
+    @/@actions/@getControl
+    sname
+    getControl
+    svarName
+    rootControl
+    sdescription
+    <p>返回组件的根容器。</p>
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    getControl
   @/@init
   sname
   init
@@ -11777,8 +11824,6 @@ if(keys != null){
           false
           sthrowException
           true
-          suseOtherAction
-          false
           screateLocalVarScope
           false
           ssaveReturn
@@ -11837,8 +11882,6 @@ if(keys != null){
               false
               sthrowException
               true
-              suseOtherAction
-              false
               screateLocalVarScope
               false
               ssaveReturn
@@ -11997,8 +12040,6 @@ def addThings(things, thing){
                   false
                   sthrowException
                   true
-                  suseOtherAction
-                  false
                   screateLocalVarScope
                   false
                   ssaveReturn
@@ -12040,8 +12081,6 @@ def addThings(things, thing){
               false
               sthrowException
               true
-              suseOtherAction
-              false
               screateLocalVarScope
               false
               ssaveReturn
@@ -12165,8 +12204,6 @@ def putAttrs(params, thing, actionContext){
                   false
                   sthrowException
                   true
-                  suseOtherAction
-                  false
                   screateLocalVarScope
                   false
                   ssaveReturn
@@ -12208,8 +12245,6 @@ def putAttrs(params, thing, actionContext){
               false
               sthrowException
               true
-              suseOtherAction
-              false
               screateLocalVarScope
               false
               ssaveReturn
@@ -12356,8 +12391,6 @@ return shell;
                   false
                   sthrowException
                   true
-                  suseOtherAction
-                  false
                   screateLocalVarScope
                   false
                   ssaveReturn
@@ -12469,8 +12502,6 @@ return shell;
               false
               sthrowException
               true
-              suseOtherAction
-              false
               screateLocalVarScope
               false
               ssaveReturn
@@ -12569,8 +12600,6 @@ return shell;
           false
           sthrowException
           true
-          suseOtherAction
-          false
           screateLocalVarScope
           false
           ssaveReturn

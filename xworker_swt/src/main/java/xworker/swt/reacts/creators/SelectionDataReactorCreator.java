@@ -21,6 +21,4 @@ public class SelectionDataReactorCreator implements DataReactorCreator{
 		
 		return new SelectionDataReactor((Widget) control, thing, actionContext);
 	}
-
-
 }

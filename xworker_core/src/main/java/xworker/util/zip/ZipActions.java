@@ -25,7 +25,7 @@ import xworker.util.UtilData;
 import xworker.util.compress.CompressEntry;
 
 public class ZipActions {
-private static Logger logger = LoggerFactory.getLogger(ZipActions.class);
+	private static Logger logger = LoggerFactory.getLogger(ZipActions.class);
 	public static void compressWithEntrys(ActionContext actionContext) throws IOException{
 		Thing self = actionContext.getObject("self");
 		File zipFile = FileActions.getFile(self, "getZipFile", actionContext);
@@ -251,41 +251,67 @@ private static Logger logger = LoggerFactory.getLogger(ZipActions.class);
 	
 	public static void decompressInputStream(ActionContext actionContext) throws IOException{
 		Thing self = actionContext.getObject("self");
-		File directory = FileActions.getFile(self, "getDirectory", actionContext);
-		InputStream fin = (InputStream) self.doAction("getInputStream", actionContext);
 		
-		try{
+		InputStream in = self.doAction("getInputStream", actionContext);
+		ZipInputStream zin = null;
+		try {			
+			zin = new ZipInputStream(in);
 			ZipEntry entry = null;
-			ZipInputStream in = new ZipInputStream(fin);
-			while((entry = in.getNextEntry()) != null){
-				//long size = entry.getSize();
-				String name = entry.getName();				
-				File newFile = new File(directory, name);
-				if(entry.isDirectory()){
-					newFile.mkdirs();
-				}else{
-					//写入文件
-					if(!newFile.getParentFile().exists()){
-						newFile.getParentFile().mkdirs();
+			File target = self.doAction("getDirectory", actionContext);
+			while((entry = zin.getNextEntry()) != null) {			
+				self.doAction("handleEntry", actionContext, "zipInputStream", zin, "entry", entry, "target", target);
+				zin.closeEntry();
+			}
+		}finally {
+			if(zin != null) {
+				zin.close();
+			}
+			
+			if(in != null && UtilData.isTrue(self.doAction("isCloseInputStream", actionContext))) {
+				in.close();
+			}	
+		}
+	}
+	
+	public static void decompressEntryToDir(ActionContext actionContext) throws IOException {
+		Thing self = actionContext.getObject("self");
+		File target = actionContext.getObject("target");
+		if(target == null) {
+			logger.info("Target dir is null, can not decompress entry, action=" + self.getMetadata().getPath());
+			return;
+		}
+		
+		ZipInputStream zin = actionContext.getObject("zipInputStream");
+		ZipEntry entry = actionContext.getObject("entry");
+		if(entry.isDirectory() == false) {
+			File file = new File(target, entry.getName());
+			long size = entry.getSize();
+			
+			if(file.getParentFile().exists() == false) {
+				file.getParentFile().mkdirs();
+			}
+			
+			byte[] buffer = new byte[1024 * 10];			
+			FileOutputStream fout = new FileOutputStream(file);
+			try {
+				while(size > 0){
+					if(size > buffer.length) {
+						zin.read(buffer);
+						fout.write(buffer);
+						size = size - buffer.length;
+					}else {
+						int length = (int) size;
+						zin.read(buffer, 0, length);
+						fout.write(buffer, 0, length);
+						size = 0;
 					}
-					
-					FileOutputStream fout = new FileOutputStream(newFile);
-					try{
-						IOUtils.copy(in, fout);
-					}finally{
-						fout.close();
-					}
-					
-					if(entry.getTime() > 0){
-						newFile.setLastModified(entry.getTime());
-					}					
 				}
+			}finally {
+				fout.close();
 			}
-			in.close();
-		}finally{
-			if(UtilData.isTrue(self.doAction("isCloseInputStream", actionContext))){
-				fin.close();
+			if(entry.getLastModifiedTime() != null) {
+				file.setLastModified(entry.getLastModifiedTime().toMillis());
 			}
-		}		
+		}
 	}
 }

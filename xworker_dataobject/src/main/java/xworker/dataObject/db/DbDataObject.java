@@ -1096,7 +1096,7 @@ public class DbDataObject {
 	public synchronized static void mapping2ddl(ActionContext actionContext) {
 		//数据对象和DataSource
 		Thing self = (Thing) actionContext.get("self");
-		Thing dataSource = DataSouceActionContextActions.getDataSource(self.getString("dataSource"), actionContext);
+		Thing dataSource = DataSouceActionContextActions.getDataSource(self, self.getString("dataSource"), actionContext);
 		if(dataSource == null){
 			throw new DataObjectException("DbDataObject mapping2ddl: dataSource is null, thing=" + self.getMetadata().getPath());
 		}

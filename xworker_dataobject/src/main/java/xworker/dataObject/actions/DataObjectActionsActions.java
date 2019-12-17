@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -34,17 +32,19 @@ import org.xmeta.util.UtilAction;
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 public class DataObjectActionsActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectActionsActions.class);
+	//private static Logger logger = LoggerFactory.getLogger(DataObjectActionsActions.class);
+	private static final String TAG = DataObjectActionsActions.class.getName();
 	
     public static Object run(ActionContext actionContext) throws OgnlException{
         Thing self = actionContext.getObject("self");
         
         DataObject dataObject = (DataObject) OgnlUtil.getValue(self.getString("dataObjectName"), actionContext);
         if(dataObject == null){
-            logger.info("DataObjectActions: dataObject is null, path=" + self.getMetadata().getPath());
+            Executor.info(TAG, "DataObjectActions: dataObject is null, path=" + self.getMetadata().getPath());
             return "failure";
         }
         
@@ -81,7 +81,7 @@ public class DataObjectActionsActions {
             dataObject = world.getThing(self.getString("dataObject"));
         }
         if(dataObject == null){
-            logger.info("DataObjectDeleteBatch: dataObject is null, action=" + self.getMetadata().getPath());
+            Executor.info(TAG, "DataObjectDeleteBatch: dataObject is null, action=" + self.getMetadata().getPath());
             return 0;
         }
         
@@ -100,14 +100,14 @@ public class DataObjectActionsActions {
             queryConfig = self.getThing("QueryConfig@0");
         }
         if(queryConfig == null){
-            logger.info("DataObjectDeleteBatch: queryConfig is null, action=" + self.getMetadata().getPath());
+            Executor.info(TAG, "DataObjectDeleteBatch: queryConfig is null, action=" + self.getMetadata().getPath());
             return 0;
         }
         
         //查询参数
         Object queryParams = OgnlUtil.getValue(self.getString("queryParams"), actionContext);
         if(queryParams == null){
-            logger.info("DataObjectDeleteBatch: queryParams is null, action=" + self.getMetadata().getPath());
+            Executor.info(TAG, "DataObjectDeleteBatch: queryParams is null, action=" + self.getMetadata().getPath());
             return 0;
         }
         
@@ -120,7 +120,7 @@ public class DataObjectActionsActions {
         
         DataObject dataObject = (DataObject) actionContext.get(self.getString("dataObjectVar"));
         if(dataObject == null){
-            logger.info("dataobject is null, thing=" + self);
+            Executor.info(TAG, "dataobject is null, thing=" + self);
             return null;
         }
         
@@ -139,7 +139,7 @@ public class DataObjectActionsActions {
         
         DataObject dataObject = (DataObject) actionContext.get(self.getString("dataObjectVar"));
         if(dataObject == null){
-            logger.info("dataobject is null, thing=" + self);
+            Executor.info(TAG, "dataobject is null, thing=" + self);
             return null;
         }
         
@@ -156,10 +156,31 @@ public class DataObjectActionsActions {
     public static Object run4(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
         
-        DataObject dataObject = (DataObject) actionContext.get(self.getString("dataObjectVar"));
+        DataObject dataObject = null;
+        Object obj = self.doAction("getDataObject", actionContext);
+        if(obj instanceof DataObject) {
+        	dataObject = (DataObject) obj;
+        }else if(obj instanceof String) {
+        	dataObject = actionContext.getObject((String) obj);
+        }
+        
+        if(dataObject == null) {
+        	Thing desc = self.doAction("getDataObjectDesc", actionContext);
+        	if(desc != null) {
+        		dataObject = new DataObject(desc);
+        	}
+        }
+                
         if(dataObject == null){
-            logger.info("dataobject is null, thing=" + self);
+            Executor.info(TAG, "Can not load data, dataobject is null, thing=" + self.getMetadata().getPath());
             return null;
+        }
+        
+        for(Thing child : self.getChilds()) {
+        	Object result = child.getAction().run(actionContext);
+        	if(result != null) {
+        		dataObject.put(child.getMetadata().getName(), result);
+        	}
         }
         
         //装载
@@ -177,7 +198,7 @@ public class DataObjectActionsActions {
         
         DataObject dataObject = (DataObject) actionContext.get(self.getString("dataObjectVar"));
         if(dataObject == null){
-            logger.info("dataobject is null, thing=" + self);
+            Executor.info(TAG, "dataobject is null, thing=" + self);
             return null;
         }
         
@@ -196,7 +217,7 @@ public class DataObjectActionsActions {
         
         DataObject dataObject = (DataObject) actionContext.get(self.getString("dataObjectVar"));
         if(dataObject == null){
-            logger.info("dataobject is null, thing=" + self);
+            Executor.info(TAG, "dataobject is null, thing=" + self);
             return null;
         }
         
@@ -221,7 +242,7 @@ public class DataObjectActionsActions {
         
         List<DataObject> dataObjects = (List<DataObject>) actionContext.get(self.getString("dataObjectsVar"));
         if(dataObjects == null){
-            logger.info("dataobjects is null, thing=" + self);
+            Executor.info(TAG, "dataobjects is null, thing=" + self);
             return null;
         }
         
@@ -236,7 +257,7 @@ public class DataObjectActionsActions {
                 result.put("result", theData);          
             }catch(Exception e){
                 result.put("result", e);  
-                logger.info("create dataobjects error, thing=" + self);
+                Executor.info(TAG, "create dataobjects error, thing=" + self);
                 if(breakOnError){
                     break;
                 }
@@ -257,7 +278,7 @@ public class DataObjectActionsActions {
         
         List<DataObject> dataObjects = (List<DataObject>) actionContext.get(self.getString("dataObjectsVar"));
         if(dataObjects == null){
-            logger.info("dataobjects is null, thing=" + self);
+            Executor.info(TAG, "dataobjects is null, thing=" + self);
             return null;
         }
         
@@ -272,7 +293,7 @@ public class DataObjectActionsActions {
                 result.put("result", theData);          
             }catch(Exception e){
                 result.put("result", e);  
-                logger.info("update dataobjects error, thing=" + self);
+                Executor.info(TAG, "update dataobjects error, thing=" + self);
                 if(breakOnError){
                     break;
                 }
@@ -293,7 +314,7 @@ public class DataObjectActionsActions {
         @SuppressWarnings("unchecked")
 		List<DataObject> dataObjects = (List<DataObject>) actionContext.get(self.getString("dataObjectsVar"));
         if(dataObjects == null){
-            logger.info("dataobjects is null, thing=" + self);
+            Executor.info(TAG, "dataobjects is null, thing=" + self);
             return null;
         }
         
@@ -308,7 +329,7 @@ public class DataObjectActionsActions {
                 result.put("result", theData);  
             }catch(Exception e){
                 result.put("result", e);  
-                logger.info("load dataobjects error, thing=" + self);
+                Executor.info(TAG, "load dataobjects error, thing=" + self);
                 if(breakOnError){
                     break;
                 }
@@ -329,7 +350,7 @@ public class DataObjectActionsActions {
         
         List<DataObject> dataObjects = (List<DataObject>) actionContext.get(self.getString("dataObjectsVar"));
         if(dataObjects == null){
-            logger.info("dataobjects is null, thing=" + self);
+            Executor.info(TAG, "dataobjects is null, thing=" + self);
             return null;
         }
         
@@ -344,7 +365,7 @@ public class DataObjectActionsActions {
                 result.put("result", theData);  
             }catch(Exception e){
                 result.put("result", e);  
-                logger.info("update dataobjects error, thing=" + self);
+                Executor.info(TAG, "update dataobjects error, thing=" + self);
                 if(breakOnError){
                     break;
                 }
@@ -365,7 +386,7 @@ public class DataObjectActionsActions {
         
         List<DataObject> dataObjects = (List<DataObject>) actionContext.get(self.getString("dataObjectsVar"));
         if(dataObjects == null){
-            logger.info("dataobjects is null, thing=" + self);
+            Executor.info(TAG, "dataobjects is null, thing=" + self);
             return null;
         }
         
@@ -387,7 +408,7 @@ public class DataObjectActionsActions {
                 result.put("result", theData);          
             }catch(Exception e){
                 result.put("result", e);  
-                logger.info("load dataobjects error, thing=" + self);
+                Executor.info(TAG, "load dataobjects error, thing=" + self);
                 if(breakOnError){
                     break;
                 }
@@ -475,5 +496,30 @@ public class DataObjectActionsActions {
 		}
 		
 		return dataObjectList;
+    }
+    
+    public static void setAttributes(ActionContext actionContext) {
+    	Thing self = actionContext.getObject("self");
+    	DataObject dataObject = self.doAction("getDataObject", actionContext);
+    	if(dataObject == null) {
+    		return;
+    	}
+    	
+    	String attributes = self.doAction("getAttributes", actionContext);
+    	if(attributes != null) {
+    		dataObject.setAttributes(attributes, actionContext);
+    	}
+    	
+    	for(Thing child : self.getChilds()) {
+    		String thingName = child.getThingName();
+    		String name = child.getMetadata().getName();
+    		if("actions".equals(thingName) || "_init".equals(name)) {
+    			continue;
+    		}else {
+    			Object value = child.getAction().run(actionContext);
+    			dataObject.put(name, value);
+    		}
+    		
+    	}
     }
 }

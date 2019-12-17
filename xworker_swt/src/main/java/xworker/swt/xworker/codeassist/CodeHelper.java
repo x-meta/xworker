@@ -92,23 +92,33 @@ public class CodeHelper {
 	 * @return
 	 */
 	public static List<CodeAssitContent> getObjectContents(String code, int offset, List<String> statements, Thing thing, ActionContext actionContext){
+		return getObjectContents(null, code, offset, statements, thing, actionContext);
+	}
+	
+	/**
+	 * 返回对象的辅助内容。sentens是调用语句列表。
+	 * 
+	 * @param varProvider
+	 * @param statements
+	 * @param thing
+	 * @param actionContext
+	 * @return
+	 */
+	public static List<CodeAssitContent> getObjectContents(VariableProvider varProvider, String code, int offset, List<String> statements, Thing thing, ActionContext actionContext){
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
 		
 		//变量定义
 		VariableDesc var = null;
 		if(statements.size() > 0) {
 			String varName = statements.get(0);
-			
-			for(VariableProvider vp : variableProviders) {
-				List<VariableDesc> vars = vp.getVariables(code, offset, statements, thing, actionContext);
-				if(vars != null) {
-					for(VariableDesc varDesc : vars) {
-						if(varDesc.getName() != null && varDesc.getName().equals(varName)){
-							var = varDesc;
-							break;
-						}
-					}
-					
+			if(varProvider != null) {
+				//先从传入的VariableProvider上获取				
+				var = getVar(varProvider, varName, code, offset, statements, thing, actionContext);
+			}
+			if(var == null) {
+				//再从注册的VariableProvider上获取
+				for(VariableProvider vp : variableProviders) {
+					var = getVar(vp, varName, code, offset, statements, thing, actionContext);
 					if(var != null) {
 						break;
 					}
@@ -131,6 +141,29 @@ public class CodeHelper {
 		
 		Collections.sort(list);
 		return list;
+	}
+	
+	private static VariableDesc getVar(VariableProvider varProvider, String varName, String code, int offset, List<String> statements, Thing thing, ActionContext actionContext) {
+		if(varProvider == null || thing == null) {
+			return null;
+		}
+		
+		VariableDesc var = null;
+		List<VariableDesc> vars = varProvider.getVariables(code, offset, statements, thing, actionContext);
+		if(vars != null) {
+			for(VariableDesc varDesc : vars) {
+				if(varDesc.getName() != null && varDesc.getName().equals(varName)){
+					var = varDesc;
+					break;
+				}
+			}
+			
+			if(var != null) {
+				return var;
+			}
+		}
+		
+		return null;
 	}
 }
 

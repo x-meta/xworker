@@ -38,7 +38,17 @@ public class PermissionChecker extends SecurityChecker implements java.lang.Comp
 			getPermissionActionChecker(action).setSecurityHandler(securityHandler);
 		}
 	}
-
+	
+	public List<String> getActions(){
+		List<String> list = new ArrayList<String>();
+		for(String key : actions.keySet()) {
+			list.add(String.valueOf(key));
+		}
+		
+		Collections.sort(list);
+		return list;
+	}
+	
 	/**
 	 * 返回动作权限校验器，如果不存在则创建一个。
 	 * 

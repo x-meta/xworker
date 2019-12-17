@@ -18,6 +18,7 @@ package xworker.swt.custom;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -93,12 +94,60 @@ public class ScrolledCompositeCreator {
 		//自动调整子控件大小的监听
 		if(self.getBoolean("autoResize")){
 			new ResizeListener(composite);
+		}else {
+			new AutoFitListener(composite);
 		}
 		
 		Designer.attach(composite, self.getMetadata().getPath(), actionContext);
 		return composite;       
 	}
 
+    public static class AutoFitListener implements Listener{
+    	ScrolledComposite composite;
+    	boolean enabled = true;  //避免递归触发事件，如果不加发现在composite.setMinWidth(width)时还会触发此事件
+    	
+    	public AutoFitListener(ScrolledComposite composite){
+    		this.composite = composite;
+    		this.composite.addListener(SWT.Resize, this);
+    	}
+    	
+		@Override
+		public void handleEvent(Event event) {
+			if(!enabled) {
+				return;
+			}
+			composite.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {			
+						enabled = false;
+						int width = 0;
+						int height = 0;
+						Rectangle size = composite.getClientArea();
+						width = size.width;
+						for(Control control : composite.getChildren()){
+							Point controlSize = control.computeSize(size.width, SWT.DEFAULT); 
+							control.setSize(controlSize);							
+							if(control instanceof Composite){
+							//	((Composite) control).layout();
+							}
+							if(controlSize.x > width){
+								width = controlSize.x;
+							}
+							height += controlSize.y;
+						}
+						composite.setMinWidth(width);
+						composite.setMinHeight(height);
+						composite.layout();
+					}catch(Exception e) {						
+					}finally {
+						enabled = true;
+					}
+				}
+			});			
+		}
+		
+    }
+    
     public static class ResizeListener implements Listener{
     	ScrolledComposite composite;
     	
@@ -109,7 +158,6 @@ public class ScrolledCompositeCreator {
     	
 		@Override
 		public void handleEvent(Event arg0) {
-			Point size = composite.getSize();
 			int width = 0;
 			int height = 0;
 			for(Control control : composite.getChildren()){

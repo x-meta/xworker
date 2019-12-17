@@ -49,6 +49,13 @@ public interface IEditor {
 	public String getSimpleTitle();
 	
 	/**
+	 * 返回编辑器所属的编辑器容器。
+	 * 
+	 * @return
+	 */
+	public IEditorContainer getEditorContainer();
+	
+	/**
 	 * 返回编辑器的长标题。长标题通常显示在Shell的标题上。
 	 * 
 	 * @return
@@ -115,4 +122,10 @@ public interface IEditor {
 	 * @return
 	 */
 	public Image getIcon();
+	
+	/**
+	 * 触发自己的状态改变事件。
+	 * 
+	 */
+	public void fireStateChanged();
 }

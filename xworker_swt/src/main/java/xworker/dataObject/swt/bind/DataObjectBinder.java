@@ -10,6 +10,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
@@ -18,6 +19,8 @@ import org.xmeta.util.UtilData;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectListener;
+import xworker.dataObject.swt.bind.BindItemFactory.ItemInfo;
+import xworker.lang.VariableDesc;
 import xworker.task.TaskManager;
 
 public class DataObjectBinder implements DataObjectListener{
@@ -165,6 +168,10 @@ public class DataObjectBinder implements DataObjectListener{
 		}
 	}
 	
+	public DataObject getDataObject() {
+		return dataObject;
+	}
+
 	/**
 	 * 执行更新，为避免更新过于频繁，指定
 	 */
@@ -239,11 +246,93 @@ public class DataObjectBinder implements DataObjectListener{
 				//	binder.items.add(function);
 				//}
 			}catch(Exception e) {
-				logger.warn("Create BinderItem error, path=" + child.getMetadata().getPath(), e);
-				
+				logger.warn("Create BinderItem error, path=" + child.getMetadata().getPath(), e);				
 			}
 		}
 		
+		//通过rules设置绑定
+		String rules = self.doAction("getRules", actionContext);
+		if(rules != null && !"".equals(rules)) {
+			String[] lines = rules.split("[\n]");
+			for(String line : lines) {
+				line = line.trim();
+				if("".equals(line) || line.startsWith("#") || line.startsWith("//")) {
+					//空行或者是注释
+					continue;
+				}
+				
+				//分解规则，widget:attrName1>type1,attrName2>type2....
+				int index = line.indexOf(":");
+				if(index == -1) {
+					continue;
+				}
+				//控件名
+				String widgetName = line.substring(0,index).trim();
+				Widget widget = actionContext.getObject(widgetName);
+				if(widget == null) {
+					continue;
+				}
+				
+				//配置
+				String itemConfigStr = line.substring(index + 1, line.length());
+				for(String itemConfig : itemConfigStr.split("[,]")) {
+					itemConfig = itemConfig.trim();
+					if("".equals(itemConfig)) {
+						continue;
+					}
+					
+					String attrName = null;
+					String typeName = null;
+					index = itemConfig.indexOf(">");
+					if(index != -1) {
+						attrName = itemConfig.substring(0, index).trim();
+						typeName = itemConfig.substring(index + 1, itemConfig.length()).trim();
+					}else {
+						attrName = itemConfig;
+						typeName = itemConfig;
+					}
+					
+					Map<String, String> params = new HashMap<String, String>();
+					params.put("valuePath", attrName);
+					BinderItem binderItem = BindItemFactory.create(typeName, params, widget, actionContext);
+					if(binderItem != null) {
+						binder.addBinderItem(binderItem);
+					}
+				}				
+			}
+		}
 		return binder;
+	}
+	
+	public static List<VariableDesc> createVarDescs(ActionContext actionContext){
+		Thing thing = actionContext.getObject("self");
+		
+		List<VariableDesc> descs = new ArrayList<VariableDesc>();
+		
+		//获取数据对象的属性描述
+		Object obj  = thing.doAction("getDataObject", actionContext);
+		Thing dataObjectDesc = null;
+		if(obj instanceof DataObject) {
+			dataObjectDesc = ((DataObject) obj).getMetadata().getDescriptor();
+		}else if(obj instanceof Thing) {
+			dataObjectDesc = (Thing) obj;
+		}
+		if(dataObjectDesc != null) {
+			for(Thing attr : dataObjectDesc.getChilds("attribute")) {
+				VariableDesc var = VariableDesc.create(attr.getMetadata().getName(), String.class);
+				var.setScope(VariableDesc.SCOPE_NODE);
+				descs.add(var);
+			}
+		}
+		
+		//获取条目类型的定义
+		Map<String, ItemInfo> itemInfos = BindItemFactory.getItemInfos();
+		for(String name : itemInfos.keySet()) {
+			VariableDesc var = VariableDesc.create(name, String.class);
+			var.setScope(VariableDesc.SCOPE_NODE);
+			descs.add(var);
+		}
+		
+		return descs;
 	}
 }

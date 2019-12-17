@@ -3,6 +3,7 @@ package xworker.swt.xworker;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -34,11 +35,14 @@ import javassist.NotFoundException;
 import ognl.OgnlException;
 import xworker.java.assist.Javaassist;
 import xworker.java.assist.ParameterInfo;
+import xworker.lang.VariableDesc;
+import xworker.swt.design.Designer;
 import xworker.swt.util.CodeUtils;
 import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.xwidgets.SelectContent;
 import xworker.swt.xworker.codeassist.CodeHelper;
+import xworker.swt.xworker.codeassist.VariableProvider;
 import xworker.swt.xworker.codeassist.variableproviders.CachedVaribleProvider;
 
 /**
@@ -47,7 +51,7 @@ import xworker.swt.xworker.codeassist.variableproviders.CachedVaribleProvider;
  * @author Administrator
  *
  */
-public class CodeAssistor implements KeyListener, DisposeListener{
+public class CodeAssistor implements KeyListener, DisposeListener, VariableProvider{
 	private static Logger logger = LoggerFactory.getLogger(CodeAssistor.class);
 	private static String key = "xworker.swt.xworker.CodeAssistor";
 	private static String keyThing = "xworker.swt.xworker.CodeAssistor_Thing";
@@ -67,6 +71,7 @@ public class CodeAssistor implements KeyListener, DisposeListener{
 	ActionContext varActionContext;
 	//TextStyle paramTextStyle = new TextStyle();
 	Thing thing;
+	Map<String, VariableDesc> varCache = new HashMap<String, VariableDesc>();
 	
 	
 	public static void initCaches(String path, ActionContext actionContext){
@@ -146,9 +151,46 @@ public class CodeAssistor implements KeyListener, DisposeListener{
 		return CodeHelper.getHelpContents(str, offset, thing, actionContext);
 	}
 	
-	public void putCache(Control text, String name, Class<?> cls){
+	public void putCache(Control text, String name, Class<?> cls, boolean addDesc){
+		if(name == null || "".equals(name) || cls == null) {
+			return;
+		}
+		
+		//放到自己的缓存里
+		varCache.put(name, VariableDesc.create(name, cls));
+		
+		//修改模型，加入持久的变量描述，只在事物编辑器里生效
 		Thing thing = (Thing) text.getData(keyThing);
-		CachedVaribleProvider.instance.putCache(thing, name, cls);
+		
+		if(thing != null && Designer.isAttribute(text) && addDesc) {
+			Thing descs = thing.getThing("VariablesDescs@0");
+			if(descs == null) {
+				descs = new Thing("xworker.lang.MetaThing/@VariablesDesc");
+				thing.addChild(descs);
+			}
+			
+			boolean have = false;
+			for(Thing desc : descs.getChilds()) {
+				if("Variable".equals(desc.getThingName()) && name.equals(desc.getString("varName"))) {
+					//修改已经有的
+					desc.put("type", "object");
+					desc.put("className", cls.getName());
+					have = true;
+					break;
+				}
+			}
+			
+			if(!have) {
+				Thing desc = new Thing("xworker.lang.MetaThing/@VariablesDesc/@Object");
+				desc.put("name", name);
+				desc.put("varName", name);
+				desc.put("type", "object");
+				desc.put("className", cls.getName());
+				descs.addChild(desc);
+			}
+		}
+		
+		//CachedVaribleProvider.instance.putCache(thing, name, cls);
 		/*
 		Map<String, Class<?>> cache = getCache(thing);
 		if(cache != null){	
@@ -319,7 +361,7 @@ public class CodeAssistor implements KeyListener, DisposeListener{
 			setContents(object, text, getHelpContents(text, actionContext));
 
 			event.doit = false;
-		}else if((event.character == 't' || event.character == 'T') && event.stateMask == SWT.ALT){
+		}else if((event.character == 't' || event.character == 'T') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
 			//弹出类型选择，手动设置变量的类型
 			openSetTypeShell(text);
 			event.doit = false;
@@ -756,5 +798,16 @@ public class CodeAssistor implements KeyListener, DisposeListener{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public List<VariableDesc> getVariables(String code, int offset, List<String> statements, Thing thing,
+			ActionContext actionContext) {
+		List<VariableDesc> vars = new ArrayList<VariableDesc>();
+		for(String key : varCache.keySet()) {
+			vars.add(varCache.get(key));
+		}
+		
+		return vars;
 	}
 }

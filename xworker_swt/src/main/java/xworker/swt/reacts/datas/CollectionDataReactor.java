@@ -16,12 +16,12 @@ public class CollectionDataReactor extends DataReactor{
 		Object value = self.doAction("getValues", actionContext);
 		if(value instanceof List<?>) {			
 			datas.addAll((List<Object>) value);
-			fireLoaded();
+			fireLoaded(null);
 		}else if(value instanceof Collection) {
 			setCollection((Collection<?>) value);
 		}else if(value != null) {
 			datas.add(value);
-			fireLoaded();
+			fireLoaded(null);
 		}
 	}
 	
@@ -29,14 +29,14 @@ public class CollectionDataReactor extends DataReactor{
 		datas.clear();
 		
 		datas.addAll(values);
-		fireLoaded();
+		fireLoaded(null);
 	}
 	
 	public void setCollection(Collection<?> c) {
 		datas.clear();
 		datas.addAll(c);
 		
-		fireLoaded();
+		fireLoaded(null);
 	}
 
 	public static Object create(ActionContext actionContext) {

@@ -149,6 +149,12 @@ public class ShellCreator {
 		    shell = new Shell(style);
 		}
 		
+		//绑定到designer，使用鼠标中键双击可以打开菜单，可以通过菜单编辑模型等
+		if(!shell.isDisposed()){
+		    Designer.attach(shell, self.getMetadata().getPath(), actionContext);
+		}
+		
+		
 		//更新属性和创建子节点等
 		actionContext.peek().put("shell", shell);
 		actionContext.peek().put("self", self);
@@ -207,12 +213,7 @@ public class ShellCreator {
 				});
 			}
 			
-			
-			//绑定到designer，使用鼠标中键双击可以打开菜单，可以通过菜单编辑模型等
-			if(!shell.isDisposed()){
-			    Designer.attach(shell, self.getMetadata().getPath(), actionContext);
-			}
-			
+					
 			//打开设计窗口
 			if(isFirst && self.getBoolean("designDefaultOpen") && Designer.isEnabled()){
 				Designer.showDesignDialog(shell, null);

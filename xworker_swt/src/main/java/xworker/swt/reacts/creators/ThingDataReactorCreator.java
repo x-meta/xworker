@@ -2,6 +2,7 @@ package xworker.swt.reacts.creators;
 
 import java.util.Map;
 
+import org.eclipse.swt.widgets.Composite;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
@@ -11,6 +12,7 @@ import xworker.swt.reacts.DataReactor;
 import xworker.swt.reacts.DataReactorCreator;
 import xworker.swt.reacts.dataobject.DataObjectFormDataReactor;
 import xworker.swt.reacts.datas.DataStoreDataReactor;
+import xworker.swt.reacts.xworker.ObjectViewerDataReactor;
 import xworker.swt.reacts.xworker.ThingFormDataReactor;
 import xworker.swt.xworker.ThingForm;
 
@@ -42,6 +44,13 @@ public class ThingDataReactorCreator implements DataReactorCreator{
 								
 				return new ThingFormDataReactor(thingForm, self, actionContext);
 			}
+		}else if("ObjectViewer".equals(thingName)) {
+			Thing self = new Thing("xworker.swt.reactors.xworker.ObjectViewerDataReactor");
+			Map<String, String> params = UtilString.getParams(action);
+			self.getAttributes().putAll(params);
+			
+			Composite composite = thing.doAction("getControl", actionContext);
+			return new ObjectViewerDataReactor(thing, composite, self, actionContext);
 		}
 		
 		

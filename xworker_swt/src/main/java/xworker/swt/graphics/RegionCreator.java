@@ -9,6 +9,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.util.SwtUtils;
+
 public class RegionCreator {
 	public static void create(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -41,7 +43,7 @@ public class RegionCreator {
 		}
 		
 		//绑定到Shell
-		if(parent instanceof Shell){
+		if(parent instanceof Shell && SwtUtils.isRWT() == false){
 			((Shell) parent).setRegion(region);
 		}
 

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class TableDataReactor extends WidgetDataReactor implements Listener{
@@ -44,14 +45,14 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 		}
 		
 		if(datas.size() > 0) {
-			this.fireSelected(datas);
+			this.fireSelected(datas, getContext());
 		}else {
-			this.fireUnselected();
+			this.fireUnselected(getContext());
 		}
 	}
 
 	@Override
-	protected void widgetDoOnSelected(List<Object> datas) {
+	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
 		String type = self.getStringBlankAsNull("type");
 		if(!"dataStore".equals(type)) {
 			List<Integer> indices = new ArrayList<Integer>();
@@ -77,7 +78,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnUnselected() {
+	protected void widgetDoOnUnselected(DataReactorContext context) {
 		table.setSelection(new int[0]);
 	}
 
@@ -93,7 +94,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 	}
 	
 	@Override
-	protected void widgetDoOnAdded(int index, List<Object> datas) {
+	protected void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
 		String type = self.getStringBlankAsNull("type");
 		if(!"dataStore".equals(type)) {
 			if(index >=0 && index < table.getItemCount()) {
@@ -111,7 +112,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnRemoved(List<Object> datas) {
+	protected void widgetDoOnRemoved(List<Object> datas, DataReactorContext context) {
 		String type = self.getStringBlankAsNull("type");
 		if(!"dataStore".equals(type)) {
 			TableItem items[] = table.getItems();
@@ -130,7 +131,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnUpdated(List<Object> datas) {
+	protected void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
 		String type = self.getStringBlankAsNull("type");
 		if(!"dataStore".equals(type)) {
 			TableItem items[] = table.getItems();
@@ -147,7 +148,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 	}
 
 	@Override
-	protected void widgetDoOnLoaded(List<Object> datas) {
+	protected void widgetDoOnLoaded(List<Object> datas, DataReactorContext context) {
 		String type = self.getStringBlankAsNull("type");
 		if(!"dataStore".equals(type)) {
 			table.removeAll();
@@ -158,7 +159,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 			}
 		}
 		
-		this.fireUnselected();
+		this.fireUnselected(context);
 	}
 
 	public static Object create(ActionContext actionContext) {

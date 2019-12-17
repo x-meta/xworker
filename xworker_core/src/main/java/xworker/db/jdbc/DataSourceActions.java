@@ -34,12 +34,6 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
-import xworker.util.UtilData;
-
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
 public class DataSourceActions {
 	private static Logger logger = LoggerFactory.getLogger(DataSourceActions.class);
 		

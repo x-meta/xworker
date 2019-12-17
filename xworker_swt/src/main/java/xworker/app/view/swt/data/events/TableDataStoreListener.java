@@ -520,6 +520,7 @@ public class TableDataStoreListener {
         }
         tableItem.setText(texts);
         tableItem.setData(record);
+        tableItem.setData("dataStore", actionContext.get("store"));
         
         updateItemICF(self, tableItem, record, actionContext);
         
@@ -559,7 +560,7 @@ public class TableDataStoreListener {
 	 * @param actionContext
 	 */
 	private static void updateItemICF(Thing self,  TableItem item, DataObject record, ActionContext actionContext) {
-	    String icon = (String) record.doAction("getIcon", actionContext);
+	    String icon = (String) record.doAction("getIcon", actionContext, "tableItem", item);
         if(icon != null && !"".equals(icon)) {
         	Image image = SwtUtils.createImage(item.getParent(), icon, actionContext);
         	if(image != null) {
@@ -567,7 +568,7 @@ public class TableDataStoreListener {
         	}
         }
         
-        String color = (String) record.doAction("getColor", actionContext);
+        String color = (String) record.doAction("getColor", actionContext, "tableItem", item);
         if(color != null && !"".equals(color)) {
         	Color c = SwtUtils.createColor(item.getParent(), color, actionContext);
         	if(c != null) {
@@ -575,13 +576,16 @@ public class TableDataStoreListener {
         	}
         }
         
-        String value = (String) record.doAction("getFont", actionContext);
+        String value = (String) record.doAction("getFont", actionContext, "tableItem", item);
         if(value != null && !"".equals(value)) {
         	Font font = SwtUtils.createFont(item.getParent(), value, actionContext);
         	if(font != null) {
         		item.setFont(font);
         	}
         }
+        
+        //执行updateSWTTableItem
+        record.doAction("updateSWTTableItem", actionContext, "tableItem", item);
         
 	}
 	
@@ -624,6 +628,10 @@ public class TableDataStoreListener {
 			@SuppressWarnings("unchecked")
 			public void run(){
 			    try{
+			    	if(table.isDisposed()) {
+			    		return;
+			    	}
+			    	
 			        //先清空数据
 			        table.removeAll();
 			        DSSelectionListener.clear(table);

@@ -22,4 +22,13 @@ public class GridData {
 	public int rowspan;
 	
 	public Thing source;
+	
+	public GridData clone() {
+		GridData data = new GridData();
+		data.colspan = colspan;
+		data.rowspan = rowspan;
+		data.source = source;
+		
+		return data;
+	}
 }

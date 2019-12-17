@@ -445,4 +445,45 @@ public class ObjectViewer {
 			 }
 		 }
 	 }
+	 
+	 public static Composite getControl(ActionContext actionContext) {
+		 Thing self = (Thing) actionContext.get("self");
+		 ActionContext ac = (ActionContext) self.getData("actionContext");
+		 
+		 return ac.getObject("composite");
+	 }
+	 
+	 public static void addObject(ActionContext actionContext) {
+		 Thing self = (Thing) actionContext.get("self");
+		 ActionContext ac = (ActionContext) self.getData("actionContext");
+		 ((ActionContainer) ac.get("actions")).doAction("addObject", ac,
+				 "object", actionContext.get("object"), "name", actionContext.get("name"));
+	 }
+	 
+	 public static void addObjectAction(ActionContext actionContext) {
+		 Object object = actionContext.getObject("object");
+		 Tree dataTree = (Tree) actionContext.get("dataTree");
+		 ActionContainer actions = (ActionContainer) actionContext.get("actions");
+		 String name = actionContext.getObject("name");
+		 
+		 String clsName = object != null ? object.getClass().getName() : "null";
+	     String value = String.valueOf(object);
+	     if(name == null) {
+	    	 name = "object";
+	     }
+	     
+	     TreeItem  treeItem = new TreeItem(dataTree, SWT.NONE);
+	     treeItem.setText(new String[]{name, value, clsName});
+	     treeItem.setData(object);
+	     treeItem.setData("name", name);
+	     
+	     actions.doAction("initDataTree", UtilMap.toMap("treeItem", treeItem, "value",  object, "context", new HashMap<Object, Object>()));
+	 }
+	 
+	 public static void removeAll(ActionContext actionContext) {
+		 Thing self = (Thing) actionContext.get("self");
+		 ActionContext ac = (ActionContext) self.getData("actionContext");
+		 Tree dataTree = (Tree) ac.get("dataTree");
+		 dataTree.removeAll();
+	 }
 }

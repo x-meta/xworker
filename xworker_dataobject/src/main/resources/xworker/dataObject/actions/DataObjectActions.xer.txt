@@ -1,4 +1,4 @@
-^1563498603644
+^1576289392245
 @
 sname
 DataObjectActions
@@ -775,6 +775,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -783,8 +785,41 @@ false
   public
   sinheritDescription
   false
-  sdescription
-  <p>调用数据对象的load方法，返回装载后的数据对象。</p>
+  Sdescription
+#$@text#$@
+<p>调用数据对象的load方法。比如通过主键加载数据中的对象。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 返回装载后的数据对象，如果数据对象不存在，返回null。</p>
+
+<p><strong>获取数据对象的方法</strong></p>
+
+<ol>
+	<li>通过getDataObject()方法获取数据对象。</li>
+	<li>通过getDataObjectDesc()方法获取数据对象描述者，如果存在则创建一个数据对象。</li>
+</ol>
+
+<p><strong>设置数据对象的值的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通常是设置主键。如果数据对象存在，会遍历执行子节点，如果子节点的返回值不为null，那么用子节点的名字作为key，放入到数据对象中。&nbsp;&nbsp;</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>DataObject getDataObject()</strong><br />
+	返回要执行load()方法的数据对象，默认通过dataObjectVar属性的设置获取。<br />
+	&nbsp;</li>
+	<li><strong>Thing getDataObjectDesc()</strong><br />
+	返回数据对象的描述者，默认通过dataObjectDesc属性的设置获取。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
   sth_createIndex
   true
   sth_registThing
@@ -815,17 +850,27 @@ false
       false
       suseOuterJava
       true
+      suseInnerJava
+      false
       souterClassName
       xworker.dataObject.actions.DataObjectActionsActions
       smethodName
       run4
       sdisableGlobalContext
       false
+      sattributeTemplate
+      false
       sinterpretationType
       Action
       svarScope
       Local
+      screateLocalVarScope
+      false
       ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
       false
       sdescriptors
       xworker.lang.actions.Actions/@JavaAction
@@ -835,6 +880,108 @@ false
       false
       sid
       run
+      @/@Load/@actions/@getDataObjectDesc
+      sname
+      getDataObjectDesc
+      sattributeName
+      dataObjectDesc
+      schildThingFirstChild
+      false
+      sreturnSelf
+      false
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getDataObjectDesc
+      @/@Load/@actions/@getDataObject
+      sname
+      getDataObject
+      sattributeName
+      dataObjectVar
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getDataObject
     @/@Load/@name
     sname
     name
@@ -909,6 +1056,14 @@ false
     @/@Load/@varName
     sname
     varName
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    private
     sreadOnly
     false
     sinheritDescription
@@ -923,6 +1078,8 @@ false
     true
     LallowNegative
     true
+    snotXmlAttribute
+    false
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute
     sth_createIndex
@@ -931,6 +1088,98 @@ false
     false
     sid
     varName
+    @/@Load/@dataObject
+    sname
+    dataObjectDesc
+    sinputtype
+    dataSelector
+    ssize
+    60
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    dataObject
+    @/@Load/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    description
   @/@Delete
   sname
   Delete
@@ -4599,8 +4848,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -4642,8 +4889,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -4687,8 +4932,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -5977,8 +6220,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -6378,8 +6619,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -6423,8 +6662,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -6822,8 +7059,6 @@ if(dataObject instanceof DataObject){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -6865,8 +7100,6 @@ if(dataObject instanceof DataObject){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -7204,8 +7437,6 @@ if(dataObject instanceof DataObject){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -7247,8 +7478,6 @@ if(dataObject instanceof DataObject){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -7582,8 +7811,6 @@ def transfer(source, self, targetDesc, actionContext){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -7625,8 +7852,6 @@ def transfer(source, self, targetDesc, actionContext){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8062,8 +8287,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8105,8 +8328,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8148,8 +8369,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8193,8 +8412,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8616,8 +8833,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8661,8 +8876,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -8710,8 +8923,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -9151,8 +9362,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -9196,8 +9405,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -9245,8 +9452,6 @@ try{
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -9558,3 +9763,447 @@ try{
     false
     sid
     DataObjects
+  @/@SetAttributes
+  sname
+  SetAttributes
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.dataObject
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>设置一个数据对象的属性。</p>
+
+<p><strong>返回值：void</strong></p>
+
+<p><strong>设置属性的方法</strong></p>
+
+<ul>
+	<li><strong>attributes</strong><br />
+	简单设置属性的文本。参看attributes属性的文档。<br />
+	&nbsp;</li>
+	<li><strong>子节点</strong><br />
+	字节点的名字是属性的名字，子节点是动作，执行后的值是属性的值。&nbsp;&nbsp;<br />
+	会被忽略的特殊子节点，事物名为actions的子节点，名字是_init的子节点。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getAttributes()</strong><br />
+	返回文本属性设置。<br />
+	&nbsp;</li>
+	<li><strong>DataObject getDataObject()</strong><br />
+	返回要设置的数据对象。<br />
+	&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp; &nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  SetAttributes
+    @/@SetAttributes/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@SetAttributes/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      suseOuterJava
+      true
+      suseInnerJava
+      false
+      souterClassName
+      xworker.dataObject.actions.DataObjectActionsActions
+      smethodName
+      setAttributes
+      sdisableGlobalContext
+      false
+      sattributeTemplate
+      false
+      sinterpretationType
+      Action
+      svarScope
+      Global
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      run
+      @/@SetAttributes/@actions/@getDataObject
+      sname
+      getDataObject
+      sattributeName
+      dataObject
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getDataObject
+      @/@SetAttributes/@actions/@getAttributes
+      sname
+      getAttributes
+      sattributeName
+      attributes
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getAttributes
+    @/@SetAttributes/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    name
+    @/@SetAttributes/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    label
+    @/@SetAttributes/@dataObject
+    sname
+    dataObject
+    ssize
+    50
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    dataObject
+    @/@SetAttributes/@attributes
+    sname
+    attributes
+    sinputtype
+    textarea
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    attributes
+    @/@SetAttributes/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    description

@@ -13,7 +13,7 @@ import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
 
 public class ThingDataStoreListener {
-	public static final String TAG = "ThingDataStoreListener";
+	public static final String TAG = ThingDataStoreListener.class.getName();
 		
 	@SuppressWarnings("unchecked")
 	public static void onInsert(ActionContext actionContext) {

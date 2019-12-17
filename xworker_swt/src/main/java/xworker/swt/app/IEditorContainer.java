@@ -109,4 +109,25 @@ public interface IEditorContainer {
 	 * @param editor
 	 */
 	public void close(IEditor editor);
+	
+	/**
+	 * 添加一个编辑器监听器。
+	 * 
+	 * @param editorListener
+	 */
+	public void addIEditorListener(IEditorListener editorListener);
+	
+	/**
+	 * 移除一个编辑器监听器。
+	 * 
+	 * @param editorListener
+	 */
+	public void removeIEditorListener(IEditorListener editorListener);
+	
+	/**
+	 * 触发一个编辑器状态改变的事件。
+	 * 
+	 * @param editor
+	 */
+	public void fireStateChanged(IEditor editor);
 }

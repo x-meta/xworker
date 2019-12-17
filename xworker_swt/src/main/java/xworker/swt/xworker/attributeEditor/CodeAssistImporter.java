@@ -55,7 +55,7 @@ public class CodeAssistImporter {
 		    int index = clsName.lastIndexOf(".");
 		    if(index != -1){
 		        clsName = clsName.substring(index + 1, clsName.length());
-		        assistor.putCache(text, clsName, cls);
+		        assistor.putCache(text, clsName, cls, false);
 		    }
 		}
 

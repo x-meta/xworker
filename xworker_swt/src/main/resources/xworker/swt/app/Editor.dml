@@ -1,4 +1,4 @@
-%1573543246234
+%1575894751263
 @
 sname=Editor
 slabel=Editor
@@ -12,40 +12,43 @@ Sdescription=
 #$@text#$@
 <p><strong>编辑器</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 通常是用于编辑数据的组件。编辑器的组成如下：</p>
+<p>&nbsp;&nbsp;&nbsp; 用在应用的编辑区域的组件，通常用于编辑数据，通过EditorContainer打开。编辑器的组成如下：</p>
 
 <ul>
-	<li><strong>主编辑区域</strong>，见EditorComposite子节点。</li>
+	<li><strong>编辑器界面</strong>，见EditorComposite子节点。</li>
 	<li><strong>菜单</strong>，见MenuConfig子节点。</li>
 	<li><strong>工具栏</strong>，见CoolBarConfig子节点。</li>
 	<li><strong>状态栏</strong>，见StatusBarConfig子节点。</li>
-	<li><strong>动作容器</strong>，见ActionContainer子节点。</li>
+	<li><strong>动作容器</strong>，见ActionContainer子节点。&nbsp;&nbsp;&nbsp;</li>
 </ul>
-
-<p>&nbsp;&nbsp;&nbsp; 如果一个编辑器无界面，比如系统编辑是在操作系统里打开文件，此时应重写方法hasComposite()并返回false，同时应实现setConent方法。</p>
 
 <p><strong>打开编辑器的方法</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 编辑器是由EditorContainer.openEditor(String id, Thing editor, Map&lt;String, Object&gt; params)方法打开的，会根据Editor模型自动创建相关控件，OpenEditor方法返回的是IEditor对象。</p>
 
-<p><strong>设置编辑内容的方法</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 通过IEditor.setContent(Map&lt;String, Object&gt; params)方法设置要编辑的内容。</p>
-
 <p><strong>编辑器的实现</strong></p>
 
-<ol>
-	<li><strong>SWT控件</strong>，通过子节点编写编辑区、菜单、工具栏和状态栏等SWT控件模型，编辑区一定要设置，其它没有则可以不用设置。</li>
-	<li><strong>方法和行为</strong>，通过ActionContainer子节点实现编辑器的行为，有哪些行为可以参看ActionContainer子节点的文档。</li>
-</ol>
+<ul>
+	<li><strong>实现</strong><br />
+	添加相应的子节点，其中<a href="do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.swt.app.Editor/@ActionContainer">ActionContainer</a>子节点是编辑器的行为定义。<br />
+	&nbsp;</li>
+	<li><strong>无界面编辑器</strong><br />
+	如果一个编辑器无界面，比如系统编辑是在操作系统里打开文件，此时应重写方法hasComposite()并返回false，同时应实现setContent()方法。<br />
+	&nbsp;</li>
+	<li><strong>注册</strong><br />
+	新的编辑器应以child方式注册到xworker.swt.app.Editors下。</li>
+</ul>
 
-<p><strong>创建数据参数</strong></p>
+<p><strong>根据内容使用那个编辑器</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 编辑器通常可以用来编辑数据，要想通过指定数据打开对应的编辑器，编辑器需要实现下面的方法：</p>
+<p>&nbsp;&nbsp;&nbsp; 某些应用需要给定内容然后打开特定的编辑器，该功能需要编辑器使用createDataParams方法。</p>
 
 <ul>
 	<li><strong>Map&lt;String, Object&gt; createDataParams(Object data)</strong><br />
-	根据数据创建打开编辑器的相关参数。如果不支持编辑该数据，那么应返回null。</li>
+	如果支持编辑给定的数据，需要实现createDatapram方法，根据数据创建打开编辑器的相关参数。如果不支持编辑该数据，那么应返回null。<br />
+	&nbsp;</li>
+	<li><strong>优先级(priority属性)</strong><br />
+	数值越小优先级越高。比如如果一个编辑器特定用来编辑Java文件，那么该编辑就应该比通用的文本编辑的优先级更高，这样才能保证被它打开Java文件而不是通用的文本编辑器。</li>
 </ul>
 
 <p><strong>变量上下文</strong></p>
@@ -84,6 +87,8 @@ Sdescription=
 	<li><strong>void editorModified(ActionContainer editorActions) </strong><br />
 	由编辑器调用，通过编辑器容器编辑器正在编辑的内容已修改。</li>
 </ul>
+
+<p>&nbsp;&nbsp;&nbsp; 有时EditorContainer可能没有菜单、工具栏和状态栏，此时编辑器可以考虑在编辑器界面加入菜单、工具栏和状态栏等。</p>
 
 <p>&nbsp;</p>
 #$@text#$@
@@ -241,6 +246,30 @@ sth_mark=false
         sth_fileMonitor=false
         sth_mark=false
         sid=params
+    @/@actions/@getExampleParams
+    sname=getExampleParams
+    sattributeName=exampleParams
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetJsonObject
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getExampleParams
   @/@name
   sname=name
   sshowLabel=true
@@ -306,6 +335,39 @@ sth_mark=false
   sth_fileMonitor=false
   sth_mark=false
   sid=priority
+  @/@exampleParams
+  sname=exampleParams
+  sinputtype=textarea
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  Sdefault=
+#$@text#$@
+{
+}
+#$@text#$@
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>示例参数，在注册浏览器中查看一个Editor时会生成示例，会用到这个参数。</p>
+
+<p>JSON格式字符串。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=exampleParams
   @/@description
   sname=description
   sinputtype=html

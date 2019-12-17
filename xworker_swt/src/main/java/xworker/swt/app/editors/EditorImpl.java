@@ -10,6 +10,7 @@ import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 
 import xworker.swt.app.IEditor;
+import xworker.swt.app.IEditorContainer;
 
 /**
  * Editor的帮助类。Editor的实现一般放在ActionContainer中，通过帮助类便于调用这些方法。
@@ -28,18 +29,23 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	long lastActiveTime = 0;
 	String id;
 	Control control;
+	IEditorContainer editorContainer;
 	
-	public EditorImpl(Thing editor, String id, ActionContext parentContext) {
+	public EditorImpl(IEditorContainer editorContainer, Thing editor, String id, ActionContext parentContext) {
+		this.editorContainer = editorContainer;
 		this.editor = editor;
 		this.id = id;
 		this.actionContext = new ActionContext();
 		actionContext.put("parentContext", parentContext);
+		actionContext.put("editor", this);
 	}
 	
-	public EditorImpl(Thing editor, ActionContainer actions, ActionContext actionContext) {
+	public EditorImpl(IEditorContainer editorContainer, Thing editor, ActionContainer actions, ActionContext actionContext) {
+		this.editorContainer = editorContainer;
 		this.editor = editor;
 		this.actions = actions;
 		this.actionContext = actionContext;
+		actionContext.put("editor", this);
 	}
 	
 	/**
@@ -221,5 +227,15 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 
 	public Control getControl() {
 		return control;
+	}
+
+	@Override
+	public IEditorContainer getEditorContainer() {
+		return editorContainer;
+	}
+
+	@Override
+	public void fireStateChanged() {
+		editorContainer.fireStateChanged(this);
 	}
 }

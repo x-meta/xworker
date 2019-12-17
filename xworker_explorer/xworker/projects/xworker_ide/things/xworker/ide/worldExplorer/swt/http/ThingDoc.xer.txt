@@ -1,4 +1,4 @@
-^1547631311740
+^1576133081754
 @
 sname
 ThingDoc
@@ -136,7 +136,7 @@ actionContext.g().put("actions", thing.getActionsThings());
 //返回真正的有文档的事物
 def realThing = thing;
 while(true){
-    def description = realThing.getStringBlankAsNull("description");
+    description = thing.getMetadata().getDescription(actionContext);
     if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
     	//是否是继承描述
     	def extendsThing = realThing.getExtends();
@@ -149,6 +149,8 @@ while(true){
 	    break;
 	}
 }
+
+actionContext.put("description", description);
 //println("realthing===========");
 actionContext.g().put("realThing", realThing);		
 return "success";
@@ -158,6 +160,8 @@ return "success";
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false

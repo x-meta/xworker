@@ -83,7 +83,7 @@ public abstract class BinderItem implements DisposeListener{
 			if(actionName != null) {
 				return dataObject.doAction(actionName, actionContext);
 			}else {
-				return null;
+				valuePath = thing.getMetadata().getName();
 			}
 		}
 		

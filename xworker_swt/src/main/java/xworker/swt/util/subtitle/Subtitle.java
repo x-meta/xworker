@@ -271,7 +271,9 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 			gc.setAntialias(SWT.ON);
 			gc.setBackground(borderColor);
 			gc.fillPath(path);
-			gc.setForeground(color);
+			if(color != null) {
+				gc.setForeground(color);
+			}
 	        gc.drawPath(path);
 	        //gc.setForeground(black);
 	        //

@@ -1,0 +1,462 @@
+%1575959494717
+@
+sname=ThingRegistEditor
+slabel=ThingRegistEditor
+spriority=-500
+SexampleParams=
+#$@text#$@
+{
+    thing:"xworker.command.Root"
+}
+#$@text#$@
+Sdescription=
+#$@text#$@
+<p>事物注册浏览器。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>thing： Thing 或 String</strong><br />
+	注册索引事物。<br />
+	&nbsp;</li>
+	<li><strong>type: String</strong><br />
+	注册类型，默认为child。<br />
+	&nbsp;</li>
+	<li><strong>descritporForNewThing&nbsp;: String</strong><br />
+	创建新事物时的可选描述者。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.app.Editor
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.swt.app.Editors
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=xworker
+sth_fileMonitor=false
+sth_deprecated=false
+sth_mark=false
+sth_registQueryOnlySelf=false
+  @/@actions1
+  sname=actions
+  sdescriptors=xworker.swt.app.Editor/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@createDataParams
+    sname=createDataParams
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import xworker.swt.app.IEditor;
+
+if(data instanceof Thing){
+    if(data.isThing("xworker.swt.xworker.ThingRegistThing")){
+        def params = ["thing": data];
+        params.put(IEditor.EDITOR_THING, world.getThing("xworker.swt.app.editors.RegistThingEditor"));
+        params.put(IEditor.EDITOR_ID, "ThingRegist:" + data.getMetadata().getPath());
+        return params;
+    }
+}
+
+return null;
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=createDataParams
+  @/@EditorComposite
+  sname=EditorComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@EditorComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=EditorComposite
+    @/@EditorComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=FillLayout
+    @/@EditorComposite/@thingRegistor
+    sname=thingRegistor
+    sregistType=child
+    sparent=false
+    ssearchByKeywords=true
+    sshowContent=true
+    scontentDisplayType=TabFolder
+    sforceUseDefaultOpenMethod=false
+    sshowDescBrowser=false
+    sdescBrowserRight=false
+    sautoLoad=false
+    scache=true
+    scheck=false
+    sdescritporForNewThing=xworker.swt.xworker.ThingRegistThing
+    sdescritporChilds=false
+    sdescriptors=xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=thingRegistor
+      @/@EditorComposite/@thingRegistor/@actions
+      sname=actions
+      sdescriptors=xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@EditorComposite/@thingRegistor/@actions/@selected
+        sname=selected
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+if(actionContext.get("thing") != null && actionContext.get("topicBrowser") != null){
+    def url = XWorkerUtils.getThingDescUrl(thing);
+    topicBrowser.setUrl(url);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=selected
+        @/@EditorComposite/@thingRegistor/@actions/@loaded
+        sname=loaded
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def thing = null;
+if(actionContext.get("first") == null){
+    actionContext.g().put("first", false);
+    
+    if(actionContext.get("path") != null){
+        for(tthing in things){
+            //println tthing.getMetadata().getPath();
+            if(tthing.getMetadata().getPath() == path){
+                thing = tthing;
+                break;
+            }
+        }
+    }
+}
+
+//println path;
+//println thing;
+if(thing != null){
+    def url = XWorkerUtils.getThingDescUrl(thing);
+    browser.setUrl(url);
+    
+    thingRegist.doAction("selectThing", actionContext, "thing", thing);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=loaded
+  @/@OutlineComposite
+  sname=OutlineComposite
+  sBORDER=false
+  sH_SCROLL=false
+  sV_SCROLL=false
+  sNO_BACKGROUND=false
+  sNO_FOCUS=false
+  sNO_MERGE_PAINTS=false
+  sNO_REDRAW_RESIZE=false
+  sNO_RADIO_GROUP=false
+  sEMBEDDED=false
+  sDOUBLE_BUFFERED=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  spack=false
+  svisible=true
+  sdescriptors=xworker.swt.app.Editor/@OutlineComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=OutlineComposite
+    @/@OutlineComposite/@FillLayout
+    sname=FillLayout
+    stype=SWT.HORIZONTAL
+    sdescriptors=xworker.swt.Layouts/@FillLayout
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=FillLayout
+    @/@OutlineComposite/@topicBrowser
+    sname=topicBrowser
+    sMOZILLA=false
+    sWEBKIT=false
+    sjavascriptEnabled=true
+    sdescriptors=xworker.swt.Widgets/@Browser
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=topicBrowser
+  @/@actions
+  sname=actions
+  sextends=xworker.swt.app.editors.NoopActionContainer
+  sdescriptors=xworker.swt.app.Editor/@ActionContainer
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@setContent
+    sname=setContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//事物参数
+def thing = params.thing;
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+if(thing == null){
+    log.warn("RegistThingEdtior: thing is null");
+    return;
+}
+actionContext.g().put("thing", thing);
+
+def type = params.type;
+if(type == null || type == ""){
+    type = "child";
+}
+
+thingRegistor.doAction("init", actionContext, "thing", thing, "type", type, 
+     "autoLoad", true, "keywords", null, "descritporForNewThing", params.descritporForNewThing);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=setContent
+      @/@actions/@setContent/@Variables
+      sname=Variables
+      sdescriptors=xworker.lang.actions.Inout/@Variables
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=Variables
+        @/@actions/@setContent/@Variables/@log
+        sname=log
+        stagName=xworker.swt.app.editors.ThingRegistEditor/@actions/@setContent
+        saction=true
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=log
+    @/@actions/@isSameContent
+    sname=isSameContent
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def thing = params.thing;
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+
+return thing == actionContext.get("thing");
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=isSameContent
+    @/@actions/@getTitle
+    sname=getTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("thing") != null){
+    return thing.getMetadata().getPath();
+}else{
+    return "No Regit Thing";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getTitle
+    @/@actions/@getSimpleTitle
+    sname=getSimpleTitle
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+if(actionContext.get("thing") != null){
+    return thing.getMetadata().getLabel();
+}else{
+    return "No Regit Thing";
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getSimpleTitle
+    @/@actions/@getOutline
+    sname=getOutline
+    svarName=OutlineComposite
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=getOutline

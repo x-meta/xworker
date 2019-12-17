@@ -21,7 +21,12 @@ public class DataEditorProvider {
 	 * @param actionContext
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static Map<String, Object> createDataParams(Object data, ActionContext actionContext){
+		if(data instanceof Map) {
+			return (Map<String, Object>) data;
+		}
+		
 		if(actionContext == null) {
 			actionContext = new ActionContext();
 		}

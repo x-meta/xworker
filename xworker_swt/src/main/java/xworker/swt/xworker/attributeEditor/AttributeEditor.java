@@ -1,6 +1,8 @@
 package xworker.swt.xworker.attributeEditor;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -17,6 +19,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.ThingMetadata;
+import org.xmeta.util.ActionContainer;
+import org.xmeta.util.UtilString;
 
 import xworker.swt.design.Designer;
 import xworker.swt.editor.LabelToolTipListener;
@@ -157,10 +161,51 @@ public abstract class AttributeEditor {
 		composite.pack();
 	}
 	
+	/**
+	 * 返回编辑器的扩展参数，如果没有设置返回null。
+	 * 
+	 * @return
+	 */
+	public String getParamsString() {
+		return attribute.getStringBlankAsNull("inputattrs"); 
+	}
+	
+	/**
+	 * 返回编辑的扩展参数，默认是x1=y1&x2=y2....的格式，转成Map<String, String>。
+	 * 
+	 * 通过size() == 0来判断是否有设置过参数。
+	 * 
+	 * @return 
+	 */
+	public Map<String, String> getParams(){
+		String inputAttrs = getParamsString();
+		if(inputAttrs == null) {
+			return Collections.emptyMap();
+		}else {
+			return UtilString.getParams(inputAttrs, "&");
+		}
+	}
+	
+	/**
+	 * 返回编辑的扩展参数，默认是x1=y1delimiterx2=y2delimiter....的格式，转成Map<String, String>。
+	 * 通过size() == 0来判断是否有设置过参数。
+	 * 
+	 * @return
+	 */
+	public Map<String, String> getParams(String delimiter){
+		String inputAttrs = getParamsString();
+		if(inputAttrs == null) {
+			return Collections.emptyMap();
+		}else {
+			return UtilString.getParams(inputAttrs, delimiter);
+		}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void create(Composite parent, FormModifyListener modifyListener, Listener defaultSelection) {
-		createLabel(parent);
+	public void create(Composite parent, FormModifyListener modifyListener, Listener defaultSelection, boolean formNoLabel) {
+		createLabel(parent, formNoLabel);
 		
+		@SuppressWarnings("unused")
 		Control editorControl = null;
 		String addonLabel = attribute.getStringBlankAsNull("addonLabel");
 		if(addonLabel != null) {
@@ -176,7 +221,10 @@ public abstract class AttributeEditor {
 			composite.setLayout(layout);
 			
 			//composite.setLayoutData(editorControl.getLayoutData());
-			
+			//创建控件时
+			xworker.swt.form.GridData fGridData = this.xgridData.clone();
+			this.xgridData.colspan = 1;
+			this.xgridData.rowspan = 1;			
 			Control control = createControl(composite, modifyListener, defaultSelection);
 			
 			Label label = new Label(composite, SWT.None);
@@ -195,9 +243,24 @@ public abstract class AttributeEditor {
 		    	control = control.getParent();
 		    }
 		    
-		    GridData data = (GridData) control.getLayoutData();
-		    System.out.println(data);
-		    composite.setLayoutData(control.getLayoutData());
+		    composite.layout();		    
+		    GridData data = (GridData) control.getLayoutData();		   
+		    GridData gdata = new GridData();
+		    gdata.heightHint = data.heightHint;
+		    gdata.horizontalAlignment = data.horizontalAlignment;
+		    gdata.horizontalSpan = fGridData.colspan;
+		    gdata.minimumHeight = data.minimumHeight;
+		    gdata.minimumWidth = data.minimumWidth;
+		    gdata.verticalAlignment = data.verticalAlignment;
+		    gdata.verticalSpan = fGridData.rowspan;		    
+		    gdata.widthHint = data.widthHint;
+		    if(gdata.widthHint > 0) {
+		    	gdata.widthHint = data.widthHint + 35 + label.getSize().x;
+		    }
+		    		
+		    //System.out.println(data);
+		    composite.setLayoutData(gdata);
+		    
 			editorControl = composite;
 			
 		}else {		
@@ -209,10 +272,17 @@ public abstract class AttributeEditor {
 	    	Bindings bindings = context.push(null);
 	    	Object control = context.get(inputName);
 	    	if(control instanceof Control){
-	    		bindings.put("parent", control);
+	    	}else if(control instanceof ActionContainer) {
+	    		ActionContainer ac = (ActionContainer) control;
+	    		control = ac.doAction("getControl", context);
+	    	}else if(control instanceof AttributeEditor) {
+	    		AttributeEditor editor = (AttributeEditor) control;
+	    		control = editor.getControl();
 	    	}else{
 	    		bindings.put("parent", context.get(name + "SwtInput"));
 	    	}
+	    	
+	    	bindings.put("parent", control);
 	    	bindings.put("attribute", attribute);	
 	    	for(Thing swt : swts){
 		    	try{
@@ -230,8 +300,8 @@ public abstract class AttributeEditor {
 	    }	    
 	}
 	
-	public Label createLabel(Composite composite) {
-		if(attribute.getBoolean("showLabel", true) != false){		    	
+	public Label createLabel(Composite composite, boolean formNoLabel) {
+		if(formNoLabel == false && attribute.getBoolean("showLabel", true) != false){		    	
 		    int textLabelStyle = SWT.NONE;
 		    textLabelStyle |= SWT.HORIZONTAL;
 		    textLabelStyle |= SWT.RIGHT;
@@ -306,5 +376,41 @@ public abstract class AttributeEditor {
     	}
 	}
 	
-	public abstract Control createControl(Composite parent, FormModifyListener modifyListener, Listener defaultSelection); 
+	/**
+	 * 创建编辑器控件，把根控件返回，把设置和取值的控件（如同Text或ActionContainer等）用inputName放到全局变量上下文中。
+	 * 
+	 * @param parent
+	 * @param modifyListener
+	 * @param defaultSelection
+	 * @return
+	 */
+	public abstract Control createControl(Composite parent, FormModifyListener modifyListener, Listener defaultSelection);
+	
+	/**
+	 * 编辑器的取值的方法。如果想要使用该方法，那么保存的时候使用本对象。
+	 * 
+	 * @return
+	 */
+	public Object getValue() {		
+		return null;
+	}
+	
+	/**
+	 * 编辑器的设置值的方法。如果想要使用该方法，那么保存的时候使用本对象。
+	 * 
+	 * @param value
+	 * @param viewPattern
+	 * @param editPattern
+	 */
+	public void setValue(Object value, String viewPattern, String editPattern) {		
+	}
+	
+	/**
+	 * 返回编辑器的主要控件。
+	 * 
+	 * @return
+	 */
+	public Control getControl() {
+		return null;
+	}
 }
