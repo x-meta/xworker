@@ -1,4 +1,4 @@
-XWorker [English](blob/master/README_en.md)
+XWorker [English](README_en.md)
 ============
 ## 项目简介
 XWorker是动态模型的开发平台，使用XWorker可以编辑、运行和发布模型程序。
