@@ -13,6 +13,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Widget;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -45,6 +46,8 @@ public class DSSelectionListener  implements Listener{
 			handleTree(event);
 		}else if(event.widget instanceof Grid) {
 			handleTree(event);
+		}else if(event.widget instanceof org.eclipse.swt.widgets.List){
+			handleList(event);
 		}else {
 			Executor.warn(TAG, "Unsupport type " + event.widget.getClass().getName());
 		}
@@ -81,13 +84,30 @@ public class DSSelectionListener  implements Listener{
 	}
 	
 	@SuppressWarnings("unchecked")
+	public void handleList(Event event) {
+		org.eclipse.swt.widgets.List combo = (org.eclipse.swt.widgets.List ) event.widget;
+		int index = combo.getSelectionIndex();
+		List<DataObject> records = (List<DataObject>) combo.getData("_store_records");
+		if(index != -1 && index < records.size()) {
+			dataObjects.clear();
+			Object data = records.get(index);
+			if(data instanceof DataObject) {
+				dataObjects.add(records.get(index));
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void handleCCombo(Event event) {
 		CCombo combo = (CCombo) event.widget;
 		int index = combo.getSelectionIndex();
 		List<DataObject> records = (List<DataObject>) combo.getData("_store_records");
 		if(index != -1 && index < records.size()) {
 			dataObjects.clear();
-			dataObjects.add(records.get(index));
+			Object data = records.get(index);
+			if(data instanceof DataObject) {
+				dataObjects.add(records.get(index));
+			}
 		}
 	}
 	
@@ -98,7 +118,10 @@ public class DSSelectionListener  implements Listener{
 		List<DataObject> records = (List<DataObject>) combo.getData("_store_records");
 		if(index != -1 && index < records.size()) {
 			dataObjects.clear();
-			dataObjects.add(records.get(index));
+			Object data = records.get(index);
+			if(data instanceof DataObject) {
+				dataObjects.add(records.get(index));
+			}
 		}
 	}
 	

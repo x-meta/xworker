@@ -6,6 +6,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.swt.util.SwtUtils;
+import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class TextContent {
@@ -28,7 +29,7 @@ public class TextContent {
 		Thing function = world.getThing("xworker.swt.browser.prototypes.TextContentBrowser/@getXWText");
 		function.doAction("create", actionContext, "parent", browser);
 		
-		if(thing.doAction("isLoadUrl", parentContext)) {
+		if(UtilData.isTrue(thing.doAction("isLoadUrl", parentContext))) {
 			String url = thing.doAction("getUrl", parentContext);
 			if(url == null || "".equals(url)) {
 				//使用默认的URL

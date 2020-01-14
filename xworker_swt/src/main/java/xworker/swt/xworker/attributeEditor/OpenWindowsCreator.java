@@ -406,7 +406,7 @@ public class OpenWindowsCreator {
 	    }
 	        
 	    Tree childTree = actions.getActionContext().getObject("thingTree");
-	    TreeItem treeItem = (TreeItem) getTreeItem(actions.getActionContext().getObject("thingTree"), winPath);
+	    TreeItem treeItem = (TreeItem) getTreeItem((Object) actions.getActionContext().getObject("thingTree"), winPath);
 	    //log.info("params=" + params + ",treeItem=" + treeItem);
 	    if(treeItem != null){
 	        Object obj = treeItem.getData();

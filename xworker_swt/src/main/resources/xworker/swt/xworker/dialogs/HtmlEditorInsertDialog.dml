@@ -1,4 +1,4 @@
-^1554885729284
+^1578626663850
 @
 sname
 shell
@@ -958,6 +958,57 @@ false
       false
       sid
       action
+      @/@tihngForm/@Thing/@nosecurity
+      sname
+      nosecurity
+      sinputtype
+      truefalse
+      sshowLabel
+      true
+      slabelAlign
+      right
+      slabelVAlign
+      baseline
+      smodifier
+      public
+      sreadOnly
+      false
+      sdefault
+      false
+      sinheritDescription
+      false
+      Sdescription
+#$@text#$@
+<p>如果为true，表示不做权限校验。</p>
+#$@text#$@
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      nosecurity
   @/@4448
   sname
   buttonComposite
@@ -1132,6 +1183,14 @@ import xworker.swt.util.SwtUtils;
 
 def values = thingForm.doAction("getValues", actionContext);
 def html = "";
+
+if(values.nosecurity == "true" && values.action != null){
+    if(values.action.indexOf("?") != -1){
+        values.action = values.action + "&nosecurity=true";
+    }else{
+        values.action = values.action + "?nosecurity=true";
+    }
+}
 switch(values.type){
     case "createThing":
         html = "<a href=\"javascript:invoke(\\'createThing:" + values.action + "\\')\">" + values.text + "</a>";
@@ -1235,6 +1294,8 @@ shell.dispose();
           false
           ssaveReturn
           false
+          sswitchResult
+          false
           sdebugLog
           false
           sdescriptors
@@ -1330,8 +1391,6 @@ shell.dispose();
           false
           sthrowException
           true
-          suseOtherAction
-          false
           screateLocalVarScope
           false
           ssaveReturn

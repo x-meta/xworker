@@ -28,9 +28,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilString;
 
+import xworker.swt.util.DialogCallback;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilModel;
@@ -179,7 +181,7 @@ public class ControlModelCreator {
 		        
 		        Shell tempShell = swtcontrol.getShell();
 		        MessageBox box = new MessageBox(tempShell, SWT.OK);
-		        box.setText("输入提示：");
+		        box.setText(UtilString.getString("lang:d=校验&en=Validate", actionContext));
 		        String errorMessage = self.getString("errorMessage");
 		        if(!"".equals(errorMessage) && errorMessage != null){
 		            String message = UtilString.getString(errorMessage, actionContext);
@@ -194,7 +196,16 @@ public class ControlModelCreator {
 		            box.setMessage("数据校验失败，请输入正确的数据！\n数据类型: ${self.type}");
 		        }
 		        
-		        box.open();
+		        if(SwtUtils.isRWT()) {        	
+		        	Thing swt = World.getInstance().getThing("xworker.swt.SWT");
+		        	swt.doAction("openMessageBoxRWT", actionContext, "messageBox", box, "callback", new DialogCallback() {
+						@Override
+						public void dialogClosed(int returnCode) {							
+						}
+		        	});
+		        }else {
+		        	box.open();
+		        }
 		        //tempShell.dispose();
 		
 		        swtcontrol.forceFocus();               

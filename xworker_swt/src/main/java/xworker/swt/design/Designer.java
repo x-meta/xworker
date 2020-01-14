@@ -107,7 +107,7 @@ public class Designer {
 	private static final byte RIGHT = 3;
 	private static final byte LEFT = 4;
 	/** 等待交互的UI监听器 */
-	private Map<String, WeakReference<InteractiveListener>> interactiveListeners = new HashMap<String, WeakReference<InteractiveListener>>();
+	private Map<String, List<InteractiveListener>> interactiveListeners = new HashMap<String, List<InteractiveListener>>();
 	/** SWT创建者的栈，创建者是创建SWT时的事物，一般是没有的，但是一些通过模型创建的复合SWT组件，
 	 * 创建者则是这些模型。使用创建者是因为创建者下的模型有可能是动态生成的，并不能在运行时不能通过直接修改
 	 * SWT控件的方式来设计它。
@@ -177,6 +177,10 @@ public class Designer {
 	}
 	
 	public static void registInteractiveListener(String name, InteractiveListener interactiveListener){
+		if(interactiveListener == null){
+			return;
+		}
+		
 		if(name == null){
 			name = "";
 		}
@@ -187,22 +191,24 @@ public class Designer {
 			return;
 		}
 		
-		WeakReference<InteractiveListener> wr = new WeakReference<InteractiveListener>(interactiveListener);
-		designer.interactiveListeners.put(name, wr);
+		List<InteractiveListener> listeners = designer.interactiveListeners.get(name);
+		if(listeners == null) {
+			listeners = new ArrayList<InteractiveListener>();
+			designer.interactiveListeners.put(name, listeners);			
+		}
+		
+		if(listeners.contains(interactiveListener) == false) {
+			listeners.add(interactiveListener);
+		}
 	}
 		
-	public static InteractiveListener getInteractiveListener(String name){
+	public static List<InteractiveListener> getInteractiveListeners(String name){
 		if(name == null){
 			name = "";
 		}
 		
 		Designer designer = getDesigner();
-		WeakReference<InteractiveListener> wr = designer.interactiveListeners.get(name);
-		if(wr != null){
-			return wr.get();
-		}else{
-			return null;
-		}		
+		return designer.interactiveListeners.get(name);
 	}
 	
 	private static Thread markControlThread = new Thread( new Runnable(){

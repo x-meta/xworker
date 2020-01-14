@@ -118,7 +118,7 @@ public class ThingDataStoreListener {
 	public static Thing attach(final Thing store, DataStoreListener listener, final ActionContext actionContext) {
 		Control control = listener.getControl();
 		if(control == null || control.isDisposed()) {
-			Executor.warn(TAG, "Control is null or disposed, can not add DataStoreListener");
+			Executor.warn(TAG, "Control is null or disposed, can not add DataStoreListener, listener=" + listener);
 			return null;
 		}
 		

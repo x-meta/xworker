@@ -2,6 +2,7 @@ package xworker.swt.actions;
 
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
@@ -24,6 +25,48 @@ public class MenuActions {
 		
 		Point pt = new Point(rect.x, rect.y + rect.height);
 		pt = getParent(item).toDisplay(pt);
+
+		String menuVar = self.getStringBlankAsNull("menuVar");
+		Menu menu = null;
+		if(menuVar != null) {
+			menu = (Menu) actionContext.get(menuVar);			
+		}else {
+			Thing menuThing = self.doAction("getMenuThing", actionContext);
+			String key = "__runShowMenuByEventWidgets__";
+			menu = (Menu) item.getData(key);
+			if(menuThing != null) {
+				boolean dynamic = self.doAction("isDynamic", actionContext);
+				if(dynamic || menu == null || menu.isDisposed()) {
+					if(menu != null && menu.isDisposed() == false) {
+						menu.dispose();
+					}
+					
+					ActionContext ac = actionContext;
+					if(UtilData.isTrue(self.doAction("isNewActionContext", actionContext))) {
+						ac = new ActionContext();
+						ac.put("parentContext", actionContext);
+					}
+					ac.peek().put("parent", item);
+					menu = menuThing.doAction("create", ac);
+					item.setData(key, menu);
+				}
+			}
+		}
+		
+		if(menu != null){
+		    menu.setLocation(pt.x, pt.y);
+		    //menu.update();
+		    menu.setVisible(true);
+		}
+	}
+	
+	public static void showMenuAtCurrentPosition(ActionContext actionContext){
+		Thing self = (Thing) actionContext.get("self");
+		Event event = (Event) actionContext.get("event");
+		Button item = (Button) event.widget;
+		
+		Point pt = new Point(event.x + event.width, event.y + event.height);
+		pt = item.toDisplay(pt);
 
 		String menuVar = self.getStringBlankAsNull("menuVar");
 		Menu menu = null;

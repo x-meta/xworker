@@ -229,7 +229,7 @@ public class viewCreator {
     	
         if(actionContext.get("explorerContext") == null){
             //log.warn("Must run in explorer menu");
-            System.out.println(currentThing.doAction("toHtml"));
+            System.out.println((Object) currentThing.doAction("toHtml"));
             return;
         }
         

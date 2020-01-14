@@ -3,6 +3,7 @@ package xworker.swt.reacts.datas;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.widgets.Control;
 import org.slf4j.Logger;
@@ -15,12 +16,14 @@ import xworker.app.view.swt.data.DataStore;
 import xworker.app.view.swt.data.DataStoreListener;
 import xworker.app.view.swt.data.ThingDataStoreListener;
 import xworker.dataObject.DataObject;
-import xworker.swt.reacts.DataReactorUtils;
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactor;
 import xworker.swt.reacts.DataReactorContext;
+import xworker.swt.reacts.DataReactorUtils;
 
 public class DataStoreDataReactor extends DataReactor implements DataStoreListener {
-	private static Logger logger = LoggerFactory.getLogger(DataStoreDataReactor.class);
+	private static final String TAG = DataStoreDataReactor.class.getName();
+	//private static Logger logger = LoggerFactory.getLogger(DataStoreDataReactor.class);
 	
 	DataStore dataStore = null;
 	Control control;
@@ -31,16 +34,23 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 		
 		this.dataStore = DataStore.getDataStore(dataStore);
 		this.control = self.doAction("getControl", actionContext);
-		ThingDataStoreListener.attach(this.dataStore.getStore(), this, actionContext);
+		if(control == null) {
+			Executor.warn(TAG, "Should set the control of this DataStoreDataReactor, path=" + self.getMetadata().getPath());
+		}else {
+			ThingDataStoreListener.attach(this.dataStore.getStore(), this, actionContext);
+		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doOnSelected(List<Object> datas, DataReactorContext context) {
 		contextLocal.set(context);
-		List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
-		DataObject params = null;
-		if(dataObjects != null && dataObjects.size() > 0) {
-			params = dataObjects.get(0);
+		Map<String, Object> params = null;
+		for(Object data : datas) {
+			if(data instanceof Map) {
+				params = (Map<String, Object>) data;
+				break;
+			}
 		}
 		
 		if(params != null) {
@@ -75,14 +85,14 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 			//打开对话框
 			self.doAction("openNewDialog", actionContext, "dataStore", dataStore, "title", title, "initValues", initValues);
 		}catch(Exception e) {
-			logger.warn("Open dialog error, thing=" + self.getMetadata().getPath(), e);
+			Executor.warn(TAG, "Open dialog error, thing=" + self.getMetadata().getPath(), e);
 		}
 	}
 
 	@Override
 	protected void doOnRemoved(List<Object> datas, DataReactorContext context) {
 		if(datas == null || datas.size() == 0) {
-			logger.info("Datas is null or blank, does not open delete dialog");
+			Executor.info(TAG, "Datas is null or blank, does not open delete dialog");
 			return;
 		}
 		
@@ -107,7 +117,7 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 					"dataObjects", DataReactorUtils.toDataObjectList(datas),
 					"confirmMessage", confirmMessage);
 		}catch(Exception e) {
-			logger.warn("Open dialog error, thing=" + self.getMetadata().getPath(), e);
+			Executor.warn(TAG, "Open dialog error, thing=" + self.getMetadata().getPath(), e);
 		}
 	}
 
@@ -116,7 +126,7 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 		try {
 			List<DataObject> dataObjects = DataReactorUtils.toDataObjectList(datas);
 			if(dataObjects.size() == 0) {
-				logger.info("Datas is null or blank, does not open edit dialog");
+				Executor.info(TAG, "Datas is null or blank, does not open edit dialog");
 				return;
 			}
 			
@@ -132,7 +142,7 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 			//打开对话框
 			self.doAction("openEditDialog", actionContext, "dataStore", dataStore, "title", title, "dataObject", dataObject);
 		}catch(Exception e) {
-			logger.warn("Open dialog error, thing=" + self.getMetadata().getPath(), e);
+			Executor.warn(TAG, "Open dialog error, thing=" + self.getMetadata().getPath(), e);
 		}
 	}
 

@@ -16,21 +16,26 @@
 package xworker.swt.model;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.util.UtilString;
+
+import xworker.swt.util.DialogCallback;
+import xworker.swt.util.SwtUtils;
 
 public class ValidateModelCreator {
     public static boolean validate(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
     	
 		if(!(Boolean) self.doAction("doValidate", actionContext)){        
-		    Shell tempShell = new Shell();
-		    MessageBox box = new MessageBox(tempShell, SWT.OK);
-		    box.setText("输入提示：");
-		    String errorMessage = self.getString("errorMessage");
+		    MessageBox box = new MessageBox(Display.getCurrent().getActiveShell(), SWT.OK);
+		    box.setText(UtilString.getString("lang:d=校验&en=Validate", actionContext));
+		    String errorMessage = self.getString("errorMessage");		    
 		    if(errorMessage != null){
+		    	errorMessage = UtilString.getString(errorMessage, actionContext);
 		        if(errorMessage.startsWith("\"")){
 		            String mes = errorMessage.substring(1, errorMessage.length() - 1);
 		            box.setMessage(mes);
@@ -38,11 +43,18 @@ public class ValidateModelCreator {
 		            box.setMessage((String) actionContext.get(errorMessage));
 		        }
 		    }else{
-		        box.setMessage("数据校验失败，请输入正确的数据！");
+		        box.setMessage(UtilString.getString("lang:d=数据校验失败，请输入正确的数据！&en=Data verification failed, please input correct data!", actionContext));
 		    }
-		      
-		    box.open();
-		    tempShell.dispose();
+		    if(SwtUtils.isRWT()) {        	
+	        	Thing swt = World.getInstance().getThing("xworker.swt.SWT");
+	        	swt.doAction("openMessageBoxRWT", actionContext, "messageBox", box, "callback", new DialogCallback() {
+					@Override
+					public void dialogClosed(int returnCode) {							
+					}
+	        	});
+	        }else { 
+	        	box.open();
+	        }
 		
 		    return false;
 		}else{

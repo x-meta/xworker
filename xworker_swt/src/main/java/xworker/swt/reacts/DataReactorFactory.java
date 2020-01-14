@@ -18,12 +18,15 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.util.ActionContainer;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
+import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditorContainer;
 import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
 import xworker.swt.app.editorContainers.CompositeEditorContainer;
+import xworker.swt.reacts.creators.ActionContainerDataReactorCreator;
 import xworker.swt.reacts.creators.BrowserDataReactorCreator;
 import xworker.swt.reacts.creators.CComboDataReactorCreator;
 import xworker.swt.reacts.creators.CTabFolderDataReactorCreator;
@@ -48,6 +51,7 @@ import xworker.swt.xwidgets.DataItemContainer;
 
 public class DataReactorFactory {
 	//private static Logger logger = LoggerFactory.getLogger(DataReactorFactory.class);
+	private static final String TAG = DataReactorFactory.class.getName();
 	private static Map<Class<?>, DataReactorCreator> creators = new HashMap<Class<?>, DataReactorCreator>();
 	private static Map<String, DataFilter> filters = new HashMap<String, DataFilter>();
 	/**
@@ -109,11 +113,26 @@ public class DataReactorFactory {
 		creators.put(DataObjectList.class, new DataObjectListDataReactorCreator());
 		creators.put(DataItemContainer.class, new DataItemContainerDataReactorCreator());
 		creators.put(DataObject.class, new DataObjectDataReactorCreator());
+		creators.put(ActionContainer.class, new ActionContainerDataReactorCreator());
 		
 		//初始化Filter
 		filters.put("thing", new ThingFilter());
 		filters.put("file", new FileFilter());
 		filters.put("source", new SourceDataFilter());
+	}
+	
+	/**
+	 * 一些特殊需要获取基类的。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static Class<?> getCreatorClass(Object control){
+		if(control instanceof ActionContainer) {
+			return ActionContainer.class;
+		}
+		
+		return control.getClass();
 	}
 	
 	public static DataReactor create(String action, String[] params,  Object control, ActionContext actionContext) {
@@ -130,10 +149,11 @@ public class DataReactorFactory {
 		
 		//创建数据响应器
 		DataReactor dataReactor = null;
-		DataReactorCreator creator = creators.get(control.getClass());
+		DataReactorCreator creator = creators.get(getCreatorClass(control));
 		if(creator != null) {
 			dataReactor = creator.create(control, action, actionContext);
 		}else {
+			Executor.info(TAG, "No creator, use defaul datareactor, control=" + control + ", action=" + action);
 			//一些数据相关的
 			if(control instanceof Collection) {
 				Thing thing = new Thing("xworker.swt.reactors.datas.CollectionDataReactor");

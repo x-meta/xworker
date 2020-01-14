@@ -1,4 +1,4 @@
-%1575017058616
+%1576745757868
 @
 sname=ECharts
 slabel=ECharts
@@ -6,6 +6,7 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.swt.layout.LayoutDatas
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
@@ -31,6 +32,43 @@ Sdescription=
 <p><strong>SWT和浏览器的交互</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; SWT访问浏览器通过上的execute方法，在浏览器中调用SWT可以通过自定义BrowserFunction来实现，见子节点Functions。</p>
+
+<p><strong>绑定</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; ECharts可以绑定到DataStore或StaticDataObjectList上。如下面的配置代码，其中records是数据对象列表。</p>
+
+<p><strong>&nbsp;&nbsp;&nbsp; script:</strong></p>
+
+<pre class="brush:jscript;">
+var option = {
+    xAxis: {
+        type: &#39;category&#39;,
+        data: []
+    },
+    yAxis: {
+        type: &#39;value&#39;
+    },
+    series: [{
+        data: [],
+        type: &#39;line&#39;
+    }]
+};
+
+swtChart.setOption(option);</pre>
+
+<p><strong>&nbsp;&nbsp;&nbsp; option:</strong></p>
+
+<pre class="brush:jscript;">
+template:{
+    xAxis: {
+        data: [&lt;#list records as r&gt;&#39;${r.date?if_exists}&#39;&lt;#if r_has_next&gt;,&lt;/#if&gt;&lt;/#list&gt;]
+    },
+    series: [{
+        data: [&lt;#list records as r&gt;&#39;${r.value?if_exists}&#39;&lt;#if r_has_next&gt;,&lt;/#if&gt;&lt;/#list&gt;]
+    }]
+}</pre>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
@@ -161,6 +199,32 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=getOption
+    @/@actions/@getDataStore
+    sname=getDataStore
+    sattributeName=dataStore
+    snotNull=false
+    svariable=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getDataStore
   @/@name
   sname=name
   sshowLabel=true
@@ -199,6 +263,29 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=label
+  @/@dataStore
+  sname=dataStore
+  ssize=50
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=dataStore
   @/@jsUrl
   sname=jsUrl
   sinputtype=inputSelect

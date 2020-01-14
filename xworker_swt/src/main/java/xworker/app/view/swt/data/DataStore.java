@@ -409,10 +409,13 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		    
 		    //查询配置
 		    Thing queryConfig = self.doAction("getQueryConfig", actionContext);
-		    /*world.getThing(self.getString("queryConfig"));
+		    /*world.getThing(self.getString("queryConfig"));*/
 		    if(queryConfig == null){
 		        queryConfig = self.getThing("queryConfig@0");
-		    }*/
+		    }
+		    if(queryConfig == null && dataObject != null) {
+		    	queryConfig = dataObject.doAction("getQueryCondition", actionContext);
+		    }
 		    store.put("queryConfig", queryConfig);
 		    
 		    //分页

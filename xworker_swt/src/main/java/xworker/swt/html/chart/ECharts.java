@@ -1,8 +1,10 @@
 package xworker.swt.html.chart;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.ProgressEvent;
@@ -20,6 +22,7 @@ import org.xmeta.util.ActionContainer;
 import xworker.app.view.swt.data.DataStoreListener;
 import xworker.app.view.swt.data.ThingDataStoreListener;
 import xworker.dataObject.DataObject;
+import xworker.swt.reacts.DataReactor;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.ThingCompositeCreator;
 import xworker.util.UtilData;
@@ -75,8 +78,9 @@ public class ECharts implements DataStoreListener{
 	 * 
 	 * @param actionContext
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static Object create(ActionContext actionContext) {
+	public static Object create(ActionContext actionContext) throws UnsupportedEncodingException {
 		Thing self = actionContext.getObject("self");
 		World world = World.getInstance();
 		
@@ -101,13 +105,19 @@ public class ECharts implements DataStoreListener{
 		String url = XWorkerUtils.getWebControlUrl(world.getThing("xworker.swt.html.chart.prototypes.EChartsWeb"));
 		String jsUrl = self.doAction("getJsUrl", actionContext);
 		if(jsUrl != null && !"".equals(jsUrl)) {
-			url = url + "&jsUrl=" + URLEncoder.encode(jsUrl, Charset.forName("utf-8"));
+			url = url + "&jsUrl=" + URLEncoder.encode(jsUrl, "utf-8");
 		}
 		browser.setUrl(url);
 		
 		ActionContainer actions = ac.getObject("actions");
-		ac.put("echarts", new ECharts(self, ac));
+		ECharts echarts = new ECharts(self, ac);
+		ac.put("echarts", echarts);
 		
+		//绑定DataStore
+		Thing dataStore = self.doAction("getDataStore", actionContext);
+		if(dataStore != null) {
+			ThingDataStoreListener.attach(dataStore, echarts, actionContext);
+		}
 		actionContext.g().put(self.getMetadata().getName(), actions);
 		return composite;
 	}
@@ -232,5 +242,15 @@ public class ECharts implements DataStoreListener{
 	@Override
 	public Control getControl() {		
 		return (Control) actionContext.get("chartComposite");
+	}
+	
+	public static DataReactor createDataReactor(ActionContext actionContext) {
+		ActionContainer actions = actionContext.getObject("actions");
+		Thing thing = new Thing("xworker.swt.html.chart.EChartsDataReactor");
+		Map<String, Object> params = actionContext.getObject("params");
+		if(params != null) {
+			thing.getAttributes().putAll(params);
+		}
+		return new EChartsDataReactor(actions, thing,  actionContext);
 	}
 }

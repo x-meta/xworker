@@ -1,4 +1,4 @@
-^1576025603595
+^1578016418635
 @
 sname
 shell
@@ -148,7 +148,7 @@ false
     sname
     subGroup
     stext
-    Title Text
+    Group Title
     sstyle
     SHADOW_ETCHED_IN
     sBORDER
@@ -220,24 +220,31 @@ false
       false
       sid
       FillLayout
-      @/@group/@subGroup/@CodeViewer
+      @/@group/@subGroup/@addGroupButton
       sname
-      CodeViewer
-      scodeName
-      xml
-      scodeType
-      xml
-      Scode
-#$@text#$@
-<?xml version="1.0" encoding="utf-8"?>
-
-<Group name="subGroup" descriptors="xworker.swt.Widgets/@Group" text="Title Text" background="#0080C0">
-    <FillLayout name="FillLayout"></FillLayout>
-    <CodeViewer name="CodeViewer"></CodeViewer>
-</Group>
-#$@text#$@
+      addGroupButton
+      stext
+      Add New Group
+      stype
+      SWT.PUSH
+      sflat
+      false
+      sborder
+      false
+      sselected
+      false
+      scapture
+      false
+      senabled
+      true
+      sredraw
+      true
+      spack
+      false
+      svisible
+      true
       sdescriptors
-      xworker.swt.Widgets/@CodeViewer
+      xworker.swt.Widgets/@Button
       sinheritDescription
       false
       sth_createIndex
@@ -246,6 +253,8 @@ false
       false
       sth_registDisabled
       false
+      sth_noThingRegistViewer
+      false
       sth_fileMonitor
       false
       sth_mark
@@ -253,7 +262,83 @@ false
       sth_registQueryOnlySelf
       false
       sid
-      CodeViewer
+      addGroupButton
+        @/@group/@subGroup/@addGroupButton/@onSelection
+        sname
+        onSelection
+        sdescriptors
+        xworker.swt.widgets.Widget/@Event
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        onSelection
+          @/@group/@subGroup/@addGroupButton/@onSelection/@GroovyAction
+          sname
+          GroovyAction
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+def parent = event.widget.getParent();
+actionContext.peek().put("parent", event.widget.getParent());
+
+def thing = world.getThing("xworker.example.swt.controls.Group/@group/@subGroup");
+thing.doAction("create", actionContext);
+event.widget.dispose();
+parent.layout();
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sswitchResult
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sth_registQueryOnlySelf
+          false
+          sid
+          GroovyAction
     @/@group/@FillLayout
     sname
     FillLayout

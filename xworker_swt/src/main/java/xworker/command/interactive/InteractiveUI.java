@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 
 /**
@@ -19,13 +22,14 @@ import xworker.swt.design.Designer;
  * @author zyx
  *
  */
-public class InteractiveUI {
+public class InteractiveUI implements DisposeListener{
 	public static final String DATA_KEY = "__interactiveUI__";
+	private static final String TAG = InteractiveUI.class.getName();
 	Thing thing;
 	
 	ActionContext actionContext;
 	
-	InteractiveListener listener;
+	List<InteractiveListener> listeners = new ArrayList<InteractiveListener>();
 	
 	/** 初始化的一些属性 */
 	Map<String, Object> attribues = null;
@@ -43,6 +47,7 @@ public class InteractiveUI {
 		
 		control = actionContext.getObject("parent");
 		shell = control.getShell();		
+		control.addDisposeListener(this);
 	}
 	
 	public Control getControl(){
@@ -93,10 +98,12 @@ public class InteractiveUI {
 	 * 连接交互服务端，如果存在的话。
 	 */
 	public void connect(){
-		InteractiveListener interactiveListener = Designer.getInteractiveListener(getListenerName());
-		if(interactiveListener != null){
-			interactiveListener.connected(this);
-			this.setInteractiveListener(interactiveListener);						//ui.addListener();
+		List<InteractiveListener> listeners = Designer.getInteractiveListeners(getListenerName());
+		if(listeners != null){
+			for(InteractiveListener interactiveListener: listeners) {
+				interactiveListener.connected(this);
+			}
+			//this.setInteractiveListener(interactiveListener);						//ui.addListener();
 		}
 	}
 	
@@ -157,7 +164,21 @@ public class InteractiveUI {
 	}
 	
 	public void setInteractiveListener(InteractiveListener listener){
-		this.listener = listener;
+		addListener(listener);
+	}
+	
+	public void addListener(InteractiveListener listener){
+		if(listener != null && listeners.contains(listener) == false) {
+			return;
+		}
+		
+		listeners.add(listener);
+	}
+	
+	public void removeListener(InteractiveListener listener){
+		if(listener != null) {
+			listeners.remove(listener);
+		}
 	}
 	
 	/**
@@ -181,19 +202,79 @@ public class InteractiveUI {
 	 * 交互者接受传入的信息。
 	 * 
 	 * @param message
+	 * @deprecated
 	 */
 	public void accept(Object message){		
 		thing.doAction("accept", actionContext, "message", message);
 	}
 	
 	/**
-	 * 交互者向监听器发送信息。
+	 * 接收Listener发送过来的消息。
 	 * 
 	 * @param message
 	 */
+	public void receiveMessage(InteractiveListener listener, Object message) {
+		thing.doAction("receiveMessage", actionContext, message, message, "listener", listener);
+	}
+
+	/**
+	 * 向所有监听器发送消息。
+	 * 
+	 * @param message
+	 */
+	public void sendMessage(Object message) {
+		try {
+			List<InteractiveListener> removed = new ArrayList<InteractiveListener>();
+			for(InteractiveListener listener : listeners) {
+				if(listener.isDisposed()) {
+					removed.add(listener);
+				}else {
+					listener.receiveMessage(this, message);
+				}
+			}
+			
+			for(InteractiveListener listener : removed) {
+				listeners.remove(listener);
+			}
+		}catch(Exception e) {
+			Executor.error(TAG, "fire event error", e);
+		}
+	}
+	
+	/**
+	 * 向指定的监听器发送消息。
+	 * 
+	 * @param listener
+	 * @param message
+	 */
+	public void sendMessage(InteractiveListener listener, Object message) {
+		if(listener != null) {
+			listener.receiveMessage(this, message);
+		}		
+	}
+	
+	/**
+	 * 交互者向监听器发送信息。
+	 * 
+	 * @param message
+	 * @deprecated
+	 */
 	public void fire(Object message){
-		if(listener != null){
-			listener.accept(this, message);
+		try {
+			List<InteractiveListener> removed = new ArrayList<InteractiveListener>();
+			for(InteractiveListener listener : listeners) {
+				if(listener.isDisposed()) {
+					removed.add(listener);
+				}else {
+					listener.accept(this, message);
+				}
+			}
+			
+			for(InteractiveListener listener : removed) {
+				listeners.remove(listener);
+			}
+		}catch(Exception e) {
+			Executor.error(TAG, "fire event error", e);
 		}
 	}
 	
@@ -235,5 +316,21 @@ public class InteractiveUI {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public void widgetDisposed(DisposeEvent e) {
+		try {	
+			List<InteractiveListener> list = new ArrayList<InteractiveListener>();			
+			for(InteractiveListener listener : listeners) {
+				list.add(listener);				
+			}
+			
+			for(InteractiveListener listener : list) {
+				listener.disconnect(this);
+			}
+		}catch(Exception ee) {
+			Executor.warn(TAG, "remove listeners error", ee);
+		}
 	}
 }
