@@ -430,7 +430,8 @@ public class ConditionCreator {
         	try{
         		cValue = OgnlUtil.getValue(dataName, condition);
         	}catch(Exception e){
-        		logger.warn("get conditiosn error, dataName=" + dataName + ",thing=" + thing.getMetadata().getPath(), e);
+        		logger.info("get condition exception, dataName=" + dataName + ",thing=" + thing.getMetadata().getPath() 
+        				+ "," + e.getMessage());
         	}
         }
     

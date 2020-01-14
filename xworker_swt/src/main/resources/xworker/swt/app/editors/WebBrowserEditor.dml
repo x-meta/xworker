@@ -1,4 +1,4 @@
-%1575958347655
+%1578299676219
 @
 sname=WebBrowserEditor
 slabel=WebBrowserEditor
@@ -27,7 +27,10 @@ Sdescription=
 	是否使用简单浏览器。默认false。<br />
 	&nbsp;</li>
 	<li><strong>type:&nbsp;String(url/thing/control)</strong><br />
-	类型，thing是浏览事物文档，control是用模型编写的WEB应用。默认url。</li>
+	类型，thing是浏览事物文档，control是用模型编写的WEB应用。默认url。<br />
+	&nbsp;</li>
+	<li><strong>title:String</strong><br />
+	标题。</li>
 </ul>
 
 <p><strong>示例参数：</strong></p>
@@ -159,6 +162,7 @@ def name = params.name;
 if(name == null || name == ""){
     name = "new";
 }
+actionContext.g().put("params", params);
 
 if(url != null && url != ""){
    if(params.simple != "true" || params.simple == null){
@@ -304,31 +308,43 @@ return null;
     sth_registDisabled=false
     sth_mark=false
     sid=isDirty1
-    @/@actions/@getSimpleTitle1
+    @/@actions/@getSimpleTitle
     sname=getSimpleTitle
-    sstring=Web浏览器
-    sen_string=WebBrowser
-    sinterpretationType=Self
-    sattributeTemplate=false
-    schildsAttributeTemplate=false
-    svarScope=Local
     sisSynchronized=false
     sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.StringUtils;
+
+def title = params.title;
+if(title == null || title == ""){
+    title = "lang:d=b浏览器&en=Web Browser";
+}
+
+return StringUtils.getString(title, actionContext);
+#$@text#$@
+    sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
-    sdisableGlobalContext=false
+    sswitchResult=false
     sdebugLog=false
-    sdescriptors=xworker.lang.actions.text.GetI18nString
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
-    sid=getSimpleTitle1
-    @/@actions/@getTitle1
+    sth_registQueryOnlySelf=false
+    sid=getSimpleTitle
+    @/@actions/@getTitle
     sname=getTitle
-    sstring=Web浏览器
-    sen_string=WebBrowser
+    srefActionPath=xworker.swt.app.editors.WebBrowserEditor/@actions/@getSimpleTitle
+    skeepSelf=true
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
@@ -337,12 +353,16 @@ return null;
     sthrowException=true
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
-    sdescriptors=xworker.lang.actions.text.GetI18nString
+    sdescriptors=xworker.lang.actions.Actions/@RefAction
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
-    sid=getTitle1
+    sth_registQueryOnlySelf=false
+    sid=getTitle

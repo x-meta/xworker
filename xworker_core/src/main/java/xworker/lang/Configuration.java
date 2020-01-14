@@ -51,9 +51,16 @@ public class Configuration {
 	}
 	
 	public static Thing getConfiguration(String name, String descriptor, Thing currentThing, ActionContext actionContext) {
-		String appCategory = currentThing.getMetadata().getCategory().getName();
-		
-		return getConfiguration(name, descriptor, appCategory, actionContext);
+		int index = name.indexOf(":");
+		if(index != -1) {
+			String nname = name.substring(0, index);
+			String category = name.substring(index + 1, name.length());
+			return getConfiguration(nname, descriptor, category, actionContext);
+		}else {
+			String appCategory = currentThing.getMetadata().getCategory().getName();
+			
+			return getConfiguration(name, descriptor, appCategory, actionContext);
+		}
 	}
 	
 	/**

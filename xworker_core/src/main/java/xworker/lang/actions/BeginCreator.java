@@ -52,11 +52,27 @@ public class BeginCreator {
         	}
         }*/
         
-        return UtilAction.runChildActions(self.getChilds(), actionContext, true);
+        //return UtilAction.runChildActions(self.getChilds(), actionContext, true);
+        for(Thing action : self.getChilds()){      
+        	if("actions".equals(action.getThingName())) {
+        		//以前的begin使用了actions
+        		result = UtilAction.runChildActions(action.getChilds(), actionContext, true);
+        	}else {
+        		result = action.getAction().run(actionContext, null, true);
+        	}
+    
+            if(ActionContext.RETURN == actionContext.getStatus() || 
+                ActionContext.CANCEL == actionContext.getStatus() || 
+                ActionContext.BREAK == actionContext.getStatus() || 
+                ActionContext.EXCEPTION == actionContext.getStatus() ||
+                ActionContext.CONTINUE == actionContext.getStatus()){
+                break;
+            }
+        }
+        return result;
         
-        /*
         //执行子动作
-        for(Thing actions :(List<Thing>) self.get("actions@")){
+        /*for(Thing actions :(List<Thing>) self.get("actions@")){
             //log.info("Action: " + actions);
             for(Thing action : actions.getChilds()){      
                 result = action.getAction().run(actionContext, null, true);

@@ -83,7 +83,9 @@ public class FormModifyListener implements ModifyListener, SetableModifyListener
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void doModifyLast(){
+		boolean enabled = this.isEnable();
 		try{
+			this.setEnable(false);
 			//表单、属性和联动等
 			String formModifyAction = formThing.getString("modifyAction");
 			String attributeModifyAction = attribute.getString("modifyAction");
@@ -127,6 +129,8 @@ public class FormModifyListener implements ModifyListener, SetableModifyListener
 			}
 		}catch(Exception e){
 			logger.error("Form modify event error, formPath=" + formThing.getMetadata().getPath(), e);
+		}finally {
+			this.setEnable(enabled);
 		}
 	}
 

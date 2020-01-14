@@ -185,6 +185,7 @@ public class ThingUtils {
 			registThingCache.clear();
 		}
 		
+		//ClasstThingManager是否包含在其中，如果不包含，那么应该初始化一次
 		
 		for(ThingManager thingManager : World.getInstance().getThingManagers()) {
 			if(!isInnerThingManager(thingManager.getName())) {

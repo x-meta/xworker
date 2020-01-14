@@ -1,5 +1,7 @@
 package xworker.swt.design;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -157,10 +159,11 @@ public class InjectableComposite {
 		
 		//连接帮助小精灵
 		InteractiveUI ui = (InteractiveUI) parent.getData(InteractiveUI.DATA_KEY);
-		InteractiveListener interactiveListener = Designer.getInteractiveListener(ui.getListenerName());
-		if(interactiveListener != null){
-			interactiveListener.connected(ui);
-			ui.setInteractiveListener(interactiveListener);						//ui.addListener();
+		List<InteractiveListener> listeners = Designer.getInteractiveListeners(ui.getListenerName());
+		if(listeners != null){
+			for(InteractiveListener interactiveListener : listeners) {
+				interactiveListener.connected(ui);
+			}
 		}
 	}
 	

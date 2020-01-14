@@ -18,6 +18,4 @@ public interface DataReactorCreator {
 	 * @return
 	 */
 	public DataReactor create(Object control, String action, ActionContext actionContext);
-	
-	
 }

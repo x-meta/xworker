@@ -1,0 +1,46 @@
+%1576662092093
+@
+sname=SetAttributeOnModify
+slabel=SetFormAttributeOnModify
+stype=thingDesc
+sgroup=事物编辑器.表单
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=true
+Sdescription=
+#$@text#$@
+<h1>修改时设置表单</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 比如在一个用户界面，当输入了用户id时，那么表单中的其它属性希望在输入用id时同时设置，如用户的名字和性别等等。</p>
+
+<h2>实现方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 监听修改动作，可以设置到事物定义或属性的定义上，设置modifyAction属性的值为事物或属性的动作名，当表单修改时会调用对应的动作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在监听的动作里，下面示例代码可以设置表单的其它属性。</p>
+
+<pre class="brush:groovy;">
+data.put(&quot;age&quot;, &quot;12&quot;);
+model.doAction(&quot;setValue&quot;, actionContext, &quot;thingAttributes&quot;, data);</pre>
+
+<h2>缺点</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;如果是Text触发的事件，Text的光标会重置到最开始的地方。</p>
+
+<h2>避免递归</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 虽然默认情况下已经处理了递归，但仍然要注意。设置表单值的时候同样会触发SWT控件的Modify事件。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_noThingRegistViewer=false
+sth_fileMonitor=false
+sth_mark=false
+sth_registQueryOnlySelf=false

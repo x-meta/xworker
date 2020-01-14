@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class DataReactorContext {
 	/** 调用者的缓存，避免重复递归的调用 */
-	private Map<Object, Object> context = new HashMap<Object, Object>();
+	//private Map<Object, Object> context = new HashMap<Object, Object>();
 	
 	public DataReactorContext() {
 	}

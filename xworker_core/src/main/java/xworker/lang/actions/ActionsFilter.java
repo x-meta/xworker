@@ -94,7 +94,11 @@ public class ActionsFilter {
 		for(int i=0; i<names.length; i++) {
 			String n = names[i];
 			if(n != null && n.equals(name)) {
-				return i;
+				if(actionArray.length > i && actionArray[i] != null) {
+					return i;
+				} else {
+					return -1;
+				}
 			}
 		}
 		

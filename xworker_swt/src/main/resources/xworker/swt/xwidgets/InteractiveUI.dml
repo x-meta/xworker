@@ -1,4 +1,4 @@
-^1497837742920
+^1577774721945
 @
 sname
 InteractiveUI
@@ -10,6 +10,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
@@ -34,14 +36,25 @@ Sdescription
 
 <p>&nbsp;&nbsp;&nbsp; 因此具体需要设置那些信息，可能要参看服务端的相关说明了。</p>
 
+<p><strong>交互框架</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; InteractiveUI和InteractiveListener是相对应的，是界面之间的交互框架。InteractiveUI绑定于某个控件下，InteractiveListener则用于监听InteractiveUI，通常是InteractiveListener主动监听InteractiveUI。它们二者之间可以相互发消息。</p>
+
+<p><strong>常用的Java方法：</strong></p>
+
+<ul>
+	<li><strong>void sendMessage(Object message)</strong><br />
+	向所有监听器(InteractiveListener)发送消息。</li>
+</ul>
+
 <p><strong>可以重写的方法：</strong></p>
 
 <ul>
-	<li><strong>void fire(Object message)</strong><br />
-	向服务端发送消息。<br />
+	<li><strong>void sendMessage(Object message)</strong><br />
+	向所有的监听器发送消息。<br />
 	&nbsp;</li>
-	<li><strong>void accept(Object message)</strong><br />
-	接收从服务端传来的消息。<br />
+	<li><strong>void receiveMessage(InteractiveListener listener, Object message)</strong><br />
+	接收从监听器传来的消息。<br />
 	&nbsp;</li>
 	<li><strong>Control getParent()</strong><br />
 	默认绑定上级控件，通过重写getParent方法也可以绑定到其它指定控件中。<br />
@@ -195,8 +208,6 @@ false
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -240,8 +251,6 @@ false
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -283,8 +292,6 @@ false
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -307,6 +314,144 @@ false
     false
     sid
     getRegistType
+    @/@actions/@receiveMessage
+    sname
+    receiveMessage
+    sunimplementedException
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    receiveMessage
+      @/@actions/@receiveMessage/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      ins
+        @/@actions/@receiveMessage/@ins/@message
+        sname
+        message
+        stype
+        java.lang.Object
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        message
+        @/@actions/@receiveMessage/@ins/@listener
+        sname
+        listener
+        stype
+        xworker.command.interactive.InteractiveListener
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        listener
   @/@name
   sname
   name
@@ -405,10 +550,10 @@ false
   @/@attributes
   sname
   attributes
-  sshowLabel
-  true
   ssize
   60
+  sshowLabel
+  true
   sreadOnly
   false
   sinheritDescription
@@ -442,10 +587,10 @@ false
   registThing
   sinputtype
   dataSelector
-  sshowLabel
-  true
   ssize
   60
+  sshowLabel
+  true
   sreadOnly
   false
   sinheritDescription
@@ -479,10 +624,10 @@ false
   xworker.lang.MetaThing/@th_registThing
   sinputtype
   inputSelect
-  sshowLabel
-  true
   ssize
   50
+  sshowLabel
+  true
   sreadOnly
   false
   sinheritDescription
@@ -512,10 +657,10 @@ false
   commandIndex
   sinputtype
   dataSelector
-  sshowLabel
-  true
   ssize
   60
+  sshowLabel
+  true
   sreadOnly
   false
   sinheritDescription
@@ -555,10 +700,8 @@ false
   0
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>在一个有父子关系的组件组成界面中，鼠标点击一个控件时获取的可能是一串交互控件，此时帮助小精灵选择优先级最高的那个控件做默认展示。</p>
-#$@text#$@
+  sdescription
+  <p>在一个有父子关系的组件组成界面中，鼠标点击一个控件时获取的可能是一串交互控件，此时帮助小精灵选择优先级最高的那个控件做默认展示。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur

@@ -63,33 +63,26 @@ public class DbDataObject {
 		PreparedStatement pst = (PreparedStatement) actionContext.get("pst");
 
 		for(int i=0; i<cds.size(); i++){
-			Map<String, Object> c = cds.get(i);            
-		    Thing thing = null;        
-		    for(Thing attr : attributes){
-		    	String name = attr.getString("name");
-		    	
-		        if(name.equals(c.get("attributeName")) || name.equals(c.get("name"))){
-		            thing = attr;
-		            break;
-		        }
+			Map<String, Object> c = cds.get(i);
+
+			//确定参数的类型，优先使用查询条件的类型			
+			Thing condition = (Thing) c.get("condition");
+			String type = condition.getStringBlankAsNull("type");
+			if(type == null) {
+				//从属性中获取参数的类型
+			    for(Thing attr : attributes){
+			    	String name = attr.getString("name");
+			    	
+			        if(name.equals(c.get("attributeName")) || name.equals(c.get("name"))){
+			            type = attr.getStringBlankAsNull("type");
+			            break;
+			        }
+			    }
+			}
+			if(type == null){
+	    		throw new XMetaException("Can not find determine condition value type, condition=" + condition);
 		    }
-		    
-		    if(thing == null){
-		    	thing = (Thing) c.get("condition");
-		    	if(thing == null){
-		    		throw new XMetaException("Can not find match DBDataObject's field, condition=" + c);
-		    	}
-		    }
-		    
-		    Thing condition =  (Thing) c.get("condition");
-		    
-		    String type = null;
-		    if(condition != null) {
-		    	type = condition.getStringBlankAsNull("type");
-		    }
-		    if(type == null) {
-		    	type = thing.getString("type");
-		    }
+
 		    DbUtil.setParameterValue(pst, index + i, type , c.get("value"));
 		}
 	}
@@ -676,25 +669,6 @@ public class DbDataObject {
 			//分页信息
 			Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");		
 			
-	
-			//----------------生成SQL语句--------------
-			//排序的列，一会要判断排序的列是否存在
-			String sortField = null;
-			String sortDir = null;
-			if(pageInfo != null){
-				sortField = (String) pageInfo.get("sort");
-			    String dir = (String) pageInfo.get("dir");		    
-			    if(dir != null && !"".equals(dir)){
-			        sortDir = dir;
-			    }
-			}
-	
-			if(sortField == null || "".equals(sortField)){
-			    //默认排序
-			    sortField = self.getString("storeSortField");
-			    sortDir = self.getString("storeSortDir");
-			}
-	
 			List<Thing> attributes = (List<Thing>) self.get("attribute@");
 			for(int i=0; i<attributes.size(); i++){
 			    //过滤非数据字段和不需要显示的字段
@@ -702,70 +676,13 @@ public class DbDataObject {
 			    	attributes.remove(i);
 			    	i--;
 			    }
-			}		
-			String sql = "";
+			}	
+			
 			List<Map<String, Object>> cds = new ArrayList<Map<String, Object>>();
-			String querySql= self.getStringBlankAsNull("querySql");
-			if(self.getBoolean("keepQuerySql") && querySql != null){
-				sql = querySql;
-			}else{
-				sql = "select ";
-				int atrCount = 0;
-				//要选择的字段列表
-				boolean haveSortField = false;
-				for(int i=0; i<attributes.size(); i++){
-				    if(atrCount > 0){
-				       sql = sql + ",";
-				    }
-		
-				    atrCount ++;
-				    String fieldName = getFieldName(attributes.get(i)); 
-				    sql = sql + fieldName;
-				    
-				    String name = attributes.get(i).getMetadata().getName();
-				    if(!haveSortField && name.equals(sortField)){
-				        haveSortField = true; //排序的列存在
-	
-				        Thing atrr = attributes.get(i);
-				        String sortFiledName = atrr.getString("fieldName");
-						
-						if(sortFiledName == null || "".equals(sortFiledName)){
-							sortFiledName = atrr.getString("name");
-						}
-				        sortField = sortFiledName;
-				    }
-				}
-				if(!haveSortField){
-				    sortField = null; //置为空，没有排序
-				}
-		
-				//表名或子查询
-				String tableName = UtilString.getString(self, "tableName", actionContext);//self.getString("tableName");
-				
-				if(querySql != null && !"".equals(querySql)){
-					if(querySql.trim().startsWith("(")){
-						tableName = querySql;
-					}else{
-						tableName = "(" + querySql + ") t";
-					}
-				}
-				sql = sql + " from " + tableName;
-		
-				//查询条件
-				
-				String clause = DbUtil.getConditionSql(conditionConfig, actionContext, datas, cds);
-				if(clause != null && clause != ""){
-				    sql = sql + " where " + clause;
-				}
-		
-				//排序，排序的字段是否选择的列中呢？
-				if(sortField  != null){
-				    sql = sql + " order by " + sortField;
-				    if(sortDir != null){
-				        sql = sql + " " + sortDir;
-				    }
-				}
-			}
+			
+			//----------------生成SQL语句--------------
+			String sql = self.doAction("getQuerySqlAndParams", actionContext, "pageInfo", pageInfo,
+					"attributes", attributes, "cds", cds, "conditionConfig", conditionConfig, "datas", datas);
 			
 			if(self.getBoolean("showSql")){
 			    log.info(self.getMetadata().getPath() + ":" + sql);
@@ -1386,4 +1303,112 @@ public class DbDataObject {
 		}
 	}
 	
+	public static String getQuerySqlAndParams(ActionContext actionContext){
+		//分页信息
+		Map<String, Object> pageInfo =  actionContext.getObject("pageInfo");	
+		List<Thing> attributes = actionContext.getObject("attributes");
+		List<Map<String, Object>> cds = actionContext.getObject("cds");
+		Thing self = actionContext.getObject("self");
+		Object conditionConfig = actionContext.get("conditionConfig");
+		Map<String, Object> datas = actionContext.getObject("datas");
+		
+		//排序的列，一会要判断排序的列是否存在
+		String sortField = null;
+		String sortDir = null;
+		if(pageInfo != null){
+			sortField = (String) pageInfo.get("sort");
+		    String dir = (String) pageInfo.get("dir");		    
+		    if(dir != null && !"".equals(dir)){
+		        sortDir = dir;
+		    }
+		}
+
+		if(sortField == null || "".equals(sortField)){
+		    //默认排序
+		    sortField = self.getString("storeSortField");
+		    sortDir = self.getString("storeSortDir");
+		}
+
+			
+		String sql = "";
+		
+		String querySql= self.getStringBlankAsNull("querySql");
+		if(self.getBoolean("keepQuerySql") && querySql != null){
+			sql = querySql;
+		}else{
+			sql = "select ";
+			int atrCount = 0;
+			//要选择的字段列表
+			boolean haveSortField = false;
+			for(int i=0; i<attributes.size(); i++){
+			    if(atrCount > 0){
+			       sql = sql + ",";
+			    }
+	
+			    atrCount ++;
+			    String fieldName = getFieldName(attributes.get(i)); 
+			    sql = sql + fieldName;
+			    
+			    String name = attributes.get(i).getMetadata().getName();
+			    if(!haveSortField && name.equals(sortField)){
+			        haveSortField = true; //排序的列存在
+
+			        Thing atrr = attributes.get(i);
+			        String sortFiledName = atrr.getString("fieldName");
+					
+					if(sortFiledName == null || "".equals(sortFiledName)){
+						sortFiledName = atrr.getString("name");
+					}
+			        sortField = sortFiledName;
+			    }
+			}
+			if(!haveSortField){
+			    sortField = null; //置为空，没有排序
+			}
+	
+			//表名或子查询
+			String tableName = UtilString.getString(self, "tableName", actionContext);//self.getString("tableName");
+			
+			if(querySql != null && !"".equals(querySql)){
+				if(querySql.trim().startsWith("(")){
+					tableName = querySql;
+				}else{
+					tableName = "(" + querySql + ") t";
+				}
+			}
+			sql = sql + " from " + tableName;
+		}
+		
+		//查询条件				
+		String clause = DbUtil.getConditionSql(conditionConfig, actionContext, datas, cds);
+		if(clause != null && clause != ""){
+			int whereIndex = sql.indexOf("where"); 
+			if(whereIndex == -1) {
+				sql = sql + " where " + clause;
+			}else {
+				int rightKuoHaoIndex = sql.indexOf(")");
+				if(rightKuoHaoIndex > whereIndex) {
+					//where在括号内
+					sql = sql + " where " + clause;
+				}else {
+					//where末尾的情况
+					sql = sql + " and " + clause;
+				}
+			}
+		}
+
+		String sqlAppend = self.getStringBlankAsNull("sqlAppend");
+		if(sqlAppend != null) {
+			sql = sql + " " + sqlAppend;
+		}
+		//排序，排序的字段是否选择的列中呢？
+		if(sortField  != null && !"".equals(sortField)){
+		    sql = sql + " order by " + sortField;
+		    if(sortDir != null){
+		        sql = sql + " " + sortDir;
+		    }
+		}
+		
+		return sql;
+	}
 }

@@ -15,6 +15,8 @@
 ******************************************************************************/
 package xworker.swt.design;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -285,17 +287,20 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 			}
 			
 			//交互组件
-			//Shell shell = newControl.getShell();
-			//String path = Designer.getControlThingPath(shell);
-
 			InteractiveUI ui = getInteractiveUI(newControl);
 			if(ui != null && ui.isEnabled()){
-				InteractiveListener interactiveListener = Designer.getInteractiveListener(ui.getListenerName());
-				if(interactiveListener != null){
-					interactiveListener.connected(ui);
-					ui.setInteractiveListener(interactiveListener);						//ui.addListener();
+				List<InteractiveListener> listeners = Designer.getInteractiveListeners(ui.getListenerName());
+				if(listeners != null){
+					for(int i=0; i<listeners.size(); i++) {
+						InteractiveListener interactiveListener = listeners.get(i);
+						if(interactiveListener == null || interactiveListener.isDisposed()) {
+							listeners.remove(i);
+							i--;
+						}else {
+							interactiveListener.connected(ui);
+						}
+					}					
 				}
-				//Designer.setInteractiveListener(null);
 			}
 		}catch(Throwable t){
 			log.error("design control mouse click", t);

@@ -165,7 +165,10 @@ public class DataReactor{
 		this.maxDataCount = maxDataCount;
 	}
 
-	protected final void onSelected(List<Object> datas, DataReactorContext context) {
+	public final void onSelected(List<Object> datas, DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
 		if(begin(context)) {
 			try {	
 				this.datas.clear();
@@ -198,7 +201,11 @@ public class DataReactor{
 		}
 	}
 	
-	protected final void onUnselected(DataReactorContext context) {
+	public final void onUnselected(DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
+		
 		if(begin(context)) {
 			try {				
 				datas.clear();
@@ -256,7 +263,10 @@ public class DataReactor{
 		}		
 	}
 	
-	protected final void onAdded(int index, List<Object> datas, DataReactorContext context) {
+	public final void onAdded(int index, List<Object> datas, DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
 		if(begin(context)) {
 			try {
 				for(Object data : datas) {
@@ -303,7 +313,10 @@ public class DataReactor{
 		}			
 	}
 	
-	protected final void onRemoved(List<Object> datas, DataReactorContext context) {
+	public final void onRemoved(List<Object> datas, DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
 		if(begin(context)) {
 			try {
 				for(Object data : datas) {
@@ -338,7 +351,10 @@ public class DataReactor{
 		}
 	}
 	
-	protected final void onUpdated(List<Object> datas, DataReactorContext context) {
+	public final void onUpdated(List<Object> datas, DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
 		if(begin(context)) {
 			try {
 				for(Object data : datas) {
@@ -379,7 +395,10 @@ public class DataReactor{
 		}
 	}
 	
-	protected final void onLoaded(List<Object> datas, DataReactorContext context) {
+	public final void onLoaded(List<Object> datas, DataReactorContext context) {
+		if(context == null) {
+			context = new DataReactorContext(); 
+		}
 		if(begin(context)) {
 			try {
 				this.datas.clear();

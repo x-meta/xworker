@@ -387,7 +387,9 @@ public abstract class AttributeEditor {
 	public abstract Control createControl(Composite parent, FormModifyListener modifyListener, Listener defaultSelection);
 	
 	/**
-	 * 编辑器的取值的方法。如果想要使用该方法，那么保存的时候使用本对象。
+	 * 编辑器的取值的方法。
+	 * 
+	 * 一般情况AttributeEditor创建后返回的是SWT控件，取值和设置值是通过SWT控件实现的。因此如果想要使用该方法，那么保存的时候使用本对象。
 	 * 
 	 * @return
 	 */
@@ -396,7 +398,9 @@ public abstract class AttributeEditor {
 	}
 	
 	/**
-	 * 编辑器的设置值的方法。如果想要使用该方法，那么保存的时候使用本对象。
+	 * 编辑器的设置值的方法。
+	 * 
+	 * 一般情况AttributeEditor创建后返回的是SWT控件，取值和设置值是通过SWT控件实现的。因此如果想要使用该方法，那么保存的时候使用本对象。
 	 * 
 	 * @param value
 	 * @param viewPattern
