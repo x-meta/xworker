@@ -690,7 +690,7 @@ public class ThingEditorActions {
 		    actionContext.getScope(0).put("dataThingCache", dataThingCache);
 		}
 
-		if(actions.doAction("isXmlEditor")){
+		if((Boolean) actions.doAction("isXmlEditor")){
 		    //xml没有cache缓存
 		    return null;
 		}
@@ -2224,7 +2224,7 @@ public class ThingEditorActions {
 		    String method = methodsCombo.getText();
 		    Object obj = currentThing.doAction(method, ac);
 		    if(obj instanceof Thing){
-		        System.out.println(((Thing) obj).doAction("toXml", ac));
+		        System.out.println((Object) ((Thing) obj).doAction("toXml", ac));
 		    }else{
 		        System.out.println(obj);
 		    }
@@ -2242,7 +2242,7 @@ public class ThingEditorActions {
 		            ac.put("parentContext", acContext);
 		            Object obj = currentThing.doAction(method, ac);
 		            if(obj instanceof Thing){
-				        System.out.println(((Thing) obj).doAction("toXml", ac));
+				        System.out.println((Object) ((Thing) obj).doAction("toXml", ac));
 				    }else{
 				        System.out.println(obj);
 				    }
@@ -2262,7 +2262,7 @@ public class ThingEditorActions {
 		    actionContext.peek().setContextThing(new Thing("xworker.lang.context.DebugContext"));
 		    Object obj = currentThing.doAction(method, ac);
 		    if(obj instanceof Thing){
-		        System.out.println(((Thing) obj).doAction("toXml", ac));
+		        System.out.println((Object) ((Thing) obj).doAction("toXml", ac));
 		    }else{
 		        System.out.println(obj);
 		    }
@@ -2281,7 +2281,7 @@ public class ThingEditorActions {
 		            ac.peek().setContextThing(new Thing("xworker.lang.context.DebugContext"));
 		            Object obj = currentThing.doAction(method, ac);
 		            if(obj instanceof Thing){
-				        System.out.println(((Thing) obj).doAction("toXml", ac));
+				        System.out.println((Object) ((Thing) obj).doAction("toXml", ac));
 				    }else{
 				        System.out.println(obj);
 				    }

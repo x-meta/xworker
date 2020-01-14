@@ -359,7 +359,7 @@ public class ConsoleActions {
 	public static Object runPrintln(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		Console console = actionContext.getObject("console");
-		console.writer().println(self.doAction("getMessage", actionContext));
+		console.writer().println((Object) self.doAction("getMessage", actionContext));
 		Thing node = self.doAction("getNode", actionContext);
 		if(node == null) {
 			throw null;

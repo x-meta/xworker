@@ -97,14 +97,14 @@ public class WriterActions {
 		}else if(out instanceof File){
 			String charset = self.doAction("getCharset", actionContext);
 			if(charset != null && !"".equals(charset)) {
-				writer = new PrintWriter((File) out, Charset.forName(charset));
+				writer = new PrintWriter((File) out, charset);
 			}else {
 				writer = new PrintWriter((File) out);
 			}
 		}else if(out instanceof String) {
 			String charset = self.doAction("getCharset", actionContext);
 			if(charset != null && !"".equals(charset)) {
-				writer = new PrintWriter((String) out, Charset.forName(charset));
+				writer = new PrintWriter((String) out, charset);
 			}else {
 				writer = new PrintWriter((String) out);
 			}

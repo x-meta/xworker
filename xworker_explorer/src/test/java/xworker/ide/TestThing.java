@@ -24,7 +24,7 @@ public class TestThing {
 			//Thing thing = World.getInstance().getThing("xworker.example.swt.xwidgets.ai.TestAlice");
 			ActionContext actionContext = new ActionContext();
 			//actionContext.peek().setContextThing(world.getThing("xworker.ide.debug.context.TraceContext"));
-			System.out.println(thing.doAction("query", actionContext));
+			System.out.println((Object) thing.doAction("query", actionContext));
 			
 			System.out.println("system end");
 			ThreadGroup root = Thread.currentThread().getThreadGroup().getParent();

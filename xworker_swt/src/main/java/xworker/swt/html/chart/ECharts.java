@@ -1,5 +1,6 @@
 package xworker.swt.html.chart;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -77,8 +78,9 @@ public class ECharts implements DataStoreListener{
 	 * 
 	 * @param actionContext
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static Object create(ActionContext actionContext) {
+	public static Object create(ActionContext actionContext) throws UnsupportedEncodingException {
 		Thing self = actionContext.getObject("self");
 		World world = World.getInstance();
 		
@@ -103,7 +105,7 @@ public class ECharts implements DataStoreListener{
 		String url = XWorkerUtils.getWebControlUrl(world.getThing("xworker.swt.html.chart.prototypes.EChartsWeb"));
 		String jsUrl = self.doAction("getJsUrl", actionContext);
 		if(jsUrl != null && !"".equals(jsUrl)) {
-			url = url + "&jsUrl=" + URLEncoder.encode(jsUrl, Charset.forName("utf-8"));
+			url = url + "&jsUrl=" + URLEncoder.encode(jsUrl, "utf-8");
 		}
 		browser.setUrl(url);
 		
