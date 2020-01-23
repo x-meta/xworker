@@ -15,20 +15,25 @@ public class SwtExecutorService extends AbstractLogService{
 	
 	public SwtExecutorService(LogViewer logViewer, UIHandler uiHandler) {
 		this.logViewer = logViewer;
-		this.uiHandler = uiHandler;
+		this.uiHandler = uiHandler;		
+		if(uiHandler != null) {
+			uiHandler.setExecutorService(Executor.getExecutorService());
+		}
 	}
 	
 	@Override
-	public void requestUI(Thing request, ActionContext actionContext) {
+	public void requestUI(ExecuteRequest request) {
 		if(uiHandler != null) {
-			uiHandler.handleUIRequest(request, actionContext);
+			uiHandler.handleUIRequest(request);
+		}else {
+			Executor.superRequestUI(this, request);
 		}
 		
 	}
 
 	@Override
 	public void log(final byte level, final String msg) {
-		if(logViewer != null) {
+		if(logViewer != null && logViewer.getDisplay() != null) {
 			logViewer.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					try {
@@ -55,16 +60,16 @@ public class SwtExecutorService extends AbstractLogService{
 	 */
 	public static void createControl(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
-		
-		//使用独立的变量上下文
-		ActionContext ac = new ActionContext();
-		ac.put("parent", actionContext.get("parent"));
-		ac.put("parentContext", actionContext);
-		
+
+		ActionContext ac = null; 
 		Object parent = actionContext.get("parent");
 		World world = World.getInstance();
 		
 		if(parent instanceof CTabFolder && self.getBoolean("createItemsOnCTabFodler")) {
+			//使用独立的变量上下文
+			ac = new ActionContext();
+			ac.put("parent", actionContext.get("parent"));
+			ac.put("parentContext", actionContext);
 			String[] things = new String[] {
 					"xworker.lang.executor.swt.SWTExecutor/@mainTabFolder/@requestTabItem",
 					"xworker.lang.executor.swt.SWTExecutor/@mainTabFolder/@logItem"
@@ -79,9 +84,11 @@ public class SwtExecutorService extends AbstractLogService{
 			init.getAction().run(ac);
 		}else {
 			Thing prototype = world.getThing("xworker.lang.executor.swt.SWTExecutor/@mainTabFolder");
-			ThingCompositeCreator c1 = SwtUtils.createCompositeCreator(self, ac);
+			ThingCompositeCreator c1 = SwtUtils.createCompositeCreator(self, actionContext);
 			c1.setCompositeThing(prototype);
 			c1.create();
+			
+			ac = c1.getNewActionContext();
 		}
 		
 		//保存变量
@@ -92,6 +99,8 @@ public class SwtExecutorService extends AbstractLogService{
 	public Thread getThread() {
 		if(uiHandler != null) {
 			return uiHandler.getThread();
+		}else if(logViewer != null){
+			return logViewer.getDisplay().getThread();
 		}else {
 			return null;
 		}
@@ -155,9 +164,11 @@ public class SwtExecutorService extends AbstractLogService{
 	}
 
 	@Override
-	public void removeRequest(Thing request, ActionContext actionContext) {
+	public void removeRequest(ExecuteRequest request) {
 		if(uiHandler != null) {
-			uiHandler.removeRequest(request, actionContext);
+			uiHandler.removeRequest(request);
+		}else {
+			super.removeRequest(request);
 		}
 	}
 

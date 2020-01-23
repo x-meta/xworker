@@ -18,12 +18,13 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class FileSync {
-	private static Logger logger = LoggerFactory.getLogger(FileSync.class);
+	//private static Logger logger = LoggerFactory.getLogger(FileSync.class);
+	private static String TAG = FileSync.class.getName();
 	private String serverFileList = null;
 	private File serverFileListFile = new File(World.getInstance().getPath() + "/work/update/filelist.txt");
 	public static String charset = "UTF-8";
@@ -63,7 +64,7 @@ public class FileSync {
 		CompareResult result = oldList.compare(newList);
 		
 		if(!result.isChanged()){
-			logger.info("no changed");
+			Executor.info(TAG, "no changed");
 		}else{
 			//写入完整的版本信息
 			FileOutputStream fout = new FileOutputStream(new File(targetDir, "version.txt"));
@@ -77,7 +78,7 @@ public class FileSync {
 			fout.close();
 		}
 		
-		logger.info("generateUploadInfo finished");
+		Executor.info(TAG, "generateUploadInfo finished");
 	}
 	
 	/**
@@ -90,7 +91,7 @@ public class FileSync {
 	public String getFileList(String url) throws IOException{
 		try{
 			URL u = new URL(url);		
-			logger.info("open " + url);
+			Executor.info(TAG, "open " + url);
 			URLConnection uc = u.openConnection();
 			uc.setRequestProperty("accept", "*/*"); 
 			uc.setRequestProperty("Connection", "Keep-Alive");
@@ -103,10 +104,10 @@ public class FileSync {
 			int length = uc.getContentLength();			
 			byte[] bytes = getBytes(uc.getInputStream(), length);
 			
-			logger.info("file info readed");
+			Executor.info(TAG, "file info readed");
 			return new String(bytes, charset);
 		}catch(Exception e){
-			logger.warn(e.getMessage());
+			Executor.warn(TAG, e.getMessage());
 			return "";
 		}
 	}
@@ -125,13 +126,13 @@ public class FileSync {
 	public void upload(String versionUrl, String uploadUrl, String user, String password, File rootDir, String filter) throws IOException, NoSuchAlgorithmException{
 		FileFilter ffilter = new FileFilter(rootDir, filter);
 		
-		logger.info("get server file info");
+		Executor.info(TAG, "get server file info");
 		String oldFileList = getFileList(versionUrl);
 		
-		logger.info("connect to server for upload");
+		Executor.info(TAG, "connect to server for upload");
 		URL url = new URL(uploadUrl);
 		
-		logger.info("connect to server " + url);
+		Executor.info(TAG, "connect to server " + url);
 		URLConnection uc = url.openConnection();		
 		uc.setRequestProperty("accept", "*/*");  
 		//uc.setRequestProperty("user-agent",              "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");  
@@ -146,12 +147,12 @@ public class FileSync {
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		logger.info("write user & password");
+		Executor.info(TAG, "write user & password");
 		putString(user, out);
 		putString(password, out);
 		out.flush();
 		
-		logger.info("compare and write changed files");
+		Executor.info(TAG, "compare and write changed files");
 		upload(rootDir, oldFileList, out, ffilter);
 		out.flush();		
 		
@@ -161,9 +162,9 @@ public class FileSync {
 		cout.write(out.toByteArray());
 		cout.flush();
 		
-		logger.info("waitting server response...");
+		Executor.info(TAG, "waitting server response...");
 		InputStream in = uc.getInputStream();
-		logger.info("server return: " + getString(in));
+		Executor.info(TAG, "server return: " + getString(in));
 		out.close();
 		in.close();				
 	}
@@ -205,19 +206,19 @@ public class FileSync {
 		FileList oldList = new FileList(oldFileList); 		
 		CompareResult result = oldList.compare(newList);
 		if(!result.isChanged()){
-			logger.info("no file changed");
+			Executor.info(TAG, "no file changed");
 			out.write("00000000".getBytes(charset));			
 		}else{
 			//写入完整的版本信息
 			putString(newList.toString(), out);
-			logger.info("version writed");
+			Executor.info(TAG, "version writed");
 			
 			//写入输出流中
 			writeResultToZip(rootDir, result, out);
-			logger.info("all file writed");
+			Executor.info(TAG, "all file writed");
 		}
 		
-		logger.info("upload finished");
+		Executor.info(TAG, "upload finished");
 	}
 	
 	/**
@@ -229,29 +230,29 @@ public class FileSync {
 	 * @throws IOException
 	 */
 	public void download(File targetDir, File versionFile, InputStream in) throws IOException{
-		logger.info("get new file list");
+		Executor.info(TAG, "get new file list");
 		String newFileList = getString(in);
 		if(newFileList == null || "".equals(newFileList)){
-			logger.info("no new file download");
+			Executor.info(TAG, "no new file download");
 			return;
 		}
 		
 		FileList newList = new FileList(newFileList);
 		
-		logger.info("get my file list");
+		Executor.info(TAG, "get my file list");
 		String myFileList = getFileList(versionFile);
 		FileList myList = new FileList(myFileList);		
 		CompareResult result = myList.compare(newList);
 		
-		logger.info("delete removed files");
+		Executor.info(TAG, "delete removed files");
 		for(FileInfo info : result.removeList){
 			File file = new File(targetDir, info.path);
 			file.delete();
 			
-			logger.info("file deleted: " + info.path);
+			Executor.info(TAG, "file deleted: " + info.path);
 		}
 		
-		logger.info("unzip files");
+		Executor.info(TAG, "unzip files");
 		ZipInputStream zin = new ZipInputStream(in);
 		ZipEntry entry = null;		
 		while((entry = zin.getNextEntry()) != null){
@@ -272,11 +273,11 @@ public class FileSync {
 				newFile.setLastModified(entry.getTime());
 			}
 			zin.closeEntry();
-			logger.info("file saved: " + entry.getName());
+			Executor.info(TAG, "file saved: " + entry.getName());
 		}		
 		zin.close();
 		
-		logger.info("write new list");
+		Executor.info(TAG, "write new list");
 		FileUtils.write(versionFile, newFileList, Charset.forName("utf-8"));
 	}
 	
@@ -291,7 +292,7 @@ public class FileSync {
 	 * @throws IOException 
 	 */
 	public void serverUpload(File targetDir, File fileListFile, InputStream in, OutputStream out, FileUploadChecker checker) throws IOException{
-		logger.info("server handle upload");
+		Executor.info(TAG, "server handle upload");
 		String user  = getString(in);
 		String password = getString(in);
 		
@@ -307,21 +308,21 @@ public class FileSync {
 			putString("no file changed", out);
 			return;
 		}
-		logger.info("fileFIleList size=" + newFileList.length());
+		Executor.info(TAG, "fileFIleList size=" + newFileList.length());
 		
 		String oldFileList = getFileList(fileListFile);
 		FileList newList = new FileList(newFileList);
 		FileList oldList = new FileList(oldFileList);
 		CompareResult result = oldList.compare(newList);
-		logger.info("delete removed files");
+		Executor.info(TAG, "delete removed files");
 		for(FileInfo info : result.removeList){
 			File file = new File(targetDir, info.path);
 			file.delete();
 			
-			logger.info("file deleted: " + info.path);
+			Executor.info(TAG, "file deleted: " + info.path);
 		}
 		
-		logger.info("unzip files");
+		Executor.info(TAG, "unzip files");
 		ZipInputStream zin = new ZipInputStream(in);
 		ZipEntry entry = null;		
 		while((entry = zin.getNextEntry()) != null){
@@ -342,11 +343,11 @@ public class FileSync {
 				newFile.setLastModified(entry.getTime());
 			}
 			zin.closeEntry();
-			logger.info("file saved: " + entry.getName());
+			Executor.info(TAG, "file saved: " + entry.getName());
 		}		
 		zin.close();
 		
-		logger.info("write new list");
+		Executor.info(TAG, "write new list");
 		setServerFileList(fileListFile, newFileList);
 		//FileUtils.write(fileListFile, newFileList);
 		
@@ -390,13 +391,13 @@ public class FileSync {
 	 * @throws IOException 
 	 */
 	public void download(String serverUrl, File targetDir, File versionFile) throws IOException{
-		logger.info("get my file list");
+		Executor.info(TAG, "get my file list");
 		String myFileList = getFileList(versionFile);
 		
-		logger.info("connect to server for upload");
+		Executor.info(TAG, "connect to server for upload");
 		URL url = new URL(serverUrl);
 		
-		logger.info("connect to server " + url);
+		Executor.info(TAG, "connect to server " + url);
 		URLConnection uc = url.openConnection();
 		uc.setDoOutput(true);
 		uc.setDoInput(true);
@@ -409,11 +410,11 @@ public class FileSync {
 		
 		OutputStream out = uc.getOutputStream();
 		
-		logger.info("upload my file list to server");
+		Executor.info(TAG, "upload my file list to server");
 		putString(myFileList, out);
 		out.flush();
 		
-		logger.info("get server file list");
+		Executor.info(TAG, "get server file list");
 		InputStream in = uc.getInputStream();
 		download(targetDir, versionFile, in);
 		
@@ -436,7 +437,7 @@ public class FileSync {
 			zout.flush();
 			zout.closeEntry();
 			
-			logger.info("zip added: " + info.path);
+			Executor.info(TAG, "zip added: " + info.path);
 		}
 		
 		for(FileInfo info : result.newList){
@@ -450,7 +451,7 @@ public class FileSync {
 			
 			zout.closeEntry();
 			
-			//logger.info("zip added: " + info.path);
+			//Executor.info(TAG, "zip added: " + info.path);
 		}
 		zout.close();
 		out.flush();

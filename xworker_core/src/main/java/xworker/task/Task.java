@@ -57,6 +57,8 @@ public class Task implements Runnable{
 	private long executeTime;
 	/** 执行时的参数 */
 	private Map<String, Object> parameters;
+	/** Thread方式执行时创建的Thread */
+	private Thread thread;
 	
 	public Task(Thing thing, ActionContext actionContext, boolean callback, boolean callbackCancel, boolean schedule){
 		synchronized(Task.class){
@@ -103,6 +105,14 @@ public class Task implements Runnable{
 	
 	private void finish(){
 		semaphore.release();
+	}
+	
+	protected void setThread(Thread thread) {
+		this.thread = thread;
+	}
+	
+	public Thread getThread() {
+		return this.thread;
 	}
 	
 	public void testUseFinish(){
@@ -189,11 +199,20 @@ public class Task implements Runnable{
 			if(future.isDone()){
 				return false;
 			}
-									
-			if(future.cancel(mayInterruptIfRunning)){
+				
+			
+			if(future != null && future.cancel(mayInterruptIfRunning)){
 				status = STATUS_FINISHED;
 				end();
 				return true;
+			}if(thread != null){
+				try {
+					thread.interrupt();
+					status = STATUS_CANCELED;
+					return true;
+				}catch(Exception e) {
+					return false;
+				}
 			}else{
 				status = STATUS_CANCELED;
 				return false;

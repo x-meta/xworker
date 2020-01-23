@@ -72,6 +72,22 @@ public class ActionListener {
 		actionContext.g().put(key, value);
 	}
 	
+	public void put(String key, Object value) {
+		actionContext.g().put(key, value);
+	}
+	
+	public Object get(String key) {
+		return actionContext.get(key);
+	}
+	
+	public void putActionContext(String key, Object value) {
+		acContext.peek().put(key, value);
+	}
+	
+	public Object getActionContext(String key) {
+		return acContext.get(key);
+	}
+	
 	/**
 	 * 从动作所在的变量上下文中获取一个变量。
 	 * 

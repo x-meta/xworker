@@ -28,48 +28,46 @@ case "`uname`" in
         ;;
 esac
 
+JAVA_OPTS=""
 # JVM memory allocation pool parameters - modify as appropriate.
 # JAVA_OPTS="-XstartOnFirstThread -Xms512M -Xmx2048M -XX:MaxPermSize=256M"
-# Mac OS will open -XstartOnFirstThread
-if $darwin ; then
-JAVA_OPTS="-XstartOnFirstThread"
-fi
 
 # Reduce the RMI GCs to once per hour for Sun JVMs.
 JAVA_OPTS="$JAVA_OPTS -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.net.preferIPv4Stack=true  -Dfile.encoding=UTF-8"
-configSh="./dml.conf.sh"
-if [ -f "$configSh" ]; then
-   source "$configSh"
-fi
 
 # Sample JPDA settings for remote socket debugging
 # JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
 
 # For Cygwin, ensure paths are in UNIX format before anything is touched
 if $cygwin ; then
-    [ -n "$XWOKRER_HOME" ] &&
-        XWOKRER_HOME=`cygpath --unix "$XWOKRER_HOME"`
+    [ -n "$XWORKER_HOME" ] &&
+        XWORKER_HOME=`cygpath --unix "$XWORKER_HOME"`
     [ -n "$JAVA_HOME" ] &&
         JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
     [ -n "$JAVAC_JAR" ] &&
         JAVAC_JAR=`cygpath --unix "$JAVAC_JAR"`
 fi
 
-# Setup XWOKRER_HOME
-RESOLVED_XWOKRER_HOME=`cd "$DIRNAME"; pwd`
-if [ "x$XWOKRER_HOME" = "x" ]; then
+# Setup XWORKER_HOME
+RESOLVED_XWORKER_HOME=`cd "$DIRNAME"; pwd`
+if [ "x$XWORKER_HOME" = "x" ]; then
     # get the full path (without any relative bits)
-    XWOKRER_HOME=$RESOLVED_XWOKRER_HOME
+    XWORKER_HOME=$RESOLVED_XWORKER_HOME
 else
- SANITIZED_XWOKRER_HOME=`cd "$XWOKRER"; pwd`
- if [ "$RESOLVED_XWOKRER_HOME" != "$SANITIZED_XWOKRER_HOME" ]; then
-   echo "WARNING XWOKRER_HOME may be pointing to a different installation - unpredictable results may occur."
+ SANITIZED_XWORKER_HOME=`cd "$XWOKRER"; pwd`
+ if [ "$RESOLVED_XWORKER_HOME" != "$SANITIZED_XWORKER_HOME" ]; then
+   echo "WARNING XWORKER_HOME may be pointing to a different installation - unpredictable results may occur."
    echo ""
  fi
 fi
-export XWOKRER_HOME
+export XWORKER_HOME
 
-LOCALCLASSPATH="$XWOKRER_HOME/config/:$XWOKRER_HOME/xworker.jar"
+configSh="$DIRNAME/dml.conf.sh"
+if [ -f "$configSh" ]; then
+   source "$configSh"
+fi
+
+LOCALCLASSPATH="$XWORKER_HOME/config/:$XWORKER_HOME/xworker.jar"
 # Explicitly add javac path to classpath, assume JAVA_HOME set
 # properly in rpm mode
 if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
@@ -136,7 +134,7 @@ fi
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then
-    XWOKRER_HOME=`cygpath --path --windows "$XWOKRER_HOME"`
+    XWORKER_HOME=`cygpath --path --windows "$XWORKER_HOME"`
     JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
     XWOKRER_CLASSPATH=`cygpath --path --windows "$XWOKRER_CLASSPATH"`
     XWOKRER_ENDORSED_DIRS=`cygpath --path --windows "$XWOKRER_ENDORSED_DIRS"`
@@ -148,7 +146,7 @@ fi
 # echo ""
 # echo "  XWorker Bootstrap Environment"
 # echo ""
-# echo "  XWOKRER_HOME: $XWOKRER_HOME"
+# echo "  XWORKER_HOME: $XWORKER_HOME"
 # echo ""
 # echo "  JAVA: $JAVA"
 # echo ""
@@ -164,12 +162,12 @@ while true; do
       # Execute the JVM in the foreground
       eval \"$JAVA\" $JAVA_OPTS \
          -classpath \"$LOCALCLASSPATH\" \
-         xworker.startup.Startup "$XWOKRER_HOME" "$@"
+         xworker.startup.Startup "$XWORKER_HOME" "$@"
       XWORKER_STATUS=$?
    else
       # Execute the JVM in the background
       eval \"$JAVA\" -classpath \"$LOCALCLASSPATH\" $JAVA_OPTS \          
-         xworker.startup.Startup "$XWOKRER_HOME" "$@" "&"
+         xworker.startup.Startup "$XWORKER_HOME" "$@" "&"
      XWORKER_PID=$!
       # Trap common signals and relay them to the xworker process
       trap "kill -HUP  $XWORKER_PID" HUP

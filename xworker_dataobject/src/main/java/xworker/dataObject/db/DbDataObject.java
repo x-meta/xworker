@@ -73,7 +73,7 @@ public class DbDataObject {
 			    for(Thing attr : attributes){
 			    	String name = attr.getString("name");
 			    	
-			        if(name.equals(c.get("attributeName")) || name.equals(c.get("name"))){
+			        if(name.equals(condition.get("attributeName")) || name.equals(condition.get("name"))){
 			            type = attr.getStringBlankAsNull("type");
 			            break;
 			        }

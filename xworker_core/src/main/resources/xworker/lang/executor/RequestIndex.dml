@@ -1,18 +1,38 @@
-%1560255950527
+%1579687871345
 @
 sname=RequestIndex
 slabel=RequestIndex
 sgroup=xworker.executor
 Sdescription=
 #$@text#$@
-<p>请求总索引。</p>
+<p>请求的界面的总索引。</p>
 
-<p><strong>请求应该实现的方法：</strong></p>
+<h2>1.Request的规范</h2>
+
+<h3>1.1.需要实现的方法</h3>
 
 <ul>
-	<li><strong>Composite createSWT(Thing request, ActionContext requestContext, Map&lt;String, Object&gt; requestVariables)&nbsp;&nbsp;&nbsp; </strong><br />
-	创建SWT请求界面，其中parentContext变量是请求发起时的变量。&nbsp;</li>
+	<li><strong>Composite createSWT(）</strong><br />
+	创建请求的SWT界面。如果其它UI也支持请求，可能会有createXXX()方法，xxx是其它界面平台。<br />
+	<strong>参数：</strong><br />
+	<strong>request: Thing</strong>，UI请求模型。<br />
+	<strong>requestContext : ActionContext</strong>，UI请求所在的变量上下文。<br />
+	<strong>requestVariables: Map&lt;String, Object&gt;，</strong>UI请求设置的要转移的变量。这些变量执行createSWT()方法时也会放到变量上下文中。<br />
+	<strong>executorService: ExecutorService</strong>，UI请求时当前的ExecutorService。<br />
+	<strong>uiExecutorService: ExecutorService</strong>，处理UI请求的ExecutorService。当前的ExecutorService可能没有UI处理能力，这时会交给能够处理UI请求的ExecutorService。</li>
 </ul>
+
+<h3>1.2.移除请求</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 当请求处理完毕后，需要调用uiExecutorService.removeRequest(Thing request, ActionContext actionContext)方法移除。</p>
+
+<h2>2.ExecutorService规范</h2>
+
+<p>&nbsp;&nbsp;&nbsp; ExecutorService如要处理请求，那么应需要满足上面的Request的需要。默认情况下以上变量都放在界面的全局变量中，界面可以随时表用。</p>
+
+<h2>3.OkCancelRequest</h2>
+
+<p>&nbsp;&nbsp;&nbsp; OkCancelRequest是一个Reuqest的界面的简单实现。&nbsp;可以参看OkCancelRequest。&nbsp;&nbsp;</p>
 
 <p><strong>actions: ActionContainer</strong></p>
 

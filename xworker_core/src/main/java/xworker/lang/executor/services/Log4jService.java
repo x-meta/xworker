@@ -3,9 +3,8 @@ package xworker.lang.executor.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
 
+import xworker.lang.executor.ExecuteRequest;
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 
@@ -296,11 +295,6 @@ public class Log4jService implements ExecutorService{
 	}
 
 	@Override
-	public void requestUI(Thing request, ActionContext actionContext) {
-		request.doAction("cancel", actionContext);
-	}
-
-	@Override
 	public Thread getThread() {
 		return null;
 	}
@@ -326,7 +320,13 @@ public class Log4jService implements ExecutorService{
 	}
 
 	@Override
-	public void removeRequest(Thing request, ActionContext actionContext) {
+	public void removeRequest(ExecuteRequest request) {
+		Executor.superRemoveRequest(this, request);
+	}
+
+	@Override
+	public void requestUI(ExecuteRequest request) {
+		Executor.superRequestUI(this, request);
 	}
 
 	@Override

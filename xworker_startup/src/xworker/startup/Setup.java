@@ -92,12 +92,16 @@ public class Setup {
 				home + "dml-rap.sh \"$@\""
 		}, true);
 		
+		File localBin = new File("/usr/local/bin");
+		if(localBin.exists() == false) {
+			localBin.mkdirs();
+		}
 		//写入setup.sh，进行文件关联等		
 		write("./setupenv.sh", new String[]{		
-				"sudo rm -f /usr/bin/dml.sh",
-				"sudo ln -s " + home + "dmlforlink.sh /usr/bin/dml.sh",			
-				"sudo rm -f /usr/bin/dml-rap.sh",
-				"sudo ln -s " + home + "dml-rapforlink.sh /usr/bin/dml-rap.sh"
+				"sudo rm -f /usr/local/bin/dml.sh",
+				"sudo ln -s " + home + "dmlforlink.sh /usr/local/bin/dml.sh",			
+				"sudo rm -f /usr/local/bin/dml-rap.sh",
+				"sudo ln -s " + home + "dml-rapforlink.sh /usr/local/bin/dml-rap.sh"
 		}, true);
 
 		//先写入一个临时的文件
@@ -116,8 +120,10 @@ public class Setup {
 		String os = Startup.getOS();
 		String arc = Startup.getPROCESSOR_ARCHITECTURE();
 		write("./dml.conf.sh", new String[]{
+				"# Mac OS will open -XstartOnFirstThread\n" + 
+				"JAVA_OPTS=\"$JAVA_OPTS -XstartOnFirstThread\"\n" + 
 				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/os/library/" 
-					+ os + "_" + arc + "/;$XWORKER_HOME/os/library/" + os + "/;$PATH\""
+					+ os + "_" + arc + "/:$XWORKER_HOME/os/library/" + os + "/:$PATH\""
 		}, true);
 		setExecutable(new File("./update.sh"));
 		setExecutable(new File("./dml.sh"));
@@ -210,7 +216,7 @@ public class Setup {
 		String arc = Startup.getPROCESSOR_ARCHITECTURE();
 		write("./dml.conf.sh", new String[]{
 				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/os/library/" 
-					+ os + "_" + arc + "/;$XWORKER_HOME/os/library/" + os + "/;$PATH\""
+					+ os + "_" + arc + "/:$XWORKER_HOME/os/library/" + os + "/:$PATH\""
 		}, true);
 					
 		setExecutable(new File("./update.sh"));

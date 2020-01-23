@@ -1,8 +1,5 @@
 package xworker.lang.executor;
 
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
-
 /**
  * UI请求的处理器。
  * 
@@ -10,9 +7,11 @@ import org.xmeta.Thing;
  *
  */
 public interface UIHandler {
-	public void handleUIRequest(Thing request, ActionContext actionContext); 
+	public void handleUIRequest(ExecuteRequest request); 
 	
-	public void removeRequest(Thing request, ActionContext actionContext) ;
+	public void removeRequest(ExecuteRequest request) ;
 	
 	public Thread getThread();
+	
+	public void setExecutorService(ExecutorService executorService);
 }

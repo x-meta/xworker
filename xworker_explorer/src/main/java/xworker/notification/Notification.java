@@ -45,6 +45,16 @@ public class Notification implements java.lang.Comparable<Notification>{
 	}
 	
 	public Notification(Thing thing, ActionContext actionContext, long newCreateTime){
+		messageId = thing.doAction("getMessageId", actionContext);		
+		
+		init(thing, actionContext);
+	}
+	
+	public Message getMessage() {
+		return message;
+	}
+
+	public void init(Thing thing, ActionContext actionContext) {
 		this.thing = thing;
 		this.actionContext = actionContext;
 		
@@ -57,23 +67,15 @@ public class Notification implements java.lang.Comparable<Notification>{
 		
 		//要转移的变量
 		variables = message.getVariables();
-
 		label = thing.doAction("getLabel", actionContext, variables);
-		messageId = thing.doAction("getMessageId", actionContext);
 		sync = thing.doAction("isSync", actionContext);
-		init();
-	}
-	
-	public Message getMessage() {
-		return message;
-	}
-
-	public void init() {
+		
 		count++;
 		viewed = false;
 		createTime = System.currentTimeMillis();		
 		Long timeout = (Long) thing.doAction("getTimeout", actionContext);
-		if(timeout != null && timeout <= 0){
+		
+		if(timeout == null || (timeout != null && timeout <= 0)){
 			expireTime = -1;
 		}else{
 			expireTime = createTime + (timeout * 1000);

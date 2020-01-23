@@ -142,7 +142,7 @@ public class NotificationManager{
 			boolean have = false;
 			for(Notification e : events) {
 				if(e.isSameMessage(id)) {
-					e.init();
+					e.init(thing, actionContext);
 					event = e;
 					have = true;
 					break;

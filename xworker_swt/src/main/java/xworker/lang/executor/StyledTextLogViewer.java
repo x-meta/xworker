@@ -77,6 +77,10 @@ public class StyledTextLogViewer implements LogViewer{
 
 	@Override
 	public Display getDisplay() {		
+		if(styledText == null || styledText.isDisposed()) {
+			return null;
+		}
+		
 		return styledText.getDisplay();
 	}
 }

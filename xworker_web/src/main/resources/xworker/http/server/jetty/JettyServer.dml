@@ -1,16 +1,28 @@
-%1548851063120
+%1579484650562
 @
 sname=JettyServer
 slabel=JettyServer
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
 <p>Jetty服务器，版本从Jetty9开始。</p>
+
+<p><strong>SSL的KeyStore的生成方法</strong></p>
+
+<pre class="brush:plain;">
+keytool -genkey -dname &quot;cn=localhost, ou=XWorker.org., o=XWorker.org, l=xworker, st=xworker, c=CN&quot; -alias jetty -keystore jettykeystore.jks -storepass xworker -keypass xworker -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -validity 3650 -ext SAN=dns:localhost
+</pre>
+
+<p><strong>从KeyStore生成证书</strong></p>
+
+<pre class="brush:plain;">
+keytool -export -alias jetty -storepass xworker -file cert.crt -keystore jettykeystore.jks</pre>
 
 <p><strong>可以重写的方法：</strong></p>
 
@@ -22,7 +34,16 @@ Sdescription=
 	是否在JVM结束时stop。<br />
 	&nbsp;</li>
 	<li><strong>void init(Server server)</strong><br />
-	执行额外的初始化操作。&nbsp;</li>
+	执行额外的初始化操作。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>boolean isSsl()</strong><br />
+	是否使用SSL。<br />
+	&nbsp;</li>
+	<li><strong>File getKeyStore()</strong><br />
+	返回KeyStore文件。KeyStore文件时*.jks。<br />
+	&nbsp;</li>
+	<li><strong>String getKeyStorePassword()</strong><br />
+	返回KeyStore的密码。</li>
 </ul>
 
 <p>&nbsp;</p>
@@ -120,7 +141,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -142,7 +162,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -157,24 +176,98 @@ sth_mark=false
     @/@actions/@init
     sname=init
     sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
     sdebugLog=false
-    sdescriptors=xworker.lang.actions.Actions/@NOOP
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
     sth_mark=false
     sid=init
+    @/@actions/@isSsl
+    sname=isSsl
+    sattributeName=ssl
+    sBoolean=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=isSsl
+    @/@actions/@getKeystore
+    sname=getKeyStore
+    sattributeName=keyStore
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetFile
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getKeystore
+    @/@actions/@getKeyStorePassword
+    sname=getKeyStorePassword
+    sattributeName=keyStorePassword
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getKeyStorePassword
   @/@name
   sname=name
   sshowLabel=true
@@ -280,3 +373,77 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=Handlers
+  @/@ssl
+  sname=ssl
+  sinputtype=truefalse
+  sgroup=SSL
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=ssl
+  @/@keystore
+  sname=keyStore
+  sinputtype=file
+  ssize=60
+  sgroup=SSL
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=keystore
+  @/@keyStorePassword
+  sname=keyStorePassword
+  ssize=40
+  sgroup=SSL
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=keyStorePassword

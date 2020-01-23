@@ -9,6 +9,7 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 
+import xworker.lang.executor.ExecuteRequest;
 import xworker.lang.executor.Executor;
 
 public class TaskExecutor {
@@ -27,6 +28,8 @@ public class TaskExecutor {
     Map<String, TaskResult> taskResults = new HashMap<String, TaskResult>();
     
     String id = null;
+    
+    ExecuteRequest request;
     
     public TaskExecutor(Thing thing, ActionContext actionContext) {
     	this.thing = thing;
@@ -220,7 +223,7 @@ public class TaskExecutor {
 	 * 从Executor上移除本对象产生的UI请求，如果存在的话。
 	 */
 	public void removeRequest() {
-		Executor.removeRequest(thing, actionContext);
+		//Executor.removeRequest(thing, actionContext);
 	}
 
 	static class TaskResult implements java.lang.Comparable<TaskResult>{

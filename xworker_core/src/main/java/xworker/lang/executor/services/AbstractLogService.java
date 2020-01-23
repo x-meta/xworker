@@ -7,6 +7,7 @@ import java.util.Date;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import xworker.lang.executor.ExecuteRequest;
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 
@@ -234,4 +235,16 @@ public abstract class AbstractLogService implements ExecutorService{
 	public void errPrintln(Object message) {
 		System.err.println(message);
 	}
+
+	@Override
+	public void removeRequest(ExecuteRequest request) {
+		Executor.superRemoveRequest(this, request);
+	}
+
+	@Override
+	public void requestUI(ExecuteRequest request) {
+		Executor.superRequestUI(this, request);
+	}
+	
+	
 }

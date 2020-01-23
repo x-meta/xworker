@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -482,19 +483,29 @@ public class FileSync {
 				project = args[0];
 			}
 			
-			File rootDir = new File("./");
+			Properties p = new Properties();
+			File file = new File("./config/update.properties");
+			if(file.exists()) {
+				FileInputStream fin = new FileInputStream(file);
+				p.load(fin);
+				fin.close();
+				
+			}
+						
+			File rootDir = new File(p.getProperty("fileDir", "./"));
 		
+			String configPath = p.getProperty("configDir", "./config/");
 			File fileListFile = null;
 			if(project == null) {
-				fileListFile = new File("./config/filelist.txt");
+				fileListFile = new File(configPath  + "/filelist.txt");
 			}else {
-				fileListFile = new File("./config/" + project + "filelist.txt");
+				fileListFile = new File(configPath + "/" + project + "filelist.txt");
 			}
 			if(fileListFile.exists() == false){
 				fileListFile.getParentFile().mkdirs();
 			}
 						
-			String downloadUrl = "https://www.xworker.org/do?sc=xworker.tools.update.Download";
+			String downloadUrl = p.getProperty("url", "https://www.xworker.org/do?sc=xworker.tools.update.Download");
 			if(project != null) {
 				downloadUrl = downloadUrl + "&project=" + project;
 			}

@@ -64,7 +64,7 @@ public class ConsoleActions {
 			for(Thing child : self.getChilds()) {
 				console.printf("%1$-20s :%2$s\n", child.getMetadata().getName(), child.getMetadata().getLabel());
 			}
-			String cmd = console.readLine("%s:", self.doAction("getSelectTips", actionContext));
+			String cmd = console.readLine("%s:", new Object[] {self.doAction("getSelectTips", actionContext)});
 			
 			if(cmd != null) {
 				cmd = cmd.trim();

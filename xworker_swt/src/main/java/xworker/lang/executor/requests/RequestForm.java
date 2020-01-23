@@ -8,6 +8,8 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
+import xworker.lang.executor.ExecuteRequestSwtUtils;
+
 //对应的模型是：xworker.lang.executor.requests.RequestForm
 public class RequestForm {
 	public static Object createSWT(ActionContext actionContext) {
@@ -25,12 +27,13 @@ public class RequestForm {
 			values = Collections.emptyMap();
 		}
 		Thing prototypes = World.getInstance().getThing("xworker.lang.executor.requests.prototypes.RequestPrototypes/@formComposite");
+		Object obj = ExecuteRequestSwtUtils.createOkCancelControl(prototypes, actionContext);
 		
-		Object composite = prototypes.doAction("create", actionContext);
+		//Object composite = prototypes.doAction("create", actionContext);
 		ActionContainer actions = actionContext.getObject("actions");
 		actions.doAction("doInit", actionContext, "formThing", formThing, "values", values);
 		
-		return composite;
+		return obj;
 	}
 	
 	public static void init(ActionContext actionContext) {

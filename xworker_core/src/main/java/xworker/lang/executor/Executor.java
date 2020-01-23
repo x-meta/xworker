@@ -228,7 +228,51 @@ public class Executor {
 	public static void requestUI(Thing request, ActionContext actionContext) {
 		ExecutorService service = getExecutorService();
 		if(service != null) {
-			service.requestUI(request, actionContext);
+			service.requestUI(new ExecuteRequest(request, actionContext));
+		}
+	}
+	
+	public static void requestUI(ExecuteRequest request) {
+		ExecutorService service = getExecutorService();
+		if(service != null) {
+			service.requestUI(request);
+		}
+	}
+	
+	/**
+	 * 通常在ExecutorService中使用，当一个ExecutorService没有能力处理UI请求时，可以通过此方法
+	 * 调用其上层的ExecutorService执行UI请求。
+	 * 
+	 * @param service
+	 * @param request
+	 * @param actionContext
+	 */
+	public static void superRequestUI(ExecutorService service, Thing request, ActionContext actionContext) {
+		ExecutorService es = getParentExecutorService(service);
+		if(es != null) {
+			es.requestUI(new ExecuteRequest(request, actionContext));
+		}
+	}
+	
+	public static void superRequestUI(ExecutorService service, ExecuteRequest request) {
+		ExecutorService es = getParentExecutorService(service);
+		if(es != null) {
+			es.requestUI(request);
+		}
+	}
+	
+	/**
+	 * 通常在ExecutorService中使用，当一个ExecutorService没有能力处理UI请求时，可以通过此方法
+	 * 调用其上层的ExecutorService执行去除UI请求。
+	 * 
+	 * @param service
+	 * @param request
+	 * @param actionContext
+	 */
+	public static void superRemoveRequest(ExecutorService service, ExecuteRequest request) {
+		ExecutorService es = getParentExecutorService(service);
+		if(es != null) {
+			es.removeRequest(request);
 		}
 	}
 	
@@ -256,6 +300,27 @@ public class Executor {
 		Stack<ExecutorService> stack = getExecutorServiceStack();
 		
 		return stack.peek();
+	}
+	
+	/**
+	 * 获取紧邻current但比current更早压入栈的ExecutorService，如果不存在返回null。
+	 * 
+	 * @param current
+	 * @return
+	 */
+	public static ExecutorService getParentExecutorService(ExecutorService current) {
+		Stack<ExecutorService> stack = getExecutorServiceStack();
+		ExecutorService parrent = null;
+		for(int i=0; i<stack.size(); i++) {
+			ExecutorService es = stack.get(i);
+			if(es != current) {
+				parrent = es;
+			}else {
+				return parrent;
+			}
+		}
+		
+		return null;
 	}
 	
 	private static Stack<ExecutorService> getExecutorServiceStack() {
@@ -312,10 +377,10 @@ public class Executor {
 		}
 	}
 	
-	public static void removeRequest(Thing request, ActionContext actionContext) {
+	public static void removeRequest(ExecuteRequest request) {
 		ExecutorService service = getExecutorService();
 		if(service != null) {
-			service.removeRequest(request, actionContext);
+			service.removeRequest(request);
 		}
 	}
 	

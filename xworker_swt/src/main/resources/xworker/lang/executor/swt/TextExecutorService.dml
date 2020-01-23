@@ -1,24 +1,43 @@
-%1579770066986
+%1579685021865
 @
-sname=ThingDesc
-slabel=ThingDesc
-sdescriptors=xworker.lang.executor.Request
+sname=TextExecutorService
+slabel=TextExecutorService
+sdescriptors=xworker.lang.MetaDescriptor3,xworker.lang.MetaDescriptor3/@thing
 smany=true
 seditCols=2
 sformNoLabel=false
 sinitialization=false
-sgroup=okcancel
+sgroup=xworker.lang.executor
 smodifier=public
 sinheritDescription=false
-sdescription=<p>展示一个事物的文档。</p>
+Sdescription=
+#$@text#$@
+<p>xworker.lang.executor.ExecutorService的实现，只输出日志等到StyledText或Text中。</p>
+
+<p><strong>返回值和保存的变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 返回null，保存的是SwtExecutorService。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Object getText()</strong><br />
+	返回StyledText或Text。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
 sth_createIndex=true
-sth_registThing=child|xworker.lang.executor.RequestIndex
+sth_registThing=child|xworker.swt.Widgets
 sth_registMyChilds=false
 sth_registDisabled=false
+sth_noThingRegistViewer=false
 sth_fileMonitor=false
+sth_deprecated=false
 sth_mark=false
+sth_registQueryOnlySelf=false
   @/@actions
   sname=actions
   sdescriptors=xworker.lang.MetaDescriptor3/@actions
@@ -26,11 +45,40 @@ sth_mark=false
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
   sth_fileMonitor=false
   sth_mark=false
+  sth_registQueryOnlySelf=false
   sid=actions
-    @/@actions/@createSWT
-    sname=createSWT
+    @/@actions/@create
+    sname=create
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.executor.TextExecutorService
+    smethodName=create
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=create
+    @/@actions/@createStyledText
+    sname=createStyledText
     sisSynchronized=false
     sthrowException=true
     suseOtherAction=false
@@ -38,25 +86,14 @@ sth_mark=false
     sdisableGlobalContext=false
     Scode=
 #$@text#$@
-import xworker.util.XWorkerUtils;
-import xworker.lang.executor.ExecuteRequestSwtUtils;
+import org.eclipse.swt.custom.StyledText;
+import xworker.lang.executor.StyledTextLogViewer;
 
-//println actionContext.get("request");
-def prototype = world.getThing("xworker.lang.executor.requests.prototypes.ThingDesc/@mainComposite");
-def composite = ExecuteRequestSwtUtils.createOkCancelControl(prototype, actionContext);
-//def composite = prototype.doAction("create", actionContext);
-
-def thing = self.doAction("getThing", actionContext);
-//println "request=" + thing;
-//println actionContext.get("request");
-if(thing == null){
-    thing = self;
+if(text instanceof StyledText){
+    return new StyledTextLogViewer(text);
+}else{
+    return null;
 }
-
-def url = XWorkerUtils.getThingDescUrl(thing);
-actionContext.browser.setUrl(url);
-
-return composite;
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
@@ -68,15 +105,16 @@ return composite;
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
     sth_fileMonitor=false
     sth_mark=false
-    sid=createSWT
-    @/@actions/@getThing
-    sname=getThing
-    sattributeName=thing
-    schildThingFirstChild=false
-    sreturnSelf=false
+    sth_registQueryOnlySelf=false
+    sid=createStyledText
+    @/@actions/@getText
+    sname=getText
+    sattributeName=text
     snotNull=false
+    svariable=false
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
@@ -85,16 +123,19 @@ return composite;
     sthrowException=true
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
-    sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
     sth_fileMonitor=false
     sth_mark=false
-    sid=getThing
+    sth_registQueryOnlySelf=false
+    sid=getText
   @/@name
   sname=name
   sshowLabel=true
@@ -112,8 +153,10 @@ return composite;
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
   sth_fileMonitor=false
   sth_mark=false
+  sth_registQueryOnlySelf=false
   sid=name
   @/@label
   sname=label
@@ -132,19 +175,18 @@ return composite;
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
   sth_fileMonitor=false
   sth_mark=false
+  sth_registQueryOnlySelf=false
   sid=label
-  @/@thing
-  sname=thing
-  sinputtype=dataSelector
-  ssize=60
+  @/@text
+  sname=text
   sshowLabel=true
   slabelAlign=right
   slabelVAlign=baseline
   smodifier=public
   sreadOnly=false
-  sdefault=var:request
   sinheritDescription=false
   svalidateAllowBlank=true
   LvalidateOnBlur=true
@@ -155,9 +197,11 @@ return composite;
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
   sth_fileMonitor=false
   sth_mark=false
-  sid=thing
+  sth_registQueryOnlySelf=false
+  sid=text
   @/@description
   sname=description
   sinputtype=html
@@ -176,6 +220,8 @@ return composite;
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
   sth_fileMonitor=false
   sth_mark=false
+  sth_registQueryOnlySelf=false
   sid=description

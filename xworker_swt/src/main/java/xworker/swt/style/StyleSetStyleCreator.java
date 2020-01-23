@@ -16,7 +16,7 @@
 package xworker.swt.style;
 
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.TableTreeItem;
+//import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
@@ -77,8 +77,8 @@ public class StyleSetStyleCreator {
             self.doAction("applyTableColumn", actionContext);
         }else if(widget instanceof TableItem){
             self.doAction("applyTableItem", actionContext);
-        }else if(widget instanceof TableTreeItem){
-            self.doAction("applyTableTreeItem", actionContext);
+        //}else if(widget instanceof TableTreeItem){
+        //    self.doAction("applyTableTreeItem", actionContext);
         }else if(widget instanceof ToolItem){
             self.doAction("applyToolItem", actionContext);
         }else if(widget instanceof TrayItem){
@@ -340,6 +340,7 @@ public class StyleSetStyleCreator {
         }
     }
 
+    /*
 	public static void applyTableTreeItem(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
     	TableTreeItem control = (TableTreeItem) actionContext.get("widget");
@@ -371,7 +372,7 @@ public class StyleSetStyleCreator {
         if(foreground != null){
             control.setForeground(foreground);
         }
-    }
+    }*/
 
     public static void applyToolItem(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");

@@ -49,7 +49,12 @@ public class GlobalConfig {
 		}
     	
     	//logger.info(XWorkerUtils.isThingExplorer()  + ":" + XWorkerUtils.getIde());
-    	if(!XWorkerUtils.isThingExplorer() && World.getInstance().getData("jettyServer") == null && XWorkerUtils.hasXWorker()){    		
+    	if(!XWorkerUtils.isThingExplorer() && World.getInstance().getData("jettyServer") == null && XWorkerUtils.hasXWorker()){
+    		boolean ssl = false;
+    		Thing globalConfig = World.getInstance().getThing("_local.xworker.config.GlobalConfig");    	
+    		if(globalConfig != null) {
+    			ssl = globalConfig.getBoolean("webSSL");
+    		}
     		//不是在XWorker的事物管理器运行环境下，此时试图启动Jetty服务器
     		ActionContext ac = new ActionContext();       		
     		//端口可能会被占用，所以尝试启动多个，直到成功
@@ -62,7 +67,11 @@ public class GlobalConfig {
 	    				jetty.getAction().run(ac);
 	    			}
 	    			
-	    			webUrl = "http://localhost:" + httpPort + "/";
+	    			if(ssl) {
+	    				webUrl = "https://localhost:" + httpPort + "/";
+	    			} else {
+	    				webUrl = "http://localhost:" + httpPort + "/";
+	    			}
 	    			
 	    			//logger.info("Jetty started at " + httpPort + ".");
 	    			break;

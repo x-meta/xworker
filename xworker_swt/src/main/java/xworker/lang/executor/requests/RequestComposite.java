@@ -3,6 +3,7 @@ package xworker.lang.executor.requests;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.ExecuteRequestSwtUtils;
 import xworker.lang.executor.Executor;
 
 public class RequestComposite {
@@ -14,7 +15,8 @@ public class RequestComposite {
 			Executor.warn("RequestComposite", "Composite is null, path=" + self.getMetadata().getPath());
 			return null;
 		}else {
-			return composite.doAction("create", actionContext);
+			return ExecuteRequestSwtUtils.createOkCancelControl(composite, actionContext);
+			//return composite.doAction("create", actionContext);
 		}
 	}
 }

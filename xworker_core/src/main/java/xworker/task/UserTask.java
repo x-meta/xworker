@@ -136,6 +136,11 @@ public class UserTask {
 		return getCurrentLabel();
 	}
 	
+	public void set(String label, String detail) {
+		this.setLabel(label);
+		this.setDetail(detail);
+	}
+	
 	/**
 	 * 通知启动任务。
 	 */

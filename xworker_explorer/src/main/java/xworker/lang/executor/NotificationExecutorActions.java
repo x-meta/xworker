@@ -105,22 +105,25 @@ public class NotificationExecutorActions {
 		}
 		ac.put("requestVariables", actionContext.get("requestVariables"));
 
-		Thing request = actionContext.getObject("request");
-		request.doAction("createSWT", ac);
+		ExecuteRequest request = actionContext.getObject("request");
+		request.createSWT(actionContext.get("mainComposite"), ac);
+		//request.doAction("createSWT", ac);
 		//println actionContext.get("request");
 		actionContext.g().put("actions", ac.get("actions"));
 	}
 	
 	public static Object getTimeout(ActionContext actionContext) {
-		Thing request = actionContext.getObject("request");
-		return request.doAction("getTimeout", actionContext);
+		ExecuteRequest request = actionContext.getObject("request");
+		Thing requestThing = request.getThing();
+		return requestThing.doAction("getTimeout", actionContext);
 	}
 	
 	public static Object getLabel(ActionContext actionContext) {
-		Thing request = actionContext.getObject("request");
-		String label = request.doAction("getLabel", actionContext);
+		ExecuteRequest request = actionContext.getObject("request");
+		Thing requestThing = request.getThing();
+		String label = requestThing.doAction("getLabel", actionContext);
 		if(label == null || "".equals(label)) {
-			return request.getMetadata().getLabel();
+			return requestThing.getMetadata().getLabel();
 		}else {
 			return label;
 		}
@@ -128,6 +131,7 @@ public class NotificationExecutorActions {
 	
 	@SuppressWarnings("unchecked")
 	public static void onFinished(ActionContext actionContext) {
+		/*
 		Notification notification = actionContext.getObject("notification");
 		Map<String, Object> mvalues = notification.getMessage().getVariables();		
 		final Map<String, Object> values = (Map<String, Object>) mvalues.get("requestVariables");
@@ -151,14 +155,15 @@ public class NotificationExecutorActions {
 					Executor.pop();
 				}
 			}
-		}).start();		
+		}).start();		*/
 	}
 	
 	public static String getId(ActionContext actionContext) {
-		Thing request = actionContext.getObject("request");
-		String messageId =  request.doAction("getMessageId", actionContext);
+		ExecuteRequest request = actionContext.getObject("request");
+		Thing requestThing = request.getThing();
+		String messageId =  requestThing.doAction("getMessageId", actionContext);
 		if(messageId == null || "".equals(messageId)) {
-			return request.getMetadata().getPath();
+			return requestThing.getMetadata().getPath();
 		}else {
 			return messageId;
 		}

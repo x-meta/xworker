@@ -3,9 +3,7 @@ package xworker.lang.executor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -49,7 +47,7 @@ public class DefaultUIHandler implements UIHandler{
 				}
 				
 				//文档
-				String url = XWorkerUtils.getThingDescUrl(request.thing);
+				String url = XWorkerUtils.getThingDescUrl(request.request.getThing());
 				DefaultUIHandler.this.browser.setUrl(url);
 			}
 			
@@ -57,31 +55,26 @@ public class DefaultUIHandler implements UIHandler{
 	}
 	
 	@Override
-	public void handleUIRequest(final Thing thing, final ActionContext actionContext) {
+	public void handleUIRequest(final ExecuteRequest request) {
 		if(table.isDisposed()) {
 			return;
 		}
 		final Thread thread = Thread.currentThread();
 		//要转移的变量
-		Map<String, Object> vs = thing.doAction("getVariables", actionContext);
-		if(vs == null) {
-			vs = new HashMap<String, Object>();
-		}
-		final Map<String, Object> variables = vs;
 		table.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				try {
 					for(TableItem item : table.getItems()) {
-						Request request = (Request) item.getData();
-						if(request.equals(thread, thing, actionContext)) {
-							request.addCount();
+						Request req = (Request) item.getData();
+						if(req.equals(thread, request.getThing(), actionContext)) {
+							req.addCount();
 							return;
 						}
 					}
 					
-					Request request = new Request(thread, thing, variables, actionContext, 
-							(ExecutorService) DefaultUIHandler.this.actionContext.getObject("executorService"));
-					request.createTabeItem(table);
+					Request req = new Request(thread, request, actionContext, 
+							(ExecutorService) DefaultUIHandler.this.executorService);
+					req.createTabeItem(table);
 				}catch(Exception e) {					
 				}
 			}
@@ -90,22 +83,18 @@ public class DefaultUIHandler implements UIHandler{
 
 	static class Request{
 		Thread thread;
-		Thing thing;
-		ActionContext actionContext;
+		ExecuteRequest request;
 		ActionContext ac;
 		int count = 1;
 		String time = null;
 		ExecutorService executorService;
-		Map<String, Object> variables;
 		
 		TableItem item;
 		Composite composite;
 		
-		public Request(Thread thread, Thing thing, Map<String, Object> variables, ActionContext actionContext, ExecutorService executorService) {
+		public Request(Thread thread, ExecuteRequest request, ActionContext actionContext, ExecutorService executorService) {
 			this.thread = thread;
-			this.thing = thing;
-			this.actionContext = actionContext;
-			this.variables = variables;
+			this.request = request;
 			
 			SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss-SSS");
 			this.executorService = executorService;
@@ -113,7 +102,8 @@ public class DefaultUIHandler implements UIHandler{
 		}
 		
 		public boolean equals(Thread thread, Thing thing, ActionContext actionContext) {
-			if(thread == this.thread && thing == this.thing && actionContext == this.actionContext) {
+			if(thread == this.thread && thing == this.request.getThing() 
+					&& actionContext == this.request.getActionContext()) {
 				return true;
 			}else {
 				return false;
@@ -123,7 +113,7 @@ public class DefaultUIHandler implements UIHandler{
 		public void createTabeItem(Table parent) {
 			if(item == null) {
 				item = new TableItem(parent, SWT.NONE, 0);
-				String[] text = new String[] {time, thing.getMetadata().getLabel(), thread.getName(), };
+				String[] text = new String[] {time, request.getThing().getMetadata().getLabel(), thread.getName(), };
 				item.setText(text);
 				item.setData(this);
 			}
@@ -131,21 +121,16 @@ public class DefaultUIHandler implements UIHandler{
 		
 		public void addCount() {
 			count++;
-			String[] text = new String[] {time,  thing.getMetadata().getLabel() + "(" + count + ")", thread.getName()};
+			String[] text = new String[] {time,  request.getThing().getMetadata().getLabel() + "(" + count + ")", thread.getName()};
 			item.setText(text);
 		}
 		
 		public Composite getComposite(Composite parent) {
 			if(composite == null) {
 				ac = new ActionContext();
-				ac.putAll(variables);
 				ac.put("parent", parent);
-				ac.put("parentContext", actionContext);
-				ac.put("executorService", executorService);
-				ac.put("request", thing);
-				ac.put("requestContext", actionContext);				
 				
-				composite = thing.doAction("createSWT", ac);
+				composite = (Composite) request.createSWT(parent, ac);
 			}
 			
 			return composite;
@@ -153,7 +138,7 @@ public class DefaultUIHandler implements UIHandler{
 		
 		public void ok() {
 			try {
-				Executor.push(executorService);
+				Executor.push(request.getExecutorService());
 				
 				Object result = null;
 				if(ac != null) {
@@ -163,8 +148,7 @@ public class DefaultUIHandler implements UIHandler{
 					}
 				}
 				
-				variables.put("result", result);
-				thing.doAction("ok", actionContext, variables);
+				request.doAction("ok", "result", result);
 			}finally {
 				Executor.pop();
 				
@@ -182,7 +166,7 @@ public class DefaultUIHandler implements UIHandler{
 		public void cancel() {
 			try {
 				Executor.push(executorService);
-				thing.doAction("cancel", actionContext, variables);
+				request.doAction("cancel");
 			}finally {
 				Executor.pop();
 				
@@ -223,7 +207,7 @@ public class DefaultUIHandler implements UIHandler{
 	public static DefaultUIHandler create(ActionContext actionContext) {
 		Table table = actionContext.getObject("requestTable");
 		Browser browser = actionContext.getObject("browser");
-		Composite composite = actionContext.getObject("requestComposite");
+		Composite composite = actionContext.getObject("contentComposite");
 		
 		return new DefaultUIHandler(table, browser, composite, actionContext);
 	}
@@ -234,7 +218,7 @@ public class DefaultUIHandler implements UIHandler{
 	}
 
 	@Override
-	public void removeRequest(final Thing request, final ActionContext actionContext) {
+	public void removeRequest(final ExecuteRequest request) {
 		if(table.isDisposed()) {
 			return;
 		}
@@ -245,12 +229,17 @@ public class DefaultUIHandler implements UIHandler{
 					List<TableItem> removeList = new ArrayList<TableItem>();
 					for(TableItem item : table.getItems()) {
 						Request req = (Request) item.getData();
-						if(req.thing == request) {
+						if(req.request == request) {
 							removeList.add(item);
 						}
 					}
 					
 					for(TableItem item : removeList) {
+						Request request = (Request) item.getData();
+						if(request.composite != null) {
+							request.composite.dispose();
+						}
+						
 						item.dispose();
 					}
 				}catch(Exception e) {
@@ -258,5 +247,10 @@ public class DefaultUIHandler implements UIHandler{
 				}
 			}
 		});
+	}
+
+	@Override
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
 	}
 }

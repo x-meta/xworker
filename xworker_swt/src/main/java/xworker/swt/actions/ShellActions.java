@@ -23,6 +23,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.util.UtilMap;
+
+import xworker.lang.actions.ActionUtils;
 
 public class ShellActions {
     public static void okButtonSelection(ActionContext actionContext){
@@ -32,7 +35,8 @@ public class ShellActions {
         ActionContext context = actionContext.getObject("context");
         
         actionContext.getScope(0).put("result", text.getText());
-        thing.doAction("ok", context, "text", text.getText());
+        ActionUtils.executeActionAndChild(thing, "ok", context, UtilMap.toMap("text", text.getText()));
+        //thing.doAction("ok", context, "text", text.getText());
         shell.dispose();
     }
 
@@ -42,7 +46,8 @@ public class ShellActions {
         Shell shell = actionContext.getObject("shell");
         ActionContext context = actionContext.getObject("context");
         
-        thing.doAction("cancel", context, "text", text.getText());
+        ActionUtils.executeActionAndChild(thing, "cancel", context, UtilMap.toMap("text", text.getText()));
+        //thing.doAction("cancel", context, "text", text.getText());
         shell.dispose();
     }
     

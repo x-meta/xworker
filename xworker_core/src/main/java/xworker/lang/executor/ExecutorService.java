@@ -1,8 +1,5 @@
 package xworker.lang.executor;
 
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
-
 /**
  * 执行器服务的接口。
  * 
@@ -49,19 +46,18 @@ public interface ExecutorService {
 	public void errPrintln(Object message);
 	
 	/**
-	 * 处理UI请求，处理完毕后调用request的ok或cancel的方法。
+	 * 请求UI。
 	 * 
 	 * @param request
-	 * @param actionContext
 	 */
-	public void requestUI(Thing request, ActionContext actionContext);
+	public void requestUI(ExecuteRequest request);
 
 	/**
 	 * 移除UI请求。
 	 * 
 	 * @param request
 	 */
-	public void removeRequest(Thing request, ActionContext actionContext);
+	public void removeRequest(ExecuteRequest request);
 	
 	/**
 	 * 返回ExecutorService所在的线程。

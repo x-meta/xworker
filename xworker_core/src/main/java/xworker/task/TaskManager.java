@@ -245,9 +245,13 @@ public class TaskManager {
 			}
 					
 			task = new Task(self, actionContext, callback, callbackCancel, false);
-			Future<?> future = executorService.submit(task);
-			task.setFuture(future);
 			putTask(task);
+			if(self.getBoolean("thread")) {
+				new Thread(task, self.getMetadata().getLabel()).start();
+			}else {
+				Future<?> future = executorService.submit(task);
+				task.setFuture(future);
+			}			
 		}
 		
 		if(self.getBoolean("saveAsGlobalVar")){

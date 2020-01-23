@@ -1,4 +1,4 @@
-^1576739887740
+^1579489527548
 @
 sshellName
 shell
@@ -405,13 +405,15 @@ if(dataSource == null){
     dataSource = new Thing("xworker.db.jdbc.DataSource");
     dataSource.initDefaultValue();
     dataSource.put("name", "XWorkerIDEDataSource");
-    dataSource.put("type", "c3p0");
-    dataSource.put("dbType", "derby");
-    dataSource.put("drivers", "14");
-    dataSource.put("driver_class", "org.apache.derby.jdbc.EmbeddedDriver");
-    dataSource.put("url", "jdbc:derby:app");
-    dataSource.put("userName", "xworker");
-    dataSource.put("password", "xworker");
+    dataSource.put("type", "HikariCP");
+    dataSource.put("dbType", "sqlite");
+    dataSource.put("drivers", "15");
+    dataSource.put("dbType", "sqlite");
+    dataSource.put("drivers", "15");
+    dataSource.put("driver_class", "org.sqlite.JDBC");
+    dataSource.put("url", "template:jdbc:sqlite:\${world.path}/databases/xworker_app.db");
+    dataSource.put("userName", "");
+    dataSource.put("password", "");
     dataSource.put("th_createIndex", "true");
     dataSource.put("th_registThing", "child|xworker.ui.db.datasource.JdbcDatasourceRegistor");
     dataSource.put("group", "xworker");
@@ -522,6 +524,8 @@ def delete(file){
         screateLocalVarScope
         false
         ssaveReturn
+        false
+        sswitchResult
         false
         sdebugLog
         false
@@ -947,18 +951,22 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.bio.SocketConnector;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;*/
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import org.xmeta.util.UtilThing;;
+import org.xmeta.util.UtilThing;
 import xworker.util.GlobalConfig;
+import xworker.jetty.JettyServer;
 
+def ssl = false;
 def globalConfig = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.GlobalConfig",
     "_local", "xworker.ide.config.decriptors.GlobalConfig");
 def port = 9001;
 if(globalConfig != null){
     port = globalConfig.getInt("webPort", 9001);
     GlobalConfig.setWebUrl(globalConfig.getString("webUrl"));
+    ssl = globalConfig.getBoolean("webSSL");
 }
 def webContextPath = globalConfig.getStringBlankAsNull("webContext");
 if(webContextPath == null){
@@ -977,7 +985,14 @@ if(server != null){
 
 try{
     //启动HTTP服务器
-    Server aserver = new Server(port);
+    Server aserver = new Server();
+    if(ssl){
+        def connector = JettyServer.createXWorkerSSLConnector(aserver, port);
+        aserver.setConnectors([connector] as Connector[]);
+    }else{
+        def connector = JettyServer.createConnector(aserver, port);
+        aserver.setConnectors([connector] as Connector[]);
+    }
     //根应用
 	   String contextPath = "/";
 	    
@@ -1040,6 +1055,8 @@ try{
   false
   ssaveReturn
   false
+  sswitchResult
+  false
   sdebugLog
   false
   sonlyRegist
@@ -1054,6 +1071,62 @@ try{
   false
   sid
   startJettry
+    @/@startJettry/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    VariablesDescs
+      @/@startJettry/@VariablesDescs/@aserver
+      sname
+      aserver
+      svarName
+      aserver
+      spassive
+      false
+      sscope
+      0
+      stype
+      object
+      sclassName
+      org.eclipse.jetty.server.Server
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      aserver
   @/@startJettry1
   sname
   initLanguage
@@ -1140,11 +1213,19 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.thread.QueuedThreadPool;
 */
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import org.xmeta.util.UtilThing;
+import xworker.jetty.JettyServer;
+
+def globalConfig = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.GlobalConfig",
+    "_local", "xworker.ide.config.decriptors.GlobalConfig");
+if(globalConfig != null){
+    ssl = globalConfig.getBoolean("webSSL");
+}
 
 //此脚本用于非事物管理器的Jetty, port是传入的
 webContextPath = "/";
@@ -1159,7 +1240,14 @@ if(server != null){
     }
 }
 
-def aserver = new Server(port);
+def aserver = new Server();
+if(ssl){
+    def connector = JettyServer.createXWorkerSSLConnector(aserver, port);
+    aserver.setConnectors([connector] as Connector[]);
+}else{
+    def connector = JettyServer.createConnector(aserver, port);
+    aserver.setConnectors([connector] as Connector[]);
+}
 //def threadPool = new QueuedThreadPool();
 //threadPool.setDaemon(true);
 aserver.getThreadPool().setDaemon(true);;
@@ -1194,6 +1282,8 @@ return aserver;
   screateLocalVarScope
   false
   ssaveReturn
+  false
+  sswitchResult
   false
   sdebugLog
   false

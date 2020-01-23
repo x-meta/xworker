@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.UtilAction;
 
+import xworker.lang.actions.ActionUtils;
 import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtUtils;
@@ -102,25 +104,25 @@ public class MessageBoxActionsMessageBoxCreator {
 					try {
 						switch(returnCode){
 			            case SWT.OK:
-			            	self.doAction("ok", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "ok", actionContext, vars);
 			            	break;
 			            case SWT.CANCEL:
-			            	self.doAction("cancel", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "cancel", actionContext, vars);
 			            	break;
 			            case SWT.YES:
-			            	self.doAction("yes", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "yes", actionContext, vars);
 			            	break;
 			            case SWT.NO:
-			            	self.doAction("no", actionContext);
+			            	ActionUtils.executeActionAndChild(self, "no", actionContext, vars);
 			            	break;
 			            case SWT.RETRY:
-			            	self.doAction("retry", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "retry", actionContext, vars);
 			            	break;
 			            case SWT.ABORT:
-			            	self.doAction("abort", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "abort", actionContext, vars);
 			            	break;
 			            case SWT.IGNORE:
-			            	self.doAction("ignore", actionContext, vars);
+			            	ActionUtils.executeActionAndChild(self, "ignore", actionContext, vars);
 			            	break;		     
 						}
 					}catch(Exception e) {
@@ -133,25 +135,25 @@ public class MessageBoxActionsMessageBoxCreator {
 	        int result = box.open();
 	        switch(result){
 	            case SWT.OK:
-	            	return self.doAction("ok", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "ok", actionContext, vars);
 	            case SWT.CANCEL:
-	            	return self.doAction("cancel", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "cancel", actionContext, vars);
 	            case SWT.YES:
-	            	return self.doAction("yes", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "yes", actionContext, vars);
 	            case SWT.NO:
-	            	return self.doAction("no", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "no", actionContext, vars);
 	            case SWT.RETRY:
-	            	return self.doAction("retry", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "retry", actionContext, vars);
 	            case SWT.ABORT:
-	            	return self.doAction("abort", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "abort", actionContext, vars);
 	            case SWT.IGNORE:
-	            	return self.doAction("ignore", actionContext, vars);
+	            	return ActionUtils.executeActionAndChild(self, "ignore", actionContext, vars);	            			
 	            default:
 	                return "OK";
 	        }
         }
     }
-
+ 
     public static Object prompt(ActionContext actionContext){
         Thing self = (Thing) actionContext.get("self");
         
