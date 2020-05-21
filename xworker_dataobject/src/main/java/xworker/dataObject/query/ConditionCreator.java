@@ -374,7 +374,7 @@ public class ConditionCreator {
             sql = sql + ")";
         }else{
             sql = column + " " + operator + " ?";
-            Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",value, "operator",operator, "condition", condition});
+            Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value", vl, "operator",operator, "condition", condition});
             cds.add(cd);
         }
         return sql;
@@ -385,9 +385,14 @@ public class ConditionCreator {
             return null;
         }
         
-        if(value instanceof String){
-        	List<String> values = new ArrayList<String>();
+        if(value instanceof String){        	
+        	//System.out.println(value);
         	String str = (String) value;
+        	if(str.startsWith("\"") && str.endsWith("\"")) {
+        		return str.substring(1, str.length() - 1);
+        	}
+        	
+        	List<String> values = new ArrayList<String>();
         	for(String vs : str.split("[,]")) {
         		for(String v : vs.split("[ ]")) {
         			v = v.trim();
@@ -402,7 +407,11 @@ public class ConditionCreator {
             //for(String v : ((String) value).split("[,]")){
             //	values.add(v);
             //}
-            return values;
+        	if(values.size() == 0) {
+        		return values.get(0);
+        	} else {
+        		return values;
+        	}
         }else{
             return value;
         }

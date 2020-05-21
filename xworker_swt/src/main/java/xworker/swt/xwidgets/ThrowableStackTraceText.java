@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.ActionContainer;
 
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtTextUtils;
@@ -43,6 +44,11 @@ public class ThrowableStackTraceText {
 			child.doAction("create", actionContext);
 		}
 		
+		ActionContainer actions = ac.getObject("actions");
+		Throwable throwable = self.doAction("getThrowable", actionContext);
+		if(throwable != null) {
+			actions.doAction("setThrowable", actionContext, "throwable", throwable);
+		}
 		actionContext.getScope(0).put(self.getMetadata().getName(), ac.get("actions"));
 		return obj;
 	}

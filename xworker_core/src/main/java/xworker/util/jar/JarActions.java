@@ -18,20 +18,20 @@ import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.io.BridgeOutputStream;
 import xworker.io.file.FileActions;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 import xworker.util.compress.CompressEntry;
 import xworker.util.compress.JarCompressEntry;
 
 public class JarActions {
-	private static Logger logger = LoggerFactory.getLogger(JarActions.class);
+	//private static Logger logger = LoggerFactory.getLogger(JarActions.class);
+	private static final String TAG = JarActions.class.getName();
 	
 	public static void compressWithEntrysToOutputStream(Thing self, OutputStream out, ActionContext actionContext) throws IOException {
 		Object manifest = self.doAction("getManifest", actionContext);
@@ -49,13 +49,13 @@ public class JarActions {
 			for(Thing entrys : self.getChilds("Entrys")){
 				for(Thing entryThing : entrys.getChilds()){
 					CompressEntry entry = entryThing.doAction("create", actionContext);
-					if(entry == null){
-						logger.debug("CompressEntry is null, Entry=" + entryThing.getMetadata().getPath());
-					}else if(entry.getName() == null){
-						logger.debug("Entry name is null, ignore it but search childs Entry=" + entryThing.getMetadata().getPath());
+					if(entry == null) {
+						Executor.info(TAG, "CompressEntry is null, thing={}", entryThing.getMetadata().getPath());
+					}else  {						
+						Executor.debug(TAG, "******Write entry {}, thing={}", entry.getName(), entryThing.getMetadata().getPath());						
+						
+						writeEntry(entry, jout, context);
 					}
-											
-					writeEntry(entry, jout, context);
 				}
 			}
 		}finally{
@@ -71,8 +71,10 @@ public class JarActions {
 			jarFile.getParentFile().mkdirs();
 		}
 		
+		Executor.debug(TAG, "Begin to write jar, file={}", jarFile);
+		
 		FileOutputStream fout = new FileOutputStream(jarFile);
-		try{
+		try{			
 			compressWithEntrysToOutputStream(self, fout, actionContext);
 		}finally{
 			fout.close();
@@ -100,8 +102,9 @@ public class JarActions {
 				}
 				
 				if(context.get(name) != null) {
-					logger.warn("duplicate entry, ignore it, name=" + name);
+					Executor.info(TAG, "duplicate entry, ignore it, name=" + name);					
 				}else {
+					Executor.debug(TAG, "Write entry {}", entry.getName());
 					context.put(name, name);
 					if(entry.isDirectory()) {
 						JarEntry jentry = new JarEntry(name);
@@ -148,6 +151,7 @@ public class JarActions {
 			jarFile.getParentFile().mkdirs();
 		}
 		
+		Executor.debug(TAG, "Compress {} to {}", directory, jarFile);
 		//输出流
 		FileOutputStream fout = new FileOutputStream(jarFile);
 		try{
@@ -175,6 +179,7 @@ public class JarActions {
 		File directory = FileActions.getFile(self, "getDirectory", actionContext);
 		File jarFile = FileActions.getFile(self, "getJarFile", actionContext);
 		
+		Executor.debug(TAG, "Decompress {} to {}", jarFile, directory);
 		FileInputStream fin = new FileInputStream(jarFile);
 		try{
 			JarEntry entry = null;
@@ -254,7 +259,7 @@ public class JarActions {
 				FileUtils.copyFile(file, out);
 				out.closeEntry();
 			}catch(Exception e){
-				logger.warn("Putentry error, " + e.getLocalizedMessage());
+				Executor.warn(TAG, "Putentry error, " + e.getLocalizedMessage());
 			}
 		}
 	}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SimpleControl name="Login" descriptors="xworker.http.controls.SimpleControl">
+    <actions>
+        <GroovyAction name="doAction">
+            <code><![CDATA[def docPath = requestBean.docPath;
+_g.put("docPath", docPath);
+
+def doc = world.getThing(docPath);
+if(doc == null){
+    return "nodoc";
+}
+
+if(requestBean.command == "login"){
+    if(doc.doAction("checkLogin", actionContext, "userName", requestBean.name, 
+            "password", requestBean.password)){
+        //登录成功，暂时没有用户概念，把doc放到session中
+        session.setAttribute(doc.getMetadata().getPath(), doc);
+        response.sendRedirect("do?sc=" + docPath);
+        return "redirected";
+    }
+}]]></code>
+        </GroovyAction>
+    </actions>
+    <view belongToHtml="false">
+        <SimpleLoginPage name="SimpleLoginPage" descriptors="xworker.app.view.http.app.page.SimpleLoginPage"
+             title="${title?if_exists}" loginUrl="do?sc=xworker.app.web.docorg.Login"
+             formContents="&lt;input type=&quot;hidden&quot; name=&quot;docPath&quot; value=&quot;${docPath?if_exists}&quot;/&gt;"></SimpleLoginPage>
+    </view>
+    <view name="view_no_doc" _xmeta_id_="view1">
+        <code name="code" code="文档不存在：${docPath?if_exists}。"></code>
+    </view>
+    <result name="success" value="xworker.app.web.docorg.Login/@view"></result>
+    <result name="nodoc" value="xworker.app.web.docorg.Login/@view1"></result>
+</SimpleControl>

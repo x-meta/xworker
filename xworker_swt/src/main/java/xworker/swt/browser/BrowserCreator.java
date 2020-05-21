@@ -74,20 +74,6 @@ public class BrowserCreator {
 				//Eclipse RAP不能使用
 			}
 		}
-		
-		String url = self.getString("url");
-		if(url != null && url != ""){
-			try {			
-				browser.setUrl(url);
-			}catch(Throwable t) {
-				t.printStackTrace();
-			}
-		}else {
-			String text = self.getString("text");
-			if(text != null && text != ""){
-			    browser.setText(text);
-			}
-		}
 		//BrowserDisposeListener.attach(browse);
 		
 		//保存变量和创建子事物
@@ -101,6 +87,20 @@ public class BrowserCreator {
 			}
 		}finally{
 			actionContext.pop();
+		}
+		
+		String url = self.getString("url");
+		if(url != null && url != ""){
+			try {			
+				browser.setUrl(url);
+			}catch(Throwable t) {
+				t.printStackTrace();
+			}
+		}else {
+			String text = self.getString("text");
+			if(text != null && text != ""){
+			    browser.setText(text);
+			}
 		}
 		
 		Designer.attach(browser, self.getMetadata().getPath(), actionContext);

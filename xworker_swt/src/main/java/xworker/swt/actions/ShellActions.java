@@ -35,7 +35,7 @@ public class ShellActions {
         ActionContext context = actionContext.getObject("context");
         
         actionContext.getScope(0).put("result", text.getText());
-        ActionUtils.executeActionAndChild(thing, "ok", context, UtilMap.toMap("text", text.getText()));
+        ActionUtils.executeActionAndChild(thing, "ok", context, "text", text.getText());
         //thing.doAction("ok", context, "text", text.getText());
         shell.dispose();
     }
@@ -46,7 +46,7 @@ public class ShellActions {
         Shell shell = actionContext.getObject("shell");
         ActionContext context = actionContext.getObject("context");
         
-        ActionUtils.executeActionAndChild(thing, "cancel", context, UtilMap.toMap("text", text.getText()));
+        ActionUtils.executeActionAndChild(thing, "cancel", context, "text", text.getText());
         //thing.doAction("cancel", context, "text", text.getText());
         shell.dispose();
     }

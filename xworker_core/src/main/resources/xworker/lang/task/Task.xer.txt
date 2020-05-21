@@ -1,4 +1,4 @@
-^1579575507175
+^1585710545581
 @
 sname
 Task
@@ -12,6 +12,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 sgroup
@@ -30,15 +32,23 @@ Sdescription
 
 <p>&nbsp;&nbsp;&nbsp; 如果params设置了则从变量上下文中获取，支持ognl:var:等，否则或者通过Variables子节点设置，返回的是Map&lt;String, Object&gt;。</p>
 
-<p><strong>需要实现的方法</strong></p>
+<p><strong>可以重写的方法</strong></p>
 
 <ul>
-	<li><strong>doTask</strong><br />
-	执行任务的方法。传入参数task，task是xworker.task.Task对象。</li>
-	<li><strong>callback</strong><br />
-	如果callback=true。传入参数task和result，result是doTask的返回值。</li>
-	<li><strong>callbackCacnel</strong><br />
-	如果callbakCacnel=true。传入参数task和status，如果取消成功status=true，否则status=false。</li>
+	<li><strong>Object doTask(Task task)</strong><br />
+	执行任务的方法。传入参数task，task是xworker.task.Task对象。默认实现是执行getActionThing()和getActionName()指定的模型或动作。<br />
+	&nbsp;</li>
+	<li><strong>void callback(Task task, Object result)</strong><br />
+	如果callback=true。传入参数task和result，result是doTask的返回值。<br />
+	&nbsp;</li>
+	<li><strong>void callbackCacnel(Task task, boolean status)</strong><br />
+	如果callbakCacnel=true。传入参数task和status，如果取消成功status=true，否则status=false。<br />
+	&nbsp;</li>
+	<li><strong>Thing getActionThing()</strong><br />
+	返回要执行的事物或动作。<br />
+	&nbsp;</li>
+	<li><strong>String getActionName()</strong><br />
+	返回要执行的动作名。如果为null或空，那么把ActionThing转化为动作执行，否则执行ActionThing对应的行为。执行的参数间doTask方法</li>
 </ul>
 
 <p><strong>定时任务</strong></p>
@@ -115,45 +125,6 @@ false
     false
     sid
     run
-    @/@actions/@doTask
-    sname
-    doTask
-    sunimplementedException
-    false
-    sdescriptors
-    xworker.lang.actions.Actions/@NOOP
-    sinterpretationType
-    Self
-    sattributeTemplate
-    false
-    schildsAttributeTemplate
-    false
-    svarScope
-    Local
-    sisSynchronized
-    false
-    sthrowException
-    true
-    screateLocalVarScope
-    false
-    ssaveReturn
-    false
-    sdisableGlobalContext
-    false
-    sdebugLog
-    false
-    sinheritDescription
-    false
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    doTask
     @/@actions/@stop
     sname
     stop
@@ -240,6 +211,214 @@ false
     false
     sid
     getParams
+    @/@actions/@createUI
+    sname
+    createUI
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.TaskManager
+    smethodName
+    createUI
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    createUI
+    @/@actions/@doTask
+    sname
+    doTask
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.task.TaskManager
+    smethodName
+    doTask
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    doTask
+    @/@actions/@getActionThing
+    sname
+    getActionThing
+    sattributeName
+    actionThing
+    schildThingFirstChild
+    false
+    sreturnSelf
+    false
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getActionThing
+    @/@actions/@getActionName
+    sname
+    getActionName
+    sattributeName
+    actionName
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getActionName
   @/@VariablesDescs
   sname
   VariablesDescs
@@ -633,35 +812,6 @@ false
   false
   sid
   params
-  @/@description
-  sname
-  description
-  sinputtype
-  html
-  sshowLabel
-  true
-  sreadOnly
-  false
-  sinheritDescription
-  false
-  svalidateAllowBlank
-  true
-  LvalidateOnBlur
-  true
-  LallowDecimals
-  true
-  LallowNegative
-  true
-  sdescriptors
-  xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex
-  false
-  sth_registMyChilds
-  false
-  sth_mark
-  false
-  sid
-  description
   @/@schedule
   sname
   schedule
@@ -1295,3 +1445,130 @@ false
   false
   sid
   Variables
+  @/@actionThing
+  sname
+  actionThing
+  sinputtype
+  dataSelector
+  ssize
+  60
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>要执行的动作事物。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  actionThing
+  @/@actionName
+  sname
+  actionName
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>要执行的动作名。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  actionName
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  description

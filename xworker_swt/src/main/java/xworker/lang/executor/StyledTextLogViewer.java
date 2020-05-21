@@ -4,18 +4,33 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Display;
 import org.xmeta.ActionContext;
 
-public class StyledTextLogViewer implements LogViewer{
+import xworker.swt.util.DelayExecutor;
+
+public class StyledTextLogViewer extends DelayExecutor implements LogViewer{
 	boolean autoScroll = true;
 	
 	StyledText styledText;
+	StringBuilder logStringBuilder = new StringBuilder();
 	
 	public StyledTextLogViewer(StyledText text) {
+		super(text.getDisplay(), 200);
+		
 		this.styledText = text;
 	}
 	
 	@Override
 	public void log(byte level, String msg) {
+		logStringBuilder.append(msg);
+		logStringBuilder.append("\n");
+		if(logStringBuilder.length() > 1024 * 1024) {
+			//超过一定长度，删除
+			logStringBuilder.delete(0, 1024 * 20);
+		}
+		
+		this.execute();
+		/*
 		 styledText.append(msg);
+		 styledText.append("\n");
          if(styledText.getLineCount() > 3000){
              //输出显示最多3000行
              int offset = styledText.getOffsetAtLine(500);
@@ -23,6 +38,7 @@ public class StyledTextLogViewer implements LogViewer{
          }
          
          showSelection();
+         */
 	}
 	
 	public void showSelection() {
@@ -82,5 +98,11 @@ public class StyledTextLogViewer implements LogViewer{
 		}
 		
 		return styledText.getDisplay();
+	}
+
+	@Override
+	public void doTask() {
+		styledText.setText(logStringBuilder.toString());
+		showSelection();
 	}
 }

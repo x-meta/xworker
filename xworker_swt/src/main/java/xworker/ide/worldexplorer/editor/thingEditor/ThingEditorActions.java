@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.ThingManager;
@@ -210,6 +211,9 @@ public class ThingEditorActions {
 		    }
 		}
 
+		if(thing == null) {
+			return null;
+		}
 		thing = world.getThing(thing.getMetadata().getPath());
 		if(thing == null){
 		    //节点已经被删除
@@ -225,17 +229,25 @@ public class ThingEditorActions {
 	@SuppressWarnings("unchecked")
 	public void openThing(ActionContext actionContext) {
 		//long start = System.currentTimeMillis();
-		TreeItem treeItem = innerOutline.getSelection()[0];
-		Object treeThing = treeItem.getData();
+	//	log.info("open thing");
+		TreeItem treeItem = null;
+		Object treeThing = null;
+		if(innerOutline.getSelection().length > 0) {
+			treeItem = innerOutline.getSelection()[0];
+			treeThing = treeItem.getData();
+		}
 		//检测节点是否存在
 		treeThing = actions.doAction("checkThing", actionContext, "thing", treeThing);
 		if(treeThing instanceof String){
 		    return;
 		}
 		if(treeThing == null){
-		    treeItem.dispose();
+			if(treeItem != null) {
+				treeItem.dispose();
+			}
 		    return;
 		}
+		//log.info("open thing " + treeThing);
 		treeItem.setData(treeThing);
 		Thing currentThing = actionContext.getObject("currentThing");
 		if(treeThing == currentThing){
@@ -321,8 +333,8 @@ public class ThingEditorActions {
 		if(editPartCompositeStackLayout.topControl == guideComposite){
 		    //不能设置为取消，否则会递归，向导现在默认取消，以后可能会有其他动作
 		    //thingGuide.cancel();
-		    //editPartCompositeStackLayout.topControl = contentEditComposite;
-		   // editPartComposite.layout();
+		    editPartCompositeStackLayout.topControl = contentEditComposite;
+		    editPartComposite.layout();
 		}else if(!UtilData.isTrue(actions.doAction("isXmlEditor", actionContext))){
 		    //表单编辑
 		    ((Listener) actionContext.get("descriptSelection")).handleEvent(null);  
@@ -414,6 +426,11 @@ public class ThingEditorActions {
 
 		TreeItem treeItem = new TreeItem(innerOutline, SWT.NONE);
 		actions.doAction("initOutlineTreeItem", actionContext, "thing", thing, "treeItem", treeItem);
+		for(Thing child : thing.getChilds()){
+	      	initOutlineTreeItem(treeItem, child, actionContext);
+	    }
+		treeItem.setExpanded(true);
+		//this.initOutlineTreeItem(treeItem, thing, actionContext);
 		//def initOutline = new Thing("xworker.ide.worldExplorer.swt.actions.OutlineTreeAction/@InitOutlineTree");
 		//initOutline.doAction("run", actionContext, ["tree": innerOutline, "thing": thing]);
 
@@ -435,13 +452,16 @@ public class ThingEditorActions {
 			((Label) actionContext.get("titleLabel")).setForeground(
 					((Composite) actionContext.get("mainComposite")).getDisplay().getSystemColor(SWT.COLOR_RED));
 		}
-
+		
+		Thing sThing = actionContext.getObject("selectedThing");
+		final Thing selectedThing = sThing != null ? sThing : thing;
 		//下面两个方法加入到asyncExec中，因为不在里面由于未知原因ubuntu下会崩溃
 		innerOutline.getDisplay().asyncExec(new Runnable(){
-			public void run(){		
-			   //默认选择根结点的数据
-			   innerOutline.setSelection(innerOutline.getItems()[0]);
-			   actions.doAction("selectThing", actionContext, "refresh", true, "thing", thing);
+			public void run(){
+				//默认选择根结点的数据
+				innerOutline.setSelection(innerOutline.getItems()[0]);
+				
+			   actions.doAction("selectThing", actionContext, "refresh", true, "thing", selectedThing);
 			   //innerOutline.notifyListeners(SWT.Selection, null); //触发选择事件
 			}
 		});
@@ -783,17 +803,19 @@ public class ThingEditorActions {
 		//设置标题
 		if(actionContext.get("titleLabel") != null){    
 			Label titleLabel = actionContext.getObject("titleLabel");
-		    int index = descriptorsCombo.getSelectionIndex();
-		    if(index == -1){
-		        return null;
-		    }
-		    Thing objStruct = ((List<Thing>) descriptorsCombo.getData()).get(index);
-		    Thing thing = actionContext.getObject("currentThing");
-		    if(UtilData.isTrue(actionContext.get("modified")) == true){
-		        titleLabel.setText("*** " + thing.getMetadata().getLabel() + "－" + objStruct.getMetadata().getName() + "（" + objStruct.getMetadata().getLabel() + "）***");
-		    }else{
-		        titleLabel.setText(thing.getMetadata().getLabel() + "－" + objStruct.getMetadata().getName() + "（" + objStruct.getMetadata().getLabel() + "）");
-		    }
+			if(titleLabel.isDisposed() == false) {
+			    int index = descriptorsCombo.getSelectionIndex();
+			    if(index == -1){
+			        return null;
+			    }
+			    Thing objStruct = ((List<Thing>) descriptorsCombo.getData()).get(index);
+			    Thing thing = actionContext.getObject("currentThing");
+			    if(UtilData.isTrue(actionContext.get("modified")) == true){
+			        titleLabel.setText("*** " + thing.getMetadata().getLabel() + "－" + objStruct.getMetadata().getName() + "（" + objStruct.getMetadata().getLabel() + "）***");
+			    }else{
+			        titleLabel.setText(thing.getMetadata().getLabel() + "－" + objStruct.getMetadata().getName() + "（" + objStruct.getMetadata().getLabel() + "）");
+			    }
+			}
 		}
 		return null;
 	}
@@ -1417,6 +1439,26 @@ public class ThingEditorActions {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public void selectDescriptor(ActionContext actionContext) {
+		Thing descriptor = actionContext.getObject("descriptor");
+		if(descriptor == null) {
+			throw new ActionException("Cat not set descriptor, please set descriptor paramter!");
+		}
+		
+		
+		Combo descriptorsCombo = actionContext.getObject("descriptorsCombo");
+		List<Thing> descriptors = (List<Thing>) descriptorsCombo.getData();
+		for(int i = 0; i<descriptors.size(); i++) {
+			if(descriptors.get(i) == descriptor) {
+				descriptorsCombo.select(i);
+				break;
+			}
+		}
+		
+		descriptComboSelection(actionContext);
+	}
+	
 	private void selectChildTreeNodeGetItem(Tree tree, TreeItem item, String thingPath, Listener childTreeSelection) {
 		if(item.getData() != null && ((Thing) item.getData()).getMetadata().getPath().equals(thingPath)){
 	        tree.setSelection(item);
@@ -1756,13 +1798,40 @@ public class ThingEditorActions {
 	}
 	
 	public Object showXmlEditor(ActionContext actionContext) {
+		if(editPartCompositeStackLayout.topControl == actionContext.getObject("xmlComposite")) {
+			//已经是XML界面了
+			return null;
+		}
+		
 		//显示XML编辑器
 		Listener editModelItemSelection = actionContext.getObject("editModelItemSelection");
 		editModelItemSelection.handleEvent(null);
 		return null;
 	}
 	
+	public Object showFormEditor(ActionContext actionContext) {
+		if(editPartCompositeStackLayout.topControl == contentEditComposite) {
+			//已经是Form界面了
+			return null;
+		}
+		
+		Composite xmlComposite = actionContext.getObject("xmlComposite");
+		if(editPartCompositeStackLayout.topControl == xmlComposite) {
+			this.editorChangeType(actionContext);			
+		} else {
+			editPartCompositeStackLayout.topControl = contentEditComposite;
+			editPartComposite.layout();
+		}
+		//if(editPartCompositeStackLayout.topControl = contentEditComposite;  )
+		return null;
+	}
+	
 	public Object showGuideEditor(ActionContext actionContext) {
+		if(editPartCompositeStackLayout.topControl == guideComposite) {
+			//已经是向导界面了
+			return null;
+		}
+		
 		//先保存
 		actions.doAction("save");
 

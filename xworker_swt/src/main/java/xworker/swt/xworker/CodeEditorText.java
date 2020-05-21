@@ -39,6 +39,9 @@ public class CodeEditorText {
 		newContext.put("codeType", codeType);
 		newContext.put("parentContext", actionContext);
 		
+		ActionContext assistActionContext = self.doAction("getAssistActionContext", actionContext);
+		newContext.put("assistActionContext", assistActionContext);
+		
 		Thing codeEditor = world.getThing("xworker.swt.xworker.CodeEditor/@editorViewForm");
 		Designer.pushCreator(self);
 		try{

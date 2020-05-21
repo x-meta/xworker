@@ -67,7 +67,6 @@ import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
@@ -102,6 +101,7 @@ import xworker.util.XWorkerUtils;
 public class SwtUtils {	
 	private static Logger log = LoggerFactory.getLogger(SwtUtils.class);
 	private static Map<String ,Integer> swtKeys = new HashMap<String, Integer>();
+	private static List<String> listenerNames = new ArrayList<String>(); //事件的名字列表
 	public static final int ABOVE = 1;
 	public static final int BELOW = 2;
 	public static final int INSIDE = 3;
@@ -518,6 +518,48 @@ public class SwtUtils {
 		swtKeys.put("VIRTUAL", SWT.VIRTUAL);
 		swtKeys.put("WRAP", SWT.WRAP);
 		swtKeys.put("YES", SWT.YES);
+		
+		//事件的名字列表
+		listenerNames.add("Selection");
+		listenerNames.add("Activate");
+		listenerNames.add("Arm");
+		listenerNames.add("Close");
+		listenerNames.add("Collapse");
+		listenerNames.add("Deactivate");
+		listenerNames.add("DefaultSelection");
+		listenerNames.add("Deiconify");
+		listenerNames.add("Dispose");
+		listenerNames.add("DragDetect");
+		listenerNames.add("EraseItem");
+		listenerNames.add("Expand");
+		listenerNames.add("FocusIn");
+		listenerNames.add("FocusOut");
+		listenerNames.add("HardKeyDown");
+		listenerNames.add("HardKeyUp");
+		listenerNames.add("Help");
+		listenerNames.add("Hide");
+		listenerNames.add("Iconify");
+		listenerNames.add("KeyDown");
+		listenerNames.add("KeyUp");
+		listenerNames.add("MeasureItem");
+		listenerNames.add("MenuDetect");
+		listenerNames.add("Modify");
+		listenerNames.add("MouseDoubleClick");
+		listenerNames.add("MouseDown");
+		listenerNames.add("MouseEnter");
+		listenerNames.add("MouseExit");
+		listenerNames.add("MouseHover");
+		listenerNames.add("MouseMove");
+		listenerNames.add("MouseUp");
+		listenerNames.add("MouseWheel");
+		listenerNames.add("Move");
+		listenerNames.add("Paint");
+		listenerNames.add("PaintItem");
+		listenerNames.add("Resize");
+		listenerNames.add("SetData");
+		listenerNames.add("Show");
+		listenerNames.add("Traverse");
+		listenerNames.add("Verify");
 	}
 	
 	public static int getSWT(String name){
@@ -527,6 +569,10 @@ public class SwtUtils {
 		}else{
 			return SWT.NONE;
 		}
+	}
+	
+	public static List<String> getListenerNames(){
+		return listenerNames;
 	}
 	
 	public static Set<String> getSWTKeys(){
@@ -612,12 +658,25 @@ public class SwtUtils {
 	 * @param shell
 	 */
 	public static void centerShell(Shell shell){
-		Display display = Display.getCurrent();
-		Rectangle rec = display.getClientArea();
-		Rectangle srec = shell.getBounds();
-		int x = rec.width / 2 - srec.width / 2;
-		int y = rec.height / 2 - srec.height / 2;
-		shell.setLocation (new Point(x, y));
+		Rectangle rec = null;
+		Shell parent = null;
+		if(shell.getParent() instanceof Shell) {
+			parent = (Shell) shell.getParent();
+		}
+		if(parent != null && parent != shell) {
+			rec = parent.getBounds();
+			Rectangle srec = shell.getBounds();
+			int x = rec.width / 2 - srec.width / 2;
+			int y = rec.height / 2 - srec.height / 2;
+			shell.setLocation (new Point(x + rec.x, y + rec.y));
+		}else {
+			Display display = Display.getCurrent();
+			rec = display.getPrimaryMonitor().getClientArea();
+			Rectangle srec = shell.getBounds();
+			int x = rec.width / 2 - srec.width / 2;
+			int y = rec.height / 2 - srec.height / 2;
+			shell.setLocation (new Point(x, y));
+		}		
 	}
 	
 	public static Dialog createDialog(final Shell shell, final ActionContext actionContext){
@@ -1148,7 +1207,7 @@ public class SwtUtils {
 	 * @param parent 树
  	 * @param actionContext 变量上下文
 	 */
-	public static void showThingOnTree(Thing thing, Tree parent, ActionContext actionContext){
+	public static TreeItem showThingOnTree(Thing thing, Tree parent, ActionContext actionContext){
 		TreeItem item = new TreeItem(parent, SWT.NONE);
 		item.setData(thing);
 		XWorkerTreeUtil.initItem(item, thing, actionContext);
@@ -1156,6 +1215,8 @@ public class SwtUtils {
 		for(Thing child : thing.getChilds()){
 			showThingOnTreeItem(child, item, actionContext);
 		}
+		
+		return item;
 	}
 	
 	/**
@@ -1165,7 +1226,7 @@ public class SwtUtils {
 	 * @param parent 树节点
 	 * @param actionContext 变量上下文
  	 */
-	public static void showThingOnTreeItem(Thing thing, TreeItem parent, ActionContext actionContext){
+	public static TreeItem showThingOnTreeItem(Thing thing, TreeItem parent, ActionContext actionContext){
 		TreeItem item = new TreeItem(parent, SWT.NONE);
 		item.setData(thing);
 		XWorkerTreeUtil.initItem(item, thing, actionContext);
@@ -1173,6 +1234,8 @@ public class SwtUtils {
 		for(Thing child : thing.getChilds()){
 			showThingOnTreeItem(child, item, actionContext);
 		}
+		
+		return item;
 	}
 	
 	/**

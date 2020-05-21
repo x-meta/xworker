@@ -1,4 +1,4 @@
-%1566993122947
+%1587953784412
 @
 sname=shell
 stext=Groovy控制台
@@ -52,15 +52,23 @@ sth_mark=false
   sth_mark=false
   sid=FillLayout
   @/@groovyTemp
-  sname=groovyTemp
+  sname=execute
   sisSynchronized=false
   sthrowException=true
   suseOtherAction=false
   svarScope=Local
   sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+data.put("name", "test");
+data.put("bk", "#ffeedd");
+data.put("text", "hello world");
+data.put("age", 20);
+#$@text#$@
   sinterpretationType=Action
   screateLocalVarScope=false
   ssaveReturn=false
+  sswitchResult=false
   sdebugLog=false
   sdescriptors=xworker.swt.widgets.Widget/@Code
   sinheritDescription=false
@@ -265,23 +273,27 @@ def thing = world.getThing("xworker.swt.xwidgets.prototypes.GroovyConsole/@groov
 
 //执行代码
 thing.set("code", codeText.getText());
-def result = thing.getAction().run(parentContext);
-
-if(SwtUtils.isRWT() == false){
-    //重新初始化代码辅助缓存
-    def ac = codeText.getData("actionContext");
-    if(ac != null){
-        ac.codeAssistor.initCache(parentContext);
-    }else{
-        //read only 模式
-        codeAssistor.initCache(parentContext);
+try{
+    def result = thing.getAction().run(parentContext);
+    if(SwtUtils.isRWT() == false){
+        //重新初始化代码辅助缓存
+        def ac = codeText.getData("actionContext");
+        if(ac != null){
+            ac.codeAssistor.initCache(parentContext);
+        }else{
+            //read only 模式
+            codeAssistor.initCache(parentContext);
+        }
     }
+    return result;
+}catch(Exception e){
+    e.printStackTrace();
 }
-return result;
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false
@@ -299,7 +311,6 @@ return result;
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -320,7 +331,6 @@ return result;
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -421,6 +431,7 @@ if(ac != null){
   scapture=false
   senabled=true
   sredraw=true
+  spack=false
   svisible=true
   sdescriptors=xworker.swt.Widgets/@Composite
   sid=mainComposite1
@@ -518,6 +529,11 @@ if(ac != null){
     sNO_RADIO_GROUP=false
     sEMBEDDED=false
     sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
     sdescriptors=xworker.swt.Widgets/@Composite
     sid=buttonComposite
       @/@mainComposite1/@buttonComposite/@buttonCompositeGridData

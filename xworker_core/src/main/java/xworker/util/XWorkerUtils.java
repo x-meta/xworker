@@ -9,14 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilThing;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 
 /**
  * 集中零散的一些常用的静态方法以便容易找到和使用。
@@ -25,7 +24,8 @@ import xworker.lang.actions.ActionContainer;
  *
  */
 public class XWorkerUtils {
-	private static Logger logger = LoggerFactory.getLogger(XWorkerUtils.class);
+	//private static Logger logger = LoggerFactory.getLogger(XWorkerUtils.class);
+	private static final String TAG = XWorkerUtils.class.getName();
 	
 	private static final String KEY_IDE = "__xworker_xworkerUtils_IDE__";
 	private static final String IDE_PERMISSION = "XWorker_Thing_IDE";
@@ -151,7 +151,7 @@ public class XWorkerUtils {
 				ide.ideOpenThing(thing);
 			}
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class XWorkerUtils {
 				ide.ideOpenFile(file);
 			}
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 	}
 	
@@ -205,7 +205,7 @@ public class XWorkerUtils {
 				ide.ideOpenThingAndSelectCodeLine(thing, codeAttrName, line);
 			}
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 	}
 	
@@ -409,7 +409,7 @@ public class XWorkerUtils {
 				ide.ideDoAction(name, parameters);
 			}
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 	}
 	
@@ -424,7 +424,7 @@ public class XWorkerUtils {
 		if(ide != null){
 			return ide.getActionContainer();
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 		
 		return null;
@@ -440,7 +440,7 @@ public class XWorkerUtils {
 		if(ide != null){
 			return ide.getIDEShell();
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 		
 		return null;
@@ -458,7 +458,7 @@ public class XWorkerUtils {
 		if(ide != null){
 			ide.ideShowMessageBox(title, message, style);
 		}else{
-			logger.warn("Ide is not setted");
+			Executor.warn(TAG, "Ide is not setted");
 		}
 	}
 	
@@ -742,6 +742,11 @@ public class XWorkerUtils {
     }   
     
     public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, ActionContext actionContext){
+    	if(thingUtils == null) {
+    		Executor.warn(TAG, "thingUtils not inited");
+    		return Collections.emptyList();
+    	}
+    	
     	if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}
@@ -749,6 +754,12 @@ public class XWorkerUtils {
     }
 	
 	public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, boolean parent,  ActionContext actionContext){
+		if(thingUtils == null) {
+			Executor.warn(TAG, "thingUtils not inited");
+    		return Collections.emptyList();
+    	}
+    	
+		
 		if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}
@@ -756,6 +767,12 @@ public class XWorkerUtils {
 	}
 	
 	public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, boolean parent,  boolean noDescriptor, ActionContext actionContext){
+		if(thingUtils == null) {
+			Executor.warn(TAG, "thingUtils not inited");
+    		return Collections.emptyList();
+    	}
+    	
+		
 		if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}

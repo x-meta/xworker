@@ -35,13 +35,22 @@ public class TreeModelCreator {
     	
         //TreeModel自身即可作根节点，所以默认返回自身
     	Thing modelThing = (Thing) self.get("modelThing");
+    	Thing root = null;
         if(modelThing != null){
             //在SWT下通过实例引用了原始的TreeModel
-            return modelThing.get("Root@0");  
+            root =  (Thing) modelThing.get("Root@0");  
         }else{
             //直接使用TreeModel的情况下，自身也是节点
-            return self.get("Root@0");
+            root = (Thing) self.get("Root@0");
         }
+        
+        if(root == null) {
+        	root = new Thing("xworker.app.model.tree.TreeModel/@Root");
+        	root.set("id", self.get("rootNodeId"));
+        	root.set("text", "default root");
+        }
+        
+        return root;
     }
 
     public static Object getRoots(ActionContext actionContext) throws OgnlException{

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="选择数据对象列表" width="800"
+     height="600" label="SelectDataObjectsShell">
+    <GridLayout name="shellGridLayout"></GridLayout>
+    <DataObjectEditCompoiste name="editor" newButton="false" editButton="false" deleteButton="false" tableCheck="true">
+        <GridData name="edtiorGridData" style="FILL_BOTH"></GridData>
+        <actions>
+            <GroovyAction name="tableSelection" code="okButton.setEnabled(true);"></GroovyAction>
+            <GroovyAction name="onStoreLoaded">
+                <code><![CDATA[if(okButton.isDisposed()){
+    return;
+}
+
+okButton.getDisplay().asyncExec({
+    okButton.setEnabled(false);
+});]]></code>
+            </GroovyAction>
+        </actions>
+    </DataObjectEditCompoiste>
+    <Composite name="buttonComposite" _xmeta_id_="7210">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="7211" style="FILL_HORIZONTAL"
+             horizontalAlignment="END"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="7212"></RowLayout>
+        <Button name="okButton" _xmeta_id_="7213" text="确定" enabled="false">
+            <RowData name="RowData" _xmeta_id_="7214" width="80"></RowData>
+            <Listeners _xmeta_id_="7215">
+                <Listener name="okButtonSelection" _xmeta_id_="7216">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[def datas = [];
+for(item in dataObjectContext.dataTable.getItems()){
+    if(item.getChecked()){
+        datas.add(item.getData());
+    }
+}
+
+_g.put("result", datas);
+thing.doAction("onSelected", parentContext, "datas", datas);
+shell.dispose();]]></code>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="cancelButton" _xmeta_id_="7217" text="取消">
+            <RowData name="RowData" _xmeta_id_="7218" width="80"></RowData>
+            <Listeners _xmeta_id_="7219">
+                <Listener name="cancelButtonSelection" _xmeta_id_="7220">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[thing.doAction("onSelectedNone", parentContext);	
+
+shell.dispose();]]></code>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+    <Code name="init">
+        <code><![CDATA[//编辑器设置数据对象
+editor.doAction("setDataObject", actionContext, ["dataObject": dataObject]);
+
+//设置参数
+if(params != null){
+    editor.doAction("setQueryFormValues", actionContext, ["values": params]);
+}
+
+//执行查询
+editor.doAction("doQuery", actionContext);]]></code>
+    </Code>
+</Shell>

@@ -29,6 +29,7 @@ public class ThingCompositeCreator {
 		
 		newActionContext = new ActionContext();
 		newActionContext.put("parentContext", actionContext);
+		newActionContext.put("parentActionContext", actionContext);
 		newActionContext.put("parent", actionContext.get("parent"));
 	}
 	

@@ -48,7 +48,12 @@ public class ComboCreator {
 		Combo combo  = new Combo(parent, style);
 		List<Thing> values = self.getChilds("value"); 
 		for(Thing v : values){
-		    combo.add(UtilString.getString(v.getString("label"), actionContext));
+		    combo.add(UtilString.getString(v.getMetadata().getLabel(), actionContext));
+		}
+		
+		String text = self.getStringBlankAsNull("text");
+		if(text != null) {
+			combo.setText(text);
 		}
 		combo.setData(values);
 		

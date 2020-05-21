@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
 public class XWorkerUtilsActions {
@@ -22,7 +23,7 @@ public class XWorkerUtilsActions {
 	public static void ideOpenFile(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		File file = (File) self.doAction("getFile", actionContext);
+		File file = (File) self.doAction("getFile", actionContext);		
 		XWorkerUtils.ideOpenFile(file);
 	}
 	
@@ -45,7 +46,13 @@ public class XWorkerUtilsActions {
 	public static void ideOpenUrl(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
+		String type = self.doAction("getType", actionContext);		
 		String url = (String) self.doAction("getUrl", actionContext);
+		if("webControl".equals(type)) {
+			url = XWorkerUtils.getWebControlUrl(World.getInstance().getThing(url));
+		}else {
+			url = XWorkerUtils.getThingDescUrl(url);
+		}
 		XWorkerUtils.ideOpenUrl(url);
 	}
 	

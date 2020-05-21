@@ -207,7 +207,7 @@ public class ShellCreator {
 							logger.info("System exit");
 							System.exit(0);
 						}else{							
-							logger.info("Has other shell, system not exit, current=" + event.widget + ", shell=" + other);
+							logger.info("Has other shell, system not exit, current=" + event.widget + ", otherShell=" + other);
 						}
 					}					
 				});

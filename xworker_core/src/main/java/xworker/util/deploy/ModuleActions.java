@@ -23,19 +23,20 @@ public class ModuleActions {
 		ModuleManager mm = new ModuleManager();
 		for(Thing module : self.getChilds("Module")) {
 			String modulePath = module.getStringBlankAsNull("module");
+			boolean noDependencies = module.getBoolean("noDependencies");
 			if(modulePath != null) {
-				mm.addModule(modulePath);
+				mm.addModule(modulePath, noDependencies);
 			}
 			
 			for(Thing child : module.getChilds("Module")) {
-				mm.addModule(child);
+				mm.addModule(child, child.getBoolean("noDependencies"));
 			}
 		}
 		
 		List<String> modules = self.doAction("getModules", actionContext);
 		if(modules != null) {
 			for(String module : modules) {
-				mm.addModule(module);
+				mm.addModule(module, false);
 			}
 		}
 		

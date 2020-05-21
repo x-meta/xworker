@@ -129,11 +129,17 @@ public class DataReactor{
 	}
 	
 	private final boolean begin(DataReactorContext context) {
+		context.push(this);
+		
 		return !context.isExists(this);
 	}
 	
 	private final void finish(DataReactorContext context) {
-		
+		context.pop();
+	}
+	
+	public final void fireSelected() {
+		fireSelected(datas, null);
 	}
 	
 	public final void fireSelected(List<Object> datas, DataReactorContext context) {
@@ -142,18 +148,23 @@ public class DataReactor{
 			context.isExists(this);
 		}
 		
-		datas = doFilter(DataReactor.SELECTED, datas);
-		if(datas == null) {
-			return;
-		}
-		
-		if(datas.size() > 0) {
-			for(DataReactor reactor : getNextReactors()) {
-				reactor.preDataReactor = this;
-				reactor.onSelected(datas, context);
-			}			
-		}else {
-			this.fireUnselected(context);
+		context.push(this);
+		try {
+			datas = doFilter(DataReactor.SELECTED, datas);
+			if(datas == null) {
+				return;
+			}
+			
+			if(datas.size() > 0) {
+				for(DataReactor reactor : getNextReactors()) {
+					reactor.preDataReactor = this;
+					reactor.onSelected(datas, context);
+				}			
+			}else {
+				this.fireUnselected(context);
+			}
+		}finally {
+			context.pop();
 		}
 	}
 		
@@ -184,20 +195,30 @@ public class DataReactor{
 	protected void doOnSelected(List<Object> datas, DataReactorContext context) {		
 	}
 
+	public final void fireUnselected() {
+		fireUnselected(null);
+	}
+	
 	public final void fireUnselected(DataReactorContext context) {
 		if(context == null) {
 			context = new DataReactorContext();
 			context.isExists(this);
 		}
 		
-		List<Object> datas = doFilter(DataReactor.UNSELECTED, Collections.emptyList());
-		if(datas == null) {
-			return;
-		}
+		try {
+			context.push(this);
 		
-		for(DataReactor reactor :  getNextReactors()) {
-			reactor.preDataReactor = this;
-			reactor.onUnselected(context);
+			List<Object> datas = doFilter(DataReactor.UNSELECTED, Collections.emptyList());
+			if(datas == null) {
+				return;
+			}
+			
+			for(DataReactor reactor :  getNextReactors()) {
+				reactor.preDataReactor = this;
+				reactor.onUnselected(context);
+			}
+		}finally {
+			context.pop();
 		}
 	}
 	
@@ -252,15 +273,21 @@ public class DataReactor{
 			context.isExists(this);
 		}
 		
-		datas = doFilter(DataReactor.ADDED, datas);
-		if(datas == null) {
-			return;
+		try {
+			context.push(this);
+			
+			datas = doFilter(DataReactor.ADDED, datas);
+			if(datas == null) {
+				return;
+			}
+			
+			for(DataReactor reactor :  getNextReactors()) {
+				reactor.preDataReactor = this;
+				reactor.onAdded(index, datas, context);
+			}	
+		}finally {
+			context.pop();
 		}
-		
-		for(DataReactor reactor :  getNextReactors()) {
-			reactor.preDataReactor = this;
-			reactor.onAdded(index, datas, context);
-		}		
 	}
 	
 	public final void onAdded(int index, List<Object> datas, DataReactorContext context) {
@@ -302,15 +329,21 @@ public class DataReactor{
 			context.isExists(this);
 		}
 		
-		datas = doFilter(DataReactor.REMOVED, datas);
-		if(datas == null) {
-			return;
+		try {
+			context.push(this);
+			
+			datas = doFilter(DataReactor.REMOVED, datas);
+			if(datas == null) {
+				return;
+			}
+			
+			for(DataReactor reactor :  getNextReactors()) {
+				reactor.preDataReactor = this;
+				reactor.onRemoved(datas, context);
+			}	
+		}finally {
+			context.pop();
 		}
-		
-		for(DataReactor reactor :  getNextReactors()) {
-			reactor.preDataReactor = this;
-			reactor.onRemoved(datas, context);
-		}			
 	}
 	
 	public final void onRemoved(List<Object> datas, DataReactorContext context) {
@@ -340,14 +373,19 @@ public class DataReactor{
 			context.isExists(this);
 		}
 		
-		datas = doFilter(DataReactor.UPDATED, datas);
-		if(datas == null) {
-			return;
-		}
-		
-		for(DataReactor reactor :  getNextReactors()) {
-			reactor.preDataReactor = this;
-			reactor.onUpdated(datas, context);
+		context.push(this);
+		try {
+			datas = doFilter(DataReactor.UPDATED, datas);
+			if(datas == null) {
+				return;
+			}
+			
+			for(DataReactor reactor :  getNextReactors()) {
+				reactor.preDataReactor = this;
+				reactor.onUpdated(datas, context);
+			}
+		}finally {
+			context.pop();
 		}
 	}
 	
@@ -384,14 +422,20 @@ public class DataReactor{
 			context = new DataReactorContext();
 			context.isExists(this);
 		}
-		datas = doFilter(DataReactor.LOADED, datas);
-		if(datas == null) {
-			return;
-		}
-		
-		for(DataReactor reactor :  getNextReactors()) {
-			reactor.preDataReactor = this;
-			reactor.onLoaded(datas, context);
+		try {
+			context.push(this);
+			
+			datas = doFilter(DataReactor.LOADED, datas);
+			if(datas == null) {
+				return;
+			}
+			
+			for(DataReactor reactor :  getNextReactors()) {
+				reactor.preDataReactor = this;
+				reactor.onLoaded(datas, context);
+			}
+		}finally {
+			context.pop();
 		}
 	}
 	
@@ -431,6 +475,10 @@ public class DataReactor{
 	
 	public int getDataIndex(Object data) {
 		return datas.indexOf(data);
+	}
+	
+	public void fireLoaded() {
+		fireLoaded(null);
 	}
 	
 	public void fireLoaded(DataReactorContext context) {

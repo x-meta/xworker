@@ -333,6 +333,7 @@ public class Workbench {
 		try {
 			Thing prototype = World.getInstance().getThing("xworker.swt.app.prototypes.WorkbenchShell");
 			shell = prototype.doAction("create", ac);
+			shell.setMaximized(self.getBoolean("maximized"));
 			Designer.attachCreator(shell, self.getMetadata().getPath(), actionContext);
 		}finally {
 			Designer.popCreator();

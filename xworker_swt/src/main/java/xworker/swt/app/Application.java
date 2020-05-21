@@ -59,10 +59,53 @@ public class Application {
 		}
 		initItems = createItems("InitItems@0");
 		this.parent = parentContext.getObject("parent");
-		Thing applicationTheme = thing.doAction("getApplication", parentContext);
+		Thing applicationTheme = thing.doAction("getTheme", parentContext);
+		if(applicationTheme == null) {
+			applicationTheme = thing.doAction("getApplication", parentContext);
+		}
+		if(applicationTheme == null) {
+			//使用默认样式
+			applicationTheme = World.getInstance().getThing("xworker.swt.app.Applications/@SimpleTreeApp");
+		}
+		
 		if(applicationTheme != null) {
 			setTheme(applicationTheme);
 		}
+	}
+	
+	/**
+	 * 重置指定类型的菜单条目。
+	 * 
+	 * @param type
+	 */
+	public void resetItems(int type) {
+		switch(type) {
+		case ITEMS_INIT:
+			initItems = createItems("InitItems@0");
+			break;
+		case ITEMS_MAIN:
+			if(thing.getBoolean("hashMainItems")) {
+				mainItems = createItems("MainItems@0");
+			}
+			break;
+		case ITEMS_SHELL:
+			if(thing.getBoolean("hasShellItems")) {
+				shellItems = createItems("ShellItems@0");
+			}
+			break;
+		case ITEMS_TOPLEFT:
+			if(thing.getBoolean("hasTopLeftItems")) {
+				topLeftItems = createItems("TopLeftItems@0");
+			}
+			break;
+		case ITEMS_TOPRIGHT:
+			if(thing.getBoolean("hasTopRightItems")) {
+				topRightItems = createItems("TopRightItems@0");
+			}
+			break;
+		}
+		
+		
 	}
 	
 	public void setTheme(Thing applicationTheme) {
@@ -92,10 +135,10 @@ public class Application {
 		}
 		
 		//创建Applicatin		
-		if(applicationTheme == null) {
+		/*if(applicationTheme == null) {
 			Executor.warn(TAG, "Application impl is null, thing=" + thing.getMetadata().getPath());
 			return;
-		}
+		}*/
 		
 		if(isComposite) {
 			this.actionContext = new ActionContext();
@@ -172,6 +215,23 @@ public class Application {
 		return thing.doAction("getTitleImage", actionContext);
 	}
 	
+	public DataItemContainer getDataItemContainer(byte type) {
+		switch(type) {
+		case ITEMS_INIT:
+			return this.initItems;
+		case ITEMS_MAIN:
+			return this.mainItems;
+		case ITEMS_SHELL:
+			return this.shellItems;
+		case ITEMS_TOPLEFT:
+			return this.topLeftItems;
+		case ITEMS_TOPRIGHT:
+			return this.topRightItems;
+		}
+		
+		return null;
+	}
+	
 	/**
 	 * 绑定指定的菜单条目到控件上，如果没有菜单条目返回false，否则返回true。
 	 * 
@@ -218,8 +278,11 @@ public class Application {
 		}
 	}
 	
-	
-	
+	/**
+	 * 返回Application
+	 * 	
+	 * @return
+	 */
 	public Control getControl() {
 		if(shell != null) {
 			return shell;

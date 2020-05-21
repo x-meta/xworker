@@ -10,7 +10,8 @@
 <script type="text/javascript" src="${request.contextPath}/js/syntaxhighlighter/scripts/shAutoloader.js"></script> 
 <script type="text/javascript" src="${request.contextPath}/js/jquery/jquery-2.0.3.min.js"></script> 
 <link rel="stylesheet" href="${request.contextPath}/js/bootstrap-3.3.5/css/bootstrap.min.css" /> 
-<link rel="stylesheet" href="${request.contextPath}/js/bootstrap-3.3.5/css/bootstrap-theme.min.css" 
+<link rel="stylesheet" href="${request.contextPath}/js/bootstrap-3.3.5/css/bootstrap-theme.min.css"/>
+<script type="text/javascript" src="${request.contextPath}/js/xworker/InnerBrowserUtil.js"></script>
 </head>
 <body >
 
@@ -39,7 +40,7 @@
         <#list menus as bar>
         <#if bar.getChilds("Category")?size == 0>
         <li>
-          <a <#if bar.target?exists>target="${bar.target}"</#if>  href="do?sc=${self.metadata.path}&cat=${bar.metadata.path}">${bar.metadata.label}</a>
+          <a <#if bar.target?exists>target="${bar.target}"</#if>  href="<#if bar.href?exists && bar.href != "">${bar.href}<#else>do?sc=${self.metadata.path}&cat=${bar.metadata.path}</#if>">${bar.metadata.label}</a>
         </li>
         <#else>
         <li class="dropdown">
@@ -67,7 +68,9 @@
           </ul>
         </li>
         <#else>
+        <#if editable?exists && editable>
         <li><a href="do?sc=${doc.metadata.path}&cat=${(category.metadata.path)?if_exists}&ac=editModel">编辑模式</a></li>
+        </#if>
         </#if>         
       </ul>          
     </div><!-- /.navbar-collapse -->
@@ -85,7 +88,9 @@
     <div class=" col-md-9 col-xs-12">
 <!-- 主内容 -->
 <#if content?exists>
-${content.description?if_exists}<#else>还没有内容。</#if>
+<#assign contentHtml = content.doAction("toHtml", actionContext)?default("toHtml is null, path=${content.getMetadata().getPath()}")>
+${contentHtml?if_exists}
+<#else>还没有内容。</#if>
  </div>
  <!-- 主内容结束 -->
  
@@ -116,9 +121,21 @@ ${content.description?if_exists}<#else>还没有内容。</#if>
     <li class="list-group-item active">
     根栏目管理
     </li>
+  
+    <li class="list-group-item" >
+        <span><strong>
+             <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=addCategoryPage"><img src="icons/add.png" style="height:12px; width:12px" />添加子栏目</a>&nbsp;&nbsp;
+        </strong></span>
+    </li>
+    </ul>
+
+    <ul class="list-group">
+    <li class="list-group-item active">
+    顶部菜单管理
+    </li>
     
     <li class="list-group-item" >
-        <span><strong> 菜单管理               
+        <span><strong> ${category.metadata.label}            
                     <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=editPage"><img src="icons/page_edit.png" style="height:12px; width:12px" /></a>
                     <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=moveUp"><img src="icons/arrow_up.png" style="height:12px; width:12px" alt="上移"/></a>
                          <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=moveDown"><img src="icons/arrow_down.png" style="height:12px; width:12px" alt="下移"/></a>    
@@ -126,7 +143,6 @@ ${content.description?if_exists}<#else>还没有内容。</#if>
     </li>   
     <li class="list-group-item" >
         <span><strong>
-             <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=addCategoryPage"><img src="icons/add.png" style="height:12px; width:12px" />添加子栏目</a>&nbsp;&nbsp;
              <a href="do?sc=${doc.metadata.path}&cat=${category.metadata.path}&content=${category.metadata.path}&ac=addCategoryPage&type=menu"><img src="icons/add.png" style="height:12px; width:12px" />添加子菜单</a>&nbsp;&nbsp;
         </strong></span>
     </li>

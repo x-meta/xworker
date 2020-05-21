@@ -2,6 +2,7 @@ package xworker.swt.reacts.dataobject;
 
 import java.util.List;
 
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -9,9 +10,11 @@ import org.xmeta.Thing;
 import xworker.app.view.swt.widgets.form.DataObjectForm;
 import xworker.app.view.swt.widgets.form.DataObjectFormListener;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.DataReactorUtils;
 import xworker.swt.reacts.WidgetDataReactor;
+import xworker.swt.reacts.xworker.ThingFormDataReactor;
 
 public class DataObjectFormDataReactor extends WidgetDataReactor implements DataObjectFormListener {
 	DataObjectForm form;
@@ -82,7 +85,22 @@ public class DataObjectFormDataReactor extends WidgetDataReactor implements Data
 
 	@Override
 	public void onMidified(DataObjectForm dataObjectForm) {
-		DataObject data = form.getDataObject();
-		this.fireUpdated(DataReactorUtils.toObjectList(data), getContext());
+		Control control = form.getControl();
+		if(control.isDisposed() == false) {
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						DataObject data = form.getDataObject();
+						DataObjectFormDataReactor.this.fireUpdated(DataReactorUtils.toObjectList(data), getContext());
+					}catch(Exception e) {
+						Executor.error(DataObjectFormDataReactor.class.getName(), 
+								"Invoke modified error, path=" + getSelf().getMetadata().getPath(), e);
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+		
 	}
 }

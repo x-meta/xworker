@@ -1,5 +1,6 @@
 package xworker.ide.assistor;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.TreeItem;
@@ -47,8 +48,8 @@ public class Assistor {
 	 */
 	public static void setCommandDomain(Thing commandDomain, ActionContext actionContext){
 		if(isComamndExcecutorValid()){
-			commandExecutor.setDomain(commandDomain, actionContext);
-			commandExecutor.reset();
+			commandExecutor.pushDomain(commandDomain, actionContext, Collections.emptyMap());
+			//commandExecutor.reset();
 			commandExecutor.getShell().setActive();			
 		}else{
 			//commandExecutor = (CommandExecutor) commandDomain.doAction("run", actionContext); 
@@ -57,7 +58,8 @@ public class Assistor {
 	
 	public static void runCommandDomain(Thing commandDomain, ActionContext actionContext){
 		if(isComamndExcecutorValid()){
-			commandExecutor.setDomain(commandDomain, actionContext);
+			//commandExecutor.setDomain(commandDomain, actionContext);
+			commandExecutor.pushDomain(commandDomain, actionContext, Collections.emptyMap());
 			commandExecutor.reset();
 			commandExecutor.getShell().setActive();			
 		}else{

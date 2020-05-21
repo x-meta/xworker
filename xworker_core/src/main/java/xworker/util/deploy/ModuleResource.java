@@ -12,6 +12,9 @@ public class ModuleResource {
 	
 	File file;
 	
+	/** 资源路径。一般是相对路径，可以作为拷贝目的地的参考。
+	 * 默认如果文件是XWorker下的文件，那么会去除XWorker的路径。
+	 */
 	String path = null;
 	
 	Pattern pattern = null;
@@ -40,6 +43,11 @@ public class ModuleResource {
 		if(pathRegex != null) {
 			pattern = Pattern.compile(pathRegex);
 		}
+	}
+	
+	public ModuleResource(String path, File file) {
+		this.path = path;
+		this.file = file;
 	}
 		
 	public boolean acceptScope(String scope) {
@@ -80,6 +88,10 @@ public class ModuleResource {
 		
 	}
 
+	public void setPath(String path) {
+		this.path = path;
+	}
+	
 	/**
 	 * 资源文件。
 	 * 

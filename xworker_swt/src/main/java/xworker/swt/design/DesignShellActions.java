@@ -203,7 +203,7 @@ public class DesignShellActions {
 		
 		XWorkerTreeUtil.initItem(treeItem, item.thing, actionContext);
 		treeItem.setData(item);
-		for(Item childItem : item.child){
+		for(Item childItem : item.childs){
 			initItemAtTree(treeItem, childItem, actionContext, control);
 		}
 		
@@ -417,7 +417,7 @@ public class DesignShellActions {
 			
 			item.control = control;
 			items.add(item);
-			items = item.child;
+			items = item.childs;
 		}
 		
 		if(control instanceof Composite){
@@ -445,6 +445,22 @@ public class DesignShellActions {
 	public static class Item{
 		public Control control;
 		public Thing thing;
-		public List<Item> child = new ArrayList<Item>();
+		public List<Item> childs = new ArrayList<Item>();
+		
+		public String getLabel() {
+			return thing.getMetadata().getLabel();
+		}
+		
+		public Thing getThing() {
+			return thing;
+		}
+		
+		public Control getControl() {
+			return control;
+		}
+		
+		public List<Item> getChilds(){
+			return childs;
+		}
 	}
 }

@@ -10,7 +10,23 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
-public class JschActions {
+import xworker.util.XWorkerUtils;
+
+public class JschActions {	
+	static {
+		Thing config = null;
+		try {
+			config = XWorkerUtils.getThingIfNotExistsCreate("_local.xworker.config.JschConfig", "_local", "xworker.net.jsch.JschConfig");
+			if(config != null) {
+				String preferredAuthentications = config.getStringBlankAsNull("preferredAuthentications");
+				if(preferredAuthentications != null) {
+					JSch.setConfig("PreferredAuthentications", preferredAuthentications);
+				}
+			}
+		}catch(Exception e) {			
+		}
+	}
+	
 	private static JSch jsch = new JSch();
 	
 	public static JSch getJSch(ActionContext actionContext){
@@ -34,13 +50,12 @@ public class JschActions {
 		if(jsch == null){
 			throw new ActionException("Jsch is null, sessionPath=" + self.getMetadata().getPath());
 		}
-		
+				
 		String username = self.getStringBlankAsNull("username");		
 		String host = self.getStringBlankAsNull("host");
 		int port = self.getInt("port", 22);
 		
-		Session session = jsch.getSession(username, host, port);
-		
+		Session session = jsch.getSession(username, host, port);	
 		UserInfo userInfo = (UserInfo) self.doAction("createUserInfo", actionContext);
 		if(userInfo != null){
 			session.setUserInfo(userInfo);

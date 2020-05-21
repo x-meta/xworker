@@ -7,6 +7,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class ThingBrowserFunction extends BrowserFunction implements DisposeListener{
 	Thing thing;
 	ActionContext actionContext;
@@ -21,7 +23,12 @@ public class ThingBrowserFunction extends BrowserFunction implements DisposeList
 	
 	@Override
 	public Object function(Object[] arguments) {		
-		return thing.doAction("doFunction", actionContext, "args", arguments);
+		try {
+			return thing.doAction("doFunction", actionContext, "args", arguments);
+		}catch(Exception e) {
+			Executor.error(ThingBrowserFunction.class.getName(), "Execute function error, thing=" + thing.getMetadata().getPath(), e);
+			return null;			
+		}
 	}
 	
 	public static Object create(ActionContext actionContext) {

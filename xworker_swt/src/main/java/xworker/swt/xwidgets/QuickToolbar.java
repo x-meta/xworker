@@ -60,22 +60,24 @@ public class QuickToolbar {
 			}
 			
 			try{
+				boolean showMenu = true;
 				if("DROP_DOWN".equals(thing.getString("type"))){
-					if (event.detail == SWT.ARROW) {
-						Menu menu = (Menu) event.widget.getData("menu");
-						if(menu != null){
-							ToolItem item = (ToolItem) event.widget;
-	
-							Rectangle rect = item.getBounds();
-							Point pt = new Point(rect.x, rect.y + rect.height);
-							pt = item.getParent().toDisplay(pt);
-	
-						    menu.setLocation(pt.x, pt.y);
-						    //menu.update();
-						    menu.setVisible(true);
-						    return;
-						}
+					if (event.detail != SWT.ARROW) {
+						showMenu = false;
 					}
+				}
+				Menu menu = (Menu) event.widget.getData("menu");
+				if(menu != null && showMenu){
+					ToolItem item = (ToolItem) event.widget;
+
+					Rectangle rect = item.getBounds();
+					Point pt = new Point(rect.x, rect.y + rect.height);
+					pt = item.getParent().toDisplay(pt);
+
+				    menu.setLocation(pt.x, pt.y);
+				    //menu.update();
+				    menu.setVisible(true);
+				    return;
 				}
 				
 				QuickWidgetUtils.invokeEvent(event, thing, "run", actionContext);
@@ -196,31 +198,32 @@ public class QuickToolbar {
             item.setEnabled(false);
         }
         
-        if("DROP_DOWN".equals(selfType)){
-        	//创建菜单节点
-        	List<Thing> menus = self.getChilds("Menu");
-        	
-        	if(menus.size() > 0){
-	        	//创建Menu
-	        	Menu menu = new Menu(item.getParent());
-	        	item.setData("menu", menu);
-	        	item.addDisposeListener(new DisposeListener() {
+        //创建菜单节点
+    	List<Thing> menus = self.getChilds("Menu");
+    	
+    	if(menus.size() > 0){
+        	//创建Menu
+        	Menu menu = new Menu(item.getParent());
+        	item.setData("menu", menu);
+        	item.addDisposeListener(new DisposeListener() {
 
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						Menu menu = (Menu) e.widget.getData("menu");
-						if(menu != null) {
-							menu.dispose();
-						}
+				@Override
+				public void widgetDisposed(DisposeEvent e) {
+					Menu menu = (Menu) e.widget.getData("menu");
+					if(menu != null) {
+						menu.dispose();
 					}
-	        		
-	        	});
-	        	actionContext.peek().put("menu", menu);
-	        	
-	        	for(Thing child : menus){
-	        		child.doAction("create", actionContext);
-	        	}
+				}
+        		
+        	});
+        	actionContext.peek().put("menu", menu);
+        	
+        	for(Thing child : menus){
+        		child.doAction("create", actionContext);
         	}
+    	}
+        if("DROP_DOWN".equals(selfType)){
+        	
         }else if("SEPARATOR".equals(selfType)){
         	//创建控件
         	Thing control = self.getThing("Control@0");

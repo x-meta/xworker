@@ -37,9 +37,9 @@ public class EnviromentChecker extends SecurityChecker{
 	/**
 	 * 注册一个权限处理器，权限处理器可能会设置到不同校验器上。
 	 *     permission == null，设置到当前对象上。
-	 *     action == null && pathRegex == null，那么设置到权限校验器上，。
+	 *     action == null &amp;&amp; pathRegex == null，那么设置到权限校验器上，。
 	 *     pathRegex != null，设置到路径校验器上。
-	 *     action != null && pathRegex == null，设置到动作校验器上。
+	 *     action != null &amp;&amp; pathRegex == null，设置到动作校验器上。
 	 * 
 	 * @param permission
 	 * @param action;

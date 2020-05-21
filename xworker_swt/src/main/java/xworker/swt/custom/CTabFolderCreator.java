@@ -228,6 +228,8 @@ public class CTabFolderCreator {
 				return;
 			}
 			
+			itemThing.doAction("onSelection", actionContext);
+			
 			if(tabThing.getBoolean("useItemTopRightControl")) {
 				int style = SWT.NONE;
 				Thing topRight = tabThing.getThing("TopRight@0");

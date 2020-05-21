@@ -20,16 +20,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
-import org.xmeta.util.UtilAction;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 /**
  * 文件相关的一些动作。
@@ -38,7 +36,8 @@ import ognl.OgnlException;
  *
  */
 public class FileActions {
-	private static Logger logger = LoggerFactory.getLogger(FileActions.class);
+	//private static Logger logger = LoggerFactory.getLogger(FileActions.class);
+	private static final String TAG = FileActions.class.getName();
 		
 	public static void iteratorLines(ActionContext actionContext) throws IOException{
 		Thing self = (Thing) actionContext.get("self");
@@ -82,7 +81,8 @@ public class FileActions {
 	}
 		
 	public static void handleLine(ActionContext actionContext){
-		logger.info((String) actionContext.get("line"));
+		Executor.info(TAG, (String) actionContext.get("line"));
+		//logger.info((String) actionContext.get("line"));
 	}
 	
 	public static File getFile(ActionContext actionContext) throws OgnlException{
@@ -114,23 +114,23 @@ public class FileActions {
 			}
 		}
 		
-		boolean debugLog = UtilAction.getDebugLog(self, actionContext);
+		boolean debugLog = Executor.isLogLevelEnabled(TAG, Executor.DEBUG);
 		syncDirOrFile(sourceDir, targetDir, type, debugLog);
 		if(debugLog){
-			logger.info("同步结束：source=" + sourceDir + ", target=" + targetDir);
+			Executor.debug(TAG, "Synchronize finished：source=" + sourceDir + ", target=" + targetDir);
 		}
 	}
 	
 	public static void syncDirOrFile(File source, File target, String type, boolean log) throws IOException{
 		if(log && source.isDirectory()){
-			logger.info("同步目录：source=" + source + " target=" + target);
+			Executor.debug(TAG, "Synchronizing：source=" + source + " target=" + target);
 		}
 		
 		if(source == null){
 			//源没有，而目标有点的文件
 			if("keepSourceSame".equals(type)){
 				if(log){
-					logger.info("删除目标文件或目录：" + target);
+					Executor.debug(TAG, "Delete target file：" + target);
 				}
 				if(target.isDirectory()){
 					FileUtils.deleteDirectory(target);
@@ -162,7 +162,7 @@ public class FileActions {
 				if(!have){
 					if(sfile.isFile()){
 						if(log){
-							logger.info("覆盖源文件：" + sfile);
+							Executor.debug(TAG, "Replace target file ：" + sfile);
 						}
 						FileUtils.copyFile(sfile, new File(target, sfile.getName()),true);
 					}else{
@@ -193,7 +193,7 @@ public class FileActions {
 						}else{
 							
 							if(log){
-								logger.info("覆盖目标文件：" + target);
+								Executor.debug(TAG, "Replace source file：" + target);
 							}
 							FileUtils.copyFile(tfile, sfile, true);
 						}
@@ -249,10 +249,18 @@ public class FileActions {
 	
 	public static void cleanDirectory(ActionContext actionContext) throws IOException{
 		Thing self = (Thing) actionContext.get("self");
-		boolean debug = UtilAction.getDebugLog(self, actionContext);
-		File file = getFile(self, "getFile", actionContext);		
-		if(!file.exists()){
+		//boolean debug = UtilAction.getDebugLog(self, actionContext);
+		File file = getFile(self, "getFile", actionContext);
+				
+		if(file == null || !file.exists()){
+			if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+				Executor.debug(TAG, "Clean directory, directory is not exists, file=" + file);
+			}
 			return;
+		}else {
+			if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+				Executor.debug(TAG, "Clean directory " + file);
+			}
 		}
 		FileUtils.cleanDirectory(file);
 	}
@@ -292,6 +300,10 @@ public class FileActions {
 		File destDir = getFile(self, "getDestDir", actionContext);
 		Boolean preserveFileDate = (Boolean) self.doAction("getPreserveFileDate", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Copy " + srcFile + " to directory " + destDir);
+		}
+		
 		FileUtils.copyFileToDirectory(srcFile, destDir, preserveFileDate);
 	}
 	
@@ -302,6 +314,9 @@ public class FileActions {
 		FileFilter filter = (FileFilter) self.doAction("getFilter", actionContext);
 		Boolean preserveFileDate = (Boolean) self.doAction("getPreserveFileDate", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Copy directory " + srcDir + " to directory " + destDir);
+		}
 		FileUtils.copyDirectory(srcDir, destDir, filter, preserveFileDate);
 	}
 	
@@ -309,6 +324,10 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File srcDir = getFile(self, "getSrcDir", actionContext);
 		File destDir = getFile(self, "getDestDir", actionContext);
+		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Copy directory " + srcDir + " to directory " + destDir);
+		}
 		
 		FileUtils.copyDirectoryToDirectory(srcDir, destDir);
 	}
@@ -318,7 +337,9 @@ public class FileActions {
 		File srcFile = getFile(self, "getSrcFile", actionContext);
 		File destFile = getFile(self, "getDestFile", actionContext);
 		Boolean preserveFileDate = (Boolean) self.doAction("getPreserveFileDate", actionContext);
-		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Copy file " + srcFile + " to " + destFile);
+		}
 		FileUtils.copyFile(srcFile, destFile, preserveFileDate);
 	}
 	
@@ -345,6 +366,10 @@ public class FileActions {
 		int connectionTimeout = (Integer) self.doAction("getConnectionTimeout", actionContext);
 		int readTimeout = (Integer) self.doAction("getReadTimeout", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Copy URL " + source + " to " + destination);
+		}
+		
 		FileUtils.copyURLToFile(source, destination, connectionTimeout, readTimeout);
 	}
 	
@@ -352,12 +377,19 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File directory = getFile(self, "getDirectory", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Delete directory " + directory);
+		}
 		FileUtils.deleteDirectory(directory);
 	}
 	
 	public static boolean deleteQuietly(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		File directory = getFile(self, "getDirectory", actionContext);
+		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Delete directory quietly " + directory);
+		}
 		
 		return FileUtils.deleteQuietly(directory);
 	}
@@ -374,6 +406,9 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Force delete " + file);
+		}
 		FileUtils.forceDelete(file);
 	}
 	
@@ -381,6 +416,9 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Force delete on exit  " + file);
+		}
 		FileUtils.forceDeleteOnExit(file);
 	}
 	
@@ -388,6 +426,9 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File directory = getFile(self, "getDirectory", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Force mkdir " + directory);
+		}
 		FileUtils.forceMkdir(directory);
 	}
 	
@@ -395,6 +436,9 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Force mkdir parent " + file);
+		}
 		FileUtils.forceMkdir(file.getParentFile());
 	}
 	
@@ -419,6 +463,9 @@ public class FileActions {
 		File srcDir = getFile(self, "getSrcDir", actionContext);
 		File destDir = getFile(self, "getDestDir", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Move directory {} to {}", srcDir , destDir);
+		}
 		FileUtils.moveDirectory(srcDir, destDir);
 	}
 	
@@ -428,6 +475,9 @@ public class FileActions {
 		File destDir = getFile(self, "getDestDir", actionContext);
 		Boolean createDestDir = (Boolean) self.doAction("getCreateDestDir", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Move directory {} to directory {}", srcDir, destDir);
+		}
 		FileUtils.moveDirectoryToDirectory(srcDir, destDir, createDestDir);
 	}
 	
@@ -436,6 +486,9 @@ public class FileActions {
 		File srcFile = getFile(self, "getSrcFile", actionContext);
 		File destFile = getFile(self, "getDestFile", actionContext);
 
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Move file {} to {}", srcFile, destFile);
+		}
 		FileUtils.moveFile(srcFile, destFile);
 	}
 	
@@ -445,6 +498,9 @@ public class FileActions {
 		File destDir = getFile(self, "getDestDir", actionContext);
 		Boolean createDestDir = (Boolean) self.doAction("getCreateDestDir", actionContext);
 
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Move file {} to directory {}", srcFile, destDir);
+		}
 		FileUtils.moveFileToDirectory(srcFile, destDir, createDestDir);
 	}
 	
@@ -454,6 +510,9 @@ public class FileActions {
 		File destDir = getFile(self, "getDestDir", actionContext);
 		Boolean createDestDir = (Boolean) self.doAction("getCreateDestDir", actionContext);
 
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Move {} to directory {}", src, destDir);
+		}
 		FileUtils.moveToDirectory(src, destDir, createDestDir);
 	}
 	
@@ -479,6 +538,7 @@ public class FileActions {
 		return FileUtils.readFileToByteArray(file);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static String readFileToString(ActionContext actionContext) throws IOException{
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
@@ -492,6 +552,7 @@ public class FileActions {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public static List<String> readLines(ActionContext actionContext) throws IOException{
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
@@ -516,6 +577,9 @@ public class FileActions {
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
 		
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG)) {
+			Executor.debug(TAG, "Touch {}", file);
+		}
 		FileUtils.touch(file);
 	}
 	

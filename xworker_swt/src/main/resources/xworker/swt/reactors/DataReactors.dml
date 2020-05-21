@@ -1,4 +1,4 @@
-%1576670447816
+%1589276673330
 @
 sname=DataReactors
 slabel=DataReactors
@@ -6,6 +6,7 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.swt.reactors.DataFilters
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
@@ -13,23 +14,23 @@ Sdescription=
 #$@text#$@
 <p><strong>数据响应框架</strong></p>
 
-<p>&nbsp; &nbsp; 数据响应器框架是一个界面的控制框架，它通过控件的指向来实现控件之间的控制。</p>
+<p>&nbsp; &nbsp; 数据响应器框架的基本想法是数据在控件之间流动，控件一般情况下会正确处理数据，也会触发数据流到下一个控件。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 比如把输入URL地址的文本框指向浏览器，就能实现在文本框中输入一个地址，然后在浏览器中显示该网页的功能。</p>
-
-<p><strong>实现方法</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 控件或组件响应数据的变化事件，根据事件做出适合的行为。比如编辑按钮监听到有数据选中了，那么就变得可用，如果监听到没有数据选中，则变得不可用。</p>
-
-<p>&nbsp;&nbsp;&nbsp; 目前可以监听以下事件：增加数据、修改数据、移除数据、选择数据、没有选择数据和加载数据。</p>
-
-<p><strong>有效性</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 控件对数据的响应一般有一个默认的实现。如果需要的功能并不是默认时，可能就得不到想要的结果，此时可以使用自定义的数据响应器。方法是添加响应的子节点。</p>
+<p>&nbsp;&nbsp;&nbsp; 因此使用数据响应框架可以让界面控制变得简单。比如把输入URL地址的文本框指向浏览器，就能实现在文本框中输入一个地址，然后在浏览器中显示该网页的功能。</p>
 
 <p><strong>过滤器</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 数据响应器支持过滤器。过滤器用在触发数据的变化事件时，过滤器可以实现转换和过滤数据等功能，也可以过滤和转换事件的类型等。</p>
+
+<p><strong>调试</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过插入日志响应器的方法通过打印日志的方法调试，方法是通过向导添加日志响应器，然后在相关方法里打印想要的信息，最后把它放到要调试的响应器后面。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如想要知道form输出的数据，而日志响应器是logDataReactor，那么可以form &gt; logDataReactor。</p>
+
+<p><strong>更多帮助</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 更多帮助和文件可以在帮助小精灵中查看。</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -261,17 +262,18 @@ sth_mark=false
 <p><strong>Rules的格式</strong></p>
 
 <pre class="brush:php;">
-#注释，如：
+<strong>注释使用#，如：</strong>
 #这是一个注释
 
-#数据响应器定义，名字时变量名，如控件名等，?后跟参数，|后时过滤器
+<strong>数据响应器定义，一行只能定义一个数据响应器。如果数据响应器没有参数和过滤器等，则无需定义</strong>
+#名字是变量名，如控件名等，?后跟参数，|后时过滤器
 editButton?fire=selected|source
 
-//指向规则
-a1,a2....&gt;b1,b2....
+<strong>执行规则，一行一个规则，在规则中不要使用?或|等定义数据响应器，如要定义应提前定义</strong>
+a1,a2....&gt;b1,b2....&gt;c1,c2....&gt;...
 </pre>
 
-<p>一个规则一行，其中an和bn是DataReactor的名字，其中如果an和bn对应的变量不是DataReactor，那么会自动创建DataRactor并以&lt;an&gt;DataReactor变量名保存到全局变量上下文中。</p>
+<p>一个规则一行，其中an、bn和cn是DataReactor的名字，其中如果an和bn对应的变量不是DataReactor，那么会自动创建DataRactor并以&lt;an&gt;DataReactor变量名保存到全局变量上下文中。</p>
 
 <p>&gt;表示bn是an的后续DataReactor，所有的后续都会添加到所有的前者中。</p>
 #$@text#$@

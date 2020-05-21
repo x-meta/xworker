@@ -18,12 +18,14 @@ package xworker.swt.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
 public class TaskMonitor implements Runnable{
@@ -230,7 +232,7 @@ public class TaskMonitor implements Runnable{
 	 * @param actionContext
 	 * @return
 	 */
-	public static Thing create(ActionContext actionContext){
+	public static Object create(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		
 		//任务列表
@@ -240,30 +242,22 @@ public class TaskMonitor implements Runnable{
 			tasks.addAll(tasksThing.getChilds());
 		}
 		
-		//进度条和标签
-		String progressBarVarName = self.getStringBlankAsNull("progressBarVarName");
-		ProgressBar progressBar = null;
-		if(progressBarVarName != null){
-			progressBar = (ProgressBar) actionContext.get(progressBarVarName);
-		}
-		String labelVarName = self.getStringBlankAsNull("labelVarName");
-		Label label = null;
-		if(labelVarName != null){
-			label = (Label) actionContext.get(labelVarName);
-		}
+		ThingCompositeCreator sc = SwtUtils.createCompositeCreator(self, actionContext);
+		sc.setCompositeThing(World.getInstance().getThing("xworker.swt.util.prototypes.TaskMonitor/@mainComposite"));
+		Composite composite = sc.create();
+
+		ActionContext ac = sc.getNewActionContext();
 		
-		//创建新的事物
-		Thing thing = new Thing();
-		thing.put("descriptors", self.getMetadata().getPath()); //设置原来的事物为描述者，用于继承行为
+		//进度条和标签
+		ProgressBar progressBar = ac.getObject("progressBar");
+		Label label = ac.getObject("label");
 		
 		//创建实例
 		TaskMonitor monitor = new TaskMonitor(self, tasks, progressBar, label, actionContext);		
-		thing.setData(TaskMonitor.monitor_name, monitor);
-		
 		//保存变量
-		actionContext.getScope(0).put(self.getMetadata().getName(), thing);
+		actionContext.getScope(0).put(self.getMetadata().getName(), monitor);
 		
-		return thing;
+		return composite;
 	}
 	
 	public static Object addTask(ActionContext actionContext){

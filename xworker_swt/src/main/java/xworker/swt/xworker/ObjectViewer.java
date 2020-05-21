@@ -36,6 +36,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.ExceptionUtil;
 import org.xmeta.util.UtilMap;
 
 import xworker.swt.ActionContainer;
@@ -126,6 +127,10 @@ public class ObjectViewer {
 		         if(value instanceof Thing){
 		        	 Thing thing = (Thing) value;
 		             openValueUrl(valueText, "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + thing.getMetadata().getPath(), false);
+		         }else if(value instanceof Throwable) {
+		        	 Throwable t = (Throwable) value;
+		        	 String stacks = ExceptionUtil.toString(t);
+		        	 valueText.setText("<pre>" + stacks + "</pre>");
 		         }else{
 		             try{
 		                 valueText.setText("<pre>" + value + "</pre>");

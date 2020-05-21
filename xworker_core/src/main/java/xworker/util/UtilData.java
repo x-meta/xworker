@@ -19,8 +19,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,9 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 import org.xmeta.util.OgnlUtil;
@@ -41,6 +49,7 @@ import org.xmeta.util.UtilMap;
 
 import freemarker.template.TemplateException;
 import ognl.OgnlException;
+import xworker.lang.Configuration;
 
 /**
  * 和数据相关的一些类。
@@ -419,6 +428,24 @@ public class UtilData {
 	}
 	
 	public static byte[] getBytes(Object v, byte[] defaultValue){
+		try {
+			if(v instanceof File){
+	    		File file = (File) v;
+	    		if(file.isFile()) {
+	    			return FileUtils.readFileToByteArray(file);				
+	    		}
+	    	}else if(v instanceof URL) {
+	    		return IOUtils.toByteArray((URL) v);
+	    	}else if(v instanceof URI) {
+	    		return IOUtils.toByteArray((URI) v);
+	    	}else if(v instanceof InputStream) {
+	    		return IOUtils.toByteArray((InputStream) v);
+	    	}else if(v instanceof Reader) {
+	    		return IOUtils.toByteArray((Reader) v, Charset.defaultCharset());
+	    	}
+		}catch(Exception e) {
+			throw new ActionException("getBytes error", e);
+		}
 		return org.xmeta.util.UtilData.getBytes(v, defaultValue);
 	}
 	
@@ -486,6 +513,23 @@ public class UtilData {
 		 Object value = thing.get(attributeName);
 		 if(value != null && value instanceof String){
 			 String str = (String) value;
+			 if(str.startsWith("_c_.")) {
+				 str = str.substring(4,  str.length());
+				 int index = str.indexOf(":");
+				 String path = null;
+				 String name = str;
+				 if(index !=  -1) {
+					 name = str.substring(0, index);
+					 path = str.substring(index + 1, str.length());
+				 }
+				 Thing config = Configuration.getConfiguration(name, thing, actionContext);
+				 if(config != null && path != null) {
+					 return config.get(path);
+				 }else {
+					 return config;
+				 }
+			 }
+			 
 			 return getData(str, actionContext);
 	 	 }else{
 	 		 return value;
@@ -500,7 +544,7 @@ public class UtilData {
 		 if(object != null) {
 			 return object;
 		 }*/
-		 
+		 		 
 		 if(value.startsWith("template:")){
 			 return StringUtils.getString(value, actionContext);
 		 }

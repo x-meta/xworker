@@ -1,5 +1,6 @@
 package xworker.util.compress;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionParams;
 
@@ -30,6 +32,7 @@ public class XWorkerModuleEntry implements CompressEntry{
 	String type;
 	String os;
 	boolean trimParentPath;
+	String trimPath;
 	List<Pattern> excludes = new ArrayList<Pattern>(); 	
 	
 	public XWorkerModuleEntry(Thing thing, ActionContext actionContext) {
@@ -42,6 +45,7 @@ public class XWorkerModuleEntry implements CompressEntry{
 		this.scope = thing.doAction("getScope", actionContext);
 		this.type = thing.doAction("getType", actionContext);
 		this.trimParentPath = thing.doAction("isTrimParentPath", actionContext);
+		this.trimPath = thing.getStringBlankAsNull("trimPath");
 		this.os = thing.doAction("getOs", actionContext);
 		String exls = thing.doAction("getExcludes", actionContext);
 		if(exls != null && !"".equals(exls)) {
@@ -57,10 +61,18 @@ public class XWorkerModuleEntry implements CompressEntry{
 			}
 		}
 		
-		init();
+		try {
+			init();
+		}catch(Exception e) {
+			throw new ActionException("Init xworker module entry error, model=" + thing.getMetadata().getPath(), e);
+		}
 	}
 	
 	private boolean isExcluded(String path) {
+		if(path == null) {
+			return false;
+		}
+		
 		for(Pattern pattern : excludes) {
 			if(pattern.matcher(path).matches()) {
 				return true;
@@ -75,7 +87,12 @@ public class XWorkerModuleEntry implements CompressEntry{
 	}
 	
 	private boolean isAccept(ModuleResource mr) {
-		if(!mr.acceptScope(scope) || isExcluded(mr.getPath())) {
+		if(mr.getFile() == null) {
+			//ModuleResource是为了拷贝文件，如果文件不存在，那么应该是没有用的
+			return false;
+		}
+		
+		if(!mr.acceptScope(scope) || isExcluded(mr.getFile().getAbsolutePath())) {
 			return false;
 		}
 		
@@ -86,31 +103,60 @@ public class XWorkerModuleEntry implements CompressEntry{
 		return true;
 	}
 	
-	private void init() {
+	private String getEntryPath(String rootPath, File file) throws IOException {
+		String resPath = null;
+		if(trimParentPath) {
+			resPath = file.getName();
+		}else {
+			resPath = file.getCanonicalPath();
+			
+			resPath = resPath.replace('\\', '/');
+			if(resPath.startsWith(rootPath)) {
+				resPath = resPath.substring(rootPath.length(), resPath.length());
+			}
+			
+			if(trimPath != null && resPath.startsWith(trimPath)) {
+				resPath = resPath.substring(trimPath.length(), resPath.length());
+			}
+		}
+		
+		if(path == null || path.equals("")) {
+			return resPath;
+		}else{
+			return path + resPath;
+		}
+	}
+	
+	private void init() throws IOException {
 		//添加和计算模块
 		ModuleManager mm = new ModuleManager();
 		for(Thing module : thing.getChilds("Module")) {
+			boolean noDependencies = module.getBoolean("noDependencies");
 			String modulePath = module.getStringBlankAsNull("module");
 			if(modulePath != null) {
-				mm.addModule(modulePath);
+				mm.addModule(modulePath, noDependencies);
 			}
 			
 			for(Thing child : module.getChilds("Module")) {
-				mm.addModule(child);
+				mm.addModule(child, noDependencies);
 			}
 		}
 		
 		for(Thing module : thing.getChilds("NewModule")) {
-			mm.addModule(module);			
+			mm.addModule(module, module.getBoolean("noDependencies"));			
 		}
 		
 		List<String> modules = thing.doAction("getModules", actionContext);
 		if(modules != null) {
 			for(String module : modules) {
-				mm.addModule(module);
+				mm.addModule(module, false);
 			}
 		}
 		mm.calculate();
+		
+		File rootDir = mm.getRootDir();
+		String rootPath = rootDir.getCanonicalPath();
+		rootPath = rootPath.replace('\\', '/');		
 		
 		//添加类库
 		if(isInclude("lib")) {
@@ -119,22 +165,15 @@ public class XWorkerModuleEntry implements CompressEntry{
 					continue;
 				}
 				
-				
-				String path = null;
-				if(trimParentPath) {
-					path = thing.doAction("getEntryPath", actionContext,			
-							"path", this.path, "resPath", mr.getFile().getName(), "moduleResource", mr);
+				File file = mr.getFile();
+				if(file.isDirectory()) {
+					childs.add(new DirectoryEntry(mr.getFile(), mr.getFile(), this.path, store, null, null));
+				}else if(decompress && file.getName().toLowerCase().endsWith(".jar")) {
+					childs.add(new JarFileEntry(mr.getFile(), this.path, store));
 				}else {
-					path = thing.doAction("getEntryPath", actionContext,				
-							"path", this.path, "resPath", mr.getPath(), "moduleResource", mr);
-				}
-				if(path != null) {
-					if(decompress) {
-						childs.add(new JarFileEntry(mr.getFile(), this.path, store));
-					}else{
-						childs.add(new FileEntry(path, mr.getFile(), store));
-					}
-				}
+					String entryPath = getEntryPath(rootPath, mr.getFile());
+					childs.add(new FileEntry(entryPath, mr.getFile(), store));
+				}				
 			}
 		}
 		
@@ -145,23 +184,16 @@ public class XWorkerModuleEntry implements CompressEntry{
 					continue;
 				}
 				
-				String path = null;
-				if(trimParentPath) {
-					path = thing.doAction("getEntryPath", actionContext,				
-							"path", this.path, "resPath", mr.getFile().getName(), "moduleResource", mr);
-				}else {
-					path = thing.doAction("getEntryPath", actionContext,				
-							"path", this.path, "resPath", mr.getPath(), "moduleResource", mr);
-				}
-				if(path != null) {
+				String entryPath = getEntryPath(rootPath, mr.getFile());
+				if(entryPath != null) {				
 					if(mr.getFile().isDirectory()) {
 						try {
-							childs.add(new DirectoryEntry(mr.getFile(), mr.getFile(), path, store, null, null));
+							childs.add(new DirectoryEntry(mr.getFile(), mr.getFile(), entryPath, store, null, null));
 						} catch (IOException e) {
 							logger.warn("init directory erro", e);
 						}
 					}else {
-						childs.add(new FileEntry(path, mr.getFile(), store));
+						childs.add(new FileEntry(entryPath, mr.getFile(), store));
 					}
 				}
 			}
@@ -206,10 +238,17 @@ public class XWorkerModuleEntry implements CompressEntry{
 	}
 
 	@ActionParams(names="path, resPath, moduleResource")
-	public static String getEntryPath(String path, String resPath, ModuleResource moduleResource, ActionContext actionContext) {
-		if(path == null && !"".equals(path)) {
+	public static String getEntryPath(String path, String resPath, ModuleResource moduleResource, ActionContext actionContext) {		
+		if(path == null || "".equals(path)) {
+			if(resPath == null || "".equals(resPath)) {
+				return null;
+			}
 			return resPath;
 		}else {
+			if(resPath == null || "".equals(resPath)) {
+				return path;
+			}
+			
 			return path + resPath;
 		}
 	}

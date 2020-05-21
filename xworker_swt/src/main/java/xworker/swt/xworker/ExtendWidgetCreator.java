@@ -49,6 +49,7 @@ public class ExtendWidgetCreator {
 						ac = new ActionContext();
 				        ac.put("parentContext", actionContext);
 				        ac.put("parent", actionContext.get("parent"));
+				        ac.put("parentThing", self);
 				        actionContext.getScope(0).put(actionContextName, ac);
 					}		
 				}else{
@@ -56,6 +57,7 @@ public class ExtendWidgetCreator {
 					if(self.getBoolean("newActionContext")){
 				        ac = new ActionContext();
 				        ac.put("parentContext", actionContext);
+				        ac.put("parentThing", self);
 				        ac.put("parent", actionContext.get("parent"));
 				       
 				        String newActionContextName = self.getStringBlankAsNull("newActionContextName");

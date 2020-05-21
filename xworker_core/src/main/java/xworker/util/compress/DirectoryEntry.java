@@ -21,6 +21,12 @@ public class DirectoryEntry implements CompressEntry{
 		if(rootPath.endsWith("/") == false) {
 			rootPath = rootPath + "/";
 		}
+		if(pathPrefix != null) {
+			pathPrefix = pathPrefix.replace('\\', '/');
+			if(pathPrefix.length() > 0 && pathPrefix.endsWith("/") == false) {
+				pathPrefix = pathPrefix + "/";
+			}
+		}
 		for(File child : dir.listFiles()){
 			if(child.isFile()){
 				String path = child.getCanonicalPath();
@@ -42,6 +48,7 @@ public class DirectoryEntry implements CompressEntry{
 				if(excludes != null && excludes.mattches(path)) {
 					continue;
 				}
+				
 				if(includes == null || includes.mattches(path)) {
 					childs.add(new DirectoryEntry(rootDir, child, pathPrefix, store, excludes, includes));
 				}

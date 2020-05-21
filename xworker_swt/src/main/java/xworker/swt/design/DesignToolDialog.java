@@ -78,6 +78,10 @@ public class DesignToolDialog {
             			"isAttribute", isAttribute, "creator", creator, "creatorControl", creatorControl);
             	if(UtilData.isTrue(obj)){
             		//已有的操作接受了新的控件
+            		Thing tools = (Thing) actionContext.g().get("tools");
+            		if(tools != null) {
+            			DesignToolDialog.setTitle(shell, tools, thing);
+            		}
             		return;
             	}
             }
@@ -246,7 +250,7 @@ public class DesignToolDialog {
 		shell.setSize(shellSize.x - 1, shellSize.y - 1);
 		shell.setSize(shellSize);
 		*/
-
+		
 		shell.setVisible(true);
 	}
 	

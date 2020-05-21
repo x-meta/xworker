@@ -36,6 +36,7 @@ import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 import xworker.task.DelayTask;
+import xworker.task.UserTask;
 import xworker.util.UtilData;
 
 public class DataStore implements DataObjectListener, DataObjectListListener, DisposeListener, DataStoreSelectionListener{
@@ -539,7 +540,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 	/**
 	 * 从Widget上获取缓存的DataStore的数据对象列表的规范方法。
 	 * 
-	 * @param control
+	 * @param rootControl
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -697,6 +698,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		            DataObject.beginThreadCache();
 		            Thing sourceDataObject = (Thing) ((Thing) store.get("dataObject")).getData("sourceDataObject");
 		            DataStore dataStore = (DataStore) store.get("dataStore");
+		            UserTask userTask = DataObject.getUserTask(sourceDataObject, acContext);
 		            try{
 		                //源数据对象		                
 		                if(sourceDataObject == null){
@@ -706,7 +708,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		                if(sourceDataObject == null){
 		                    sourceDataObject = (Thing) store.get("dataObject");
 		                }
-		                store.put("userTask", DataObject.getUserTask(sourceDataObject, acContext));
+		                store.put("userTask", userTask);
 		                List<DataObject> records = null;
 		                acContext.peek().putAll(UtilMap.toMap("store", store, "conditionData", store.get("params"), 
                 				"conditionConfig", store.get("queryConfig"), "pageInfo", store.get("pageInfo")));
@@ -721,6 +723,9 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		            	Executor.error(TAG, "Load dataobject error, dataObject=" + sourceDataObject, e);
 		            }finally{
 		                DataObject.finishThreadCache();
+		                if(userTask != null) {
+		                	userTask.finished();
+		                }
 		                store.put("userTask", null);
 		            }
 		            //log.info("records=" + store.records);
@@ -737,8 +742,9 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		}else{
 		    //执行查询
 		    DataObject.beginThreadCache();
+		    UserTask userTask = DataObject.getUserTask((Thing) store.get("dataObject"), acContext);
 		    try{
-		    	store.put("userTask", DataObject.getUserTask((Thing) store.get("dataObject"), acContext));
+		    	store.put("userTask", userTask);
 		    	
 		    	//List<DataObject> records = ((Thing) store.get("dataObject")).doAction("query", actionContext, 
 		        //		UtilMap.toMap("store", store, "conditionData", store.get("params"), "conditionConfig", store.get("queryConfig"),
@@ -758,6 +764,9 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		    }finally{
 		        DataObject.finishThreadCache();
 		        store.put("userTask", null);
+		        if(userTask != null) {
+		        	userTask.finished();
+		        }
 		    }
 		    self.put("dataLoaded", true);
 		    

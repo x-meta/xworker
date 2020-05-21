@@ -396,6 +396,44 @@ public class TaskManager {
 		return unit.toMillis(duration);		
 	}
 	
+	/**
+	 * 任务的doTask的默认实现。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public static Object doTask(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		Thing actionThing = self.doAction("getActionThing", actionContext);
+		if(actionThing == null) {
+			return null;
+		}
+		
+		String actionName = self.doAction("getActionName", actionContext);
+		if(actionName == null || "".equals(actionName)) {
+			return actionThing.getAction().run(actionContext, "taskThing", self);
+		} else {
+			return actionThing.doAction(actionName, actionContext, "taskThing", self);
+		}
+	}
+	
+	/**
+	 * Task模型的createUI方法的默认实现。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public static Object createUI(ActionContext actionContext) {
+		Task task = actionContext.getObject("task");
+		Object parent = actionContext.getObject("parent");
+		if(task == null || parent == null) {
+			return null;
+		}
+		
+		Thing uiThing = World.getInstance().getThing("xworker.lang.task.prototypes.DefaultTaskUI/@mainComposite");
+		return uiThing.doAction("create", actionContext);
+	}
+	
 	static class DelayInfo{
 		long delay;
 		long period; 

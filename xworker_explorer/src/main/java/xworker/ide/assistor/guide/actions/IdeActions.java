@@ -125,16 +125,20 @@ public class IdeActions {
 			
 			Shell parentShell = treeItem.getParent().getShell();
 
+			String descriptorPath = actionContext.getObject("descriptorPath");
+			Map<String, Object> initValues = actionContext.getObject("initValues");
+			
 			ActionContext newContext = new ActionContext();
 			newContext.put("treeItem", treeItem);
 			newContext.put("explorerContxt", explorerContext);
 			newContext.put("explorerActions", actionContext.get("explorerActions"));
 			newContext.put("categoryPath", ((Index) treeItem.getData()).getPath());
 			newContext.put("parent", parentShell);
+			newContext.put("thingInitValues", initValues);
 			
 			Shell newShell = (Shell) dialogObject.doAction("create", newContext);
 
-			String descriptorPath = self.doAction("getDescriptorPath", actionContext);//self.getStringBlankAsNull("descriptorPath");
+			//String descriptorPath = self.doAction("getDescriptorPath", actionContext);//self.getStringBlankAsNull("descriptorPath");
 			if(descriptorPath != null){
 				((Text) newContext.get("descriptorText")).setText(descriptorPath);
 			}

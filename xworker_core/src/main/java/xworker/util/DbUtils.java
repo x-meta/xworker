@@ -50,7 +50,7 @@ public class DbUtils {
 	}
 	
 	/**
-	 * 把ResultSet中的数据读到Map<String, Object>中。其中字段名都会转成小写。
+	 * 把ResultSet中的数据读到Map&lt;String, Object&gt;中。其中字段名都会转成小写。
 	 * 
 	 * @param rs
 	 * @return

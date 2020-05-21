@@ -1,7 +1,12 @@
 package xworker.lang.executor.services;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.helpers.FormattingTuple;
+import org.slf4j.helpers.MessageFormatter;
 import org.slf4j.spi.LocationAwareLogger;
 
 import xworker.lang.executor.ExecuteRequest;
@@ -14,7 +19,7 @@ public class Log4jService implements ExecutorService{
 	
 	private void log(byte level, String TAG, String message) {
 		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
-		byte realLevel = getLevel(logger, level);
+		byte realLevel = getLevel(logger, TAG, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
@@ -38,7 +43,7 @@ public class Log4jService implements ExecutorService{
 	
 	private void log(byte level, String TAG, String message, Throwable t) {
 		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
-		byte realLevel = getLevel(logger, level);
+		byte realLevel = getLevel(logger, TAG, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
@@ -62,72 +67,78 @@ public class Log4jService implements ExecutorService{
 	
 	private void log(byte level, String TAG, String format, Object arg) {
 		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
-		byte realLevel = getLevel(logger, level);
+		FormattingTuple ft = MessageFormatter.arrayFormat(format, new Object[] {arg});
+				
+		byte realLevel = getLevel(logger, TAG, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, new Object[] {arg}, null);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.DEBUG:
-			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, new Object[] {arg}, null);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.INFO:
-			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, new Object[] {arg}, null);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.WARN:
-			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, new Object[] {arg}, null);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.ERROR:
-			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, new Object[] {arg}, null);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, ft.getMessage(), null, null);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String format, Object arg1, Object arg2) {
 		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
-		byte realLevel = getLevel(logger, level);
+		FormattingTuple ft = MessageFormatter.arrayFormat(format, new Object[] {arg1, arg2});
+		
+		byte realLevel = getLevel(logger, TAG, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, new Object[] {arg1, arg2}, null);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.DEBUG:
-			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, new Object[] {arg1, arg2}, null);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.INFO:
-			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, new Object[] {arg1, arg2}, null);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.WARN:
-			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, new Object[] {arg1, arg2}, null);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.ERROR:
-			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, new Object[] {arg1, arg2}, null);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT,ft.getMessage(), null, null);
 			break;
 		}
 	}
 	
 	private void log(byte level, String TAG, String format,  Object... arguments) {
 		LocationAwareLogger logger = (LocationAwareLogger) LoggerFactory.getLogger(TAG);
-		byte realLevel = getLevel(logger, level);
+		FormattingTuple ft = MessageFormatter.arrayFormat(format, arguments);
+		
+		byte realLevel = getLevel(logger, TAG, level);
 		switch(realLevel) {
 		case -1:
 			return;  //不打印日志
 		case Executor.TRACE:
-			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, format, arguments, null);
+			logger.log(null, FQCN, LocationAwareLogger.TRACE_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.DEBUG:
-			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, format, arguments, null);
+			logger.log(null, FQCN, LocationAwareLogger.DEBUG_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.INFO:
-			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, format, arguments, null);
+			logger.log(null, FQCN, LocationAwareLogger.INFO_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.WARN:
-			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, format, arguments, null);
+			logger.log(null, FQCN, LocationAwareLogger.WARN_INT, ft.getMessage(), null, null);
 			break;
 		case Executor.ERROR:
-			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, format, arguments, null);
+			logger.log(null, FQCN, LocationAwareLogger.ERROR_INT, ft.getMessage(), null, null);
 			break;
 		}
 	}
@@ -138,11 +149,7 @@ public class Log4jService implements ExecutorService{
 	 * @param logger
 	 * @param level
 	 */
-	private byte getLevel(Logger logger, byte level) {
-		if(level < this.level) {
-			return -1;
-		}
-		
+	private byte getLevel(Logger logger, String TAG, byte level) {		
 		switch(level) {
 		case Executor.TRACE:
 			if(logger.isTraceEnabled()) {
@@ -337,6 +344,11 @@ public class Log4jService implements ExecutorService{
 	@Override
 	public byte getLogLevel() {
 		return level;
+	}
+
+	@Override
+	public List<ExecuteRequest> getRequestUIs() {
+		return Collections.emptyList();
 	}
 
 }

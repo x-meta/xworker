@@ -9,6 +9,8 @@ import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.Configuration;
+
 
 public class StringUtils {
 	private static String[] emptyString = new String[]{}; 
@@ -22,7 +24,7 @@ public class StringUtils {
 	 */
 	public static String getString(String value, ActionContext actionContext) throws IOException{
 		if(value == null || "".equals(value)){
-			return value;
+			return null;
 		}else if(value.startsWith("template:")){
 			String template = value.substring(9, value.length());
 			try{
@@ -40,6 +42,22 @@ public class StringUtils {
 	
 	public static String getString(Thing thing, String attribute, ActionContext actionContext) throws IOException{
 		String value = thing.getString(attribute);
+		if(value != null && value.startsWith("_c_.")) {
+			value = value.substring(4,  value.length());
+			 int index = value.indexOf(":");
+			 String path = null;
+			 String name = value;
+			 if(index !=  -1) {
+				 name = value.substring(0, index);
+				 path = value.substring(index + 1, value.length());
+			 }
+			 Thing config = Configuration.getConfiguration(name, thing, actionContext);
+			 if(config != null && path != null) {
+				 return String.valueOf(config.get(path));
+			 }else {
+				 return null;
+			 }
+		 }
 		return getString(value, actionContext);
 	}
 	

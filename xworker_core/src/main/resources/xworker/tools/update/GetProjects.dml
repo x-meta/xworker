@@ -1,0 +1,71 @@
+%1580956659851
+@
+sname=GetProjects
+slabel=GetProjects
+Sdescription=
+#$@text#$@
+<p>返回除了XWorker之外的其它项目，返回字符串，多个项目以换行符区分。</p>
+#$@text#$@
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_noThingRegistViewer=false
+sth_fileMonitor=false
+sth_mark=false
+sth_registQueryOnlySelf=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=actions
+    @/@actions/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def rootDir = new File(world.getPath() + "/work/update/");
+def projects = "";
+for(file in rootDir.listFiles()){
+    def name = file.getName();
+    if(file.isDirectory() && name != "xworker"){
+        if(projects == ""){
+            projects = name;
+        }else{
+            projects = projects + "\n" + name;
+        }
+    }
+}
+
+response.setContentType("text/plain");
+response.writer.print(projects);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=doAction

@@ -1,4 +1,4 @@
-^1575629350542
+^1587978788915
 @
 sname
 DataStoreActions
@@ -699,9 +699,11 @@ def selectTreeItemData(dataObjects, item){
       Scode
 #$@text#$@
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 import ognl.Ognl;
 
+def TAG = "xworker.app.view.swt.data.DataStoreActions.p_914249389.run";
 def dataObject = null;
 
 def dataStore = self.doAction("getDataStore", actionContext)
@@ -711,8 +713,8 @@ if(dataStore instanceof String){
 if(dataStore != null){
     dataObject = new DataObject(dataStore.dataObject);
 }else{
-    def log = getLogger(actionContext);
-    log.info("dataStore is null, thing=" + self.getMetadata().getPath());
+    //def log = getLogger(actionContext);
+    Executor.info(TAG, "dataStore is null, thing=" + self.getMetadata().getPath());
 }
 
 if(self.varName != null && self.varName != ""){
@@ -729,6 +731,8 @@ return dataObject;
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false
@@ -1566,27 +1570,6 @@ return dataObject;
     xworker.lang.MetaDescriptor3/@attribute
     sid
     title
-    @/@CreateDataObject/@valuesName
-    sname
-    initValues
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    sdescription
-    <p>初始化值的变量名称，当对话框打开后使用初始化值填充表单，使用Ognl表达式获取。</p>
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sid
-    valuesName
     @/@CreateDataObject/@insert
     sname
     insert
@@ -1724,6 +1707,41 @@ return dataObject;
     xworker.lang.MetaDescriptor3/@attribute
     sid
     confirmMessage
+    @/@CreateDataObject/@valuesName
+    sname
+    initValues
+    sinputtype
+    textarea
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    Sdescription
+#$@text#$@
+<p>初始化值的变量名称，当对话框打开后使用初始化值填充表单。</p>
+#$@text#$@
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    valuesName
     @/@CreateDataObject/@description
     sname
     description
@@ -6518,10 +6536,8 @@ def selectTreeItemData(dataObjects, item){
     public
     sinheritDescription
     false
-    Sdescription
-#$@text#$@
-<p>自定义的ToolItem。</p>
-#$@text#$@
+    sdescription
+    <p>自定义的ToolItem。</p>
     snotXmlAttribute
     false
     sjson_isArray

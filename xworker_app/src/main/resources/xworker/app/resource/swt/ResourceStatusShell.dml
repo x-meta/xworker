@@ -1,4 +1,4 @@
-%1564653995524
+%1583218995365
 @
 sname=ResourceStatusShell
 sNO_TRIM=false
@@ -285,8 +285,15 @@ sth_mark=false
         Scode=
 #$@text#$@
 //println parentContext.get("textContent");
-
+//theData是全局变量，是数据对象，在doinit方法时设置的
 def handler = world.getThing(theData.getString("resourceHandler"));
+if(parentContext == null || parentContext.contentComposite == null){
+    //在其它环境下被打开的
+    openDataObjectFormEditor(actionContext);
+    return;
+}
+
+//在资源状态查看器中被打开的，xworker.app.resource.swt.ResourceStatusThingRegistViewer
 if(handler != null){
     for(child in parentContext.contentComposite.getChildren()){
         child.dispose();
@@ -304,6 +311,7 @@ parentContext.g().put("currentData", theData);
         sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdebugLog=false
         sdescriptors=xworker.lang.actions.Actions/@GroovyAction
         sinheritDescription=false
@@ -313,6 +321,41 @@ parentContext.g().put("currentData", theData);
         sth_fileMonitor=false
         sth_mark=false
         sid=GroovyAction
+          @/@DataObjectControl/@ListenerBinder/@Listener/@GroovyAction/@ActionDefined
+          sname=ActionDefined
+          sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=ActionDefined
+            @/@DataObjectControl/@ListenerBinder/@Listener/@GroovyAction/@ActionDefined/@OpenDataObjectFormEditor
+            sname=openDataObjectFormEditor
+            sdataObject=var:theData
+            supdate=true
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sswitchResult=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.app.view.swt.widgets.DataObjectActions/@OpenDataObjectEditor
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=OpenDataObjectFormEditor
     @/@DataObjectControl/@doinit
     sname=doinit
     sisSynchronized=false

@@ -39,6 +39,7 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.DbUtil;
+import xworker.util.DbUtils;
 
 public class DbDataObjectActions {
 	private static Logger logger = LoggerFactory.getLogger(DbDataObjectActions.class);
@@ -603,6 +604,7 @@ public class DbDataObjectActions {
         cls.set("table", self.get("tableName"));
         
         //id
+        Thing keyThing = null;  //目前XWorker只支持单个key的Hibernate，如果有多个key，会在ddl中创建
         for(Thing attr : self.getChilds("attribute")){
             if(attr.getBoolean("dataField") == false){
                 continue;
@@ -620,6 +622,8 @@ public class DbDataObjectActions {
                     id.addChild(gen);
                 }
                 cls.addChild(id);
+                keyThing = attr;
+                break;
             }
         }
         
@@ -629,7 +633,7 @@ public class DbDataObjectActions {
                 continue;
             }
             
-            if(!attr.getBoolean("key")){
+            if(attr != keyThing){//!attr.getBoolean("key")){
                 Thing property = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@property");
                 property.set("name", attr.get("name"));
                 property.set("column", attr.get("fieldName"));

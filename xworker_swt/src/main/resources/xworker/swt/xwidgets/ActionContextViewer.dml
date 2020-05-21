@@ -1,4 +1,4 @@
-^1571120288061
+^1582767326514
 @
 sname
 ActionContextViewer
@@ -12,6 +12,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
@@ -24,13 +26,13 @@ Sdescription
 
 <p><strong>保存变量和返回值</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 保存的是新创建到变量上下文。返回值是Composite，变量上下文中的composite也是返回值。</p>
+<p>&nbsp;&nbsp;&nbsp; 保存的是ActionContainer。返回值是Composite，变量上下文中的composite也是返回值。</p>
 
-<p><strong>保存的动作的常用方法</strong></p>
+<p><strong>动作容器的常用方法</strong></p>
 
 <ul>
-	<li><strong>初始化缓存</strong><br />
-	调用&lt;newContext&gt;.actions.doAction(&quot;setActionContext&quot;, actionContext, [&quot;ac&quot;: &lt;actionContext&gt;]方法设置新的变量上下文。<br />
+	<li><strong>setActionContext(ActionContext ac)</strong><br />
+	设置要查看的变量上下文。<br />
 	&nbsp;</li>
 	<li><strong>Object getSelectedObject()</strong><br />
 	返回对象查看器上选中的对象。</li>
@@ -136,7 +138,7 @@ if(acc == null || !( acc instanceof ActionContext)){
 ac.put("actionContextForView", acc);
 ac.actions.doAction("setActionContext", actionContext, ["ac": acc]);
 
-actionContext.g().put(self.getMetadata().getName(), ac);
+actionContext.g().put(self.getMetadata().getName(), ac.actions);
 Designer.attachCreator(composite, self.metadata.path, actionContext);
 return composite;
 #$@text#$@
@@ -145,6 +147,8 @@ return composite;
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -179,8 +183,6 @@ return composite;
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -397,3 +399,37 @@ return composite;
   false
   sid
   Button
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  szh_label
+  动作
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name

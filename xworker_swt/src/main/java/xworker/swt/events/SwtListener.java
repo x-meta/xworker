@@ -78,7 +78,7 @@ public class SwtListener implements Listener{
 				log.info("action is null : " + entry.getPath());
 			}
 			return;
-		}else{
+		}else{			
 			Map<String, String> params = null;
 			String ref = swtListenerThing.getString("ref");
 			if(ref != null && !"".equals(ref)){

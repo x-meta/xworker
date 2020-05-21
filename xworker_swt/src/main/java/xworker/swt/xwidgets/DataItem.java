@@ -141,6 +141,34 @@ public abstract class DataItem {
 	}
 	
 	/**
+	 * 移除自己。
+	 */
+	public void remove() {
+		if(parentItem != null) {
+			parentItem.remove(this);
+		}
+	}
+	
+	public void remove(DataItem item) {
+		childs.remove(item);
+	}
+	
+	public DataItem findByThing(Thing thing) {
+		if(this.thing == thing) {
+			return this;
+		}
+		
+		for(DataItem item : childs) {
+			DataItem it = item.findByThing(thing);
+			if(it != null) {
+				return it;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * 创建条目时，返回style，默认为SWT.NONE。
 	 * 
 	 * @return

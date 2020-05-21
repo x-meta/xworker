@@ -12,7 +12,7 @@ import xworker.lang.VariableDesc;
 import xworker.lang.executor.Executor;
 
 public class DataReactors {
-	private static final String TAG = "DataReactors";
+	private static final String TAG = DataReactors.class.getName();
 	public static void create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
@@ -37,21 +37,28 @@ public class DataReactors {
 					
 					//目前只接收a,b,c,d或a>b,c,d这样的两种格式
 					int index = line.indexOf(">");
-					String first, second = null;
-					if(index != -1) {
-						first = line.substring(0, index);
-						second = line.substring(index + 1, line.length());
-					}else {
-						first = line;
-					}
-					
-					List<DataReactor> firstReactors = getOrCreateDataReactors(first, actionContext);
-					List<DataReactor> secondReactors = getOrCreateDataReactors(second, actionContext);
-					for(DataReactor f : firstReactors) {
-						for(DataReactor s : secondReactors) {
-							f.addNextReator(s);
+					if(index == -1) {
+						//只是响应器的定义
+						getOrCreateDataReactors(line, actionContext);
+					} else {
+						String[] reactors = line.split("[>]");
+						
+						List<DataReactor> lastReactors = null;
+						for(int i=0; i<reactors.length; i++) {
+							if(i == 0) {
+								lastReactors = getOrCreateDataReactors(reactors[i], actionContext);
+							} else {
+								List<DataReactor> nextReactors = getOrCreateDataReactors(reactors[i], actionContext);
+								for(DataReactor f : lastReactors) {
+									for(DataReactor s : nextReactors) {
+										f.addNextReator(s);
+									}
+								}
+								
+								lastReactors = nextReactors;
+							}
 						}
-					}
+					}				
 				}
 			}
 			
@@ -152,6 +159,11 @@ public class DataReactors {
 					continue;
 				}
 				
+				for(String str : line.split("[>]")) {
+					initDataReactorDescs(str, vars, context);
+				}
+				
+				/*
 				//目前只接收a,b,c,d或a>b,c,d这样的两种格式
 				int index = line.indexOf(">");
 				String first, second = null;
@@ -164,6 +176,7 @@ public class DataReactors {
 				
 				initDataReactorDescs(first, vars, context);
 				initDataReactorDescs(second, vars, context);
+				*/
 			}
 		}
 		

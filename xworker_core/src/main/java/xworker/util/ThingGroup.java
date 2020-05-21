@@ -173,7 +173,19 @@ public class ThingGroup implements Comparable<ThingGroup>{
 	}
 	
 	public void sort(){
-		Collections.sort(childs);
+		if(this.thing == null) {
+			//自己是分组，寻找子节点，查看是否有分组描述的模型
+			for(int i=0; i<childs.size(); i++) {
+				ThingGroup child = childs.get(i);
+				if(child.thing != null && child.thing.getBoolean("groupDescriptor")) {
+					this.thing = child.thing;
+					childs.remove(i);		
+					break;
+				}
+			}
+		}
+		
+		Collections.sort(childs);		
 		
 		for(ThingGroup group : childs){
 			group.sort();
@@ -192,6 +204,30 @@ public class ThingGroup implements Comparable<ThingGroup>{
 			weightCount = 0;
 		}
 		
+		if(sortWeight > o.sortWeight) {
+			return 1;
+		}else if(sortWeight == o.sortWeight) {
+			if(o.thing != null && thing != null){
+				if(o.sortWeight == sortWeight){
+					return thing.getMetadata().getLabel().compareTo(o.thing.getMetadata().getLabel());
+				}else{
+					return compareSortWeight(o);
+				}				
+			}else if(o.thing != null && thing == null){
+				return -1;
+			}else if(o.thing == null && thing != null){
+				return 1;
+			}else{
+				if(o.sortWeight == sortWeight){
+					return group.compareTo(o.group);
+				}else{
+					return compareSortWeight(o);
+				}
+			}
+		}else {
+			return -1;
+		}
+		/*
 		if(o.thing != null && thing != null){
 			if(o.sortWeight == sortWeight){
 				return thing.getMetadata().getLabel().compareTo(o.thing.getMetadata().getLabel());
@@ -208,7 +244,7 @@ public class ThingGroup implements Comparable<ThingGroup>{
 			}else{
 				return compareSortWeight(o);
 			}
-		}
+		}*/
 	}
 	
 	public Thing getThing(){
@@ -218,12 +254,23 @@ public class ThingGroup implements Comparable<ThingGroup>{
 	public String getGroup(){
 		return group;
 	}
+	
 	public int compareSortWeight(ThingGroup o){
 		if(o.sortWeight < sortWeight){
 			return 1;
 		}else if(o.sortWeight > sortWeight){
 			return -1;
 		}else{
+			if(this.thing != null && o.thing != null) {
+				return this.thing.getMetadata().getLabel().compareTo(o.thing.getMetadata().getLabel());
+			}else if(this.thing != null && o.thing == null) {
+				return 1;
+			}else if(this.thing == null && o.thing != null) {
+				return -1;
+			}else if(this.group != null && o.group != null) {
+				return this.group.compareTo(o.group);
+			}
+			
 			return 0;
 		}
 	}

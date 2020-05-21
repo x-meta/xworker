@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="CreateStatusThingDataObject" descriptors="xworker.lang.util.ThingGuide"
+     th_createIndex="true" th_registThing="guide|xworker.dataObject.thing.ThingDataObject"
+     group="-1000|ThingDataObject">
+    <Composite label="设置保存数据的模型" en_label="Set up a model to save data">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <ThingForm name="thingForm">
+                <Thing>
+                    <attribute name="default" inputtype="truefalse" default="true">
+                        <description><![CDATA[<p>如果为true，那么在ThingDataObject所在的category下，创建&lt;category&gt;/dats/&lt;thingName&gt;Data模型。</p>
+]]></description>
+                    </attribute>
+                    <attribute name="dataObjects" label="数据对象实例" inputtype="dataSelector"
+                         size="60" colspan="2" validateOnBlur="false" allowDecimals="false"
+                         allowNegative="false">
+                        <description><![CDATA[<p>数据对象模拟的是关系数据库，必须指定一个包含改数据对象的实例的事物，否则无法对事物形式存在数据对象操作。</p>
+
+<p>如果保存数据的事物不是确定的，那么可以通过重载getInstances方法返回指定的事物。</p>]]></description>
+                    </attribute>
+                </Thing>
+            </ThingForm>
+        </Composite>
+        <actions descriptors="xworker.lang.MetaDescriptor3/@actions">
+            <GroovyAction name="nodeFinished">
+                <code><![CDATA[import org.xmeta.Thing;
+
+def editThing = thingGuide.getEditThing();
+
+//获取表单的值
+def values = thingForm.doAction("getValues", actionContext);
+def dataPath = values.dataObjects;
+if(values.get("default") == "true"){
+    def thingManager = editThing.getMetadata().getThingManager().getName();
+    dataPath = editThing.getMetadata().getCategory().getName();
+    if(dataPath != null && dataPath !=""){
+        dataPath = dataPath + ".datas.";
+    }else{
+        categoryPath = "datas.";
+    } 
+    def name = editThing.getMetadata().getName() + "Datas";
+    dataPath = dataPath + editThing.getMetadata().getName() + "Datas";
+    if(world.getThing(dataPath) == null){
+        //数据文件不存在，创建
+        def dataThing = new Thing(name, name, "xworker.dataObject.thing.ThingDataObjectSet");
+        dataThing.saveAs(thingManager, dataPath);
+    }
+}
+
+def xml = """<ThingDataObject descriptors="xworker.dataObject.thing.ThingDataObject" dataObjects="${dataPath}"
+     valueName="id" displayName="name">
+    <attribute name="id" label="标识" type="byte" key="true" en_label="Id"></attribute>
+    <attribute name="name" label="名称" en_label="Name"></attribute>
+</ThingDataObject>""";
+
+
+editThing.paste(xml);
+
+return true;]]></code>
+            </GroovyAction>
+        </actions>
+    </Composite>
+</ThingGuide>

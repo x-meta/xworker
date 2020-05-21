@@ -56,6 +56,12 @@ public class Setup {
 			dbdir.mkdirs();
 		}
 		
+		//update.properties
+		write("./config/update.properties", new String[]{
+				"configDir=./config/",
+				"url=https://www.xworker.org/do?sc=xworker.tools.update.Download"
+		}, true);
+		
 		if(OS.indexOf("windows") != -1){
 			setupWindows();
 		}else if(OS.indexOf("linux") != -1){

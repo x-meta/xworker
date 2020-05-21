@@ -1,4 +1,4 @@
-%1577068801899
+%1587021120230
 @
 sname=workbench
 slabel=简单事物管理器
@@ -1108,7 +1108,7 @@ if(event.detail == SWT.ARROW){
               sparent=var:shell
               sshellPath=xworker.swt.xwidgets.prototypes.SimpleThingEditorExporter
               ssingleInstance=false
-              sanotherThread=true
+              sanotherThread=false
               sinterpretationType=Self
               sattributeTemplate=false
               schildsAttributeTemplate=false
@@ -1117,6 +1117,7 @@ if(event.detail == SWT.ARROW){
               sthrowException=true
               screateLocalVarScope=false
               ssaveReturn=false
+              sswitchResult=false
               sdisableGlobalContext=false
               sdebugLog=false
               sdescriptors=xworker.swt.actions.ShellActionsNew/@OpenShell
@@ -1526,6 +1527,60 @@ return false;
             sth_registDisabled=false
             sth_mark=false
             sid=splitMenuItem
+            @/@Menu/@HasXWorker1/@Then/@windowMenuItem/@windowMenu/@exampleMenuItem1
+            sname=doc&tutorialsMenuItem
+            stext=lang:d=文档和教程&en=Document &amp; Tutorials
+            sselected=false
+            senabled=true
+            sdescriptors=xworker.swt.widgets.Menu/@MenuItem
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=exampleMenuItem1
+              @/@Menu/@HasXWorker1/@Then/@windowMenuItem/@windowMenu/@exampleMenuItem1/@listeners
+              sname=listeners
+              sdescriptors=xworker.swt.events.Listeners/@listeners
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=listeners
+                @/@Menu/@HasXWorker1/@Then/@windowMenuItem/@windowMenu/@exampleMenuItem1/@listeners/@exampleMenuItemSelection
+                sname=docMenuItemSelection
+                stype=Selection
+                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=exampleMenuItemSelection
+                  @/@Menu/@HasXWorker1/@Then/@windowMenuItem/@windowMenu/@exampleMenuItem1/@listeners/@exampleMenuItemSelection/@OpenShell
+                  sname=OpenShell
+                  sshellPath=xworker.doc.DocShell
+                  ssingleInstance=true
+                  sanotherThread=false
+                  sinterpretationType=Self
+                  sattributeTemplate=false
+                  schildsAttributeTemplate=false
+                  svarScope=Local
+                  sisSynchronized=false
+                  sthrowException=true
+                  screateLocalVarScope=false
+                  ssaveReturn=false
+                  sswitchResult=false
+                  sdisableGlobalContext=false
+                  sdebugLog=false
+                  sdescriptors=xworker.swt.actions.ShellActionsNew/@OpenShell
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_mark=false
+                  sid=OpenShell
             @/@Menu/@HasXWorker1/@Then/@windowMenuItem/@windowMenu/@exampleMenuItem
             sname=exampleMenuItem
             stext=lang:d=示例&en=Examples
@@ -1760,10 +1815,20 @@ return false;
 #$@text#$@
 import java.util.Locale;
 
+import org.xmeta.ActionContext;
 import org.xmeta.util.UtilResource;
 import org.xmeta.ui.session.SessionManager;
 
 import xworker.util.XWorkerUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+//当有编辑器未保存时，不修改语言
+if(workbench.getEditorContainer() != null && workbench.getEditorContainer().isDirty()){
+    saveDialog(actionContext);
+    return;
+}
 
 boolean zh = true;
 
@@ -1787,14 +1852,29 @@ if(zh == true){
 
 //重新启动Workbench
 def thing =  workbench.getThing();
+
+//为避免系统退出，先建一个shell，保证不会触发最后一个Shell退出时系统退出
+def shell = new Shell(SWT.NONE);
+def oldDisplay = shell.getDisplay();
+//关闭之前的
 workbench.exit();
-thing.doAction("run", actionContext);
-workbench.getShell().setVisible(true);
-workbench.getShell().open();
+shell.dispose();
+try{
+    if(oldDisplay.getShells().length == 0){
+        oldDisplay.dispose();
+    }
+}catch(Exception e){
+}
+
+//重新创建一个Workbench
+def ac = new ActionContext();
+ac.put("parent", new Display());
+def newShell = thing.doAction("run", ac);
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -1803,3 +1883,43 @@ workbench.getShell().open();
     sth_registDisabled=false
     sth_mark=false
     sid=changeLanguage
+      @/@ActionContainer/@changeLanguage/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=ActionDefined
+        @/@ActionContainer/@changeLanguage/@ActionDefined/@saveDialog
+        sname=saveDialog
+        sshell=ognl:workbench.getShel()
+        sicon=ICON_INFORMATION
+        sbuttons=OK
+        stitle=lang:d=设置语言&en=Set Language
+        smessage=lang:d=变更系统语言前请先保存!&en=Please save before changing the system language!
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=saveDialog

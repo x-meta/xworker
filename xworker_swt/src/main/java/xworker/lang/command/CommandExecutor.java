@@ -3,10 +3,15 @@ package xworker.lang.command;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.slf4j.Logger;
@@ -17,6 +22,7 @@ import org.xmeta.World;
 import org.xmeta.util.MapData;
 import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilMap;
+import org.xmeta.util.UtilString;
 
 import ognl.OgnlException;
 import xworker.swt.ActionContainer;
@@ -26,12 +32,10 @@ import xworker.util.XWorkerUtils;
 public class CommandExecutor extends MapData{
 	private static Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 	
-	/** 命令域。 */
-	Thing domain;
+	Stack<CommandDomain>  domainStack = new Stack<CommandDomain>();
 	
 	/** 动作上下文，包含窗口等的动作上下文 */
 	ActionContext actionContext;
-	ActionContext domainContext;
 	
 	/** 当前命令  */
 	Command currentCmd;
@@ -39,12 +43,48 @@ public class CommandExecutor extends MapData{
 	/** 根命令 */
 	Command rootCmd;
 	
-	public CommandExecutor(Thing domain, ActionContext actionContext, ActionContext domainContext){
-		this.domain = domain;
+	public CommandExecutor(Thing domainThing, ActionContext actionContext, ActionContext domainContext){
 		this.actionContext = actionContext;
-		this.domainContext = domainContext;
 		
-		domain.doAction("init", domainContext, "executor", this);
+		
+		CommandDomain domain = new CommandDomain(this, domainThing, domainContext);
+		pushDomain(domain);
+	}
+	
+	public void pushDomain(Thing domainThing, ActionContext actionContext, Map<String, Object> params) {
+		if(params != null) {
+			actionContext.peek().putAll(params);
+		}
+		CommandDomain domain = new CommandDomain(this, domainThing, actionContext);
+		domain.setParams(params);
+		
+		pushDomain(domain);
+	}
+	
+	private void pushDomain(CommandDomain domain) {
+		if(domainStack.size() > 0) {
+			domain.setParentDomain(domainStack.peek());
+		}
+		domainStack.push(domain);
+		
+		reset();
+	}
+		
+	public void popDomain() {
+		//最后一层Domain不能Pop
+		if(domainStack.size() > 1) {		
+			domainStack.pop();
+			
+			reset();
+		}
+	}
+	
+	public Thing getDomainThing() {
+		return domainStack.peek().getThing();
+	}
+	
+	public ActionContext getDomainActionContext() {
+		return domainStack.peek().getActionContext();
 	}
 	
 	/**
@@ -57,25 +97,50 @@ public class CommandExecutor extends MapData{
 	public List<SelectContent> getContents(String text){
 		text =  text.toLowerCase();
 		if(rootCmd == null || currentCmd.getCommandThing() == null){
-			List<Thing> list = domain.doAction("getCommands", actionContext);
+			CommandDomain domain = this.getDomain();
+			List<Thing> list = domain.getCommands();
 			List<SelectContent> cmds = new ArrayList<SelectContent>();
 			
+			String texts[] = text.split("[ ]");
+			for(int i=0; i<texts.length; i++) {
+				texts[i] = texts[i].trim();
+			}
+						
 			//根据text过滤
 			for(Thing  child : list) {
 				String label = child.getMetadata().getLabel();
 				String name = child.getMetadata().getName();
-				name = name + "(" + label + ")";
+				name = name + " (" + label + ")";
+				name = name.toLowerCase();
 				
-				if(name.toLowerCase().indexOf(text) != -1) {
+				boolean ok = true;
+				for(String txt : texts) {
+					if(name.indexOf(txt) != -1) {
+						continue;
+					}
+					
+					ok = false;
+					break;
+				}
+				if(ok) {
 					SelectContent content = new SelectContent(name, child);
 					cmds.add(content);
 				}
 			}
 			
+			//测试大量数据的情况
+			/*int count = 1000000;
+			for(int i=0; i<count; i++) {
+				SelectContent content = new SelectContent("test " + System.currentTimeMillis(), "test");
+				cmds.add(content);
+			}*/
 			Collections.sort(cmds);
 			return cmds;			
 		}else{
-			List<SelectContent> contents =  (List<SelectContent>) currentCmd.run("getContents", domainContext, UtilMap.toMap("command", currentCmd, "text", text));
+			Map<String, Object> params = UtilMap.toMap("command", currentCmd, "text", text);
+			params.putAll(domainStack.peek().getParams());
+			List<SelectContent> contents =  (List<SelectContent>) currentCmd.run("getContents", 
+					getDomainActionContext(), params);
 					/*
 					.getCommandThing()
 					.doAction("getContents", domainContext,	UtilMap.toMap("command", currentCmd, "text", text));*/			
@@ -102,17 +167,35 @@ public class CommandExecutor extends MapData{
 		}
 	}
 	
+	public void setDomainPathLabel(String path) {
+		if(path == null) {
+			return;
+		}
+		
+		Label domainPathLabel = actionContext.getObject("domainPathLabel");
+		domainPathLabel.setText(path);
+	}
+	
 	public void setTip(String tip){
+		if(tip == null) {
+			return;
+		}
+		
+		Label tipLabel = actionContext.getObject("tipLabel");
+		tipLabel.setText(tip);
+		tipLabel.getParent().layout();
+		
+		//功能目前有些鸡肋，暂时取消了
+		
+		/*
 		Text tipText = actionContext.getObject("tipText");
 		if(tipText != null){
 			tipText.setText(tip == null ? "" : tip);
 			tipText.getParent().update();
-		}
+		}*/
 	}
 	
 	public void select(SelectContent content, String text){		
-		setTip(null);
-		
 		if(rootCmd == null){
 			if(content == null){
 				setTip("请选择一个命令!");
@@ -145,18 +228,31 @@ public class CommandExecutor extends MapData{
 			}
 		}else{
 			if(content != null){
-				currentCmd.setResult(content.object == null ? content.value : content.object);
+				currentCmd.setContent(content.object == null ? content.value : content.object);
 			}else{
-				currentCmd.setResult(text);
+				currentCmd.setContent(text);
 			}
-			refresh(currentCmd);
+			if(currentCmd != null && !currentCmd.isExecuted()) {
+				refresh(currentCmd);
+			}
 			
 			checkStatus();
 		}
+	}
+	
+	public void setCurrentCommandThing(Thing commandThing) {
+		if(currentCmd == null) {
+			return;
+		}
 		
-		//if(rootCmd != null) {
-		//	setTip(rootCmd.toString());
-		//}
+		currentCmd.setCommandThing(commandThing);
+		refresh(currentCmd);
+		
+		if(commandThing.getBoolean("hasContents")){
+			doSearch("");
+		}else{
+			checkStatus();
+		}
 	}
 	
 	/**
@@ -250,6 +346,17 @@ public class CommandExecutor extends MapData{
 	 * 检查命令的状态，如果有未准备好的命令这准备，否则将执行整个命令，并且清除命令重新来过。
 	 */
 	public void checkStatus(){
+		//清空提示
+		setTip("");
+		
+		//切换到查询界面
+		StackLayout mainStackLayout = actionContext.getObject("mainStackLayout");
+		Composite commandComposite = actionContext.getObject("commandComposite");
+		Composite mainComposite = actionContext.getObject("mainComposite");
+		
+		mainStackLayout.topControl = commandComposite;
+		mainComposite.layout();
+				
 		Tree tree = (Tree) actionContext.get("tree");
 		if(tree.getItemCount() == 0){
 			doSearch("");
@@ -263,11 +370,11 @@ public class CommandExecutor extends MapData{
 			//检查通过，执行
 			try{
 				if(!rootCmd.isExecuted()) {
-					rootCmd.run(domainContext);
+					rootCmd.run(getDomainActionContext());
 				}
 				
 				//重新来过
-				if(rootCmd.isExecuted()) {
+				if(rootCmd != null && rootCmd.isExecuted()) {
 					reset();
 				}
 			}catch(Exception e){
@@ -327,10 +434,10 @@ public class CommandExecutor extends MapData{
 		}
 	}
 		
-	public Thing getDomain() {
-		return domain;
+	public CommandDomain getDomain() {
+		return domainStack.peek();
 	}
-
+		
 	public static CommandExecutor domainRun(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
 		Shell parentShell = UtilData.getObjectByType(self, "parentShell", Shell.class, actionContext);
@@ -354,6 +461,14 @@ public class CommandExecutor extends MapData{
 	
 	
 	public void reset(){
+		//切换到查询界面
+		StackLayout mainStackLayout = actionContext.getObject("mainStackLayout");
+		Composite commandComposite = actionContext.getObject("commandComposite");
+		Composite mainComposite = actionContext.getObject("mainComposite");
+		
+		mainStackLayout.topControl = commandComposite;
+		mainComposite.layout();
+		
 		Tree tree = (Tree) actionContext.get("tree");
 		if(tree == null || tree.isDisposed()) {
 			return;
@@ -364,15 +479,29 @@ public class CommandExecutor extends MapData{
 		rootCmd = null;
 		doSearch("");
 		
-		String label = domain.getMetadata().getLabel();
-		Command parentCommand = actionContext.getObject("parentCommand");
-		while(parentCommand != null) {
-			CommandExecutor parentExecutor = parentCommand.getExecutor();
-			label = parentExecutor.domain.getMetadata().getLabel() + " -> " + label;
-			parentCommand = parentExecutor.getActionContext().getObject("parentCommand");
+		
+		String domainPath = null;
+		for(CommandDomain domain : domainStack) {
+			if(domainPath == null) {
+				domainPath = domain.getLabel();
+			}else {
+				domainPath = domainPath + " / " + domain.getLabel();
+			}
 		}
 		
-		//setTip(label);
+		Button editDomainButton = actionContext.getObject("editDomainButton");
+		if(domainPath == null) {
+			domainPath = UtilString.getString("lang:d=未设置命令域&en=Command domain not setted", actionContext);
+			if(editDomainButton != null) {
+				editDomainButton.setEnabled(false);
+			}
+		}else {
+			if(editDomainButton != null) {
+				editDomainButton.setEnabled(true);
+			}
+		}
+		
+		setDomainPathLabel(domainPath);
 	}
 
 	public ActionContext getActionContext() {
@@ -380,7 +509,7 @@ public class CommandExecutor extends MapData{
 	}
 
 	public ActionContext getDomainContext() {
-		return domainContext;
+		return domainStack.peek().getActionContext();
 	}
 
 	public Command getCurrentCmd() {
@@ -389,12 +518,5 @@ public class CommandExecutor extends MapData{
 
 	public Command getRootCmd() {
 		return rootCmd;
-	}
-
-	public void setDomain(Thing domain, ActionContext domainContext) {
-		this.domain = domain;
-		this.domainContext = domainContext;
-		
-		domain.doAction("init", actionContext, "executor", this);
 	}
 }

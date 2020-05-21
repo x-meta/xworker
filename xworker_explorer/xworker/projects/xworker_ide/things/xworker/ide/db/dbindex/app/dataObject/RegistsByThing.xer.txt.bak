@@ -1,0 +1,1054 @@
+^1586336150136
+@
+sname
+RegisByThing
+slabel
+RegisByThing
+stableName
+tblThings
+sdataSource
+xworker.ide.db.datasource.XWorkerDataSource
+sdescription
+<p>获取注册到执行事物的模板列表。</p>
+seditCols
+2
+spaging
+true
+spageSize
+50
+sreadUrl
+do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+screateUrl
+do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+supdateUrl
+do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+sdestroyUrl
+do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+LstoreAutoDestroy
+false
+sstoreAutoLoad
+true
+LstoreAutoSave
+true
+LstoreBatch
+true
+LstorePruneModifiedRecords
+false
+LstoreRemoteSort
+false
+LstoreRestful
+false
+sstoreRoot
+'rows'
+sstoreSuccessProperty
+'success'
+sstoreTotalProperty
+'totalCount'
+sstoreMessageProperty
+'msg'
+sgridEditable
+false
+sformReadUrl
+do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+sformCreateUrl
+do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+sformUpdateUrl
+do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+sformDestroyUrl
+do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+spaging_afterPageText
+页 共
+spaging_beforePageText
+第
+Lpaging_displayInfo
+true
+spaging_displayMsg
+第{0}-第{1}条，共{2}条
+spaging_firstText
+首页
+spaging_lastText
+最后一页
+spaging_nextText
+下一页
+Lpaging_prependButtons
+false
+spaging_prevText
+上一页
+spaging_refreshText
+刷新
+sgridColumnLocking
+false
+sgridLockText
+'锁定'
+sgridUnlockText
+'解锁'
+scolumnGroup
+false
+sgridCheckable
+false
+sgridRowNumber
+false
+sgridGrouping
+false
+sgridGroupTextTpl
+'{text} ({[values.rs.length]} 条)'
+sgridRowExpander
+false
+sautoGenerateId
+false
+sidGenerateType
+action
+sstoreSortDir
+ASC
+sdescriptors
+xworker.dataObject.db.DbDataObject
+sth_createIndex
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@actions1
+  sid
+  actions
+    @/@actions/@query
+    sname
+    query
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+import xworker.dataObject.utils.DbUtil;
+import org.xmeta.Thing;
+import xworker.util.ThingUtils;
+import xworker.lang.executor.Executor;
+
+def TAG = "xworker.ide.db.dbindex.app.dataObject.RegistsByThing.p_1052623121.query";
+
+def sql = "";
+def pathSql = "";
+def keySql = "";
+def keys = [];
+def keywords = actionContext.get("keywords");
+def registType = actionContext.get("registType");
+def thing = actionContext.get("thing");
+def pageInfo = actionContext.get("pageInfo");
+if(actionContext.get("conditionData") != null){
+    keywords = conditionData.keywords;
+    registType = conditionData.registType;
+    thing = conditionData.thing;
+}
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+def parent = actionContext.get("parent");
+if(parent == null || !(parent instanceof Boolean)){
+    parent = false;
+}
+//println(parent);
+Executor.debug(TAG, "thing={}, registType={}, conditionData={}", 
+     thing.getMetadata().getPath(), registType, actionContext.get("conditionData"));
+//log.info("thing=" + thing + ",registType=" + registType + ",conditionData=" + actionContext.get("conditionData"));
+
+if(keywords != null && keywords != ""){
+    keySql = "select thingId from tblThingKeywords where ";
+    def ks = keywords.split("[,]");
+    for(int i=0; i<ks.length; i++){
+        if(i != 0){
+            keySql = keySql + " or ";
+        }
+        keySql = keySql + "keyword = ?";
+        keys.add(ks[i] + "%"); 
+    }
+}
+def paths = [];
+if(thing != null){
+    //context是事物的路径，如果已经有了那么表示已经添加过，因此也用于排除
+    def context = [:];
+    addExcludes(thing, context);
+    def thingIndex = world.getThing("xworker.lang.util.ThingIndex");
+    addPath(paths, thing.metadata.path, context);    
+    //log.info("noDescriptor=" + actionContext.get("noDescriptor"));    
+    if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
+    }else{
+        //查询不包括当前模型的描述者列表
+        for(desc in thing.getAllDescriptors()){            
+            if(desc != thingIndex){
+                addExcludes(desc, context);
+            }
+        }
+    }
+        
+    if(thing.getBoolean("th_registQueryOnlySelf") == true){
+    }else{
+        //查询不包括当前模型所继承的其它模型
+        for(ext in thing.getAllExtends()){
+            if(ext != thingIndex){
+                addExcludes(ext, context);
+            }
+        }
+    }
+
+    //println "RegsitByThing:" + thing.getMetadata().getPath()
+    //println "    noDescriptor=" + actionContext.get("noDescriptor");
+    if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
+    }else{                
+        for(desc in thing.getDescriptors()){            
+            if(desc != thingIndex){
+                if(addPath(paths, desc.metadata.path, context)){
+                    for(ext in desc.getAllExtends()){
+                        if(ext != thingIndex){
+                            addPath(paths, ext.metadata.path, context);
+                        }
+                    }
+                }
+            }
+            //log.info("descPath=" + desc.metadata.path);
+        }
+    }
+    
+    if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
+    }else{   
+        for(ext in thing.getAllExtends()){
+            if(addPath(paths, ext.metadata.path, context)){
+                for(extt in ext.getAllExtends()){
+                    if(extt != thingIndex){
+                        addPath(paths, extt.metadata.path, context);
+                    }
+                }
+            }
+        }
+    }
+    
+    //额外事物
+    def extraThings = ThingUtils.getSearchRegistLocal();
+    if(extraThings != null){
+         for(extraThing in extraThings){
+             addPath(paths, extraThing, context);
+         }
+    }  
+    ThingUtils.setSearchRegistLocal(null);
+    Executor.debug(TAG, "paths=", paths);
+    //log.info("paths=" + paths);
+    //log.info("context=" + context);
+    
+    //先检查是否有数据，derby不知为何如果没有数据会特别慢
+    if(parent == false){
+        pathSql = "select distinct thingPath from tblThingRegists where (";
+        for(int i=0; i<paths.size(); i++){
+             if(i != 0){
+                 pathSql = pathSql + " or ";
+             }
+             pathSql = pathSql + "registThingPath=?";         
+        }
+    }else{
+        pathSql = "select distinct registThingPath from tblThingRegists where (";
+        for(int i=0; i<paths.size(); i++){
+             if(i != 0){
+                 pathSql = pathSql + " or ";
+             }
+             pathSql = pathSql + "thingPath=?";         
+        }
+    }
+    
+    pathSql = pathSql + ") and registType=?";
+    
+    Executor.debug(TAG, pathSql);
+    def pst = con.prepareStatement(pathSql);
+    def index = 1;    
+    
+    for(path in paths){
+        pst.setString(index, path);
+        index++;
+    }
+    
+    if(registType != null){
+        pst.setString(index, registType);
+        index++;
+    }
+    def rs = pst.executeQuery();
+    if(!rs.next()){
+        paths.clear();
+        pathSql = "";
+        //log.info("regists has no data");
+    }else{
+        //log.info("regists has data");
+        for(path in paths){
+            //log.info(path);
+        }
+    }
+    rs.close();
+    pst.close();
+    
+    if(pathSql == ""){
+       return []; //如果注册的事物不存在就直接返回空了
+    }
+}
+sql = "select * from tblThings a";
+if(pathSql != ""){
+    if(parent == false){
+        sql = sql + " join (" + pathSql + ") b on a.path = b.thingPath ";
+    }else{
+        sql = sql + " join (" + pathSql + ") b on a.path = b.registThingPath ";
+    }
+}
+if(keySql != ""){
+    if(pathSql != ""){
+        sql = sql + " where ";
+    }else{
+        sql = sql + " where ";
+    }
+    sql = sql + " id in (" + keySql + ")";
+}
+
+//log.info(sql);
+if(pageInfo != null && pageInfo.limit != 0){
+    //分页查询
+    def countSql = "select count(*) from (" + sql + ") as t ";
+    //log.info(countSql);
+    def pst = con.prepareStatement(countSql);
+    def index = 1;    
+    
+    if(pathSql != ""){
+        for(path in paths){
+            pst.setString(index, path);
+            index++;
+        }
+        
+        if(registType != null){
+            pst.setString(index, registType);
+            index++;
+        }
+    }
+    
+    for(key in keys){
+        pst.setString(index, key);
+        index++;
+    }
+    rs = pst.executeQuery();
+    rs.next();
+    pageInfo.totalCount = rs.getInt(1);
+    rs.close();
+    pst.close();
+    
+    //分页的sql    
+    //sql = "SELECT * FROM ( SELECT ROW_NUMBER() OVER() AS rownum, t.*  FROM (" + sql + " ) t) AS tmp WHERE rownum >= ? AND rownum < ?";
+}
+
+//log.info(sql);
+
+//设置参数值和查询
+def pst = con.prepareStatement(sql);
+def rs = null;
+try{
+    
+    def index = 1;   
+    if(pathSql != ""){
+        for(path in paths){
+            pst.setString(index, path);
+            index++;
+        }
+        
+        if(registType != null){
+            pst.setString(index, registType);
+            index++;
+        }
+    }
+    
+    for(key in keys){
+        pst.setString(index, key);
+        index++;
+    }
+    if(pageInfo != null && pageInfo.limit != 0){
+        pageInfo.start = pageInfo.start + 1;
+       // pst.setInt(index, pageInfo.start);
+        //pst.setInt(index + 1, pageInfo.start + pageInfo.limit - 1);
+    }
+    
+    //执行sql
+    rs = pst.executeQuery();
+    def ds =[];
+    def descthing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
+    def tmpThing = new Thing();
+    while(rs.next()){
+        //构造对象
+        def data = new DataObject(descthing);
+        data.setInited(false);
+        
+        data.id = rs.getInt("id");
+        data.name = rs.getString("name");
+        data.path = rs.getString("path");
+        data.label = rs.getString("label");
+        data.en_label = rs.getString("en_label");
+        data.zh_label = rs.getString("zh_label");
+        data.userGroup = rs.getString("userGroup");
+        tmpThing.set("name", data.name);
+        tmpThing.set("label", data.label);
+        tmpThing.set("en_label", data.en_label);
+        tmpThing.set("zh_label", data.zh_label);
+        data.label = tmpThing.metadata.label;
+        data.setInited(true);
+        ds.add(data);    
+    }
+    
+    return ds;
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+}
+
+def addExcludes(thing, context){
+    def excludeDescriptorsForChilds = thing.getStringBlankAsNull("excludeDescriptorsForChilds");
+    if(excludeDescriptorsForChilds != null){
+        for(ex in excludeDescriptorsForChilds.split("[,]")){
+            ex = ex.trim();            
+            if(ex != ""){
+                context.put(ex, ex);
+            }
+        }
+    }
+}
+
+def addPath(paths, path, context){
+    if(context.get(path) == null){
+        paths.add(path);
+        context.put(path, path);
+        return true;
+    }else{
+        return false;
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    query
+      @/@actions/@query/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@query/@contexts/@dataSource
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        self.dataSource
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        dataSource
+      @/@actions/@query/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@query/@ins/@thing
+        sname
+        thing
+        stype
+        org.xmeta.Thing
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>事物。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        thing
+        @/@actions/@query/@ins/@registType
+        sname
+        registType
+        stype
+        java.lang.String
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>注册类型。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        registType
+        @/@actions/@query/@ins/@noDescriptor
+        sname
+        noDescriptor
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>是否包含事物本身的描述者。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        noDescriptor
+    @/@actions/@test
+    sname
+    test
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def paths = [
+   "xworker.lang.MetaDescriptor3/@SwtObject/@SwtEditor",
+   "xworker.lang.MetaDescriptor3Actions",
+   "xworker.swt.Widgets",
+   "xworker.app.view.swt.Items"
+];
+
+//"tblThings where path in ";
+def sql = "select * from tblThingRegists b where (b.registThingPath='xworker.lang.javawrap.Class'";
+for(path in paths){
+    sql = sql + " or b.registThingPath='" + path + "'"; 
+}
+sql = sql + ")";
+//println sql;
+//sql = "select thingId, registType,registThingId, thingPath, registThingPath from tblThingRegists";
+def pst = con.prepareStatement(sql);
+def rs = pst.executeQuery();
+while(rs.next()){
+    //println rs.getString("thingId") + "," + rs.getString("registType") + "," + rs.getString("registThingId") + "," + rs.getString("thingPath") + "," + rs.getString("registThingPath");
+    println rs.getString("thingPath");
+}
+rs.close();
+pst.close();
+
+sql = "select count(*) from tblThings a join (" + sql + ") b on b.thingPath=a.path";
+pst = con.prepareStatement(sql);
+rs = pst.executeQuery();
+rs.next();
+println rs.getInt(1);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    test
+      @/@actions/@test/@contexts
+      sname
+      contexts
+      slabel
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sid
+      contexts
+        @/@actions/@test/@contexts/@dataSource
+        sname
+        dataSource
+        sconnectionName
+        con
+        stransaction
+        false
+        sdataSourcePath
+        self.dataSource
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+        sid
+        dataSource
+  @/@id
+  sname
+  id
+  slabel
+  标识
+  sfieldName
+  id
+  stype
+  int
+  soptional
+  true
+  skey
+  true
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  false
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  id
+  @/@path
+  sname
+  path
+  slabel
+  路径
+  sfieldName
+  path
+  stype
+  string
+  soptional
+  true
+  skey
+  false
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  false
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  path
+  @/@label
+  sname
+  label
+  slabel
+  标签
+  sfieldName
+  label
+  stype
+  string
+  soptional
+  true
+  skey
+  false
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  true
+  sgridWidth
+  400
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  label
+  @/@en_label
+  sname
+  en_label
+  slabel
+  标签_英文
+  sfieldName
+  en_label
+  stype
+  string
+  soptional
+  true
+  skey
+  false
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  false
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  en_label
+  @/@zh_label
+  sname
+  zh_label
+  slabel
+  中文标签
+  sfieldName
+  zh_label
+  stype
+  string
+  soptional
+  true
+  skey
+  false
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  false
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  zh_label
+  @/@lastModified
+  sname
+  lastModified
+  slabel
+  最后修改时间
+  sfieldName
+  lastModified
+  stype
+  datetime
+  soptional
+  true
+  skey
+  false
+  sdataField
+  true
+  sviewField
+  true
+  sreadField
+  true
+  screateEditor
+  true
+  seditEditor
+  true
+  sviewEditor
+  true
+  sgridEditor
+  true
+  squeryEditor
+  true
+  sreadOnly
+  false
+  seditable
+  true
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sshowInTable
+  false
+  sgridFixed
+  false
+  sgridHidden
+  false
+  sgridHideable
+  true
+  sgridSortable
+  false
+  scolumnLocked
+  false
+  sgridGroupable
+  true
+  sgridMenuDisabled
+  false
+  sgridResizable
+  true
+  sdescriptors
+  xworker.dataObject.db.DbDataObject/@attribute
+  sid
+  lastModified

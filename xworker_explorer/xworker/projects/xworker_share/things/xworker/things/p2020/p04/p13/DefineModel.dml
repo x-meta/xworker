@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="DefineModel" descriptors="xworker.swt.xworker.ThingRegistThing" label="定义模型"
+     type="composite" group="-10000|动态模型.-9900|定义模型" icon="icons/application.png" th_sortWeight="30"
+     en_label="Define Model" en_group="-1000|Dynamic Model.-9900|Define Model" th_createIndex="true"
+     th_registThing="child|xworker.doc.DocIndex">
+    <Composite>
+        <Composite name="descCreateComposite">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ExtendWidget name="ExtendWidget" extendWidgetPath="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite"
+                 actionContext="descCreateContext"></ExtendWidget>
+        </Composite>
+        <Composite name="descEditorComposite" _xmeta_id_="Composite" descriptors="xworker.swt.xworker.ThingRegistThing/@Composite">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ThingEditor name="descThingEditor" _xmeta_id_="thingEditor" useRootThing="true"
+                 saveActionContainer="true"></ThingEditor>
+        </Composite>
+        <Composite name="insCreateComposite" _xmeta_id_="descCreateComposite1">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ExtendWidget name="ExtendWidget" extendWidgetPath="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite"
+                 actionContext="insCreateContext"></ExtendWidget>
+        </Composite>
+        <Composite name="insEditorComposite" _xmeta_id_="Composite1" descriptors="xworker.swt.xworker.ThingRegistThing/@Composite">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ThingEditor name="insThingEditor" _xmeta_id_="thingEditor" thingPath="var:thing"
+                 useRootThing="true" saveActionContainer="true"></ThingEditor>
+        </Composite>
+        <Code name="init">
+            <code><![CDATA[descCreateContext.dataObjectNameText.setText("Person");
+descCreateContext.descriptorText.setText("xworker.lang.MetaDescriptor3");
+descCreateContext.pathText.setText("tutorials");
+
+insCreateContext.dataObjectNameText.setText("Zhangsan");
+insCreateContext.descriptorText.setText("tutorials.Person");
+insCreateContext.pathText.setText("tutorials");]]></code>
+        </Code>
+        <StackLayout name="stackLayout" topControl="descCreateComposite"></StackLayout>
+        <ShellGuide name="guide" label="定义模型教程" en_label="Define model tutorial">
+            <Guide name="introduce" label="简介">
+                <description><![CDATA[<p><strong>定义模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 本教程将介绍如何定义一个模型。</p>
+
+<p><strong>创建和编辑模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在继续本教程前，需要掌握创建和编辑模型的方法。如果还不知道如何创建和编辑一个模型，可以先学习创建和编辑模型的教程。</p>
+]]></description>
+            </Guide>
+            <Guide name="defineClass" _xmeta_id_="commonToolBar" label="定义类">
+                <description><![CDATA[<p><strong>定义类</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型是面向对象的编程方法，因此定义一个模型实际上是定义一个作为类的模型。</p>
+
+<p><strong>元事物</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在XWorker中，通常使用元事物来创建类模型，也就是说元事物是定义类的模型。其中元事物的<strong>元</strong>是第一个的意思，因此元事物就是系统中的第一个模型的意思。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 为什么说元事物是系统中的第一个模型呢？这是因为使用元事物可以定义类，并且元事物也是自己的类，因此任何模型都可以直接或者间接的通过元事物创建出来，所以元事物可以是系统中存在的第一个模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker所使用的动态模型引擎叫做<strong>X-Meta引擎</strong>，也是根据元事物命名的。</p>
+
+<p>&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="Person" _xmeta_id_="tittle">
+                <description><![CDATA[<p><strong>Person(人）</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在本教程中我们将定义一个类-Person(人），同时使用Perosn(人）来编写一个对象实例ZhangSan（张三），通过Person和Zhansan来演示如何定义模型。</p>
+
+<p>&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="createPeron" _xmeta_id_="menu" label="创建人" activeControlParent="var:descCreateComposite"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@descriptorText">
+                <description><![CDATA[<p><strong>创建Person(人）</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker中常用的元事物是路径为<strong>xworker.lang.MetaDescriptor3</strong>的模型，我们常使用MetaDescriptor3来创建类模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[stackLayout.topControl = descCreateComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editPerson" _xmeta_id_="assistToolBar" label="编辑人">
+                <description><![CDATA[<p><strong>编辑Person(人）</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当Perosn(人）模型创建后，一般会进入编辑界面。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[//设置编辑器的模型
+def thing = world.getThing("xworker.things.p2020.p04.p13.Person").detach();
+descThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = descEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="createZhangsan" _xmeta_id_="descToolbar" label="创建张三" activeControlParent="var:insCreateComposite"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@descriptorText">
+                <description><![CDATA[<p><strong>创建Zhangsan(张三）</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当Person(人）这个创建后，我们就可以用它来创建Zhangsan(张三）对象实例模型了。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在这里Zhangsan的类是Person模型。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[stackLayout.topControl = insCreateComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editZhangsan" _xmeta_id_="extendToolbar" label="编辑张三">
+                <description><![CDATA[<p><strong>编辑Zhangsan(张三)</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Zhangsan（张三）这个模型创建后一般会进入编辑界面，可以看到目前的Zhangsan是没有属性可以编辑的。</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+//设置编辑器的模型
+def thing = new Thing("xworker.things.p2020.p04.p13.Person");
+thing.set("name", "Zhangsan");
+insThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = insEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editPerson2" _xmeta_id_="assistToolBar1" label="mainOfClass">
+                <description><![CDATA[<p><strong>类的要素</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 现在我们回到Person(人）这个模型的编辑界面，来介绍定义一个类的要素。</p>
+
+<ul>
+	<li><strong>属性（attribute)</strong><br />
+	类可以定义对象有那么些属性。<br />
+	&nbsp;</li>
+	<li><strong>行为（action)</strong><br />
+	类可以定义对象有那些行为。<br />
+	&nbsp;</li>
+	<li><strong>子对象</strong><br />
+	类可以定义对象有那些子节点。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 下面我们一步步介绍类的要素。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[//设置编辑器的模型
+def thing = world.getThing("xworker.things.p2020.p04.p13.Person").detach();
+descThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = descEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="attribue" _xmeta_id_="assistToolBar11" label="定义属性" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm">
+                <description><![CDATA[<p><strong>定义属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 定义属性的方法是在Person模型下创建属性(attribute）子节点，在这里我们向Person添加了name、label、age、sex和description5个属性子节点。</p>
+
+<p><strong>Person的属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在这里，name、age和sex是Person的属性。</p>
+
+<p><strong>编辑器用属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在这里，label和description是XWorker的模型编辑器用到的属性，用于多语言和文档显示。一般定义模型时，建议总是增加这两个属性。</p>
+
+<p><strong>属性编辑器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在属性里可以设置编辑方式，比如sex属性设置了列表的编辑方式。关于属性编辑器的更多内容，可以打开帮助小精灵，然后点击模型编辑器，在帮助小精灵中可以看到相关文档。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[//设置编辑器的模型
+def thing = world.getThing("xworker.things.p2020.p04.p13.PersonWithAttribute");
+descThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = descEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editZhangsan" _xmeta_id_="extendToolbar1" label="编辑张三-包含属性"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite">
+                <description><![CDATA[<p><strong>编辑Zhangsan(张三)-属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;当Person定义了属性后，我们再回到编辑Zhangsan的界面，可以看到Zhangsan已经有了相关属性。</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+//设置编辑器的模型
+def thing = new Thing("xworker.things.p2020.p04.p13.PersonWithAttribute");
+thing.set("name", "Zhangsan");
+insThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = insEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="attribue" _xmeta_id_="assistToolBar111" label="定义行为" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm">
+                <description><![CDATA[<p><strong>定义行为</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 模型是对象，可以有行为，行为是定义在第一个actions子节点下的。比如当前模型中，定义了一个名为sayHelo的方法。</p>
+
+<p><strong>动作</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 行为、方法和函数等等在动态模型中对应的是动作，关于动作可以参看动作相关的教程。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[//选择sayHello节点
+def sayHello = world.getThing("xworker.things.p2020.p04.p13.PersonWithActions/@actions/@sayHello");
+descThingEditor.doAction("setThing", actionContext, "thing", sayHello);
+
+stackLayout.topControl = descEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editZhangsan" _xmeta_id_="extendToolbar11" label="编辑张三-包含行为"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@methodCoolItem/@methodToolbar">
+                <description><![CDATA[<p><strong>编辑Zhangsan(张三)-行为</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;当Person增加了sayHello的行为定义后，我们在Zhangsan的编辑界面就可以看到和执行sayHello行为了。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在行为下拉框中选择sayHello，然后点击右面的执行按钮执行，执行后在控制台中可以看到打印出了&quot;Zhangsan say hello world!&quot;。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注意，有的时候需要重新点击一个Zhangsan的模型节点，才能看到新增了行为等。</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+//设置编辑器的模型
+def thing = new Thing("xworker.things.p2020.p04.p13.PersonWithActions");
+thing.set("name", "Zhangsan");
+insThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = insEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="attribue" _xmeta_id_="assistToolBar1111" label="定义子节点" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm">
+                <description><![CDATA[<p><strong>定义子节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;模型是像XML这样树形结构的数据，因此我们可以定义一个模型的子节点。</p>
+
+<p><strong>子节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在动态模型中，每一个节点都是相对独立的对象。所以定义子节点和根节点的模型是一样的，对应的类型都是thing，thing是事物和模型。</p>
+
+<p><strong>Child</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在当前示例中，我们为Person定义了Child子节点，即人可以有子，而人的子还是人，所以Child继承了Person模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[//设置编辑器的模型
+def thing = world.getThing("xworker.things.p2020.p04.p13.PersonWithChilds/@Child");
+descThingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = descEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="editZhangsan" _xmeta_id_="extendToolbar111" label="编辑张三-包含子节点"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@methodCoolItem/@methodToolbar">
+                <description><![CDATA[<p><strong>编辑Zhangsan(张三)-子节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;当Person增加了Child子节点后，我们在张三的模型中就可以添加Child子节点了。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如当前的示例添加了名字是Xiaoming的子节点，由于Child继承了Person，所以Xiaoming也有Person所定义的属性和行为。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+//设置编辑器的模型
+def thing = new Thing("xworker.things.p2020.p04.p13.PersonWithChilds");
+thing.set("name", "Zhangsan");
+
+def child = new Thing("xworker.things.p2020.p04.p13.PersonWithChilds/@Child");
+child.set("name", "Xiaoming");
+thing.addChild(child);
+
+insThingEditor.doAction("setThing", actionContext, "thing", child);
+
+stackLayout.topControl = insEditorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="summary" label="总结">
+                <description><![CDATA[<p><strong>总结</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型是面向对象，定义一个模型就是定义类模型，类的主要要素如下。</p>
+
+<ul>
+	<li><strong>属性（attribute)</strong><br />
+	类可以定义对象有那么些属性。<br />
+	&nbsp;</li>
+	<li><strong>行为（action)</strong><br />
+	类可以定义对象有那些行为。<br />
+	&nbsp;</li>
+	<li><strong>子对象</strong><br />
+	类可以定义对象有那些子节点。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+            </Guide>
+        </ShellGuide>
+    </Composite>
+</QuickFunction>

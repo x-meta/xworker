@@ -10,12 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
+
 public class FileList {
-	private static Logger logger = LoggerFactory.getLogger(FileList.class);
+	//private static Logger logger = LoggerFactory.getLogger(FileList.class);
+	private static final String TAG = FileList.class.getName();
 	
 	List<FileInfo> fileList = new ArrayList<FileInfo>();
 	Map<String, FileInfo> fileMap = new HashMap<String, FileInfo>();
@@ -68,7 +69,7 @@ public class FileList {
 			FileInfo info = new FileInfo(path, checkString);
 			addFileList(info);
 			
-			logger.info("add file info: " + info.path);
+			Executor.info(TAG, "add file info: " + info.path);
 		}else if(file.isDirectory()){
 			for(File child : file.listFiles()){
 				init(child, rootPath, filter);

@@ -1,4 +1,4 @@
-^1576634933747
+^1588838287343
 @
 sname
 DataObject
@@ -1872,12 +1872,12 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     @/@actions/@menu_toJavaModel
     sname
     menu_toJavaModel
-    sthingVar
-    currentThing
-    stemplatePath
-    xworker/dataObject/ftl/DataObjectToJava.ftl
+    sshell
+    ognl:coolBar.getShell()
     scodeType
     java.java
+    scode
+    ognl:currentThing.doAction("toJavaEntityCode", actionContext, null)
     sinterpretationType
     Self
     sattributeTemplate
@@ -1894,13 +1894,31 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     false
     ssaveReturn
     false
+    sswitchResult
+    false
     sdisableGlobalContext
     false
+    sdebugLog
+    false
     sdescriptors
-    xworker.ide.worldExplorer.swt.actions.ThingToCodeByTemplateViewer
+    xworker.swt.actions.DialogActions/@ShowCodeDialog
+    sinheritDescription
+    false
     sth_createIndex
     false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_deprecated
+    false
     sth_mark
+    false
+    sth_registQueryOnlySelf
     false
     sid
     menu_toJavaModel
@@ -3328,6 +3346,434 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         false
         sid
         tableItem
+    @/@actions/@toJavaEntityCode
+    sname
+    toJavaEntityCode
+    schangeSelf
+    true
+    sselfVarName
+    data
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ActionGroup
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    toJavaEntityCode
+      @/@actions/@toJavaEntityCode/@TextTemplate
+      sname
+      TextTemplate
+      stype
+      freemarker
+      svarScope
+      Local
+      stemplateEncoding
+      UTF-8
+      soutputEncoding
+      UTF-8
+      StemplateCode
+#$@text#$@
+<#if packageName?exists>
+package ${packageName};
+
+</#if>
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectEntity;
+
+/**
+ * <b>${data.getMetadata().getLabel()?if_exists}</b><p/>
+ * ${data.getMetadata().getDescription()?if_exists}
+ */
+public class ${data.getMetadata().getName()} extends DataObjectEntity<${data.getMetadata().getName()}> {
+    public ${data.getMetadata().getName()}(){
+        super(new DataObject("${data.getMetadata().getPath()}"));
+    }
+      
+    <#list data.getChilds("attribute") as attribute>
+    public void set${attribute.getMetadata().getName()?cap_first}(${attribute.doAction("getJavaType", actionContext)?if_exists} value){
+        this.put("${attribute.getMetadata().getName()}", value);
+    }
+    
+    public ${attribute.doAction("getJavaType", actionContext)?if_exists} get${attribute.getMetadata().getName()?cap_first}(){
+        return this.get${attribute.doAction("getJavaType", actionContext)?cap_first}("${attribute.getMetadata().getName()}");
+    }
+    </#list>
+    
+    @Override
+    public ${data.getMetadata().getName()} createInstance() {
+        return new ${data.getMetadata().getName()}();
+    }
+    
+    public static int createBatch(List<${data.getMetadata().getName()}> datas){
+	       Thing dataObjectThing = World.getInstance().getThing("${data.getMetadata().getPath()}");
+        List<DataObject> dataObjects = new ArrayList<DataObject>();
+        for(${data.getMetadata().getName()} data : datas) {
+        	   if(data.getDataObject() != null) {
+        		   dataObjects.add(data.getDataObject());
+            }
+        }
+        Integer count = dataObjectThing.doAction("createBatch", new ActionContext(), "datas", dataObjects);
+        if(count == null){
+            return 0;
+        }else{
+            return count;
+        }
+    }
+}
+#$@text#$@
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.text.TextTemplate
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      TextTemplate
+    @/@actions/@toHtml
+    sname
+    toHtml
+    schangeSelf
+    true
+    sselfVarName
+    data
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ActionGroup
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    toHtml
+      @/@actions/@toHtml/@TextTemplate
+      sname
+      TextTemplate
+      stype
+      freemarker
+      svarScope
+      Local
+      stemplateEncoding
+      UTF-8
+      soutputEncoding
+      UTF-8
+      StemplateCode
+#$@text#$@
+<h1>${data.getMetadata().getLabel()}</h1>
+<a href="javascript:invoke('thing:${data.getMetadata().getPath()}')">${data.getMetadata().getPath()}</a>
+${data.getMetadata().getDescription()?if_exists}
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>标签</th>
+      <th>名称</th>
+      <th>类型</th>
+      <th>关键字</th>      
+      <th>数据字段</th>
+      <th>索引</th>
+      <th>生成器</th>
+      <th>描述</th>
+    </tr>
+  </thead>  
+  <tbody>
+    <#list data.getChilds("attribute") as field>
+    <tr>
+      <td>${field.getMetadata().getLabel()}</td>
+      <td>${field.getMetadata().getName()}</td>
+      <td>${field.type?if_exists}</td>
+      <td>${field.key?if_exists}</td>      
+      <td>${field.dataFiled?if_exists}</td>
+      <td>${field.index?if_exists}</td>
+      <td>${field.generator?if_exists}</td>
+      <td>${field.getMetadata().getDescription()?if_exists}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</div>
+<h2>JavaEntity</h2>
+<pre class="brush:java;">
+${data.doAction("toJavaEntityCode", actionContext)?if_exists?html}
+</pre>
+#$@text#$@
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.text.TextTemplate
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      TextTemplate
+    @/@actions/@doDDL
+    sname
+    doDDL
+    sunimplementedException
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    doDDL
+    @/@actions/@createBatch
+    sname
+    createBatch
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.dataObject.DataObjectCreator
+    smethodName
+    createBatch
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    createBatch
+      @/@actions/@createBatch/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@createBatch/@ins/@theData
+        sname
+        data
+        stype
+        java.util.List
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>数据对象。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        theData
   @/@name
   sname
   name
@@ -3497,17 +3943,29 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   truefalse
   sgroup
   GridView
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
   sreadOnly
   false
   sdefault
-  false
+  true
   sinheritDescription
   false
+  svalidateAllowBlank
+  true
   LvalidateOnBlur
   false
   LallowDecimals
   false
   LallowNegative
+  false
+  snotXmlAttribute
   false
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
@@ -3520,8 +3978,18 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   分页大小
   sgroup
   GridView
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
   sreadOnly
   false
+  sdefault
+  200
   sinheritDescription
   false
   svalidateAllowBlank
@@ -3532,6 +4000,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   true
   LallowNegative
   true
+  snotXmlAttribute
+  false
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid

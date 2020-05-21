@@ -309,8 +309,20 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 
 	@Override
 	public boolean remove(Object o) {
-		int index = super.indexOf(o);
-		boolean r = super.remove(o);
+		int index = -1;
+		for(int i =0; i<super.size(); i++) {
+			if(o == super.get(i)) {
+				index = i;
+				break;
+			}
+		}
+		
+		boolean r = false;
+		if(index != -1) {
+			super.remove(index);
+			r = true;
+		}
+		
 		if(listeners != null && r && fireEvent) {
 			for(int i=0; i<listeners.size(); i++) {
 				DataObjectListListener listener = listeners.get(i);

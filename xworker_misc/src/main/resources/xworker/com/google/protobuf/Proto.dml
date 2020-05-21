@@ -1,0 +1,779 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Proto" descriptors="xworker.lang.MetaDescriptor3" icon="icons/comments.png">
+    <description><![CDATA[<p>Protobuf的消息定义。</p>
+]]></description>
+    <actions>
+        <GroovyAction name="httpDo">
+            <code><![CDATA[import org.xmeta.Thing;
+
+if(requestBean.action == "proto"){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println(self.doAction("toString", actionContext));
+    return;
+}
+
+//把当前模型转化为OrgDocument，通过OrgDocument输出文档
+//生成OrgDocument
+def doc = new Thing("xworker.app.web.docorg.OrgDocument");
+doc.set("title", self.getMetadata().getLabel());
+doc.set("editable", "false");
+
+//enum
+
+def enumMenu = addMenu(doc, "enums");
+for(enumGroup in self.getChilds("enums")){
+    addGroupItems(enumMenu, enumGroup, enumGroup.getChilds("enum"));
+}
+
+//messages
+def msgMenu = addMenu(doc, "Messages");
+for(msgGroup in self.getChilds("messages")){
+    def docThing = msgGroup.doAction("toDocThing", actionContext);
+    //println docThing;
+    if(docThing != null){
+        msgMenu.addChild(docThing);
+    }
+}
+
+//proto协议代码的
+def protoMenu = addMenu(doc, "Proto");
+def protoCat = addCategory(protoMenu, "Proto");
+def protoContent = addContentThing(protoCat, self);
+
+def refresh = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+refresh.set("href", "do?sc=" + self.getMetadata().getPath());
+refresh.set("label", "Refresh");
+doc.addChild(refresh);
+
+doc.doAction("httpDo", actionContext);
+
+def addMenu(doc, name){
+    def menu = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+    menu.set("name", name);
+    doc.addChild(menu);
+    
+    return menu;
+}
+
+def addCategory(menu, name){
+    def cat = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    cat.set("name", name);
+    menu.addChild(cat);
+    
+    return cat;
+}
+
+def addContentThing(cat, contentThing){
+    def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    content.set("contentThing", contentThing.getMetadata().getPath());
+    content.set("label", contentThing.getMetadata().getLabel());
+    cat.addChild(content);
+}
+
+def addItems(menu, name, things){
+    def cat = addCategory(menu, name);
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}
+
+def addGroupItems(menu, group, things){
+    def cat = addCategory(menu, group.getMetadata().getLabel());
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}]]></code>
+        </GroovyAction>
+        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="data">
+            <description><![CDATA[<p>用于生成proto文件的html。</p>
+]]></description>
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                <templateCode><![CDATA[<pre>
+syntax="${data.syntax?default("proto2")}";
+<#if data.import?exists && data.import != "">
+import ${data.import};
+</#if>
+<#if data.package?exists && data.package != "">
+package ${data.package};
+</#if>
+<#if data.java_package?exists && data.java_package != "">
+option java_package="${data.java_package}";
+</#if>
+<#if data.java_outer_classname?exists && data.java_outer_classname != "">
+option java_outer_classname="${data.java_outer_classname}";
+</#if>
+
+<#list data.doAction("getEnums", actionContext) as enu>
+${enu.doAction("toProto", actionContext)}
+
+</#list>
+<#list data.doAction("getMessages", actionContext) as msg>
+${msg.doAction("toProto", actionContext)}
+
+</#list>
+</pre>]]></templateCode>
+            </TextTemplate>
+        </Begin>
+        <GroovyAction name="getMessages">
+            <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
+def msgs = self.getChilds("message");
+
+//获取各种子节点下定义的
+for(child in self.getChilds()){
+    def ms = child.doAction("getMessages", actionContext);
+    if(ms != null){
+        msgs.addAll(ms);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <GroovyAction name="getEnums">
+            <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
+def msgs = self.getChilds("enum");
+
+//获取各种子节点下定义的
+for(child in self.getChilds()){
+    def ms = child.doAction("getEnums", actionContext);
+    if(ms != null){
+        msgs.addAll(ms);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <Begin name="toClientTestCode" _xmeta_id_="toString1" changeSelf="true" selfVarName="data">
+            <description><![CDATA[<p>用于生成proto文件的html。</p>
+]]></description>
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                <templateCode><![CDATA[import java.util.HashMap;
+import java.util.Map;
+
+import com.google.protobuf.MessageLite;
+import com.wingtech.network.Session;
+import com.wingtech.network.handler.Handler;
+import com.wingtech.network.handler.HandlerManager;
+import com.wingtech.network.netty.NettyClient;
+
+/**
+ * 测试协议的工具。
+ * 
+ */
+public class TestProtocolTools {
+	static NettyClient client;
+	static Map<Class<?>, TestMessageEntry> messages = new HashMap<Class<?>, TestMessageEntry>();
+	
+	public static void start(String host, int port) {
+		//改成自己的类
+		HandlerManager.regist(TestProtocolTools.class);
+		
+		client = new NettyClient(host, port);
+		client.start();
+		
+		//发送线程
+		new Thread(new Runnable() {
+			public void run() {
+				for(Class<?> key : messages.keySet()) {
+					TestMessageEntry messageEntry = messages.get(key);
+					if(messageEntry.getReq() != null && messageEntry.getStatus() == TestMessageEntry.INIT) {
+						client.sendMessage(messageEntry.getReq());
+						messageEntry.setStatus(TestMessageEntry.WAITRESPONSE);
+						
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						};
+					}
+				}
+			}
+		}).start();
+		
+		//打印状态的线程
+		new Thread(new Runnable() {
+			public void run() {
+				while(true) {
+					printStatus();
+					
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();	
+		
+	}
+	
+	public static void printStatus() {
+		System.out.println("测试消息数：" + messages.size());
+		int successCount = 0;
+		int initCount = 0;
+		int failureCount = 0;
+		int waitresponseCount = 0;
+		
+		for(Class<?> key : messages.keySet()) {
+			TestMessageEntry entry = messages.get(key);
+			if(entry.getStatus() == TestMessageEntry.INIT) {
+				initCount++;
+			}else if(entry.getStatus() == TestMessageEntry.SUCCESS) {
+				successCount ++;
+			}else if(entry.getStatus() == TestMessageEntry.FAILURE) {
+				failureCount ++;
+				
+				System.out.println("消息测失败: " + entry.getInfo());
+			}else if(entry.getStatus() == TestMessageEntry.WAITRESPONSE) {
+				waitresponseCount ++;
+			}
+		}
+		
+		System.out.println("还在初始化的消息数：" + initCount);
+		System.out.println("等待回复的消息数：" + waitresponseCount);
+		System.out.println("成功消息数：" + successCount);
+		System.out.println("失败消息数：" + failureCount);
+	}
+	
+	public static void addMessages() {
+		//添加各种协议
+		<#list data.getChilds("messages") as messages>
+		<#list messages.getChilds("message") as message>
+		<#if message.receiver == "server" || message.receiver == "all">
+		<#assign name = message.getMetadata().getName()/>
+		//${message.getMetadata().getLabel()}
+		${name}.Builder ${name?uncap_first} = ${name}.newBuilder();
+		<#if message.getStringBlankAsNull("responseMessage")?exists>
+		messages.put(${message.responseMessage}.class , new TestMessageEntry(${name?uncap_first}.build()));
+		</#if>
+		
+		</#if>
+		</#list>
+		<#list messages.getChilds("RequestResponse") as reqresp>
+		<#list reqresp.getChilds("message") as message>
+		<#if message.getStringBlankAsNull("receiver")?exists && (message.receiver == "server" || message.receiver == "all")>
+		<#assign name = message.getMetadata().getName()/>
+		//${message.getMetadata().getLabel()}
+		${name}.Builder ${name?uncap_first} = ${name}.newBuilder();
+		<#if message.getStringBlankAsNull("responseMessage")?exists>
+		messages.put(${message.responseMessage}.class , new TestMessageEntry(${name?uncap_first}.build()));
+		</#if>
+		
+		</#if>
+		</#list>
+		</#list>
+		</#list>
+	}
+	
+	<#list data.getChilds("messages") as messages>
+    <#list messages.getChilds("message") as message>
+    <#if (message.receiver == "server" || message.receiver == "all") && message.getStringBlankAsNull("responseMessage")?exists>
+	@Handler(reqType = ${message.responseMessage}.class)
+	public static void handle${message.responseMessage}(${message.responseMessage} resp, Session session) {
+		TestMessageEntry entry = messages.get(${message.responseMessage}.class);
+		if(entry != null) {
+			entry.setStatus(TestMessageEntry.SUCCESS);
+			
+			//如果失败
+			//entry.setStatus(TestMessageEntry.FAILURE);
+			//entry.setInfo("错误的信息...");
+		}
+	}
+	
+	</#if>
+	</#list>
+	<#list messages.getChilds("RequestResponse") as reqresp>
+    <#list reqresp.getChilds("message") as message>
+    <#if message.getStringBlankAsNull("receiver")?exists && (message.receiver == "server" || message.receiver == "all") && message.getStringBlankAsNull("responseMessage")?exists>
+    /**
+     * ${message.getMetadata().getLabel()}<p/>
+     * ${message.getMetadata().getDescription()?if_exists}
+     */
+	@Handler(reqType = ${message.responseMessage}.class)
+	public static void handle${message.responseMessage}(${message.responseMessage} resp, Session session) {
+		TestMessageEntry entry = messages.get(${message.responseMessage}.class);
+		if(entry != null) {
+			entry.setStatus(TestMessageEntry.SUCCESS);
+			
+			//如果失败
+			//entry.setStatus(TestMessageEntry.FAILURE);
+			//entry.setInfo("错误的信息...");
+		}
+	}
+	
+	</#if>
+    </#list>
+    </#list>
+	</#list>
+}]]></templateCode>
+            </TextTemplate>
+        </Begin>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="syntax" inputtype="inputSelect" default="proto2">
+        <value name="proto2" value="proto2"></value>
+        <value name="proto3" value="proto3"></value>
+    </attribute>
+    <attribute name="import" size="60"></attribute>
+    <attribute name="package" size="50"></attribute>
+    <attribute name="java_package" size="60"></attribute>
+    <attribute name="java_outer_classname" size="60"></attribute>
+    <attribute name="receiver" inputtype="select" default="server">
+        <description><![CDATA[<p>用于生成Java，是生成服务器端还是客户端的代码。</p>
+]]></description>
+        <value name="server" value="server"></value>
+        <value name="client" value="client"></value>
+    </attribute>
+    <attribute name="handlerDir" _xmeta_id_="handlerClassName" size="60">
+        <description><![CDATA[<p>生成Java代码时，要生成的handler要生成到那个目录下。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <sswtMenus extends="xworker.http.ControlSet/@swtMenus1">
+        <menuDefine>
+            <menu name="Proto"></menu>
+        </menuDefine>
+        <menuSetting name="proto" menuType="Proto">
+            <menu name="runWebAction" label="在浏览器中打开文档" url="xworker.http.ControlSet/@actions/@httpExecute"
+                 en_label="Run Web Action"></menu>
+            <menu name="split1" isSplit="true"></menu>
+            <menu name="generateClientTestCode" label="生成客户端测试代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toClientTestCode"></menu>
+        </menuSetting>
+    </sswtMenus>
+    <thing name="enums" icon="icons/folder_feed.png">
+        <actions>
+            <NOOP name="getMessages"></NOOP>
+            <RefAction name="getEnums" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getEnums"></RefAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="enum" icon="icons/contrast.png">
+            <actions>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-enum</h2>
+<p/>
+${data.getMetadata().getDescription()?if_exists}
+<p/>
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>标签</th>
+      <th>值</th>
+      <th>描述</th>
+    </tr>
+  </thead>  
+  <tbody>
+    <#list data.getChilds("Value") as field>
+    <tr>
+      <td>${field.getMetadata().getName()}</td>
+      <td>${field.getMetadata().getLabel()}</td>
+      <td>${field.value?if_exists}</td>
+      <td>${field.getMetadata().getDescription()?if_exists}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</div>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <Begin name="toProto" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[//${data.getMetadata().getLabel()}
+enum ${data.getMetadata().getName()}{
+    <#list data.getChilds("Value") as v>
+    ${v.getMetadata().getName()} = ${v.value?if_exists};    //${v.getMetadata().getLabel()}
+    </#list>
+}]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <NOOP name="getMessages"></NOOP>
+                <NOOP name="getEnums"></NOOP>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="Value">
+                <attribute name="name"></attribute>
+                <attribute name="label"></attribute>
+                <attribute name="value"></attribute>
+                <attribute name="description" inputtype="html"></attribute>
+            </thing>
+        </thing>
+    </thing>
+    <thing name="messages" icon="icons/folder_page.png">
+        <actions>
+            <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
+            <NOOP name="getEnums"></NOOP>
+            <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+                <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+for(child in self.getChilds()){
+    def childContent = child.doAction("toDocThing", actionContext);
+    if(childContent != null){
+        content.addChild(childContent);
+    }
+}
+
+return content;]]></code>
+            </GroovyAction>
+            <Begin name="toJavaCode" _xmeta_id_="toHtml11" changeSelf="true" selfVarName="data">
+                <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                    <templateCode><![CDATA[/**
+ * <h2>服务器端代码</h2>
+ */
+public class ${data.handlerClassName?if_exists} {
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+
+</#if>
+</#list>
+<#list data.getChilds("RequestResponse") as reqresp>
+<#list reqresp.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</#list>
+}
+
+
+//<h2>客户端端代码</h2>
+${data.getMetadata().getDescription()?if_exists}
+public class ${data.handlerClassName?if_exists} {
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+
+</#if>
+</#list>
+<#list data.getChilds("RequestResponse") as reqresp>
+<#list reqresp.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</#list>]]></templateCode>
+                </TextTemplate>
+            </Begin>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="handlerClassName" size="60">
+            <description><![CDATA[<p>生产Java代码时的Handler的类的名称。</p>
+
+<p>子节点下的所有message的handler代码，都会生成到这下面。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="message" icon="icons/email.png">
+            <description><![CDATA[<p>double:&nbsp;浮点数</p>
+
+<p>float:&nbsp;单精度浮点</p>
+
+<p>int32:&nbsp;int类型，使用可变长编码，编码负数不够高效,如果有负数那么使用sint32</p>
+
+<p>sint32:&nbsp;int类型，使用可变长编码,&nbsp;有符号的整形,比通常的int32高效;</p>
+
+<p>uint32:&nbsp;无符号整数使用可变长编码方式;</p>
+
+<p>int64 long&nbsp;long&nbsp;,&nbsp;使用可变长编码方式。编码负数时不够高效&mdash;&mdash;如果有负数，可以使用sint64;</p>
+
+<p>sint64 long&nbsp;long&nbsp;&nbsp;使用可变长编码方式。有符号的整型值。编码时比通常的int64高效;</p>
+
+<p>uint64:&nbsp;无符号整数使用可变长编码方式;</p>
+
+<p>fixed32 : 总是4个字节。如果数值总是比总是比2^28大的话，这个类型会比uint32高效。</p>
+
+<p>fixed64: 总是8个字节。如果数值总是比总是比2^56大的话，这个类型会比uint64高效。</p>
+
+<p>sfixed32: 总是4个字节。</p>
+
+<p>sfixed64: 总是8个字节。</p>
+
+<p>bool:bool值</p>
+
+<p>string: 一个字符串必须是UTF-8编码或者7-bit ASCII编码的文本。</p>
+
+<p>bytes:&nbsp;可能包含任意顺序的字节数据。类似java的ByteString以及&nbsp;c++ string;</p>
+]]></description>
+            <actions>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-message</h2>
+<p/>
+${data.getMetadata().getDescription()?if_exists}
+<p/>
+<#list data.getChilds("enum") as enu>
+${enu.doAction("toHtml", actionContext)?if_exists}
+</#list>
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>标签</th>
+      <th>名称</th>
+      <th>修饰符</th>
+      <th>类型</th>      
+      <th>序号</th>
+      <th>描述</th>
+    </tr>
+  </thead>  
+  <tbody>
+    <#list data.getChilds("Field") as field>
+    <tr>
+      <td>${field.getMetadata().getLabel()}</td>
+      <td>${field.getMetadata().getName()}</td>
+      <td>${field.modifier?if_exists}</td>
+      <td>${field.type?if_exists}</td>      
+      <td>${field.index?if_exists}</td>
+      <td>${field.getMetadata().getDescription()?if_exists}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</div>
+<#list data.getChilds("message") as msg>
+${msg.doAction("toHtml", actionContext)?if_exists}
+</#list>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <Begin name="toProto" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[//${data.getMetadata().getLabel()}<#if data.getMetadata().getDescription()?exists><#list data.getMetadata().getDescription()?split("\n") as line><#assign line = line?trim/><#if line != "">
+//${line}</#if></#list></#if>
+//接收方：${data.receiver?if_exists}
+message ${data.getMetadata().getName()}{
+    <#list data.getChilds("Field") as f>
+    ${f.modifier?if_exists} ${f.type?if_exists} ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
+    </#list>    
+    <#list data.getChilds("enum") as enu>
+    
+    <#list enu.doAction("toProto", actionContext)?split("\n") as line>
+    ${line}
+    </#list>
+    </#list>
+    <#list data.getChilds("message") as msg>
+    
+    <#list msg.doAction("toProto", actionContext)?split("\n") as line>
+    ${line}
+    </#list>
+    </#list>
+}]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <NOOP name="getMessages"></NOOP>
+                <NOOP name="getEnums"></NOOP>
+                <GroovyAction name="toDocThing">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+return content;]]></code>
+                </GroovyAction>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="receiver" _xmeta_id_="handler" inputtype="select">
+                <description><![CDATA[<p>服务器还是客户端在接收该协议，也可以是相互接收的。</p>
+]]></description>
+                <value name="server" value="server"></value>
+                <value name="client" value="client"></value>
+                <value name="all" value="all"></value>
+            </attribute>
+            <attribute name="responseMessage" size="50"></attribute>
+            <attribute name="description" inputtype="textarea"></attribute>
+            <thing name="Field">
+                <attribute name="name"></attribute>
+                <attribute name="label"></attribute>
+                <attribute name="modifier" inputtype="select" default="required">
+                    <value name="required" value="required"></value>
+                    <value name="optional" value="optional"></value>
+                    <value name="repeated" value="repeated"></value>
+                </attribute>
+                <attribute name="type" inputtype="inputSelect">
+                    <value name="double" value="double"></value>
+                    <value name="float" value="float"></value>
+                    <value name="int32" value="int32"></value>
+                    <value name="sint32" value="sint32"></value>
+                    <value name="uint32" value="uint32"></value>
+                    <value name="int64" value="int64"></value>
+                    <value name="sint64" value="sint64"></value>
+                    <value name="uint64" value="uint64"></value>
+                    <value name="fixed32" value="fixed32"></value>
+                    <value name="fixed64" value="fixed64"></value>
+                    <value name="sfixed32" value="sfixed32"></value>
+                    <value name="sfixed64" value="sfixed64"></value>
+                    <value name="bool" value="bool"></value>
+                    <value name="string" value="string"></value>
+                    <value name="bytes" value="bytes"></value>
+                </attribute>
+                <attribute name="index"></attribute>
+                <attribute name="description" inputtype="html"></attribute>
+            </thing>
+            <sswtMenus>
+                <menuDefine>
+                    <menu name="Message"></menu>
+                </menuDefine>
+                <menuSetting menuType="Message">
+                    <menu name="autoSetIndexMenuItem" label="自动设置Index">
+                        <actions>
+                            <GroovyAction name="doAction">
+                                <code><![CDATA[actions.doAction("save", actionContext);
+
+def index = 1;
+for(field in currentThing.getChilds("Field")){
+    field.set("index", "" + index);
+    index++;
+}
+
+actions.doAction("save", actionContext);]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </menu>
+                </menuSetting>
+            </sswtMenus>
+            <thing name="enum" extends="xworker.com.google.protobuf.Proto/@enums/@enum"
+                 inheritDescription="true" icon="icons/contrast.png"></thing>
+            <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
+                 inheritDescription="true" icon="icons/email.png"></thing>
+        </thing>
+        <thing name="RequestResponse" icon="icons/folder_go.png">
+            <description><![CDATA[<p>用来定义成对的协议。</p>
+]]></description>
+            <actions>
+                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
+                <NOOP name="getEnums"></NOOP>
+                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+/*
+for(child in self.getChilds()){
+    def childContent = child.doAction("toDocThing", actionContext);
+    if(childContent != null){
+        content.addChild(childContent);
+    }
+}*/
+
+return content;]]></code>
+                </GroovyAction>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h1>${data.getMetadata().getLabel()}</h1>
+${data.getMetadata().getDescription()?if_exists}
+<#list data.getChilds("message") as msg>
+${msg.doAction("toHtml", actionContext)?if_exists}
+
+</#list>
+<h2>服务器端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+</#if>
+</#list>
+</pre>
+
+<h2>客户端端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+</#if>
+</#list>
+</pre>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
+                 inheritDescription="true"></thing>
+        </thing>
+        <sswtMenus>
+            <menuDefine>
+                <menu name="Messages"></menu>
+            </menuDefine>
+            <menuSetting menuType="Messages">
+                <menu name="toJavaCode" label="ToJavaCode" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toJavaCode"></menu>
+            </menuSetting>
+        </sswtMenus>
+    </thing>
+</thing>

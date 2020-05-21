@@ -1,16 +1,37 @@
-%1542716169435
+%1582618374412
 @
 sname=DesignTool
 slabel=DesignTool
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>设计工具，以design的方式注册到控件事物下，在SWT设计器理可以做为设计工具。</p>
+<p><strong>SWT的设计工具或交互工具</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当在界面选择了一个SWT控件后，如果同时点击了Ctrl+鼠标中键，那么会弹出一个工具窗口，工具窗口可以接收选中的SWT控件，并可以做相应出里。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 本模型用于编写处理SWT控件的工具，工具的约定是run方法。</p>
+
+<p><strong>变量上下文</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 工具使用独立的变量上下文，下面是几个常用变量。</p>
+
+<ul>
+	<li><strong>parentContext: ActionContext</strong><br />
+	父变量上下文，是工具窗口变量上下文。当前工具是在包含在工具窗口下的。<br />
+	&nbsp;</li>
+	<li><strong>parentContext.control: org.eclipse.swt.widgets.Control</strong><br />
+	界面上选中的SWT控件。</li>
+</ul>
+
+<p><strong>工具类</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<strong>xworker.swt.design.DesignTools</strong>是设计相关的常用的工具类。</p>
 
 <p><strong>通用工具</strong></p>
 
@@ -76,8 +97,8 @@ sth_mark=false
   @/@group
   sname=group
   sinputtype=text
-  sshowLabel=true
   ssize=60
+  sshowLabel=true
   sreadOnly=false
   sinheritDescription=false
   svalidateAllowBlank=true
@@ -94,8 +115,8 @@ sth_mark=false
   @/@en_group
   sname=en_group
   sinputtype=text
-  sshowLabel=true
   ssize=60
+  sshowLabel=true
   sreadOnly=false
   sinheritDescription=false
   svalidateAllowBlank=true
@@ -111,8 +132,8 @@ sth_mark=false
   sid=en_group
   @/@zh_group
   sname=zh_group
-  sshowLabel=true
   ssize=60
+  sshowLabel=true
   sreadOnly=false
   sinheritDescription=false
   svalidateAllowBlank=true
@@ -218,18 +239,17 @@ sth_mark=false
       @/@Action/@actions/@run
       sname=run
       sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
       sinterpretationType=Self
       sattributeTemplate=false
       schildsAttributeTemplate=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
       sdebugLog=false
-      sdescriptors=xworker.lang.actions.Actions/@NOOP
       sinheritDescription=false
       sth_createIndex=false
       sth_registMyChilds=false
@@ -290,8 +310,8 @@ sth_mark=false
     sid=visible
     @/@Action/@group
     sname=group
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     smodifier=public
     sreadOnly=false
     sinheritDescription=false
@@ -510,6 +530,7 @@ parentContext.contentComposites.layout();
 
 //设置标题
 DesignToolDialog.setTitle(shell, self, parentContext.controlThing);
+parentContext.g().put("tools", self);
 
 //设置当前的工具
 parentContext.g().put("currentTool", self);
@@ -520,6 +541,7 @@ shell.forceActive();
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false
@@ -541,7 +563,6 @@ shell.forceActive();
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -588,8 +609,8 @@ shell.forceActive();
     @/@Composite/@composite
     sname=composite
     sinputtype=dataSelector
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     sreadOnly=false
     sinheritDescription=false
     svalidateAllowBlank=true
@@ -675,8 +696,8 @@ shell.forceActive();
     sid=visible
     @/@Composite/@group
     sname=group
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     smodifier=public
     sreadOnly=false
     sinheritDescription=false
@@ -1044,8 +1065,8 @@ shell.forceActive();
     sid=visible
     @/@SwtCreatorModelEditor/@group
     sname=group
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     smodifier=public
     sreadOnly=false
     sinheritDescription=false
@@ -1162,8 +1183,8 @@ return thing.doAction("run", actionContext);
     @/@ExtendTool/@extends
     sname=extends
     sinputtype=dataSelector
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     sreadOnly=false
     sinheritDescription=false
     svalidateAllowBlank=true
@@ -1199,8 +1220,8 @@ return thing.doAction("run", actionContext);
     sid=visible
     @/@ExtendTool/@group
     sname=group
-    sshowLabel=true
     ssize=60
+    sshowLabel=true
     smodifier=public
     sreadOnly=false
     sinheritDescription=false

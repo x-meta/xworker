@@ -3,10 +3,12 @@ package xworker.swt.reacts.xworker;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.DataReactorUtils;
 import xworker.swt.reacts.WidgetDataReactor;
@@ -94,8 +96,22 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 
 	@Override
 	public void modified(ThingForm thingForm) {
-		Object values = thingForm.getValues();
-		this.fireUpdated(DataReactorUtils.toObjectList(values), getContext());
+		Control control = thingForm.getControl();
+		if(control.isDisposed() == false) {
+			control.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						Object values = thingForm.getValues();
+						ThingFormDataReactor.this.fireUpdated(DataReactorUtils.toObjectList(values), getContext());
+					}catch(Exception e) {
+						Executor.error(ThingFormDataReactor.class.getName(), 
+								"Invoke modified error, path=" + getSelf().getMetadata().getPath(), e);
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
 	}
 
 	@Override

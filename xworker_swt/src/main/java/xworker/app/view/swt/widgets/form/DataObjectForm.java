@@ -23,6 +23,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
+import org.xmeta.util.UtilMap;
 
 import xworker.app.view.swt.data.DataStoreSelectionListener;
 import xworker.dataObject.DataObject;
@@ -33,6 +34,7 @@ import xworker.swt.events.SwtListener;
 import xworker.swt.form.ThingDescriptorForm;
 import xworker.swt.util.DelayExecutor;
 import xworker.swt.util.SwtUtils;
+import xworker.util.TheadWaitTask;
 
 public class DataObjectForm implements DataObjectListener, DisposeListener, DataStoreSelectionListener{
 	private static Logger logger = LoggerFactory.getLogger(DataObjectForm.class);
@@ -130,31 +132,10 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 		        dataObject = dos.getChilds().get(0);
 		    }
 		}
-
-		//创建面板		
-		Composite composite = null;
-		Designer.pushCreator(self);
-		try{
-			Thing compositeThing = self.getThing("Composite@0");
-			if(compositeThing == null) {
-				compositeThing = world.getThing("xworker.swt.widgets.Composite");
-				composite = (Composite) compositeThing.run("create", actionContext);
-			}else {
-				compositeThing = compositeThing.detach();
-				compositeThing.put("name", self.getMetadata().getName());
-				composite = (Composite) compositeThing.doAction("create", actionContext);
-			}
-			
-		}finally {
-			Designer.popCreator();
-		}
-		FillLayout fillLayout = new FillLayout();
-		composite.setLayout(fillLayout);
-
-			//创建事物定义，使用事物编辑器
+		
+		//创建事物定义，使用事物编辑器
 		Thing form = new Thing("xworker.app.view.swt.widgets.form.DataObjectForm");
-		form.setData("formThing", self);
-		form.setData("parent", composite);
+		form.setData("formThing", self);		
 		form.set("extends", self.getMetadata().getPath());
 		form.put("H_SCROLL","true");//self.H_SCROLL;
 		form.put("V_SCROLL", "true");//self.V_SCROLL;
@@ -181,6 +162,29 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 			}
 			
 		});
+
+		//创建面板		
+		Composite composite = null;
+		Designer.pushCreator(self);
+		try{
+			Thing compositeThing = self.getThing("Composite@0");
+			if(compositeThing == null) {
+				compositeThing = world.getThing("xworker.swt.widgets.Composite");
+				composite = (Composite) compositeThing.run("create", actionContext, UtilMap.toMap("dataObjectForm", form));
+			}else {
+				compositeThing = compositeThing.detach();
+				compositeThing.put("name", self.getMetadata().getName());
+				composite = (Composite) compositeThing.doAction("create", actionContext, UtilMap.toMap("dataObjectForm", form));
+			}
+			
+		}finally {
+			Designer.popCreator();
+		}
+		FillLayout fillLayout = new FillLayout();
+		composite.setLayout(fillLayout);
+
+		form.setData("parent", composite);
+		
 		//form.put("defaultModify", self.get("defaultModify"));
 		
 		//修改事件
@@ -759,7 +763,27 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 	 * @return
 	 */
 	public DataObject getDataObject() {
-		return form.doAction("getDataObject", actionContext);
+		Control control = getControl();
+		if(control == null) {
+			return null;
+		}
+		
+		if(Thread.currentThread() != getControl().getDisplay().getThread()) {
+			//不在同一个线程中
+			TheadWaitTask task = new TheadWaitTask() {
+
+				@Override
+				public Object doTask() {
+					return form.doAction("getDataObject", actionContext);
+				}				
+			};
+			
+			control.getDisplay().asyncExec(task);
+			return (DataObject) task.getResult(5000);
+			
+		}else {
+			return form.doAction("getDataObject", actionContext);
+		}
 	}
 	
 	@Override

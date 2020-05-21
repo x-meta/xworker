@@ -17,5 +17,5 @@ public interface DataReactorCreator {
 	 * @param actionContext
 	 * @return
 	 */
-	public DataReactor create(Object control, String action, ActionContext actionContext);
+	public DataReactor create(Object control, String action, ActionContext actionContext);	
 }

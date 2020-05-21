@@ -1079,8 +1079,9 @@ public class Designer {
 	 */
 	public static void attachTo(Shell shell, Control control) {
 		//确定提示窗口应该显示的位置
-		Designer designer = Designer.getDesigner();
-		Rectangle monitorSize = designer.explorerDisplay.getMonitors()[0].getClientArea();
+		//Designer designer = Designer.getDesigner();
+		Rectangle monitorSize = control.getShell().getDisplay().getClientArea();
+		//Rectangle monitorSize = shell.getDisplay().getMonitors()[0].getClientArea();
 		
 		Point location = control.getLocation();
 		Point cl = control.getParent().toDisplay(location);
@@ -1132,39 +1133,73 @@ public class Designer {
 		return null;
 	}
 	
+	/**
+	 * 从指定的控件或子控件上获取指定事物对应的控件，其中控件的的类名要和simpleClassName一致。
+	 * 
+	 * @param control
+	 * @param thingPath
+	 * @param isAttribute
+	 * @param simpleClassName
+	 * @return
+	 */
+	public static Control getControl(Control control, String thingPath, boolean isAttribute, String simpleClassName) {
+		String thing = (String) control.getData(Designer.DATA_THING);
+		String name = control.getClass().getSimpleName();
+		if(thingPath.equals(thing) && name.equals(simpleClassName)) {			
+			if(isAttribute && UtilData.isTrue(control.getData(Designer.DATA_ISATTRIBUTE))) {
+				return control;
+			}else {
+				return control;
+			}
+		}
+		
+		//取子节点
+		if(control instanceof Composite) {
+			for(Control child : ((Composite) control).getChildren()) {
+				Control c = getControl(child, thingPath, isAttribute, simpleClassName);
+				if(c != null) {
+					return c;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 	private static Point getTooltipLocation(Control control, Point location,Point cl, Point size, int width, int height, Rectangle monitorSize, int[] seq){
+		//rec是control在display中的区域
+		location = control.toDisplay(location);				
+		Rectangle rec = new Rectangle(location.x, location.y, location.x + size.x, location.y + size.y);
+		
 		int x = 0, y = 0;
 		Point l = null;
 		for(int s : seq){
 			switch(s){
 			case Designer.BOTTOM:
-				l = control.toDisplay(location.x + width, location.y + size.y + height);
-				if(l.x <= monitorSize.width && l.y <= monitorSize.height){
+				if(rec.x + width < monitorSize.width && rec.height + height < monitorSize.height) {
 					x = cl.x;
 					y = cl.y + size.y;
 					return new Point(x, y);
-				}		
+				}
+				
 				break;
 			case Designer.UP:
-				l = control.toDisplay(location.x + width, location.y - height);
-				if(l.x <= monitorSize.width && l.y <= monitorSize.height){
+				if(rec.x + width < monitorSize.width && rec.y - height > 0) {
 					x = cl.x;
 					y = cl.y - height;
 					return new Point(x, y);
 				}
+				
 				break;
 			case Designer.LEFT:
-				l = control.toDisplay(location.x - width, location.y);
-				if(l.x <= monitorSize.width && l.y <= monitorSize.height){
+				if(rec.y - height < monitorSize.height) {
 					x = cl.x - width;
 					y = cl.y;
 					return new Point(x, y);
 				}
 				break;
 			case Designer.RIGHT:
-				
-				l = control.toDisplay(location.x + size.x +  width, location.y);
-				if(l.x <= monitorSize.width && l.y <= monitorSize.height){
+				if(rec.width + width < monitorSize.width && rec.y + height < monitorSize.height) {
 					x = cl.x + size.x;
 					y = cl.y;
 					return new Point(x, y);

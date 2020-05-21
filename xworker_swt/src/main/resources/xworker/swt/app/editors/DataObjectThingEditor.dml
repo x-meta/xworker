@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Editor name="DataObjectThingEditor" descriptors="xworker.swt.app.Editor" priority="-1000"
+     th_createIndex="true" th_registThing="child|xworker.swt.app.Editors" group="dataObject">
+    <exampleParams><![CDATA[{
+    dataObject:"xworker.example.dataobject.db.FamilyCost"
+}]]></exampleParams>
+    <description><![CDATA[<p>简单数据对象编辑器。</p>
+
+<p>固定按钮新建、编辑、删除和工具，如果要其它功能可以通过自定义编辑器等方式。</p>
+
+<p><strong>参数</strong></p>
+
+<ul>
+	<li><strong>dataObject </strong>:&nbsp;String or Thing&nbsp;<br />
+	要编辑的数据对象。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+    <actions _xmeta_id_="actions1">
+        <JavaAction name="createDataParams" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.swt.app.editors.DataObjectThingEditor" methodName="createDataParams"
+             varScope="Local">
+            <code><![CDATA[if(data instanceof String){
+    //如果是字符串，先转成事物
+    data = world.getThing(data);
+}
+
+if(data instanceof Thing){
+    if(data.isThing("xworker.dataObject.DataObject")){
+        return [dataObject : data];
+    }
+}]]></code>
+            <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                <Variable name="data" varName="data" scope="" className="org.xmeta.Thing"></Variable>
+            </VariablesDescs>
+        </JavaAction>
+    </actions>
+    <EditorComposite name="editorComposite">
+        <FillLayout name="editorCompositeFillLayout"></FillLayout>
+        <Resource name="resources">
+            <Image name="iconImage" imageFile="icons/database_table.png"></Image>
+        </Resource>
+        <CTabFolder name="mainTabFolder">
+            <CTabItem name="dataObjectEditorItem" _xmeta_id_="dataObjectEditor" text="lang:d=数据对象&amp;en=DataObject">
+                <ThingEditor name="thingEditor" saveActionContainer="true"></ThingEditor>
+            </CTabItem>
+            <CTabItem name="datasItem" text="lang:d=数据&amp;en=Data">
+                <DataObjectEditCompoiste name="dataObjectEditor" toolsButton="true"></DataObjectEditCompoiste>
+            </CTabItem>
+            <CTabItem name="javeEntityItem" text="JavaEntity">
+                <CodeViewer name="codeViewer" codeName="java" codeType="java"></CodeViewer>
+            </CTabItem>
+        </CTabFolder>
+    </EditorComposite>
+    <OutlineComposite name="outlineComposite">
+        <FillLayout name="outlineCompositeFillLayout"></FillLayout>
+        <Browser name="outlineBrowser"></Browser>
+    </OutlineComposite>
+    <ActionContainer name="actions">
+        <JavaAction name="setContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.DataObjectThingEditor"
+             methodName="setContent" varScope="Local">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+
+def dataObject = params.dataObject;
+
+if(dataObject instanceof String){
+    dataObject = world.getThing(dataObject);
+}
+
+//设置数据对象
+actionContext.g().put("dataObject", dataObject);
+dataObjectEditor.doAction("setDataObject", actionContext, "dataObject", dataObject);
+
+//设置outline，如果存在
+if(actionContext.get("outlineBrowser") != null){
+    def url = XWorkerUtils.getThingDescUrl(dataObject);
+    outlineBrowser.setUrl(url);
+}]]></code>
+        </JavaAction>
+        <JavaAction name="isSameContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.DataObjectThingEditor"
+             methodName="isSameContent" varScope="Local">
+            <code><![CDATA[def dataObject = params.dataObject;
+
+if(dataObject instanceof String){
+    dataObject = world.getThing(dataObject);
+}
+
+return actionContext.get("dataObject") == dataObject;]]></code>
+        </JavaAction>
+        <GetVariable name="getIcon" varName="iconImage"></GetVariable>
+        <Ognl name="getSimpleTitle" expression="dataObject.getMetadata().getLabel()"></Ognl>
+        <Ognl name="getTitle" expression="dataObject.getMetadata().getPath()"></Ognl>
+    </ActionContainer>
+</Editor>

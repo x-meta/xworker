@@ -128,6 +128,7 @@ public class DefaultUIHandler implements UIHandler{
 		public Composite getComposite(Composite parent) {
 			if(composite == null) {
 				ac = new ActionContext();
+				ac.putAll(request.getVariables());
 				ac.put("parent", parent);
 				
 				composite = (Composite) request.createSWT(parent, ac);
@@ -252,5 +253,20 @@ public class DefaultUIHandler implements UIHandler{
 	@Override
 	public void setExecutorService(ExecutorService executorService) {
 		this.executorService = executorService;
+	}
+
+	@Override
+	public List<ExecuteRequest> getRequestUIs() {
+		List<ExecuteRequest> requests = new ArrayList<ExecuteRequest>();
+		if(table != null && table.isDisposed() == false) {
+			for(TableItem item : table.getItems()) {
+				Request request = (Request) item.getData();
+				if(request != null) {
+					requests.add(request.request);
+				}
+			}
+		}
+
+		return requests;
 	}
 }

@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="ActionObject" descriptors="xworker.swt.xworker.ThingRegistThing" label="创建动作"
+     type="composite" group="-10000|动态模型.-9800|动作" icon="icons/application.png" th_sortWeight="200"
+     en_group="-1000|Dynamic Model.-9800|Action" th_createIndex="true" th_registThing="child|xworker.doc.DocIndex">
+    <Composite>
+        <Composite name="editorComposite">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ThingEditor name="thingEditor" useRootThing="true" saveActionContainer="true"></ThingEditor>
+        </Composite>
+        <Composite name="newThingComposite">
+            <FillLayout name="FillLayout"></FillLayout>
+            <ExtendWidget name="ExtendWidget" extendWidgetPath="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite"
+                 actionContext="newThingContext"></ExtendWidget>
+        </Composite>
+        <Code name="init">
+            <code><![CDATA[newThingContext.dataObjectNameText.setText("MyAction");
+newThingContext.descriptorText.setText("xworker.lang.MetaDescriptor3");
+newThingContext.pathText.setText("tutorials");]]></code>
+        </Code>
+        <StackLayout name="stackLayout" topControl="newThingComposite"></StackLayout>
+        <ShellGuide name="actionObjct" label="创建动作" en_label="Create Action">
+            <Guide name="createAction" _xmeta_id_="actionIsObject" label="创建动作" activeControlThing="xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@descriptorText">
+                <description><![CDATA[<p>&nbsp;&nbsp;&nbsp; 动作模型通常是使用xworker.lang.MetaDescriptor3模型来创建的。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[stackLayout.topControl = newThingComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="runMethod" _xmeta_id_="actionIsObject1" label="run方法" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@innerOutline">
+                <description><![CDATA[<p><strong>run方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动作模型创建后，需要实现一个名字为run的方法。run方法是动作模型的约定。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyAction/@actions/@ru");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="selfAction" label="继承SelfAction" activeControlThing="xworker.lang.MetaDescriptor3/@extends"
+                 activeControlIsAttribute="true" activeControlClassName="Text">
+                <description><![CDATA[<p><strong>继承SelfAction</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 除了语言类的模型，其它大部分模型都是以对象的形式存在的。换句话说就是大部分动作模型都希望自己是对象，从而在run方法可以调用自己的其它方法和属性等。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 要理解SelfAction需要先知道self变量，动态模型里self变量等价于Java中的this变量，可以用self变量指代模型本身。</p>
+
+<p><strong>为什么会有SelfAction?</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 这是因为在动态模型里，模型和它的行为是不同的两个对象，那么在行为模型里self指的是哪一个对象呢？</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在动态模型里规定如果一个动作模型继承了SelfAction模型，那么self变量就是行为模型自己，否则self就是行为的所有者&mdash;&mdash;对象模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在XWorker里，可以看到大部分模型都是继承了SelfAction的，除了想Groovy等脚本语言类模型，对脚本语言类模型来说self是对象模型更合理。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyAction");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="runMethod" _xmeta_id_="actionIsObject11" label="run方法" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite">
+                <description><![CDATA[<p><strong>run方法的实现</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 本示例的MyAction继承了SelfAction，因此在MyAction中的run方法里，self变量就是MyAction自己。</p>
+
+<p><strong>getMessage()方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在run方法里，可以看到下面的语句：</p>
+
+<pre class="brush:groovy;">
+def message = self.doAction(&quot;getMessage&quot;, actionContext);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 其中getMessage方法也是MyAction的行为，点击<strong>下一步</strong>按钮查看getMessage方法的讲解。</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyAction/@actions/@ru");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="getMessageMethod" _xmeta_id_="actionIsObject111" label="getMessage方法"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite">
+                <description><![CDATA[<p><strong>getMessage方法的实现</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; getMessage方法的实现是需要重点了解的，它是让一个动作模型变得易用的方法。</p>
+
+<p><strong>为了方便使用变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 我们知道在动态模型里，动作相当于方法和函数，而编程中的方法和函数是用来处理各种变量的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 那么在动作模型里，如何能够方便简单的使用变量呢？方法就是为动作本身定义像getMessage()这样的方法。</p>
+
+<p><strong>getMessage()方法的定义</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 首先，像getMessage()这样的方法是和模型的属性相关的，比如当前的getMessage()动作里使用了动作模型的message属性。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 其次，getMessage()模型的类是GetString模型。类似GetString的模型XWorker中还有很多，比如GetObject、GetThing等等。这些模型一般是放在_action.thinaction分组下的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<strong>下一步</strong>按钮查看MyAction的示例。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyAction/@actions/@getMessage");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="test1" _xmeta_id_="actionIsObject1111" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@menuCoolItem/@toolBar">
+                <description><![CDATA[<p><strong>输出常量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如在本示例中，我们可以在message属性里输入Hello World!字符串。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在菜单中选择动作-&gt;执行来执行当前示例动作，执行后应该可以在控制台中看到输出了Hello Word!</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyActionTest1");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="test2" label="test2Ognl" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@menuCoolItem/@toolBar">
+                <description><![CDATA[<p><strong>使用Ognl等表达式</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如在本示例中，message属性的值是ognl:@java.lang.System@getenv()，表示同构OGNL获取表达式@java.lang.System@getenv()的值。</p>
+
+<p><strong>其它表达式</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 除了ognl表达式，还可以使用var:、template:、label:等等表达式，通过这些表达式可以方便的访问各种变量。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyActionTest2");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="test3" _xmeta_id_="test21" label="test3重写方法" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@innerOutline">
+                <description><![CDATA[<p><strong>重写GetMessage方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当使用message属性无法满足需要时，我们还可以在MyAction的实例里重写getMessage()方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如当前示例中重写了getMessage()方法，当动作执行时会执行当前的getMessage()方法。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyActionTest3/@actions/@getMessage");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="regsist" label="注册" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite">
+                <description><![CDATA[<p><strong>注册</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动作可以以child的方式注册到xworker.lang.actions.Actions模型下，这样其它模型都可以使用它了。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.things.p2020.p04.p15.MyActionRegist");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+stackLayout.topControl = editorComposite;
+Composite.layout();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="summary" label="总结">
+                <description><![CDATA[<p><strong>总结</strong></p>
+
+<ul>
+	<li>通常使用xworker.lang.MetaDescriptor3来编写动作模型。</li>
+	<li>动作模型需要实现名为run的方法。</li>
+	<li>动作模型可以继承SelfAction，除了run方法动作模型还可以定义其它行为。</li>
+	<li>动作模型可以注册到xworker.lang.actions.Actions模型下。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+            </Guide>
+        </ShellGuide>
+    </Composite>
+</QuickFunction>

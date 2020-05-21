@@ -100,7 +100,7 @@ public class ConsoleActions {
 		Console console = actionContext.getObject("console");
 		
 		while(true) {
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim())) && UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 				//不能为空，重新读取
 				continue;
@@ -117,7 +117,7 @@ public class ConsoleActions {
 		Console console = actionContext.getObject("console");
 		
 		while(true) {
-			char[] password = console.readPassword("%s", self.doAction("getMessage", actionContext));					
+			char[] password = console.readPassword("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((password == null || password.length == 0) && UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 				//不能为空，重新读取
 				continue;
@@ -139,7 +139,7 @@ public class ConsoleActions {
 			String line = null;
 										
 			if(text == null) {
-				line = console.readLine("%s", self.doAction("getMessage", actionContext));
+				line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});
 				text = line;
 			}else {
 				line = console.readLine();
@@ -170,7 +170,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			int value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					
@@ -196,7 +196,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			long value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					
@@ -222,7 +222,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			float value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					
@@ -248,7 +248,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			double value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					
@@ -274,7 +274,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			char value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					
@@ -300,7 +300,7 @@ public class ConsoleActions {
 		
 		while(true) {
 			byte value = 0;
-			String line = console.readLine("%s", self.doAction("getMessage", actionContext));					
+			String line = console.readLine("%s", new Object[] {self.doAction("getMessage", actionContext)});					
 			if((line == null || "".equals(line.trim()))) {
 				if(UtilData.isTrue(self.doAction("isBlankable", actionContext)) == false) {
 					//不能为空，重新读取					

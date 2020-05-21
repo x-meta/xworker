@@ -17,6 +17,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.xworker.DelayAction;
@@ -46,8 +47,31 @@ public class ContentSelector{
 			return Collections.emptyList();
 		}
 		
+		String texts[] = text.split("[ ]");
+		for(int i=0; i<texts.length; i++) {
+			texts[i] = texts[i].trim();
+		}
+		
 		List<SelectContent> list = new ArrayList<SelectContent>();
 		for(SelectContent c : contentsForSelect){
+			boolean ok = true;
+			for(String txt : texts) {				
+				if(c.value != null && c.value.indexOf(txt) != -1) {
+					continue;
+				}
+				
+				if(c.label != null && c.label.indexOf(txt) != -1){
+					continue;
+				}
+				
+				ok = false;
+				break;
+			}
+			
+			if(ok) {
+				list.add(c);
+			}
+			/*
 			if(c.value != null && c.value.indexOf(text) != -1){
 				list.add(c);
 				continue;
@@ -56,7 +80,7 @@ public class ContentSelector{
 			if(c.label != null && c.label.indexOf(text) != -1){
 				list.add(c);
 				continue;
-			}
+			}*/
 		}
 		
 		return list;
@@ -74,6 +98,7 @@ public class ContentSelector{
 		List<SelectContent> contents = (List<SelectContent>) thing.doAction("query", actionContext, UtilMap.toMap("text", filterText, "selector", this));
 		
 		if(contents != null && contents.size() > 0){
+			int count = 0;
 			for(SelectContent c : contents){
 				TableItem item = new TableItem(table, SWT.NONE);
 				if(c.label != null){
@@ -91,6 +116,11 @@ public class ContentSelector{
 					
 				}
 				item.setData(c);
+				count++;
+				
+				if(count > 200) {
+					break;
+				}
 			}
 			
 			if(contents.size() > 0){
@@ -175,7 +205,7 @@ public class ContentSelector{
 					}
 					assistor.showContents(str);
 				}catch(Exception e) {
-					
+					Executor.warn(ContentSelector.class.getName(), "Search content error", e);
 				}
 			}		   
 		});
@@ -231,7 +261,17 @@ public class ContentSelector{
 		}
 
 		if(table.getItems().length > 0){
+			//table.select(index);
 		    table.setSelection(index);
+		    
+			ActionContext parentContext = (ActionContext) actionContext.get("parentContext");
+			TableItem item = table.getSelection()[0];
+			
+			Object value = ((SelectContent)  item.getData()).value;
+			Object content = item.getData();
+
+			Thing thing = (Thing) actionContext.get("thing"); 
+		    thing.doAction("onSelection", parentContext, UtilMap.toMap("value", value, "content", content));
 		}
 	}
 	
@@ -244,6 +284,17 @@ public class ContentSelector{
 		Object content = event.item.getData();
 
 		thing.doAction("selected", parentContext, UtilMap.toMap("value", value, "content", content));
+	}
+	
+	public static void tableSelection(ActionContext actionContext){
+		Thing thing = (Thing) actionContext.get("thing");
+		Event event = (Event) actionContext.get("event");
+		ActionContext parentContext = (ActionContext) actionContext.get("parentContext");
+		
+		Object value = ((SelectContent) event.item.getData()).value;
+		Object content = event.item.getData();
+
+		thing.doAction("onSelection", parentContext, UtilMap.toMap("value", value, "content", content));
 	}
 	
 	public static void setText(ActionContext actionContext){

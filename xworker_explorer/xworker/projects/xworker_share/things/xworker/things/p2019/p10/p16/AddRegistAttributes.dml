@@ -1,7 +1,12 @@
-%1571227896973
+%1587352340235
 @
 sname=AddRegistAttributes
 slabel=AddRegistAttributes
+sautoExecute=false
+Sdescription=
+#$@text#$@
+<p>添加几个注册相关的子节点，用于</p>
+#$@text#$@
 sdescriptors=xworker.lang.util.ThingGuide
 sinheritDescription=false
 sth_createIndex=true
@@ -50,6 +55,7 @@ if(!check(thing, "th_createIndex")){
     attr.put("inputtype", "truefalse");
     attr.put("default", "true");
     attr.put("group", "Regist");
+    attr.put("modifier", "private");
     thing.addChild(attr);
 }
 
@@ -58,9 +64,21 @@ if(!check(thing, "th_registThing")){
     attr.put("name", "th_registThing");
     attr.put("size", "60");
     attr.put("group", "Regist");
+    attr.put("modifier", "private");
     
     thing.addChild(attr);
 }
+
+if(!check(thing, "th_registMyChilds")){
+    def attr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
+    attr.put("name", "th_registMyChilds");
+    attr.put("group", "Regist");
+    attr.put("default", "true");
+    attr.put("modifier", "private");
+    
+    thing.addChild(attr);
+}
+
 def check(thing, name){
     for(child in thing.getChilds()){
         if(child.getThingName() == "attribute" && child.getMetadata().getName() == name){
@@ -74,6 +92,7 @@ def check(thing, name){
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="XWorkerCommands" descriptors="xworker.lang.command.CommandDomain" th_createIndex="true"
+     th_registThing="child|xworker.lang.command.CommandIndex" th_registMyChilds="true">
+    <TabCompoisteCommand name="xworker deploy" label="发布XWorker">
+        <Composite>
+            <GridLayout name="GridLayout"></GridLayout>
+            <SWTExecutorService name="executorService">
+                <GridData name="GridData" style="FILL_BOTH"></GridData>
+            </SWTExecutorService>
+            <Composite name="buttonComposite" _xmeta_id_="2667">
+                <GridData name="buttonCompositeGridData" _xmeta_id_="2668" style="FILL_HORIZONTAL"
+                     horizontalAlignment="END"></GridData>
+                <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="2669"></RowLayout>
+                <Button name="executeButton" _xmeta_id_="2670" text="执行">
+                    <RowData name="RowData" _xmeta_id_="2671" width="80"></RowData>
+                    <Listeners _xmeta_id_="2672">
+                        <Listener name="executeButtonSelection" _xmeta_id_="2673">
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.lang.executor.Executor;
+ 
+def world = world;
+def actionContext = actionContext;
+new Thread({
+    //压入ExecutorService
+    Executor.push(executorService);
+     
+    try{
+         //使用Executor请求UI或输入日志等
+         def thing = world.getThing("xworker.tools.update.UploadToXWorker");
+         thing.doAction("run", actionContext); 
+    }finally{
+         //弹出executorService，需要和push()成对出现
+         Executor.pop();
+    }
+}).start();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+            </Composite>
+        </Composite>
+    </TabCompoisteCommand>
+</CommandDomain>

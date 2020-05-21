@@ -676,9 +676,13 @@
             <value name="normal" value="normal"></value>
             <value name="max" value="max"></value>
         </attribute>
+        <attribute name="trimPath" inputtype="text" size="60">
+            <description><![CDATA[<p>过滤掉一部分起始的路径，比如/webroot/js/xxx，过滤/webroot/，那么就剩下/js/xxx。</p>
+]]></description>
+        </attribute>
         <attribute name="trimParentPath" _xmeta_id_="trimLibParentPath" inputtype="truefalse"
              default="false">
-            <description><![CDATA[<p>是否过滤父路径，比如一个类库在xworker的目录下是/lib/xxx.jar，过滤之后就是去掉/lib/，变成xxx.jar。</p>
+            <description><![CDATA[<p>是否过滤父路径，比如一个类库在xworker的目录下是/lib/lib/lib/xxx.jar，过滤之后就是去掉/lib/lib/lib/，变成xxx.jar。</p>
 ]]></description>
         </attribute>
         <attribute name="os" extends="xworker.util.deploy.Module/@Lib/@os" inputtype="inputSelect"></attribute>
@@ -695,6 +699,8 @@
             <attribute name="name"></attribute>
             <attribute name="label"></attribute>
             <attribute name="module" inputtype="openWindow" size="60" inputattrs="xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.util.deploy.ModuleIndex,seperator=%2C,returnType=path,append=false"></attribute>
+            <attribute name="noDependencies" _xmeta_id_="preventExtends" inputtype="truefalse"
+                 default="false"></attribute>
             <attribute name="description" inputtype="html"></attribute>
             <thing name="Module" extends="xworker.util.deploy.Module" inheritDescription="true"></thing>
         </thing>
@@ -750,6 +756,60 @@
             <description><![CDATA[<p>附加到路径前的路径。</p>
 ]]></description>
         </attribute>
+        <attribute name="excludes" inputtype="textarea"></attribute>
+        <attribute name="includes" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html" modifier=""></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作">
+            <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+            <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="DirectoryJarOrZipFileEntry" _xmeta_id_="DirectoryJarFileEntry" extends="xworker.util.compress.CompressEntry">
+        <description><![CDATA[<p>一般用于打包类库，把一个目录和及其子目录下的Jar或Zip的文件解压或以STORE的方式重新压缩后放到指定目录下。</p>
+
+<p>store的作用参看<a href="do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.util.compress.CompressEntrys/@JarFileEntry">JarFileEntry</a>。</p>
+]]></description>
+        <actions>
+            <GetFile name="getFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="file"></GetFile>
+            <GetString name="getPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="path"></GetString>
+            <GetFile name="getDirectory" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="directory"></GetFile>
+            <JavaAction name="create" outerClassName="xworker.util.compress.DirectoryJarOrZipFileEntry"
+                 methodName="create"></JavaAction>
+            <GetString name="getExcludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="excludes"></GetString>
+            <GetString name="getIncludes" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="includes"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="directory" inputtype="filePath" size="60"></attribute>
+        <attribute name="path" size="60" modifier=""></attribute>
         <attribute name="excludes" inputtype="textarea"></attribute>
         <attribute name="includes" inputtype="textarea"></attribute>
         <attribute name="description" inputtype="html" modifier=""></attribute>

@@ -388,6 +388,7 @@ public class NewThingDialog {
 	            t.put("visitCount", "");;
 	            t.put("thingType", child.getString("thingType"));
 	            t.put("thingPath", child.getString("thingPath"));
+	            t.put("configThing", child.getMetadata().getPath());
 	            alist.add(t);
 		    }
 		}
@@ -497,14 +498,22 @@ public class NewThingDialog {
 		    Thing descObj = world.getThing(descPath);
 		    if(descObj == null) return;
 		    
-		    saveToHistory(descObj, descPath);
+		    saveToHistory(descObj, descPath, null, null);
 
 		    Shell shell = actionContext.getObject("shell");
 		    shell.dispose();
 		}
 	}
 	
-	private void saveToHistory(Thing descObj, String descPath) {
+	/**
+	 * 保存创建事物的历史。
+	 * 
+	 * @param descObj
+	 * @param descPath
+	 * @param thingType
+	 * @param configPath
+	 */
+	private void saveToHistory(Thing descObj, String descPath, String thingType, String configThing) {
 		Thing memory = world.getThing("_local.xworker.worldExplorer.CreateThingMemory");
 	    boolean have = false;
 	    if(memory == null) {
@@ -516,6 +525,8 @@ public class NewThingDialog {
 	            dataObj.put("name", descObj.getMetadata().getName());
 	            dataObj.put("lastVisit", new Date());
 	            dataObj.put("visitCount", dataObj.getInt("visitCount") + 1);
+	            dataObj.put("thingType", thingType);
+	            dataObj.put("configThing", configThing);
 	            dataObj.save();
 	            have = true;
 	        }
@@ -528,6 +539,8 @@ public class NewThingDialog {
 	        vd.put("path", descPath);
 	        vd.put("lastVisit", new Date());
 	        vd.put("visitCount", 1);
+	        vd.put("thingType", thingType);
+	        vd.put("configThing", configThing);
 	        memory.addChild(vd);
 	        memory.save();
 	    }
@@ -537,6 +550,18 @@ public class NewThingDialog {
 	public Object createThing(ActionContext actionContext) {
 		Thing model = actionContext.getObject("model");
 		Shell shell = actionContext.getObject("shell");
+		
+		String hThingType = null;
+		String hConfigThing = null;
+		String hPath = null;
+		if(historyTable.getSelection().length > 0) {				
+			Object data = historyTable.getSelection()[0].getData();
+			Map<String, Object> itemData = data instanceof Thing ? ((Thing) data).getAttributes() : (Map<String, Object>) data;
+	
+			hPath = (String) itemData.get("path");
+			hConfigThing = (String) itemData.get("configThing");
+			hThingType = (String) itemData.get("thingType");
+		}
 		
 		//校验数据输入
 		if(!UtilData.isTrue(model.doAction("validate", actionContext))) return null;
@@ -611,6 +636,17 @@ public class NewThingDialog {
 		    object.getMetadata().setCoderType((String) values.get("codecType"));
 		    
 		    //初始化事物
+		    if(hConfigThing != null && "descriptor".equals(hThingType) && descriptors.equals(hPath)) {
+	        	//在界面里选中了一个预先定义的描述者时，配置改描述者的模型设置的默认属性
+        		Thing configThing = world.getThing(hConfigThing);
+        		if(configThing != null) {
+	        		Map<String, Object> attrs = configThing.doAction("getAttributes", actionContext);
+					if(attrs != null) {
+						object.getAttributes().putAll(attrs);				
+					}
+        		}
+	        }
+        		
 		    if(actionContext.get("thingInitValues") != null){
 		        object.putAll((Map<String, Object>) actionContext.get("thingInitValues"));
 		    }
@@ -644,7 +680,7 @@ public class NewThingDialog {
 		    
 		    if(descObj == null) return null;
 		    
-		    saveToHistory(descObj, descPath);
+		    saveToHistory(descObj, descPath, hThingType, hConfigThing);
 		  
 		    if(actionContext.get("shell") != null){
 		        shell.dispose();

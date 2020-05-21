@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
@@ -32,7 +33,8 @@ import xworker.swt.util.SwtUtils;
 import xworker.swt.widgets.CoolBarCreator;
 
 public class DataItemContainer{
-	public static final String TAG = "DataItemContainer";
+	private static final String TAG = DataItemContainer.class.getName();
+	
 	List<DataItem> dataItems = new ArrayList<DataItem>();
 	Thing thing = null;
 	ActionContext actionContext = null;
@@ -40,6 +42,7 @@ public class DataItemContainer{
 	String eventType;
 	Map<String, DataItem> itemsMap = new HashMap<String, DataItem>();
 	DataReactor dataReactor;
+	Widget widget;
 	
 	public DataItemContainer(Thing thing, ActionContext actionContext) {
 		this.thing = thing;
@@ -117,6 +120,17 @@ public class DataItemContainer{
 		return itemsMap.get(name);
 	}
 	
+	public DataItem findByThing(Thing thing) {
+		for(DataItem item : dataItems) {
+			DataItem it = item.findByThing(thing);
+			if(it != null) {
+				return it;
+			}
+		}
+		
+		return null;
+	}
+	
 	public Widget getBindItem(String name, Widget parent) {
 		DataItem item = getItem(name);
 		if(item != null) {
@@ -146,6 +160,117 @@ public class DataItemContainer{
 		bind(widget, event);
 	}
 	
+	/**
+	 * 如果已经绑定了控件上，那么会把先前绑定的条目移除，然后重新创建。
+	 */
+	public void refresh() {
+		if(widget == null) {
+			return;
+		}
+		
+		int event = "defaultSelection".equals(eventType) ? SWT.DefaultSelection : SWT.Selection;
+		
+		//添加事件监听
+		if(widget instanceof Decorations) {
+			Decorations decorations = (Decorations) widget;
+			remove(decorations.getMenuBar());
+			createItem(dataItems, (Decorations) widget, event);
+		}if(widget instanceof Tree) {
+			for(TreeItem item : ((Tree) widget).getItems()) {
+				remove(item);
+			}
+			
+			for(DataItem dataItem : dataItems) {
+				if((dataItem.getStyle(widget) & SWT.SEPARATOR) == SWT.SEPARATOR) {
+					//tree不支持分割符
+					continue;
+				}
+				
+				createItem(dataItem, (Tree) widget);
+			}
+		}else if(widget instanceof TreeItem) {
+			TreeItem treeItem = (TreeItem) widget;			
+			for(TreeItem item : ((TreeItem) widget).getItems()) {
+				remove(item);
+			}
+			
+			for(DataItem dataItem : dataItems) {
+				if((dataItem.getStyle(widget) & SWT.SEPARATOR) == SWT.SEPARATOR) {
+					//tree不支持分割符
+					continue;
+				}
+				
+				createItem(dataItem, treeItem);
+			}
+		}else if(widget instanceof Menu) {
+			for(MenuItem item : ((Menu) widget).getItems()) {
+				remove(item);
+			}
+			
+			for(DataItem dataItem : dataItems) {
+				createItem(dataItem, (Menu) widget, event, widget);
+			}
+		}else if(widget instanceof ToolBar) {
+			for(ToolItem item : ((ToolBar) widget).getItems()) {
+				remove(item);
+			}
+			
+			for(DataItem dataItem : dataItems) {
+				createItem(dataItem, (ToolBar) widget, event);
+			}
+			
+			//ToolBarCreator.initToolBar((ToolBar) widget); 
+		}else if(widget instanceof ToolItem){
+			Widget menu = (Widget) widget.getData("menu");
+			remove(menu);
+			createItem(dataItems, (ToolItem) widget, event);
+		}else if(widget instanceof CoolBar) {
+			for(CoolItem item : ((CoolBar) widget).getItems()) {
+				remove(item);
+			}
+			createItem(dataItems, (CoolBar) widget, event);
+		}else if(widget instanceof ExpandBar) {		
+			for(ExpandItem item : ((ExpandBar) widget).getItems()) {
+				remove(item);
+			}
+			
+			for(DataItem dataItem : dataItems) {
+				createItem(dataItem, (ExpandBar) widget, event);
+			}
+		}else if(widget instanceof Control) {
+			//默认是Control的右键菜单
+			Menu menu = ((Control) widget).getMenu();
+			remove(menu);
+			createItem(dataItems, (Control) widget, event);
+		}
+	}
+	
+	private void remove(Widget widget) {
+		if(widget != null && widget.getData(TAG) == this) {
+			Control control = null;
+			if(widget instanceof CoolItem) {
+				control = ((CoolItem) widget).getControl();
+			}else if(widget instanceof ExpandItem) {
+				control = ((ExpandItem) widget).getControl();				
+			}else if(widget instanceof ToolItem) {
+				control = ((ToolItem) widget).getControl();
+			}else if(widget instanceof CTabItem) {
+				control = ((CTabItem) widget).getControl();
+			}
+			
+			if(control != null) {
+				control.dispose();
+			}
+			widget.dispose();
+		}
+	}
+	
+	/**
+	 * 绑定到控件上。
+	 * 
+	 * @param widget
+	 * @param event
+	 */
 	public void bind(Widget widget, int event) {
 		//添加事件监听
 		if(widget instanceof Decorations) {
@@ -184,6 +309,7 @@ public class DataItemContainer{
 			
 			//ToolBarCreator.initToolBar((ToolBar) widget); 
 		}else if(widget instanceof ToolItem){
+			addListener((ToolItem) widget, event);
 			createItem(dataItems, (ToolItem) widget, event);
 		}else if(widget instanceof CoolBar) {
 			createItem(dataItems, (CoolBar) widget, event);
@@ -194,11 +320,14 @@ public class DataItemContainer{
 		}else if(widget instanceof Control) {
 			//默认是Control的右键菜单
 			createItem(dataItems, (Control) widget, event);
+		}else {
+			Executor.warn(TAG, "Can not bind items, widget not supported, widget=" + widget);
 		}
 	}
 	
 	private void createItem(List<DataItem> dataItems, Control control, int event) {
 		Menu menu = new Menu(control);
+		menu.setData(TAG, this);
 		control.setMenu(menu);
 		for(DataItem dataItem : dataItems) {
 			createItem(dataItem, menu, event, control);
@@ -207,6 +336,7 @@ public class DataItemContainer{
 	
 	private void createItem(DataItem dataItem, ExpandBar expandBar, int event) {
 		ExpandItem item = new ExpandItem(expandBar, SWT.NONE);
+		item.setData(TAG, this);
 		item.setText(dataItem.getLabel());
 		item.setData(dataItem);
 		Image image = dataItem.getIcon(expandBar);
@@ -231,6 +361,7 @@ public class DataItemContainer{
 	
 	private void createItem(List<DataItem> dataItems, Decorations decorations, int event) {
 		Menu menu = new Menu(decorations, SWT.BAR);
+		menu.setData(TAG, this);
 		decorations.setMenuBar(menu);
 		for(DataItem dataItem : dataItems) {
 			createItem(dataItem, menu, event, decorations);
@@ -239,6 +370,7 @@ public class DataItemContainer{
 	
 	private void createItem(List<DataItem> dataItems, CoolBar coolBar, int event) {
 		CoolItem item = new CoolItem(coolBar, SWT.NONE);
+		item.setData(TAG, this);
 		ToolBar toolBar = new ToolBar(coolBar, SWT.HORIZONTAL | SWT.FLAT);
 		item.setControl(toolBar);
 		
@@ -257,6 +389,7 @@ public class DataItemContainer{
 			style = SWT.DROP_DOWN;
 		}
 		ToolItem  item = new ToolItem(toolBar, style);
+		item.setData(TAG, this);
 		addListener(item, event);
 		item.setData(dataItem);
 		if(dataItem.showLabel()) {
@@ -283,8 +416,7 @@ public class DataItemContainer{
 		dataItem.onBind(toolBar, item);
 	}
 	
-	private void createItem(List<DataItem> dataItems, ToolItem toolItem, int event) {
-		addListener(toolItem, event);
+	private void createItem(List<DataItem> dataItems, ToolItem toolItem, int event) {		
 		Thing thing = new Thing("xworker.swt.xwidgets.DataItems/@Folder");
 		thing.put("noDropDown", true);
 		DataItem root = new DataItem(this, null, false, thing, new ActionContext()) {
@@ -295,7 +427,9 @@ public class DataItemContainer{
 		};
 		root.getChilds().addAll(dataItems);
 		toolItem.setData(root);
+		
 		Menu childMenu = new Menu(toolItem.getParent());
+		childMenu.setData(TAG, this);
 		toolItem.setData("menu", childMenu);
 		for(DataItem childItem : dataItems) {
 			createItem(childItem, childMenu, event, toolItem.getParent());
@@ -310,6 +444,7 @@ public class DataItemContainer{
 		}
 		
 		MenuItem item = new MenuItem(menu, style);
+		item.setData(TAG, this);
 		addListener(item, event);
 		item.setData(dataItem);
 		item.setText(dataItem.getLabel());
@@ -368,6 +503,7 @@ public class DataItemContainer{
 	
 	private void createItem(DataItem dataItem, Tree tree) {
 		TreeItem item = new TreeItem(tree, SWT.NONE);
+		item.setData(TAG, this);
 		item.setText(dataItem.getLabel());
 		Image image = dataItem.getIcon(tree);
 		if(image != null) {
@@ -391,6 +527,7 @@ public class DataItemContainer{
 	
 	private void createItem(DataItem dataItem, TreeItem treeItem) {
 		TreeItem item = new TreeItem(treeItem, SWT.NONE);
+		item.setData(TAG, this);
 		item.setText(dataItem.getLabel());
 		Image image = dataItem.getIcon(treeItem.getParent());
 		if(image != null) {

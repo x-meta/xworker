@@ -1,4 +1,4 @@
-%1564624250645
+%1587449441767
 @
 sname=DataObjectSwtUtils
 slabel=DataObjectSwtUtils
@@ -20,19 +20,21 @@ sth_mark=false
   sname=SelectDataObject
   sdescriptors=xworker.lang.MetaDescriptor3/@thing
   sextends=xworker.lang.actions.SelfAction
+  sexcludeDescriptorsForChilds=xworker.lang.actions.SelfAction
   smany=true
   seditCols=2
+  sformNoLabel=false
   sinitialization=false
   sgroup=xworker.dataObject.swt
   smodifier=public
   sinheritDescription=false
   Sdescription=
 #$@text#$@
-<p>打开一个数据对象编辑窗口，并且选择一个数据对象。</p>
+<p>打开一个数据对象查询编辑窗口，并且选择一个数据对象。</p>
 
 <p><strong>返回值</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; DataObject，如果没有选择任何记录返回null。</p>
+<p>&nbsp;&nbsp;&nbsp; DataObject，如果没有选择任何记录返回null。为兼容RWT请使用事件来处理选择的结果。</p>
 
 <p><strong>事件：</strong></p>
 
@@ -93,6 +95,9 @@ import xworker.swt.util.SwtDialog;
 
 //参数
 def shell = self.doAction("getShell", actionContext);
+if(shell == null){
+    throw new ActionException("Parent shell can not be null, action=" + self.getMetadata().getPath());
+}
 def dataObject = self.doAction("getDataObject", actionContext);
 if(dataObject == null){
     throw new ActionException("DataObject is null, action=" + self.getMetadata().getPath());
@@ -105,23 +110,20 @@ def ac = new ActionContext();
 ac.put("parent", shell);
 ac.put("dataObject", dataObject);
 ac.put("params", params);
+ac.put("parentContext", actionContext);
+ac.put("thing", self);
 def newShell = thing.doAction("create", ac);
 
 //选择结果
 def result = SwtDialog.open(newShell, ac);
-println(result);
-//触发事件
-if(result != null){
-    self.doAction("onSelected", actionContext, ["data": result]);
-}else{
-    self.doAction("onSelectedNone", actionContext);	
-}
+
 
 return result;
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false
@@ -140,7 +142,6 @@ return result;
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -164,7 +165,6 @@ return result;
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -179,25 +179,105 @@ return result;
       @/@SelectDataObject/@actions/@getParams
       sname=getParams
       sattributeName=params
-      snotNull=false
       sinterpretationType=Self
       sattributeTemplate=false
       schildsAttributeTemplate=false
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdisableGlobalContext=false
       sdebugLog=false
-      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
       sinheritDescription=false
       sth_createIndex=false
       sth_registMyChilds=false
       sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
       sth_mark=false
+      sth_registQueryOnlySelf=false
       sid=getParams
+      @/@SelectDataObject/@actions/@onSelected
+      sname=onSelected
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=onSelected
+        @/@SelectDataObject/@actions/@onSelected/@ins
+        sisValidate=false
+        sname=ins
+        sdescriptors=xworker.lang.actions.Inout/@ins
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=ins
+          @/@SelectDataObject/@actions/@onSelected/@ins/@data
+          sname=data
+          stype=xworker.dataObject.DataObject
+          stypeCheck=false
+          soptional=true
+          scheck=false
+          scheckLevel=exception
+          sdescriptors=xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=data
+      @/@SelectDataObject/@actions/@onSelectedNone
+      sname=onSelectedNone
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=onSelectedNone
     @/@SelectDataObject/@name
     sname=name
     sshowLabel=true
@@ -249,10 +329,11 @@ return result;
     sid=shell
     @/@SelectDataObject/@params
     sname=params
-    sinputtype=openWindow
-    ssize=40
+    sinputtype=textarea
     sshowLabel=true
-    sinputattrs=xworker.dataObject.swt.AttributeDataObjectSelector/@shell|winWidth=-1,winHeight=-1,multi=false
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
     sreadOnly=false
     sinheritDescription=false
     svalidateAllowBlank=true
@@ -317,3 +398,420 @@ return result;
     sth_registDisabled=false
     sth_mark=false
     sid=DataObjects
+    @/@SelectDataObject/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@SelectDataObject/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name
+  @/@SelectDataObject1
+  sname=SelectDataObjects
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.SelfAction
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  sgroup=xworker.dataObject.swt
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>打开一个数据对象编辑窗口，并且选择一个数据对象。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; DataObject，如果没有选择任何记录返回null。</p>
+
+<p><strong>事件：</strong></p>
+
+<ul>
+	<li><strong>void onSelected(DataObject data)</strong><br />
+	当有数据选中时触发的事件。<br />
+	&nbsp;</li>
+	<li><strong>void onSelectedNone()</strong><br />
+	当没有数据选中时的事件。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Shell getShell()</strong><br />
+	用于打开选择窗口的父Shell。<br />
+	&nbsp;</li>
+	<li><strong>Thing getDataObject()</strong><br />
+	数据对象的定义事物。<br />
+	&nbsp;</li>
+	<li><strong>Map&lt;String, Object&gt; getParams()</strong><br />
+	查询参数。</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SelectDataObject1
+    @/@SelectDataObject1/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SelectDataObject1/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.ActionException;
+import org.xmeta.ActionContext;
+
+import xworker.swt.util.SwtDialog;
+
+//参数
+def shell = self.doAction("getShell", actionContext);
+if(shell == null){
+    throw new ActionException("Parent shell can not be null, action=" + self.getMetadata().getPath());
+}
+
+def dataObject = self.doAction("getDataObject", actionContext);
+if(dataObject == null){
+    throw new ActionException("DataObject is null, action=" + self.getMetadata().getPath());
+}
+def params = self.doAction("getParams", actionContext);
+
+//创建窗口
+def thing = world.getThing("xworker.dataObject.actions.prototypes.SelectDataObjectsShell");
+def ac = new ActionContext();
+ac.put("parent", shell);
+ac.put("dataObject", dataObject);
+ac.put("params", params);
+ac.put("parentContext", actionContext);
+ac.put("thing", self);
+def newShell = thing.doAction("create", ac);
+
+//选择结果
+def result = SwtDialog.open(newShell, ac);
+
+return result;
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+      @/@SelectDataObject1/@actions/@getShell
+      sname=getShell
+      sattributeName=shell
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getShell
+      @/@SelectDataObject1/@actions/@getDataObject
+      sname=getDataObject
+      sattributeName=dataObject
+      schildThingName=DataObjects
+      schildThingFirstChild=true
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=getDataObject
+      @/@SelectDataObject1/@actions/@getParams
+      sname=getParams
+      sattributeName=params
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=getParams
+      @/@SelectDataObject1/@actions/@onSelected
+      sname=onSelected
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=onSelected
+        @/@SelectDataObject1/@actions/@onSelected/@ins
+        sisValidate=false
+        sname=ins
+        sdescriptors=xworker.lang.actions.Inout/@ins
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=ins
+          @/@SelectDataObject1/@actions/@onSelected/@ins/@data
+          sname=datas
+          stype=java.util.List
+          stypeCheck=false
+          soptional=true
+          scheck=false
+          scheckLevel=exception
+          sdescriptors=xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=data
+      @/@SelectDataObject1/@actions/@onSelectedNone
+      sname=onSelectedNone
+      sunimplementedException=false
+      sdescriptors=xworker.lang.actions.Actions/@NOOP
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=onSelectedNone
+    @/@SelectDataObject1/@name
+    sname=name
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+    @/@SelectDataObject1/@label
+    sname=label
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=label
+    @/@SelectDataObject1/@shell
+    sname=shell
+    ssize=40
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=shell
+    @/@SelectDataObject1/@dataObject
+    sname=dataObject
+    sinputtype=dataSelector
+    ssize=60
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObject
+    @/@SelectDataObject1/@params
+    sname=params
+    sinputtype=textarea
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=params
+    @/@SelectDataObject1/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=description
+    @/@SelectDataObject1/@DataObjects
+    sname=DataObjects
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.dataObject.DataObjects
+    smany=true
+    seditCols=2
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=true
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=DataObjects
+    @/@SelectDataObject1/@actions1
+    sname=actions
+    slabel=Actions
+    sdescriptors=xworker.lang.MetaDescriptor2/@thing
+    sextends=xworker.lang.actions.Actions
+    smany=true
+    seditCols=2
+    szh_label=动作
+    sinheritDescription=true
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions1
+      @/@SelectDataObject1/@actions1/@name
+      sname=name
+      sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+      sid=name

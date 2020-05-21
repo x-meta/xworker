@@ -1,4 +1,4 @@
-%1556523087355
+%1583829767234
 @
 sname=shell
 stext=CompositeCommand
@@ -195,8 +195,8 @@ sth_mark=false
       sdescriptors=xworker.swt.Layouts/@RowLayout
       sid=11779
   @/@11780
-  sname=returnButton
-  stext=lang:d=返回(&amp;B)&en=Back(&amp;B)
+  sname=moveToButton
+  stext=lang:d=移动到标签页(&amp;T)&en=Move To Tab(&amp;T)
   stype=SWT.PUSH
   sflat=false
   sborder=false
@@ -204,6 +204,7 @@ sth_mark=false
   scapture=false
   senabled=true
   sredraw=true
+  spack=false
   svisible=true
   sdescriptors=xworker.swt.Widgets/@Button
   sth_createIndex=false
@@ -211,7 +212,7 @@ sth_mark=false
     @/@11780/@11781
     sname=RowData
     sexclude=false
-    swidth=80
+    swidth=120
     sheight=-1
     sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
     sth_createIndex=false
@@ -236,12 +237,140 @@ sth_mark=false
         sdisableGlobalContext=false
         Scode=
 #$@text#$@
-executorContext.mainStackLayout.topControl = executorContext.commandComposite;
-executorContext.mainComposite.layout();
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+
+//把当前的Composite转移到Tab上
+def tab = executorContext.mainTabFolder;
+def item = new CTabItem(tab, SWT.CLOSE);
+item.setText(command.getCommandThing().getMetadata().getLabel());
+def control = __executor_root_composite__;
+control.setParent(tab);
+item.setControl(control);
+
+__executor_moveButton__.dispose();
+__executor_returnButton__.dispose();
+
+if(command.isExecuted() == false){
+    //如果isExecuted()==false还没设置值，如果为true用户已经设置过值了
+    command.setResult(null);
+}
+commandExecutor.checkStatus();
+
+tab.setSelection(item);
 #$@text#$@
         sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GroovyAction
+          @/@11780/@11782/@11783/@GroovyAction/@VariablesDescs
+          sname=VariablesDescs
+          sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=VariablesDescs
+            @/@11780/@11782/@11783/@GroovyAction/@VariablesDescs/@command
+            sname=command
+            svarName=command
+            spassive=false
+            sscope=0
+            stype=object
+            sclassName=xworker.lang.command.Command
+            sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            sid=command
+            @/@11780/@11782/@11783/@GroovyAction/@VariablesDescs/@tab
+            sname=tab
+            svarName=tab
+            spassive=false
+            sscope=0
+            stype=object
+            sclassName=org.eclipse.swt.custom.CTabFolder
+            sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            sid=tab
+  @/@117801
+  sname=returnButton
+  stext=lang:d=返回(&amp;B)&en=Back(&amp;B)
+  stype=SWT.PUSH
+  sflat=false
+  sborder=false
+  sselected=false
+  scapture=false
+  senabled=true
+  sredraw=true
+  svisible=true
+  sdescriptors=xworker.swt.Widgets/@Button
+  sth_createIndex=false
+  sid=117801
+    @/@117801/@11781
+    sname=RowData
+    sexclude=false
+    swidth=80
+    sheight=-1
+    sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
+    sth_createIndex=false
+    sid=11781
+    @/@117801/@11782
+    sname=Listeners
+    sdescriptors=xworker.swt.widgets.Widget/@Listeners
+    sth_createIndex=false
+    sid=11782
+      @/@117801/@11782/@11783
+      sname=returnButtonSelection
+      stype=Selection
+      sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+      sth_createIndex=false
+      sid=11783
+        @/@117801/@11782/@11783/@GroovyAction
+        sname=GroovyAction
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+//executorContext.mainStackLayout.topControl = executorContext.commandComposite;
+//executorContext.mainComposite.layout();
+if(command.isExecuted() == false){
+    //如果isExecuted()==false还没设置值，如果为true用户已经设置过值了
+    command.setResult(null);
+}
+commandExecutor.checkStatus();
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
         sdebugLog=false
         sdescriptors=xworker.lang.actions.Actions/@GroovyAction
         sinheritDescription=false

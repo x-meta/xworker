@@ -1,4 +1,4 @@
-^1557886904688
+^1584163620829
 @
 sname
 CommandDomain
@@ -10,6 +10,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
@@ -20,25 +22,33 @@ sicon
 icons/folder_go.png
 Sdescription
 #$@text#$@
-<h3>命令域</h3>
+<p><strong>命令域</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 用来定义各种命令。</p>
+<p>&nbsp;&nbsp;&nbsp; 命令的主要作用是通过输入来完成各种操作，即通过键盘的输入操作来实现各种功能。</p>
 
-<h3>命令的作用和原理</h3>
+<p>&nbsp;&nbsp;&nbsp; 命令域是命令的集合，用于定义某个领域下的命令。一个领域是针对某个功能模块的，比如模型编辑器的功能域等。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 命令是一种通过命令行来执行操作的方法，它实际上是一个简单的函数式编程，其中每一个命令相当于一个函数，命令可以有参数，参数可以是输入或函数。</p>
+<p><strong>命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个命令相当于一个函数，命令可以有参数，参数也是命令。命令实际上是一个简单的函数式编程，不过一般它每次只编辑和运行一个函数。</p>
 
 <p>&nbsp;&nbsp;&nbsp; 比如命令：set(name: &quot;age&quot;, value: Input())，只是调用set命令，set命令有name和value两个参数，其中name的值是常量age，value的值是输入Input()命令。</p>
 
-<h3>命令执行器</h3>
+<p><strong>变量</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;命令是通过操作界面完成输入的。</p>
+<p>&nbsp;&nbsp;&nbsp; 命令域的实例可以设置变量，这些变量在执行命令时会作为参数传入。可以通过命令域的put(String key, Object value)，putAll(Map&lt;String, Object&gt;)方法设置。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 要获得父变量域的设置的变量，可以通过命令域的getParentDomain()方法获取，如果没有父变量域会返回null。</p>
+
+<p><strong>父命令域</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在命令里可以执行子命令域，此时命令所属的域就会设置为子域的父命令域。</p>
 
 <p><strong>可以重写的方法</strong></p>
 
 <ul>
-	<li><strong>void init(CommandExecutor executor)</strong><br />
-	执行初始化。<br />
+	<li><strong>void init(CommandExecutor executor, CommandDomain commandDomain)</strong><br />
+	执行初始化。executor是命令执行器，是执行命令的界面。<br />
 	&nbsp;</li>
 	<li><strong>List&lt;Thing&gt; getCommands(CommandExecutor executor)</strong><br />
 	返回可以命令事物列表。默认读取命令相关的子节点。</li>
@@ -139,8 +149,6 @@ false
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -206,6 +214,206 @@ false
     false
     sid
     getCommands
+    @/@actions/@getLabel
+    sname
+    getLabel
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    scode
+    return self.getMetadata().getLabel();
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getLabel
+  @/@VariablesDescs
+  sname
+  VariablesDescs
+  sdescriptors
+  xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  VariablesDescs
+    @/@VariablesDescs/@executor
+    sname
+    executor
+    svarName
+    executor
+    spassive
+    false
+    sscope
+    0
+    stype
+    object
+    sclassName
+    xworker.lang.command.CommandExecutor
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    executor
+    @/@VariablesDescs/@commandExecutor
+    sname
+    commandExecutor
+    svarName
+    commandExecutor
+    spassive
+    false
+    sscope
+    0
+    stype
+    object
+    sclassName
+    xworker.lang.command.CommandExecutor
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    commandExecutor
+    @/@VariablesDescs/@commandDomain
+    sname
+    commandDomain
+    svarName
+    commandDomain
+    spassive
+    false
+    sscope
+    0
+    stype
+    object
+    sclassName
+    xworker.lang.command.CommandDomain
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    commandDomain
+    @/@VariablesDescs/@parentCommand
+    sname
+    parentCommand
+    svarName
+    parentCommand
+    spassive
+    false
+    sscope
+    0
+    stype
+    object
+    sclassName
+    xworker.lang.command.Command
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    parentCommand
   @/@name
   sname
   name
@@ -303,6 +511,55 @@ false
   false
   sid
   extends
+  @/@tags
+  sname
+  tags
+  sinputtype
+  text
+  ssize
+  60
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>tags是保留的标签，用途自定。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  tags
   @/@description
   sname
   description
@@ -345,6 +602,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   smodifier
@@ -356,6 +615,32 @@ false
   Sdescription
 #$@text#$@
 <p>命令相当于函数，命令可以包含0到多个参数。</p>
+
+<p><strong>执行规则</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个命令isExecuted()=true，那么表示已经执行了。以执行的状态通常是在setResult(Object value)时设置的。通常情况下执行命令会先执行其参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 设置命令的结果hasContents的特殊方式。</p>
+
+<ul>
+	<li><strong>hasContents=true</strong><br />
+	执行getContents()方法，getContents()的返回值是选择列表，执行选择后作为命令的结果。<br />
+	<strong>如果commandContent=true，那么选择的结果会作为命令事物替换当前命令。</strong><br />
+	&nbsp;</li>
+	<li><strong>hasContents=false</strong><br />
+	执行命令模型的run()方法，run()方法的返回值作为命令的结果。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 对于其它命令，如CompositeCommand等，参看它们的文档。</p>
+
+<p><strong>事件</strong></p>
+
+<ul>
+	<li><strong>void onContent(Object content)</strong><br />
+	当选择一个content是时触发，比如hasContents=true时，选择一个内容后会触发onResult(），可以在这里处理选择的内容。<br />
+	如果有选择列表，那么content是SelectContent对象的object或value属性的值，如果object==null返回value，否则是object。<br />
+	如果没有选择列表，那么content是命令执行器上输入的文本。</li>
+</ul>
 
 <p><strong>需要重写的方法</strong></p>
 
@@ -415,13 +700,24 @@ false
       Local
       sdisableGlobalContext
       false
-      scode
-      return [];
+      Scode
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+
+def list = self.doAction("getContentList", actionContext);
+def contentList = [];
+for(value in list){
+    contentList.add(new SelectContent(value));
+}
+return contentList;
+#$@text#$@
       sinterpretationType
       Action
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false
@@ -460,6 +756,8 @@ false
       false
       ssaveReturn
       false
+      sswitchResult
+      false
       sdebugLog
       false
       sdescriptors
@@ -495,8 +793,6 @@ false
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -517,6 +813,220 @@ false
       false
       sid
       init
+      @/@Command/@actions1/@getContentList
+      sname
+      getContentList
+      sattributeName
+      contentList
+      snotNull
+      false
+      ssplitLine
+      true
+      sdelimiter
+      ,
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetStringList
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getContentList
+      @/@Command/@actions1/@onResult
+      sname
+      onContent
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      scode
+      command.setResult(content);
+      sinterpretationType
+      Self
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_deprecated
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      onResult
+        @/@Command/@actions1/@onResult/@ins
+        sisValidate
+        false
+        sname
+        ins
+        sdescriptors
+        xworker.lang.actions.Inout/@ins
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        ins
+          @/@Command/@actions1/@onResult/@ins/@object
+          sname
+          content
+          stype
+          java.lang.Object
+          stypeCheck
+          false
+          soptional
+          true
+          scheck
+          false
+          scheckLevel
+          exception
+          sdescriptors
+          xworker.lang.actions.Inout/@ins/@param
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sth_registQueryOnlySelf
+          false
+          sid
+          object
+    @/@Command/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    VariablesDescs
+      @/@Command/@VariablesDescs/@command
+      sname
+      command
+      svarName
+      command
+      spassive
+      false
+      sscope
+      0
+      stype
+      object
+      sclassName
+      xworker.lang.command.Command
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      command
     @/@Command/@name
     sname
     name
@@ -599,7 +1109,7 @@ false
     sinheritDescription
     false
     sdescription
-    <p>是否有可选择的内容，如果有则执行getContents返回可选择的内容，用户从可选择的内容中选择作为命令的执行结果。</p>
+    <p>是否有可选择的内容，如果有则执行getContents返回可选择的内容，用户从可选择的内容中选择作为命令的执行结果。此时不会再执行run方法。</p>
     svalidateAllowBlank
     true
     LvalidateOnBlur
@@ -706,6 +1216,53 @@ false
     false
     sid
     tags
+    @/@Command/@contents
+    sname
+    contentList
+    sinputtype
+    textarea
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>用于设置快速选择的值，会转换成List&lt;String&gt;，然后再getContents（）方法转化为List&lt;SelectContent&gt;；</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    contents
     @/@Command/@description
     sname
     description
@@ -912,7 +1469,7 @@ false
       smodifier
       public
       sinputattrs
-      xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.lang.command.CommandInstancesIndex,seperator=%2C,returnType=path,append=false
+      xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=thingDescBrowser,thing=xworker.lang.command.CommandInstancesIndex,seperator=%2C,returnType=path,append=false
       sreadOnly
       false
       sinheritDescription
@@ -1097,8 +1654,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1138,8 +1693,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1181,8 +1734,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1222,8 +1773,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1263,8 +1812,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1306,8 +1853,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1349,8 +1894,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1392,8 +1935,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1433,8 +1974,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1474,8 +2013,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1517,8 +2054,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1558,8 +2093,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1599,8 +2132,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1642,8 +2173,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1683,8 +2212,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1726,8 +2253,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1767,8 +2292,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1808,8 +2331,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1853,8 +2374,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1894,8 +2413,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1937,8 +2454,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -1982,8 +2497,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2027,8 +2540,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2074,8 +2585,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2117,8 +2626,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2160,8 +2667,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2203,8 +2708,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2246,8 +2749,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -2289,8 +2790,6 @@ return self.doAction("get" + type, actionContext);
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -3047,6 +3546,8 @@ return self.doAction("get" + type, actionContext);
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   smodifier
@@ -3057,7 +3558,15 @@ return self.doAction("get" + type, actionContext);
   icons/application_go.png
   Sdescription
 #$@text#$@
-<p>实现了run方法，执行后进入打开一个Composite。</p>
+<p>实现了run方法，执行后切换到设置的Composite。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用command.setResult(Object value)方法设置当前命令的返回值。</p>
+
+<p><strong>回到命令界面</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 必须先执行command.setResult(Object value)方法，然后使用commandExecutor.checkStatus()方法。默认有一个返回按钮。</p>
 
 <p><strong>变量上下文</strong></p>
 
@@ -3068,7 +3577,19 @@ return self.doAction("get" + type, actionContext);
 	命令所在的环境的变量上下文，如模型编辑器的变量上下文。<br />
 	&nbsp;</li>
 	<li><strong>executorContext: ActionContext</strong><br />
-	命令执行器的变量上下文。&nbsp;&nbsp;&nbsp;</li>
+	命令执行器的变量上下文。&nbsp;&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>command: Command</strong><br />
+	当前命令。<br />
+	&nbsp;</li>
+	<li><strong>commandDomain: CommandDomain</strong><br />
+	当前命令所属的域。<br />
+	&nbsp;</li>
+	<li><strong>executor或commandExecutor: CommandExecutor</strong><br />
+	命令执行器。<br />
+	&nbsp;</li>
+	<li><strong>域参数</strong><br />
+	commandDomain所设置的参数也会全部放入到变量上下文中。</li>
 </ul>
 
 <p>&nbsp;&nbsp;&nbsp; 新创建的变量上下文会以<strong>domainCompositeContext</strong>或<strong>compositeContext</strong>保存到命令执行器的变量上下文中。</p>
@@ -3144,6 +3665,14 @@ return self.doAction("get" + type, actionContext);
       Scode
 #$@text#$@
 import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+def composite = self.doAction("getComposite", actionContext);
+if(composite == null){
+   def tip = UtilString.getString("lang:d=Composite为空!&en=Composite not setted!", actionContext);
+   commandExecutor.setTip(tip);   
+   return;
+}
 
 //使用独立的变量上下文
 def ac = new ActionContext();
@@ -3151,72 +3680,64 @@ for(param in command.getParams()){
     String name = param.paramThing.getMetadata().getName();
     ac.put(name, param.getResult(actionContext));
 }
+ac.putAll(commandDomain.getParams());
 ac.put("domainContext", actionContext);
 ac.put("executorContext", executorContext);
 ac.put("command", command);	
 ac.put("commandExecutor", commandExecutor);
 ac.put("executor", commandExecutor);
+ac.put("commandDomain", commandDomain);
 
-def composite = self.doAction("getComposite", actionContext);
-if(self.doAction("isDomainComposite", actionContext)){
-    executorContext.g().put("domainCompositeContext", ac);
+executorContext.g().put("compositeContext", ac);
 
-    //运行在domainContext
-    def parent = self.doAction("getDomainParent", actionContext);
-    ac.put("parent", parent);
-    ac.put("parentContext", actionContext);
-    
-    if(self.doAction("isDomainParentClear", actionContext)){  
-        for(child in parent.getChildren()){
-            child.dispose();
-        }
-    }
+//运行在命令的
+ac.put("parent", executorContext.get("contentComposite"));	
+command.setExecuted(false);
 
-    composite.doAction("create", ac);
-    parent.layout();
-}else{
-    executorContext.g().put("compositeContext", ac);
-    
-    //运行在命令的
-    ac.put("parent", executorContext.get("contentComposite"));	
-    command.setExecuted(false);
-    
-    //先清除原来的内容
-    for(child in executorContext.contentComposite.getChildren()){
-        child.dispose();
-    }
-    
-    //创建界面
-    def prototype = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@composite");
-    def parentComposite = prototype.doAction("create", ac);
-    
-    //创建命令的Composite
-    ac.peek().put("parent", ac.contentComposite);
-    if(composite != null){
-        composite.doAction("create", ac);
-    }
-    
-    //创建按钮
-    ac.peek().put("parent", ac.buttonComposite);
-    for(buttons in self.getChilds("Buttons")){
-        for(button in buttons.getChilds("Button")){
-            button.doAction("create", ac);
-        }
-    }
-    def returnButton = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@11780");
-    returnButton.doAction("create", ac);
-    
-    //切换界面
-    executorContext.contentComposite.layout();
-    executorContext.mainStackLayout.topControl = executorContext.contentComposite;
-    executorContext.mainComposite.layout();
+//先清除原来的内容
+for(child in executorContext.contentComposite.getChildren()){
+    child.dispose();
 }
+
+//创建界面
+def prototype = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@composite");
+def parentComposite = prototype.doAction("create", ac);
+def buttonComposite = ac.buttonComposite;
+
+//创建命令的Composite
+ac.peek().put("parent", ac.contentComposite);
+if(composite != null){
+    composite.doAction("create", ac);
+}
+
+//创建按钮
+ac.peek().put("parent", buttonComposite);
+for(buttons in self.getChilds("Buttons")){
+    for(button in buttons.getChilds("Button")){
+        button.doAction("create", ac);
+    }
+}
+
+//常用按钮
+def moveToTabButton = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@11780");
+ac.g().put("__executor_moveButton__", moveToTabButton.doAction("create", ac));
+def returnButton = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@117801");
+ac.g().put("__executor_returnButton__", returnButton.doAction("create", ac));
+ac.g().put("__executor_root_composite__", parentComposite);
+
+//切换界面
+executorContext.contentComposite.layout();
+executorContext.mainStackLayout.topControl = executorContext.contentComposite;
+executorContext.mainComposite.layout();
+executorContext.contentComposite.setFocus();
 #$@text#$@
       sinterpretationType
       Action
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false
@@ -3259,8 +3780,6 @@ if(self.doAction("isDomainComposite", actionContext)){
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -3283,135 +3802,6 @@ if(self.doAction("isDomainComposite", actionContext)){
       false
       sid
       getComposite
-      @/@CompoisteCommand/@actions/@isDomainComposite
-      sname
-      isDomainComposite
-      sattributeName
-      domainComposite
-      sBoolean
-      false
-      sinterpretationType
-      Self
-      sattributeTemplate
-      false
-      schildsAttributeTemplate
-      false
-      svarScope
-      Local
-      sisSynchronized
-      false
-      sthrowException
-      true
-      suseOtherAction
-      false
-      screateLocalVarScope
-      false
-      ssaveReturn
-      false
-      sdisableGlobalContext
-      false
-      sdebugLog
-      false
-      sdescriptors
-      xworker.lang.actions.ActionUtil/@GetBoolean
-      sinheritDescription
-      false
-      sth_createIndex
-      false
-      sth_registMyChilds
-      false
-      sth_registDisabled
-      false
-      sth_mark
-      false
-      sid
-      isDomainComposite
-      @/@CompoisteCommand/@actions/@getDomainParent
-      sname
-      getDomainParent
-      sattributeName
-      domainParent
-      snotNull
-      false
-      sinterpretationType
-      Self
-      sattributeTemplate
-      false
-      schildsAttributeTemplate
-      false
-      svarScope
-      Local
-      sisSynchronized
-      false
-      sthrowException
-      true
-      suseOtherAction
-      false
-      screateLocalVarScope
-      false
-      ssaveReturn
-      false
-      sdisableGlobalContext
-      false
-      sdebugLog
-      false
-      sdescriptors
-      xworker.lang.actions.ActionUtil/@GetData
-      sinheritDescription
-      false
-      sth_createIndex
-      false
-      sth_registMyChilds
-      false
-      sth_registDisabled
-      false
-      sth_mark
-      false
-      sid
-      getDomainParent
-      @/@CompoisteCommand/@actions/@isDomainParentClear
-      sname
-      isDomainParentClear
-      sattributeName
-      domainParentClear
-      sBoolean
-      false
-      sinterpretationType
-      Self
-      sattributeTemplate
-      false
-      schildsAttributeTemplate
-      false
-      svarScope
-      Local
-      sisSynchronized
-      false
-      sthrowException
-      true
-      suseOtherAction
-      false
-      screateLocalVarScope
-      false
-      ssaveReturn
-      false
-      sdisableGlobalContext
-      false
-      sdebugLog
-      false
-      sdescriptors
-      xworker.lang.actions.ActionUtil/@GetBoolean
-      sinheritDescription
-      false
-      sth_createIndex
-      false
-      sth_registMyChilds
-      false
-      sth_registDisabled
-      false
-      sth_mark
-      false
-      sid
-      isDomainParentClear
     @/@CompoisteCommand/@name
     sname
     name
@@ -3517,129 +3907,6 @@ if(self.doAction("isDomainComposite", actionContext)){
     false
     sid
     hasContents
-    @/@CompoisteCommand/@domainComposite
-    sname
-    domainComposite
-    sinputtype
-    truefalse
-    sshowLabel
-    true
-    slabelAlign
-    right
-    slabelVAlign
-    baseline
-    smodifier
-    public
-    sreadOnly
-    false
-    sdefault
-    false
-    sinheritDescription
-    false
-    sdescription
-    <p>是否是作用于domainContext的Composite。默认是针对命令执行器本身的。</p>
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    domainComposite
-    @/@CompoisteCommand/@domainParent
-    sname
-    domainParent
-    ssize
-    50
-    sshowLabel
-    true
-    slabelAlign
-    right
-    slabelVAlign
-    baseline
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    domainParent
-    @/@CompoisteCommand/@domainParentClear
-    sname
-    domainParentClear
-    sinputtype
-    truefalse
-    sshowLabel
-    true
-    slabelAlign
-    right
-    slabelVAlign
-    baseline
-    smodifier
-    public
-    sreadOnly
-    false
-    sdefault
-    true
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    domainParentClear
     @/@CompoisteCommand/@composite
     sname
     composite
@@ -3887,6 +4154,451 @@ if(self.doAction("isDomainComposite", actionContext)){
       false
       sid
       Button
+  @/@CompoisteCommand1
+  sname
+  TabCompoisteCommand
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.command.CommandDomain/@Command
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  sicon
+  icons/application_go.png
+  Sdescription
+#$@text#$@
+<p>实现了run方法，执行后在TabFolder部分打开一个Composite。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; null.</p>
+
+<p><strong>变量上下文</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Composite使用新建的独立的变量上下文。常用的变量如下：</p>
+
+<ul>
+	<li><strong>domainContext: ActionContext</strong><br />
+	命令所在的环境的变量上下文，如模型编辑器的变量上下文。<br />
+	&nbsp;</li>
+	<li><strong>executorContext: ActionContext</strong><br />
+	命令执行器的变量上下文。&nbsp;&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>command: Command</strong><br />
+	当前命令。<br />
+	&nbsp;</li>
+	<li><strong>commandDomain: CommandDomain</strong><br />
+	当前命令所属的域。<br />
+	&nbsp;</li>
+	<li><strong>executor或commandExecutor: CommandExecutor</strong><br />
+	命令执行器。<br />
+	&nbsp;</li>
+	<li><strong>域参数</strong><br />
+	commandDomain所设置的参数也会全部放入到变量上下文中。</li>
+</ul>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>Thing getComposite()</strong><br />
+	返回Composite事物。<br />
+	&nbsp;</li>
+	<li><strong>String getLabel()</strong><br />
+	放回标题。默认是返回自己的Label。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  CompoisteCommand1
+    @/@CompoisteCommand1/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@CompoisteCommand1/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+
+def composite = self.doAction("getComposite", actionContext);
+if(composite == null){
+   def tip = UtilString.getString("lang:d=Composite为空!&en=Composite not setted!", actionContext);
+   commandExecutor.setTip(tip);   
+   return;
+}
+
+def tabItem = new CTabItem(executorContext.mainTabFolder, SWT.CLOSE);
+
+//使用独立的变量上下文
+def ac = new ActionContext();
+for(param in command.getParams()){
+    String name = param.paramThing.getMetadata().getName();
+    ac.put(name, param.getResult(actionContext));
+}
+ac.putAll(commandDomain.getParams());
+ac.put("domainContext", actionContext);
+ac.put("executorContext", executorContext);
+ac.put("command", command);	
+ac.put("commandExecutor", commandExecutor);
+ac.put("executor", commandExecutor);
+ac.put("commandDomain", commandDomain);
+ac.put("parent", executorContext.mainTabFolder);
+def control = composite.doAction("create", ac);
+
+def label = self.doAction("getLabel", ac);
+if(label != null && label != ""){
+    tabItem.setText(label);
+}else{
+    tabItem.setText(self.getMetadata().getLabel());
+}   
+tabItem.setControl(control);
+executorContext.mainTabFolder.setSelection(tabItem);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@CompoisteCommand1/@actions/@getComposite
+      sname
+      getComposite
+      sattributeName
+      composite
+      schildThingName
+      Composite
+      schildThingFirstChild
+      false
+      sreturnSelf
+      false
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getComposite
+      @/@CompoisteCommand1/@actions/@getLabel
+      sname
+      getLabel
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      scode
+      return self.getMetadata().getLabel();
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      getLabel
+    @/@CompoisteCommand1/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@CompoisteCommand1/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@CompoisteCommand1/@hasContents
+    sname
+    hasContents
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否有可选择的内容，如果有当选择这个命令后命令执行器即选择内容，否则命令执行器执行其它操作，如检查参数等。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    hasContents
+    @/@CompoisteCommand1/@composite
+    sname
+    composite
+    sinputtype
+    dataSelector
+    ssize
+    60
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    composite
+    @/@CompoisteCommand1/@Composite
+    sname
+    Composite
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.swt.widgets.Composite
+    smany
+    true
+    seditCols
+    2
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    Composite
   @/@CallCommand
   sname
   CallCommandDomain
@@ -3898,6 +4610,8 @@ if(self.doAction("isDomainComposite", actionContext)){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   smodifier
@@ -3906,37 +4620,34 @@ if(self.doAction("isDomainComposite", actionContext)){
   false
   Sdescription
 #$@text#$@
-<p>执行一个子命令域。</p>
+<p>执行一个子命令域，其中参数会放到命令域的参数中，这样命令域中所有的命令都可以看到这些参数变量。</p>
 
 <p><strong>变量上下文</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 执行器使用独立的变量上下文，以下是常用变量。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;使用上级命令域的变量上下文，可以保存<strong>参数</strong>，参数的变量在执行命令相关方法时会带入到变量上下文中。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;注意以下变量名不能用于参数中，默认已经使用了：</p>
 
 <ul>
-	<li><strong>parentContext: ActionContext</strong><br />
-	父执行器的变量上下文。<br />
+	<li><strong>text: String</strong><br />
+	命令执行器界面中输入的文本。<br />
 	&nbsp;</li>
-	<li><strong>parentExecutor: CommandExecutor</strong><br />
-	父命令执行器。<br />
+	<li><strong>executor、commandExecutor: CommandExecutor</strong><br />
+	命令执行器。<br />
 	&nbsp;</li>
-	<li><strong>parentCommand: Command&nbsp;&nbsp;&nbsp; </strong><br />
-	调用子命令域的命令。</li>
+	<li><strong>command: Command</strong><br />
+	当前选中的命令。</li>
 </ul>
 
-<p><strong>返回值和返回父命令执行器的方法</strong></p>
+<p><strong>返回上级命令域的方法</strong></p>
 
-<pre class="brush:java;">
-parentCommand.setResult((Object) result);
-parentExecutor.checkStatus();</pre>
+<p>&nbsp;&nbsp;&nbsp; 可以调用executor.popDomain()方法，也可以使用ReturnToParentDomain命令。</p>
 
 <p><strong>可以重写的方法</strong></p>
 
 <ul>
 	<li><strong>Thing getCommandDomain()</strong><br />
-	返回要执行的CommandDomain事物。&nbsp;&nbsp;<br />
-	&nbsp;</li>
-	<li><strong>void onEnter(CommandExecutor childExecutor, Command command)</strong><br />
-	进入了子命令执行器时触发的方法，其中childExecutor是子命令。</li>
+	返回要执行的CommandDomain事物。&nbsp;&nbsp;</li>
 </ul>
 
 <p>&nbsp;&nbsp;参看<a href="http://localhost:9001/do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.command.CommandDomain/@Command"><font color="#0066cc">Command</font></a>。</p>
@@ -3989,15 +4700,28 @@ parentExecutor.checkStatus();</pre>
 #$@text#$@
 import org.xmeta.ActionContext;
 
+//要调用的子域
+def commandDomain = self.doAction("getCommandDomain", actionContext);
+if(commandDomain == null){
+    return null;
+}
+
+//参数
+def params = [:];
+params.put("parentCommand", command);
+for(param in command.getParams()){
+    String name = param.paramThing.getMetadata().getName();
+    params.put(name, param.getResult(actionContext));
+}
+
+executor.pushDomain(commandDomain, actionContext, params);
+
+/*
 //先清除原来的内容
 for(child in executorContext.contentComposite.getChildren()){
     child.dispose();
 }
 
-def commandDomain = self.doAction("getCommandDomain", actionContext);
-if(commandDomain == null){
-    return null;
-}
 
 //使用独立的变量上下文
 def ac = new ActionContext();
@@ -4030,12 +4754,18 @@ executor.reset();
 executorContext.contentComposite.layout();
 executorContext.mainStackLayout.topControl = executorContext.contentComposite;
 executorContext.mainComposite.layout();
+
+//设置焦点 
+ac.commandExecutor.getActionContext().commandSelector.doAction("setFocus", ac);
+*/
 #$@text#$@
       sinterpretationType
       Action
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false
@@ -4078,8 +4808,6 @@ executorContext.mainComposite.layout();
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -4121,8 +4849,6 @@ executorContext.mainComposite.layout();
       false
       sthrowException
       true
-      suseOtherAction
-      false
       screateLocalVarScope
       false
       ssaveReturn
@@ -5050,3 +5776,337 @@ if(exts.size() > 0){
     false
     sid
     Constant
+  @/@ReturnToParentDomain
+  sname
+  ReturnToParentDomain
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.command.CommandDomain/@Command
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  sdescription
+  <p>在被调用的CommandDomain中使用，用于返回上一级CommandDomain。</p>
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  ReturnToParentDomain
+    @/@ReturnToParentDomain/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@ReturnToParentDomain/@actions/@run
+      sname
+      run
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.command.CommandActions/@ReturnToParentExecutor
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+  @/@PredefinedDomains
+  sname
+  PredefinedDomains
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  PredefinedDomains
+    @/@PredefinedDomains/@CommandDomain
+    sname
+    CommandDomain
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@thing
+    sextends
+    xworker.lang.command.CommandDomain
+    smany
+    true
+    seditCols
+    2
+    sformNoLabel
+    false
+    sinitialization
+    false
+    smodifier
+    public
+    sinheritDescription
+    true
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    CommandDomain
+  @/@QuickContent
+  sname
+  QuickContent
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing,xworker.lang.MetaDescriptor3/@actions
+  sextends
+  xworker.swt.xwidgets.QuickContent,xworker.lang.command.CommandDomain/@Command
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  QuickContent
+    @/@QuickContent/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@QuickContent/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+def composite = self;
+
+//使用独立的变量上下文
+def ac = new ActionContext();
+for(param in command.getParams()){
+    String name = param.paramThing.getMetadata().getName();
+    ac.put(name, param.getResult(actionContext));
+}
+ac.putAll(commandDomain.getParams());
+ac.put("domainContext", actionContext);
+ac.put("executorContext", executorContext);
+ac.put("command", command);	
+ac.put("commandExecutor", commandExecutor);
+ac.put("executor", commandExecutor);
+ac.put("commandDomain", commandDomain);
+
+executorContext.g().put("compositeContext", ac);
+
+//运行在命令的
+ac.put("parent", executorContext.get("contentComposite"));	
+command.setExecuted(false);
+
+//先清除原来的内容
+for(child in executorContext.contentComposite.getChildren()){
+    child.dispose();
+}
+
+//创建界面
+def prototype = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@composite");
+def parentComposite = prototype.doAction("create", ac);
+
+//创建命令的Composite
+ac.peek().put("parent", ac.contentComposite);
+if(composite != null){
+    composite.doAction("create", ac);
+}
+
+//创建按钮
+ac.peek().put("parent", ac.buttonComposite);
+for(buttons in self.getChilds("Buttons")){
+    for(button in buttons.getChilds("Button")){
+        button.doAction("create", ac);
+    }
+}
+
+//常用按钮
+def moveToTabButton = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@11780");
+ac.g().put("__executor_moveButton__", moveToTabButton.doAction("create", ac));
+def returnButton = world.getThing("xworker.lang.command.prototypes.CompositeCommoand/@117801");
+ac.g().put("__executor_returnButton__", returnButton.doAction("create", ac));
+
+ac.g().put("__executor_root_composite__", parentComposite);
+
+//切换界面
+executorContext.contentComposite.layout();
+executorContext.mainStackLayout.topControl = executorContext.contentComposite;
+executorContext.mainComposite.layout();
+executorContext.contentComposite.setFocus();
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run

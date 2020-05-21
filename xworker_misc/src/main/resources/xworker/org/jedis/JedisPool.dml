@@ -1,13 +1,15 @@
-%1571275973654
+%1585795430076
 @
 sname=JedisPool
 slabel=JedisPool
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
+sdefaultEditor=form
 Sdescription=
 #$@text#$@
 <p>JedisPool。</p>
@@ -49,6 +51,7 @@ sth_mark=false
     svarScope=Global
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@JavaAction
     sinheritDescription=false
@@ -68,7 +71,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -90,7 +92,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -112,7 +113,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -135,7 +135,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -157,7 +156,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -333,3 +331,157 @@ sth_mark=false
   sth_fileMonitor=false
   sth_mark=false
   sid=description
+  @/@sswtMenus
+  sname=sswtMenus
+  slabel=sswtMenus
+  sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus
+  sid=sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname=menuDefine
+    slabel=menuDefine
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sid=menuDefine
+      @/@sswtMenus/@menuDefine/@DataSource
+      sname=Jedis
+      slabel=Jedis
+      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+      sid=DataSource
+    @/@sswtMenus/@DataSource
+    sname=Jedis
+    stype=data
+    smenuType=Jedis
+    slabel=Jedis
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_deprecated=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=DataSource
+      @/@sswtMenus/@DataSource/@testDataSource
+      sname=testDataSource
+      slabel=测试连接
+      sisSplit=false
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sid=testDataSource
+        @/@sswtMenus/@DataSource/@testDataSource/@actions
+        sname=actions
+        slabel=actions
+        sdescriptors=xworker.lang.Menu/@actions
+        sid=actions
+          @/@sswtMenus/@DataSource/@testDataSource/@actions/@test
+          sname=test
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Local
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+
+import org.eclipse.swt.widgets.MessageBox;
+
+import org.xmeta.ActionContext;
+
+def coolBar = actionContext.get("coolBar");
+def thing = actionContext.get("currentThing");
+def display = coolBar.getShell().display;
+def success = success;
+def failure = failure;
+new Thread({
+    display.asyncExec({
+        try{
+            def ac = new ActionContext();
+            def pool = thing.doAction("getJedisPool", actionContext);
+            if(pool == null || pool.isClosed()){
+                failure(actionContext);
+                return;
+            }
+            success(actionContext);
+        }catch(Exception e){
+            failure(actionContext);
+        }
+    });
+}).start();
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sid=test
+            @/@sswtMenus/@DataSource/@testDataSource/@actions/@test/@ActionDefined
+            sname=ActionDefined
+            sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            sid=ActionDefined
+              @/@sswtMenus/@DataSource/@testDataSource/@actions/@test/@ActionDefined/@msg
+              sname=success
+              sshell=ognl:coolBar.getShell()
+              sicon=ICON_INFORMATION
+              sbuttons=OK
+              stitle=lang:d=测试Jedis&en=Test Jedis
+              smessage=lang:d=测试成功，Jedis已连接服务器。&en=Test successed, Jedis has connected to server.
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sswitchResult=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_noThingRegistViewer=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sth_registQueryOnlySelf=false
+              sid=msg
+              @/@sswtMenus/@DataSource/@testDataSource/@actions/@test/@ActionDefined/@msg1
+              sname=failure
+              sshell=ognl:coolBar.getShell()
+              sicon=ICON_ERROR
+              sbuttons=OK
+              stitle=lang:d=测试Jedis&en=Test Jedis
+              smessage=lang:d=测试失败，Jedis连接服务器失败。&en=Test failed, jedis failed to connect to the server.
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sswitchResult=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_noThingRegistViewer=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sth_registQueryOnlySelf=false
+              sid=msg1

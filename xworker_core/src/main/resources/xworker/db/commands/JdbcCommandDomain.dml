@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="JdbcCommandDomain" descriptors="xworker.lang.command.CommandDomain">
+    <actions>
+        <GroovyAction name="getCommands">
+            <code><![CDATA[import java.lang.String;
+import xworker.util.XWorkerUtils;
+
+def dataSource = self.get("dataSource");
+//println dataSource;
+commandExecutor.getDomainActionContext().g().put("dataSource", dataSource);
+
+//取公共的
+def commonDomain = world.getThing("xworker.db.commands.CommonCommandDoamin");
+commands = commonDomain.doAction("getCommands", actionContext);
+
+//取数据库相关的
+def dbType = dataSource.doAction("getDbType", actionContext);
+if(dbType != null){
+    dbType = dbType.toLowerCase();
+ 
+    def typeDomain = null;
+    if(dbType.indexOf("mysql") != -1){
+        typeDomain = world.getThing("xworker.db.commands.MysqlCommandDomain");
+    }else if(dbType.indexOf("oracle") != -1){
+        typeDomain = world.getThing("xworker.db.commands.MysqlCommandDomain");
+    }
+    
+    if(typeDomain != null){
+        commands.addAll(typeDomain.doAction("getCommands", actionContext));
+    }
+}
+
+//获取注册到dataSource上的命令
+def things = XWorkerUtils.searchRegistThings(dataSource, "command", [], actionContext);
+if(things != null){
+    commands.addAll(things);
+}
+
+return commands;]]></code>
+        </GroovyAction>
+    </actions>
+</CommandDomain>

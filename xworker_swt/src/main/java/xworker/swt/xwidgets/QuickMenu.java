@@ -17,6 +17,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
@@ -25,7 +26,8 @@ import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 
 public class QuickMenu {
-	private static Logger logger = LoggerFactory.getLogger(QuickMenu.class);
+	//private static Logger logger = LoggerFactory.getLogger(QuickMenu.class);
+	private static final String TAG = QuickMenu.class.getName();
 	private static SelectionListener listener = new SelectionListener(){
 
 		@Override
@@ -34,47 +36,50 @@ public class QuickMenu {
 
 		@Override
 		public void widgetSelected(SelectionEvent event) {
-			//System.out.println("Quick menu selected");
 			Thing thing = (Thing) event.widget.getData();
 			Thing menuThing = (Thing) event.widget.getData("menuThing");
 			ActionContext actionContext = (ActionContext) event.widget.getData("actionContext");
-			
-			boolean debug = menuThing != null && menuThing.getBoolean("debug");
-			if(debug && event.stateMask == SWT.CTRL && Designer.isEnabled()){
-				//编辑Item
-				Thing editor = World.getInstance().getThing("xworker.swt.xwidgets.prototypes.QuickItemEditor");
-				ActionContext ac = new ActionContext();
-				ac.put("parent", event.widget.getDisplay().getActiveShell());
-				ac.put("parentContext", actionContext);
-				Shell shell = editor.doAction("create", ac);
-				ActionContainer thingEditor = ac.getObject("thingEditor");
-				thingEditor.doAction("setThing", actionContext, "thing", thing);
-				shell.setText(thing.getMetadata().getLabel());
-				shell.open();
-				return;
-			}
-			
-			QuickWidgetUtils.invokeEvent(event, thing, "run", actionContext);
-			/*
-			try{
-				String actionContainer = thing.getStringBlankAsNull("actionContainer");
-				String actionName = thing.getStringBlankAsNull("actionName");
-				if(actionName != null && actionContainer != null){
-					ActionContainer ac = (ActionContainer) actionContext.get(actionContainer);
-					if(ac != null){
-						ac.doAction(actionName, actionContext, "event", event, "menuThing", thing);
-					}
-				}else{
-					Thing acThing = thing.doAction("getActionThing", actionContext);
-					if(acThing != null) {
-						acThing.doAction("run", actionContext, "event", event, "menuThing", thing);
-					}else {
-						thing.doAction("run", actionContext, "event", event);
-					}
+			try {
+				//System.out.println("Quick menu selected");
+				boolean debug = menuThing != null && menuThing.getBoolean("debug");
+				if(debug && event.stateMask == SWT.CTRL && Designer.isEnabled()){
+					//编辑Item
+					Thing editor = World.getInstance().getThing("xworker.swt.xwidgets.prototypes.QuickItemEditor");
+					ActionContext ac = new ActionContext();
+					ac.put("parent", event.widget.getDisplay().getActiveShell());
+					ac.put("parentContext", actionContext);
+					Shell shell = editor.doAction("create", ac);
+					ActionContainer thingEditor = ac.getObject("thingEditor");
+					thingEditor.doAction("setThing", actionContext, "thing", thing);
+					shell.setText(thing.getMetadata().getLabel());
+					shell.open();
+					return;
 				}
+				
+				QuickWidgetUtils.invokeEvent(event, thing, "run", actionContext);
+				/*
+				try{
+					String actionContainer = thing.getStringBlankAsNull("actionContainer");
+					String actionName = thing.getStringBlankAsNull("actionName");
+					if(actionName != null && actionContainer != null){
+						ActionContainer ac = (ActionContainer) actionContext.get(actionContainer);
+						if(ac != null){
+							ac.doAction(actionName, actionContext, "event", event, "menuThing", thing);
+						}
+					}else{
+						Thing acThing = thing.doAction("getActionThing", actionContext);
+						if(acThing != null) {
+							acThing.doAction("run", actionContext, "event", event, "menuThing", thing);
+						}else {
+							thing.doAction("run", actionContext, "event", event);
+						}
+					}
+				}catch(Exception e){
+					logger.warn("QuickMenu selection error， path=" + thing.getMetadata().getPath(), e);
+				}*/
 			}catch(Exception e){
-				logger.warn("QuickMenu selection error， path=" + thing.getMetadata().getPath(), e);
-			}*/
+				Executor.error(TAG, "Menu selection error, path=" + thing.getMetadata().getPath(), e);
+			}
 		}		
 	};
 

@@ -13,6 +13,8 @@ public class ExecuteRequest {
 	ExecutorService executorService;
 	ExecutorService uiExecutorService;
 	Map<String, Object> datas = new HashMap<String, Object>();
+	//UI所在的变量上下文，如果存在
+	ActionContext uiActionContext;
 	
 	public ExecuteRequest(Thing thing, ActionContext actionContext) {
 		this.thing = thing;
@@ -69,10 +71,16 @@ public class ExecuteRequest {
 	}
 	
 	public Object createSWT(Object parent, ActionContext actionContext) {
-		actionContext.g().put("request", this);		
-		actionContext.peek().put("parent", parent);
+		uiActionContext= actionContext;
+		actionContext.g().put("variables", variables);
+		actionContext.g().put("request", this);		  //一般都是使用的独立的变量上下文，所以放在g()里时允许的
+		actionContext.peek().put("parent", parent);		
 		
 		return thing.doAction("createSWT", actionContext);
+	}
+	
+	public ActionContext getUIActionContext() {
+		return uiActionContext;
 	}
 
 	public Thing getThing() {
@@ -85,6 +93,10 @@ public class ExecuteRequest {
 
 	public Map<String, Object> getVariables() {
 		return variables;
+	}
+	
+	public void putVariable(String key , Object value) {
+		variables.put(key, value);
 	}
 
 	public ExecutorService getExecutorService() {

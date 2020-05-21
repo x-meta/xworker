@@ -105,7 +105,7 @@ public class DataSouceActionContextActions {
 			
 		}else if(dsPath.startsWith("_c_.")) {
 			dsPath = dsPath.substring(4, dsPath.length());
-			dataSourceThing = Configuration.getConfiguration(dsPath, "xworker.db.jdbc.DataSource", realSelf != null ? realSelf : self, acContext);
+			dataSourceThing = Configuration.getConfiguration(dsPath, realSelf != null ? realSelf : self, acContext);
 		}
 
 		if(dataSourceThing == null){

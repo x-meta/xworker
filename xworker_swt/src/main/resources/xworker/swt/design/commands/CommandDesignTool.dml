@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<DesignTool name="CommandDesignTool" descriptors="xworker.swt.design.DesignTool" group="-10000|设计"
+     en_group="-10000|Design" description="通过命令设计SWT界面。" en_description="Design swt with command."
+     th_createIndex="true" th_registThing="design|xworker.swt.widgets.Widget">
+    <Composite name="command" label="命令" width="640" height="480" group="-10000|设计" en_label="Command"
+         en_group="-10000|Design">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <CommandExecutor name="commandExecutor" commandDomain="xworker.swt.design.commands.DesignCommandDomain"></CommandExecutor>
+            <ActionContainer name="actions">
+                <GroovyAction name="handleNewControl">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.design.Designer;
+
+def controlThing = Designer.getThing(newControl);
+commandExecutor.getDomainActionContext().g().put("controlThing", controlThing);
+commandExecutor.getDomainActionContext().g().put("control", newControl);
+commandExecutor.reset();
+
+return true;]]></code>
+                </GroovyAction>
+            </ActionContainer>
+            <Code name="init">
+                <code><![CDATA[import xworker.swt.design.Designer;
+//注册toolActions
+parentContext.g().put("toolActions", actions);
+
+def controlThing = Designer.getThing(parentContext.control);
+commandExecutor.getDomainActionContext().g().put("controlThing", controlThing);
+commandExecutor.getDomainActionContext().g().put("control", parentContext.control);
+commandExecutor.reset();]]></code>
+            </Code>
+        </Composite>
+    </Composite>
+</DesignTool>

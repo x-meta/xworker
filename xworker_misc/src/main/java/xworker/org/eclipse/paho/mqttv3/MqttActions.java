@@ -71,7 +71,7 @@ public class MqttActions {
 			for(String topic : topics) {
 				topic = topic.trim();
 				if(!"".equals(topic)) {
-					//client.subscribe(topic);
+					client.subscribe(topic);
 				}
 			}
 		}

@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
+import xworker.util.UtilAction;
 
 public class ThreadActions implements Runnable{
 	Thing thing;
@@ -27,13 +29,20 @@ public class ThreadActions implements Runnable{
 			Executor.push(executorService);
 		}
 		try {
+			Bindings bindings = actionContext.push();
+			
 			if(params != null){
-				thing.doAction("doAction", actionContext, params);
-			}else{
-				thing.doAction("doAction", actionContext);
+				bindings.putAll(params);			
 			}
+			
+			thing.doAction("doAction", actionContext);
+			UtilAction.runChildActions(thing.getChilds(), actionContext, true);			
 		}finally {
-			Executor.pop();
+			actionContext.pop();
+			
+			if(executorService != null) {
+				Executor.pop();
+			}
 		}
 	}
 	

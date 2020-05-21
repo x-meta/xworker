@@ -17,31 +17,30 @@ public class PropertiesActions {
 	public static Properties createProperties(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		String strategy = self.getStringBlankAsNull("strategy");
-		String propertiesFile1 = self.getStringBlankAsNull("propertiesFile1");
-		String propertiesFile2 = self.getStringBlankAsNull("propertiesFile2");
-		String propertiesFile3 = self.getStringBlankAsNull("propertiesFile3");
+		File propertiesFile1 = self.doAction("getPropertiesFile1", actionContext);
+		File propertiesFile2 = self.doAction("getPropertiesFile2", actionContext);
+		File propertiesFile3 = self.doAction("getPropertiesFile3", actionContext);
 		
 		Properties p = new Properties();
 		boolean loadAll = "all".equals(strategy);
-		if(!loadAll && loadProperties(p, propertiesFile1)){
+		if(loadProperties(p, propertiesFile1) && !loadAll){
 			return p;
 		}
-		if(!loadAll && loadProperties(p, propertiesFile2)){
+		if(loadProperties(p, propertiesFile2) && !loadAll){
 			return p;
 		}
-		if(!loadAll && loadProperties(p, propertiesFile3)){
+		if(loadProperties(p, propertiesFile2) && !loadAll){
 			return p;
 		}
 		
 		return p;
 	}
 	
-	private static boolean loadProperties(Properties p, String fileName){
-		if(fileName == null || "".equals(fileName)){
+	private static boolean loadProperties(Properties p, File file){
+		if(file == null || file.exists() == false){
 			return false;
 		}
 		
-		File file = new File(fileName);
 		if(file.exists()){
 			FileInputStream fin = null;
 			try{

@@ -68,18 +68,19 @@ form {
   <td nowrap>
 <form name="nwLoginForm" method="POST" action="${data.loginUrl?if_exists}">
     <input type="hidden" name="command" value="login"/>
+    ${data.formContents?if_exists}
 	<table width="100%"  border="0" cellpadding="0" cellspacing="5">
 	    <tr>
 		  <td nowrap height="18" align="right"><img src="${(request.contextPath)?if_exists}/images/login.jpg"></td>
 		  <td nowrap height="18" class="label-login">用户登录</td>
 	     </tr>
-		  <#if message?exists>
+		  <${r"#"}if message?exists>
 		  <tr>
 				<td nowrap height="18" colspan="2" class="login_text">
-					<span style="color:red;" class="input-3" nowrap>&nbsp;&nbsp;&nbsp;&nbsp;${message?if_exists}</span>
+					<span style="color:red;" class="input-3" nowrap>&nbsp;&nbsp;&nbsp;&nbsp;${r"$"}{message?if_exists}</span>
 				</td>
 		 </tr>
-		  </#if>
+		  </${r"#"}if>
 	      <tr>
 	        <td nowrap width="30%" height="18" align="right" class="input-3">用户名:</td>
 	        <td nowrap width="70%" height="18"><input type="text" name="name" maxlength="30" size="20" value="" id="name" class="input-1"></td>

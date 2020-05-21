@@ -1,4 +1,4 @@
-^1574159883682
+^1586349043341
 @
 sname
 RegisByThing
@@ -135,6 +135,9 @@ import xworker.dataObject.DataObjectList;
 import xworker.dataObject.utils.DbUtil;
 import org.xmeta.Thing;
 import xworker.util.ThingUtils;
+import xworker.lang.executor.Executor;
+
+def TAG = "xworker.ide.db.dbindex.app.dataObject.RegistsByThing.p_1052623121.query";
 
 def sql = "";
 def pathSql = "";
@@ -157,6 +160,8 @@ if(parent == null || !(parent instanceof Boolean)){
     parent = false;
 }
 //println(parent);
+Executor.debug(TAG, "thing={}, registType={}, conditionData={}", 
+     thing.getMetadata().getPath(), registType, actionContext.get("conditionData"));
 //log.info("thing=" + thing + ",registType=" + registType + ",conditionData=" + actionContext.get("conditionData"));
 
 if(keywords != null && keywords != ""){
@@ -172,13 +177,14 @@ if(keywords != null && keywords != ""){
 }
 def paths = [];
 if(thing != null){
+    //context是事物的路径，如果已经有了那么表示已经添加过，因此也用于排除
     def context = [:];
     addExcludes(thing, context);
     def thingIndex = world.getThing("xworker.lang.util.ThingIndex");
     addPath(paths, thing.metadata.path, context);    
-    //log.info("noDescriptor=" + actionContext.get("noDescriptor"));
+    //log.info("noDescriptor=" + actionContext.get("noDescriptor"));    
     if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
-    }else{        
+        //查询不包括当前模型的描述者列表
         for(desc in thing.getAllDescriptors()){            
             if(desc != thingIndex){
                 addExcludes(desc, context);
@@ -186,7 +192,8 @@ if(thing != null){
         }
     }
         
-    if(thing.getBoolean("th_registQueryOnlySelf") == false){
+    if(thing.getBoolean("th_registQueryOnlySelf") == true){
+        //查询不包括当前模型所继承的其它模型
         for(ext in thing.getAllExtends()){
             if(ext != thingIndex){
                 addExcludes(ext, context);
@@ -197,18 +204,32 @@ if(thing != null){
     //println "RegsitByThing:" + thing.getMetadata().getPath()
     //println "    noDescriptor=" + actionContext.get("noDescriptor");
     if(actionContext.get("noDescriptor") == true || thing.getBoolean("th_registQueryOnlySelf")){
-    }else{        
-        for(desc in thing.getAllDescriptors()){            
+    }else{                
+        for(desc in thing.getDescriptors()){            
             if(desc != thingIndex){
-                addPath(paths, desc.metadata.path, context);
+                if(addPath(paths, desc.metadata.path, context)){
+                    for(ext in desc.getAllExtends()){
+                        if(ext != thingIndex){
+                            addPath(paths, ext.metadata.path, context);
+                        }
+                    }
+                }
             }
             //log.info("descPath=" + desc.metadata.path);
         }
     }
-        
-    for(ext in thing.getAllExtends()){
-        if(ext != thingIndex){
-            addPath(paths, ext.metadata.path, context);
+    
+    if(thing.getBoolean("th_registQueryOnlySelf")){
+    }else{   
+        for(ext in thing.getExtends()){
+            //println ext;
+            if(addPath(paths, ext.metadata.path, context)){
+                for(extt in ext.getAllExtends()){
+                    if(extt != thingIndex){
+                        addPath(paths, extt.metadata.path, context);
+                    }
+                }
+            }
         }
     }
     
@@ -220,7 +241,7 @@ if(thing != null){
          }
     }  
     ThingUtils.setSearchRegistLocal(null);
-    
+    Executor.debug(TAG, "paths=", paths);
     //log.info("paths=" + paths);
     //log.info("context=" + context);
     
@@ -245,7 +266,7 @@ if(thing != null){
     
     pathSql = pathSql + ") and registType=?";
     
-    //println(pathSql);
+    Executor.debug(TAG, pathSql);
     def pst = con.prepareStatement(pathSql);
     def index = 1;    
     
@@ -404,10 +425,14 @@ def addExcludes(thing, context){
         }
     }
 }
+
 def addPath(paths, path, context){
     if(context.get(path) == null){
         paths.add(path);
         context.put(path, path);
+        return true;
+    }else{
+        return false;
     }
 }
 #$@text#$@
@@ -469,6 +494,8 @@ def addPath(paths, path, context){
         @/@actions/@query/@ins/@thing
         sname
         thing
+        stype
+        org.xmeta.Thing
         stypeCheck
         false
         soptional
@@ -486,6 +513,8 @@ def addPath(paths, path, context){
         @/@actions/@query/@ins/@registType
         sname
         registType
+        stype
+        java.lang.String
         stypeCheck
         false
         soptional

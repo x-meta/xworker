@@ -1,6 +1,8 @@
 package xworker.swt.design;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,9 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +32,8 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
@@ -37,7 +44,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 
+import xworker.swt.design.DesignShellActions.Item;
 import xworker.swt.design.tools.CTabFolderDesignTools;
 import xworker.swt.design.tools.CompositeDesignTools;
 import xworker.swt.design.tools.CoolBarDesignTools;
@@ -49,6 +58,7 @@ import xworker.swt.design.tools.SashFormDesignTools;
 import xworker.swt.design.tools.ShellDesignTools;
 import xworker.swt.design.tools.TabFolderDesignTools;
 import xworker.swt.design.tools.ToolBarDesignTools;
+import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.widgets.ShellCreator;
 import xworker.util.StringUtils;
@@ -196,7 +206,7 @@ public class DesignTools {
 	}
 	
 	/**
-	 * 返回当前控件是否是容器。
+	 * 返回当前控件是否是SWT的容器。
 	 * 
 	 * @param control
 	 * @return
@@ -528,5 +538,219 @@ public class DesignTools {
 		}else {
 			return parent;
 		}
+	}
+	
+	/**
+	 * 返回一个Control已经注册事件列表。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static List<String> getRegistedListeners(Control control){
+		List<String> listeners = new ArrayList<String>();
+		for(String name : SwtUtils.getListenerNames()) {
+			int type = SwtUtils.getSWT(name);
+			for(Listener lis : control.getListeners(type)) {
+				if(lis instanceof SwtListener) {
+					listeners.add(name);
+					break;
+				}
+			}
+		}
+		
+		return listeners;
+	}
+	
+	public static List<String> getUnregistedListeners(Control control){
+		List<String> listeners = new ArrayList<String>();
+		for(String name : SwtUtils.getListenerNames()) {
+			int type = SwtUtils.getSWT(name);
+			boolean have = false;
+			for(Listener lis : control.getListeners(type)) {
+				if(lis instanceof SwtListener) {
+					have = true;
+					break;
+				}
+			}
+			
+			if(!have) {
+				listeners.add(name);
+			}
+		}
+		
+		return listeners;
+	}
+	
+	
+	/**
+	 * 指定一个控件，返回相关的控件列表，其中列表是树形结构的。
+	 * 
+	 * 相关的控件是指和指定的控件是由同一个事物模型创建的。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static List<Item> getControlItems(Control control){
+		//初始化条目			
+		String thingPath = (String) control.getData("_designer_thingPath");
+		Thing thing = World.getInstance().getThing(thingPath);
+		if(thing == null){
+			return Collections.emptyList();
+		}
+		Thing rootThing = thing.getRoot();
+		Control rootControl = DesignShellActions.getRootControl(control, rootThing);
+		
+		List<Item> items = new ArrayList<Item>();
+		if(rootControl != null) {
+			DesignShellActions.initItem(rootControl, items, rootThing);
+		}
+		
+		return  items;
+	}
+	
+	/**
+	 * 返回控件所在变量上下文。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static ActionContext getActionContext(Control control) {
+		return Designer.getActionContext(control);
+	}
+	
+	/**
+	 * 返回控件是否是模型的属性编辑器中属性对应的控件，如果是那么这里控件一般是不可设计的，因为这些控件一般是自动生成的。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static boolean isAttribute(Control control) {
+		return Designer.isAttribute(control);
+	}
+	
+	/**
+	 * 返回是否是一个组件下的控件。组件是XWorker的复合控件模型创建的，一般不能修改，因为修改后会影响所有的实例，因此通常是禁止修改的。
+	 * 
+	 * @param control
+	 * @return
+	 */
+	public static boolean isComponent(Control control) {
+		return Designer.isUnderCreator(control);
+	}
+	
+	public static Thing getLayoutThing(Control control) {
+		if(DesignTools.hasLayout(control) == false) {
+			return null;
+		}
+		
+		Thing thing = Designer.getThing(control);
+		return thing.getThing("Layout@0");
+	}
+	
+	/**
+	 * 改变布局。
+	 * 
+	 * @param control
+	 * @param layout 可以是FillLayout、GridLayout、RowLayout、FormLayout和StackLayout等。
+	 */
+	public static void changeLayout(Control control, String newLayout) {
+		if(!DesignTools.hasLayout(control)) {
+			return;
+		}
+		
+		Composite composite = (Composite) control;
+		Layout layout = composite.getLayout();
+		Thing thing = Designer.getThing(control);
+		if(layout != null) {
+			if(layout.getClass().getSimpleName().equals(newLayout)) {
+				//相同，没必要切换布局
+				return;
+			}
+			
+			//移除原来的Layout和子节点的Layout
+			Thing layoutThing = getLayoutThing(control);			
+			if(layoutThing != null) {
+				thing.removeChild(layoutThing);
+			}
+			
+			for(Control childControl : composite.getChildren()) {
+				Thing childThing = Designer.getThing(childControl);
+				if(childThing != null) {
+					for(Thing child : childThing.getChilds()) {
+						if(child.isThingByName("LayoutData")) {
+							childThing.removeChild(child);
+							break;
+						}
+					}
+				}
+				childControl.setLayoutData(null);
+			}
+		}
+		
+		//设置新的布局
+		Thing layoutThing = null;
+		if("FillLayout".equals(newLayout)) {
+			layoutThing = new Thing("xworker.swt.Layouts/@FillLayout");
+			thing.addChild(layoutThing);
+		}else if("GridLayout".equals(newLayout)) {
+			layoutThing = new Thing("xworker.swt.layout.GridLayout");
+			thing.addChild(layoutThing);		
+		}else if("RowLayout".equals(newLayout)) {
+			layoutThing = new Thing("xworker.swt.Layouts/@RowLayout");
+			thing.addChild(layoutThing);
+		}else if("StackLayout".equals(newLayout)) {
+			layoutThing = new Thing("xworker.swt.custom.StackLayout");
+			thing.addChild(layoutThing);
+		}else if("FormLayout".equals(newLayout)) {
+			layoutThing = new Thing("xworker.swt.layout.FormLayout");
+			thing.addChild(layoutThing);
+		}
+		
+		if(layoutThing != null) {
+			ActionContext actionContext = Designer.getActionContext(control);
+			layoutThing.doAction("create", actionContext, "parent", control);
+			
+			if("GridLayout".equals(newLayout)) {
+				//初始化子节点的LayoutData，先让它能够显示出来
+				for(Control childControl : composite.getChildren()) {
+					DesignTools.getLayoutDataThing(childControl);
+				}
+			}else {
+				thing.save();
+			}
+		}		
+		
+		composite.layout();
+	}
+	
+	public static Thing getLayoutDataThing(Control control) {
+		Thing thing = Designer.getThing(control);
+		Composite parent = control.getParent();
+		if(!DesignTools.hasLayout(parent)) {
+			return null;
+		}
+		
+		Thing layoutData = thing.getThing("LayoutData@0");
+		if(layoutData == null) {
+			//如果没有创建一个
+			Layout layout = parent.getLayout();
+			if(layout instanceof GridLayout) {
+				layoutData = new Thing("xworker.swt.layout.LayoutDatas/@GridData");
+			}else if(layout instanceof RowLayout) {
+				layoutData = new Thing("xworker.swt.layout.LayoutDatas/@RowData");
+			}else if(layout instanceof FormLayout) {
+				layoutData = new Thing("xworker.swt.layout.LayoutDatas/@FormData");
+			}
+			
+			if(layoutData != null) {
+				thing.addChild(layoutData);
+				thing.save();
+				
+				ActionContext ac = Designer.getActionContext(control);
+				layoutData.doAction("create", ac, "parent", control);				
+			}
+		}
+		
+		return layoutData;
 	}
 }

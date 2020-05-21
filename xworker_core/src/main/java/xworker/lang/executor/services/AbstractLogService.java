@@ -17,7 +17,7 @@ public abstract class AbstractLogService implements ExecutorService{
 	
 	public abstract void log(byte level, String msg);
 	
-	byte level = Executor.INFO;
+	private byte level = Executor.INFO;
 	
 	@Override
 	public void setLogLevel(byte level) {
@@ -30,10 +30,6 @@ public abstract class AbstractLogService implements ExecutorService{
 	}
 	
 	private void log(byte level, String TAG, String msg) {
-		if(level < this.level) {
-			return;
-		}
-		
 		StringBuilder sb = new StringBuilder();
 		synchronized(sf) {
 			sb.append(sf.format(new Date()));
@@ -50,10 +46,6 @@ public abstract class AbstractLogService implements ExecutorService{
 	}
 	
 	private void log(byte level, String TAG, String msg, Throwable t) {
-		if(level < this.level) {
-			return;
-		}
-		
 		StringBuilder sb = new StringBuilder();
 		synchronized(sf) {
 			sb.append(sf.format(new Date()));
@@ -70,7 +62,7 @@ public abstract class AbstractLogService implements ExecutorService{
 		t.printStackTrace(new PrintStream(bout));		
 		sb.append(bout.toString());
 		
-		log(level, msg);
+		log(level, sb.toString());
 	}
 	
 	private String getLevelName(byte level) {

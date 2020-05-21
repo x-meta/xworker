@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ObjectUpdator" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.actions.SelfAction"
+     group="_actions.value" th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions">
+    <description><![CDATA[<p>对象更新器，用于设置对象的属性。</p>
+]]></description>
+    <actions>
+        <GetObject name="getObject" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="object"></GetObject>
+        <JavaAction name="run" outerClassName="xworker.lang.updator.ObjectUpdator" methodName="execute"></JavaAction>
+        <JavaAction name="getAttributeSetter" outerClassName="xworker.lang.updator.ObjectUpdator"
+             methodName="getAttributeSetter"></JavaAction>
+        <JavaAction name="isStoped" outerClassName="xworker.lang.updator.ObjectUpdator" methodName="isStoped"></JavaAction>
+        <GetBoolean name="isSchedule" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="schedule"></GetBoolean>
+        <GetLong name="getInterval" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="interval"></GetLong>
+        <GetLong name="getInitialDelay" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="initialDelay"></GetLong>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="object" size="40">
+        <description><![CDATA[<p>要被更新的对象，不能为null。</p>
+]]></description>
+    </attribute>
+    <attribute name="schedule" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>是否是定时执行。</p>
+]]></description>
+    </attribute>
+    <attribute name="initialDelay" default="2000"></attribute>
+    <attribute name="interval" default="2000">
+        <description><![CDATA[<p>如果是定时任务，那么截至事件。单位毫秒</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="AttributeValues" extends="xworker.lang.actions.Actions">
+        <description><![CDATA[<p>子节点是动作，动作的名字是属性的名字，执行动作后的返回值是属性值。</p>
+]]></description>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="AttributeMaps" extends="xworker.lang.actions.Actions">
+        <description><![CDATA[<p>子节点是动作，动作执行后如果返回的是Map，那么Map的key是属性的名字（如果key是属性），Map中对应Key的值是属性的值。</p>
+]]></description>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

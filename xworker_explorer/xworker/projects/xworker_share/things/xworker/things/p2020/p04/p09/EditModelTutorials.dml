@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="EditModelTutorials" descriptors="xworker.swt.xworker.ThingRegistThing"
+     label="编辑模型" type="composite" group="-10000|动态模型.-9999|编辑模型" icon="icons/application.png"
+     th_sortWeight="10" en_group="-1000|Dynamic Model.-9999|Edit Model" th_createIndex="true"
+     th_registThing="child|xworker.doc.DocIndex">
+    <Composite>
+        <FillLayout name="FillLayout"></FillLayout>
+        <ThingEditor name="thingEditor" saveActionContainer="true">
+            <actions>
+                <GroovyAction name="getThing">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+def thing = world.getThing("xworker.example.swt.SWTHelloWorld");
+if(thing != null){
+    return thing.detach();
+}else{
+    return new Thing("xworker.swt.widgets.Shell");
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </ThingEditor>
+        <ShellGuide name="guide" label="编辑模型教程" en_label="Edit model tutorial">
+            <Guide name="introduce" label="简介">
+                <description><![CDATA[<p><strong>模型编辑器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个模型创建后一般会自动打开其编辑器，另外我们也可以使用事物管理器的项目导航打开模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 下面我们将介绍模型编辑器的主要功能。</p>
+]]></description>
+            </Guide>
+            <Guide name="tittle" label="标题栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@titleComposite">
+                <description><![CDATA[<p><strong>标题栏</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 标题栏用于说明当前正在编辑的模型节点。</p>
+
+<p><strong>修改状态</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当模型修改了后，标题会变成*** xxx ***，保存后***消失。</p>
+
+<p><strong>文档</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当鼠标移动到标题栏时，会弹出模型对应的文档。</p>
+
+<p><strong>颜色</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 红色表示模型是内存中的模型，灰色表示模型不可以修改（修改后不能存储，如jar中的模型）。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="menu" label="菜单栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@menuCoolItem/@toolBar">
+                <description><![CDATA[<p><strong>菜单</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 菜单是根据模型动态生成的，用户可以自定义模型的菜单。</p>
+
+<p><strong>文档</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 菜单的详细文档可以在帮助小精灵中查看，方法是先打开帮助小精灵，然后鼠标点击模型编辑器的区域，这样在帮助小精灵中就会显示相关的信息。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 帮助小精灵一般在事物管理器的右上角。</p>
+]]></description>
+            </Guide>
+            <Guide name="commonToolBar" label="常用工具栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@buttonsCoolItem/@buttonsToolbar">
+                <description><![CDATA[<p><strong>常用工具栏：</strong></p>
+
+<ul>
+	<li><input alt="" src="icons/xworker/save.gif" style="width: 16px; height: 16px;" type="image" />保存模型，也可以按Ctrl+S或Alt+S保存。&nbsp;&nbsp;</li>
+	<li><input alt="" src="icons/xworker/delete.gif" style="width: 16px; height: 16px;" type="image" />删除当前模型节点，如果是根节点，删除整个模型。</li>
+	<li><input alt="" src="icons/xworker/moveUp.gif" style="width: 16px; height: 16px;" type="image" />向上移动当前模型节点。</li>
+	<li><input alt="" src="icons/xworker/moveDown.gif" style="width: 16px; height: 16px;" type="image" />向下移动当前模型节点。</li>
+	<li><input alt="" src="icons/xworker/search.gif" style="width: 16px; height: 16px;" type="image" />打开查询对话框。</li>
+	<li><input alt="" src="icons/file/xml.gif" style="width: 16px; height: 16px;" type="image" />切换模型的编辑方式，在表单和XML模式间切换。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="assistToolBar" label="辅助工具栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@assistCoolItem/@assitCoolBar">
+                <description><![CDATA[<p><strong>辅助工具栏：</strong></p>
+
+<ul>
+	<li><input alt="" src="icons/xworker/descriptorExtends.gif" style="width: 16px; height: 16px;" type="image" />打开模型的类、继承和行为的查看对话框，用于查看模型对象关系。</li>
+	<li><input alt="" src="icons/xworker/assit.gif" style="width: 16px; height: 16px;" type="image" />打开帮助小精灵。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="descToolbar" label="类工具栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@descButtonCoolItem/@descButtonToolBar">
+                <description><![CDATA[<p><strong>类工具栏：</strong></p>
+
+<ul>
+	<li><strong>下拉框</strong>，下拉框中的列表是当前模型所属的类的列表，选择一个则会使用选择的类动态生成模型的编辑表单。&nbsp;</li>
+	<li><input alt="" src="icons/xworker/descriptor.gif" style="width: 16px; height: 16px;" type="image" />为当前模型添加一个类。&nbsp;</li>
+	<li><input alt="" src="icons/xworker/descriptor_deleteall.gif" style="width: 16px; height: 16px;" type="image" />移除选中的类，即模型不再属于这个类了。</li>
+	<li><input alt="" src="icons/xworker/descriptor_deleteall.gif" style="width: 16px; height: 16px;" type="image" />移除选中的类，同时移除模型的相关子节点，即这些子节点的类是由移除的类定义的。</li>
+</ul>
+
+<p><strong>描述者</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 类在动态模型编程中也叫做描述者。</p>
+
+<p>&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="extendToolbar" label="继承工具栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@extButtonCoolItem/@addExtToolbar">
+                <description><![CDATA[<p><strong>继承工具栏</strong></p>
+
+<ul>
+	<li>下拉框，显示当前模型所继承的模型。</li>
+	<li><input alt="" src="icons/xworker/extends.gif" style="width: 16px; height: 16px;" type="image" />添加继承。&nbsp;&nbsp;</li>
+	<li><input alt="" src="icons/xworker/extends_delete.gif" style="width: 16px; height: 16px;" type="image" />删除选中的继承。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="actionToolbar" label="动作工具栏" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@methodCoolItem/@methodToolbar">
+                <description><![CDATA[<p><strong>动作工具栏</strong></p>
+
+<ul>
+	<li>下拉框，当前模型的所有动作（行为）列表。</li>
+	<li><input alt="" src="icons/xworker/run24_24.gif" style="width: 16px; height: 16px;" type="image" />打开执行菜单，可以执行当前选中的动作。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+            </Guide>
+            <Guide name="outline" label="概要树" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@innerOutline">
+                <description><![CDATA[<p><strong>概要树</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型是像XML这样的树形结构的数据，概要树显示了模型的树形节点。</p>
+
+<p><strong>编辑模型节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 选中概要树中的一个节点后，可以在右面的表单区编辑该节点的树形。也可以在右面区域添加子节点等。</p>
+
+<p><strong>右键菜单</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 概要树有右键菜单，可以点击鼠标右键打开。模型的拷贝、粘贴等等在右键菜单中。</p>
+]]></description>
+            </Guide>
+            <Guide name="form" label="表单" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@structComposite">
+                <description><![CDATA[<p><strong>表单</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型节点的表单是根据模型的类（描述者）动态生成的，模型的类（描述者）定义了模型的表单。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在类工具栏中选择相应的类来切换表单。</p>
+]]></description>
+            </Guide>
+            <Guide name="addChildButton" label="添加子节点按钮" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@addChildButton">
+                <description><![CDATA[<p><strong>添加子节点按钮</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击添加子节点按钮可以进入添加子节点的界面。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <span style="color: rgb(255, 0, 0);"><strong>请点击添加子节点按钮，然后再进入下一步的教程。</strong></span></p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="selectableChilds" label="可选择子节点" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childTreeDescSash">
+                <description><![CDATA[<p><strong>可添加的子节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个模型可以添加那些子节点也是有它的类定义的，可以下拉框中选择类，然后会显示这个类定义的子节点。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 当选择了一个子节点后，下面会出现子节点的对应的表单。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="addChildButtons" label="添加子节点按钮" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentButtonComposite">
+                <description><![CDATA[<p><strong>添加子节点按钮</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<strong>添加</strong>按钮可以为当前的模型添加一个子节点，点击<strong>返回编辑</strong>按钮则会取消添加子节点。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <span style="color: rgb(255, 0, 0);"><strong>请点击返回编辑按钮，然后再进入下一步教程。</strong></span></p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="markButton" label="标记" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@viewMarkButton">
+                <description><![CDATA[<p><strong>查看标记</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个模型比较复杂时，可以在模型的MetaThing类下编辑标记(Mark)。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 标记的用途是可以着重显示（如粗体+颜色等）标记过的节点。查看标记则是弹出一个窗口，列出所有标记过的己点。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="lockButton" label="锁定位置" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@markButton">
+                <description><![CDATA[<p><strong>锁定位置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 锁定位置按钮点击后会弹出一个按钮，当切换到其它模型的编辑页面是，点击弹出的按钮可以快速回到当前的模型编辑界面。</p>
+]]></description>
+            </Guide>
+            <Guide name="command" label="命令" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@commandButton">
+                <description><![CDATA[<p><strong>命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 进入命令编辑模式。命令是一种尽量只用键盘编辑模型的方法，命令在以后也许会实现语音的操作。</p>
+]]></description>
+            </Guide>
+            <Guide name="xmlEditor" label="XML编辑器" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@commandButton1">
+                <description><![CDATA[<p><strong>XML编辑器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 切换到XML编辑模式。</p>
+]]></description>
+            </Guide>
+            <Guide name="guideButton" label="向导" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@guideButton">
+                <description><![CDATA[<p><strong>向导</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击后会进入向导界面，向导是一个可以自定义的工具集，用于方便编写当前模型。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="saveButton" label="保存" activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@guideButton1">
+                <description><![CDATA[<p><strong>保存</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以点击保存按钮保存模型，此按钮也提供了Alt+S快捷方式。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"></GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="finish" label="结束">
+                <description><![CDATA[<p><strong>结束</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 以上就是本教程的全部内容了，希望你能对模型编辑器有一个基本了解。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击下一步按钮结束教程。</p>
+]]></description>
+            </Guide>
+        </ShellGuide>
+    </Composite>
+</QuickFunction>

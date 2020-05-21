@@ -50,16 +50,16 @@ public class Configuration {
 		return profile;
 	}
 	
-	public static Thing getConfiguration(String name, String descriptor, Thing currentThing, ActionContext actionContext) {
+	public static Thing getConfiguration(String name, Thing currentThing, ActionContext actionContext) {
 		int index = name.indexOf(":");
 		if(index != -1) {
 			String nname = name.substring(0, index);
 			String category = name.substring(index + 1, name.length());
-			return getConfiguration(nname, descriptor, category, actionContext);
+			return getConfiguration(nname, category, actionContext);
 		}else {
 			String appCategory = currentThing.getMetadata().getCategory().getName();
 			
-			return getConfiguration(name, descriptor, appCategory, actionContext);
+			return getConfiguration(name, appCategory, actionContext);
 		}
 	}
 	
@@ -67,13 +67,13 @@ public class Configuration {
 	 * 获取配置。
 	 * 
 	 * @param name
-	 * @param descriptor
 	 * @param appCategory
+	 * @param actionContext
 	 * @return
 	 */
-	public static Thing getConfiguration(String name, String descriptor, String appCategory, ActionContext actionContext) {
+	public static Thing getConfiguration(String name, String appCategory, ActionContext actionContext) {
 		//首先从缓存中获取
-		String key = name + "_" + descriptor + "_" + appCategory;
+		String key = name + "_" + "_" + appCategory;
 		ThingEntry entry = cache.get(key);
 		if(entry != null) {
 			Thing config = entry.getThing();
@@ -100,7 +100,7 @@ public class Configuration {
 				
 				if(profile != null) {
 					for(Thing child : profile.getChilds()) {
-						if(child.isThing(descriptor) && child.getMetadata().getName().equals(name)) {
+						if(child.getMetadata().getName().equals(name)) {
 							cache.put(key, new ThingEntry(child));
 							return child;
 						}

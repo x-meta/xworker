@@ -43,11 +43,16 @@ import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.DbUtil;
 import xworker.db.jdbc.DataSouceActionContextActions;
 import xworker.db.jdbc.DataSourceActions;
+import xworker.lang.executor.Executor;
 import xworker.task.UserTask;
 import xworker.task.UserTaskManager;
 
 public class DbDataObject {
-	private static Logger log = LoggerFactory.getLogger(DbDataObject.class);
+	//private static Logger log = LoggerFactory.getLogger(DbDataObject.class);
+	private static final String TAG = DbDataObject.class.getName();
+	
+	/** 防止数据查询一次读取太多记录而设置的，太多记录应该使用iterator，而不是直接查询。*/
+	private static int MAX_ROWS = 100000;  
 	
 	/**
 	 * 设置参数。
@@ -114,7 +119,7 @@ public class DbDataObject {
 		    }
 		}
 		if(self.getBoolean("showSql")){
-		    log.info(self.getMetadata().getPath() + ":" + sql);
+		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
 		//设置参数值
@@ -134,6 +139,65 @@ public class DbDataObject {
 		    if(pst != null){
 		        pst.close();
 		    }
+		}
+	}
+	
+	/**
+	 *　批量插入数据库。
+	 *
+	 * @param actionContext
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static int createBatch(ActionContext actionContext) throws SQLException {
+		Thing self = actionContext.getObject("self");
+		List<DataObject> datas = actionContext.getObject("datas");
+		List<Thing> attributes = new ArrayList<Thing>();
+		for(Thing attr : self.getChilds("attribute")) {
+			if(attr.getBoolean("dataField")) {
+				attributes.add(attr);
+			}
+		}
+		
+		//生成insert sql语句
+		String sql = "insert into " + self.getString("tableName") + "(";
+		String valueSql = " values(";
+		for(int i =0; i<attributes.size(); i++) {
+			Thing attr = attributes.get(i);
+			sql = sql + attr.getString("fieldName");
+			valueSql = valueSql + "?";
+			if(i < attributes.size() - 1) {
+				sql = sql + ",";
+				valueSql = valueSql + ",";
+			}
+		}
+		
+		sql = sql + ")";
+        valueSql = valueSql + ")";
+        sql = sql + valueSql;
+		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+		}
+		
+		Connection con = (Connection) actionContext.get("con");
+		PreparedStatement pst = con.prepareStatement(sql);
+		try {
+			for(DataObject data : datas) {
+				int index = 1;
+				for(Thing attr : attributes) {
+					DbUtil.setParameter(pst, index, attr.getMetadata().getName(), data);
+					index++;
+				}
+				
+				pst.addBatch();
+			}
+			
+			int[] ids =  pst.executeBatch();
+			return ids.length;
+		}finally {
+			if(pst != null) {
+				pst.close();
+			}
 		}
 	}
 	
@@ -163,8 +227,8 @@ public class DbDataObject {
 		String sql = "insert into " + self.getString("tableName") + "(";
 		String valueSql = " values(";
 		String[] dirtyFields = theData.getMetadata().getDirtyFields();
-		if(dirtyFields == null){
-			log.warn("no value need insert to database");
+		if(dirtyFields == null || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			Executor.warn(TAG, "no value need insert to database");
 		    return null;
 		}
 		for(int i=0; i<dirtyFields.length; i++){    
@@ -180,8 +244,8 @@ public class DbDataObject {
 		    }
 		}
 		sql = sql + valueSql;
-		if(self.getBoolean("showSql")){
-		    log.info(self.getMetadata().getPath() + ":" + sql);
+		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
 		//设置参数值
@@ -260,8 +324,8 @@ public class DbDataObject {
 		        sql = sql + " and ";
 		    }
 		}
-		if(self.getBoolean("showSql")){
-		    log.info(self.getMetadata().getPath() + ":" + sql);
+		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
 		//设置参数值
@@ -332,8 +396,8 @@ public class DbDataObject {
 		if(clause != null && clause != ""){
 		    sql = sql + " where " + clause;
 		}
-		if(self.getBoolean("showSql")){
-		    log.info(self.getMetadata().getPath() + ":" + sql);
+		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
 		//设置参数值
@@ -399,7 +463,7 @@ public class DbDataObject {
 		}
 
 		if(self.getBoolean("showSql")){
-		    log.info(self.getMetadata().getPath() + ":" + sql);
+		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
 		//设置参数值和查询
@@ -684,8 +748,8 @@ public class DbDataObject {
 			String sql = self.doAction("getQuerySqlAndParams", actionContext, "pageInfo", pageInfo,
 					"attributes", attributes, "cds", cds, "conditionConfig", conditionConfig, "datas", datas);
 			
-			if(self.getBoolean("showSql")){
-			    log.info(self.getMetadata().getPath() + ":" + sql);
+			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 			}
 			UserTaskManager.setUserTaskLabelDetail(userTask, "Sql setted", sql);
 			
@@ -732,6 +796,7 @@ public class DbDataObject {
 			        
 			        List<DataObject> ds = new ArrayList<DataObject>();
 			        long start = System.currentTimeMillis();
+			        int count = 0;
 			        while(rs.next()){
 			            //构造对象
 			        	DataObject data = new DataObject(self);
@@ -748,6 +813,11 @@ public class DbDataObject {
 			            if(userTask != null && System.currentTimeMillis() - start > 1000){
 			            	UserTaskManager.setUserTaskLabelDetail(userTask, ds.size() + " rows has getted", null);
 			            	start = System.currentTimeMillis();
+			            }
+			            
+			            count++;
+			            if(count > MAX_ROWS) {
+			            	break;
 			            }
 			        }
 			        
@@ -879,8 +949,8 @@ public class DbDataObject {
 			}
 			
 	
-			if(self.getBoolean("showSql")){
-			    log.info(self.getMetadata().getPath() + ":" + sql);
+			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 			}
 			UserTaskManager.setUserTaskLabelDetail(userTask, "sql setted", sql);
 			
@@ -1026,6 +1096,13 @@ public class DbDataObject {
 		currentThing.doAction("mapping2ddl", actionContext);
 	}
 	
+	public static void doDDL(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		if(self.getBoolean("DDL")) {
+			mapping2ddl(actionContext);
+		}
+	}
+	
 	/**
 	 * 从ResultSet中读取数据。
 	 * 
@@ -1087,8 +1164,8 @@ public class DbDataObject {
 		    
 		    //分页查询
 		    sql = "select * from (select t.*, rownum rowno from (" + sql + ") t ) where rowno between ? and ?";
-		    if(self.getBoolean("showSql")){
-		        log.info(self.getMetadata().getPath() + ":" + sql);
+		    if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		        Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		    }
 		    pst = con.prepareStatement(sql);
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
@@ -1131,7 +1208,7 @@ public class DbDataObject {
 	            try{
 	                data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
 	            }catch(Exception e){
-	                log.error("get result value error: " + e.getMessage() + ": " + attribute);
+	                Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attribute);
 	                throw e;
 	            }
 	        }
@@ -1170,8 +1247,8 @@ public class DbDataObject {
 		    
 		    //分页查询
 		    sql = "SELECT * FROM ( SELECT ROW_NUMBER() OVER() AS rownum, t.*  FROM (" + sql + " ) t) AS tmp WHERE rownum >= ? AND rownum <= ?";
-		    if(self.getBoolean("showSql")){
-		        log.info(self.getMetadata().getPath() + ":" + sql);
+		    if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		        Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		    }
 		    pst = con.prepareStatement(sql);
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
@@ -1222,8 +1299,8 @@ public class DbDataObject {
 		    
 		    //分页查询
 		    sql = sql + " limit ? ,?";
-		    if(self.getBoolean("showSql")){
-		        log.info(self.getMetadata().getPath() + ":" + sql);
+		    if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		        Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		    }
 		    pst = con.prepareStatement(sql);
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
@@ -1277,8 +1354,8 @@ public class DbDataObject {
 		    
 		    //分页查询
 		    sql = "select * from (select t.*, ROW_NUMBER() over(order by (select 0)) as rowno from (" + sql + ") t ) where rowno between ? and ?";
-		    if(self.getBoolean("showSql")){
-		        log.info(self.getMetadata().getPath() + ":" + sql);
+		    if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		        Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		    }
 		    pst = con.prepareStatement(sql);
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));

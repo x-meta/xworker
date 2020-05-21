@@ -20,8 +20,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -36,6 +34,7 @@ import ognl.OgnlException;
 import xworker.java.assist.Javaassist;
 import xworker.java.assist.ParameterInfo;
 import xworker.lang.VariableDesc;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.CodeUtils;
 import xworker.swt.util.SwtTextUtils;
@@ -52,7 +51,8 @@ import xworker.swt.xworker.codeassist.variableproviders.CachedVaribleProvider;
  *
  */
 public class CodeAssistor implements KeyListener, DisposeListener, VariableProvider{
-	private static Logger logger = LoggerFactory.getLogger(CodeAssistor.class);
+	//private static Logger logger = LoggerFactory.getLogger(CodeAssistor.class);
+	private static final String TAG = CodeAssistor.class.getName();
 	private static String key = "xworker.swt.xworker.CodeAssistor";
 	private static String keyThing = "xworker.swt.xworker.CodeAssistor_Thing";
 	
@@ -346,43 +346,47 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 	
 	@Override
 	public void keyPressed(KeyEvent event) {
-		delayAction.cancel();
-		
-		final Control text = (Control) event.widget;
-		final ActionContext actionContext = (ActionContext) text.getData(key);
-		
-		if((event.character == 'h' || event.character == 'H') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
-			//弹出所有词的列表
-			String object = getCurentWord(text);			
-			if(object != null && object.length() > 0){
-				int index = SwtTextUtils.getCaretOffset(text);		
-				SwtTextUtils.setSelection(text, index - object.length(), index);
-			}
-			setContents(object, text, getHelpContents(text, actionContext));
-
-			event.doit = false;
-		}else if((event.character == 't' || event.character == 'T') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
-			//弹出类型选择，手动设置变量的类型
-			openSetTypeShell(text);
-			event.doit = false;
-		}else if((event.character == 'p' || event.character == 'P') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
-			//弹出import的选择器
-			openImportShell(text);
-			event.doit = false;
-		}/*else if((event.keyCode == 'i' || event.keyCode == 'I') && event.stateMask == SWT.ALT){
-			//弹出import的选择器
-			openImportShell(text);
-			event.doit = false;
-		}*/else if(event.character == '.'){
-			delayAction.setRunnable(new Runnable(){
-				public void run(){
-					try{						
-						setContents("", text, getClassContents(text, actionContext));
-					}catch(Exception e){
-						logger.error("CodeAssistor error", e);
-					}
+		try {
+			delayAction.cancel();
+			
+			final Control text = (Control) event.widget;
+			final ActionContext actionContext = (ActionContext) text.getData(key);
+			
+			if((event.character == 'h' || event.character == 'H') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
+				//弹出所有词的列表
+				String object = getCurentWord(text);			
+				if(object != null && object.length() > 0){
+					int index = SwtTextUtils.getCaretOffset(text);		
+					SwtTextUtils.setSelection(text, index - object.length(), index);
 				}
-			});
+				setContents(object, text, getHelpContents(text, actionContext));
+	
+				event.doit = false;
+			}else if((event.character == 't' || event.character == 'T') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
+				//弹出类型选择，手动设置变量的类型
+				openSetTypeShell(text);
+				event.doit = false;
+			}else if((event.character == 'p' || event.character == 'P') && (event.stateMask == SWT.CTRL || event.stateMask == SWT.ALT)){
+				//弹出import的选择器
+				openImportShell(text);
+				event.doit = false;
+			}/*else if((event.keyCode == 'i' || event.keyCode == 'I') && event.stateMask == SWT.ALT){
+				//弹出import的选择器
+				openImportShell(text);
+				event.doit = false;
+			}*/else if(event.character == '.'){
+				delayAction.setRunnable(new Runnable(){
+					public void run(){
+						try{						
+							setContents("", text, getClassContents(text, actionContext));
+						}catch(Exception e){
+							Executor.error(TAG, "CodeAssistor error", e);
+						}
+					}
+				});
+			}
+		}catch(Exception e) {
+			Executor.error(TAG, "CodeAssistor error", e);
 		}
 	}
 	
@@ -684,7 +688,7 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 		}
 		
 		if(styledText == null){
-			logger.warn("CodeAssistor: styledText is null, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "CodeAssistor: styledText is null, path=" + self.getMetadata().getPath());
 			return;
 		}
 		

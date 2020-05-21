@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ContentSelectorActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <description><![CDATA[<p>ContentSelector相关的动作。</p>
+]]></description>
+    <thing name="ThingChildsContent" extends="xworker.lang.actions.SelfAction" group="swt.xwidgets.selectcontent">
+        <description><![CDATA[<p>返回一个事物的子节点的List&lt;SelectContent&gt;，如果没有设置事物等会返回空的List。</p>
+
+<p>其中SelectContent的value是路径，object是事物模型。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getThing()</strong><br />
+	返回要获取子节点的事物。</li>
+</ul>
+]]></description>
+        <actions>
+            <GroovyAction name="run">
+                <code><![CDATA[import java.util.Collections;
+import xworker.swt.xwidgets.SelectContent;
+import xworker.util.XWorkerUtils;
+
+def thing = self.doAction("getThing", actionContext);
+if(thing == null){
+    return Collections.emptyList();
+}else{    
+    def childs = XWorkerUtils.searchRegistThings(thing, "childThing", [], false, false, actionContext);
+    def contents = [];
+    def thingNames = self.doAction("getThingNames", actionContext);
+    childs.addAll(thing.getChilds("thing"));
+    for(child in childs){
+        if(thingNames != null && thingNames.size() > 0){
+            def ok = false;
+            for(name in thingNames){
+                if(child.isThingByName(name)){
+                    ok = true;
+                    break;
+                }
+            }
+            
+            if(!ok){
+                //过滤掉
+                continue;
+            }
+        }
+        def label = child.getMetadata().getName() + "(" + child.getMetadata().getLabel() + ")";
+        def content = new SelectContent(child.getMetadata().getPath(), label, child);
+        contents.add(content);
+    }
+    
+    Collections.sort(contents);
+    return contents;
+}]]></code>
+            </GroovyAction>
+            <GetThing name="getThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="thing"></GetThing>
+            <GetStringList name="getThingNames" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="thingNames"></GetStringList>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="thing" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="thingNames" _xmeta_id_="childThingNames">
+            <description><![CDATA[<p>如果设置了，那么只有符合thingName的子节点才会加入，不符合的则会过滤掉。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

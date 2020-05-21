@@ -1,16 +1,25 @@
-%1571886176815
+%1583928244949
 @
 sname=Module
 slabel=Module
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>模块定义。为了打包和发布的方便，把类库和资源等按照模块划分。</p>
+<p><strong>模块</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;模块是为了打包和发布时拷贝XWorker中的类库和资源，是为了打包方便。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如打包Web应用时，拷贝Web相关的类库和资源等。</p>
+
+<p><strong>原理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 打包程序会遍历XWorker的下的目录和文件（深度做多4层），凡是文件名通过了过滤正则表达式，那么表示拷贝该文件。</p>
 
 <p><strong>资源范围</strong></p>
 
@@ -37,6 +46,58 @@ sth_createIndex=false
 sth_registMyChilds=false
 sth_registDisabled=false
 sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=actions
+    @/@actions/@printLibAndResources
+    sname=printLibAndResources
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.util.deploy.ModuleManager;
+
+import org.xmeta.Thing;
+
+def mm = new ModuleManager();
+mm.addModule(self);
+mm.calculate();
+
+for(lib in mm.getLibs()){
+    println lib.getPath();
+}
+
+for(res in mm.getResources()){
+    println res.getPath();
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=printLibAndResources
   @/@name
   sname=name
   sshowLabel=true

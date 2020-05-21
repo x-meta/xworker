@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="DataObjectIntroduce" descriptors="xworker.swt.xworker.ThingRegistThing"
+     label="数据对象" type="thingDesc" group="-6000|数据管理.-6000|数据对象" groupDescriptor="true"
+     icon="icons/html.png" th_sortWeight="-10000" simpleBrowser="true" en_label="DataObject"
+     en_group="-6000|Data.-6000|DataObject" th_createIndex="true" th_registThing="child|xworker.doc.DocIndex">
+    <description><![CDATA[<h1>数据对象</h1>
+
+<h2>1.作用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象模型可以实现对数据的CURD操作，也可以用于快速生成各种界面。</p>
+
+<h2>2.创建数据模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在新建事物对话框里，数据对象模型在xworker.dataObjects分组下。数据对象模型有多种，比如映射数据库的DbDataObject，映射Excel的ExcelDataObject等等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如何编写数据对象可以在编辑时查看相应的文档。</p>
+
+<h2>3.CURD的代码示例</h2>
+
+<pre class="brush:groovy;">
+import xworker.dataObject.DataObject();
+
+//创建数据对象，xxx是具体数据对象模型的路径
+def dataObject = new DataObject(&#39;xxx&quot;);
+
+//设置属性
+dataObject.put(&quot;name&quot;, &quot;abc&quot;);
+
+//创建对象，如在数据库表中插入一条记录
+dataObject = dataObject.create(actionContext);
+if(dataObject != null){
+     //创建成功
+}
+
+//更新数据对象，如在数据库表中更新记录
+dataObject.update(actionContext);</pre>
+
+<h2>4.界面示例</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 这是一个数据库表的查询和编辑界面，<a href="javascript:invoke('shell:xworker.example.swt.xworker.dataobject.DataObjectEditCompoiste')">点击这里</a>可以打开示例。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>界面代码：</strong></p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;DataObjectEditCompoiste&quot;
+     width=&quot;640&quot; height=&quot;480&quot; design=&quot;&quot; label=&quot;DataObjectEditCompoiste&quot;&gt;
+    &lt;FillLayout name=&quot;shellFillLayout&quot;&gt;&lt;/FillLayout&gt;
+    &lt;Group name=&quot;group&quot; text=&quot;DataObjectEditCompoiste&quot; label=&quot;DataObjectEditCompoiste&quot;&gt;
+        &lt;FillLayout name=&quot;groupFillLayout&quot;&gt;&lt;/FillLayout&gt;
+        &lt;DataObjectEditCompoiste name=&quot;DataObjectEditCompoiste&quot; dataObject=&quot;xworker.app.monitor.dataobjects.MonitorData&quot;
+             toolsButton=&quot;true&quot;&gt;&lt;/DataObjectEditCompoiste&gt;
+    &lt;/Group&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp;<strong> 数据对象代码：</strong></p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;DbDataObject name=&quot;MonitorData&quot; descriptors=&quot;xworker.dataObject.db.DbDataObject&quot; label=&quot;监控数据&quot;
+     tableName=&quot;tblmonitordata&quot; dataSource=&quot;xworker.app.monitor.datasource.MonitorDataSource&quot;
+     description=&quot;&amp;lt;p&amp;gt;执行监控时所产生的数据。&amp;lt;/p&amp;gt;&quot; group=&quot;xworker.app.monitor&quot; pageSize=&quot;500&quot; storeAutoLoad=&quot;true&quot;
+     gridEditable=&quot;true&quot; gridRowNumber=&quot;true&quot; autoGenerateId=&quot;true&quot; idGenerateType=&quot;native&quot;
+     storeSortField=&quot;grabStartTime&quot; storeSortDir=&quot;DESC&quot; th_createIndex=&quot;true&quot; th_registThing=&quot;child|xworker.dataObject.DataObjectIns&quot;&gt;
+    &lt;attribute name=&quot;id&quot; label=&quot;标识&quot; fieldName=&quot;id&quot; generator=&quot;native&quot; type=&quot;long&quot; key=&quot;true&quot;
+         gridFixed=&quot;true&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;monitorId&quot; label=&quot;监控标识&quot; fieldName=&quot;monitorId&quot; index=&quot;idx_tblmonitordata_monitorId&quot;
+         type=&quot;long&quot; gridFixed=&quot;true&quot; gridSortable=&quot;true&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;monitorTaskId&quot; label=&quot;监控任务标识&quot; fieldName=&quot;monitorTaskId&quot; index=&quot;idx_tblmonitordata_monitorTaskId&quot;
+         type=&quot;long&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;monitorTaskResId&quot; label=&quot;监控任务资源标识&quot; fieldName=&quot;monitorTaskResId&quot; index=&quot;idx_tblmondata_monTkResId&quot;
+         type=&quot;long&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;taskThingPath&quot; label=&quot;任务事物路径&quot; fieldName=&quot;taskThingPath&quot; index=&quot;idx_tblmonitordata_taskpath&quot;
+         length=&quot;500&quot; gridWidth=&quot;300&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;resourceId&quot; _xmeta_id_=&quot;name&quot; label=&quot;资源标识&quot; fieldName=&quot;resourceId&quot; index=&quot;idx_tblmonitordata_name&quot;
+         selectFiled=&quot;100&quot; gridWidth=&quot;100&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;dataName&quot; _xmeta_id_=&quot;dataType&quot; label=&quot;数据名称&quot; fieldName=&quot;dataName&quot; selectFiled=&quot;50&quot;
+         gridWidth=&quot;100&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;dataId&quot; label=&quot;数据标识&quot; fieldName=&quot;dataId&quot; length=&quot;100&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;value&quot; label=&quot;数值&quot; fieldName=&quot;value&quot; selectFiled=&quot;500&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;grabStartTime&quot; label=&quot;抓取开始时间&quot; fieldName=&quot;grabStartTime&quot; index=&quot;idx_tblmonitordata_starttime&quot;
+         type=&quot;datetime&quot; inputtype=&quot;datePick&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;grabEndTime&quot; label=&quot;抓取结束时间&quot; fieldName=&quot;grabEndTime&quot; type=&quot;datetime&quot; inputtype=&quot;datePick&quot;&gt;&lt;/attribute&gt;
+    &lt;QueryFormDataObject&gt;
+        &lt;AbstractDataObject label=&quot;数据名称&quot; editCols=&quot;3&quot; paging=&quot;false&quot; pageSize=&quot;&quot;&gt;
+            &lt;attribute name=&quot;taskThingPath&quot; descriptors=&quot;xworker.dataObject.db.DbDataObject/@attribute&quot;
+                 label=&quot;任务事物路径&quot; fieldName=&quot;taskThingPath&quot; index=&quot;idx_tblmonitordata_taskpath&quot;
+                 length=&quot;200&quot; inputtype=&quot;dataSelector&quot; gridWidth=&quot;300&quot;&gt;&lt;/attribute&gt;
+            &lt;attribute name=&quot;resourceId&quot; _xmeta_id_=&quot;name&quot; descriptors=&quot;xworker.dataObject.db.DbDataObject/@attribute&quot;
+                 label=&quot;资源标识&quot; fieldName=&quot;resourceId&quot; index=&quot;idx_tblmonitordata_name&quot;
+                 selectFiled=&quot;100&quot; gridWidth=&quot;100&quot;&gt;&lt;/attribute&gt;
+            &lt;attribute name=&quot;dataName&quot; _xmeta_id_=&quot;dataType&quot; descriptors=&quot;xworker.dataObject.db.DbDataObject/@attribute&quot;
+                 label=&quot;数据名称&quot; fieldName=&quot;dataName&quot; selectFiled=&quot;50&quot; gridWidth=&quot;100&quot;&gt;&lt;/attribute&gt;
+        &lt;/AbstractDataObject&gt;
+    &lt;/QueryFormDataObject&gt;
+    &lt;Condition multiValueJoin=&quot;&quot; type=&quot;&quot;&gt;
+        &lt;Condition name=&quot;taskThingPath&quot; attributeName=&quot;taskThingPath&quot; dataName=&quot;taskThingPath&quot;
+             multiValueJoin=&quot;&quot; type=&quot;&quot;&gt;&lt;/Condition&gt;
+        &lt;Condition name=&quot;resourceId&quot; attributeName=&quot;resourceId&quot; dataName=&quot;resourceId&quot; multiValueJoin=&quot;&quot;
+             type=&quot;&quot;&gt;&lt;/Condition&gt;
+        &lt;Condition name=&quot;dataName&quot; _xmeta_id_=&quot;dataTypeId&quot; attributeName=&quot;dataName&quot; dataName=&quot;dataName&quot;
+             multiValueJoin=&quot;&quot; type=&quot;&quot;&gt;&lt;/Condition&gt;
+    &lt;/Condition&gt;
+&lt;/DbDataObject&gt;</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickFunction>

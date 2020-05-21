@@ -84,10 +84,12 @@ public class SecurityManager {
     /**
      * 注册安全处理器。
      * 
+     * @param env
      * @param permission
      * @param action
-     * @param path
+     * @param pathRegex
      * @param handler
+     * @param actionContet
      */
 	public static void registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler, ActionContext actionContet){		
 		EnviromentChecker envc = getEnviromentChecker(env);

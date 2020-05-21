@@ -1,4 +1,4 @@
-%1575601235040
+%1587366556818
 @
 sname=SimpleStateMachineComposite
 slabel=SimpleStateMachineComposite
@@ -6,6 +6,7 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.swt.layout.LayoutDatas
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 sgroup=ai.statemachine
 smodifier=public
@@ -20,9 +21,20 @@ Sdescription=
 
 <p>&nbsp;&nbsp;&nbsp; 保存的是xworker.ai.statemachine.SimpleStateMachine对象，返回的是Composite。通过SimpleStateMachine.get(&quot;composite&quot;)可以返回根Composite。</p>
 
-<p>&nbsp;&nbsp;&nbsp; <strong>独立变量上下文</strong>，注意StateMachine和State以及它们的相关SWT组件都是用各自独立的变量上下文</p>
+<p><strong>状态</strong></p>
 
-<p><strong>设置根Composite</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 状态用来生成Composite，每一个状态使用<strong>独立的变量上下文。</strong>状态的上下文默认的变量如下：</p>
+
+<ul>
+	<li><strong>stateMachine: SimpleStateMachine</strong><br />
+	简单状态机。&nbsp;&nbsp;</li>
+	<li><strong>state: ThingState</strong><br />
+	当前状态。</li>
+	<li><strong>parentContext: ActionContext</strong><br />
+	父变量上下文，即StateMachine所处于的SWT的变量上下文。</li>
+</ul>
+
+<p><strong>设置根Composite样式</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 可以通过设置RootComposite子节点来设置根Composite的样式，否则使用默认。注意RootComposite不要添加子节点等。</p>
 
@@ -171,6 +183,23 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=var
+    @/@VariablesDescs/@parentContext
+    sname=parentContext
+    svarName=parentContext
+    spassive=false
+    sscope=2
+    stype=object
+    sclassName=org.xmeta.ActionContext
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=parentContext
   @/@name
   sname=name
   sshowLabel=true
@@ -470,6 +499,35 @@ sth_mark=false
       sth_registDisabled=false
       sth_mark=false
       sid=getComposite
+    @/@State/@VariablesDescs
+    sname=VariablesDescs
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=VariablesDescs
+      @/@State/@VariablesDescs/@state
+      sname=state
+      svarName=state
+      spassive=false
+      sscope=2
+      stype=object
+      sclassName=xworker.ai.statemachine.ThingState
+      sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=state
     @/@State/@name
     sname=name
     sshowLabel=true

@@ -12,6 +12,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -70,7 +73,7 @@ public class FileSync {
 			uc.setDoInput(true);
 			
 			HttpURLConnection conn = (HttpURLConnection) uc;
-			conn.setUseCaches(true);// 不使用Cache
+			conn.setUseCaches(false);// 不使用Cache
 			
 			int length = uc.getContentLength();			
 			byte[] bytes = getBytes(uc.getInputStream(), length);
@@ -83,6 +86,28 @@ public class FileSync {
 		}
 	}
 	
+	public static String getUrlContent(String url) {
+		try{
+			URL u = new URL(url);		
+			System.out.println("open " + url);
+			URLConnection uc = u.openConnection();
+			uc.setRequestProperty("accept", "*/*"); 
+			uc.setRequestProperty("Connection", "Keep-Alive");
+			//uc.setRequestProperty("user-agent",              "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");  
+			uc.setDoInput(true);
+			
+			HttpURLConnection conn = (HttpURLConnection) uc;
+			conn.setUseCaches(false);// 不使用Cache
+			
+			int length = uc.getContentLength();			
+			byte[] bytes = getBytes(uc.getInputStream(), length);
+			
+			return new String(bytes, charset);
+		}catch(Exception e){
+			System.out.println(e.getMessage());
+			return "";
+		}
+	}
 	/**
 	 * 向服务器上传版本。
 	 * 
@@ -476,6 +501,102 @@ public class FileSync {
 		}
 	}
 	
+	/**
+	 * 从服务器查找是否有镜像，优先通过镜像下载。
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String getMirrorUrl(String url) {
+		System.out.println("Begin slelect fast mirror");
+		String urlPrefix = url;
+		int index = url.indexOf("?");
+		if(index > 0) {
+			urlPrefix = url.substring(0, index);
+		}
+		String mirrorUrl = urlPrefix + "?sc=xworker.tools.update.Mirrors";
+		String mirrors = getUrlContent(mirrorUrl);
+		
+		if(mirrors != null) {
+			List<Mirror> mlist = new ArrayList<Mirror>();
+			List<String> murls = new ArrayList<String>();
+			for(String murl : mirrors.split("[\n]")) {
+				murl = murl.trim();
+				if("".equals(murl)) {
+					continue;
+				}
+				
+				murls.add(murl);
+			}
+			murls.add("https://www.xworker.org/do");
+			Collections.shuffle(murls);
+			
+			for(String murl : murls) {
+				murl = murl.trim();
+				if("".equals(murl)) {
+					continue;
+				}
+				
+				Mirror m = checkMirror(murl);
+				if(m != null) {
+					mlist.add(m);					
+				}
+				
+				if(mlist.size() >= 5) {
+					//最多试5个，多了意义不大
+					break;
+				}
+			}
+
+			//选择最快的镜像
+			Collections.sort(mlist);
+			if(mlist.size() > 0) {
+				return mlist.get(0).url;
+			}
+		}		
+		
+		return null;
+	}
+	
+	private static Mirror checkMirror(String url) {
+		long start = System.currentTimeMillis();
+		try {
+			System.out.println("Check mirror : " + url);
+			String s = String.valueOf(start);
+			String res = getUrlContent(url + "?sc=xworker.tools.update.MirrorCheck&time=" + start);
+			if(res != null && s.equals(res.trim())) {
+				long pingTime = System.currentTimeMillis()  - start; 
+				Mirror m = new Mirror();
+				m.url = url;
+				m.pingTime = pingTime;
+				
+				System.out.println("Check mirror : " + url + ", responseTime:" + pingTime);
+				return m;
+			}
+			
+			System.out.println("Check mirror : " + url + ", unvalid");
+			return null;
+		}catch(Exception e) {
+			System.out.println("Check mirror : " + url + ", " + e.getMessage());
+			return null;
+		}
+	}
+	
+	static class Mirror implements java.lang.Comparable<Mirror>{
+		String url;
+		long pingTime;
+		@Override
+		public int compareTo(Mirror o) {
+			if(this.pingTime < o.pingTime) {
+				return -1;
+			}else if(this.pingTime == o.pingTime) {
+				return 0;
+			}else {
+				return 1;
+			}
+		} 
+	}
+	
 	public static void main(String args[]){
 		try{
 			String project = null;
@@ -510,6 +631,15 @@ public class FileSync {
 				downloadUrl = downloadUrl + "&project=" + project;
 			}
 			
+			String useMirror = p.getProperty("useMirror");
+			System.out.println("useMirror=" + useMirror);
+			
+			if(useMirror == null || "ture".equals(useMirror)) {
+				String url = FileSync.getMirrorUrl(downloadUrl);
+				if(url != null && !"".equals(url)) {
+					downloadUrl = url + "?sc=xworker.tools.update.Download";
+				}
+			}
 			FileSync.download(downloadUrl, rootDir, fileListFile);
 		}catch(Exception e){
 			e.printStackTrace();

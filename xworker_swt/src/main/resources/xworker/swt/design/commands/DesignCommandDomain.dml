@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="DesignCommandDomain" descriptors="xworker.lang.command.CommandDomain" label="SWT设计"
+     en_label="SWT Designer">
+    <actions>
+        <GroovyAction name="getCommands">
+            <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.lang.executor.Executor;
+
+def TAG = "xworker.swt.design.commands.DesignCommandDomain.p_1022320282.getCommands";
+if(actionContext.get("control") == null){
+    Executor.warn(TAG, "Control is null, no commands");
+    return [];
+}
+
+def commands = null;
+if(DesignTools.isAttribute(control)){
+    //Executor.info(TAG, "Control is a attribute");
+    def thing = world.getThing("xworker.swt.design.commands.DesignCommandDomain/@controlCommands");    
+    commands = thing.getChilds("Command");
+}else if(DesignTools.isComponent(control)){
+    //Executor.info(TAG, "Control is a component");
+    def thing = world.getThing("xworker.swt.design.commands.DesignCommandDomain/@componentCommands");
+    commands = thing.getChilds("Command");
+}else{
+    //Executor.info(TAG, "Control is a control");
+    def thing = world.getThing("xworker.swt.design.commands.DesignCommandDomain/@controlCommands");    
+    commands = thing.getChilds("Command");
+    commands.add(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@CommonCommands/@actionContext"));
+}
+
+//添加公共的命令
+commands.add(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@CommonCommands/@open"));
+return commands;]]></code>
+        </GroovyAction>
+    </actions>
+    <PredefinedCommands name="controlCommands">
+        <CompositeCommand name="edit" label="编辑">
+            <Composite>
+                <FillLayout name="FillLayout"></FillLayout>
+                <ThingForm name="thingForm" column="1"></ThingForm>
+                <Code name="init">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+
+def control = domainContext.control;
+def thing = Designer.getThing(domainContext.control);
+
+thingForm.doAction("setThing", actionContext, "thing", thing);
+
+actionContext.g().put("control", control);
+actionContext.g().put("thing", thing);]]></code>
+                </Code>
+            </Composite>
+            <Buttons>
+                <Button name="okButton" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+                    <Listeners>
+                        <Listener>
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.swt.design.DesignTools;
+
+def values = thingForm.doAction("getValues", actionContext);
+thing.getAttributes().putAll(values);
+thing.save();
+
+DesignTools.update(control);
+
+commandExecutor.reset();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+            </Buttons>
+        </CompositeCommand>
+        <Command name="move to" _xmeta_id_="move" label="移动到">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import org.xmeta.util.UtilString;
+import xworker.swt.design.DesignTools;
+import xworker.swt.design.Designer;
+
+if(target == null){
+    commandExecutor.setTip(UtilString.getString("lang:d=不能移动，未设置目标控件。&en=Cannot move, target control is not set.", actionContext));
+    return null;
+}else if(target == control){
+    commandExecutor.setTip(UtilString.getString("lang:d=不能移动，目标是自己。&en=Cannot move, target control is self.", actionContext));
+    return null;
+}else{
+    def actionType = -1;
+    switch(type){
+        case "above":
+            actionType = DesignTools.ABOVE;
+            break;
+        case "below":
+            actionType = DesignTools.BELOW;
+            break;
+        case "inside":
+            actionType = DesignTools.INSIDE;
+            if(DesignTools.isContainer(target) == false){
+                commandExecutor.setTip(UtilString.getString("lang:d=不能移动，目标不是容器。&en=Cannot move, target is not a composite.", actionContext));
+                return null;
+            }
+            break;
+    }
+    
+    if(actionType != -1){
+        DesignTools.move(control, target, actionType, false, DesignTools.getActionContext(control));
+    }
+}]]></code>
+                </GroovyAction>
+            </actions>
+            <Parameter name="target" _xmeta_id_="parentControl" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@select"></Parameter>
+            <Parameter name="type" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@moveType"></Parameter>
+        </Command>
+        <Command name="copy to" _xmeta_id_="move1" label="拷贝到">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import org.xmeta.util.UtilString;
+import xworker.swt.design.DesignTools;
+import xworker.swt.design.Designer;
+
+if(target == null){
+    commandExecutor.setTip(UtilString.getString("lang:d=不能移动，未设置目标控件。&en=Cannot move, target control is not set.", actionContext));
+    return null;
+}else{
+    def actionType = -1;
+    switch(type){
+        case "above":
+            actionType = DesignTools.ABOVE;
+            break;
+        case "below":
+            actionType = DesignTools.BELOW;
+            break;
+        case "inside":
+            actionType = DesignTools.INSIDE;
+            break;
+    }
+    
+    if(actionType != -1){
+        DesignTools.move(control, target, actionType, true, DesignTools.getActionContext(control));
+    }
+}]]></code>
+                </GroovyAction>
+            </actions>
+            <Parameter name="target" _xmeta_id_="parentControl" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@select"></Parameter>
+            <Parameter name="type" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@moveType"></Parameter>
+        </Command>
+        <CompositeCommand name="add child" _xmeta_id_="add" label="添加子节点">
+            <Parameter name="descriptor" _xmeta_id_="Parameter" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@selectThingChilds"></Parameter>
+            <Composite>
+                <FillLayout name="FillLayout"></FillLayout>
+                <ThingForm name="thingForm" column="1"></ThingForm>
+                <Code name="init">
+                    <code><![CDATA[import org.xmeta.Thing;
+import org.xmeta.util.UtilString;
+
+if(descriptor != null){
+    def thing = new Thing(descriptor.getMetadata().getPath());
+    thingForm.doAction("setThing", actionContext, "thing", thing);
+}else{
+    def text = "lang:d=未选择子节点的类型。&en=The type of the child node is not selected.";
+    text = StringUtils.getString(text, actionContext);
+    commandExecutor.setTip(text);
+    
+    command.setResult(null);
+    commandExecutor.checkStatus();
+}]]></code>
+                </Code>
+            </Composite>
+            <Buttons>
+                <Button name="addButton" text="lang:d=添加(&amp;amp;A)&amp;en=Add(&amp;amp;A)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.design.Designer;
+import org.xmeta.Thing;
+
+def thing = new Thing(descriptor.getMetadata().getPath());
+def values = thingForm.doAction("getValues", actionContext);
+thing.getAttributes().putAll(values);
+def controlThing = Designer.getThing(domainContext.control);
+def control = domainContext.control;
+if(thing != null){
+    controlThing.addChild(thing);
+    controlThing.save();
+    
+    def ac = Designer.getActionContext(control);
+    def bindings = ac.push();
+    bindings.put("parent", control);
+    try{
+        thing.doAction("create", ac);
+    }finally{
+        ac.pop();
+    }
+    
+}
+
+if(DesignTools.isContainer(control)){
+    control.layout();
+}
+command.setResult(null);
+commandExecutor.checkStatus();]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+            </Buttons>
+        </CompositeCommand>
+        <Command name="delete" label="删除">
+            <Parameter name="confirm" command="xworker.lang.command.instances.CommonCommands/@YesNo"></Parameter>
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+if(confirm == "yes"){
+    DesignTools.remove(control);
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="edit LayoutData" label="编辑布局数据">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import org.xmeta.util.UtilString;
+
+def layoutDataThing = DesignTools.getLayoutDataThing(control);
+if(layoutDataThing == null){
+    def tip = UtilString.getString("lang:d=没有布局数据可以编辑。&en=There is no layout data to edit.", actionContext);
+    commandExecutor.setTip(tip);
+}else{
+    //切换到编辑布局数据的命令
+    command.setCommandThing(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editLayoutData"));
+    //commandExecutor.setCurrentCommandThing(world.ggetThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editLayoutData"));
+    def param = command.getParameter("thing");
+    param.setResult(layoutDataThing);
+    
+    commandExecutor.checkStatus();
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="edit Layout" label="编辑布局">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import org.xmeta.util.UtilString;
+
+def layoutDataThing = DesignTools.getLayoutThing(control);
+if(layoutDataThing == null){
+    def tip = UtilString.getString("lang:d=没有布局可以编辑。&en=There is no layout to edit.", actionContext);
+    commandExecutor.setTip(tip);
+}else{
+    //切换到编辑布局数据的命令
+    command.setCommandThing(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editLayoutData"));
+    //commandExecutor.setCurrentCommandThing(world.ggetThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editLayoutData"));
+    def param = command.getParameter("thing");
+    param.setResult(layoutDataThing);
+    
+    commandExecutor.checkStatus();
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="change Layout" _xmeta_id_="edit Layout1" label="改变布局">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import org.xmeta.util.UtilString;
+
+if(DesignTools.hasLayout(control) == false){
+    def tip = UtilString.getString("lang:d=当前控件没有布局可以设置。&en=The current control has no layout to set.", actionContext);
+    commandExecutor.setTip(tip);
+    return;
+}
+
+DesignTools.changeLayout(control, layout);]]></code>
+                </GroovyAction>
+            </actions>
+            <Parameter name="layout" command="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@layouts"></Parameter>
+        </Command>
+        <Command name="select" _xmeta_id_="select1" label="选择" hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.xwidgets.SelectContent;
+
+def items = DesignTools.getControlItems(control);
+def contents = [];
+
+for(item in items){
+    addContent(item, "", contents);
+}
+
+//println contents;
+return contents;
+
+def addContent(item, ident, contents){
+    def label = ident + item.getLabel() + " (" + item.getControl().getClass().getSimpleName() + ")";
+    def content = new SelectContent(label, label, item.getControl());
+    contents.add(content);
+    
+    for(childItem in item.getChilds()){
+        addContent(childItem, ident + "  ", contents);
+    }
+}]]></code>
+                    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                        <Variable name="item" varName="item" scope="2" className="xworker.swt.design.DesignShellActions$Item"></Variable>
+                    </VariablesDescs>
+                </GroovyAction>
+                <GroovyAction name="onContent">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+
+if(content != null){
+    command.setResult(null);
+    Designer.setCurrentDesignControl(content);    
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="add listener" label="添加事件监听" hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.xwidgets.SelectContent;
+
+def listenerNames = DesignTools.getUnregistedListeners(control);
+def contents = [];
+for(name in listenerNames){
+    contents.add(new SelectContent(name));
+}
+
+return contents;]]></code>
+                </GroovyAction>
+                <GroovyAction name="onContent">
+                    <code><![CDATA[import org.eclipse.swt.SWT;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.events.SwtListener;
+import xworker.swt.design.Designer;
+import org.xmeta.Thing;
+
+def eventType = SwtUtils.getSWT(content);
+if(eventType != SWT.NONE){
+    def thing = Designer.getThing(control);
+    
+    def listener = new Thing("xworker.swt.widgets.Widget/@Event");
+    listener.set("name", "on" + content);
+    
+    //默认使用Groovy
+    def groovy = new Thing("xworker.lang.actions.Actions/@GroovyAction");
+    listener.addChild(groovy);
+    
+    thing.addChild(listener);
+    thing.save();
+    
+    def ac = Designer.getActionContext(control);
+    listener.doAction("create", ac, "parent", control);
+    
+    command.setCommandThing(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editEventGroovy"));
+    command.getParameter("thing").setResult(groovy);
+    command.getParameter("ac").setResult(Designer.getActionContext(control));
+        
+    commandExecutor.checkStatus();
+    return;
+}
+
+command.setResult(null);]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="remove listener" _xmeta_id_="add listener1" label="移除事件监听" hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.xwidgets.SelectContent;
+
+def listenerNames = DesignTools.getRegistedListeners(control);
+def contents = [];
+for(name in listenerNames){
+    contents.add(new SelectContent(name));
+}
+
+return contents;]]></code>
+                </GroovyAction>
+                <GroovyAction name="onContent">
+                    <code><![CDATA[import org.eclipse.swt.SWT;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.events.SwtListener;
+import xworker.swt.design.Designer;
+
+def eventType = SwtUtils.getSWT(content);
+if(eventType != SWT.NONE){
+    def listeners = control.getListeners(eventType);
+    for(listener in listeners){
+        if(listener instanceof SwtListener){
+            def thing = Designer.getThing(control);
+            
+            //控件移除事件
+            control.removeListener(eventType, listener);
+            //事物移除相关子节点
+            def list = [];
+            getParentThings(thing, listener.getThing(), list);
+            if(list.get(list.size() - 1) == thing){
+                //是控件的当前事物设置的事件
+                list.get(0).removeChild(listener.getThing());
+                thing.save();
+            }
+        }
+    }
+}
+command.setResult(null);
+
+//返回child的父节点的列表，如果父是thing那么终止
+def getParentThings(thing, child, list){
+    def parent = child.getParent();
+    if(parent == thing){
+        list.add(thing);
+    }else if(parent != null){
+        list.add(parent);
+        getParentThings(thing, parent, list);
+    }        
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="edit listener" _xmeta_id_="editEvent" label="编辑事件监听" hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.xwidgets.SelectContent;
+
+def listenerNames = DesignTools.getRegistedListeners(control);
+def contents = [];
+for(name in listenerNames){
+    contents.add(new SelectContent(name));
+}
+
+return contents;]]></code>
+                </GroovyAction>
+                <GroovyAction name="onContent">
+                    <code><![CDATA[import org.eclipse.swt.SWT;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.events.SwtListener;
+import xworker.swt.design.Designer;
+
+def eventType = SwtUtils.getSWT(content);
+if(eventType != SWT.NONE){
+    def eventThing = null;
+    def listeners = control.getListeners(eventType);
+    for(listener in listeners){
+        if(listener instanceof SwtListener){
+            eventThing = listener.getThing();
+            break;
+        }
+    }
+    
+    println eventThing;
+    if(eventThing != null){
+        command.setCommandThing(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@CommonCommands/@editThing"));
+        command.getParameter("thing").setResult(eventThing);
+        command.getParameter("ac").setResult(Designer.getActionContext(control));
+        
+        commandExecutor.checkStatus();
+        return;
+    }
+}
+command.setResult(null);
+
+//返回child的父节点的列表，如果父是thing那么终止
+def getParentThings(thing, child, list){
+    def parent = child.getParent();
+    if(parent == thing){
+        list.add(thing);
+    }else if(parent != null){
+        list.add(parent);
+        getParentThings(thing, parent, list);
+    }        
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <Command name="edit listener groovy" _xmeta_id_="editEvent1" label="编辑事件监听Groovy"
+             hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.xwidgets.SelectContent;
+
+def listenerNames = DesignTools.getRegistedListeners(control);
+def contents = [];
+for(name in listenerNames){
+    contents.add(new SelectContent(name));
+}
+
+return contents;]]></code>
+                </GroovyAction>
+                <GroovyAction name="onContent">
+                    <code><![CDATA[import org.eclipse.swt.SWT;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.events.SwtListener;
+import xworker.swt.design.Designer;
+import org.xmeta.util.UtilString;
+
+def eventType = SwtUtils.getSWT(content);
+if(eventType != SWT.NONE){
+    def eventThing = null;
+    def listeners = control.getListeners(eventType);
+    for(listener in listeners){
+        if(listener instanceof SwtListener){
+            eventThing = listener.getThing();
+            break;
+        }
+    }
+    
+    def codeThing = null;
+    if(eventThing != null && eventThing.getChilds().size() > 0){
+        codeThing = eventThing.getChilds().get(0);
+        if(!codeThing.isThingByName("Groovy")){
+            codeThing == null;
+        }
+    }
+    if(codeThing != null){
+        command.setCommandThing(world.getThing("xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@editEventGroovy"));
+        command.getParameter("thing").setResult(codeThing);
+        command.getParameter("ac").setResult(Designer.getActionContext(control));
+        
+        commandExecutor.checkStatus();
+        return;
+    }else{
+        def tip = UtilString.getString("lang:d=没有Groovy脚本。&en=No groovy script found.", actionContext);
+    }
+}
+command.setResult(null);
+
+//返回child的父节点的列表，如果父是thing那么终止
+def getParentThings(thing, child, list){
+    def parent = child.getParent();
+    if(parent == thing){
+        list.add(thing);
+    }else if(parent != null){
+        list.add(parent);
+        getParentThings(thing, parent, list);
+    }        
+}]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <CompositeCommand name="edit model" _xmeta_id_="edit control model" label="编辑模型">
+            <Composite name="mainComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <ThingEditor name="thingEditor" saveActionContainer="true"></ThingEditor>
+                <Code name="code">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+
+def control = domainContext.control;
+actionContext.g().put("control", control);
+
+def thing = Designer.getThing(control);
+
+thingEditor.doAction("setThing", actionContext, "thing", thing);]]></code>
+                </Code>
+            </Composite>
+            <Buttons>
+                <Button name="okButton" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import xworker.swt.design.DesignTools;
+
+thingEditor.doAction("save", actionContext);
+
+DesignTools.update(control);
+
+command.setResult(null);
+commandExecutor.checkStatus();]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+                <Button name="saveButton" _xmeta_id_="apllayButton" text="lang:d=保存(&amp;amp;S)&amp;en=Save(&amp;amp;S)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import xworker.swt.design.DesignTools;
+
+thingEditor.doAction("save", actionContext);]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+            </Buttons>
+        </CompositeCommand>
+        <CompositeCommand name="document" label="文档">
+            <Composite name="mainComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <Browser name="browser">
+                    <UtilBrowser name="UtilBrowser"></UtilBrowser>
+                </Browser>
+                <Code name="init">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+import xworker.util.XWorkerUtils;
+
+def thing = Designer.getThing(domainContext.control);
+def desc = thing.getDescriptor();
+def url = XWorkerUtils.getThingDescUrl(desc);
+browser.setUrl(url);]]></code>
+                </Code>
+            </Composite>
+        </CompositeCommand>
+    </PredefinedCommands>
+    <PredefinedCommands name="attributeCommands"></PredefinedCommands>
+    <PredefinedCommands name="componentCommands"></PredefinedCommands>
+    <PredefinedCommands name="ControlOtherCommands">
+        <CompositeCommand name="select" label="选择">
+            <Composite name="mainComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <Tree name="tree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
+                     multipleColumns="false" headerVisible="false" sortIndicator="false"
+                     moveableColumns="false">
+                    <Listeners>
+                        <Listener name="Listener" type="DefaultSelection" ref="xworker.swt.design.commands.DesignCommandDomain/@ControlOtherCommands/@select/@Buttons/@selectButton/@onSelection/@GroovyAction"></Listener>
+                    </Listeners>
+                </Tree>
+                <Code name="init">
+                    <code><![CDATA[import xworker.swt.design.DesignShellActions;
+
+//println domainContext.control;
+DesignShellActions.designTreeInit(actionContext, tree, domainContext.control,  true);
+
+tree.setFocus();]]></code>
+                </Code>
+            </Composite>
+            <Buttons>
+                <Button name="selectButton" text="lang:d=选择(&amp;amp;S)&amp;en=Select(&amp;amp;S)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import xworker.swt.design.Designer;
+
+//选择控件
+def data = tree.getSelection()[0].getData();
+command.setResult(data.control);
+
+if(data.control.isVisible() == false){
+    data.control.setVisible(true);
+}
+
+commandExecutor.checkStatus();]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+            </Buttons>
+        </CompositeCommand>
+        <Command name="moveType" hasContents="true" contentList="above,below,inside"></Command>
+        <Command name="selectThingChilds" hasContents="true">
+            <actions>
+                <ThingChildsContent name="getContents" descriptors="xworker.swt.actions.ContentSelectorActions/@ThingChildsContent"
+                     thing="ognl:controlThing.getDescriptor()" thingNames="thing"></ThingChildsContent>
+            </actions>
+        </Command>
+        <CompositeCommand name="editControlChildThing" _xmeta_id_="editLayoutData" label="编辑布局数据">
+            <Composite name="maimComposite" _xmeta_id_="Composite">
+                <ThingForm name="thingForm" column="1"></ThingForm>
+                <Code name="init">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+import xworker.swt.design.DesignTools;
+import org.xmeta.util.UtilString;  
+
+def control = domainContext.control;
+def thing = actionContext.get("thing");
+
+thingForm.doAction("setThing", actionContext, "thing", thing);
+
+actionContext.g().put("control", control);
+actionContext.g().put("thing", thing);]]></code>
+                </Code>
+                <FillLayout name="FillLayout"></FillLayout>
+            </Composite>
+            <Buttons>
+                <Button name="okButton" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+                    <Listeners>
+                        <Listener>
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.design.Designer;
+import org.eclipse.swt.widgets.Composite;
+
+if(actionContext.get("thing") == null){
+    commandExecutor.reset();
+    return;
+}
+
+def values = thingForm.doAction("getValues", actionContext);
+thing.getAttributes().putAll(values);
+thing.save();
+
+def ac = Designer.getActionContext(control);
+thing.doAction("create", ac, "parent", control);
+
+if(control.getParent() != null){
+    control.getParent().layout();
+}else if(control instanceof Composite){
+    control.layout();
+}
+
+command.setResult(null);
+commandExecutor.checkStatus();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+            </Buttons>
+            <Parameter name="thing"></Parameter>
+        </CompositeCommand>
+        <Command name="layouts" hasContents="true" contentList="FillLayout,GridLayout,RowLayout,StackLayout,FormLayout"></Command>
+        <CompositeCommand name="editEventGroovy">
+            <Parameter name="thing"></Parameter>
+            <Parameter name="ac"></Parameter>
+            <Composite name="mainComposite">
+                <CodeEditor name="codeEditor" codeName="groovy" codeType="groovy" assistActionContext="var:ac"></CodeEditor>
+                <Code name="init">
+                    <code><![CDATA[def code = thing.getString("code");
+if(code != null){
+    codeEditor.setText(code);
+}
+
+actionContext.g().put("thing", thing);]]></code>
+                </Code>
+                <FillLayout name="FillLayout"></FillLayout>
+            </Composite>
+            <Buttons>
+                <Button name="okButton" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[thing.set("code", codeEditor.getText());
+thing.save();
+
+command.setResult(null);
+commandExecutor.checkStatus();]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+                <Button name="saveButton" _xmeta_id_="okButton1" text="lang:d=保存(&amp;amp;S)&amp;en=Save(&amp;amp;S)">
+                    <Event name="onSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[thing.set("code", codeEditor.getText());
+thing.save();]]></code>
+                        </GroovyAction>
+                    </Event>
+                </Button>
+            </Buttons>
+        </CompositeCommand>
+    </PredefinedCommands>
+    <PredefinedCommands name="CommonCommands">
+        <Command name="open" label="打开">
+            <actions>
+                <GroovyAction name="run">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+
+def thing = Designer.getThing(control);
+
+open(actionContext, "thing", thing);]]></code>
+                    <ActionDefined>
+                        <ideOpenThing name="open" descriptors="xworker.lang.actions.utils.XWorkerActions/@ideOpenThing"
+                             thing="var:thing"></ideOpenThing>
+                    </ActionDefined>
+                </GroovyAction>
+            </actions>
+        </Command>
+        <CompositeCommand name="editThing">
+            <Parameter name="thing"></Parameter>
+            <Composite name="mainComposite" _xmeta_id_="mainCompoiste">
+                <FillLayout name="fillLayout"></FillLayout>
+                <ThingEditor name="thingEditor" thingPath="var:thing" title="false" variablesActionContext="var:ac"></ThingEditor>
+            </Composite>
+            <Parameter name="ac"></Parameter>
+        </CompositeCommand>
+        <CompositeCommand name="actionContext" label="变量上下文">
+            <Composite name="mainComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <ActionContextViewer name="viewer">
+                    <actions>
+                        <GroovyAction name="getActionContext">
+                            <code><![CDATA[import xworker.swt.design.Designer;
+
+def ac = Designer.getActionContext(domainContext.control);
+return ac;]]></code>
+                        </GroovyAction>
+                    </actions>
+                </ActionContextViewer>
+            </Composite>
+        </CompositeCommand>
+    </PredefinedCommands>
+</CommandDomain>

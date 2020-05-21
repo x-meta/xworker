@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ShellGuide" descriptors="xworker.lang.MetaDescriptor3" icon="icons/group_go.png">
+    <description><![CDATA[<p>打开一个shell，遮住一个Composite，为这个Composite提供向导。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.swt.guide.ShellGuide" methodName="create"></JavaAction>
+        <GetObject name="getActionContext" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="actionContext"></GetObject>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="en_label"></attribute>
+    <attribute name="actionContext" default="var:actionContext"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Guide" icon="icons/user.png">
+        <description><![CDATA[<p><strong>向导节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在向导上显示文本，也可以定位到某个控件，使得这个控件可以输入。</p>
+
+<p><strong>&nbsp;可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>void init()</strong><br />
+	初始化，变量上下文是parentContext，即向导所要展示的SWT界面的变量上下文。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+        <actions>
+            <NOOP name="init"></NOOP>
+            <NOOP name="finished"></NOOP>
+            <GetObject name="getActiveControlParent" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="activeControlParent"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="activeControlParent" size="50">
+            <description><![CDATA[<p>要激活的Control的父，如果没有指定使用向导演示默认的。</p>
+]]></description>
+        </attribute>
+        <attribute name="activeControlThing" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="activeControlIsAttribute" inputtype="truefalse" default="false"></attribute>
+        <attribute name="activeControlClassName" _xmeta_id_="controlClassName">
+            <description><![CDATA[<p>如果不为空，那么会比较控件的类的SimpleName，符合的才是要激活的的控件。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+</thing>

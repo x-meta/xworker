@@ -1,4 +1,4 @@
-^1579575350478
+^1583217703930
 @
 sname
 shell
@@ -704,10 +704,10 @@ if(data instanceof Thing){
          registedTasksRegist.doAction("refresh", actionContext);
          //registedTasksRegist.doAction("search", actionContext);
          taskContentStackLayout.topControl = thingRegistComposite;
-         taskContentComposite.layout();
+         taskMainContentComposite.layout();
     }else{
          taskContentStackLayout.topControl = descBrowser;
-         taskContentComposite.layout();
+         taskMainContentComposite.layout();
     }
     
     refreshTaskListButton.setEnabled(true);
@@ -723,6 +723,8 @@ if(data instanceof Thing){
     
     refreshTaskListButton.setEnabled(false);
     editButton.setEnabled(false);
+    taskContentStackLayout.topControl = descBrowser;
+    taskMainContentComposite.layout();
 }
 
 //清空任务表格
@@ -740,6 +742,8 @@ pauseTaskButton.setEnabled(false);
                     screateLocalVarScope
                     false
                     ssaveReturn
+                    false
+                    sswitchResult
                     false
                     sdebugLog
                     false
@@ -2062,6 +2066,7 @@ import xworker.task.Task;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
+import org.xmeta.ActionContext;
 import org.xmeta.util.UtilString;
 
 //获取选中的任务
@@ -2090,12 +2095,30 @@ if(type == "scheduled"){
 }else{
     pauseTaskButton.setEnabled(false);
 }
+
+//创建任务自身的界面，如果存在
+if(taskContentStackLayout.topControl != thingRegistComposite){
+    //如果是thingRegistComposite，那么是按分钟，按小时等....的任务集合，它们有自己的界面
+    for(child in taskContentComposite.getChildren()){
+        child.dispose();
+    }
+    
+    //使用新的变量上下文
+    def ac = new ActionContext();
+    ac.put("parent", taskContentComposite);
+    task.createUI(ac);
+    taskContentComposite.layout();
+    taskContentStackLayout.topControl = taskContentComposite;
+    taskMainContentComposite.layout();
+}
 #$@text#$@
                         sinterpretationType
                         Action
                         screateLocalVarScope
                         false
                         ssaveReturn
+                        false
+                        sswitchResult
                         false
                         sdebugLog
                         false
@@ -2965,13 +2988,25 @@ if(task.getStatus() == Task.STATUS_PAUSED){
                   @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@thingDescComposite/@thingPathLabel
                   sname
                   thingPathLabel
-                  sBORDER
+                  sstyle
+                  SINGLE
+                  sH_SCROLL
                   false
-                  stype
-                  HORIZONTAL
-                  sshadow
-                  SHADOW_OUT
-                  salignment
+                  sV_SCROLL
+                  false
+                  sWRAP
+                  false
+                  sREAD_ONLY
+                  true
+                  sPASSWORD
+                  false
+                  sSEARCH
+                  false
+                  sCANCEL
+                  false
+                  sBORDER
+                  true
+                  salign
                   LEFT
                   scapture
                   false
@@ -2979,15 +3014,29 @@ if(task.getStatus() == Task.STATUS_PAUSED){
                   true
                   sredraw
                   true
+                  spack
+                  false
                   svisible
                   true
                   sdescriptors
-                  xworker.swt.Widgets/@Label
+                  xworker.swt.Widgets/@Text
+                  sinheritDescription
+                  false
                   sth_createIndex
                   false
                   sth_registMyChilds
                   false
+                  sth_registDisabled
+                  false
+                  sth_noThingRegistViewer
+                  false
+                  sth_fileMonitor
+                  false
+                  sth_deprecated
+                  false
                   sth_mark
+                  false
+                  sth_registQueryOnlySelf
                   false
                   sid
                   thingPathLabel
@@ -3026,7 +3075,7 @@ if(task.getStatus() == Task.STATUS_PAUSED){
                     thingPathLabelGridData
                   @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@thingDescComposite/@taskContentComposite
                   sname
-                  taskContentComposite
+                  taskMainContentComposite
                   sBORDER
                   false
                   sH_SCROLL
@@ -3053,6 +3102,8 @@ if(task.getStatus() == Task.STATUS_PAUSED){
                   true
                   sredraw
                   true
+                  spack
+                  false
                   svisible
                   true
                   sdescriptors
@@ -3101,6 +3152,84 @@ if(task.getStatus() == Task.STATUS_PAUSED){
                       false
                       sid
                       UtilBrowser
+                    @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@thingDescComposite/@taskContentComposite/@taskContentComposite
+                    sname
+                    taskContentComposite
+                    sBORDER
+                    false
+                    sH_SCROLL
+                    false
+                    sV_SCROLL
+                    false
+                    sNO_BACKGROUND
+                    false
+                    sNO_FOCUS
+                    false
+                    sNO_MERGE_PAINTS
+                    false
+                    sNO_REDRAW_RESIZE
+                    false
+                    sNO_RADIO_GROUP
+                    false
+                    sEMBEDDED
+                    false
+                    sDOUBLE_BUFFERED
+                    false
+                    scapture
+                    false
+                    senabled
+                    true
+                    sredraw
+                    true
+                    spack
+                    false
+                    svisible
+                    true
+                    sdescriptors
+                    xworker.swt.Widgets/@Composite
+                    sinheritDescription
+                    false
+                    sth_createIndex
+                    false
+                    sth_registMyChilds
+                    false
+                    sth_registDisabled
+                    false
+                    sth_noThingRegistViewer
+                    false
+                    sth_fileMonitor
+                    false
+                    sth_mark
+                    false
+                    sth_registQueryOnlySelf
+                    false
+                    sid
+                    taskContentComposite
+                      @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@thingDescComposite/@taskContentComposite/@taskContentComposite/@FillLayout
+                      sname
+                      FillLayout
+                      stype
+                      SWT.HORIZONTAL
+                      sdescriptors
+                      xworker.swt.Layouts/@FillLayout
+                      sinheritDescription
+                      false
+                      sth_createIndex
+                      false
+                      sth_registMyChilds
+                      false
+                      sth_registDisabled
+                      false
+                      sth_noThingRegistViewer
+                      false
+                      sth_fileMonitor
+                      false
+                      sth_mark
+                      false
+                      sth_registQueryOnlySelf
+                      false
+                      sid
+                      FillLayout
                     @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@thingDescComposite/@taskContentComposite/@thingRegistComposite1
                     sname
                     thingRegistComposite

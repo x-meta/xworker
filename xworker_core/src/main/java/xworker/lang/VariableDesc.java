@@ -216,6 +216,10 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		String className = self.doAction("getClassName", actionContext);
 		Thing thing = self.doAction("getThing", actionContext);
 		byte scope = self.getByte("scope");
+		if("parent".equals(type)) {
+			thing = thing_;
+			type = THING;
+		}
 		
 		VariableDesc var = new VariableDesc(name, type, className, thing, scope);
 		var.setPassive(self.getBoolean("passive"));

@@ -13,6 +13,8 @@ public class CodeViewer {
 	ActionContainer actions;
 	Thing self;
 	Control control;
+	String codeType;
+	String codeName;
 	
 	public CodeViewer(Thing self, ActionContainer actions, Control control){
 		this.self = self;
@@ -21,6 +23,19 @@ public class CodeViewer {
 	}
 	
 	public void setCode(String codeName, String codeType, String code){
+		if(codeName == null || code == null){
+			return;
+		}
+		if(codeType == null){
+			codeType = codeName;
+		}
+		
+		this.codeName = codeName;
+		this.codeType = codeType;
+		actions.doAction("setCode", null, "codeType", codeType, "codeName", codeName, "code", code);
+	}
+	
+	public void setCode(String code) {
 		if(codeName == null || code == null){
 			return;
 		}

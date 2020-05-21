@@ -170,17 +170,17 @@ public class HttpServletDo extends HttpServlet{
 		}
 		
 		//默认的profile
-		String configurationProfile = config.getInitParameter("configurationProfile");
+		String configurationProfile = config.getInitParameter("profile");
 		if(configurationProfile != null) {
 			Configuration.setProfile(configurationProfile);
 		}
 		
 		//配置模型，如果存在执行它的init方法
-		String configurationPath = config.getInitParameter("configuration");
+		String configurationPath = config.getInitParameter("init");
 		if(configurationPath != null) {
 			Thing configuration = World.getInstance().getThing(configurationPath);
 			if(configuration != null) {
-				configuration.doAction("init");
+				configuration.getAction().run();
 			}
 		}		
 		

@@ -642,7 +642,8 @@ public class XWorkerTreeUtil {
 			}
 		}
 		
-		Collections.sort(rootGroup.getChilds());
+		rootGroup.sort();
+		//Collections.sort(rootGroup.getChilds());
 		for( xworker.util.ThingGroup group : rootGroup.getChilds()){
 			showThingGroupOnTreeOrItem(cachePath, group, treeOrTreeItem, "", actionContext);
 		}
@@ -688,19 +689,21 @@ public class XWorkerTreeUtil {
 	}
 			
 	public static void showThingGroupOnTreeOrItem(String cachePath, xworker.util.ThingGroup group, Object treeOrItem, String parentGroup, ActionContext actionContext){
-		if(group.getThing() == null){
-			TreeItem item = showGroupOnTreeOrITem(cachePath, group, parentGroup, treeOrItem, actionContext);
-			String path = parentGroup.equals("") ? group.getOldGroup() : parentGroup + "." + group.getOldGroup();
-			Collections.sort(group.getChilds());
-			for(xworker.util.ThingGroup childGroup : group.getChilds()){
-				showThingGroupOnTreeOrItem(cachePath, childGroup, item, path, actionContext);
-			}
-			
-			if(isExpaned(cachePath, item)){
-				item.setExpanded(true);
-			}
-		}else{
-			showThingOnTreeOrItem(cachePath, group.getThing(), treeOrItem, actionContext);
+		TreeItem item = null;
+		if(group.getThing() != null) {
+			item = showThingOnTreeOrItem(cachePath, group.getThing(), treeOrItem, actionContext);
+		}else {
+			item = showGroupOnTreeOrITem(cachePath, group, parentGroup, treeOrItem, actionContext);
+		}
+		
+		String path = parentGroup.equals("") ? group.getOldGroup() : parentGroup + "." + group.getOldGroup();
+		Collections.sort(group.getChilds());
+		for(xworker.util.ThingGroup childGroup : group.getChilds()){
+			showThingGroupOnTreeOrItem(cachePath, childGroup, item, path, actionContext);
+		}
+		
+		if(isExpaned(cachePath, item)){
+			item.setExpanded(true);
 		}
 	}
 	

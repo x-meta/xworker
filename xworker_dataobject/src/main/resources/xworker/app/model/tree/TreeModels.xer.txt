@@ -1,4 +1,4 @@
-^1573732303771
+^1587102406886
 @
 sname
 TreeModels
@@ -10,6 +10,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 sgroup
@@ -31,12 +33,29 @@ Sdescription
 <p>&nbsp;&nbsp;&nbsp;&nbsp;自定义的TreeModel主要需要实现以下两个方法：</p>
 
 <ul>
-	<li><strong>getRoot&nbsp;</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
-	返回模型的根节点，根节点只有一个。<br />
+	<li><strong>List&lt;Object&gt; getRoot()&nbsp;</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+	返回模型的根节点，根节点只有一个。TreeModel的默认实现是返回第一个Root子节点。<br />
 	&nbsp;</li>
-	<li><strong>getChilds&nbsp;&nbsp;&nbsp;&nbsp;</strong>&nbsp;&nbsp;&nbsp;&nbsp;<br />
-	根据标识返回其子节点列表，日过标识为空，应返回getRoots方法的内容。</li>
+	<li><strong>List&lt;Object&gt; getChilds(Object id)&nbsp;&nbsp;&nbsp;&nbsp;</strong>&nbsp;&nbsp;&nbsp;&nbsp;<br />
+	根据标识返回其子节点列表，如果标识为空，应返回getRoots()方法的内容。</li>
 </ul>
+
+<p><strong>节点对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 节点可以是对象，TreeModel通常使用Ognl来取值，常用的属性如下：</p>
+
+<ul>
+	<li><strong>id: Object</strong><br />
+	节点的标识。</li>
+	<li><strong>text: String</strong><br />
+	节点的文本。</li>
+	<li><strong>icon: String</strong><br />
+	节点的图标的路径。</li>
+	<li><strong>leaf: String</strong><br />
+	true/false，是否是叶子节点。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 节点还有其它属性，详细可以参看模型<a href="javascript:invoke('thing:xworker.app.model.tree.TreeNode')">xworker.app.model.tree.TreeNode</a>。</p>
 
 <p><strong>模型示例</strong></p>
 

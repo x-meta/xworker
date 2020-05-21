@@ -1,4 +1,4 @@
-^1568602174435
+^1586229535568
 @
 sname
 OrgDocument
@@ -10,6 +10,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
@@ -18,7 +20,9 @@ sinheritDescription
 false
 Sdescription
 #$@text#$@
-<p>一个简易文档应用，可以在线编辑页面，所有页面都放在一个事物里。</p>
+<p>一个简易文档应用，可以在线编辑页面，所有页面都放在一个模型里。</p>
+
+<p>风格类似XWorker的主页。</p>
 
 <p>&nbsp;</p>
 #$@text#$@
@@ -70,7 +74,9 @@ false
 #$@text#$@
 import org.xmeta.Thing;
 import xworker.security.SecurityManager;
+import xworker.lang.executor.Executor;
 
+def TAG = "xworker.app.web.docorg.OrgDocument.p_367904812.httpDo";
 //需要安全校验的动作列表
 def ac_security = ["addCategoryPage", "addCategory", "editPage", 
                 "savePage", "removePage", "moveUp", "moveDown",
@@ -86,17 +92,19 @@ if(self.doAction("check", actionContext) == false){
 
 //校验权限
 def ac = request.getParameter("ac");
-def checkSecurity = false;
-for(acc in ac_security){
-    if(acc == ac){
-        checkSecurity = true;
-        break;
+if(self.getString("security") != "self"){ //self是用户名密码的验证
+    def checkSecurity = false;
+    for(acc in ac_security){
+        if(acc == ac){
+            checkSecurity = true;
+            break;
+        }
     }
-}
-if(checkSecurity){
-    if(!SecurityManager.doCheck((byte) 1, "xworker.app.web.docorg.OrgDocument", null, null, actionContext)){
-        //response.writer.println("Security check failured");
-        return;
+    if(checkSecurity){
+        if(!SecurityManager.doCheck((byte) 1, "xworker.app.web.docorg.OrgDocument", null, null, actionContext)){
+            //response.writer.println("Security check failured");
+            return;
+        }
     }
 }
 
@@ -128,9 +136,17 @@ if(content != null){
 //保存全局变量
 _g.put("category", category);
 _g.put("menus", menus);
+Executor.info(TAG, "content=" + content);
 _g.put("content", content);
 _g.put("doc", self);
 if(ac == "editModel"){
+    if(self.getString("security") == "self"){
+        if(session.getAttribute(self.getMetadata().getPath()) == null){
+            //需要登录
+            response.sendRedirect("do?sc=xworker.app.web.docorg.Login&docPath=" + self.getMetadata().getPath());
+            return;
+        }
+    }
     session.setAttribute(self.metadata.path + "_EditModel", "editModel");
 }else if(ac == "exitEditModel"){
     session.setAttribute(self.metadata.path + "_EditModel", null);
@@ -165,6 +181,7 @@ if(ac == "addCategoryPage"){
 }else if(ac == "doMovePage"){
     self.doAction("doMovePage", actionContext);
 }else{
+    //println content;
     if(content != null){
         def href= content.getStringBlankAsNull("href");
         if(href != null){
@@ -174,6 +191,7 @@ if(ac == "addCategoryPage"){
     }
     
     //默认是输出文件
+    actionContext.g().put("editable", self.getBoolean("editable"));
     self.doAction("writeContent", actionContext);
 }
 
@@ -243,6 +261,8 @@ def getCategoryByContent(content){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -525,8 +545,6 @@ if(label == null){
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -890,8 +908,6 @@ if(self.getData("checking") == true){
         false
         sthrowException
         true
-        suseOtherAction
-        false
         screateLocalVarScope
         false
         ssaveReturn
@@ -953,8 +969,6 @@ if(self.getData("checking") == true){
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -1285,6 +1299,67 @@ def getCategory(content){
     false
     sid
     doMovePage
+    @/@actions/@checkLogin
+    sname
+    checkLogin
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def uName = self.getStringBlankAsNull("userName");
+def uPassword = self.getStringBlankAsNull("password");
+
+/*
+println uName
+println uPassword;
+println userName;
+println  password;
+*/
+if((uName == null || uName == userName) 
+    && (uPassword == null || uPassword == password)){
+    return true;
+}else{
+    return false;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    checkLogin
   @/@name
   sname
   name
@@ -1354,6 +1429,12 @@ def getCategory(content){
   50
   sshowLabel
   true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
   sreadOnly
   false
   sinheritDescription
@@ -1413,6 +1494,166 @@ def getCategory(content){
   false
   sid
   icon
+  @/@security
+  sname
+  security
+  sinputtype
+  select
+  sgroup
+  Security
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  self
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>安全验证的方法。</p>
+
+<ul>
+	<li><strong>self</strong><br />
+	采用文档自身设置的用户名和密码验证。可以重写checkLogin(String user, String passowrd)来验证。<br />
+	&nbsp;</li>
+	<li><strong>system</strong><br />
+	采用系统的安全验证机制。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  security
+    @/@security/@self
+    sname
+    self
+    svalue
+    self
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    self
+    @/@security/@system
+    sname
+    system
+    svalue
+    system
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    system
+  @/@editable
+  sname
+  editable
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  editable
   @/@bottom
   sname
   bottom
@@ -1490,12 +1731,16 @@ def getCategory(content){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   smodifier
   public
   sinheritDescription
   false
+  sdescription
+  <p>显示到页面最上部的菜单条。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -1642,19 +1887,23 @@ def getCategory(content){
     sname
     CategoryItem
     slabel
-    栏目
+    栏目和页面
     sdescriptors
     xworker.lang.MetaDescriptor3/@thing
     smany
     true
     seditCols
     2
+    sformNoLabel
+    false
     sinitialization
     false
     smodifier
     public
     sinheritDescription
     false
+    sdescription
+    <p>根据页面模板的不同，有可能会显示为栏目，也有可能显示为页面。</p>
     snotXmlAttribute
     false
     sjson_isArray
@@ -1669,6 +1918,88 @@ def getCategory(content){
     false
     sid
     CategoryItem
+      @/@Category/@CategoryItem/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@actions
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      actions
+        @/@Category/@CategoryItem/@actions/@toHtml
+        sname
+        toHtml
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+def content = world.getThing(self.getStringBlankAsNull("contentThing"));
+
+def html = null;
+if(content != null){
+    html = content.doAction("toHtml", actionContext);
+}else{
+    html = self.getMetadata().getDescription();
+}
+if(html == null){
+    html = "";
+}
+
+return html;
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sswitchResult
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        toHtml
       @/@Category/@CategoryItem/@name
       sname
       name
@@ -1762,6 +2093,53 @@ def getCategory(content){
       false
       sid
       href
+      @/@Category/@CategoryItem/@contentThing
+      sname
+      contentThing
+      sinputtype
+      dataSelector
+      ssize
+      60
+      sshowLabel
+      true
+      slabelAlign
+      right
+      slabelVAlign
+      baseline
+      smodifier
+      public
+      sreadOnly
+      false
+      sinheritDescription
+      false
+      svalidateAllowBlank
+      true
+      LvalidateOnBlur
+      true
+      LallowDecimals
+      true
+      LallowNegative
+      true
+      snotXmlAttribute
+      false
+      sdescriptors
+      xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      contentThing
       @/@Category/@CategoryItem/@description
       sname
       description
@@ -1798,6 +2176,8 @@ def getCategory(content){
       @/@Category/@CategoryItem/@CategoryItem
       sname
       CategoryItem
+      slabel
+      栏目和页面
       sdescriptors
       xworker.lang.MetaDescriptor3/@thing
       sextends
@@ -1806,12 +2186,14 @@ def getCategory(content){
       true
       seditCols
       2
+      sformNoLabel
+      false
       sinitialization
       false
       smodifier
       public
       sinheritDescription
-      false
+      true
       snotXmlAttribute
       false
       sjson_isArray
@@ -1839,12 +2221,16 @@ def getCategory(content){
     true
     seditCols
     2
+    sformNoLabel
+    false
     sinitialization
     false
     smodifier
     public
     sinheritDescription
     true
+    sdescription
+    <p>菜单条的的子菜单，Bootstrap只能有一级子菜单。</p>
     snotXmlAttribute
     false
     sjson_isArray
@@ -1870,3 +2256,93 @@ def getCategory(content){
   false
   sid
   sswtMenus
+  @/@userName
+  sname
+  userName
+  sgroup
+  Security
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  userName
+  @/@password
+  sname
+  password
+  sgroup
+  Security
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  password

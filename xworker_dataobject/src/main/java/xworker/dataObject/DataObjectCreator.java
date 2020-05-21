@@ -53,6 +53,20 @@ public class DataObjectCreator {
         return theData;
     }
 
+    public static Object createBatch(ActionContext actionContext) throws Exception{
+    	int count = 0;
+    	List<DataObject> datas = actionContext.getObject("datas");
+    	if(datas != null) {
+    		for(DataObject data : datas) {
+    			if(data.create(actionContext) != null) {
+    				count++;
+    			}
+    		}
+    	}
+    	
+    	return count;
+    }
+    
     public static Object create(ActionContext actionContext) throws Exception{
     	Thing self = (Thing) actionContext.get("self");    	
     	DataObject theData = (DataObject) actionContext.get("theData");

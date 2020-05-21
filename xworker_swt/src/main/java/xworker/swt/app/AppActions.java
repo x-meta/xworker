@@ -1,5 +1,6 @@
 package xworker.swt.app;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.xmeta.Action;
@@ -15,6 +16,9 @@ public class AppActions {
 		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
 		Thing editor = self.doAction("getEditor", actionContext);
 		Map<String, Object> params = self.doAction("getParams", actionContext);
+		if(params == null) {
+			params = Collections.emptyMap();
+		}
 
 		editorContainer.openEditor(id, editor, params);
 	}

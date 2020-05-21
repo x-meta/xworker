@@ -187,7 +187,9 @@ public class CompositeEditor {
 		Object data = actionContext.getObject("data");
 		if(data instanceof Thing) {
 			Thing thing = (Thing) data;
-			if(thing.isThing("xworker.swt.widgets.Composite") || thing.isThing("xworker.swt.xworker.ThingRegistSelector")) {
+			if(thing.isThing("xworker.swt.widgets.Composite") 
+					|| thing.isThing("xworker.swt.xworker.ThingRegistSelector")
+					|| thing.isThing("xworker.swt.xwidgets.QuickContent")) {
 				return UtilMap.toMap("composite", data, 
 						IEditor.EDITOR_THING, World.getInstance().getThing("xworker.swt.app.editors.CompositeEditor"),
 						IEditor.EDITOR_ID, "Composite:" + thing.getMetadata().getPath());

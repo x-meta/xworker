@@ -1,5 +1,7 @@
 package xworker.lang.executor;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.xmeta.ActionContext;
@@ -14,6 +16,7 @@ import xworker.lang.executor.services.Log4jService;
  *
  */
 public class Executor {
+	private static final String TAG = Executor.class.getName();
 	public final static byte TRACE = 0;
 	public final static byte DEBUG = 1;
 	public final static byte INFO = 2;
@@ -25,6 +28,8 @@ public class Executor {
 	
 	private static ExecutorService defaultExecutorService = new Log4jService();
 	
+	/** tag设置的日志级别 */
+	private static Map<String, Byte> tagLogLevels = new HashMap<String, Byte>();	
 	/**
 	 * 设置默认的Executor服务。
 	 * 
@@ -34,7 +39,41 @@ public class Executor {
 		Executor.defaultExecutorService = defaultExecutorService;
 	}
 	
+	public static void setTagLogLevel(String tag, byte level) {
+		tagLogLevels.put(tag, level);
+	}
+	
+	public static void removeTagLevel(String tag) {
+		tagLogLevels.remove(tag);
+	}
+	
+	public static Map<String, Byte> getTagLogLevels(){
+		return tagLogLevels;
+	}
+	
+	private static byte getTagLogLevel(String tag, byte defaultLevel) {
+		if(tag == null || "".equals(tag)) {
+			return defaultLevel;
+		}
+		
+		Byte level = tagLogLevels.get(tag);
+		if(level != null) {
+			return level;
+		}else {
+			int index = tag.lastIndexOf(".");
+			if(index != -1) {
+				return getTagLogLevel(tag.substring(0, index), defaultLevel);
+			}else {			
+				return defaultLevel;
+			}
+		}
+	}
+	
 	public static void trace(String TAG, String message) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, message);
@@ -42,6 +81,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String message, Throwable t) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, message, t);
@@ -49,6 +92,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object arg) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, format, arg);
@@ -56,12 +103,25 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object arg1, Object arg2) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, format, arg1, arg2);
 		}
 	}
 	
+	/**
+	 * <p>设置Executor当前的ExecutorService的日志级别。</p>
+	 * 
+	 * 可能并不会改变系统的日志级别。比如XWorker用于把日志输出到Log4j的ExecutorService，它不会改变Log4j的日志级别，
+	 * 而是把低级的日志输入到高级中。比如Executor的日志级别是debug，而log4j是info，那么会把Executor的debug日志
+	 * 输出到Log4j的info级别中。
+	 * 
+	 * @param level
+	 */
 	public static void setLogLevel(byte level) {
 		ExecutorService service = getExecutorService();
 		if(service != null) {
@@ -69,6 +129,21 @@ public class Executor {
 		}
 	}
 	
+	/**
+	 * 返回是否指定的日志级别是激活的。
+	 * 
+	 * @param level
+	 * @return
+	 */
+	public static boolean isLogLevelEnabled(String TAG, byte level) {
+		return level >= getTagLogLevel(TAG, getLogLevel());
+	}
+	
+	/**
+	 * 返回Executor当前的ExecutorService的日志级别。
+	 * 
+	 * @return
+	 */
 	public static byte getLogLevel() {
 		ExecutorService service = getExecutorService();
 		if(service != null) {
@@ -79,6 +154,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object ...arguments) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, format, arguments);
@@ -86,6 +165,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String message) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.debug(TAG, message);
@@ -93,6 +176,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String message, Throwable t) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.trace(TAG, message, t);
@@ -100,6 +187,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object arg) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.debug(TAG, format, arg);
@@ -107,6 +198,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object arg1, Object arg2) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.debug(TAG, format, arg1, arg2);
@@ -114,6 +209,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object ...arguments) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.debug(TAG, format, arguments);
@@ -121,6 +220,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String message) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.info(TAG, message);
@@ -128,6 +231,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String message, Throwable t) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.info(TAG, message, t);
@@ -135,6 +242,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object arg) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.info(TAG, format, arg);
@@ -142,6 +253,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object arg1, Object arg2) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.info(TAG, format, arg1, arg2);
@@ -149,6 +264,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object ...arguments) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.info(TAG, format, arguments);
@@ -156,6 +275,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String message) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.warn(TAG, message);
@@ -163,6 +286,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String message, Throwable t) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.warn(TAG, message, t);
@@ -170,6 +297,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object arg) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.warn(TAG, format, arg);
@@ -177,6 +308,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object arg1, Object arg2) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.warn(TAG, format, arg1, arg2);
@@ -184,6 +319,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object ...arguments) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.warn(TAG, format, arguments);
@@ -191,6 +330,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String message) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.error(TAG, message);
@@ -198,6 +341,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String message, Throwable t) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.error(TAG, message, t);
@@ -205,6 +352,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object arg) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.error(TAG, format, arg);
@@ -212,6 +363,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object arg1, Object arg2) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.error(TAG, format, arg1, arg2);
@@ -219,12 +374,23 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object ...arguments) {
+		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
+			return;
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.error(TAG, format, arguments);
 		}
 	}
 	
+	/**
+	 * 请求UI。request模型没有明确的定义，比如在SWT下一般要实现createSWT方法，但在其它环境下就没有明确定义了。
+	 * 可以参看动作模型：xworker.lang.executor.ExecutorActions/@RequestUI。
+	 * 
+	 * @param request
+	 * @param actionContext
+	 */
 	public static void requestUI(Thing request, ActionContext actionContext) {
 		ExecutorService service = getExecutorService();
 		if(service != null) {
@@ -251,6 +417,8 @@ public class Executor {
 		ExecutorService es = getParentExecutorService(service);
 		if(es != null) {
 			es.requestUI(new ExecuteRequest(request, actionContext));
+		} else {
+			service.info(TAG, "Can not request ui, parent service is null, current service not support request ui, currentService={}", service);
 		}
 	}
 	
@@ -258,6 +426,8 @@ public class Executor {
 		ExecutorService es = getParentExecutorService(service);
 		if(es != null) {
 			es.requestUI(request);
+		} else {
+			service.info(TAG, "Can not request ui, parent service is null, current service not support request ui, currentService={}", service);
 		}
 	}
 	
@@ -267,12 +437,13 @@ public class Executor {
 	 * 
 	 * @param service
 	 * @param request
-	 * @param actionContext
 	 */
 	public static void superRemoveRequest(ExecutorService service, ExecuteRequest request) {
 		ExecutorService es = getParentExecutorService(service);
 		if(es != null) {
 			es.removeRequest(request);
+		} else {
+			service.info(TAG, "Can not remove request, parent service is null, current service not support remove request, currentService={}", service);
 		}
 	}
 	
@@ -384,4 +555,23 @@ public class Executor {
 		}
 	}
 	
+	/**
+	 * 启动一个线程执行Runnable，并把当前的ExecutorService带过去。
+	 * 
+	 * @param runnable
+	 */
+	public static void startThread(final Runnable runnable) {
+		final ExecutorService es = Executor.getExecutorService();
+		new Thread(new Runnable() {
+			public void run() {
+				try {
+					Executor.push(es);
+					
+					runnable.run();
+				}finally {
+					Executor.pop();
+				}
+			}
+		}).start();
+	}
 }

@@ -15,7 +15,7 @@ public class SwtCommandExecutor {
 		Thing self = actionContext.getObject("self");
 		
 		ThingCompositeCreator cc = SwtUtils.createCompositeCreator(self, actionContext);
-		cc.setCompositeThing(World.getInstance().getThing("xworker.lang.command.CommandExecutor/@mainComposite1"));
+		cc.setCompositeThing(World.getInstance().getThing("xworker.lang.command.CommandExecutor/@mainTabFolder"));
 		
 		Object composite = cc.create();
 		ActionContext ac = cc.getNewActionContext();

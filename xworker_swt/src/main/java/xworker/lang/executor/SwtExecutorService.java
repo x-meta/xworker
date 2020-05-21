@@ -1,5 +1,8 @@
 package xworker.lang.executor;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.swt.custom.CTabFolder;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -58,12 +61,13 @@ public class SwtExecutorService extends AbstractLogService{
 	 * 
 	 * @param actionContext
 	 */
-	public static void createControl(ActionContext actionContext) {
+	public static Object createControl(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 
 		ActionContext ac = null; 
 		Object parent = actionContext.get("parent");
 		World world = World.getInstance();
+		Object result = null;
 		
 		if(parent instanceof CTabFolder && self.getBoolean("createItemsOnCTabFodler")) {
 			//使用独立的变量上下文
@@ -86,13 +90,15 @@ public class SwtExecutorService extends AbstractLogService{
 			Thing prototype = world.getThing("xworker.lang.executor.swt.SWTExecutor/@mainTabFolder");
 			ThingCompositeCreator c1 = SwtUtils.createCompositeCreator(self, actionContext);
 			c1.setCompositeThing(prototype);
-			c1.create();
+			result = c1.create();
 			
 			ac = c1.getNewActionContext();
 		}
 		
 		//保存变量
 		actionContext.g().put(self.getMetadata().getName(), ac.get("executorService"));
+		
+		return result;
 	}
 	
 	@Override
@@ -169,6 +175,15 @@ public class SwtExecutorService extends AbstractLogService{
 			uiHandler.removeRequest(request);
 		}else {
 			super.removeRequest(request);
+		}
+	}
+
+	@Override
+	public List<ExecuteRequest> getRequestUIs() {
+		if(uiHandler != null) {
+			return uiHandler.getRequestUIs();
+		}else {
+			return Collections.emptyList();
 		}
 	}
 

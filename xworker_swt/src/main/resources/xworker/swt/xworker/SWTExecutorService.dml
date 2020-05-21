@@ -1,4 +1,4 @@
-%1567997238295
+%1583907691085
 @
 sname=SWTExecutorService
 slabel=SWTExecutorService
@@ -6,12 +6,40 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.swt.layout.LayoutDatas
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>SWT执行器服务。保存的是ExecutorService对象，返回值是null。</p>
+<p>SWT执行器服务。</p>
+
+<p><strong>保存变量和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;保存的是ExecutorService对象，返回值是null。</p>
+
+<p><strong>SWT控件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;SWT的相关控件可以创建到CTabFolder或Composite下，当父节点是CTabFolder是可以选择创建两个Item，或者创建一个Item下。</p>
+
+<p>&nbsp;&nbsp;&nbsp; SWT控件包含请求处理和日志两部分。</p>
+
+<p><strong>ExecutorService的用法</strong></p>
+
+<pre class="brush:groovy;">
+import xworker.lang.executor.Executor;
+
+//压入ExecutorService
+Executor.push(executorService);
+
+try{
+     //使用Executor请求UI或输入日志等
+     Executor.info(TAG, &quot;hello world!&quot;);
+}finally{
+     //弹出executorService，需要和push()成对出现
+     Executor.pop();
+}
+</pre>
 
 <p>&nbsp;</p>
 #$@text#$@
@@ -56,6 +84,35 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=create
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@var
+    sname=var
+    svarName=_thingName_
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=xworker.lang.executor.ExecutorService
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=var
   @/@name
   sname=name
   sshowLabel=true

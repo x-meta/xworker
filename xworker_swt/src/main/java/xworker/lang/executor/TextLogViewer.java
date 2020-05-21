@@ -4,11 +4,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 
-public class TextLogViewer implements LogViewer{
+import xworker.swt.util.DelayExecutor;
+
+public class TextLogViewer extends DelayExecutor implements LogViewer{
 	Text text;
 	boolean autoScroll = true;
+	StringBuilder logStringBuilder = new StringBuilder();
 	
 	public TextLogViewer(Text text) {
+		super(text.getDisplay(), 200);
 		this.text = text;
 	}
 	
@@ -23,6 +27,15 @@ public class TextLogViewer implements LogViewer{
 	@Override
 	public void log(final byte level, final String msg) {
 		if(text != null && !text.isDisposed()) {
+			logStringBuilder.append(msg);
+			logStringBuilder.append("\n");
+			if(logStringBuilder.length() > 1024 * 1024) {
+				//超过一定长度，删除
+				logStringBuilder.delete(0, 1024 * 20);
+			}
+			
+			this.execute();
+			/*
 			text.getDisplay().asyncExec(new Runnable(){
 				public void run() {
 					if(text.isDisposed() == false) {
@@ -40,7 +53,7 @@ public class TextLogViewer implements LogViewer{
 						}
 					}
 				}
-			});
+			});*/
 		}
 	}
 	
@@ -86,5 +99,11 @@ public class TextLogViewer implements LogViewer{
 	@Override
 	public Display getDisplay() {
 		return text.getDisplay();
+	}
+
+	@Override
+	public void doTask() {
+		text.setText(logStringBuilder.toString());
+		showSelection();
 	}
 }

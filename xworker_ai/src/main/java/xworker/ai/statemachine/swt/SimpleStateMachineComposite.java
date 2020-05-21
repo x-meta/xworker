@@ -68,6 +68,7 @@ public class SimpleStateMachineComposite {
 				ActionContext ac = cc.getNewActionContext();
 				ac.put("stateMachine", stateMachine);
 				ac.put("state", state);
+				ac.put("parentContext", stateMachine.getActionContext());				
 				
 				cc.addChildFilter("Composite");
 				stateComposite = cc.create();

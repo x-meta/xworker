@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="EditChildsByTabe" descriptors="xworker.swt.widgets.Shell">
+    <FillLayout name="FillLayout"></FillLayout>
+    <Composite name="mainComposite" _xmeta_id_="mainCompoiste">
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="thingGuide" varName="thingGuide" className="xworker.ide.utils.ThingGuide"></Variable>
+        </VariablesDescs>
+        <GridLayout name="GridLayout"></GridLayout>
+        <Table name="table">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </Table>
+        <Composite name="buttonComposite" _xmeta_id_="28107">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="28108" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="28109"></RowLayout>
+            <Button name="newButton" _xmeta_id_="28110" text="lang:d=添加(&amp;amp;A)&amp;en=Add(&amp;amp;A)">
+                <RowData name="RowData" _xmeta_id_="28111" width="80"></RowData>
+                <Listeners _xmeta_id_="28112">
+                    <Listener name="newButtonSelection" _xmeta_id_="28113">
+                        <GroovyAction name="addDataObject" _xmeta_id_="dataObject">
+                            <code><![CDATA[import xworker.dataObject.DataObject;
+
+def data = new DataObject(dataObject);
+data.put("name", "new");
+dataObjectList.add(data);
+
+table.setFocus();]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+            <Button name="deleteButton" _xmeta_id_="28114" text="lang:d=删除(&amp;amp;D)&amp;en=Delete(&amp;amp;D)">
+                <RowData name="RowData" _xmeta_id_="28115" width="80"></RowData>
+                <Listeners _xmeta_id_="28116">
+                    <Listener name="deleteButtonSelection" _xmeta_id_="28117">
+                        <MessageBox name="confirm" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                             shell="ognl:table.getShell()" icon="ICON_QUESTION" title="lang:d=删除&amp;en=Delete"
+                             message="lang:d=确定要删除么?&amp;en=Are you sure to delete?">
+                            <GroovyAction name="ok">
+                                <code><![CDATA[def items = table.getSelection();
+if(items.length > 0){
+    def data = items[0].getData();
+    if(data._EditChildsByTabe_source_ != null){
+        deleteList.add(data);
+    }
+    
+    items[0].dispose();
+}
+
+table.setFocus();]]></code>
+                            </GroovyAction>
+                        </MessageBox>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+        <StaticDataObjectList name="dataObjectList" dataObject="var:dataObject" scope="actionContext"
+             bindTo="table"></StaticDataObjectList>
+        <Code name="init">
+            <code><![CDATA[import xworker.dataObject.DataObject;
+
+//向导节点
+def guideNodeThing = thingGuide.getCurrentNode();
+//正在编辑的模型
+def editThing = thingGuide.getEditThing();
+
+//获取要编辑器的子节点
+def thingName = guideNodeThing.getStringBlankAsNull("childThingName");
+def childs = [];
+if(thingName == null){
+    childs.addAll(editThing.getChilds());
+}else{
+    childs.addAll(editThing.getChilds(thingName));
+}
+
+//包装成数据对象
+for(child in childs){
+    def data = new DataObject(dataObject);
+    data.putAll(child.getAttributes());
+    data.put("_EditChildsByTabe_source_", child);
+    dataObjectList.add(data);
+}
+
+actionContext.g().put("dataObject", dataObject);]]></code>
+        </Code>
+    </Composite>
+</Shell>

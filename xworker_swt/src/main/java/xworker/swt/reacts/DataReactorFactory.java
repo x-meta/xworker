@@ -26,12 +26,14 @@ import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditorContainer;
 import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
 import xworker.swt.app.editorContainers.CompositeEditorContainer;
+import xworker.swt.data.DataComposite;
 import xworker.swt.reacts.creators.ActionContainerDataReactorCreator;
 import xworker.swt.reacts.creators.BrowserDataReactorCreator;
 import xworker.swt.reacts.creators.CComboDataReactorCreator;
 import xworker.swt.reacts.creators.CTabFolderDataReactorCreator;
 import xworker.swt.reacts.creators.ComboDataReactorCreator;
 import xworker.swt.reacts.creators.CompositeDataReactorCreator;
+import xworker.swt.reacts.creators.DataCompositeDataReactorCreator;
 import xworker.swt.reacts.creators.DataItemContainerDataReactorCreator;
 import xworker.swt.reacts.creators.DataObjectDataReactorCreator;
 import xworker.swt.reacts.creators.DataObjectListDataReactorCreator;
@@ -114,11 +116,16 @@ public class DataReactorFactory {
 		creators.put(DataItemContainer.class, new DataItemContainerDataReactorCreator());
 		creators.put(DataObject.class, new DataObjectDataReactorCreator());
 		creators.put(ActionContainer.class, new ActionContainerDataReactorCreator());
+		creators.put(DataComposite.class, new DataCompositeDataReactorCreator());
 		
 		//初始化Filter
 		filters.put("thing", new ThingFilter());
 		filters.put("file", new FileFilter());
 		filters.put("source", new SourceDataFilter());
+	}
+	
+	public void registFilter(String name, DataFilter filter) {
+		filters.put(name, filter);
 	}
 	
 	/**
@@ -135,7 +142,11 @@ public class DataReactorFactory {
 		return control.getClass();
 	}
 	
-	public static DataReactor create(String action, String[] params,  Object control, ActionContext actionContext) {
+	public static DataReactor create(String action, String[] params,  Object control, ActionContext actionContext) {		
+		Object obj = actionContext.get(action);
+		if(obj instanceof DataReactor) {
+			return (DataReactor) obj;
+		}
 		if(control == null) {
 			return null;
 		}
@@ -147,7 +158,7 @@ public class DataReactorFactory {
 			action = acs[0];
 		}
 		
-		//创建数据响应器
+		//创建数据响应器		
 		DataReactor dataReactor = null;
 		DataReactorCreator creator = creators.get(getCreatorClass(control));
 		if(creator != null) {

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.xmeta.util.UtilString;
 
 import freemarker.template.TemplateException;
 import ognl.OgnlException;
+import xworker.db.sql.SQLConnection;
 import xworker.lang.Configuration;
 import xworker.util.StringUtils;
 import xworker.util.UtilData;
@@ -787,24 +789,51 @@ public class ActionUtils {
 		String format = self.getString("format");
 		String defaultValue = self.getStringBlankAsNull("defaultValue");
 		
+		//先看是否是Date类型
 		Object d = UtilData.getData(realSelf, attributeName, actionContext);
 		if(d instanceof Date){
 			return (Date) d;
 		}
 		
 		if(d == null){
-			return null;			
+			d = defaultValue;			
 		}
 		
-		SimpleDateFormat sf = new SimpleDateFormat(format);
+		//转化为String试试
 		String value = UtilString.getString(String.valueOf(d), actionContext);//UtilData.getString(realSelf, attributeName, actionContext);
-		if(value != null){
-			return sf.parse(value);
-		}else if(defaultValue != null){
-			return sf.parse(defaultValue);
-		}else{
+		if(value == null || "".equals(value)) {
+			value = defaultValue;
+		}
+		if(value == null || "".equals(value)) {
 			return null;
-		}		
+		}
+		
+		//自动匹配格式，如果没有设定格式
+		if(format == null || "".equals(format)) {
+			switch(value.length()) {
+			case 2:
+				format = "dd";   //日期
+				break;
+			case 4:
+				format = "yyyy"; //年
+				break;
+			case 5:
+				format = "MM-dd"; //月日
+				break;
+			case 8:
+				format = "HH:mm:ss"; //时分秒
+				break;
+			case 10:
+				format = "yyyy-MM-dd"; //年月日
+				break;
+			case 19:
+				format = "yyyy-MM-dd HH:mm:ss"; //年月日时分秒
+				break;
+			}
+		}
+		SimpleDateFormat sf = new SimpleDateFormat(format);
+		
+		return sf.parse(value);				
 	}
 	
 	public static Object getStaticField(ActionContext actionContext) throws ClassNotFoundException, IllegalAccessException{
@@ -961,6 +990,76 @@ public class ActionUtils {
 		return list;
 	}
 	
+	public static SQLConnection getConnection(ActionContext actionContext) throws OgnlException, IOException {
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String attributeName = self.getString("attributeName");
+		String value = realSelf.getStringBlankAsNull(attributeName);
+		if(value != null){
+			Object obj = UtilData.getData(value, actionContext);
+			
+			Thing dataSource = null;
+			if(obj instanceof Connection) {
+				return new SQLConnection((Connection) obj, false);
+			}else if(obj instanceof String) {
+				String path = (String) obj;
+				if(path.startsWith("_c_.")) {
+					path = path.substring(4, path.length());
+					dataSource = Configuration.getConfiguration(path, realSelf, actionContext); 
+				} else {
+					dataSource = World.getInstance().getThing((String) obj);
+				}
+			}else if(obj instanceof Thing) {
+				dataSource = (Thing) obj;
+			}
+			
+			if(dataSource != null) {
+				Connection connection = dataSource.doAction("getConnection", actionContext);
+				if(connection != null) {
+					return new SQLConnection(connection, true);
+				}
+			}
+		}
+		
+		if(self.getBoolean("notNull")){
+			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
+		}
+		return null;
+	}
+	
+	
+	public static Object executeGroovy(ActionContext actionContext) {
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String attributeName = self.getString("attributeName");
+		String value = realSelf.getStringBlankAsNull(attributeName);
+		if(value == null || "".equals(value)) {
+			//代码是空的
+			return null;
+		} else {
+			String key = "__self_action_grooy__" + attributeName;
+			Thing groovy = realSelf.getData(key);
+			if(groovy == null) {
+				groovy = new Thing("xworker.lang.actions.GroovyAction");
+				groovy.set("name", attributeName);
+				groovy.set("code", value);
+				groovy.getMetadata().setCategory(realSelf.getMetadata().getCategory());
+				groovy.getMetadata().setPath(realSelf.getMetadata().getPath() + "/@attr_groovy_" + attributeName);
+				groovy.set("lastMofidied", realSelf.getMetadata().getLastModified());
+				realSelf.setData(key, groovy);
+			}
+			
+			if(groovy.getLong("lastMofidied") != realSelf.getMetadata().getLastModified()) {
+				groovy.set("code", value);
+				groovy.set("lastMofidied", realSelf.getMetadata().getLastModified());
+			}
+			
+			return groovy.getAction().run(actionContext);
+		}
+	}
+	
 	static class Contructors{
 		Contructor[] cs;
 		
@@ -1068,6 +1167,7 @@ public class ActionUtils {
 			return text + "\n" + thing.getMetadata().getPath();
 		}
 	}
+
 	
 	public static String removeThinInCode(Thing thing, String text) {
 		if(text == null || "".equals(text)) {
@@ -1216,9 +1316,9 @@ public class ActionUtils {
 		Thing realSelf = getSelf(actionContext);
 		
 		String name = realSelf.getStringBlankAsNull(self.getString("attributeName"));
-		String descriptor = self.getString("configDescriptor");
+		//String descriptor = self.getString("configDescriptor");
 		
-		Thing config = Configuration.getConfiguration(name, descriptor, realSelf, actionContext);
+		Thing config = Configuration.getConfiguration(name, realSelf, actionContext);
 		if(config == null && self.getBoolean("notNull")){
 			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
 		}

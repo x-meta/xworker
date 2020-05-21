@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataObjectManager" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>数据对象管理器，可以把各种数据对象放在这里一起管理。</p>
+]]></description>
+    <actions>
+        <GroovyAction name="httpDo">
+            <code><![CDATA[import org.xmeta.Thing;
+
+
+//把当前模型转化为OrgDocument，通过OrgDocument输出文档
+//生成OrgDocument
+def doc = new Thing("xworker.app.web.docorg.OrgDocument");
+doc.set("title", self.getMetadata().getLabel());
+doc.set("editable", "false");
+
+//dataObjecs
+def dataObjectsMenu = addMenu(doc, "DataObjects");
+for(child in self.getChilds()){
+    def orgDoc = child.doAction("toOrgDocThing", actionContext);
+    if(orgDoc != null){
+        dataObjectsMenu.addChild(orgDoc);
+    }
+}
+
+def refresh = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+refresh.set("href", "do?sc=" + self.getMetadata().getPath());
+refresh.set("label", "Refresh");
+doc.addChild(refresh);
+
+doc.doAction("httpDo", actionContext);
+
+def addMenu(doc, name){
+    def menu = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+    menu.set("name", name);
+    doc.addChild(menu);
+    
+    return menu;
+}
+
+def addCategory(menu, name){
+    def cat = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    cat.set("name", name);
+    menu.addChild(cat);
+    
+    return cat;
+}
+
+def addContentThing(cat, contentThing){
+    def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    content.set("contentThing", contentThing.getMetadata().getPath());
+    content.set("label", contentThing.getMetadata().getLabel());
+    cat.addChild(content);
+}
+
+def addItems(menu, name, things){
+    def cat = addCategory(menu, name);
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}
+
+def addGroupItems(menu, group, things){
+    def cat = addCategory(menu, group.getMetadata().getLabel());
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}]]></code>
+        </GroovyAction>
+        <GroovyAction name="generateJavaEntities">
+            <code><![CDATA[import org.apache.commons.io.FileUtils;
+import xworker.lang.executor.Executor;
+
+def TAG = self.getMetadata().getPath();
+Executor.info(TAG, "Begin generate java entities...");
+
+def packageName = self.getString("packageName");
+
+def filePath = self.getStringBlankAsNull("entityFilePath");
+if(filePath == null){
+    Executor.warn(TAG, "Can not generate java entities, entityFilePath is null");
+    return;
+}
+
+def rootFile = new File(filePath);
+if(rootFile.exists() == false){
+    if(!rootFile.mkdirs()){
+        Executor.warn(TAG, "Can not generate java entities, entityFilePath director not exsits, dir={}", filePath);
+        return;
+    }
+}
+
+for(child in self.getChilds()){
+    def dataObjects = child.doAction("getDataObjects", actionContext);
+    if(dataObjects != null){
+        for(dataObject in dataObjects){
+            def code = dataObject.doAction("toJavaEntityCode", actionContext, "packageName", packageName);
+            def name = dataObject.getMetadata().getName() + ".java";
+            File targetFile = new File(rootFile, name);
+            if(targetFile.exists()){
+                Executor.info(TAG, "{}/{} already exists, not generate.", filePath, name);
+            } else {      
+                FileUtils.writeStringToFile(targetFile, code);
+                Executor.info(TAG, "{}/{} genereated.", filePath, name);
+            }
+        }
+    }
+}
+
+Executor.info(TAG, "Genereate java entities finished.");]]></code>
+        </GroovyAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="packageName" size="60"></attribute>
+    <attribute name="entityFilePath" inputtype="filePath" size="60">
+        <description><![CDATA[<p>生成JavaEntity后Java文件要保存的路径。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataObjectGroup" extends="xworker.dataObject.DataObjects" icon="icons/folder.gif">
+        <actions>
+            <GroovyAction name="getDataObjects" _xmeta_id_="getAllDataObjects">
+                <code><![CDATA[import org.xmeta.Thing;
+
+def dataObjects = [];
+for(child in self.getChilds()){
+    if(child.isThingByName("DataObject")){
+        add(dataObjects, child);
+    }else{
+        def datas = child.doAction("getDataObjects", actionContext);
+        add(dataObjects, datas);
+    }
+    
+}
+
+return dataObjects;
+def add(dataObjects, obj){
+    if(obj instanceof Thing){
+        if(obj.isThingByName("DataObject")){
+            dataObjects.add(obj);
+        }
+    }else if(obj instanceof List){
+        for(childObj in obj){
+            add(dataObjects, childObj);
+        }
+    }
+}]]></code>
+            </GroovyAction>
+            <GroovyAction name="toOrgDocThing">
+                <code><![CDATA[import org.xmeta.Thing;
+
+//自己转化为栏目节点
+def menu = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+menu.set("name", self.getMetadata().getName());
+menu.set("label", self.getMetadata().getLabel());
+
+for(dataObject in self.doAction("getDataObjects", actionContext)){
+    def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    content.set("contentThing", dataObject.getMetadata().getPath());
+    content.set("label", dataObject.getMetadata().getLabel());
+    menu.addChild(content);
+}
+
+return menu;]]></code>
+            </GroovyAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="DataObjectRef" group="_dataObjectManager">
+            <description><![CDATA[<p>引用数据对象。</p>
+]]></description>
+            <actions>
+                <GetThing name="getDataObjects" _xmeta_id_="getDataObject" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                     attributeName="dataObject"></GetThing>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="dataObject" inputtype="dataSelector" size="60"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="CategoryDataObject" group="_dataObjectManager">
+            <description><![CDATA[<p>查找某个目录下的所有数据对象。</p>
+]]></description>
+            <actions>
+                <GroovyAction name="getDataObjects">
+                    <code><![CDATA[//获取Category
+def category = self.doAction("getCategory", actionContext);
+if(category == null){
+    //默认使用自己的
+    category = self.getMetadata().getCategory();
+}
+
+def dataObjects = [];
+def iterator = category.iterator(true);
+while(iterator.hasNext()){
+    def thing = iterator.next();
+    if(thing.isThingByName("DataObject")){
+        dataObjects.add(thing);
+    }
+}
+
+return dataObjects;]]></code>
+                </GroovyAction>
+                <GetCategory name="getCategory" descriptors="xworker.lang.actions.ActionUtil/@GetCategory"
+                     attributeName="category"></GetCategory>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="category" size="60"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+    </thing>
+    <sswtMenus>
+        <menuDefine>
+            <menu name="Web"></menu>
+            <menu name="DataObjectMangaer"></menu>
+        </menuDefine>
+        <menuSetting name="Web" menuType="Web" extends="xworker.http.ControlSet/@swtMenus1/@execute"></menuSetting>
+        <menuSetting name="DataObjectManager" menuType="DataObjectMangaer">
+            <menu name="openManagerTools" label="打开管理工具" shell="xworker.dataObject.prototypes.DataObjectManagerWorkbench"></menu>
+        </menuSetting>
+    </sswtMenus>
+</thing>

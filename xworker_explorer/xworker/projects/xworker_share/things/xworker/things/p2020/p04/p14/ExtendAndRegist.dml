@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="ExtendAndRegist" descriptors="xworker.swt.xworker.ThingRegistThing" label="继承和注册"
+     type="composite" group="-10000|动态模型.-9900|定义模型" icon="icons/application.png" th_sortWeight="1000"
+     en_group="-1000|Dynamic Model.-9900|Define Model" th_createIndex="true" th_registThing="child|xworker.doc.DocIndex">
+    <Composite>
+        <FillLayout name="FillLayout"></FillLayout>
+        <ThingEditor name="thingEditor" _xmeta_id_="extendEditor1" thingPath="xworker.html.base.view"
+             useRootThing="true" saveActionContainer="true"></ThingEditor>
+        <ShellGuide label="继承和注册" en_label="Extend &amp; Regist">
+            <Guide name="introduce" label="介绍">
+                <description><![CDATA[<p><strong>继承</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动态模型中继承的概念和Java中类的继承概念基本一致的。如果A继承B，那么A继承B的行为以及B的属性和子节点的定义。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在动态模型里允许多重继承，一个模型可以继承除自己外的任意其它模型。</p>
+
+<p><strong>注册</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 注册是为了实现第三方继承的。比如A是一个数据库驱动的集合，而第三方的数据库驱动B想要加入到集合A中但又不能修改A的模型，那么可以选择把B注册到A上。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注册是XWorker的功能，不是动态模型默认的功能。模型之间的注册关系是保存到XWorker的数据库中的。</p>
+
+<p><strong>定义复杂模型&nbsp;&nbsp;&nbsp; </strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用继承和注册可以定义复杂的模型，也会让模型定义变得简单。</p>
+]]></description>
+            </Guide>
+            <Guide name="htmlView" label="HTMLView示例">
+                <description><![CDATA[<p><strong>HTML示例</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如下面的界面（View）模型是用于生成HTML代码的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 界面模型生成HTML的原理是遍历其子节点，然后调用子节点的toHtml方法，如果返回的是String，那么就作为HTML的一部分拼接起来。下面是界面模型的生成HTML的核心代码。</p>
+
+<pre class="brush:java;">
+String bodyContent = &quot;&quot;;
+for(Thing child : self.getAllChilds()){
+    String content = (String) child.doAction(&quot;toHtml&quot;, newContext);
+    if(content != null){
+        bodyContent = bodyContent + content;
+    }
+}</pre>
+
+<p>&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.html.base.view");
+thingEditor.doAction("setThing", actionContext, "thing", thing);]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="htmlViewExtend" _xmeta_id_="htmlView1" label="HTMLView Extend"
+                 activeControlThing="xworker.lang.MetaDescriptor3/@extends" activeControlIsAttribute="true"
+                 activeControlClassName="Text">
+                <description><![CDATA[<p><strong>界面模型的继承</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以看到HTML的界面（View)模型本身是比较简单的，但使用它可以生成各种各样的HTML界面，原因是它继承了xworker.html.Widgets模型，而Widgets模型又继承了其它模型，直到继承了多个HTML相关的模型。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[def thing = world.getThing("xworker.html.base.view");
+thingEditor.doAction("setThing", actionContext, "thing", thing);]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="widgetsExtend" _xmeta_id_="htmlView11" label="Widges Extend"
+                 activeControlThing="xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childTreeDescSash/@propertiesComposite">
+                <description><![CDATA[<p><strong>继承的好处</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用继承的好处是可以降低模型之间的耦合度，并且能够通过继承创建复杂的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如在当前的例子中，界面（View)模型可以添加各种继承过来的控件模型。</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+def thing = new Thing("xworker.html.base.view");
+thingEditor.doAction("setThing", actionContext, "thing", thing);
+
+Composite.getDisplay().asyncExec({
+    try{
+        thingEditor.doAction("showAddChild", actionContext);
+    }catch(Exception e){
+    }
+});]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="widgetsExtend" _xmeta_id_="htmlView111" label="Regist" activeControlThing="xworker.things.p2020.p04.p14.MetaThing/@th_registThing"
+                 activeControlIsAttribute="true" activeControlClassName="Text">
+                <description><![CDATA[<p><strong>注册</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 注册是为了解决第三方模型的继承问题的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如第三方编写了一个HTML控件模型，比如叫做MyHtmlWidget。由于第三方不能修改控件(View)模型，那么它怎么能够加入到控件（View)模型呢？方法就是通过注册。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注册是XWorker的功能。在编辑模型时，选择描述者（类)MetaThing，在模型编辑表单就可以看到Regist选项卡，在Regist选项卡中设置注册。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如在当前的示例中，MyHtmlWidget的注册信息是<strong>child|xworker.html.base.view</strong>，意思是把自己作为<strong>child</strong>注册到<strong>xworker.html.base.view</strong>模型下。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+                <actions>
+                    <GroovyAction name="init">
+                        <code><![CDATA[import org.xmeta.Thing;
+
+def thing = world.getThing("xworker.things.p2020.p04.p14.MyHtmlWidget");
+thingEditor.doAction("setThing", actionContext, "thing", thing);]]></code>
+                    </GroovyAction>
+                </actions>
+            </Guide>
+            <Guide name="summary" label="总结">
+                <description><![CDATA[<p><strong>总结</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型中的继承的概念和Java中的继承概念基本一致的，动态模型允许多重继承。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用继承可以方便的定义出复杂的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注册是解决第三方模型的继承问题的。</p>
+]]></description>
+            </Guide>
+        </ShellGuide>
+    </Composite>
+</QuickFunction>

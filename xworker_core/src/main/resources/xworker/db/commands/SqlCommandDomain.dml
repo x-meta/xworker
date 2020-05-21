@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="sql datasources" _xmeta_id_="sql" descriptors="xworker.lang.command.CommandDomain"
+     label="SQL数据源" th_createIndex="true" th_registThing="child|xworker.lang.command.CommandIndex">
+    <PredefinedCommands>
+        <Command name="GetDataSources" hasContents="true">
+            <actions>
+                <GroovyAction name="getContents">
+                    <code><![CDATA[import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+import xworker.swt.xwidgets.SelectContent;
+
+def indexThing = world.getThing("xworker.ui.db.datasource.JdbcDatasourceRegistor");
+def dataSources = XWorkerUtils.searchRegistThings(indexThing, "child", [], actionContext);
+def contents = [];
+
+for(dataSource in dataSources){
+    def name = dataSource.getMetadata().getName();
+    def label = dataSource.getMetadata().getLabel();
+    
+    contents.add(new SelectContent(name, label, dataSource));
+}
+
+return contents;]]></code>
+                </GroovyAction>
+            </actions>
+        </Command>
+    </PredefinedCommands>
+    <actions>
+        <GroovyAction name="getCommands">
+            <code><![CDATA[import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
+
+def indexThing = world.getThing("xworker.ui.db.datasource.JdbcDatasourceRegistor");
+def dataSources = XWorkerUtils.searchRegistThings(indexThing, "child", [], actionContext);
+def commands = [];
+
+for(dataSource in dataSources){
+    def domain = new Thing();
+    domain.set("dataSource", dataSource);
+    domain.set("name", dataSource.getMetadata().getName());
+    domain.set("label", dataSource.getMetadata().getLabel());
+    domain.set("extends", "xworker.db.commands.JdbcCommandDomain");
+    
+    def callCommandDomain = new Thing("xworker.lang.command.CommandDomain/@CallCommand");
+	   callCommandDomain.set("name", dataSource.getMetadata().getName());
+	   callCommandDomain.set("label", dataSource.getMetadata().getLabel());
+	   callCommandDomain.set("commandDomain", domain.getMetadata().getPath());		
+    commands.add(callCommandDomain)
+}
+
+return commands;]]></code>
+        </GroovyAction>
+    </actions>
+</CommandDomain>

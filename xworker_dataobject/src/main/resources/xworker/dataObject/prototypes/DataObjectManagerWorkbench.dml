@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Workbench name="DataObjectManagerWorkbench" descriptors="xworker.swt.app.Workbench" statusBar="false"
+     rightTab="false" editSelf="false" maximized="false">
+    <Views>
+        <View name="menuView" id="menuTree" type="left" closeable="false">
+            <Composite label="数据对象导航" en_label="DataObject Explorer">
+                <FillLayout name="FillLayout"></FillLayout>
+                <Tree name="tree" FULL_SELECTION="false" HIDE_SELECTION="false" BORDER="true"
+                     lineVisible="false" multipleColumns="false" headerVisible="false"
+                     sortIndicator="false" moveableColumns="false">
+                    <Event name="onDefaultSelection">
+                        <GroovyAction>
+                            <code><![CDATA[def data = event.item.getData();
+if(data != null && data.isThingByName("DataObject")){
+    openEditor(actionContext, "dataObject", data);
+}]]></code>
+                            <ActionDefined>
+                                <OpenEditor name="openEditor" descriptors="xworker.swt.app.AppActions/@OpenEditor"
+                                     editorContainer="ognl:workbench.getEditorContainer()"
+                                     id="ognl:dataObject.getMetadata().getPath()" editor="xworker.swt.app.editors.DataObjectThingEditor">
+                                    <params><![CDATA[{
+    dataObject:"var:dataObject"
+}]]></params>
+                                </OpenEditor>
+                            </ActionDefined>
+                        </GroovyAction>
+                    </Event>
+                </Tree>
+                <Code name="init">
+                    <code><![CDATA[import xworker.swt.util.SwtUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def currentThing = parentContext.parentContext.currentThing;
+for(groupThing in currentThing.getChilds()){
+    def item = new TreeItem(tree, SWT.NONE);
+    XWorkerTreeUtil.initItem(item, groupThing, actionContext);
+    item.setData(groupThing);
+    
+    def dataObjects = groupThing.doAction("getDataObjects", actionContext);
+    if(dataObjects != null){
+        for(dataObject in dataObjects){
+             def objItem = new TreeItem(item, SWT.NONE);
+             XWorkerTreeUtil.initItem(objItem, dataObject, actionContext);
+             objItem.setData(dataObject);
+        }
+    }
+}]]></code>
+                </Code>
+            </Composite>
+        </View>
+    </Views>
+    <Menu>
+        <QuickMenu name="fileMenu" label="文件" en_label="File">
+            <Menu name="exitMenuItem" label="退出" en_label="Exit">
+                <actions>
+                    <Exit name="run" _xmeta_id_="Exit" descriptors="xworker.swt.app.AppActions/@CreateOutline1"></Exit>
+                </actions>
+            </Menu>
+        </QuickMenu>
+        <QuickMenu name="tools" label="工具" en_label="Tools">
+            <Menu name="DDLMenuItem" label="DDL">
+                <actions>
+                    <GroovyAction name="run">
+                        <code><![CDATA[import xworker.swt.util.SwtUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import xworker.lang.executor.Executor;
+
+def currentThing = parentContext.currentThing;
+def actionContext = actionContext;
+
+def TAG = currentThing.getMetadata().getPath();
+
+new Thread({
+    for(groupThing in currentThing.getChilds()){
+        def dataObjects = groupThing.doAction("getDataObjects", actionContext);
+        if(dataObjects != null){
+            for(dataObject in dataObjects){
+                 Executor.info(TAG, "DDL " + dataObject.getMetadata().getPath());
+                 dataObject.doAction("doDDL", actionContext);
+            }
+        }
+    }
+}).start();]]></code>
+                    </GroovyAction>
+                </actions>
+            </Menu>
+            <Menu name="WEBItems" label="WEB">
+                <actions>
+                    <OpenEditor name="run" descriptors="xworker.swt.app.AppActions/@OpenEditor"
+                         editorContainer="ognl:workbench.getEditorContainer()" id="dataObjectWEB"
+                         editor="xworker.swt.app.editors.WebBrowserEditor">
+                        <params><![CDATA[{
+    url:"ognl:parentContext.currentThing",
+    type:"control",
+    simple:"true",
+    title:"数据对象网页"
+}]]></params>
+                    </OpenEditor>
+                </actions>
+            </Menu>
+        </QuickMenu>
+    </Menu>
+</Workbench>

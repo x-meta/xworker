@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="ActionExecutorByExecuteService"
+     label="ActionExecutorByExecuteService">
+    <GridLayout name="GridLayout"></GridLayout>
+    <Composite name="topComposite">
+        <GridData name="GridData" style="FILL_HORIZONTAL" verticalAlignment="CENTER_"></GridData>
+        <RowLayout name="RowLayout"></RowLayout>
+        <Label name="logLevelLabel" text="lang:d=日志级别：&amp;en=Log Level:"></Label>
+        <Combo name="logLevelCombo" _xmeta_id_="logLevelCobo" READ_ONLY="true" selectIndex="1"
+             text="DEBUG">
+            <value name="TRACE" value="TRACE"></value>
+            <value name="DEBUG" value="DEBUG"></value>
+            <value name="INFO" value="INFO"></value>
+            <value name="WARN" value="WARN"></value>
+            <value name="ERROR" value="ERROR"></value>
+        </Combo>
+        <Button name="executeButton" text="lang:d=执行(&amp;amp;E)&amp;en=Execute(&amp;amp;E)">
+            <Event name="onSelection">
+                <GroovyAction name="GroovyAction">
+                    <code><![CDATA[import xworker.lang.executor.Executor;
+
+switch(logLevelCombo.getText()){
+    case "TRACE":
+        executorService.setLogLevel(Executor.TRACE);
+        break;
+    case "DEBUG":
+        executorService.setLogLevel(Executor.DEBUG);
+        break;
+    case "INFO":
+        executorService.setLogLevel(Executor.INFO);
+        break;
+    case "WARN":
+        executorService.setLogLevel(Executor.WARN);
+        break;
+    case "ERROR":
+        executorService.setLogLevel(Executor.ERROR);
+        break;   
+}
+
+def actionContext = actionContext;
+def thing = thing;
+
+Executor.startThread({
+    Executor.push(executorService);
+    try{
+        Executor.info("Executor", "Start execute action, thing=" + thing.getMetadata().getPath());
+        Object result = thing.getAction().run(actionContext);
+        Executor.info("Executor", "Action finished, result=" + result);
+    }catch(Exception e){
+        Executor.error("Executor", "Action has expection", e);
+    }finally{
+        Executor.pop();
+    }
+});]]></code>
+                </GroovyAction>
+            </Event>
+        </Button>
+    </Composite>
+    <SWTExecutorService name="executorService">
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+    </SWTExecutorService>
+</Shell>

@@ -10,6 +10,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.UtilMap;
 
 public class Command {
 	/** 命令事物 */
@@ -98,8 +99,10 @@ public class Command {
 		}
 		
 		Bindings bindings = actionContext.push();
+		bindings.putAll(executor.getDomain().getParams());
 		bindings.put("command", this);
 		bindings.put("commandExecutor", executor);
+		bindings.put("executor", executor);
 		bindings.put("executorContext", executor.getActionContext());
 		try{
 			for(int i=0; i<params.size(); i++){
@@ -120,9 +123,38 @@ public class Command {
 		}
 		return result;
 	}
+	
+	public CommandDomain getDomain() {
+		return executor.getDomain();
+	}
 
+	public Object doAction(String actionName, Map<String, Object> params1) {
+		CommandDomain domain = executor.getDomain();
+		ActionContext actionContext = domain.getActionContext();
+		Bindings bindings = actionContext.push();
+		try {
+			bindings.putAll(domain.getParams());
+			bindings.put("command", this);
+			bindings.put("commandExecutor", executor);
+			bindings.put("executor", executor);
+			if(params != null) {
+				bindings.putAll(params1);
+			}
+			for(int i=0; i<params.size(); i++){
+				Command param = params.get(i);				
+				String name = param.paramThing.getMetadata().getName();
+				bindings.put(name, param.getResult(actionContext));
+			}
+			
+			return commandThing.doAction(actionName, actionContext);
+		}finally {
+			actionContext.pop();
+		}
+	}
+	
 	public Object run(String actionName, ActionContext actionContext, Map<String, Object> params1){
 		Bindings bindings = actionContext.push();
+		bindings.putAll(executor.getDomain().getParams());
 		bindings.put("command", this);
 		bindings.put("commandExecutor", executor);
 		try{
@@ -195,6 +227,16 @@ public class Command {
 		this.result = result;
 		
 		executed = true;
+		
+		if(commandThing != null) {
+			doAction("onResult", UtilMap.toMap("result", result));
+		}
+	}
+	
+	public void setContent(Object content) {
+		if(commandThing != null) {
+			doAction("onContent", UtilMap.toMap("content", content));
+		}
 	}
 
 	public Thing getParamThing() {
@@ -260,7 +302,11 @@ public class Command {
 	}
 	
 	public String toString() {
-		StringBuilder sb = new StringBuilder(commandThing.getMetadata().getName());
+		
+		StringBuilder sb = new StringBuilder();
+		if(commandThing != null) {
+			sb.append(commandThing.getMetadata().getName());
+		}
 		sb.append("(");
 		boolean first = true;
 		for(Command param : params) {

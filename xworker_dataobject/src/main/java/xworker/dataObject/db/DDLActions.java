@@ -1,13 +1,14 @@
 package xworker.dataObject.db;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class DDLActions {
-	private static Logger logger = LoggerFactory.getLogger(DDLActions.class);
+	//private static Logger logger = LoggerFactory.getLogger(DDLActions.class);
+	private static final String TAG = DDLActions.class.getName();
 	
 	/**
 	 * 动作xworker.dataObject.db.DBDataObjectDDL的执行方法。
@@ -15,7 +16,7 @@ public class DDLActions {
 	public static void runDBDataObjectDDL(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		
-		logger.info("DDL: start " + self.getMetadata().getLabel() + ", path=" + self.getMetadata().getPath());
+		Executor.info(TAG, "DDL: start " + self.getMetadata().getLabel() + ", path=" + self.getMetadata().getPath());
 		//执行DDL
 		String dataObjects = self.getStringBlankAsNull("dataObjects");
 		Thing datasoruce = (Thing) self.doAction("getDatasource", actionContext);
@@ -29,14 +30,14 @@ public class DDLActions {
 					
 					Thing dbThing = World.getInstance().getThing(dataObject);
 					if(dbThing != null){
-						logger.info("DDL: " + dbThing.getMetadata().getPath());
+						Executor.info(TAG, "DDL: " + dbThing.getMetadata().getPath());
 						if(datasoruce != null){
 							DbDataObject.mapping2ddl(dbThing, datasoruce, actionContext);					
 						}else{
 							dbThing.doAction("mapping2ddl", actionContext);
 						}
 					}else{
-						logger.warn("DDL: DBDataObject not exists, path=" + dataObject);
+						Executor.info(TAG, "DDL: DBDataObject not exists, path=" + dataObject);
 					}
 				}
 			}

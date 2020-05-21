@@ -58,13 +58,18 @@ public class CommonActions {
 			Bindings bindings = ac.push();
 			bindings.put("parent", parent);
 						
+			Thing widget = self.doAction("getWidget", actionContext);
+			if(widget != null) {
+				result = widget.doAction("create", ac);
+			}
+			/*
 			String widgetPath = self.getStringBlankAsNull("widgetPath");
 			if(widgetPath != null){
 				Thing widget = World.getInstance().getThing(widgetPath);
 				if(widget != null){
 					result = widget.doAction("create", ac);
 				}
-			}
+			}*/
 			
 			if(result != null){
 				//保存data

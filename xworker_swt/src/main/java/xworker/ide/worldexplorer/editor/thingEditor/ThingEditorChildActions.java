@@ -373,6 +373,7 @@ public class ThingEditorChildActions {
 		
 		//long start = System.currentTimeMillis();
 		Thing descriptor = actionContext.getObject("descriptor");
+		//在这里也过滤了excludeDescriptorsForChilds的事物
 		List<Thing> desChilds = descriptor.getAllChilds("thing");
 		//for(child in desChilds){
 		//    log.info("child=" + child);

@@ -55,7 +55,8 @@ public class MessageBoxActionsMessageBoxCreator {
         //}
         String message = self.doAction("getMessage", actionContext); 
         if(message == null) {
-        	return null;
+        	message = "No message!";
+        	//return null;
         }
         		//UtilString.getString(self.getString("message"), actionContext);
         //if(message != null){

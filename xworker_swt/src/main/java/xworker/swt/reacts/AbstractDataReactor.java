@@ -47,4 +47,11 @@ public class AbstractDataReactor extends DataReactor{
 		self.doAction("doOnLoaded", actionContext, "dataReactor", this, "datas", datas, "context", context);
 	}
 
+	public static AbstractDataReactor create(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		AbstractDataReactor dataReactor = new AbstractDataReactor(self, actionContext);
+		actionContext.g().put(self.getMetadata().getName(), dataReactor);
+		
+		return dataReactor;
+	}
 }

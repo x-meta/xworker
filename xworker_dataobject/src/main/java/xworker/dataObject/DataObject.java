@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.xmeta.ActionContext;
@@ -34,6 +35,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import xworker.dataObject.cache.DataObjectCache;
+import xworker.dataObject.query.Condition;
 import xworker.dataObject.query.UtilCondition;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.task.UserTask;
@@ -88,7 +90,6 @@ public class DataObject extends HashMap<String, Object> {
 	 * 数据对象监听器，用来监听数据对象的变更等。比如UI联动。
 	 */
 	private List<DataObjectListener> listeners = null;
-	private boolean fireChangeEvent = true;
 	
 	/**
 	 * WRAP的Java对象。
@@ -99,6 +100,11 @@ public class DataObject extends HashMap<String, Object> {
 	 * 使用事物定义的数据对象时包装的源Java对象。
 	 */
 	private Object source = null;
+	
+	/**
+	 * 修改栈。
+	 */
+	private ThreadLocal<Stack<Object>> modifiyStack = new ThreadLocal<Stack<Object>>();
 	
 	/**
 	 * 无描述者的构造函数，这样构造出来的数据对象只能当作临时数据(Map)用。
@@ -183,49 +189,54 @@ public class DataObject extends HashMap<String, Object> {
 			return;
 		}
 		
-		String[] lines = attributes.split("[\n]");
-		for(int i=0; i<lines.length; i++) {
-			String line = lines[i];
-			if(line.startsWith("#") || line.startsWith("//")) {
-				//注释
-				continue;
-			}
-			
-			int index = line.indexOf("=");
-			if(index == -1) {
-				//没有设置属性
-				continue;
-			}			
-			String name = line.substring(0, index).trim();
-			String value = line.substring(index + 1, line.length()).trim();
-			if(value.startsWith("\"\"\"")){
-				//多行文本
-				value = value.substring(3, value.length());
-				if(value.endsWith("\"\"\"")) {
-					//单行文本，就结束了
-					value = value.substring(0, value.length() - 3);
-				} else {
-					//是多行文本
-					for(int n = i + 1; n < lines.length; n++) {
-						String strLine = lines[n];
-						int endIndex = strLine.indexOf("\"\"\"");
-						if(endIndex != -1) {
-							value = value + "\n" + strLine.substring(0, endIndex);
-							i = n;
-							break;
-						}else {
-							value = value + "\n" + strLine; 
+		begin();
+		try {
+			String[] lines = attributes.split("[\n]");
+			for(int i=0; i<lines.length; i++) {
+				String line = lines[i];
+				if(line.startsWith("#") || line.startsWith("//")) {
+					//注释
+					continue;
+				}
+				
+				int index = line.indexOf("=");
+				if(index == -1) {
+					//没有设置属性
+					continue;
+				}			
+				String name = line.substring(0, index).trim();
+				String value = line.substring(index + 1, line.length()).trim();
+				if(value.startsWith("\"\"\"")){
+					//多行文本
+					value = value.substring(3, value.length());
+					if(value.endsWith("\"\"\"")) {
+						//单行文本，就结束了
+						value = value.substring(0, value.length() - 3);
+					} else {
+						//是多行文本
+						for(int n = i + 1; n < lines.length; n++) {
+							String strLine = lines[n];
+							int endIndex = strLine.indexOf("\"\"\"");
+							if(endIndex != -1) {
+								value = value + "\n" + strLine.substring(0, endIndex);
+								i = n;
+								break;
+							}else {
+								value = value + "\n" + strLine; 
+							}
 						}
 					}
 				}
+				
+				Object v = value;
+				if(value.indexOf("\n") == -1 && value.indexOf(":") != -1) {
+					//有可能是var: ognl: 等表达式
+					v = UtilData.getData(value, actionContext);
+				}
+				this.put(name, v);
 			}
-			
-			Object v = value;
-			if(value.indexOf("\n") == -1 && value.indexOf(":") != -1) {
-				//有可能是var: ognl: 等表达式
-				v = UtilData.getData(value, actionContext);
-			}
-			this.put(name, v);
+		}finally {
+			finish();
 		}
 		
 	}
@@ -300,40 +311,34 @@ public class DataObject extends HashMap<String, Object> {
 			return null;
 		}
 
-		DataObjectCache.begin();
+		begin();
 		try {
-			if(wrappedObject != null) {
-				OgnlUtil.setValue(key, wrappedObject, value);
-				return value;
-			}else {
-				if (fireEvent && metadata != null) {
-					metadata.beforeFieldChanged(key, value);
-				}
-				
-				if(metadata != null){
-					Thing definition = metadata.getDefinition(key);
-					if (definition != null && "attribute".equals(definition.getThingName())) {
-						return super.put(key, DataObjectUtil.getValue(value, definition));
-					} else {
+			DataObjectCache.begin();	
+			try {				
+				if(wrappedObject != null) {
+					OgnlUtil.setValue(key, wrappedObject, value);
+					return value;
+				}else {
+					if (fireEvent && metadata != null) {
+						metadata.beforeFieldChanged(key, value);
+					}
+					
+					if(metadata != null){
+						Thing definition = metadata.getDefinition(key);
+						if (definition != null && "attribute".equals(definition.getThingName())) {
+							return super.put(key, DataObjectUtil.getValue(value, definition));
+						} else {
+							return super.put(key, value);
+						}
+					}else{
 						return super.put(key, value);
 					}
-				}else{
-					return super.put(key, value);
 				}
+			}finally {
+				DataObjectCache.finish();
 			}
 		}finally {
-			DataObjectCache.finish();
-			
-			//触发变更事件
-			fireChangeEvent();
-		}
-	}
-
-	private void fireChangeEvent() {
-		if(fireChangeEvent && listeners != null) {
-			for(DataObjectListener listener : listeners) {
-				listener.changed(this);
-			}
+			finish();
 		}
 	}
 	
@@ -341,29 +346,40 @@ public class DataObject extends HashMap<String, Object> {
 	 * 开始批量修改。
 	 */
 	public void begin() {
-		fireChangeEvent = false;
+		Stack<Object> stack = modifiyStack.get();
+		if(stack == null) {
+			stack = new Stack<Object>();
+			modifiyStack.set(stack);
+		}
+		
+		stack.push(this);
 	}
 	
 	/**
-	 * 结束批量修改，并出发changeEvent。
+	 * 结束批量修改，并触发changeEvent。
 	 */
 	public void finish() {
-		fireChangeEvent = true;
+		Stack<Object> stack = modifiyStack.get();
+		stack.pop();
 		
-		fireChangeEvent();
+		if(stack == null || stack.size() == 0) {
+			if(listeners != null) {
+				for(DataObjectListener listener : listeners) {
+					listener.changed(this);
+				}
+			}
+		}
 	}
 	
 	@Override
 	public void putAll(Map<? extends String, ? extends Object> m) {
-		fireChangeEvent = false;
+		begin();
 		try {
 			for (String key : m.keySet()) {
 				this.put(key, m.get(key));
 			}
 		}finally {
-			fireChangeEvent = true;
-			
-			fireChangeEvent();
+			finish();
 		}
 	}
 
@@ -495,16 +511,132 @@ public class DataObject extends HashMap<String, Object> {
 		if(metadata == null) {
 			return this;
 		}else {
-			return (DataObject) doAction("load", actionContext);
+			DataObject dataObj = (DataObject) doAction("load", actionContext);
+			if(dataObj != null && dataObj != this) {
+				this.putAll(dataObj);
+			}
+			
+			return this;
 		}
+	}
+	
+	/**
+	 * <p>根据条件查询，如果返回的数据对象的列表不为空，那么把第一个数据对象作为加载的数据对象。</p>
+	 * 
+	 * <p>如果加载的数据对象不为null，那么把数据对象的所有属性放到当前数据对象中，并返回当前数据对象。</p>
+	 * 
+	 * @param actionContext
+	 * @param condition
+	 * @return
+	 */
+	public DataObject load(ActionContext actionContext, Condition condition) {
+		List<DataObject> datas = query(actionContext, condition);
+		if(datas.size() > 0) {
+			setInited(true);
+			DataObject dataObj = datas.get(0);
+			this.putAll(dataObj);
+			
+			return this;
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 根据条件批量更新数据，其中要更新的内容是当前数据对象的脏字段。
+	 * 
+	 * @param actionContext 变量上下文
+	 * @param condition 查询条件
+	 * @return
+	 */
+	public Object update(ActionContext actionContext, Condition condition){
+		return delete(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+	}
+	
+	/**
+	 * 根据条件批量更新数据，其中要更新的内容是当前数据对象的脏字段。
+	 * 
+	 * @param actionContext 变量上下文
+	 * @param condition 条件，一般是条件模型
+	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 */
+	public Object update(ActionContext actionContext, Object condition,
+			Object queryDatas) {
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+			//查询条件的变量
+			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
+			bindings.put("datas", queryDatas);
+			bindings.put("conditionData", queryDatas);
+
+			return doAction("updateBatch", actionContext);
+		} finally {
+			actionContext.pop();
+		}
+	}
+	
+	/**
+	 * 根据条件批量删除数据。
+	 * 
+	 * @param actionContext 变量上下文
+	 * @param condition 查询条件
+	 * @return
+	 */
+	public Object delete(ActionContext actionContext, Condition condition){
+		return delete(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+	}
+	
+	/**
+	 * 根据条件批量删除数据。
+	 * 
+	 * @param actionContext 变量上下文
+	 * @param condition 条件，一般是条件模型
+	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 */
+	public Object delete(ActionContext actionContext, Object condition,
+			Object queryDatas) {
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+			//查询条件的变量
+			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
+			bindings.put("datas", queryDatas);
+			bindings.put("conditionData", queryDatas);
+
+			return doAction("deleteBatch", actionContext);
+		} finally {
+			actionContext.pop();
+		}
+	}
+	
+	/**
+	 * 通过查询条件查询。
+	 * 
+	 * @param actionContext 变量上下文
+	 * @param condition 查询条件
+	 * @return
+	 */
+	public List<DataObject> query(ActionContext actionContext, Condition condition){
+		return query(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
 	}
 	
 	/**
 	 * 查询数据。
 	 * 
 	 * @param actionContext 变量上下文
-	 * @param condition 条件
-	 * @param queryDatas 查询条件
+	 * @param condition 条件，一般是条件模型
+	 * @param queryDatas 查询条件，一般是Map<String, Object>
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DataObject> query(ActionContext actionContext, Object condition,
@@ -515,7 +647,10 @@ public class DataObject extends HashMap<String, Object> {
 
 		try {
 			Bindings bindings = actionContext.push(null);
+			//查询条件的变量
 			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
 
@@ -589,6 +724,11 @@ public class DataObject extends HashMap<String, Object> {
 		}
 		
 		Object[][] keyDatas = this.getKeyAndDatas();
+		if(keyDatas == null || keyDatas.length == 0) {
+			//如果没有主键，不能通过主键比较，返回false
+			return false;
+		}
+		
 		for(int i = 0; i < keyDatas.length; i++) {
 			if(keys.length <= i) {
 				return false;
@@ -971,19 +1111,36 @@ public class DataObject extends HashMap<String, Object> {
 		
 		return data;
 	}
+	
+	/**
+	 * 把自己的元数据等复制到指定数据对象，内部共用基数数据，如爆粗。
+	 * 
+	 * @param dataObject
+	 */
+	public void copyTo(DataObject dataObject) {
+		dataObject.datas = this.datas;
+		dataObject.flag = this.flag;
+		dataObject.metadata = this.metadata;
+		dataObject.source = this.source;
+		dataObject.wrappedObject = this.wrappedObject;
+		dataObject.putAll(this);
+	}
 
 	public void setWrappedObject(Object wrappedObject) {
 		this.wrappedObject = wrappedObject;
 	}
 
-	@Override
-	public String toString() {
+	public String getLabel() {
+		String label = null;
 		//优先返回标签字段的内容
 		Thing descriptor = this.getMetadata().getDescriptor();
 		if(descriptor != null) {
 			String labelField = descriptor.getStringBlankAsNull("displayName");
 			if(labelField != null) {
-				return getString(labelField); 
+				label =  getString(labelField);
+				if(label != null && !"".equals(label)) {
+					return label;
+				}
 			}			
 		}
 		 

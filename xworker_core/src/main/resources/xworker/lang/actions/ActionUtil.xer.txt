@@ -1,4 +1,4 @@
-^1576497420231
+^1590027115549
 @
 sname
 ActionUtil
@@ -2203,6 +2203,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -2232,7 +2234,7 @@ false
 	如果没有以上前缀， 那么解析动作属性的值。</li>
 </ul>
 
-<p>对于通过属性获取的值，如果是byte[]则返回，如果是String返回getBytes()，如果是其它对象，则尝试序列化。</p>
+<p>对于通过属性获取的值，如果是byte[]则返回，如果是String、File、URL、URI、InputStream、Reader等会转化或读取到byte[]，其它使用序列化方法转成byte[]。</p>
 #$@text#$@
   snotXmlAttribute
   false
@@ -3272,6 +3274,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -3286,7 +3290,7 @@ false
 
 <ol>
 	<li><strong>从attributeName属性获取</strong><br />
-	支持var:、ognl:、action:等前缀。<br />
+	支持var:、ognl:、action:等前缀。如果前缀是_c_.那么从Configuration中获取。<br />
 	&nbsp;</li>
 	<li><strong>从childThingName属性获取</strong><br />
 	childThingName是子节点的事物名，获取第一个子事物，如果childThingFirstChild=true那么返回第一个子事物的第一个子事物。<br />
@@ -12333,10 +12337,8 @@ name</pre>
   public
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>返回配置事物。</p>
-#$@text#$@
+  sdescription
+  <p>返回配置事物。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -12511,53 +12513,6 @@ name</pre>
     false
     sid
     label
-    @/@GetConfiguration/@configDescriptor
-    sname
-    configDescriptor
-    sinputtype
-    dataSelector
-    ssize
-    60
-    sshowLabel
-    true
-    slabelAlign
-    right
-    slabelVAlign
-    baseline
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_noThingRegistViewer
-    false
-    sth_fileMonitor
-    false
-    sth_mark
-    false
-    sth_registQueryOnlySelf
-    false
-    sid
-    configDescriptor
     @/@GetConfiguration/@attributeName
     sname
     attributeName
@@ -12666,6 +12621,602 @@ name</pre>
     sth_registMyChilds
     false
     sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@GetSqlConnection
+  sname
+  GetSQLConnection
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  _actions.thingaction
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>返回一个SQLConnection对象，如果不存在返回null。</p>
+
+<p><strong>SQLConnection的用法</strong></p>
+
+<pre class="brush:groovy;">
+SQLConnection sqlcon = ...;
+try{
+    java.sql.Connection con = sqlcon.getConnection();
+    .....
+}finally{
+    //释放连接。
+    sqlcon.close();
+}</pre>
+
+<p><strong>获取SQLConnection可能途径：</strong></p>
+
+<ul>
+	<li><strong>Connection</strong><br />
+	属性指向的对象是Connection，这时Connection在close()方法中不会关闭。<br />
+	&nbsp;</li>
+	<li><strong>String or Thing</strong><br />
+	是数据源模型，通过模型获取Connection，此时close()方法会关闭获取的连接。<br />
+	&nbsp;</li>
+	<li><strong>_c_.xxx</strong><br />
+	获取项目配置下的xxx模型，xxx模型是数据源模型，通过模型获取Connection，此时close()方法会关闭获取的连接。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  GetSqlConnection
+    @/@GetSqlConnection/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@GetSqlConnection/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      suseOuterJava
+      true
+      suseInnerJava
+      false
+      souterClassName
+      xworker.lang.actions.ActionUtils
+      smethodName
+      getConnection
+      sdisableGlobalContext
+      false
+      sattributeTemplate
+      false
+      sinterpretationType
+      Action
+      svarScope
+      Global
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      run
+    @/@GetSqlConnection/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    name
+    @/@GetSqlConnection/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    label
+    @/@GetSqlConnection/@attributeName
+    sname
+    attributeName
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    attributeName
+    @/@GetSqlConnection/@notNull
+    sname
+    notNull
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否不能为null，如果是且获得的值为null，那么会抛出异常。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    notNull
+    @/@GetSqlConnection/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@Groovy
+  sname
+  Groovy
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  _actions.thingaction
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>返回动作属性所指定的字符串。通过属性的值做以下操作：</p>
+
+<ul>
+	<li><strong>template:xxx</strong><br />
+	执行Freemarker模板，其中模板代码是xxx。<br />
+	&nbsp;</li>
+	<li><strong>res:xxx</strong><br />
+	获取i18n资源。（现已很少用）。<br />
+	&nbsp;</li>
+	<li><strong>label:xxx</strong><br />
+	获取一个xxx事物的标签，其中xxx是事物的路径。<br />
+	&nbsp;</li>
+	<li><strong>desc:xxx</strong><br />
+	获取xxx事物的描述，其中xxx是事物的路径。<br />
+	&nbsp;</li>
+	<li><strong>descurl:xxx</strong><br />
+	获取xxx事物的描述的网页路径，其中xxx是事物的路径。<br />
+	&nbsp;</li>
+	<li><strong>attr:xxx</strong><br />
+	返回world.get(xxx)的字符串类型，可以通过事物路径的表达式获取指定事物的属性等。<br />
+	&nbsp;</li>
+	<li><strong>ognl:xxx</strong><br />
+	使用Ognl表达式xxx，其中root是当前变量上下文。<br />
+	&nbsp;</li>
+	<li><strong>xworker:xxx</strong><br />
+	获取xworker的相对路径，return wrold.getPath() + &quot;/&quot; + xxx。<br />
+	&nbsp;</li>
+	<li><strong>var:xxx</strong><br />
+	从变量上下文获取xxx变量。如果是事物返回其路径，否则返回String.valueOf(obj)。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>默认</strong><br />
+	返回属性的值，如果以英文的双引号开头或截止，那么会去掉相应的双引号。可能会返回空的字符串。</li>
+</ul>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  Groovy
+    @/@Groovy/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@Groovy/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      suseOuterJava
+      true
+      suseInnerJava
+      false
+      souterClassName
+      xworker.lang.actions.ActionUtils
+      smethodName
+      executeGroovy
+      sdisableGlobalContext
+      false
+      sattributeTemplate
+      false
+      sinterpretationType
+      Action
+      svarScope
+      Global
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      run
+    @/@Groovy/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@Groovy/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@Groovy/@attributeName
+    sname
+    attributeName
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    attributeName
+    @/@Groovy/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
     false
     sth_mark
     false

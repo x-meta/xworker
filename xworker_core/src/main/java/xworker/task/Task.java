@@ -128,6 +128,17 @@ public class Task implements Runnable{
 		
 	}
 	
+	/**
+	 * 创建界面。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public Object createUI(ActionContext actionContext) {
+		Thing thing = getThing();
+		return thing.doAction("createUI", actionContext, "task", this);
+	}
+	
 	public static void main(String args[]){
 		try{
 			final Task t = new Task(null, null , false, false, false);

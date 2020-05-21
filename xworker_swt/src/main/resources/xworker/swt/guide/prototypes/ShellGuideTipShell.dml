@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="tipShell" _xmeta_id_="ShellGuideTipShell" descriptors="xworker.swt.widgets.Shell"
+     CLOSE="false" MIN="false" MAX="false" TOOL="true" width="450" height="300" visible="false">
+    <GridLayout name="GridLayout" marginWidth="0" marginHeight="0"></GridLayout>
+    <Browser name="browser" javascriptEnabled="">
+        <UtilBrowser name="UtilBrowser"></UtilBrowser>
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+        <BrowserFunction name="browserSetSize" _xmeta_id_="BrowserFunction">
+            <actions>
+                <GroovyAction name="doFunction">
+                    <code><![CDATA[int width =(int) args[0];
+int height = (int) args[1];
+
+tipShell.setSize(tipShell.getSize().x, height + 80);
+//println args;]]></code>
+                </GroovyAction>
+            </actions>
+        </BrowserFunction>
+    </Browser>
+    <Composite name="buttonComposite" _xmeta_id_="7488">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="7489" style="FILL_HORIZONTAL"
+             horizontalAlignment="END"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="7490"></RowLayout>
+        <Button name="preButton" _xmeta_id_="7491" text="lang:d=上一步&amp;en=Pre">
+            <RowData name="RowData" _xmeta_id_="7492" width="80"></RowData>
+            <Listeners _xmeta_id_="7493">
+                <Listener name="preButtonSelection" _xmeta_id_="7494">
+                    <GroovyAction name="GroovyAction" code="guide.pre()"></GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="nextButton" _xmeta_id_="74911" text="lang:d=下一步&amp;en=Next">
+            <RowData name="RowData" _xmeta_id_="7492" width="80"></RowData>
+            <Listeners _xmeta_id_="7493">
+                <Listener name="nextButtonSelection" _xmeta_id_="7494">
+                    <GroovyAction name="GroovyAction" code="guide.next()"></GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+</Shell>
