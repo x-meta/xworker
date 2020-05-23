@@ -377,7 +377,7 @@ public class XWorkerUtils {
 		if(p == null){
 			return null;
 		}else{
-			T obj = (T) actionContext.get(name);
+			T obj = (T) p.get(name);
 			if(obj != null){
 				return obj; 
 			}else{

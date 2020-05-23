@@ -1,4 +1,4 @@
-%1579521895254
+%1590111809032
 @
 sname=ViewTableRows
 sBORDER=false
@@ -163,6 +163,8 @@ import groovy.sql.Sql;
 import xworker.util.UtilAction;
 import xworker.util.XWorkerUtils;
 
+def dataSource = XWorkerUtils.getParentVar(actionContext, "dataSource");
+
 //获取全部的表
 def datas = [];
 def metadata = con.getMetaData();
@@ -177,7 +179,6 @@ if(metadata.getDriverName().indexOf("Derby") != -1){
     rs = metadata.getTables(null, metadata.getUserName(), null, ["TABLE"] as String[]);
 }
 
-def dataSource = XWorkerUtils.getParentVar(actionContext, "dataSource");
 try{    
     while(rs.next()){        
         def data = new DataObject("xworker.things.p2016.p09.p05.ViewTableRows/@dataObjectEditor/@dataObjects/@AbstractDataObject");
@@ -246,6 +247,7 @@ def getConditionData(actionContext, name){
           sinterpretationType=Action
           screateLocalVarScope=false
           ssaveReturn=false
+          sswitchResult=false
           sdebugLog=false
           sdescriptors=xworker.lang.actions.Actions/@GroovyAction
           sth_createIndex=false

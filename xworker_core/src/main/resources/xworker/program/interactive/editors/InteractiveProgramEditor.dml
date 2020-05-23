@@ -5,10 +5,183 @@
     <FillLayout name="FillLayout"></FillLayout>
     <Composite name="mainComposite">
         <GridLayout name="mainCompositeGrifLayout"></GridLayout>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="currentNode" varName="currentNode" className="xworker.program.interactive.InteractiveProgram"></Variable>
+        </VariablesDescs>
+        <QuickToolbar name="quickToolBar">
+            <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+            <Item name="saveItem" label="保存" showText="true" actionContainer="actions"
+                 actionName="save"></Item>
+            <Item name="refreshItem" label="刷新" showText="true" actionContainer="actions"
+                 actionName="refresh"></Item>
+            <Item name="addOnExceptionItem" label="添加异常处理" showText="true" actionContainer="actions"
+                 actionName="addOnException"></Item>
+            <Item name="addOnResultItem" label="添加结果处理" showText="true" actionContainer="actions"
+                 actionName="addOnResult"></Item>
+            <Item name="removeNodeItem" label="移除节点" showText="true" actionContainer="actions"
+                 actionName="removeNode"></Item>
+            <Item name="split1" type="SEPARATOR"></Item>
+            <Item name="executeItem" label="执行" showText="true" actionContainer="actions"
+                 actionName="execute"></Item>
+        </QuickToolbar>
         <SashForm name="mainSashForm" weights="30,70">
-            <Tree name="oulineTree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
-                 multipleColumns="false" headerVisible="false" sortIndicator="false"
-                 moveableColumns="false"></Tree>
+            <Tree name="outlineTree" _xmeta_id_="oulineTree" FULL_SELECTION="false"
+                 HIDE_SELECTION="false" lineVisible="false" multipleColumns="false" headerVisible="false"
+                 sortIndicator="false" moveableColumns="false">
+                <Listeners>
+                    <Listener name="outlineTreeSelection">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[//当前节点
+def node = event.item.getData("node");
+
+actionContext.g().put("currentNode", node);
+
+actions.doAction("selectNode", actionContext, "node", node);]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+                <GridData name="GridData" style="FILL_BOTH"></GridData>
+            </Tree>
+            <CTabFolder name="mainTabFolder" _xmeta_id_="mianTabFolder" BORDER="true">
+                <CTabItem name="resultTabItem" text="运行结果">
+                    <Composite name="resultComposite">
+                        <GridLayout name="GridLayout"></GridLayout>
+                        <ObjectViewer name="objectViewer">
+                            <GridData name="GridData" style="FILL_BOTH"></GridData>
+                        </ObjectViewer>
+                    </Composite>
+                </CTabItem>
+                <CTabItem name="modelTabItem" text="模型">
+                    <Composite name="modelComposite">
+                        <GridLayout name="GridLayout"></GridLayout>
+                        <ThingForm name="modelThingForm" column="1">
+                            <GridData name="modelThingFormGridData" style="FILL_BOTH"></GridData>
+                        </ThingForm>
+                        <Composite name="buttonComposite" _xmeta_id_="20716">
+                            <GridData name="buttonCompositeGridData" _xmeta_id_="20717"
+                                 style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+                            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="20718"></RowLayout>
+                            <Button name="setFunctionButton" _xmeta_id_="20719" text="lang:d=设置函数&amp;en=Set Function">
+                                <RowData name="RowData" _xmeta_id_="20720" width="80"></RowData>
+                                <Listeners _xmeta_id_="20721">
+                                    <Listener name="setFunctionButtonSelection" _xmeta_id_="20722">
+                                        <ThingRegistorDialog descriptors="xworker.swt.actions.MessageBoxActions/@ThingRegistorDialog"
+                                             title="lang:d=选择函数&amp;en=Select Function"
+                                             shell="ognl:mainComposite.getShell()"
+                                             thing="xworker.program.interactive.InteractiveFunctions"
+                                             registType="child">
+                                            <actions>
+                                                <GroovyAction name="ok">
+                                                    <code><![CDATA[if(thing != null){
+    currentNode.setFunctionThing(thing);
+    
+    actions.doAction("refresh", actionContext);
+}]]></code>
+                                                </GroovyAction>
+                                            </actions>
+                                        </ThingRegistorDialog>
+                                    </Listener>
+                                </Listeners>
+                            </Button>
+                        </Composite>
+                    </Composite>
+                </CTabItem>
+            </CTabFolder>
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
         </SashForm>
+        <ActionContainer name="actions" _xmeta_id_="ActionContainer">
+            <GroovyAction name="refresh">
+                <code><![CDATA[import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.SWT;
+import xworker.swt.util.XWorkerTreeUtil;
+
+//先移除已有的节点
+outlineTree.removeAll();
+
+initNode(interactiveProgram, outlineTree, currentNode);
+
+actions.doAction("selectNode", actionContext, "node", currentNode);
+
+def initNode(node, parent, currentNode){
+    def treeItem = new TreeItem(parent, SWT.NONE);
+    XWorkerTreeUtil.initItem(treeItem, node.getThing(), actionContext)
+    treeItem.setData("node", node);
+    
+    if(node == currentNode){
+        outlineTree.setSelection(treeItem);
+    }
+    
+    for(child in node.getChilds()){
+        initNode(child, treeItem, currentNode);
+    }
+    
+    treeItem.setExpanded(true);
+}
+//println interactiveProgram;]]></code>
+            </GroovyAction>
+            <GroovyAction name="selectNode">
+                <code><![CDATA[//outlineTree选中了一个节点时的操作
+if(node.isExecuted()){
+    objectViewer.doAction("setObject", actionContext, "object", node.getResult());
+}else{
+    objectViewer.doAction("setObject", actionContext, "object", null);
+    mainTabFolder.setSelection(modelTabItem);
+}
+
+//模型编辑表单
+modelThingForm.doAction("setThing", actionContext, "thing", node.getThing());]]></code>
+                <ins>
+                    <param name="node" type="xworker.program.interactive.InteractiveProgram"></param>
+                </ins>
+            </GroovyAction>
+            <GroovyAction name="save">
+                <code><![CDATA[def values = modelThingForm.doAction("getValues", actionContext);
+currentNode.getThing().putAll(values);
+
+interactiveProgram.save();]]></code>
+            </GroovyAction>
+            <GroovyAction name="addOnException">
+                <code><![CDATA[currentNode.addOnException();
+
+actions.doAction("refresh", actionContext);]]></code>
+            </GroovyAction>
+            <GroovyAction name="addOnResult">
+                <code><![CDATA[currentNode.addOnResult();
+
+actions.doAction("refresh", actionContext);]]></code>
+            </GroovyAction>
+            <GroovyAction name="removeNode">
+                <code><![CDATA[if(confirm(actionContext)){ 
+    if(currentNode.getParent() == null && confirmDeleteRoot(actionContext)){
+        currentNode.remove() ;
+        outlineTree.getSelection()[0].dispose();
+//        requrest.finish();
+    }else{
+        currentNode.remove();
+        actions.doAction("refresh", actionContext);
+    }
+}]]></code>
+                <ActionDefined>
+                    <MessageBox name="confirm" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                         shell="ognl:mainComposite.getShell()" icon="ICON_QUESTION"
+                         title="lang:d=删除节点&amp;en=Delete Node" message="lang:d=确定要删除当前节点吗？&amp;en=Are you sure to delete current node?"></MessageBox>
+                    <MessageBox name="confirmDeleteRoot" _xmeta_id_="confirmDelete" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                         shell="ognl:mainComposite.getShell()" icon="ICON_QUESTION"
+                         title="lang:d=删除&amp;en=Delete" message="lang:d=确实要删除根节点吗？&amp;en=Are you sure to delete root?"></MessageBox>
+                </ActionDefined>
+            </GroovyAction>
+            <GroovyAction name="execute" code="currentNode.execute();"></GroovyAction>
+            <MessageBox name="removeNode" _xmeta_id_="confirm" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                 shell="ognl:mainComposite.getShell()" icon="ICON_QUESTION" title="lang:d=删除节点&amp;en=Delete Node"
+                 message="lang:d=确定要删除当前节点吗？&amp;en=Are you sure to delete current node?">
+                <GroovyAction name="ok"></GroovyAction>
+            </MessageBox>
+        </ActionContainer>
+        <Code name="init">
+            <code><![CDATA[//当前选中的节点
+actionContext.g().put("currentNode", interactiveNode);
+
+actions.doAction("refresh", actionContext);]]></code>
+        </Code>
     </Composite>
 </Shell>

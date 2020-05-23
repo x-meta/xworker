@@ -86,6 +86,12 @@ public class InteractiveProgram {
 			if(desc.isThing("xworker.program.interactive.InteractiveFunction")) {
 				return desc;
 			}
+			
+			for(Thing ext : desc.getAllExtends()) {
+				if(ext .isThing("xworker.program.interactive.InteractiveFunction")) {
+					return desc;
+				}
+			}
 		}
 		
 		return null;
@@ -93,6 +99,17 @@ public class InteractiveProgram {
 	
 	public Thing getFunctionThing() {
 		return getFunctionThing(thing);
+	}
+	
+	public void setUnexecuted() {
+		this.executed = false;
+	}
+	
+	public void clear() {
+		this.executed = false;
+		for(InteractiveProgram child : childs) {
+			child.clear();
+		}
 	}
 	
 	public void setFunctionThing(Thing functionThing) {
@@ -106,16 +123,16 @@ public class InteractiveProgram {
 		//设置新的描述者		
 		switch(this.type) {
 		case TYPE_FUNCTION:
-			thing.set("descriptor", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram");
+			thing.set("descriptors", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram");
 			break;
 		case TYPE_ONEXCEPTION:
-			thing.set("descriptor", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@OnExcepion");
+			thing.set("descriptors", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@OnExcepion");
 			break;
 		case TYPE_ONRESULT:
-			thing.set("descriptor", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@OnResult");
+			thing.set("descriptors", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@OnResult");
 			break;
 		case TYPE_PARAMETER:
-			thing.set("descriptor", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@Parameter");
+			thing.set("descriptors", functionThing.getMetadata().getPath() + ",xworker.program.interactive.InteractiveProgram/@Parameter");
 			break;
 		}
 		
@@ -130,11 +147,14 @@ public class InteractiveProgram {
 			childs.add(child);
 			parameters.add(child);
 		}
+		
+		save();
 	}
 	
 	public void addOnException() {
 		if(onException == null) {
 			Thing exceptionThing = new Thing("xworker.program.interactive.InteractiveProgram/@OnExcepion");
+			exceptionThing.set("name", "onException");
 			thing.addChild(exceptionThing);
 			onException = new InteractiveProgram(exceptionThing, actionContext, this);
 			childs.add(onException);
@@ -144,6 +164,7 @@ public class InteractiveProgram {
 	public void addOnResult() {
 		if(onResult == null) {
 			Thing resultThing = new Thing("xworker.program.interactive.InteractiveProgram/@OnResult");
+			resultThing.set("name", "onResult");
 			thing.addChild(resultThing);
 			onResult = new InteractiveProgram(resultThing, actionContext, this);
 			childs.add(onResult);
@@ -156,6 +177,8 @@ public class InteractiveProgram {
 			childs.remove(onException);
 			onException = null;
 		}
+		
+		save();
 	}
 	
 	public void removeOnResult() {
@@ -164,7 +187,40 @@ public class InteractiveProgram {
 			childs.remove(onResult);
 			onResult = null;
 		}
+		
+		save();
 	}
+	
+	/**
+	 * 移除当前节点。
+	 */
+	public void remove() {
+		if(parent != null) {
+			//删除事物
+			parent.getThing().removeChild(this.getThing());
+			
+			//从父节点删除子节点
+			parent.childs.remove(this);
+			
+			parent.parameters.remove(this);
+			if(parent.onException == this) {
+				parent.onException = null;
+			}
+			if(parent.onResult == this) {
+				parent.onResult = null;
+			}
+			
+			parent.save();
+		} else {
+			this.getThing().remove();
+		}
+	}
+	
+	public void save() {
+		InteractiveProgram root = getRoot();
+		root.getThing().save();
+	}
+	
 	/**
 	 * 是否已经准备好可以执行了。
 	 * @return
@@ -299,6 +355,10 @@ public class InteractiveProgram {
 		Executor.requestUI(root.uiRequest);
 	}
 	
+	public InteractiveProgram getParent() {
+		return parent;
+	}
+	
 	public byte getType() {
 		return type;
 	}
@@ -327,5 +387,10 @@ public class InteractiveProgram {
 		return onException;
 	}
 	
+	public static void run(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		InteractiveProgram program = new InteractiveProgram(self, actionContext, null);
+		program.execute();
+	}
 	
 }
