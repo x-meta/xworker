@@ -15,6 +15,8 @@
 ******************************************************************************/
 package xworker.ide;
 
+import java.io.File;
+
 import org.xmeta.Thing;
 import org.xmeta.World;
 
@@ -24,6 +26,12 @@ public class XWorkerExplorer {
 	public static void main(String[] args){
 		try{
 			SystemIoRedirector.init();
+			
+			//首次从git上拉下来没有databases目录，会报数据库的错误
+			File dbDir = new File("./xworker/databases/");
+			if(dbDir.exists() == false) {
+				dbDir.mkdirs();
+			}
 			
 			//初始化引擎
 			World world = World.getInstance();			
