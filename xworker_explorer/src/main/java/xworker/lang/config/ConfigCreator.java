@@ -51,7 +51,7 @@ public class ConfigCreator {
         ThingRegistor.regist("_xworker_thing_attribute_editor_GridData", "xworker.swt.layout.GridData");
         ThingRegistor.regist("_xworker_thing_attribute_editor_CodeEditor", "xworker.swt.xworker.CodeEditor");
         ThingRegistor.regist("_xworker_thing_attribute_editor_HtmlEditor", "xworker.swt.xworker.HtmlEditor");
-        ThingRegistor.regist("_xworker_thing_attribute_editor_openDataListener", "xworker.ide.worldExplorer.swt.shareScript.ThingEditor/@scripts/@openDataListener");
+        ThingRegistor.regist("_xworker_thing_attribute_editor_openDataListener", "xworker.ide.worldexplorer.swt.shareScript.ThingEditor/@scripts/@openDataListener");
         
         ThingRegistor.regist("_xworker.swt_model", "xworker.swt.model.Model");
         ThingRegistor.regist("_xworker_globalConfig", "_local.xworker.config.GlobalConfig");

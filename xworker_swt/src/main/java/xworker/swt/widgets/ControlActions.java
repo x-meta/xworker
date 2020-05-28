@@ -30,7 +30,7 @@ public class ControlActions {
     public static void menu_viewimageinbrowser(ActionContext actionContext){
         Thing currentThing = actionContext.getObject("currentThing");
         
-        String url = XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.SwtImage";
+        String url = XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.SwtImage";
         url = url + "&control=" + currentThing.getMetadata().getPath();
         
         XWorkerUtils.ideOpenUrl(url);        

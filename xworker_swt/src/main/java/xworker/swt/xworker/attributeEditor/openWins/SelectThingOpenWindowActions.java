@@ -35,7 +35,7 @@ public class SelectThingOpenWindowActions {
         ActionContext ac = new ActionContext();
         ac.put("parent", shell.getParent());
         
-        Thing selector = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+        Thing selector = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
         Shell sshell = (Shell) selector.doAction("create", ac);
         Object result = SwtDialog.open(sshell, ac);
         if(result != null){
@@ -51,7 +51,7 @@ public class SelectThingOpenWindowActions {
         ActionContext ac = new ActionContext();
         ac.put("parent", shell);
         
-        Thing selector = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+        Thing selector = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
         Shell sshell = (Shell) selector.doAction("create", ac);
         return SwtDialog.open(sshell, ac);
     }

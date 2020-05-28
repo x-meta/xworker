@@ -316,7 +316,7 @@ public class ExtJsCreator {
     	World world = World.getInstance();
         
         //打开显示窗体
-        Thing shellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.JavaScriptDialog/@shell");
+        Thing shellObj = world.getThing("xworker.ide.worldexplorer.swt.dialogs.JavaScriptDialog/@shell");
         ActionContext context = new ActionContext();
         Bindings bindings = context.peek();
         List<String> extGlobalVars = new ArrayList<String>();

@@ -129,7 +129,7 @@ public class ShellCreator {
 				
 				//系统入口，是否是设计模式
 				if(self.getBoolean("design") && Designer.isEnabled() == false 
-						&& World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner") != null){
+						&& World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner") != null){
 					Designer.setEnabled(true);
 				}
 				isFirst = true;				
@@ -384,7 +384,7 @@ public class ShellCreator {
 		bin.put("parent", Display.getCurrent());
 		bin.put("treeItem", ((Tree) actionContext.get("outlineTree")).getSelection()[0]);
 		bin.put("treeListener", null);
-		Thing designObj = world.getThing("xworker.ide.worldExplorer.swt.designer.Designer/@shell");
+		Thing designObj = world.getThing("xworker.ide.worldexplorer.swt.designer.Designer/@shell");
 		Shell shell = (Shell) designObj.doAction("create", bin);
 		Thing thing = (Thing) actionContext.get("thing");
 		bin.put("dataObject", thing);

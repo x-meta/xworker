@@ -98,7 +98,7 @@ public class ProjectSetActions {
 		}
 		
 		if(!have){
-			Thing project = new Thing("xworker.ide.worldExplorer.things.ProjectSet/@ProjectDir");
+			Thing project = new Thing("xworker.ide.worldexplorer.things.ProjectSet/@ProjectDir");
 			project.put("name", projectFile.getName());
 			project.put("dir", projectFile.getAbsolutePath());
 			if(actionContext.get("initAttributes") != null){

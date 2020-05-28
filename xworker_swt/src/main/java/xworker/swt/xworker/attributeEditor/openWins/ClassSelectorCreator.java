@@ -31,7 +31,7 @@ public class ClassSelectorCreator {
 		
 		Thing globalCfg = world.getThing("_local.xworker.config.GlobalConfig");
 		String name = (String) OgnlUtil.getValue("name",event.item.getData());
-		String url = globalCfg.getString("webUrl") + "do?sc=xworker.ide.worldExplorer.swt.http.ClassDoc/@clsDoc&className=" + name;
+		String url = globalCfg.getString("webUrl") + "do?sc=xworker.ide.worldexplorer.swt.http.ClassDoc/@clsDoc&className=" + name;
 		((Browser) actionContext.get("browser")).setUrl(url);
 
 		actionContext.getScope(0).put("selectedClassName", name);

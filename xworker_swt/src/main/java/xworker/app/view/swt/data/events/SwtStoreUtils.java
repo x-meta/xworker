@@ -43,8 +43,9 @@ public class SwtStoreUtils {
 	/**
 	 * 返回一个列（如Table的列）中数据对象的值对应的要显示的值。
 	 * 
-	 * @param dataObject
+	 * @param record
 	 * @param column
+	 * @param actionContext
 	 * @return
 	 */
 	public static String getColumnDisplayText(DataObject record, Thing column, ActionContext actionContext) {

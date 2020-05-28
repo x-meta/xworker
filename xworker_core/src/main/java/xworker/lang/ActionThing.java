@@ -16,7 +16,7 @@ public class ActionThing {
 		}
 		
 		if("edit".equals(self.getString("mode")) && XWorkerUtils.getIde() == null){
-			Thing shell = World.getInstance().getThing("xworker.ide.worldExplorer.swt.editor.ThingEditorShell");
+			Thing shell = World.getInstance().getThing("xworker.ide.worldexplorer.swt.editor.ThingEditorShell");
 			shell.doAction("run", actionContext, "thing", self);
 			return null;
 		}

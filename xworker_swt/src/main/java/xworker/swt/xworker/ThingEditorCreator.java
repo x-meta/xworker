@@ -53,10 +53,10 @@ public class ThingEditorCreator {
 			//RWT下为了安全起见进行权限校验
 			if(xworker.security.SecurityManager.doCheck("RAP",
 				"XWorker_Thing_Manager", null, null, actionContext)) {
-				editorThing = world.getThing("xworker.ide.worldExplorer.ThingEditor/@shell/@mainComposite");
+				editorThing = world.getThing("xworker.ide.worldexplorer.ThingEditor/@shell/@mainComposite");
 			}
 		}else {
-			editorThing = world.getThing("xworker.ide.worldExplorer.ThingEditor/@shell/@mainComposite");
+			editorThing = world.getThing("xworker.ide.worldexplorer.ThingEditor/@shell/@mainComposite");
 		}
 		
 		if(editorThing == null){			
@@ -86,7 +86,7 @@ public class ThingEditorCreator {
 		if(outlineBrowser != null && outlineBrowser.getClass().getName().equals("org.eclipse.swt.widgets.Composite")) {
 			ActionContext thingContext =  (ActionContext) ac.get("thingContext");
 			thingContext.peek().put("parent", outlineBrowser);
-			Thing outlineThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
+			Thing outlineThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
 			outlineThing.doAction("create",thingContext);
 			((Composite) outlineBrowser).layout();
 		}

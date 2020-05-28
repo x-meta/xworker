@@ -54,7 +54,7 @@ public class ThingCompositeCreator {
 	/**
 	 * 设置替换模板模型的根节点的模型。
 	 * 
-	 * @param styleCompositeThing
+	 * @param replaceComposite
 	 */
 	public void setReplaceCompositeThing(Thing replaceComposite) {
 		this.replaceComposite = replaceComposite;

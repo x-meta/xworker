@@ -22,7 +22,7 @@ public class TestSax implements ContentHandler{
 			world.init("./xworker/");
 			
 			//启动编辑器			
-			Thing thing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorer/@shell1");
+			Thing thing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1");
 			String xml = thing.doAction("toXml", new ActionContext());
 			//System.out.println(xml);
 			

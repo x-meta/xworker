@@ -1,0 +1,218 @@
+%1524224882724
+@
+sshellName=shell
+sshellThingPath=xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1
+ssplash=true
+ssplashIcon=/xworker/ide/images/xworker_editor.jpg
+slabelColor="#FFFFFF"
+sexitOnClose=false
+sname=SimpleExplorerRWT
+slabel=SimpleExplorerRWT
+sdescriptors=xworker.swt.xworker.SwtRunner
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.swt.xworker.SwtRunner/@actions1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@onShellOpened
+    sname=onShellOpened
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.ActionContext;
+
+import xworker.ide.IdeImpl;
+import xworker.util.XWorkerUtils;
+
+//设置IDE实例的shell
+XWorkerUtils.getIde().setShell(shell);
+
+//构造一个执行介绍的actionContext
+def ac = new ActionContext();
+ac.put("explorerContext", actionContext);
+
+//查看是否已执行welcom界面
+def config = world.getThing("_local.xworker.config.XWorkerInitConfig");
+
+//是否已查看过欢迎
+if(!config.getBoolean("welcomeViewed")){
+    def guide = world.getThing("xworker.guides.base.XWorkerIntroduce");
+    if(guide != null){
+        guide.doAction("run", ac);
+    }
+}
+
+//打开默认的文件，如果存在，如模型应用和文件关联是打开文件
+if(actionContext.get("parentContext") != null && parentContext.get("defaultOpenFile") != null){
+    XWorkerUtils.ideOpenFile(parentContext.get("defaultOpenFile") );
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=onShellOpened
+    @/@actions/@init
+    sname=init
+    slabel=init
+    sisSynchronized=false
+    sthrowException=false
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.config.ProjectCreator
+    smethodName=init
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction,xworker.lang.actions.JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=init
+  @/@Tasks
+  sname=Tasks
+  sdescriptors=xworker.swt.xworker.SwtRunner/@Tasks
+  sth_createIndex=false
+  sth_mark=false
+  sid=Tasks
+    @/@Tasks/@Thing
+    sname=Thing
+    slabel=Check Project _local
+    sbreakOnException=false
+    sdescriptors=xworker.swt.util.Tasks/@Thing
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=Thing
+      @/@Tasks/@Thing/@actions
+      sname=actions
+      sdescriptors=xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@Tasks/@Thing/@actions/@run
+        sname=run
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.ide.IdeImpl;
+import xworker.util.XWorkerUtils;
+
+def thingManager = world.getThingManager("_local");
+if(thingManager == null){
+    world.createThingManager("_local", null);
+}
+
+
+//设置IDE的实现
+XWorkerUtils.setIde(new IdeImpl(display, actionContext));
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+    @/@Tasks/@loadSelf
+    sname=loadShell
+    slabel=load shell thing
+    sthingPath=xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1
+    sdescriptors=xworker.swt.util.Tasks/@LoadThing
+    sth_createIndex=false
+    sth_mark=false
+    sid=loadSelf
+    @/@Tasks/@set Lanaguge
+    sname=set Lanaguge
+    slabel=Set Language
+    sthingPath=xworker.ide.worldexplorer.swt.SimpleExplorerRWT/@startJettry1
+    sactionName=run
+    sbreakOnException=false
+    sdescriptors=xworker.swt.util.Tasks/@ThingRunnber
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=set Lanaguge
+  @/@startJettry1
+  sname=initLanguage
+  sisSynchronized=true
+  sthrowException=true
+  suseOtherAction=false
+  svarScope=Global
+  sdisableGlobalContext=false
+  Scode=
+#$@text#$@
+import java.util.Locale;
+
+import org.xmeta.util.UtilResource;
+import org.xmeta.ui.session.SessionManager;
+
+import xworker.util.XWorkerUtils;
+
+def config = world.getThing("_local.xworker.config.GlobalConfig");
+if(config != null){
+    def lang = config.getStringBlankAsNull("language");
+    if(lang != null){
+        try{
+            def ls = lang.split("[_]");
+            Locale l = new Locale(ls[0], ls[1]);
+            def session = SessionManager.getSession(null);
+            session.setLocale(l);
+            session.setI18nResource(UtilResource.getInstance(l));
+        }catch(Exception e){
+            log.error("init language error", e);
+        }
+    }    
+}
+#$@text#$@
+  sinterpretationType=Action
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdebugLog=false
+  sonlyRegist=false
+  sdescriptors=xworker.lang.util.Functions/@function
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_mark=false
+  sid=startJettry1

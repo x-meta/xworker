@@ -107,7 +107,7 @@ public class ActionExecuteViewerThread implements Runnable{
 		try{
 			Bindings bindings = actionThingContext.push();
 			bindings.put("actionExecutor", this);
-			bindings.setContextThing(World.getInstance().getThing("xworker.ide.worldExplorer.swt.actions.ActionExecuteViewerContext"));
+			bindings.setContextThing(World.getInstance().getThing("xworker.ide.worldexplorer.swt.actions.ActionExecuteViewerContext"));
 			if(startActionThing != null){
 				final Object result = startActionThing.doAction("run", actionThingContext);
 				nextButton.getDisplay().asyncExec(new Runnable(){

@@ -83,7 +83,7 @@ public class DataObjectAttrOpenWindowCreator {
 
 		//设置说明文档
 		Browser browser = (Browser) actionContext.get("browser");
-		browser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + dataObject.getMetadata().getPath());
+		browser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + dataObject.getMetadata().getPath());
 		actionContext.getScope(0).put("split", actionContext.get("split"));
 		Shell shell = (Shell) actionContext.get("shell"); 
 		shell.pack();

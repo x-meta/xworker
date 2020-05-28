@@ -154,7 +154,7 @@ public class InjectableComposite {
 		}
 		
 		//弹出帮助小精灵，通过帮助小精灵设置子控件
-		Action action = World.getInstance().getAction("xworker.ide.worldExplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar1/@mainCollItem/@mainToolBar/@commandAssistorItem/@listeners/@openCommander/@openAssistor");
+		Action action = World.getInstance().getAction("xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar1/@mainCollItem/@mainToolBar/@commandAssistorItem/@listeners/@openCommander/@openAssistor");
 		action.run(actionContext);
 		
 		//连接帮助小精灵

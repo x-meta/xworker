@@ -91,7 +91,7 @@ public class HttpActionMappingServlet extends HttpServlet{
 		
 		ActionContext actionContext = new ActionContext();
 		if(mappings == null){
-			Thing servletTask = world.getThing("xworker.ide.worldExplorer.background.tasks.HttpServletTask");
+			Thing servletTask = world.getThing("xworker.ide.worldexplorer.background.tasks.HttpServletTask");
 			if(servletTask != null){
 				servletTask.doAction("run", actionContext);
 			}

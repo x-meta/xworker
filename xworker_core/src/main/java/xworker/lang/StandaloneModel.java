@@ -24,7 +24,7 @@ public class StandaloneModel {
 		
 		//如果是编辑模式，进入编辑器
 		if(edit && XWorkerUtils.getIde() == null){
-			Thing shell = World.getInstance().getThing("xworker.ide.worldExplorer.swt.editor.ThingEditorShell");
+			Thing shell = World.getInstance().getThing("xworker.ide.worldexplorer.swt.editor.ThingEditorShell");
 			shell.doAction("run", actionContext, "thing", self);
 			return;
 		}

@@ -52,7 +52,7 @@ public class NoneOpenWindowActions {
 		
 		Browser browser = (Browser) actionContext.get("browser");
 		//Browser descBrowser = (Browser) actionContext.get("descBrowser");
-		browser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + attrDesc.getMetadata().getPath());
-		//descBrowser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + inputDesc.getMetadata().getPath());
+		browser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + attrDesc.getMetadata().getPath());
+		//descBrowser.setUrl(GlobalConfig.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + inputDesc.getMetadata().getPath());
 	}
 }

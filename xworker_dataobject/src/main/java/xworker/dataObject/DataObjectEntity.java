@@ -340,6 +340,7 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 如果数据存在返回本事物，否则返回null或者抛出异常。
 	 * 
 	 * @param actionContext 变量上下文
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public T load(ActionContext actionContext) {
@@ -396,7 +397,8 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * @return
 	 */
 	public Object update(ActionContext actionContext, Object condition,
 			Object queryDatas) {
@@ -427,7 +429,9 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * @return
+	 * 
 	 */
 	public Object delete(ActionContext actionContext, Object condition,
 			Object queryDatas) {
@@ -473,7 +477,8 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * @return
 	 */
 	public List<T> query(ActionContext actionContext, Object condition,
 			Object queryDatas) {

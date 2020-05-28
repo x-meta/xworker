@@ -42,7 +42,7 @@ public class ProjectCreator {
         world.metaThing = metaThing;
                 
         //注册事物        
-        ThingRegistor.regist("_xworker_thing_attribute_editor_openDataListener", "xworker.ide.worldExplorer.swt.shareScript.ThingEditor/@scripts/@openDataListener");
+        ThingRegistor.regist("_xworker_thing_attribute_editor_openDataListener", "xworker.ide.worldexplorer.swt.shareScript.ThingEditor/@scripts/@openDataListener");
         
         //derby system path
         java.lang.System.setProperty("derby.system.home", world.getPath() + "/databases/derby");

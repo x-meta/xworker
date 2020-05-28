@@ -38,7 +38,7 @@ public class DocControlsActions {
         Thing thing = world.getThing((String) requestBean.get("thingPath"));
         String descriptor = thing.getDescriptor().getMetadata().getPath();
         
-        response.sendRedirect("do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + descriptor);
+        response.sendRedirect("do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + descriptor);
     }
 
     public static void doAction1(ActionContext actionContext) throws IOException{
@@ -48,7 +48,7 @@ public class DocControlsActions {
          
         Thing thing = world.getThing((String) requestBean.get("thing"));
         String  descriptor = thing.getString("descriptor");        
-        response.sendRedirect("do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + descriptor);
+        response.sendRedirect("do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + descriptor);
     }
 
 }

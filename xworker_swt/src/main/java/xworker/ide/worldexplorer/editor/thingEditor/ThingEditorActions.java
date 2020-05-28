@@ -431,7 +431,7 @@ public class ThingEditorActions {
 	    }
 		treeItem.setExpanded(true);
 		//this.initOutlineTreeItem(treeItem, thing, actionContext);
-		//def initOutline = new Thing("xworker.ide.worldExplorer.swt.actions.OutlineTreeAction/@InitOutlineTree");
+		//def initOutline = new Thing("xworker.ide.worldexplorer.swt.actions.OutlineTreeAction/@InitOutlineTree");
 		//initOutline.doAction("run", actionContext, ["tree": innerOutline, "thing": thing]);
 
 		//是否能够保存
@@ -468,7 +468,7 @@ public class ThingEditorActions {
 		/*
 		//初始化概要树
 		innerOutline.removeAll();
-		def refreshAction = world.getAction("xworker.ide.worldExplorer.swt.shareScript.ThingEditor/@scripts/@initOutline");
+		def refreshAction = world.getAction("xworker.ide.worldexplorer.swt.shareScript.ThingEditor/@scripts/@initOutline");
 		refreshAction.run(null, ["tree":outlineTree, "thing":thing, "itemIndex":null]);
 		outlineTree.setSelection(innerOutline.getItems()[0]);
 		*/
@@ -1190,7 +1190,7 @@ public class ThingEditorActions {
 		    		+ "（" + objStruct.getMetadata().getLabel() + "）");
 		    
 		    String toolTipText = "<b><u><a href=\"" + webUrl + 
-		        "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" +
+		        "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" +
 		        objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
 		        
 		    //log.info(    toolTipText);
@@ -1216,9 +1216,9 @@ public class ThingEditorActions {
 		        menus = swtMenu.getMenu(thing, new String[] {strFullPath}, "data");
 		    }
 		    
-		    Thing toolItemListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@toolBarItemSelection");
-		    Thing disposeListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@dispose");
-		    Thing menuListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection");
+		    Thing toolItemListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@toolBarItemSelection");
+		    Thing disposeListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@dispose");
+		    Thing menuListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection");
 		    
 		    ToolBar toolBar = actionContext.getObject("toolBar");
 		    for(ToolItem item : toolBar.getItems()){
@@ -1320,7 +1320,7 @@ public class ThingEditorActions {
 
 		Thing globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
 		String webUrl = globalConfig.getString("webUrl");
-		webUrl = webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath();
+		webUrl = webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath();
 		childDescBrowser.setUrl(webUrl);
 
 		//初始化编辑内容窗体
@@ -1590,7 +1590,7 @@ public class ThingEditorActions {
 		    }
 
 		     //命令
-		    Thing editorCommandDomain = world.getThing("xworker.ide.worldExplorer.swt.command.ThingEditorCommandDomain");
+		    Thing editorCommandDomain = world.getThing("xworker.ide.worldexplorer.swt.command.ThingEditorCommandDomain");
 		    Assistor.setCommandDomain(editorCommandDomain, actionContext);
 		    
 		    //设置编辑器的表单
@@ -1609,7 +1609,7 @@ public class ThingEditorActions {
 		    actions.doAction("xmlSetCurrentThing", actionContext);
 		    
 		    //命令
-		    Thing editorCommandDomain = world.getThing("xworker.ide.worldExplorer.swt.command.XmlEditorCommandDomain");
+		    Thing editorCommandDomain = world.getThing("xworker.ide.worldexplorer.swt.command.XmlEditorCommandDomain");
 		    Assistor.setCommandDomain(editorCommandDomain, actionContext);
 		    
 		    
@@ -1893,7 +1893,7 @@ public class ThingEditorActions {
 	
 	public Object hasXWorker(ActionContext actionContext) {
 		//返回否是有整个XWorker的环境
-		return world.getThing("xworker.ide.worldExplorer.swt.dialogs.MarkTreeDialog") != null;
+		return world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkTreeDialog") != null;
 	}
 	
 	public Object fastLocateCode(ActionContext actionContext) {
@@ -1906,7 +1906,7 @@ public class ThingEditorActions {
 		context.put("thing", currentThing.getRoot());
 		context.put("currentThing", currentThing);
 
-		Thing templateShellObj = world.getThing("xworker.ide.worldExplorer.swt.dialogs.FastLocateDialog/@shell");
+		Thing templateShellObj = world.getThing("xworker.ide.worldexplorer.swt.dialogs.FastLocateDialog/@shell");
 		Shell templateShell = templateShellObj.doAction("create", context);
 
 		templateShell.open();
@@ -1922,7 +1922,7 @@ public class ThingEditorActions {
 		context.put("thing", currentThing);
 		context.put("parent", coolBar.getShell());
 
-		Thing shellThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.DesAndExtendsDialog/@shell");
+		Thing shellThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.DesAndExtendsDialog/@shell");
 		Shell shellObj = shellThing.doAction("create", context);
 		((ActionContainer) context.get("actions")).doAction("setThing");
 
@@ -1959,7 +1959,7 @@ public class ThingEditorActions {
 		    		+ objStruct.getMetadata().getLabel() + "）");
 		    
 		    String toolTipText = "<b><u><a href=\"" + webUrl + 
-		        "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" +
+		        "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" +
 		        objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
 		        
 		    //log.info(    toolTipText);
@@ -1986,9 +1986,9 @@ public class ThingEditorActions {
 		        menus = swtMenu.getMenu(thing, new String[] {strFullPath}, "data");
 		    }
 		    
-		    Thing toolItemListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@toolBarItemSelection");
-		    Thing disposeListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@dispose");
-		    Thing menuListenerObject = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection");
+		    Thing toolItemListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@toolBarItemSelection");
+		    Thing disposeListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@dispose");
+		    Thing menuListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@menuSelection");
 		    
 		    for(ToolItem item : toolBar.getItems()){
 		        item.dispose();
@@ -2149,7 +2149,7 @@ public class ThingEditorActions {
 	public Object addDesSelection(final ActionContext actionContext) {
 		Composite contentComposite = actionContext.getObject("contentComposite");
 		Shell shell = contentComposite.getShell();
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
 
 		ActionContext newContext = new ActionContext();
 		newContext.put("parent", shell);
@@ -2228,7 +2228,7 @@ public class ThingEditorActions {
 	public Object addExtendSelection(ActionContext actionContext) {
 		Composite contentComposite = actionContext.getObject("contentComposite");
 		Shell shell = contentComposite.getShell();
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
 
 		ActionContext newContext = new ActionContext();
 		newContext.put("parent", shell);
@@ -2384,14 +2384,14 @@ public class ThingEditorActions {
 		}
 
 		//使用新的临时的事物伪装当前正在编辑的事物
-		//def thing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot");
+		//def thing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingCommandIndexRoot");
 		//thing = thing.detach();
 		Thing thing = new Thing();
 		String thingPath = thing.getMetadata().getPath();
 		thing.set("descriptors", currentThing.getString("descriptors"));
 		//默认不查询描述者，所以放到继承里
 		String descs = currentThing.getStringBlankAsNull("descriptors");
-		String exts = path + ",xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot";
+		String exts = path + ",xworker.ide.worldexplorer.swt.dataExplorerParts.ThingCommandIndexRoot";
 		if(descs != null){
 		    exts = exts + "," + descs;
 		}
@@ -2596,7 +2596,7 @@ public class ThingEditorActions {
 		ac.put("thingEntry", thingEntry);
 		ac.put("innerOutline", innerOutline);
 
-		Thing menuThing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@innerOutlineDragMenu");
+		Thing menuThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@innerOutlineDragMenu");
 		Menu menu = menuThing.doAction("create", ac);
 
 		if(item == innerOutline.getItems()[0]){
@@ -2659,7 +2659,7 @@ public class ThingEditorActions {
 	
 	public Object viewmarkButtonSelection(final ActionContext actionContext) {
 		//创建弹出窗口
-		Thing dialogThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.MarkTreeDialog");
+		Thing dialogThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkTreeDialog");
 		ActionContext ac = new ActionContext();
 		Button markButton = actionContext.getObject("markButton");
 		ac.put("parent", markButton.getShell());
@@ -2710,7 +2710,7 @@ public class ThingEditorActions {
 	    }
 	}
 	public Object markButtonSelection(ActionContext actionContext) {
-		Thing dialogThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.MarkDialog");
+		Thing dialogThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkDialog");
 		ActionContext ac = new ActionContext();
 		Button markButton = actionContext.getObject("markButton");
 		Thing currentThing = actionContext.getObject("currentThing");
@@ -2727,7 +2727,7 @@ public class ThingEditorActions {
 	}
 	
 	public Object commandButtonSelection(ActionContext actionContext) {
-		Thing editorCommandDomain = world.getThing("xworker.ide.worldExplorer.swt.command.ThingEditorCommandDomain");
+		Thing editorCommandDomain = world.getThing("xworker.ide.worldexplorer.swt.command.ThingEditorCommandDomain");
 		Assistor.runCommandDomain(editorCommandDomain, actionContext);
 		return null;
 	}
@@ -2801,7 +2801,7 @@ public class ThingEditorActions {
 		OutlineTreeMoveListener moveListener = new OutlineTreeMoveListener(innerOutline, actionContext);
 		actionContext.g().put("innerOutlineMoveListener", moveListener);
 
-		Thing dialogThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.MarkTreeDialog");
+		Thing dialogThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkTreeDialog");
 		if(dialogThing == null){
 		    ((Button) actionContext.get("viewMarkButton")).dispose();
 		    ((Button) actionContext.get("markButton")).dispose();

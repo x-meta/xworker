@@ -1,0 +1,1443 @@
+^1408432356992
+@
+sname
+FunctionManager
+slabel
+FunctionManager
+sid
+FunctionManager
+sdescriptors
+xworker.swt.widgets.Display
+@/@shell
+sname
+shell
+stext
+Function Manager
+sNO_TRIM
+false
+sCLOSE
+true
+sTITLE
+true
+sMIN
+true
+sMAX
+true
+sBORDER
+false
+sRESIZE
+false
+sON_TOP
+false
+sTOOL
+false
+sNO_FOCUS
+false
+swidth
+-1
+sheight
+-1
+scenterScreen
+true
+spack
+false
+smaximized
+false
+sfullScreen
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sid
+shell
+sdescriptors
+xworker.swt.widgets.Display/@Shell
+@/@shell/@shellFillLayout
+sname
+shellFillLayout
+stype
+SWT.HORIZONTAL
+sid
+shellFillLayout
+slabel
+shellFillLayout
+sdescriptors
+xworker.swt.Layouts/@FillLayout
+@/@shell/@mainComposite
+sname
+mainComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+Function Manager
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+mainComposite
+sdescriptors
+xworker.swt.Widgets/@Composite,xworker.swt.widgets.Display/@Shell
+@/@shell/@mainComposite/@shellFillLayout
+sname
+mainCompositeFillLayout
+stype
+SWT.HORIZONTAL
+sxw_cl_global
+false
+sid
+shellFillLayout
+slabel
+mainCompositeFillLayout
+sdescriptors
+xworker.swt.Layouts/@FillLayout
+@/@shell/@mainComposite/@browser
+sname
+browser
+sMOZILLA
+false
+sWEBKIT
+false
+sid
+browser
+slabel
+browser
+sdescriptors
+xworker.swt.Widgets/@Browser
+@/@shell/@mainComposite/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.swt.Widgets/@actions
+@/@shell/@mainComposite/@actions/@execute
+sname
+execute
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.lang.ref.WeakReference;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+def browser = explorerContext.get("browser")
+def dataObj = world.getThing(explorerContext.get("path"));
+if(dataObj.thingName == "Script"){
+    def result = world.runAction(dataObj.metadata.path, actionContext);
+    if(result != null && result instanceof String){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(result);
+        box.open();
+    }
+    return;
+}else if(dataObj.thingName == "openComposite"){
+    def viewObject = world.getThing(dataObj.path);
+    if(viewObject == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        explorerActions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":dataObj.metadata.label, "path":""]);
+    }
+}else if(dataObj.thingName == "openSwtShell"){
+    def viewObject = world.getThing(dataObj.path);
+    if(viewObject == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        if(dataObj.getBoolean("singleInstance")){
+            def shellref = world.getData("functions_shell_" + viewObject.metadata.path); 
+            if(shellref != null && shellref.get() != null && !shellref.get().isDisposed()){
+                def shell = shellref.get();
+                
+                shell.getDisplay().asyncExec([
+                    run : {
+                        shell.setVisible(true);
+                    }] as Runnable);                
+                return;
+            }
+        }
+               
+        if(!dataObj.getBoolean("anotherThread")){
+            ActionContext ac = new ActionContext(actionContext);
+            ac.put("parent", Display.getCurrent().getActiveShell());
+            def shell = viewObject.doAction("create", ac);
+            
+            if(dataObj.getBoolean("singleInstance")){
+                def wr = new WeakReference(shell);
+                world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+            }
+            shell.open();
+        } else{
+           def currentActionContext = actionContext;
+           def world = world;
+            new Thread([
+                run : {
+                    ActionContext ac = new ActionContext(currentActionContext);
+                    Display display = new Display ();
+                    ac.put("parent", display);
+                    def shell = viewObject.doAction("create", ac);
+                    if(dataObj.getBoolean("singleInstance")){
+                        def wr = new WeakReference(shell);
+                        world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+                    }
+                    shell.open ();
+            	    while (!shell.isDisposed ()) {
+            	        if (!display.readAndDispatch ()) display.sleep ();
+            	    }
+            	    display.dispose ();
+                }] as Runnable).start();
+        }      
+    }
+}else if(dataObj.thingName == "htmlUrl"){
+    explorerActions.doAction("openUrl", ["url":dataObj.url, "name":dataObj.name]);
+}else if(dataObj.thingName == "openDataObject"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        explorerActions.doAction("openThing", ["thing":thing]);
+    }
+}else if(dataObj.thingName == "WebControl"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    
+    def globalCfg = world.getThing("_local.xworker.config.GlobalConfig");
+    def httpServer = globalCfg.getString("webUrl");
+    if(httpServer == null || httpServer == ""){
+       httpServer = "http://localhost:9001/";
+    }
+    def url = httpServer + "do?sc=" + thing.metadata.path;
+
+    explorerActions.doAction("openUrl", ["url":url, "name":thing.metadata.path]);
+}else if(dataObj.thingName == "thingEditor"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    def editorObject = world.getThing(dataObj.editorPath);
+    if(editorObject == null){
+        MessageBox box = new MessageBox(browser.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingEditorNotExists:事物编辑器不存在：", actionContext) + dataObj.editorPath);
+        box.open();
+        return;
+    }
+    def tab = actions.doAction("openCompoisteAtTab", ["compositeThing":editorObject, "title":thing.metadata.label, "path":editorObject.metadata.path + thing.metadata.path]);
+    def tabactionContext = tab.getData("tabactionContext");
+    if(tabactionContext != null){
+        tabactionContext.scripts.exec("setThing", ["thing":thing]);
+    }
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+sid
+execute
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@shell/@mainComposite/@init
+sname
+init
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+def url = globalConfig.getString("webUrl") + "do?sc=xworker.ide.guide.functionsGuide.webControl.GuideViewer/@guideViewer";
+if(actionContext.get("thing") != null){
+    url = url + "&path=" + thing.metadata.path;
+}
+browser.setUrl(url);
+browser.setData("actionContext", actionContext);
+
+if(actionContext.get("utilBrowser") != null){
+    utilBrowser.attach(browser);
+}
+#$@text#$@
+sid
+init
+sdescriptors
+xworker.swt.Widgets/@Code
+@/@mainComposite
+sname
+mainComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+功能管理
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sid
+mainComposite
+sdescriptors
+xworker.swt.Widgets/@Composite
+@/@mainComposite/@resources
+sname
+resources
+sdescriptors
+xworker.swt.Widgets/@Resource
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@resources/@run
+sname
+runImage
+stype
+Image
+simageFile
+icons/application_go.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@resources/@refreshImge
+sname
+refreshImge
+stype
+Image
+simageFile
+icons/arrow_refresh_small.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@resources/@refreshAllImage
+sname
+refreshAllImage
+stype
+Image
+simageFile
+icons/arrow_refresh.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@resources/@editImage
+sname
+editImage
+stype
+Image
+simageFile
+icons/pencil.png
+sdescriptors
+xworker.swt.util.Resource/@Image
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@mainCompositeFillLayout
+sname
+mainCompositeFillLayout
+snumColumns
+1
+smakeColumnsEqualWidth
+false
+smarginWidth
+5
+smarginHeight
+5
+smarginLeft
+0
+smarginTop
+0
+smarginRight
+0
+smarginBottom
+0
+shorizontalSpacing
+5
+sverticalSpacing
+5
+sid
+mainCompositeFillLayout
+slabel
+mainCompositeFillLayout
+sdescriptors
+xworker.swt.layout.GridLayout
+@/@mainComposite/@mainCompositeBar
+sname
+mainCompositeBar
+stype
+HORIZONTAL
+sBORDER
+false
+sFLAT
+true
+sid
+mainCompositeBar
+sdescriptors
+xworker.swt.Widgets/@CoolBar
+@/@mainComposite/@mainCompositeBar/@buttonBar
+sname
+buttonBar
+sDROP_DOWN
+false
+sid
+buttonBar
+slabel
+buttonBar
+sdescriptors
+xworker.swt.widgets.CoolBar/@CoolItem
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar
+sname
+buttonToolBar
+stype
+HORIZONTAL
+sFLAT
+true
+sWRAP
+false
+sBORDER
+false
+sSHADOW_OUT
+false
+sRIGHT
+true
+sxw_cl_global
+false
+sid
+buttonToolBar
+slabel
+buttonToolBar
+sdescriptors
+xworker.swt.widgets.CoolBar/@CoolItem/@ToolBar
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@executeButton
+sname
+executeButton
+stype
+PUSH
+simage
+runImage
+stext
+res:res.w_exp:run:运行
+stoolTiptext
+Execute the Function
+senabled
+true
+sxw_cl_global
+false
+sid
+executeButton
+slabel
+executeButton
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@executeButton/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@executeButton/@listeners/@executeButtonDefaultSelection
+sname
+executeButtonDefaultSelection
+stype
+Selection
+sid
+executeButtonDefaultSelection
+slabel
+executeButtonDefaultSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@executeButton/@listeners/@executeButtonDefaultSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("execute");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshButton
+sname
+refreshButton
+stype
+PUSH
+simage
+refreshImge
+stext
+res:res.w_exp:refresh:刷新
+stoolTiptext
+refresh the tree node
+senabled
+true
+sxw_cl_global
+false
+sid
+refreshButton
+slabel
+refreshButton
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshButton/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshButton/@listeners/@refreshButtonSelection
+sname
+refreshButtonSelection
+stype
+Selection
+sid
+refreshButtonSelection
+slabel
+refreshButtonSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshButton/@listeners/@refreshButtonSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("refresh");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshAllButton
+sname
+refreshAllButton
+stype
+PUSH
+simage
+refreshAllImage
+stext
+res:res.w_exp:refreshAll:刷新所有
+stoolTiptext
+Refresh the hole tree node
+senabled
+true
+sxw_cl_global
+false
+sid
+refreshAllButton
+slabel
+refreshAllButton
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshAllButton/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshAllButton/@listeners/@refreshAllButtonSelection
+sname
+refreshAllButtonSelection
+stype
+Selection
+sid
+refreshAllButtonSelection
+slabel
+refreshAllButtonSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@refreshAllButton/@listeners/@refreshAllButtonSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("refreshAll");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@openThingButton
+sname
+openThingButton
+stype
+PUSH
+simage
+editImage
+stext
+res:res.w_exp:edit:编辑
+stoolTiptext
+Edit the Function Node
+senabled
+true
+sxw_cl_global
+false
+sid
+openThingButton
+slabel
+openThingButton
+sdescriptors
+xworker.swt.widgets.ToolBar/@ToolItem
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@openThingButton/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@openThingButton/@listeners/@openThingButtonSelection
+sname
+openThingButtonSelection
+stype
+Selection
+sid
+openThingButtonSelection
+slabel
+openThingButtonSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainCompositeBar/@buttonBar/@buttonToolBar/@openThingButton/@listeners/@openThingButtonSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("openThing");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainSashForm
+sname
+mainSashForm
+sstyle
+HORIZONTAL
+sSMOOTH
+false
+sweights
+35,66
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sxw_cl_global
+false
+sdescriptors
+xworker.swt.Widgets/@SashForm
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@mainSashForm/@functionTree
+sname
+functionTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+false
+sHIDE_SELECTION
+false
+sBORDER
+true
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+false
+smoveableColumns
+false
+sheadImages
+false
+ssubImages
+false
+sid
+functionTree
+slabel
+functionTree
+sdescriptors
+xworker.swt.Widgets/@Tree
+@/@mainComposite/@mainSashForm/@functionTree/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreedefaultSelection
+sname
+functionTreedefaultSelection
+stype
+DefaultSelection
+sid
+functionTreedefaultSelection
+slabel
+functionTreedefaultSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreedefaultSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("execute");
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreeMenuDetect
+sname
+functionTreeMenuDetect
+stype
+MenuDetect
+sid
+functionTreeMenuDetect
+slabel
+functionTreeMenuDetect
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreeMenuDetect/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+return ;
+
+for(item in functionTreeMenu.getItems()){
+    item.dispose();
+}
+
+//设置弹出菜单的变量
+String menuPath = "";
+if(functionTree.getSelection().length == 0){
+    menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.FunctionTreeMenu/@refreshOnlyMenu";
+}else{
+    def treeItem = functionTree.getSelection()[0];
+    def data = treeItem.getData();
+    //log.info(data.type);
+    switch(data.getThingName()){
+        case "WebControl":   
+        case "openDataObject":
+        case "openComposite":
+            menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.FunctionTreeMenu/@withDataObjectMenu";
+            break;
+        default:
+            menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.FunctionTreeMenu/@refreshOnlyMenu";
+            break;
+    }
+}
+
+ActionContext context = new ActionContext();
+context.put("functionTree", functionTree);
+context.put("parent", functionTreeMenu);
+context.put("explorerActions", explorerActions);
+context.put("functionContext", actionContext);
+Thing menuObj = world.getThing(menuPath);
+if(menuObj != null){
+    for(child in menuObj.childs){
+        child.doAction("create", context);
+    }
+}
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreeSelection
+sname
+functionTreeSelection
+stype
+Selection
+sid
+functionTreeSelection
+slabel
+functionTreeSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@/@mainComposite/@mainSashForm/@functionTree/@listeners/@functionTreeSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def functionTreeItem = functionTree.getSelection()[0];
+def dataObj = functionTreeItem.getData();
+
+openThingButton.setEnabled(true);
+refreshButton.setEnabled(true);
+refreshAllButton.setEnabled(true);
+
+if(dataObj.descriptor.name == "Functions" || dataObj.descriptor.name == "node"){
+    executeButton.setEnabled(false);
+}else{
+    executeButton.setEnabled(true);
+}
+
+def url = XWorkerUtils.getThingDescUrl(dataObj);
+descBrowser.setUrl(url);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@mainSashForm/@descBrowser
+sname
+descBrowser
+sMOZILLA
+false
+sWEBKIT
+false
+sdescriptors
+xworker.swt.Widgets/@Browser
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@mainSashForm/@descBrowser/@UtilBrowser
+sname
+UtilBrowser
+sdescriptors
+xworker.swt.browser.Browser/@UtilBrowser
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_mark
+false
+@/@mainComposite/@mainSashForm/@functionTreeGridData
+sname
+mainSashFormGridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sxw_cl_global
+false
+sid
+functionTreeGridData
+slabel
+functionTreeGridData
+sdescriptors
+xworker.swt.Commons/@GridData
+@/@mainComposite/@functionActions
+sname
+functionActions
+sid
+functionActions
+slabel
+functionActions
+sdescriptors
+xworker.swt.Widgets/@actions
+@/@mainComposite/@functionActions/@execute
+sname
+execute
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import java.lang.ref.WeakReference;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Display;
+
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+import xworker.util.XWorkerUtils;
+
+def functionTreeItem = functionTree.getSelection()[0];
+def dataObj = functionTreeItem.getData();
+dataObj.doAction("runAction", actionContext);
+/*
+//实现已转移到xworker.lang.util.Functions各节点的方法中了
+if(dataObj.thingName == "Script"){
+    world.runAction(dataObj.metadata.path, actionContext);
+    MessageBox box = new MessageBox(functionTree.shell, SWT.OK);
+    box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+    box.setMessage(UtilString.getString("res:res.w_exp:scriptExecuted:Executed!", actionContext));
+    box.open();
+    return;
+}else if(dataObj.thingName == "openComposite"){
+    def viewObject = world.getThing(dataObj.path);
+    if(viewObject == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        explorerActions.doAction("openCompoisteAtTab", ["compositeThing":viewObject, "title":dataObj.metadata.label, "path":""]);
+    }
+}else if(dataObj.thingName == "openSwtShell"){
+    def viewObject = world.getThing(dataObj.path);
+    if(viewObject == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        if(dataObj.getBoolean("singleInstance")){
+            def shellref = world.getData("functions_shell_" + viewObject.metadata.path); 
+            if(shellref != null && shellref.get() != null && !shellref.get().isDisposed()){
+                def shell = shellref.get();
+                
+                shell.getDisplay().asyncExec([
+                    run : {
+                        shell.setVisible(true);
+                    }] as Runnable);                
+                return;
+            }
+        }
+               
+        if(!dataObj.getBoolean("anotherThread")){
+            ActionContext ac = new ActionContext(actionContext);
+            ac.put("parent", Display.getCurrent().getActiveShell());
+            def shell = viewObject.doAction("create", ac);
+            
+            if(dataObj.getBoolean("singleInstance")){
+                def wr = new WeakReference(shell);
+                world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+            }
+            shell.open();
+        } else{
+           def currentActionContext = actionContext;
+           def world = world;
+            new Thread([
+                run : {
+                    ActionContext ac = new ActionContext(currentActionContext);
+                    Display display = new Display ();
+                    ac.put("parent", display);
+                    def shell = viewObject.doAction("create", ac);
+                    if(dataObj.getBoolean("singleInstance")){
+                        def wr = new WeakReference(shell);
+                        world.setData("functions_shell_" + viewObject.metadata.path, wr); 
+                    }
+                    shell.open ();
+            	    while (!shell.isDisposed ()) {
+            	        if (!display.readAndDispatch ()) display.sleep ();
+            	    }
+            	    display.dispose ();
+                }] as Runnable).start();
+        }      
+    }
+}else if(dataObj.thingName == "htmlUrl"){
+    explorerActions.doAction("openUrl", ["url":dataObj.url, "name":dataObj.name]);
+}else if(dataObj.thingName == "openDataObject"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }else{
+        explorerActions.doAction("openThing", ["thing":thing]);
+    }
+}else if(dataObj.thingName == "WebControl"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    
+    def url = XWorkerUtils.getWebControlUrl(thing);
+    explorerActions.doAction("openUrl", ["url":url, "name":thing.metadata.path]);
+}else if(dataObj.thingName == "thingEditor"){
+    def thing = world.getThing(dataObj.path);
+    if(thing == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingNotExists:事物不存在：", actionContext) + dataObj.path);
+        box.open();
+        return;
+    }
+    def editorObject = world.getThing(dataObj.editorPath);
+    if(editorObject == null){
+        MessageBox box = new MessageBox(functionTree.shell, SWT.OK | SWT.ICON_WARNING);
+        box.setText(UtilString.getString("res:res.w_exp:commonBoxTitle:操作信息", actionContext));
+        box.setMessage(UtilString.getString("res:res.w_exp:thingEditorNotExists:事物编辑器不存在：", actionContext) + dataObj.editorPath);
+        box.open();
+        return;
+    }
+    def tab = actions.doAction("openCompoisteAtTab", ["compositeThing":editorObject, "title":thing.metadata.label, "path":editorObject.metadata.path + thing.metadata.path]);
+    def tabactionContext = tab.getData("tabactionContext");
+    if(tabactionContext != null){
+        tabactionContext.scripts.exec("setThing", ["thing":thing]);
+    }
+}*/
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+execute
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@functionActions/@refresh
+sname
+refresh
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+import xworker.swt.util.XWorkerTreeUtil;
+
+def functionTreeItem = functionTree.getSelection()[0];
+def dataObj = functionTreeItem.getData();
+
+for(item in functionTreeItem.items){
+    item.dispose();
+}
+
+for(node in dataObj.childs){
+    if(node.getBoolean("disabled") == false){
+        initTreeItem(functionTreeItem, node);
+    }
+}
+        
+functionTreeItem.setExpanded(true);
+
+def initTreeItem(treeItem, dataObj){
+    TreeItem item = new TreeItem(treeItem, SWT.NONE);
+    item.setData(dataObj);
+    item.setText(dataObj.metadata.label);
+    XWorkerTreeUtil.initItem(item, dataObj, actionContext);    
+    
+    for(child in dataObj.childs){
+        if(node.getBoolean("disabled") == false){
+            initTreeItem(item, child);
+        }
+    }        
+    
+    item.setExpanded(true);
+}
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+refresh
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@functionActions/@refreshAll
+sname
+refreshAll
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+import xworker.swt.util.XWorkerTreeUtil;
+
+import xworker.lang.util.FuntionsUtil;
+
+//清空所有节点
+for(treeItem in functionTree.items){
+    treeItem.dispose();
+}
+
+FuntionsUtil.attachToTree(functionTree, actionContext);
+
+executeButton.setEnabled(false);
+openThingButton.setEnabled(false);
+refreshButton.setEnabled(false);
+refreshAllButton.setEnabled(true);
+#$@text#$@
+sinitBreakPoint
+false
+ssuccessBreakPoint
+false
+sexceptionBreakPoint
+false
+seditBreakPoint
+false
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sid
+refreshAll
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@functionActions/@openThing
+sname
+openThing
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+def functionTreeItem = functionTree.getSelection()[0];
+def dataObj = functionTreeItem.getData();
+
+explorerActions.doAction("openThing", ["thing":dataObj]);
+#$@text#$@
+sid
+openThing
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@/@mainComposite/@initCode
+sname
+initCode
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+sdisableGlobalContext
+false
+scode
+functionActions.doAction("refreshAll");
+sid
+initCode
+sdescriptors
+xworker.swt.Widgets/@Code

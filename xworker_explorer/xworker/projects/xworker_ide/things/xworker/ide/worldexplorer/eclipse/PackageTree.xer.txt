@@ -1,0 +1,258 @@
+@xworker.ide.worldexplorer.eclipse.PackageTree
+sname
+PackageTree
+slabel
+PackageTree
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sid
+PackageTree
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree
+sname
+projectTree
+sselectStyle
+SINGLE
+sV_SCROLL
+true
+sH_SCROLL
+true
+sCHECK
+false
+sFULL_SELECTION
+false
+sHIDE_SELECTION
+false
+sBORDER
+false
+slineVisible
+false
+smultipleColumns
+false
+sheaderVisible
+false
+ssortIndicator
+false
+smoveableColumns
+false
+sheadImages
+false
+ssubImages
+false
+sid
+projectTree
+slabel
+projectTree
+sdescriptors
+xworker.swt.Widgets/@DataTree
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource
+sname
+resources
+sid
+Resource
+slabel
+resources
+sdescriptors
+xworker.swt.Widgets/@Resource
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource/@projectImage
+sname
+projectImage
+slabel
+projectImage
+stype
+Image
+simageFile
+/xworker/ide/images/project.gif
+sid
+projectImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource/@project1
+sname
+project1Image
+slabel
+project1Image
+stype
+Image
+simageFile
+/xworker/ide/images/project1.gif
+sid
+project1
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource/@factoryImage
+sname
+factoryImage
+slabel
+factoryImage
+stype
+Image
+simageFile
+/xworker/ide/images/factory.gif
+sid
+factoryImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource/@packageIamge
+sname
+packageImage
+slabel
+packageImage
+stype
+Image
+simageFile
+/xworker/ide/images/package.gif
+sid
+packageIamge
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@Resource/@dataObjectImage
+sname
+dataObjectImage
+slabel
+dataObjectImage
+stype
+Image
+simageFile
+/xworker/ide/images/dataObject.gif
+sid
+dataObjectImage
+sdescriptors
+xworker.swt.util.Resource/@Image
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@listeners
+sname
+listeners
+sid
+listeners
+slabel
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@listeners/@projectTreeMenudetect
+sname
+projectTreeMenudetect
+stype
+MenuDetect
+sid
+projectTreeMenudetect
+slabel
+projectTreeMenudetect
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@listeners/@projectTreeMenudetect/@ProjectTreeMenuDetect
+sname
+ProjectTreeMenuDetect
+slabel
+ProjectTreeMenuDetect
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+for(item in projectTreeMenu.getItems()){
+    item.dispose();
+}
+
+//设置弹出菜单的变量
+def treeItem = projectTree.getSelection()[0];
+
+def data = treeItem.getData();
+//log.info(data.type);
+String menuPath = "";
+switch(data.type){
+    case "project":   
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@projectComposite/@projectMenu";
+        break;
+    case "plugins":
+    case "projects":
+    case "virtuals":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataCenterComposite/@dataCenterMenu";
+        break;
+    case "thingManager":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@cactoryComposite/@facotyMenu";
+        break;
+    case "category":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@packageComposite/@packageMenu";
+        break;
+    case "thing":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataObjectComposite/@dataObjectMenuItem";
+        break;
+}
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", projectTreeMenu);
+newContext.put("explorerActions", actions);
+newContext.put("explorerActionContext", actionContext);
+newContext.put("treeItem", treeItem);
+newContext.put("projectTree", projectTree);
+
+Thing menuObj = world.getThing(menuPath);
+if(menuObj != null){
+    for(child in menuObj.childs){
+        child.doAction("create", newContext);
+    }
+}
+#$@text#$@
+sid
+ProjectTreeMenuDetect
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@listeners/@projectTreeSelection
+sname
+projectTreeSelection
+stype
+Selection
+sid
+projectTreeSelection
+slabel
+projectTreeSelection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@listeners/@projectTreeSelection/@GroovyAction
+sname
+GroovyAction
+slabel
+GroovyAction
+sisSynchronized
+false
+sthrowException
+false
+suseOtherAction
+false
+Scode
+#$@text#$@
+actions.doAction("openPackageViewer", ["index":projectTree.getSelection()[0].getData()]);
+actions.doAction("expandProjectTreeItem");
+#$@text#$@
+sid
+GroovyAction
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldexplorer.eclipse.PackageTree/@projectTree/@projectTreeMenu
+sname
+projectTreeMenu
+sstyle
+DROP_DOWN
+sNO_RADIO_GROUP
+false
+salign
+LEFT_TO_RIGHT
+sid
+projectTreeMenu
+slabel
+projectTreeMenu
+sdescriptors
+xworker.swt.Commons/@Menu

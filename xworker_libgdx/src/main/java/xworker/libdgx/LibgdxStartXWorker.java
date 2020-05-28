@@ -10,7 +10,7 @@ public class LibgdxStartXWorker {
 			world.init("E:\\git\\xworker\\xworker\\xworker");
 
 			//启动编辑器
-			Thing worldExplorer = World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner");			
+			Thing worldExplorer = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner");			
 			worldExplorer.doAction("run");
 		}catch(Exception e){
 			e.printStackTrace();

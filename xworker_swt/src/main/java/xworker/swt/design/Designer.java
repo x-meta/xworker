@@ -119,7 +119,7 @@ public class Designer {
 	private Designer() {
 		//目前设计器需要XWorker的环境来运行
 		try {
-			if(World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner") == null) {
+			if(World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner") == null) {
 				enabled = false;
 			}
 		}catch(Exception e) {

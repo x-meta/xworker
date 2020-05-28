@@ -87,7 +87,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	}
 	
 	private void createPopMenuItem(Menu popMenu,DesignPopMenuListener popSelectionListener, ActionContext actionContext){
-		Thing popThing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.designer.DesignerPopMenu");
+		Thing popThing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.designer.DesignerPopMenu");
 		ActionContext ac = new ActionContext();
 		ac.put("parent", popMenu);
 		ac.put("thingPath", popSelectionListener.thingPath);
@@ -593,7 +593,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 					public void run(){
 						if(!widget.isDisposed() && widget.getData("_design_mouse_in") != null){
 							
-							Thing iconShellThing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.designer.DesignIconShell");
+							Thing iconShellThing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.designer.DesignIconShell");
 							Shell iconShell = (Shell) iconShellThing.doAction("create", ac);
 												
 							if(iconShell == null || point == null){
@@ -634,7 +634,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 			this.setCurrentControL(control);
 			
 			if(!Designer.isControlAttribute(control)){
-				Thing commandDomain = World.getInstance().getThing("xworker.ide.worldExplorer.swt.designer.DesignerCommandDomain");
+				Thing commandDomain = World.getInstance().getThing("xworker.ide.worldexplorer.swt.designer.DesignerCommandDomain");
 				ActionContext actionContext = Designer.getControlActionContext(control);
 				ac.put("parent", control.getShell());				
 				ac.put("control", control);

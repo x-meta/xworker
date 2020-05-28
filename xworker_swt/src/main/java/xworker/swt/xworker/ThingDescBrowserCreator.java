@@ -57,7 +57,7 @@ public class ThingDescBrowserCreator {
 		    Thing globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
 		    if(globalConfig != null){
 		    	String webUrl = globalConfig.getString("webUrl");
-		    	browse.setUrl(webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + thing.getMetadata().getPath() + "&nohead=" + self.getBoolean("nohead"));
+		    	browse.setUrl(webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + thing.getMetadata().getPath() + "&nohead=" + self.getBoolean("nohead"));
 		    }else{
 		    	String desc = thing.getStringBlankAsNull("description");
 		    	if(desc != null){

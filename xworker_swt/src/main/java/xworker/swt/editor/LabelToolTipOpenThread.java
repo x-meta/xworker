@@ -48,7 +48,7 @@ public class LabelToolTipOpenThread extends Thread{
 						actionContext.put("parent", control.getShell());
 						actionContext.put("message", control.getData("toolTip"));		
 
-						Shell toolTipShell = (Shell) PoolableControlFactory.borrowControl(control.getShell(), "xworker.ide.worldExplorer.swt.util.HtmlToolTip/@shell", actionContext);
+						Shell toolTipShell = (Shell) PoolableControlFactory.borrowControl(control.getShell(), "xworker.ide.worldexplorer.swt.util.HtmlToolTip/@shell", actionContext);
 						if(toolTipShell == null){
 							return;
 						}

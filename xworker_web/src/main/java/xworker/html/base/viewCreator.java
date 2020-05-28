@@ -233,7 +233,7 @@ public class viewCreator {
             return;
         }
         
-        Thing editorThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.HtmlCodeViewer/@shell");
+        Thing editorThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.HtmlCodeViewer/@shell");
         ActionContext context = new ActionContext();
         context.put("parent", ((ActionContext) actionContext.get("explorerContext")).get("shell"));
         String html = (String) currentThing.doAction("toHtml");

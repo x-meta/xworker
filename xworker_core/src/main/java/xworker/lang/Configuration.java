@@ -43,6 +43,12 @@ public class Configuration {
 	}
 	
 	public static void setProfile(String profile) {
+		if(profile == null || profile.equals(Configuration.profile)) {
+			return;
+		}
+		
+		//清空原有的缓存
+		cache.clear();
 		Configuration.profile = profile;
 	}
 	
@@ -75,12 +81,16 @@ public class Configuration {
 		//首先从缓存中获取
 		String key = name + "_" + "_" + appCategory;
 		ThingEntry entry = cache.get(key);
-		if(entry != null) {
-			Thing config = entry.getThing();
-			if(config != null) {
-				return config;
+		if(entry != null) {	
+			if(entry.isChanged()) {
+				cache.remove(key);
 			}else {
-				cache.put(key, null);
+				Thing config = entry.getThing();
+				if(config != null) {
+					return config;
+				}else {
+					cache.put(key, null);
+				}
 			}
 		}
 		
@@ -131,7 +141,7 @@ public class Configuration {
 		Thing profile = null;
 		List<Thing> profiles = config.getChilds("Profile");
 		String profileName = Configuration.profile;
-		if(profileName != null) {						
+		if(profileName == null) {						
 			profileName = config.doAction("getProfile", actionContext);
 		}
 		if(profileName == null) {

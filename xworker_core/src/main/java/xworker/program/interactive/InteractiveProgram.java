@@ -259,8 +259,6 @@ public class InteractiveProgram {
 	
 	/**
 	 * 执行，返回是否已经成功执行了。
-	 * 
-	 * @return
 	 */
 	public void execute() {
 		//检查是否已经设置了函数

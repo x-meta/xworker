@@ -131,7 +131,7 @@ public class XWorkerUtils {
 	 * @return
 	 */
 	public static boolean hasXWorker() {
-		return World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner/@startJettry2") != null;
+		return World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry2") != null;
 	}
 	
 	/**
@@ -663,7 +663,7 @@ public class XWorkerUtils {
     	World world = World.getInstance();
         Thing  projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
         if(projectSet != null){
-        	Thing project = new Thing("xworker.ide.worldExplorer.things.ProjectSet/@ProjectDir");
+        	Thing project = new Thing("xworker.ide.worldexplorer.things.ProjectSet/@ProjectDir");
 			project.put("name", projectName);
 			project.put("dir", projectDir);
 

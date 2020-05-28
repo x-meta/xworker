@@ -20,7 +20,7 @@ public class TestMemory {
 			}
 			
 			long start = System.currentTimeMillis();
-			Thing thing = world.getThing("xworker.ide.worldExplorer.swt.SimpleExplorer");
+			Thing thing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer");
 			int count = 1000000;
 			Thing[] things = new Thing[count];
 			for(int i=0; i<count; i++){

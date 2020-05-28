@@ -175,7 +175,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 设置多个属性。
 	 * 
-	 * attributs字符串的格式：<br/>
+	 * attributs字符串的格式：
 	 * name=value的格式，默认一行设置一个属性
 	 * #或//是注释
 	 * 三个连续的引号（""")是具有换行的文本，结尾也是三个连续的引号
@@ -558,7 +558,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * 
+	 * @return
 	 */
 	public Object update(ActionContext actionContext, Object condition,
 			Object queryDatas) {
@@ -597,7 +599,8 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * @return
 	 */
 	public Object delete(ActionContext actionContext, Object condition,
 			Object queryDatas) {
@@ -636,7 +639,8 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
-	 * @param queryDatas 查询条件，一般是Map<String, Object>
+	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
+	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DataObject> query(ActionContext actionContext, Object condition,

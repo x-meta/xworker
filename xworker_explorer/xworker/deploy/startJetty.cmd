@@ -1,1 +1,1 @@
-dml.cmd xworker.ide.worldExplorer.swt.SimpleExplorerRunner/@startJettry
+dml.cmd xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry

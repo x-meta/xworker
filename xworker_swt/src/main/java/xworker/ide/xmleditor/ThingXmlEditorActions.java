@@ -173,7 +173,7 @@ public class ThingXmlEditorActions {
         			    Thing newThing = new Thing(desthing.getMetadata().getPath());
         			    newThing.put(name, thing.get(name));
         			    
-        			    Thing shellThing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.command.EditAttributeShell");
+        			    Thing shellThing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.command.EditAttributeShell");
         			    Shell shell = (Shell) shellThing.doAction("create", ac);
         			    shell.setText("编辑属性-" + descriptor.getMetadata().getName()  + "(" + descriptor.getMetadata().getLabel() + ")");
         			    Thing thingForm = ac.getObject("thingForm");

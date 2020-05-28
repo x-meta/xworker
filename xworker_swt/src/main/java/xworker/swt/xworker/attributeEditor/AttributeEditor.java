@@ -171,7 +171,7 @@ public abstract class AttributeEditor {
 	}
 	
 	/**
-	 * 返回编辑的扩展参数，默认是x1=y1&x2=y2....的格式，转成Map<String, String>。
+	 * 返回编辑的扩展参数，默认是x1=y1&amp;x2=y2....的格式，转成Map&lt;String, String&gt;。
 	 * 
 	 * 通过size() == 0来判断是否有设置过参数。
 	 * 
@@ -187,7 +187,7 @@ public abstract class AttributeEditor {
 	}
 	
 	/**
-	 * 返回编辑的扩展参数，默认是x1=y1delimiterx2=y2delimiter....的格式，转成Map<String, String>。
+	 * 返回编辑的扩展参数，默认是x1=y1delimiterx2=y2delimiter....的格式，转成Map&lt;String, String&gt;。
 	 * 通过size() == 0来判断是否有设置过参数。
 	 * 
 	 * @return
@@ -358,7 +358,7 @@ public abstract class AttributeEditor {
 		    textLabel.addMouseListener(tipListener);
 		    String toolTipText = "thing=" +  path;
 		    /*
-		    		"<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" 
+		    		"<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" 
 		    	+ f.getMetadata().getPath() + "\">"+ f.getMetadata().getName() + "</a></u></b><br/><br/>";*/    
 		    
 		    if(description != null){

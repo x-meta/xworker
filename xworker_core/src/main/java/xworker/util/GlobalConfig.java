@@ -62,7 +62,7 @@ public class GlobalConfig {
     			logger.info("Check port availabe, port=" + httpPort);
     			if(isPortAvailable(httpPort)){    		
 	    			ac.put("port", httpPort);
-	    			Thing jetty = World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner/@startJettry2");
+	    			Thing jetty = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry2");
 	    			if(jetty != null) {
 	    				jetty.getAction().run(ac);
 	    			}
@@ -132,13 +132,13 @@ public class GlobalConfig {
     			}
     		}
     	}else{
-    		return getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&nohead=true&thing=";
+    		return getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&nohead=true&thing=";
     	}
     	
     	try {
-			return getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&nohead=true&thing=" + URLEncoder.encode(thing.getMetadata().getPath(), "UTF-8");
+			return getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&nohead=true&thing=" + URLEncoder.encode(thing.getMetadata().getPath(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			return getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&nohead=true&thing=" + thing.getMetadata().getPath();
+			return getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&nohead=true&thing=" + thing.getMetadata().getPath();
 		} 
     }
     

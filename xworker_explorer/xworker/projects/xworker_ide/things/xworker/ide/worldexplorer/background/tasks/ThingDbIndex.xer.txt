@@ -1,0 +1,123 @@
+^1501817110348
+@
+sname
+ThingDbIndex
+slabel
+事物数据库索引
+sgroup
+xworker.ide.background
+senable
+true
+scallback
+false
+scallbackCancel
+false
+ssingleInstance
+false
+Sdescription
+#$@text#$@
+<p>重新已变更的事物的数据库索引，每5秒1次。</p>
+
+<p><span style="color:rgb(255, 0, 0)"><strong>常驻任务，请勿关闭。</strong></span></p>
+#$@text#$@
+sschedule
+true
+speriod
+5000
+sfixedRate
+false
+stimeUnit
+MILLISECONDS
+sfixTime
+false
+sinterpretationType
+Self
+sattributeTemplate
+false
+schildsAttributeTemplate
+false
+svarScope
+Local
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdisableGlobalContext
+false
+sdescriptors
+xworker.lang.task.Task
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.task.TaskIndex
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.ide.worldexplorer.background.BackGroundTask/@actions
+  sid
+  actions
+    @/@actions/@GroovyAction
+    sname
+    doTask
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//log.info("update thing index start");
+def updater = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+updater.doAction("doUpdate", actionContext);
+//log.info("update thing index end");
+#$@text#$@
+    sdescription
+    <p>扫描并更新所有变更的或者没有建立索引的事物。</p>
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sid
+    GroovyAction
+  @/@thing
+  sname
+  configStructure
+  sdescriptors
+  xworker.lang.MetaDescriptor3
+  sid
+  thing
+    @/@thing/@time
+    sname
+    lastScanTime
+    slabel
+    最后一次扫描时间
+    LvalidateOnBlur
+    false
+    LallowDecimals
+    false
+    LallowNegative
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sid
+    time

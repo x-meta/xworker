@@ -1,1 +1,1 @@
-eval ./dml.sh xworker.ide.worldExplorer.swt.SimpleExplorerRunner/@startJettry
+eval ./dml.sh xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry

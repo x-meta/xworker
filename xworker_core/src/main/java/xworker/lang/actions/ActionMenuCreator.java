@@ -38,7 +38,7 @@ public class ActionMenuCreator {
         ActionContext explorerContext = (ActionContext) actionContext.get("explorerContext");
         Thing currentThing = (Thing) actionContext.get("currentThing");
         
-        Thing shellThing = world.getThing("xworker.ide.worldExplorer.swt.dialogs.TextDialog/@shell");
+        Thing shellThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.TextDialog/@shell");
         ActionContext ac = new ActionContext();
         Action action = world.getAction(currentThing);
         ac.put("parent", explorerContext.get("shell"));

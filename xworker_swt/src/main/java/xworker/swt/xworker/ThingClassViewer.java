@@ -12,7 +12,7 @@ public class ThingClassViewer {
 		ActionContext ac = new ActionContext();
 		ac.put("parent", actionContext.get("parent"));
 		
-		Thing compositeThing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.dialogs.DesAndExtendsDialog/@shell/@mainComposite");				
+		Thing compositeThing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.dialogs.DesAndExtendsDialog/@shell/@mainComposite");				
 		Composite composite = compositeThing.doAction("create", ac);
 		ActionContainer actions = ac.getObject("actions");
 		Thing thing = self.doAction("getThing", actionContext);

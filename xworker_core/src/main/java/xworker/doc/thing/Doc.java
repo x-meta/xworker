@@ -99,7 +99,7 @@ public class Doc implements Comparable<Doc>{
 	
 	public String getUrl(Thing thing){
 		if(context == null){
-			return "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc&thing=" + thing.getMetadata().getPath();
+			return "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc&thing=" + thing.getMetadata().getPath();
 		}else if(context.isThingExists(thing)){
 			//事物也会生成文档
 			return getRelatePath(thing);

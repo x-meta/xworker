@@ -712,7 +712,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 	/**
 	 * 设置表单的数据。
 	 * 
-	 * @param values Map<String, Object> 或 DataObject
+	 * @param values Map&lt;String, Object&gt; 或 DataObject
 	 */
 	public void setValues(Object values) {
 		form.doAction("setValues", actionContext, "values", values);
@@ -742,7 +742,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 	/**
 	 * 设置表单的部分数据。
 	 * 
-	 * @param values Map<String, Object> 或 DataObject
+	 * @param values Map&lt;String, Object&gt; 或 DataObject
 	 */
 	public void setPartialValues(Object values) {
 		form.doAction("setPartialValues", actionContext, "values", values);

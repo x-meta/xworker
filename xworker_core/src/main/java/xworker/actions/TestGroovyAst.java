@@ -69,7 +69,7 @@ public class TestGroovyAst implements  GroovyCodeVisitor{
 			World world = World.getInstance();
 			world.init(null);
 			
-			Thing thing = world.getThing("xworker.ide.worldExplorer.swt.SimpleExplorer/@shell1/@scripts/@openDataObject");
+			Thing thing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@scripts/@openDataObject");
 			String code = thing.getString("code");
 			
 			AstBuilder ac = new AstBuilder();

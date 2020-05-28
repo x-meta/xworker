@@ -121,7 +121,7 @@ public class ThingEditorChildActions {
 		}
 
 		childTitleLabel.setText(UtilString.getString("res:res.w_exp:addLabel添加：", actionContext) + objStruct.metadata.name + "（" + objStruct.metadata.label + "）");
-		String toolTipText = "<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" + objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
+		String toolTipText = "<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" + objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
 		if(objStruct.metadata.description != null){
 		    String ttText = objStruct.metadata.description;
 		    childTitleLabel.setData("toolTip", toolTipText + ttText);
@@ -213,14 +213,14 @@ public class ThingEditorChildActions {
 		}
 
 		//使用新的临时的事物伪装当前正在编辑的事物
-		//def thing = world.getThing("xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot");
+		//def thing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingCommandIndexRoot");
 		//thing = thing.detach();
 		Thing thing = new Thing();
 		String thingPath = thing.getMetadata().getPath();
 		thing.set("descriptors", currentThing.getMetadata().getPath());
 		//默认不查询描述者，所以放到继承里
 		String descs = currentThing.getMetadata().getPath();
-		String exts = path + ",xworker.ide.worldExplorer.swt.dataExplorerParts.ThingCommandIndexRoot";
+		String exts = path + ",xworker.ide.worldexplorer.swt.dataExplorerParts.ThingCommandIndexRoot";
 		if(descs != null){
 		    exts = exts + "," + descs;
 		}

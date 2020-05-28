@@ -92,7 +92,7 @@ public class NewThingDialog {
 	
 	public void selectionButtonSelection(ActionContext actionContext) {
 		Event event = actionContext.getObject("event");
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
 		TreeItem treeItem = (TreeItem) ((Control) event.widget).getParent().getData();
 		
 		Shell shell = selectButton.getShell();
@@ -117,7 +117,7 @@ public class NewThingDialog {
 	}
 	
 	public void pathSelectionButtonSelection(final ActionContext actionContext) {
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.tools.CategoryIndexSelector");
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.CategoryIndexSelector");
 		//def treeItem = event.widget.getParent().getData();
 		Shell shell = pathSelectButton.getShell();
 
@@ -264,15 +264,15 @@ public class NewThingDialog {
 
 		String thingPath = (String) itemData.get("thingPath");
 		if("template".equals(itemData.get("thingType"))  && thingPath != null){
-		    okButton.setText(world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@newThingDialog/@useTemplateButton").getMetadata().getLabel());
+		    okButton.setText(world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@newThingDialog/@useTemplateButton").getMetadata().getLabel());
 		    okButton.setData("action", "useTemplate");    
 		    docPath = thingPath;
 		}else{
 			
 		    //默认创建事物
-		    okButton.setText(world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@buttons/@okButton").getMetadata().getLabel());
+		    okButton.setText(world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@buttons/@okButton").getMetadata().getLabel());
 		    okButton.setData("action", "createThing");
-		    cancelButton.setText(world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@buttons/@cancelButton").getMetadata().getLabel());
+		    cancelButton.setText(world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@buttons/@cancelButton").getMetadata().getLabel());
 		    cancelButton.setData("action", "dispose");
 		}
 
@@ -284,7 +284,7 @@ public class NewThingDialog {
 		    //def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
 		    //def webUrl = globalConfig.getString("webUrl");
 		    String webUrl = XWorkerUtils.getThingDescUrl(docPath);
-		    historyBorwser.setUrl(webUrl);// + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + docPath);
+		    historyBorwser.setUrl(webUrl);// + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + docPath);
 		    /*String html = pathObj.getString("description");
 		    if(html == null){
 		        html = "";
@@ -328,11 +328,11 @@ public class NewThingDialog {
 
 		Thing memory = world.getThing("_local.xworker.worldExplorer.CreateThingMemory");
 		if(memory == null){
-			if(world.getThing("xworker.ide.worldExplorer.swt.memory.CreateThingMemory/@struct") == null) {
+			if(world.getThing("xworker.ide.worldexplorer.swt.memory.CreateThingMemory/@struct") == null) {
 				return;
 			}
 			
-		    memory = new Thing("xworker.ide.worldExplorer.swt.memory.CreateThingMemory/@struct");
+		    memory = new Thing("xworker.ide.worldexplorer.swt.memory.CreateThingMemory/@struct");
 		    
 		    memory.saveAs("_local", "_local.xworker.worldExplorer.CreateThingMemory");
 
@@ -375,7 +375,7 @@ public class NewThingDialog {
 		String webUrl = XWorkerUtils.getWebUrl();
 		//def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
 		//def webUrl = globalConfig.getString("webUrl");
-		historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" 
+		historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" 
 				+ ((Thing) item.getData()).getMetadata().getPath());
 		    
 		List<Map<String, Object>> alist = new ArrayList<Map<String, Object>>();
@@ -534,7 +534,7 @@ public class NewThingDialog {
 	    
 	    if(!have){
 	    	String name = descObj.getMetadata().getName();
-	        Thing vd = new Thing(name, name, "xworker.ide.worldExplorer.swt.memory.CreateThingMemory/@struct", false);        
+	        Thing vd = new Thing(name, name, "xworker.ide.worldexplorer.swt.memory.CreateThingMemory/@struct", false);        
 	        
 	        vd.put("path", descPath);
 	        vd.put("lastVisit", new Date());
@@ -717,7 +717,7 @@ public class NewThingDialog {
 		    
 		    //目录树
 		    TreeItem item = new TreeItem(categoryTree, SWT.NONE);
-		    item.setText(world.getThing("xworker.ide.worldExplorer.swt.i18n.I18nResource/@newThingDialog/@historyRecord").getMetadata().getLabel());
+		    item.setText(world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@newThingDialog/@historyRecord").getMetadata().getLabel());
 		    item.setImage(folderImage);
 		}       
 		List<Thing> allThings = new ArrayList<Thing>();

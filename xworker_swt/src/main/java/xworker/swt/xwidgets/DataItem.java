@@ -188,7 +188,8 @@ public abstract class DataItem {
 	/**
 	 * 在绑定到一个Item上时触发。
 	 * 
-	 * @param widgt
+	 * @param parent
+	 * @param item
 	 */
 	protected final void fireOnBind(Widget parent, Widget item) {
 		bindItems.put(parent, item);

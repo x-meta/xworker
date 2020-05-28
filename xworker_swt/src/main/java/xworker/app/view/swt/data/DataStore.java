@@ -540,8 +540,8 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 	/**
 	 * 从Widget上获取缓存的DataStore的数据对象列表的规范方法。
 	 * 
-	 * @param rootControl
-	 * @return
+	 * @param widget
+	 * @return 设在在Widget上的数据对象列表
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<DataObject> getWidgetRecords(Widget widget){

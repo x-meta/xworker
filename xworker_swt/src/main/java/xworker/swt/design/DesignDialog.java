@@ -65,7 +65,7 @@ public class DesignDialog implements DisposeListener{
 			actionContext.put("parent", parentShell);
 			 			 			 
 			Thing shellThing = World.getInstance().getThing("xworker.swt.design.DesignToolDialog");
-			//Thing shellThing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.designer.DesignerToolbarDialog");
+			//Thing shellThing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.designer.DesignerToolbarDialog");
 			shell = (Shell) shellThing.doAction("create", actionContext);
 			shell.addDisposeListener(this);
 			if(location != null){

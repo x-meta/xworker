@@ -123,7 +123,7 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 		actionContext.put("utilBrowser", utilBrowser);
 		
 		Shell toolTipShell = (Shell) lastControl.getData("toolTipShell");
-		Shell toolTipBrowser = (Shell) PoolableControlFactory.borrowControl(lastControl.getShell(), "xworker.ide.worldExplorer.swt.util.ToolTipBrowser/@shell", actionContext);
+		Shell toolTipBrowser = (Shell) PoolableControlFactory.borrowControl(lastControl.getShell(), "xworker.ide.worldexplorer.swt.util.ToolTipBrowser/@shell", actionContext);
 		
 		if(SwtUtils.isRWT()) {
 			SwtUtils.setShellRelateLocation(toolTipBrowser, lastControl.toDisplay(lastControl.getLocation()),
@@ -145,7 +145,7 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 		if(content != null && content.startsWith("thing=")) {
 			String thingPath = content.substring(6, content.length());
 			Thing attribute = World.getInstance().getThing(thingPath);
-			content = "<b><u><a href=\"" + XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" 
+			content = "<b><u><a href=\"" + XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" 
 			    	+ thingPath + "\">"+ attribute.getMetadata().getName() + "</a></u></b><br/><br/>";
 		}
 		param.put("message", content);
@@ -177,7 +177,7 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 			control.setData("toolTipShell", null);
 			toolTipShell.setVisible(false);		
 			//toolTipShell.dispose();
-			PoolableControlFactory.returnControl(control.getShell(), "xworker.ide.worldExplorer.swt.util.HtmlToolTip/@shell", toolTipShell);
+			PoolableControlFactory.returnControl(control.getShell(), "xworker.ide.worldexplorer.swt.util.HtmlToolTip/@shell", toolTipShell);
 		}
 	}
 	

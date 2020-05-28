@@ -78,9 +78,9 @@ public class ThingSelectorCreator {
     public static void editButtonAction(ActionContext actionContext){
     	Text text = (Text) actionContext.get("text");
     	Shell shell = text.getShell();
-    	//Thing newShellThing = World.getInstance().getThing( "xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
-    	//Shell newShell = (Shell) PoolableControlFactory.borrowControl(shell, "xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell", actionContext);
-    	Thing dialogObject = World.getInstance().getThing("xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+    	//Thing newShellThing = World.getInstance().getThing( "xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
+    	//Shell newShell = (Shell) PoolableControlFactory.borrowControl(shell, "xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell", actionContext);
+    	Thing dialogObject = World.getInstance().getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
     	Shell newShell = (Shell) dialogObject.doAction("create", actionContext);
     	
     	newShell.open();
@@ -89,7 +89,7 @@ public class ThingSelectorCreator {
                 if (!display.readAndDispatch()) display.sleep();
         }
         
-        //PoolableControlFactory.returnControl(shell, "xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell", newShell);
+        //PoolableControlFactory.returnControl(shell, "xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell", newShell);
     	//SwtDialog dialog = new SwtDialog(shell, newShell, actionContext);
     	//def result = dialog.open();
     	String result = (String) actionContext.get("result");

@@ -99,7 +99,7 @@ public class HtmlEditorCreator {
     
     public static void outerToolItemSelection(ActionContext actionContext) throws MalformedURLException, IOException, URISyntaxException{
     	Thing editThing = actionContext.getObject("__editThing__");
-    	Desktop.getDesktop().browse(new URL(XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldExplorer.swt.tools.EditDesc&thingPath=" + editThing.getMetadata().getPath()).toURI());
+    	Desktop.getDesktop().browse(new URL(XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.tools.EditDesc&thingPath=" + editThing.getMetadata().getPath()).toURI());
     }
 
     public static void setValue(final ActionContext actionContext){

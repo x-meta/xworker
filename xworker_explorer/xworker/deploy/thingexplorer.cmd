@@ -1,1 +1,1 @@
-dmw.cmd xworker.ide.worldExplorer.swt.SimpleExplorerRunner
+dmw.cmd xworker.ide.worldexplorer.swt.SimpleExplorerRunner

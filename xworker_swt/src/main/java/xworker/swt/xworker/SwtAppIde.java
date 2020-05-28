@@ -153,7 +153,7 @@ public class SwtAppIde implements IIde, Listener{
 	public void handleEvent(Event event) {
 		if(event.type == SWT.KeyDown){
 			if((event.keyCode == 'h' || event.keyCode == 'H') && (event.stateMask & SWT.CTRL) == SWT.CTRL && (event.stateMask & SWT.ALT) == SWT.ALT){
-				Action action = World.getInstance().getAction("xworker.ide.worldExplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar1/@mainCollItem/@mainToolBar/@commandAssistorItem/@listeners/@openCommander/@openAssistor");
+				Action action = World.getInstance().getAction("xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar1/@mainCollItem/@mainToolBar/@commandAssistorItem/@listeners/@openCommander/@openAssistor");
 				action.run(actionContext);
 			}
 		}

@@ -67,8 +67,6 @@ import xworker.util.UtilData;
 /**
  * DesignTools是SWT设计器的工具类。
  * 
- * @See DesignDialog 设计对话框
- * @See DesignToolDialog 设计对话框的动作
  * @author zyx
  *
  */
@@ -651,7 +649,7 @@ public class DesignTools {
 	 * 改变布局。
 	 * 
 	 * @param control
-	 * @param layout 可以是FillLayout、GridLayout、RowLayout、FormLayout和StackLayout等。
+	 * @param newLayout 可以是FillLayout、GridLayout、RowLayout、FormLayout和StackLayout等。
 	 */
 	public static void changeLayout(Control control, String newLayout) {
 		if(!DesignTools.hasLayout(control)) {

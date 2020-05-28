@@ -37,7 +37,7 @@ public class XWorkerEntryPoint extends AbstractEntryPoint {
 		actionContext.put("parent", display);
 		
 		
-		Thing thing = World.getInstance().getThing("xworker.ide.worldExplorer.swt.SimpleExplorerRunner");
+		Thing thing = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner");
 		return thing.doAction("create", actionContext);
 	}*/
 	

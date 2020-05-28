@@ -1,1 +1,1 @@
-dml.sh xworker.ide.worldExplorer.swt.SimpleExplorerRunner
+dml.sh xworker.ide.worldexplorer.swt.SimpleExplorerRunner

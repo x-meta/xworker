@@ -156,7 +156,7 @@ public class ExplorerActions {
 		World world = World.getInstance();
 		
 		//新事物的窗口
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell");		
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");		
 		Shell parentShell = self.doAction("getShell", actionContext);
 		if(parentShell == null) {
 			parentShell = (Shell) XWorkerUtils.getIDEShell();
@@ -210,7 +210,7 @@ public class ExplorerActions {
 		World world = World.getInstance();
 		
 		//新事物的窗口
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.dialogs.NewThingByTemplateDialog");		
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingByTemplateDialog");		
 		Shell parentShell = self.doAction("getShell", actionContext);
 		if(parentShell == null) {
 			parentShell = (Shell) XWorkerUtils.getIDEShell();
@@ -280,7 +280,7 @@ public class ExplorerActions {
 			return;
 		}
 		
-		Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell");		
+		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");		
 		Shell parentShell = treeItem.getParent().getShell();
 
 		ActionContext newContext = new ActionContext();
@@ -307,7 +307,7 @@ public class ExplorerActions {
 	
 	public static void startBackgroudThread(ActionContext actionContext){
 		final World world = World.getInstance();
-		Category taskCategory = (Category) world.get("xworker.ide.worldExplorer.background.tasks");
+		Category taskCategory = (Category) world.get("xworker.ide.worldexplorer.background.tasks");
 		if(taskCategory == null){
 			return;
 		}
@@ -347,7 +347,7 @@ public class ExplorerActions {
 		    	
 		        world.setData("xw_background_thread", ac);
 		        while(true){
-		            Category taskCategory = (Category) world.get("xworker.ide.worldExplorer.background.tasks");
+		            Category taskCategory = (Category) world.get("xworker.ide.worldexplorer.background.tasks");
 		            //log.info("background running " + taskCategory);
 		            
 		            Iterator<Thing> tasks = taskCategory.iterator(true);

@@ -126,7 +126,7 @@ public class ObjectViewer {
 		     if(value != null){
 		         if(value instanceof Thing){
 		        	 Thing thing = (Thing) value;
-		             openValueUrl(valueText, "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + thing.getMetadata().getPath(), false);
+		             openValueUrl(valueText, "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + thing.getMetadata().getPath(), false);
 		         }else if(value instanceof Throwable) {
 		        	 Throwable t = (Throwable) value;
 		        	 String stacks = ExceptionUtil.toString(t);

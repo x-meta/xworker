@@ -121,7 +121,7 @@ public class IdeActions {
 		
 		if(dialogShell == null){
 			World world = World.getInstance();
-			Thing dialogObject = world.getThing("xworker.ide.worldExplorer.swt.dialogs.NewThingDialog/@shell");
+			Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");
 			
 			Shell parentShell = treeItem.getParent().getShell();
 

@@ -1,0 +1,428 @@
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder
+sname
+StringHyperLinkAdder
+slabel
+StringHyperLinkAdder
+sdescription
+<p>为一个字符串的指定文字加入超级连接。</p>
+sdescriptors
+xworker.swt.widgets.Display
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell
+sname
+shell
+stext
+"超链接编辑器"
+sNO_TRIM
+false
+sCLOSE
+true
+sTITLE
+true
+sMIN
+true
+sMAX
+true
+sBORDER
+false
+sRESIZE
+false
+sON_TOP
+false
+sTOOL
+false
+sNO_FOCUS
+false
+swidth
+-1
+sheight
+-1
+scenterScreen
+true
+spack
+false
+smaximized
+false
+sdescriptors
+xworker.swt.widgets.Display/@Shell
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@shellGridLayout
+sname
+shellGridLayout
+snumColumns
+1
+smakeColumnsEqualWidth
+false
+smarginWidth
+5
+smarginHeight
+5
+smarginLeft
+0
+smarginTop
+0
+smarginRight
+0
+smarginBottom
+0
+shorizontalSpacing
+5
+sverticalSpacing
+5
+sdescriptors
+xworker.swt.Layouts/@GridLayout
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@text
+sname
+text
+sstyle
+MULTI
+sFULL_SELECTION
+false
+sREAD_ONLY
+false
+sWRAP
+false
+sH_SCROLL
+true
+sV_SCROLL
+true
+sBORDER
+true
+salign
+LEFT
+sdescriptors
+xworker.swt.Widgets/@StyledText
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@text/@textGridData
+sname
+textGridData
+sstyle
+FILL_BOTH
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sdescriptors
+xworker.swt.Commons/@GridData
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite
+sname
+buttonComposite
+sBORDER
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_FOCUS
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+sdescriptors
+xworker.swt.Widgets/@Composite
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@buttonCompositeGridData
+sname
+buttonCompositeGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+-1
+sheight
+-1
+shorizontalAlignment
+CENTER
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sdescriptors
+xworker.swt.Commons/@GridData
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@buttonCompositeRowLayout
+sname
+buttonCompositeRowLayout
+sfill
+false
+sjustify
+false
+smarginWidth
+0
+smarginHeight
+0
+smarginLeft
+3
+smarginTop
+3
+smarginRight
+3
+smarginBottom
+3
+spack
+true
+sspacing
+3
+stype
+SWT.HORIZONTAL
+swrap
+true
+sdescriptors
+xworker.swt.Layouts/@RowLayout
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@modifiyButton
+sname
+modifiyButton
+stext
+" 修改 "
+stype
+SWT.PUSH
+sflat
+false
+sborder
+false
+senabled
+true
+sdescriptors
+xworker.swt.Widgets/@Button
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@modifiyButton/@listeners
+sname
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@modifiyButton/@listeners/@modifiyButtonSelection
+sname
+modifiyButtonSelection
+stype
+Selection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@modifiyButton/@listeners/@modifiyButtonSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+false
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+import java.util.Collections;
+import java.util.Comparator;
+
+String[] worlds = worldText.getText().split("[\n]");
+worldList = [];
+
+for(world in worlds){
+    ws = world.split("[|]");
+    def wmap = ["name":ws[0].trim(),
+                "label":ws[1].trim(),
+                "path":ws[2].trim()];
+    worldList.add(wmap);
+}
+
+//按照名称排序（倒序）
+Collections.sort(worldList, [
+    compare : {
+        o1, o2->
+        if(o1.name > o2.name){
+            return -1;            
+        }
+        
+        if(o1.name < o2.name){
+            return 1;
+        }
+        
+        return 0;
+    }] as Comparator);
+    
+String str = text.getText();
+str = changeData(str, worldList, "name");   
+
+Collections.sort(worldList, [
+    compare : {
+        o1, o2->
+        if(o1.label > o2.label){
+            return -1;            
+        }
+        
+        if(o1.label < o2.label){
+            return 1;
+        }
+        
+        return 0;
+    }] as Comparator); 
+
+    
+str = changeData(str, worldList, "label");     
+
+text.setText(str);
+    
+def changeData(str, worldList, key){
+    for(world in worldList){
+        String k = world.get(key);
+        //println k;
+        if(k == null || k == ""){
+            continue;
+        }
+        int index = -1;
+        int startIndex = 0;
+        int klength = k.length();
+        
+        while(str.indexOf(k, startIndex) != -1){
+            index = str.indexOf(k, startIndex);
+            startIndex = index + klength;
+            //println startIndex;
+            
+            //判断是否已经有了超链接
+            if(!haveLink(str, index, startIndex)){
+                str = str.substring(0, index) + 
+                    "<a href=\"do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + world.path + 
+                    "\">" + str.substring(index, startIndex) + "</a>" + 
+                    str.substring(startIndex, str.length());
+            }
+        }
+    }
+    
+    return str;
+}    
+
+def haveLink(str, index, index1){
+    int i1 = str.lastIndexOf("<a", index);
+    int i2 = str.lastIndexOf("/a>", index);
+    int i3 = str.indexOf("<a", index1);
+    int i4 = str.indexOf("/a>", index1);
+        
+    if(i1 > i2 && (i4 < i3 || i3 == -1)){
+        return true;
+    }
+    
+    i1 = str.lastIndexOf("<A", index);
+    i2 = str.lastIndexOf("/A>", index);
+    i3 = str.indexOf("<A", index1);
+    i4 = str.indexOf("/A>", index1);
+    
+    if(i1 > i2 && (i3 < i4 || i3 == -1)){
+        return true;
+    }
+    
+    return false;
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@exitButton
+sname
+exitButton
+stext
+" 退出 "
+stype
+SWT.PUSH
+sflat
+false
+sborder
+false
+senabled
+true
+sdescriptors
+xworker.swt.Widgets/@Button
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@exitButton/@listeners
+sname
+listeners
+sdescriptors
+xworker.swt.events.Listeners/@listeners
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@exitButton/@listeners/@exitButtonSelection
+sname
+exitButtonSelection
+stype
+Selection
+sdescriptors
+xworker.swt.events.Listeners/@listeners/@Listener
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@buttonComposite/@exitButton/@listeners/@exitButtonSelection/@GroovyAction
+sname
+GroovyAction
+sisSynchronized
+true
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+scode
+shell.dispose();
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@worldText
+sname
+worldText
+sstyle
+MULTI
+sFULL_SELECTION
+false
+sREAD_ONLY
+false
+sWRAP
+false
+sH_SCROLL
+true
+sV_SCROLL
+true
+sBORDER
+true
+salign
+LEFT
+sdescriptors
+xworker.swt.Widgets/@StyledText
+@xworker.ide.worldexplorer.swt.util.StringHyperLinkAdder/@shell/@worldText/@worldTextGridData
+sname
+worldTextGridData
+sstyle
+FILL_HORIZONTAL
+shorizontalIndent
+0
+swidth
+-1
+sheight
+100
+shorizontalAlignment
+BEGINNING
+sverticalAlignment
+CENTER
+shorizontalSpan
+1
+sverticalSpan
+1
+sgrabExcessHorizontalSpace
+false
+sgrabExcessVerticalSpace
+false
+sdescriptors
+xworker.swt.Commons/@GridData

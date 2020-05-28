@@ -130,11 +130,11 @@ public class AttributeEditorCreator extends AbstractTableEditor{
     	}else if("dataSelector".equals(inputType)){
     		//dataSelector
     		editorThing = new Thing("xworker.swt.custom.tableEditors.DialogEditor");
-    		editorThing.set("shell", "xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+    		editorThing.set("shell", "xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
     	}else if("pathSelector".equals(inputType)){
     		//pathSelector
     		editorThing = new Thing("xworker.swt.custom.tableEditors.DialogEditor");
-    		editorThing.set("shell", "xworker.ide.worldExplorer.swt.tools.ThingSelector/@shell");
+    		editorThing.set("shell", "xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
     		actionContext.g().put("selectType", "category");
     	}else if("fontSelect".equals(inputType)){
     		//fontSelect

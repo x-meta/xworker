@@ -85,7 +85,7 @@ public class AutoPlayNodeGroup implements AutoPlayNode{
 	}
 	
 	/**
-	 * 返回执行的栈列表。即组->组->...->节点。
+	 * 返回执行的栈列表。即组-&gt;组-&gt;...-&gt;节点。
 	 * 
 	 * @return
 	 */

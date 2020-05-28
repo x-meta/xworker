@@ -1546,7 +1546,7 @@ public class SwtUtils {
 	 * 
 	 * @param box 
 	 * @param actionContext
-	 * @param callBack 可以为null
+	 * @param callback 可以为null
 	 */
 	public static void showMessageBox(MessageBox box, ActionContext actionContext, DialogCallback callback) {
 		SwtUtils.openDialog(box, callback, actionContext);

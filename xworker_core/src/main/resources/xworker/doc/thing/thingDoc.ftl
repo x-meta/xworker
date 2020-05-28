@@ -26,7 +26,7 @@ function openThing(thingName){
 }
 
 function openDesc(url){
-    document.location = "do?sc=xworker.ide.worldExplorer.swt.http.ThingDoc/@desc&thing=" + url;
+    document.location = "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + url;
 }
 </SCRIPT>
 <NOSCRIPT>

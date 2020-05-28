@@ -211,7 +211,7 @@ public class UtilBrowser implements StatusTextListener{
 					String thingName = message.substring(12, message.length());
 					if(nosecurity || xworker.security.SecurityManager.doCheck(SwtUtils.getEnviroment(),
 							UtilBrowser.class.getName(), "createThing", thingName, actionContext)) {
-						Thing createThing = new Thing("xworker.ide.worldExplorer.actions.ExplorerActions/@CreateThing");
+						Thing createThing = new Thing("xworker.ide.worldexplorer.actions.ExplorerActions/@CreateThing");
 						createThing.put("descriptor", thingName);
 						createThing.getAction().run(actionContext);
 					}else {

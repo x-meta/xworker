@@ -1,0 +1,1301 @@
+^1579489527548
+@
+sshellName
+shell
+sshellThingPath
+xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1
+ssplash
+true
+ssplashIcon
+/xworker/ide/images/xworker_editor.jpg
+slabelColor
+"#FFFFFF"
+sexitOnClose
+true
+sname
+SimpleExplorerRunner
+slabel
+SimpleExplorerRunner
+sdescriptors
+xworker.swt.xworker.SwtRunner
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.swt.xworker.SwtRunner/@actions1
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@onShellOpened
+    sname
+    onShellOpened
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.xmeta.ActionContext;
+
+import xworker.ide.IdeImpl;
+import xworker.util.XWorkerUtils;
+
+//设置IDE实例的shell
+XWorkerUtils.getIde().setShell(shell);
+
+//构造一个执行介绍的actionContext
+def ac = new ActionContext();
+ac.put("explorerContext", actionContext);
+
+//查看是否已执行welcom界面
+def config = world.getThing("_local.xworker.config.XWorkerInitConfig");
+
+//是否已查看过欢迎
+if(!config.getBoolean("welcomeViewed")){
+    def guide = world.getThing("xworker.guides.base.XWorkerIntroduce");
+    if(guide != null){
+        guide.doAction("run", ac);
+    }
+}
+
+//打开默认的文件，如果存在，如模型应用和文件关联是打开文件
+if(actionContext.get("parentContext") != null && parentContext.get("defaultOpenFile") != null){
+    XWorkerUtils.ideOpenFile(parentContext.get("defaultOpenFile") );
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    onShellOpened
+    @/@actions/@init
+    sname
+    init
+    slabel
+    init
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.lang.config.ProjectCreator
+    smethodName
+    init
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction,xworker.lang.actions.JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    init
+  @/@Tasks
+  sname
+  Tasks
+  sdescriptors
+  xworker.swt.xworker.SwtRunner/@Tasks
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  Tasks
+    @/@Tasks/@Thing
+    sname
+    Thing
+    slabel
+    Check Project _local
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@Thing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    Thing
+      @/@Tasks/@Thing/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Tasks/@Thing/@actions/@run
+        sname
+        run
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import xworker.ide.IdeImpl;
+import xworker.util.XWorkerUtils;
+
+def thingManager = world.getThingManager("_local");
+if(thingManager == null){
+    world.createThingManager("_local", null);
+}
+
+
+//设置IDE的实现
+XWorkerUtils.setIde(new IdeImpl(display, actionContext));
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        run
+    @/@Tasks/@loadOrtherProject
+    sname
+    loadOrtherProject
+    slabel
+    Load other projects
+    sdescription
+    <p>加载XWorker目录之外的项目。</p>
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@Thing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    loadOrtherProject
+      @/@Tasks/@loadOrtherProject/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Tasks/@loadOrtherProject/@actions/@run
+        sname
+        run
+        srefActionPath
+        _local.xworker.worldExplorer.ProjectSet
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@RefAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        run
+    @/@Tasks/@startDB
+    sname
+    startDB
+    slabel
+    start database
+    sthingPath
+    xworker.ide.db.dbindex.actions.DbAdminActions
+    sactionName
+    checkDb
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@ThingRunnber
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    startDB
+    @/@Tasks/@initAppDatabase
+    sname
+    initAppDatabase
+    sdescription
+    <p>初始化App的数据库。</p>
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@Thing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    initAppDatabase
+      @/@Tasks/@initAppDatabase/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Tasks/@initAppDatabase/@actions/@checkDatabase
+        sname
+        run
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.util.UtilThing;
+
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger(this.class);
+
+//检查数据源是否存在，如果不存在创建数据源
+def dataSource = world.getThing("_local.xworker.db.XWorkerAppDataSource");
+if(dataSource == null){
+    def thingManager = world.getThingManager("_local");
+    if(thingManager == null){
+        world.createThingManager("_local", null);
+    }
+    dataSource = new Thing("xworker.db.jdbc.DataSource");
+    dataSource.initDefaultValue();
+    dataSource.put("name", "XWorkerIDEDataSource");
+    dataSource.put("type", "HikariCP");
+    dataSource.put("dbType", "sqlite");
+    dataSource.put("drivers", "15");
+    dataSource.put("dbType", "sqlite");
+    dataSource.put("drivers", "15");
+    dataSource.put("driver_class", "org.sqlite.JDBC");
+    dataSource.put("url", "template:jdbc:sqlite:\${world.path}/databases/xworker_app.db");
+    dataSource.put("userName", "");
+    dataSource.put("password", "");
+    dataSource.put("th_createIndex", "true");
+    dataSource.put("th_registThing", "child|xworker.ui.db.datasource.JdbcDatasourceRegistor");
+    dataSource.put("group", "xworker");
+    dataSource.saveAs("_local", "_local.xworker.db.XWorkerAppDataSource");
+}
+
+//检查数据库是否存在，如果不存在创建数据库，仅限derby
+def con = null;
+def pst = null;
+def rs = null;
+def dbExists = false;
+String userName = dataSource.get("userName");
+String password = dataSource.get("password");
+try{
+     //建表
+    boolean createTables = false;
+
+    if(dataSource.get("driver_class") == "org.apache.derby.jdbc.EmbeddedDriver"){
+        try{
+            //建立到derby的连接
+            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+            con = java.sql.DriverManager.getConnection("jdbc:derby:app", "xworker", "xworker");
+            if(con != null){
+                log.info("XWorer app database exists");
+            }
+        }catch(Exception e){
+            log.info("Create XWorer app database");
+            con = java.sql.DriverManager.getConnection("jdbc:derby:app;create=true", "xworker", "xworker");
+            createTables = true;
+        }
+    }
+       
+    try{
+        //检查数据库文件是否已修改
+        def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig",
+                 "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
+        def dbThing = world.getThing("xworker.app.db.DDlAll");
+        if(config.getLong("appDbLastModified") != dbThing.getMetadata().getLastModified()){
+             createTables = true;
+             log.info("XWorker app database tables has changed");
+        }else{
+             log.info("XWorker app database tables created before");
+        }
+    }catch(Exception e){
+		createTables = true;
+        log.info("XWorker app database not exists, create them");
+    }
+    
+    if(createTables){
+         //创建schema
+         /*
+         try{
+            pst = con.prepareStatement("create schema " + userName + "");
+            pst.execute();
+            pst.close();
+            
+         }catch(Exception e){
+              log.info("Create schema error", e);
+         }*/
+        //释放资源
+        if(rs != null){
+            rs.close();
+        }
+        if(pst != null){
+            pst.close();
+        }
+        if(con != null){
+            con.close();
+        }
+        //执行ddl
+        def ddl = world.getThing("xworker.app.db.DDlAll");
+        ddl.doAction("run", actionContext);
+        
+        //保存更新时间
+        def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig",
+                 "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
+        def dbThing = ddl;
+        config.put("appDbLastModified", dbThing.getMetadata().getLastModified());
+        config.save();                 
+    }
+}finally{
+    if(rs != null){
+        rs.close();
+    }
+    if(pst != null){
+        pst.close();
+    }
+    if(con != null){
+        con.close();
+    }
+}
+
+def delete(file){
+    if(file.isFile()){
+        file.delete();
+    }else if(file.isDirectory()){
+        for(child in file.listFiles()){
+            delete(child);
+        }
+        
+        log.info("delete index " + file.getPath());
+        file.delete();
+    }
+}
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sswitchResult
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        checkDatabase
+    @/@Tasks/@init
+    sname
+    init
+    slabel
+    sartBackgroundThreadInitTask
+    sdescription
+    <p>初始化一些事物，lang、app和ide相关的初始化等。</p>
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@Thing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    init
+      @/@Tasks/@init/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Tasks/@init/@actions/@run
+        sname
+        run
+        sdaemon
+        true
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdescriptors
+        xworker.java.lang.ThreadActions/@StartThead
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        run
+          @/@Tasks/@init/@actions/@run/@actions
+          sname
+          actions
+          sdescriptors
+          xworker.java.lang.ThreadActions/@StartThead/@actions1
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_mark
+          false
+          sid
+          actions
+            @/@Tasks/@init/@actions/@run/@actions/@doAction
+            sname
+            doAction
+            schangeSelf
+            false
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Local
+            sisSynchronized
+            false
+            sthrowException
+            true
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sswitchResult
+            false
+            sdisableGlobalContext
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.Actions/@ActionGroup
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_noThingRegistViewer
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sth_registQueryOnlySelf
+            false
+            sid
+            doAction
+              @/@Tasks/@init/@actions/@run/@actions/@doAction/@ideInit
+              sname
+              ideInit
+              sthingType
+              path
+              sthing
+              xworker.ide.config.Project
+              sactionName
+              init
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sswitchResult
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.lang.actions.Actions/@ThingAction
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_noThingRegistViewer
+              false
+              sth_fileMonitor
+              false
+              sth_mark
+              false
+              sth_registQueryOnlySelf
+              false
+              sid
+              ideInit
+              @/@Tasks/@init/@actions/@run/@actions/@doAction/@executeRegistetScripts
+              sname
+              executeRegistetScripts
+              sthingPath
+              xworker.ide.worldexplorer.StartupIndex
+              stype
+              child
+              sactionName
+              init
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sswitchResult
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.utils.ThingRegistActions/@ExecuteRegistedThingsAction
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_noThingRegistViewer
+              false
+              sth_fileMonitor
+              false
+              sth_mark
+              false
+              sth_registQueryOnlySelf
+              false
+              sid
+              executeRegistetScripts
+    @/@Tasks/@checkWorkingSet
+    sname
+    checkWorkingSet
+    slabel
+    Check working set
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@Thing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    checkWorkingSet
+      @/@Tasks/@checkWorkingSet/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.util.Tasks/@Thing/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@Tasks/@checkWorkingSet/@actions/@run
+        sname
+        run
+        sthingPath
+        _local.xworker.worldExplorer.WorkingSet
+        sthingManager
+        _local
+        sreplaceThing
+        xworker.ide.worldexplorer.things.DefaultWorkingSet
+        sinterpretationType
+        Self
+        sattributeTemplate
+        false
+        schildsAttributeTemplate
+        false
+        svarScope
+        Local
+        sisSynchronized
+        false
+        sthrowException
+        true
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdisableGlobalContext
+        false
+        sdescriptors
+        xworker.lang.actions.thing.CheckOrCreateThing
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_mark
+        false
+        sid
+        run
+    @/@Tasks/@loadSelf
+    sname
+    loadShell
+    slabel
+    load shell thing
+    sthingPath
+    xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1
+    sdescriptors
+    xworker.swt.util.Tasks/@LoadThing
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    loadSelf
+    @/@Tasks/@startJetty
+    sname
+    startJetty
+    slabel
+    start jetty server
+    sthingPath
+    xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry
+    sactionName
+    run
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@ThingRunnber
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    startJetty
+    @/@Tasks/@startBackground
+    sname
+    startBackground
+    slabel
+    start background tasks
+    sthingPath
+    xworker.ide.worldexplorer.background.BackGroundTaskRunner
+    sactionName
+    run
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@ThingRunnber
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    startBackground
+    @/@Tasks/@set Lanaguge
+    sname
+    set Lanaguge
+    slabel
+    Set Language
+    sthingPath
+    xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry1
+    sactionName
+    run
+    sbreakOnException
+    false
+    sdescriptors
+    xworker.swt.util.Tasks/@ThingRunnber
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    set Lanaguge
+  @/@startJettry
+  sname
+  startJettry
+  slabel
+  StartJetty
+  sisSynchronized
+  true
+  sthrowException
+  true
+  suseOtherAction
+  false
+  svarScope
+  Global
+  sdisableGlobalContext
+  false
+  Scode
+#$@text#$@
+/*import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.webapp.WebAppContext;*/
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+
+import org.xmeta.util.UtilThing;
+import xworker.util.GlobalConfig;
+import xworker.jetty.JettyServer;
+
+def ssl = false;
+def globalConfig = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.GlobalConfig",
+    "_local", "xworker.ide.config.decriptors.GlobalConfig");
+def port = 9001;
+if(globalConfig != null){
+    port = globalConfig.getInt("webPort", 9001);
+    GlobalConfig.setWebUrl(globalConfig.getString("webUrl"));
+    ssl = globalConfig.getBoolean("webSSL");
+}
+def webContextPath = globalConfig.getStringBlankAsNull("webContext");
+if(webContextPath == null){
+    webContextPath = "/";
+}
+
+def server = world.getData("jettyServer");
+if(server != null){
+    if(!server.isStopped()){
+        return;
+    }else{
+        server.start();
+        return;
+    }
+}
+
+try{
+    //启动HTTP服务器
+    Server aserver = new Server();
+    if(ssl){
+        def connector = JettyServer.createXWorkerSSLConnector(aserver, port);
+        aserver.setConnectors([connector] as Connector[]);
+    }else{
+        def connector = JettyServer.createConnector(aserver, port);
+        aserver.setConnectors([connector] as Connector[]);
+    }
+    //根应用
+	   String contextPath = "/";
+	    
+	   WebAppContext context = new WebAppContext("webroot", contextPath);     	  
+	   if(world.getWebFileRoot() != null){
+        context.setResourceBase(world.getWebFileRoot());
+    }else{
+        context.setResourceBase(world.getPath() + "/webroot");
+    }
+	    
+    context.setWelcomeFiles(["index.html", "index.htm", "index.do", 
+        		"index.dml", "index.xer", "index.xer.xml", "index.xer.txt"] as String[]);	        
+	   context.setClassLoader(world.getClassLoader());		   
+	   context.setAttribute("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
+	   //SWT rwt会出现文件明明存在，但404问题，加下面的语句可以解决
+	   context.setInitParameter("org.eclipse.jetty.servlet.Default.useFileMappedBuffer", "false"); 
+	    
+	   aserver.setHandler(context);
+	   aserver.setStopAtShutdown(true);		    
+	   new Thread(
+        {
+            aserver.start();
+            aserver.join()
+        } as Runnable
+    , "JettySever start thread").start(); 
+    world.setData("jettyServer", aserver);	     	
+		
+	   /*	    
+	   def aserver = new Server();
+    Connector connector= new SocketConnector();//new SelectChannelConnector();
+    connector.setPort(port);
+    aserver.setConnectors([connector] as Connector[]);
+    
+    //根应用
+    WebAppContext context = new WebAppContext("webroot", webContextPath);     	  
+    if(world.getWebFileRoot() != null){
+        context.setResourceBase(world.getWebFileRoot());
+    }else{
+        context.setResourceBase(world.getPath() + "/webroot");
+    }
+    context.setClassLoader(world.getClassLoader());
+    aserver.setHandler(context);
+    
+    aserver.setStopAtShutdown(true);
+    
+    new Thread(
+        {
+            aserver.start();
+            aserver.join()
+        } as Runnable
+    , "JettySever start thread").start(); 
+    world.setData("jettyServer", aserver);*/
+}catch(Exception e){
+	e.printStackTrace();
+}
+#$@text#$@
+  sinterpretationType
+  Action
+  screateLocalVarScope
+  false
+  ssaveReturn
+  false
+  sswitchResult
+  false
+  sdebugLog
+  false
+  sonlyRegist
+  false
+  sdescriptors
+  xworker.lang.util.Functions/@function
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  startJettry
+    @/@startJettry/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    VariablesDescs
+      @/@startJettry/@VariablesDescs/@aserver
+      sname
+      aserver
+      svarName
+      aserver
+      spassive
+      false
+      sscope
+      0
+      stype
+      object
+      sclassName
+      org.eclipse.jetty.server.Server
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      aserver
+  @/@startJettry1
+  sname
+  initLanguage
+  sisSynchronized
+  true
+  sthrowException
+  true
+  suseOtherAction
+  false
+  svarScope
+  Global
+  sdisableGlobalContext
+  false
+  Scode
+#$@text#$@
+import java.util.Locale;
+
+import org.xmeta.util.UtilResource;
+import org.xmeta.ui.session.SessionManager;
+
+import xworker.util.XWorkerUtils;
+
+import org.slf4j.LoggerFactory;
+
+def log = LoggerFactory.getLogger(this.class);
+
+def config = world.getThing("_local.xworker.config.GlobalConfig");
+if(config != null){
+    def lang = config.getStringBlankAsNull("language");
+    if(lang != null){
+        try{
+            def ls = lang.split("[_]");
+            Locale l = new Locale(ls[0], ls[1]);
+            def session = SessionManager.getSession(null);
+            session.setLocale(l);
+            session.setI18nResource(UtilResource.getInstance(l));
+        }catch(Exception e){
+            log.error("init language error", e);
+        }
+    }    
+}
+#$@text#$@
+  sinterpretationType
+  Action
+  screateLocalVarScope
+  false
+  ssaveReturn
+  false
+  sdebugLog
+  false
+  sonlyRegist
+  false
+  sdescriptors
+  xworker.lang.util.Functions/@function
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  startJettry1
+  @/@startJettry2
+  sname
+  startJettryNoExplorer
+  sisSynchronized
+  true
+  sthrowException
+  true
+  suseOtherAction
+  false
+  svarScope
+  Global
+  sdisableGlobalContext
+  false
+  Scode
+#$@text#$@
+/*
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+//import org.mortbay.jetty.plugin.Jetty6PluginServer;
+import org.mortbay.jetty.bio.SocketConnector;
+import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.thread.QueuedThreadPool;
+*/
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
+import org.xmeta.util.UtilThing;
+import xworker.jetty.JettyServer;
+
+def globalConfig = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.GlobalConfig",
+    "_local", "xworker.ide.config.decriptors.GlobalConfig");
+if(globalConfig != null){
+    ssl = globalConfig.getBoolean("webSSL");
+}
+
+//此脚本用于非事物管理器的Jetty, port是传入的
+webContextPath = "/";
+
+def server = world.getData("jettyServer");
+if(server != null){
+    if(!server.isStopped()){
+        return;
+    }else{
+        server.start();
+        return;
+    }
+}
+
+def aserver = new Server();
+if(ssl){
+    def connector = JettyServer.createXWorkerSSLConnector(aserver, port);
+    aserver.setConnectors([connector] as Connector[]);
+}else{
+    def connector = JettyServer.createConnector(aserver, port);
+    aserver.setConnectors([connector] as Connector[]);
+}
+//def threadPool = new QueuedThreadPool();
+//threadPool.setDaemon(true);
+aserver.getThreadPool().setDaemon(true);;
+
+/*
+//def aserver = new Jetty6PluginServer();
+Connector connector= new SocketConnector();//new SelectChannelConnector();
+connector.setPort(port);
+aserver.setConnectors([connector] as Connector[]);
+*/
+
+//根应用
+WebAppContext context = new WebAppContext("webroot", webContextPath);     	  
+if(world.getWebFileRoot() != null){
+    context.setResourceBase(world.getWebFileRoot());
+}else{
+    context.setResourceBase(world.getPath() + "/webroot");
+}
+context.setClassLoader(world.getClassLoader());
+aserver.setHandler(context);
+//aserver.addWebApplication(context);
+
+aserver.setStopAtShutdown(true);
+aserver.start();
+
+world.setData("jettyServer", aserver);
+
+return aserver;
+#$@text#$@
+  sinterpretationType
+  Action
+  screateLocalVarScope
+  false
+  ssaveReturn
+  false
+  sswitchResult
+  false
+  sdebugLog
+  false
+  sonlyRegist
+  false
+  sdescriptors
+  xworker.lang.util.Functions/@function
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  startJettry2
