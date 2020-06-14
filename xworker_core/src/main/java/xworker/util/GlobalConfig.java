@@ -38,6 +38,23 @@ public class GlobalConfig {
 		}
 	}
 	
+	/**
+	 * 如果port可以绑定则返回，否则+1再判断，最多循环300次。
+	 * 
+	 * @param port
+	 * @return 返回可用的port，否则返回-1
+	 */
+	public static int getAvaiablePort(int port) {
+		for(int i=0; i<300; i++){
+			if(isPortAvailable(port)){   
+				return port;
+			}else {
+				port++;
+			}
+		}
+		
+		return -1;
+	}
 	/** 
 	 * 获取XWorker内置的网页路径。
 	 * 

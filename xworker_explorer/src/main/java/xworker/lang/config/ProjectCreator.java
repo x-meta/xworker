@@ -44,8 +44,8 @@ public class ProjectCreator {
         //注册事物        
         ThingRegistor.regist("_xworker_thing_attribute_editor_openDataListener", "xworker.ide.worldexplorer.swt.shareScript.ThingEditor/@scripts/@openDataListener");
         
-        //derby system path
-        java.lang.System.setProperty("derby.system.home", world.getPath() + "/databases/derby");
+        //derby system path,Derby已经不再使用，而改名sqlite了
+        //java.lang.System.setProperty("derby.system.home", world.getPath() + "/databases/derby");
 
         //执行其他项目的初始化
         //World.getInstance().runActionAsync("xworker.lang.config.Project/@actions/@initBackground", null);

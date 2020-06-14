@@ -24,9 +24,7 @@ import xworker.io.SystemIoRedirector;
 
 public class XWorkerExplorer {
 	public static void main(String[] args){
-		try{
-			SystemIoRedirector.init();
-			
+		try{		
 			//首次从git上拉下来没有databases目录，会报数据库的错误
 			File dbDir = new File("./xworker/databases/");
 			if(dbDir.exists() == false) {
@@ -36,7 +34,10 @@ public class XWorkerExplorer {
 			//初始化引擎
 			World world = World.getInstance();			
 			world.init("./xworker/");
+			Thread.currentThread().setContextClassLoader(world.getClassLoader());
+			SystemIoRedirector.init();
 			
+			System.out.println(world.getThingManager("_local"));
 			//启动编辑器			
 			Thing worldExplorer = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner");		
 			worldExplorer.doAction("run");

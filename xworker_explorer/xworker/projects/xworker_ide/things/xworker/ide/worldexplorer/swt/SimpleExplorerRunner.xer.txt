@@ -1,4 +1,4 @@
-^1579489527548
+^1592104870003
 @
 sshellName
 shell
@@ -965,9 +965,16 @@ def globalConfig = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.Gl
 def port = 9001;
 if(globalConfig != null){
     port = globalConfig.getInt("webPort", 9001);
-    GlobalConfig.setWebUrl(globalConfig.getString("webUrl"));
+   
     ssl = globalConfig.getBoolean("webSSL");
 }
+port = GlobalConfig.getAvaiablePort(port);
+if(ssl){
+    GlobalConfig.setWebUrl("https://localhost:" + port + "/");
+}else{
+    GlobalConfig.setWebUrl("http://localhost:" + port + "/");
+} 
+ 
 def webContextPath = globalConfig.getStringBlankAsNull("webContext");
 if(webContextPath == null){
     webContextPath = "/";
