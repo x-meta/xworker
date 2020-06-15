@@ -1,4 +1,4 @@
-^1576135180298
+^1592210488168
 @
 sname
 GroovyAction
@@ -1500,11 +1500,6 @@ if(index.getType() == "thingManager"){
 //删除所有文件
 deleteFile(new File(filePath));
 
-def box = new MessageBox(treeItem.getParent().getShell(), SWT.ICON_INFORMATION | SWT.OK);
-box.setText("重建索引");
-box.setMessage("索引文件已删除，请等待系统在后台自动重建索引！")
-box.open();
-
 def world = world;
 new Thread({
      def updater = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
@@ -1514,6 +1509,8 @@ new Thread({
      }
      updater.doAction("updateThingManagerIndex", actionContext, "thingManager", thingManager);
 }).start();
+
+tip(actionContext);
 def deleteFile(file){
     if(file.isDirectory()){
         for(childFile in file.listFiles()){
@@ -1530,12 +1527,92 @@ def deleteFile(file){
               false
               ssaveReturn
               false
+              sswitchResult
+              false
               sdebugLog
               false
               sdescriptors
               xworker.lang.actions.Actions/@GroovyAction
               sid
               GroovyAction
+                @/@shell/@cactoryComposite/@facotyMenu/@versionMenu/@listeners/@versionMenuSelection/@GroovyAction/@ActionDefined
+                sname
+                ActionDefined
+                sdescriptors
+                xworker.lang.actions.Inout/@ActionDefined
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_noThingRegistViewer
+                false
+                sth_fileMonitor
+                false
+                sth_mark
+                false
+                sth_registQueryOnlySelf
+                false
+                sid
+                ActionDefined
+                  @/@shell/@cactoryComposite/@facotyMenu/@versionMenu/@listeners/@versionMenuSelection/@GroovyAction/@ActionDefined/@tip
+                  sname
+                  tip
+                  sshell
+                  var:shell
+                  sicon
+                  ICON_INFORMATION
+                  sbuttons
+                  OK
+                  stitle
+                  lang:d=更新索引&en=Update Index
+                  smessage
+                  lang:d=请耐心等待索引更新完毕再做其它操作，否则SQLite可能会出错。&en=Please wait patiently for the index update to complete before doing other operations, otherwise SQLite may make errors.
+                  sinterpretationType
+                  Self
+                  sattributeTemplate
+                  false
+                  schildsAttributeTemplate
+                  false
+                  svarScope
+                  Local
+                  sisSynchronized
+                  false
+                  sthrowException
+                  true
+                  screateLocalVarScope
+                  false
+                  ssaveReturn
+                  false
+                  sswitchResult
+                  false
+                  sdisableGlobalContext
+                  false
+                  sdebugLog
+                  false
+                  sdescriptors
+                  xworker.swt.actions.MessageBoxActions/@MessageBox
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_registDisabled
+                  false
+                  sth_noThingRegistViewer
+                  false
+                  sth_fileMonitor
+                  false
+                  sth_mark
+                  false
+                  sth_registQueryOnlySelf
+                  false
+                  sid
+                  tip
         @/@shell/@cactoryComposite/@facotyMenu/@factorySpet4
         sname
         factorySpet4

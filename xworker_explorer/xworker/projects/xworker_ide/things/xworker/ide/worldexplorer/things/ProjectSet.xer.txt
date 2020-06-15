@@ -1,4 +1,4 @@
-^1483955083691
+^1592210221935
 @
 sname
 ProjectSet
@@ -392,10 +392,10 @@ false
     dir
     sinputtype
     filePath
-    sshowLabel
-    true
     ssize
     60
+    sshowLabel
+    true
     sreadOnly
     false
     sinheritDescription
@@ -458,10 +458,10 @@ false
     @/@ProjectDir/@exclude
     sname
     exclude
-    sshowLabel
-    true
     ssize
     60
+    sshowLabel
+    true
     sreadOnly
     false
     sdefault
@@ -509,10 +509,8 @@ false
     false
     sinheritDescription
     false
-    Sdescription
-#$@text#$@
-<p>如果为true那么项目目录就是事物文件的存储目录。如果模型事物的文件放在things目录下的，或者是数据库、Redis等其它类型存储的模型的，那么应该选择false。</p>
-#$@text#$@
+    sdescription
+    <p>如果为true那么项目目录就是事物文件的存储目录。如果模型事物的文件放在things目录下的，或者是数据库、Redis等其它类型存储的模型的，那么应该选择false。</p>
     svalidateAllowBlank
     true
     LvalidateOnBlur
@@ -566,3 +564,314 @@ false
     false
     sid
     description
+  @/@sswtMenus
+  sname
+  sswtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname
+    menuDefine
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    menuDefine
+      @/@sswtMenus/@menuDefine/@ProjectSet
+      sname
+      ProjectSet
+      sdescriptors
+      xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      ProjectSet
+    @/@sswtMenus/@menuSetting
+    sname
+    menuSetting
+    smenuType
+    ProjectSet
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    menuSetting
+      @/@sswtMenus/@menuSetting/@addSourceXWorkerProjects
+      sname
+      addSourceXWorkerProjects
+      slabel
+      添加源码下的XWorker其它项目
+      sisSplit
+      false
+      sattachParam
+      true
+      sdescriptors
+      xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      addSourceXWorkerProjects
+        @/@sswtMenus/@menuSetting/@addSourceXWorkerProjects/@actions
+        sname
+        actions
+        sdescriptors
+        xworker.lang.Menu/@actions
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        actions
+          @/@sswtMenus/@menuSetting/@addSourceXWorkerProjects/@actions/@run
+          sname
+          run
+          sisSynchronized
+          false
+          sthrowException
+          true
+          suseOtherAction
+          false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+def projects = [
+    "xworker_ai", "xworker_app","xworker_core",
+    "xworker_dataobject","xworker_function","xworker_jfreechart",
+    "xworker_libgdx", "xworker_misc", "xworker_swt",
+    "xworker_uiflow", "xworker_web" 
+];
+
+def file = new File("../xworker_swt/src/main/resources");
+if(file.exists() == false){
+    envError(actionContext);
+    return;
+}
+
+for(name in projects){
+    add(currentThing, name);
+}
+currentThing.save();
+
+def add(projectSet, name){
+    if(exists(projectSet, name)){
+        return;
+    }
+    
+    def child = new Thing("xworker.ide.worldexplorer.things.ProjectSet/@ProjectDir");
+    child.set("name", name);
+    child.set("dir", "..\\" + name + "\\src\\main\\resources\\");
+    child.set("isThingRoot", "true");
+    projectSet.addChild(child);
+}
+
+def exists(projectSet, name){
+    for(child in projectSet.getChilds()){
+        if(child.getMetadata().getName() == name){
+            return true;
+        }
+    }
+    
+    return false;
+}
+#$@text#$@
+          sinterpretationType
+          Action
+          screateLocalVarScope
+          false
+          ssaveReturn
+          false
+          sswitchResult
+          false
+          sdebugLog
+          false
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sth_registQueryOnlySelf
+          false
+          sid
+          run
+            @/@sswtMenus/@menuSetting/@addSourceXWorkerProjects/@actions/@run/@ActionDefined
+            sname
+            ActionDefined
+            sdescriptors
+            xworker.lang.actions.Inout/@ActionDefined
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_noThingRegistViewer
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sth_registQueryOnlySelf
+            false
+            sid
+            ActionDefined
+              @/@sswtMenus/@menuSetting/@addSourceXWorkerProjects/@actions/@run/@ActionDefined/@envError
+              sname
+              envError
+              sshell
+              ognl:coolBar.setShell()
+              sicon
+              ICON_ERROR
+              sbuttons
+              OK
+              stitle
+              lang:d=添加项目&en=Add Projects
+              smessage
+              lang:d=当前XWorker不是运行在XWorker的源码下，不能添加源码下的项目。&en=At present, xworker is not running under the source code of xworker. You cannot add projects under the source code.
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sswitchResult
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.swt.actions.MessageBoxActions/@MessageBox
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_noThingRegistViewer
+              false
+              sth_fileMonitor
+              false
+              sth_mark
+              false
+              sth_registQueryOnlySelf
+              false
+              sid
+              envError

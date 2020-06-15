@@ -1,4 +1,4 @@
-^1558664813919
+^1592209628553
 @
 sname
 ThingIndexUpdater
@@ -72,8 +72,8 @@ if(actionContext.get("thing") != null && thing instanceof Thing){
         @/@actions/@addIndexJob/@contexts/@thingPath
         sname
         thingPath
-        sconflicting
-        ignore
+        slabel
+        thingPath
         sdisable
         false
         sonError
@@ -82,8 +82,6 @@ if(actionContext.get("thing") != null && thing instanceof Thing){
         false
         sinherit
         true
-        slabel
-        thingPath
         sdescriptors
         xworker.lang.actions.Inout/@contexts/@context
         sid
@@ -91,8 +89,8 @@ if(actionContext.get("thing") != null && thing instanceof Thing){
         @/@actions/@addIndexJob/@contexts/@thing
         sname
         thing
-        sconflicting
-        ignore
+        slabel
+        thing
         sdisable
         false
         sonError
@@ -101,8 +99,6 @@ if(actionContext.get("thing") != null && thing instanceof Thing){
         false
         sinherit
         true
-        slabel
-        thing
         sdescriptors
         xworker.lang.actions.Inout/@contexts/@context
         sid
@@ -1283,9 +1279,12 @@ for(d in deleted){
     Scode
 #$@text#$@
 import org.xmeta.util.UtilThing;
+import xworker.lang.executor.Executor;
 
 //遍历所有的事物
-println("Check things");
+def TAG = "ThingManagerIndexUpdator";
+Executor.info(TAG, "Check things");
+
 int count = 0;
 def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
 
@@ -1293,36 +1292,36 @@ def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater")
 def datasource = world.getThing("xworker.ide.db.datasource.XWorkerDataSource");
 def con = datasource.doAction("getConnection", actionContext);
 try{
-    //con.setAutoCommit(false);    
+    con.setAutoCommit(false);    
     if("_transient" == thingManager.getName()){
         return;
     }
-    System.out.println("ThingManager : " + thingManager.getName());
+    Executor.info(TAG, "ThingManager : " + thingManager.getName());
     def iter = thingManager.iterator(null, true);
     while(iter.hasNext()){
         def thing = iter.next();
         //if( thingManager.getName() == "xworker_core"){
         //    System.out.println(thing.metadata.path);
-       // }
+        // }
         if(updator.doAction("checkThingIndex", actionContext, [
              thing: thing, con: con])){
-             System.out.println("Thing index updated : " + thing.metadata.path);
+             Executor.info(TAG, "Thing index updated : " + thing.metadata.path);
         }
         count++;
     }
 
-    System.out.println("Total " + count + " things checked");
-    //con.commit();
+    Executor.info(TAG, "Total " + count + " things checked");
+    con.commit();
 }catch(Exception e){
-    //con.rollback();
-    e.printStackTrace();
+    con.rollback();
+    Executor.error(TAG, "Update index error", e);
 }finally{   
-   //con.setAutoCommit(true);
+   con.setAutoCommit(true);
    con.close();
 }
 
 //删除无效索引
-println("Delete invalid index");
+Executor.info(TAG, "Delete invalid index");
 updator.doAction("removeInvalidIndex", actionContext);
 #$@text#$@
     sinterpretationType
@@ -1330,6 +1329,8 @@ updator.doAction("removeInvalidIndex", actionContext);
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
