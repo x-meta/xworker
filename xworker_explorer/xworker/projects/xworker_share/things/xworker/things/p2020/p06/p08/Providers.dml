@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ListDataObject name="Providers" descriptors="xworker.dataObject.DataObjects/@ListDataObject"
+     group="java.security" storeAutoLoad="true" th_createIndex="true" th_registThing="child|xworker.dataObject.DataObjectIns">
+    <actions>
+        <GroovyAction name="getListData">
+            <code><![CDATA[import java.security.Security;
+
+def datas = [];
+for(provider in Security.getProviders()){
+    datas.add(provider);
+}
+
+return datas;]]></code>
+        </GroovyAction>
+    </actions>
+    <attribute name="name" propertyPath="getName()" key="true"></attribute>
+    <attribute name="version" propertyPath="getVersion()"></attribute>
+    <attribute name="info" propertyPath="getInfo()"></attribute>
+    <attribute name="className" propertyPath="getClass().getName()"></attribute>
+    <QueryFormDataObject>
+        <AbstractDataObject>
+            <attribute name="name" descriptors="xworker.dataObject.java.ListDataObject/@attribute"
+                 propertyPath="getName()" key="true"></attribute>
+        </AbstractDataObject>
+    </QueryFormDataObject>
+    <Condition>
+        <Condition name="name" attributeName="name" dataName="name" operator="10"></Condition>
+    </Condition>
+</ListDataObject>

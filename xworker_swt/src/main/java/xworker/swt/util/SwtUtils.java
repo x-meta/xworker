@@ -663,6 +663,7 @@ public class SwtUtils {
 		if(shell.getParent() instanceof Shell) {
 			parent = (Shell) shell.getParent();
 		}
+		
 		if(parent != null && parent != shell) {
 			rec = parent.getBounds();
 			Rectangle srec = shell.getBounds();

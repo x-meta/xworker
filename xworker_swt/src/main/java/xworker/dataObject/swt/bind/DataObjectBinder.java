@@ -31,7 +31,7 @@ public class DataObjectBinder implements DataObjectListener{
 	Display display;
 	DataObject dataObject;
 	
-	/** 如果为true表示当前正在等待执行doUpdate，是为了避免执行太平凡 */
+	/** 如果为true表示当前正在等待执行doUpdate，是为了避免执行太频繁 */
 	boolean waittingUpdate = false;
 	/** 更新执行延迟时间 */
 	int updateInterval = 100;

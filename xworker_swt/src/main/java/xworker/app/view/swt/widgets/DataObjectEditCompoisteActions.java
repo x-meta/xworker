@@ -18,8 +18,10 @@
  */
 package xworker.app.view.swt.widgets;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -33,6 +35,7 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.dataObject.DataObject;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
@@ -270,6 +273,36 @@ public class DataObjectEditCompoisteActions {
         store.put("params", values);
     }
 
+    public static List<DataObject> getSelection(ActionContext actionContext){
+    	Thing self = actionContext.getObject("self");
+        //数据对象编辑器所在变量上下文
+        ActionContext objActionContext = (ActionContext) self.getData("actionContext");
+        Table dataTable = objActionContext.getObject("dataTable");
+        List<DataObject> datas = new ArrayList<DataObject>();
+        boolean check = (dataTable.getStyle() & SWT.CHECK) == SWT.CHECK;
+        if(check) {
+	        for(TableItem item : dataTable.getItems()) {
+	        	if(item.getChecked()) {
+	        		datas.add((DataObject) item.getData());
+	        	}
+	        }
+        }else {
+        	for(TableItem item : dataTable.getSelection()) {
+        		datas.add((DataObject) item.getData());
+        	}
+        }
+        
+        return datas;
+    }
+    
+    public static Object getQueryFormValues(ActionContext actionContext) {
+    	Thing self = actionContext.getObject("self");
+    	
+    	 ActionContext objActionContext = (ActionContext) self.getData("actionContext");
+         Thing queryForm = (Thing) objActionContext.get("queryForm");
+         return queryForm.doAction("getValues", actionContext);
+    }
+    
     public static void doQuery(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
         //数据对象编辑器所在变量上下文

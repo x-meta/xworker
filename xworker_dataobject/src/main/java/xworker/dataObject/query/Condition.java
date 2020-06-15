@@ -12,13 +12,13 @@ public class Condition {
 	public static final byte eq = 1;
 	/** ！= */
 	public static final byte uneq = 2;
-	/** &lt; */
-	public static final byte gt = 3;
-	/** &lt;= */
-	public static final byte gteq = 4;
 	/** &gt; */
-	public static final byte lt = 5;
+	public static final byte gt = 3;
 	/** &gt;= */
+	public static final byte gteq = 4;
+	/** &lt; */
+	public static final byte lt = 5;
+	/** &lt;= */
 	public static final byte lteq = 6;
 	/** like */
 	public static final byte like = 7;
@@ -93,7 +93,9 @@ public class Condition {
 	}
 	
 	/**
-	 * 添加一个查询节点，返回新建的查询节点。
+	 * <p>添加一个查询节点，返回新建的查询节点。</p>
+	 * 
+	 * <p>对于同一个字段有多个条件，不要使用此方法，要使用能够设置条件名字的方法。</p>
 	 * 
 	 * @param attrName 属性名
 	 * @param dataName 条件值的变量名

@@ -1,4 +1,4 @@
-%1566195863760
+%1591925582983
 @
 sname=UrlEncodedFormEntity
 slabel=UrlEncodedFormEntity
@@ -61,6 +61,7 @@ import org.xmeta.util.UtilString;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 
+def charset = self.doAction("getCharset", actionContext);
 def list = [];
 
 //通过参数
@@ -82,11 +83,16 @@ for(child in self.getChilds()){
     }
 }
 
-return new UrlEncodedFormEntity(list);
+if(charset != null && charset != ""){
+    return new UrlEncodedFormEntity(list, charset);
+}else{
+    return new UrlEncodedFormEntity(list);
+}
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -104,7 +110,6 @@ return new UrlEncodedFormEntity(list);
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -117,6 +122,31 @@ return new UrlEncodedFormEntity(list);
     sth_fileMonitor=false
     sth_mark=false
     sid=getParams
+    @/@actions/@getCharset
+    sname=getCharset
+    sattributeName=charset
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getCharset
   @/@name
   sname=name
   sshowLabel=true
@@ -155,6 +185,28 @@ return new UrlEncodedFormEntity(list);
   sth_registDisabled=false
   sth_mark=false
   sid=label
+  @/@charset
+  sname=charset
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=charset
   @/@params
   sname=params
   sinputtype=textarea

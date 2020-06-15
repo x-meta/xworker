@@ -35,6 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -427,7 +430,7 @@ public class UtilData {
 		return org.xmeta.util.UtilData.getByte(v, defaultValue);
 	}
 	
-	public static byte[] getBytes(Object v, byte[] defaultValue){
+	public static byte[] getBytes(Object v, byte[] defaultValue) throws DecoderException{
 		try {
 			if(v instanceof File){
 	    		File file = (File) v;
@@ -445,6 +448,17 @@ public class UtilData {
 	    	}
 		}catch(Exception e) {
 			throw new ActionException("getBytes error", e);
+		}
+		
+		if(v instanceof String) {
+			String str = (String) v;
+    		if(str.startsWith("hex:")) {
+    			str = str.substring(4, str.length());
+    			return Hex.decodeHex(str);
+    		}else if(str.startsWith("base64:")) {
+    			str = str.substring(7, str.length());
+    			return Base64.decodeBase64(str);
+    		}
 		}
 		return org.xmeta.util.UtilData.getBytes(v, defaultValue);
 	}
@@ -509,8 +523,19 @@ public class UtilData {
 		 return org.xmeta.util.UtilData.getObjectByType(thing, attributeName, t, actionContext);
 	 }
 	 
-	 public static Object getData(Thing thing, String attributeName, ActionContext actionContext) throws OgnlException, IOException{
-		 Object value = thing.get(attributeName);
+	 /**
+	  * 返回value值对应的对象。
+	  * 
+	  * 如果value是非字符串，那么直接返回。否则会匹配_c_.和各种xxx:前缀等，通过前缀来执行相关操作返回对应的值。
+	  * 
+	  * @param thing
+	  * @param value
+	  * @param actionContext
+	  * @return
+	  * @throws OgnlException
+	  * @throws IOException
+	  */
+	 public static Object getValueData(Thing thing, Object value, ActionContext actionContext) throws OgnlException, IOException {
 		 if(value != null && value instanceof String){
 			 String str = (String) value;
 			 if(str.startsWith("_c_.")) {
@@ -534,6 +559,12 @@ public class UtilData {
 	 	 }else{
 	 		 return value;
 	 	 }
+	 }
+	 
+	 public static Object getData(Thing thing, String attributeName, ActionContext actionContext) throws OgnlException, IOException{
+		 Object value = thing.get(attributeName);
+		 
+		 return getValueData(thing, value, actionContext);
 		 //return org.xmeta.util.UtilData.getData(thing, attributeName, actionContext);
 	 }
 	 

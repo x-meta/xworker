@@ -15,7 +15,6 @@
 ******************************************************************************/
 package xworker.swt.design;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.slf4j.Logger;
@@ -1080,7 +1080,7 @@ public class Designer {
 	public static void attachTo(Shell shell, Control control) {
 		//确定提示窗口应该显示的位置
 		//Designer designer = Designer.getDesigner();
-		Rectangle monitorSize = control.getShell().getDisplay().getClientArea();
+		Rectangle monitorSize = control.getShell().getMonitor().getClientArea();
 		//Rectangle monitorSize = shell.getDisplay().getMonitors()[0].getClientArea();
 		
 		Point location = control.getLocation();
@@ -1166,42 +1166,89 @@ public class Designer {
 		return null;
 	}
 	
+	/**
+	 * 让shell(width, height)显示在控件四周
+	 * 
+	 * @param control 控件
+	 * @param location 控件自身获取的Location
+	 * @param cl 控件的Location相对于Display的
+	 * @param size 控件的大小
+	 * @param width Shell的宽度
+	 * @param height Shell的高度
+	 * @param monitorSize 监视器的大小
+	 * @param seq 位置选择顺序列表
+	 * @return
+	 */
 	private static Point getTooltipLocation(Control control, Point location,Point cl, Point size, int width, int height, Rectangle monitorSize, int[] seq){
 		//rec是control在display中的区域
 		location = control.toDisplay(location);				
 		Rectangle rec = new Rectangle(location.x, location.y, location.x + size.x, location.y + size.y);
 		
+		
+		//System.out.println(monitor.getClientArea());
 		int x = 0, y = 0;
-		Point l = null;
+		//Point l = null;
 		for(int s : seq){
 			switch(s){
 			case Designer.BOTTOM:
-				if(rec.x + width < monitorSize.width && rec.height + height < monitorSize.height) {
-					x = cl.x;
-					y = cl.y + size.y;
+				//判断存在不准确的情况，尤其是多个显示器，且显示器的缩放又不一致的情况
+				if(rec.height + height < monitorSize.height) {					
+					y = cl.y +size.y;
+							
+					//可以在下面显示Shell
+					if(rec.x +  width < monitorSize.x + monitorSize.width) {
+						x = cl.x;
+					}else {
+						//右面超出屏幕
+						x= monitorSize.x + monitorSize.width - width;						
+					}
 					return new Point(x, y);
 				}
 				
 				break;
 			case Designer.UP:
-				if(rec.x + width < monitorSize.width && rec.y - height > 0) {
-					x = cl.x;
+				if(rec.y - height > 0) {					
+					//可以在上面显示Shell
 					y = cl.y - height;
+					if(rec.x + width < monitorSize.x + monitorSize.width) {
+						x = cl.x;
+					}else {
+						//右面超出屏幕
+						x= monitorSize.x + monitorSize.width - width;						
+					}
 					return new Point(x, y);
 				}
 				
 				break;
 			case Designer.LEFT:
-				if(rec.y - height < monitorSize.height) {
+				if(rec.x - width > 0) {
+					//可以在左面放下
 					x = cl.x - width;
 					y = cl.y;
+					if(rec.y + height > monitorSize.height) {
+						//不要超出下边界
+						y = monitorSize.y + monitorSize.height - height - 100;
+					}
+					if(y < 0) {
+						//不能超出上边界，要能够看到Shell的标题
+						y = 0;
+					}
 					return new Point(x, y);
 				}
+				
 				break;
 			case Designer.RIGHT:
-				if(rec.width + width < monitorSize.width && rec.y + height < monitorSize.height) {
+				if(rec.width + width < monitorSize.width) {
 					x = cl.x + size.x;
 					y = cl.y;
+					if(rec.y + height > monitorSize.height) {
+						//不要超出下边界
+						y = monitorSize.y +  monitorSize.height - height - 100;
+					}
+					if(y < 0) {
+						//不能超出上边界，要能够看到Shell的标题
+						y = 0;
+					}
 					return new Point(x, y);
 				}
 				break;
@@ -1209,7 +1256,7 @@ public class Designer {
 		}
 		
 		
-		//那里都不行，就放在控件下面一点
+		//那里都不行，就放在控件上面先
 		return new Point(cl.x, cl.y + 20);
 	}
 	

@@ -862,6 +862,13 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static List<DataObject> getRecords(ActionContext actionContext){
+		Thing self = (Thing) actionContext.get("self");
+		//Thing dataObject = (Thing) self.get("dataObject");
+		return (List<DataObject>) self.get("records");
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static void fireEvent(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		//Bindings bindings = actionContext.peek();

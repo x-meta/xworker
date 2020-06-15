@@ -1,4 +1,4 @@
-^1516847812327
+^1591929677596
 @
 sname
 OpenWindowSet
@@ -12,6 +12,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
@@ -20,35 +22,27 @@ sinheritDescription
 false
 Sdescription
 #$@text#$@
-<p><strong>属性弹出窗口设置</strong></p>
+<p><strong>属性弹出窗口</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 设置一个属性编辑弹出窗口的相关信息。</p>
 
 <p><strong>设置方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 要设置两个部分，一个是参数表单，另一个是窗口路径。参数表单是在编辑属性时，在属性扩展输入的参数中要设置的参数。这些参数在编辑窗口是会传入。</p>
-
-<p><strong>参数设置</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 可以添加一个数据对象作为参数的编辑器，数据对象的属性值就是参数。</p>
-
-<p>&nbsp;&nbsp;&nbsp; 设置事物的第一个子事物被认作是数据对象的定义。</p>
+<ul>
+	<li><strong>参数表单</strong><br />
+	通过子节点设置一个数据对象，第一个子节点生效，用于生成参数表单。参数表单是传给弹出窗口的参数数据。参数表单是在设置属性的弹出窗口时设置的。<br />
+	&nbsp;</li>
+	<li><strong>弹出窗口</strong><br />
+	需要设置一个弹出窗口，通过winPath属性设置。</li>
+</ul>
 
 <p><strong>窗口获取参数的方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 在窗口的变量上下文中有一个prarams变量，它是一个字符串，格式为&lt;name1&gt;=&lt;value1&gt;,&lt;name2&gt;=&lt;value2&gt;，其中分隔符是在这个窗口设置中设置的。</p>
+<p>&nbsp;&nbsp;&nbsp; 参数是Map&lt;String, String&gt;格式，对应的变量是params。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 把字符串转化为Map的方法。</p>
+<p><strong>窗口设置返回值的方法</strong></p>
 
-<pre class="brush:java;">
-import org.xmeta.util.UtilString;
-
-Map&lt;String, String&gt; params = UtilString.getParams(param, &quot;,&quot;);
-</pre>
-
-<p><strong>窗口返回值的方法</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 窗口的目的是给事物编辑器的属性辅助。方法是在变量上下文的全局变量中设置<strong>result</strong>变量，类型为字符串。</p>
+<p>&nbsp;&nbsp;&nbsp; 通过text变量来设置，比如：text.setText(&quot;value&quot;)。</p>
 
 <p><strong>窗口设置编辑器多个属性值的方法</strong></p>
 
@@ -60,22 +54,32 @@ Map&lt;String, String&gt; params = UtilString.getParams(param, &quot;,&quot;);
 
 <p><strong>窗口可用变量</strong></p>
 
-<pre class="brush:java;">
-    	ac.put(&quot;parent&quot;, shell);
-    	ac.put(&quot;value&quot;, text.getText());
-    	ac.put(&quot;text&quot;, text);
-    	ac.put(&quot;param&quot;, param);
-    	ac.put(&quot;params&quot;, UtilString.getParams(param, &quot;,&quot;));
-    	ac.put(&quot;parentContext&quot;, actionContext.get(&quot;parentContext&quot;));
-    	ac.put(&quot;utilBrowser&quot;, actionContext.get(&quot;utilBrowser&quot;));
-    	ac.put(&quot;explorerActions&quot;, actionContext.get(&quot;explorerActions&quot;));
-    	ac.put(&quot;explorerContext&quot;, actionContext.get(&quot;explorerContext&quot;));
-    	ac.put(&quot;textContext&quot;, actionContext.get(&quot;actionContext&quot;));
-    	ac.put(&quot;parentModel&quot;, parentContext.get(&quot;__editModel__model&quot;));</pre>
+<p>&nbsp;&nbsp;&nbsp; 在编写窗口时应避免使用下面的变量名，因为这些变量名是打开窗口时预先设置的。</p>
+
+<ul>
+	<li><strong>parent: org.eclipse.swt.widgets.Shell</strong></li>
+	<li><strong>value: String</strong><br />
+	当前属性编辑器中的值。</li>
+	<li><strong>text: rog.eclipse.swt.widget.Text</strong><br />
+	属性编辑器的Text控件。</li>
+	<li><strong>param: String</strong><br />
+	参数原始值。</li>
+	<li><strong>params: Map&lt;String, String&gt;</strong><br />
+	参数转化为Map后的值。</li>
+	<li><strong>parentContext: ActionContext</strong><br />
+	属性编辑表单的上下文。</li>
+	<li><strong>textContext: ActionContext</strong><br />
+	属性编辑器Text所在的上下文。</li>
+	<li><strong>parentModel: Thing</strong><br />
+	属性编辑器的模型。</li>
+	<li><strong>utilBrowser</strong></li>
+	<li><strong>explorerActions</strong></li>
+	<li><strong>explorerContext </strong></li>
+</ul>
 
 <p><strong>注册窗口</strong></p>
 
-<p>把本事物注册到xworker.swt.xworker.attributeEditor.OpenWindowSets的子节点下，那么在事物的编辑弹出窗口的扩展属性中则可以看到本事物的设置。</p>
+<p>&nbsp;&nbsp;&nbsp; 把本事物注册到xworker.swt.xworker.attributeEditor.OpenWindowSets的子节点下，那么在事物的编辑弹出窗口的扩展属性中则可以看到本事物的设置。</p>
 #$@text#$@
 snotXmlAttribute
 false
@@ -126,12 +130,12 @@ false
   winPath
   sinputtype
   dataSelector
-  sshowLabel
-  true
   ssize
   60
   scolspan
   2
+  sshowLabel
+  true
   sreadOnly
   false
   sinheritDescription

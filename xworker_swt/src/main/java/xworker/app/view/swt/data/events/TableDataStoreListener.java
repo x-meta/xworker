@@ -549,6 +549,9 @@ public class TableDataStoreListener {
 			tableItem.setData("__TableDataStore_ItemRowEditor__", rowEditor);
 		}
         //showTableEditor(self, table, tableItem, record, actionContext);
+		
+		//监听数据对象的变化，自动更新表格
+		new TableDataStoreDataObjectListener(self, record, tableItem, actionContext);
 	}
 	
 	/**
@@ -589,7 +592,7 @@ public class TableDataStoreListener {
         
 	}
 	
-	private static void updateItem(Thing self, TableItem item, DataObject record, ActionContext actionContext) {
+	protected static void updateItem(Thing self, TableItem item, DataObject record, ActionContext actionContext) {
 		//log.info("DataStore: update table item");
         String[] texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));
         

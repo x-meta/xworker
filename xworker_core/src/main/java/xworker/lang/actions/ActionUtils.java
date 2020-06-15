@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.MethodUtils;
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.lang.enums.EnumUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.xmeta.ActionContext;
@@ -39,6 +40,7 @@ import freemarker.template.TemplateException;
 import ognl.OgnlException;
 import xworker.db.sql.SQLConnection;
 import xworker.lang.Configuration;
+import xworker.lang.actions.data.StringDataFactory;
 import xworker.util.StringUtils;
 import xworker.util.UtilData;
 import xworker.util.UtilTemplate;
@@ -97,7 +99,7 @@ public class ActionUtils {
 		return UtilData.getBigDecimal(UtilData.getData(realSelf, attributeName, actionContext), self.getBigDecimal("defaultValue"));
 	}
 		
-	public static byte[] getBytes(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static byte[] getBytes(ActionContext actionContext) throws IOException, TemplateException, OgnlException, DecoderException{
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
@@ -161,22 +163,18 @@ public class ActionUtils {
 		return UtilData.getInt(UtilData.getData(realSelf, attributeName, actionContext), self.getInt("defaultValue"));
 	}
 	
-	public static Object getObject(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getObject(ActionContext actionContext) throws Exception{
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		String value = realSelf.getString(attributeName);
-		if(value != null && value.startsWith("template:")){
-			String template = value.substring(9, value.length());
-			try{
-				return UtilTemplate.processString(actionContext, template);
-			}catch(Exception e){
-				throw new ActionException("Get string from template error", e);
-			}
+		String value = realSelf.getStringBlankAsNull(attributeName);
+		if(value == null) {
+			return null;
 		}
 		
-		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		Object obj = StringDataFactory.getStringData(realSelf, self, value, actionContext);
+		
 		if(obj instanceof String && self.getBoolean("variable")) {
 			Object var = actionContext.get((String) obj);
 			if(var != null) {
@@ -421,7 +419,7 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static Object getStringList(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getStringList(ActionContext actionContext) throws Exception{
 		Thing self = (Thing) actionContext.get("self");
 		Object data = getObject(actionContext);
 		if(data instanceof String) {
@@ -476,7 +474,7 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static String[] getStringArray(ActionContext actionContext) throws IOException, TemplateException, OgnlException {
+	public static String[] getStringArray(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Object data = getObject(actionContext);
 		if(data instanceof String) {
@@ -908,7 +906,7 @@ public class ActionUtils {
 		return a;
 	}
 	
-	public static Object getObjectOrChildActionResult(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getObjectOrChildActionResult(ActionContext actionContext) throws Exception{
 		Object value = getObject(actionContext);
 		if(value == null){
 			value = getChildActionResult(actionContext);
@@ -916,7 +914,7 @@ public class ActionUtils {
 		return value;
 	}
 	
-	public static Object getObjectOrChildsActionResultList(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getObjectOrChildsActionResultList(ActionContext actionContext) throws Exception{
 		Object value = getObject(actionContext);
 		if(value == null){
 			value = getChildsActionResultList(actionContext);
@@ -924,7 +922,7 @@ public class ActionUtils {
 		return value;
 	}
 	
-	public static Object getObjectOrChildsActionResultArray(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getObjectOrChildsActionResultArray(ActionContext actionContext) throws Exception{
 		Object value = getObject(actionContext);
 		if(value == null){
 			value = getChildsActionResultArray(actionContext);
@@ -1216,7 +1214,7 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings({"rawtypes"})
-	public static Object getJsonObject(ActionContext actionContext) throws OgnlException, IOException, TemplateException {
+	public static Object getJsonObject(ActionContext actionContext) throws Exception {
 		Object object = getObject(actionContext);
 		
 		if(object instanceof String) {
@@ -1235,7 +1233,7 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes"})
-	private static void filterMapObject(Map map, ActionContext actionContext) throws OgnlException, IOException {
+	public static void filterMapObject(Map map, ActionContext actionContext) throws OgnlException, IOException {
 		for(Object key : map.keySet()) {
 			Object value = map.get(key);
 			if(value instanceof String) {
@@ -1263,7 +1261,7 @@ public class ActionUtils {
 		}
 	}
 	
-	public static ThingManager getThingManager(ActionContext actionContext) throws IOException, TemplateException, OgnlException {
+	public static ThingManager getThingManager(ActionContext actionContext) throws Exception {
 		Thing self = actionContext.getObject("self");
 		Thing realSelf = getSelf(actionContext);
 		
@@ -1282,7 +1280,7 @@ public class ActionUtils {
 		return thingManager;
 	}
 	
-	public static Category getCategory(ActionContext actionContext) throws IOException, TemplateException, OgnlException {
+	public static Category getCategory(ActionContext actionContext) throws Exception {
 		Thing self = actionContext.getObject("self");
 		Thing realSelf = getSelf(actionContext);
 		

@@ -92,7 +92,7 @@ public class ShellActions {
 		}
 				
 		if(!checker.have){
-			if(Display.getCurrent().getActiveShell() == null){
+			if(Display.getCurrent() == null || Display.getCurrent().getActiveShell() == null){
 				System.exit(0);
 			}
 		}

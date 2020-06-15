@@ -13,9 +13,11 @@ import xworker.lang.executor.Executor;
 
 public class Configuration {
 	private static final String TAG = Configuration.class.getName();
+	private static final String CONFIG_PROFILE_KEY = "__cofnig__profile__";
 	//配置缓存
 	private static Map<String, ThingEntry> cache = new HashMap<String, ThingEntry>();	
-	static String profile;
+	private static String profile;
+	private static ThreadLocal<String> profileLocal = new ThreadLocal<String>();
 	
 	//初始化系统的配置，如果存在
 	static {
@@ -52,8 +54,35 @@ public class Configuration {
 		Configuration.profile = profile;
 	}
 	
+	
+	/**
+	 * 获取当前的配置，有限返回Local的设置。
+	 * 
+	 * @return
+	 */
 	public static String getProfile() {
-		return profile;
+		String p = profileLocal.get();
+		if(p != null) {
+			return p;
+		}else {
+			return profile;
+		}
+	}
+	
+	/**
+	 * 设置ProfileLocal，应改在finally中调用clearProfileLocal()。
+	 * 
+	 * @param profile
+	 */
+	public static void setProfileLocal(String profile) {
+		profileLocal.set(profile);
+	}
+	
+	/**
+	 * 清除ProfileLocal。
+	 */
+	public static void clearProfileLocal() {
+		profileLocal.set(null);;
 	}
 	
 	public static Thing getConfiguration(String name, Thing currentThing, ActionContext actionContext) {
@@ -140,7 +169,7 @@ public class Configuration {
 	public static Thing getProfile(Thing config, ActionContext actionContext) {
 		Thing profile = null;
 		List<Thing> profiles = config.getChilds("Profile");
-		String profileName = Configuration.profile;
+		String profileName = getProfile();
 		if(profileName == null) {						
 			profileName = config.doAction("getProfile", actionContext);
 		}

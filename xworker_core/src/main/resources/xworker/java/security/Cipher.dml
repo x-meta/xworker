@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Cipher" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.actions.SelfAction"
+     group="java.security" th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions">
+    <description><![CDATA[<p>Java的加密和解密。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>String getAlgorithm()</strong><br />
+	返回算法的名称。<br />
+	　</li>
+	<li><strong>byte[] getKey()</strong><br />
+	返回密钥的byte数组。<br />
+	&nbsp;</li>
+	<li><strong>AlgorithmParameters 或&nbsp;</strong>&nbsp; <strong>AlgorithmParameterSpec getParams()</strong><br />
+	返回算法的参数。<br />
+	&nbsp;</li>
+	<li><strong>SecureRandom getRandom()</strong><br />
+	返回随机对象。<br />
+	&nbsp;</li>
+	<li><strong>Object getInput()</strong><br />
+	返回输入。可以是String、byte[]、File和InputStream()等。<br />
+	&nbsp;</li>
+	<li><strong>String getMode()</strong><br />
+	返回是加密(encrypt)还是解密(decrypt)。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.java.security.CipherActions" methodName="run"></JavaAction>
+        <GetString name="getAlgorithm" _xmeta_id_="getAlgorithms" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="algorithm"></GetString>
+        <GetBytes name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetBytes"
+             attributeName="key"></GetBytes>
+        <GetObject name="getParams" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="params"></GetObject>
+        <GetObject name="getRandom" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="random"></GetObject>
+        <GetString name="getMode" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="mode"></GetString>
+        <GetString name="getTransformation" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="transformation"></GetString>
+        <GetObject name="getInput" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="input"></GetObject>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="mode" inputtype="select" default="decrypt">
+        <value name="decrypt" value="decrypt"></value>
+        <value name="encrypt" value="encrypt"></value>
+    </attribute>
+    <attribute name="transformation" inputtype="inputSelect" size="40">
+        <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+            <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+        </DataStore>
+    </attribute>
+    <attribute name="algorithm" _xmeta_id_="algorithms" inputtype="inputSelect" size="40">
+        <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+            <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+        </DataStore>
+    </attribute>
+    <attribute name="key" size="50"></attribute>
+    <attribute name="params" inputtype="50"></attribute>
+    <attribute name="random" inputtype="50"></attribute>
+    <attribute name="input" inputtype="textarea"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <sswtMenus>
+        <menuDefine>
+            <menu name="Cipher"></menu>
+        </menuDefine>
+        <menuSetting menuType="Cipher">
+            <menu name="keyGenreateor" label="Key生成工具"></menu>
+        </menuSetting>
+    </sswtMenus>
+</thing>

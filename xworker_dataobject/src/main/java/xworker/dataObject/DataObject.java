@@ -512,7 +512,11 @@ public class DataObject extends HashMap<String, Object> {
 			return this;
 		}else {
 			DataObject dataObj = (DataObject) doAction("load", actionContext);
-			if(dataObj != null && dataObj != this) {
+			if(dataObj == null) {
+				return null;
+			}
+			
+			if(dataObj != this) {
 				this.putAll(dataObj);
 			}
 			

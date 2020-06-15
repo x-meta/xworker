@@ -1,4 +1,4 @@
-^1557744848126
+^1591930584644
 @
 sname
 ByteArrayEntity
@@ -60,13 +60,27 @@ false
     Scode
 #$@text#$@
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+
+def contentType = null;
+def mimeType = self.doAction("getMimeType", actionContext);
+def charset = self.doAction("getCharset", actionContext);
+if(mimeType != null && mimeType != "" && charset != null && charset != ""){
+    contentType = ContentType.create(mimeType, charset);
+} else if(mimeType != null){
+    contentType = ContentType.create(mimeType);
+}
 
 def bytes = self.doAction("getBytes", actionContext);
 //def bytes = Ognl.getValue(self.bytes, actionContext);
 if(bytes == null){
     return null;
 }else{
-    return new ByteArrayEntity(bytes);
+    if(contentType != null){
+        return new ByteArrayEntity(bytes, contentType);
+    }else{
+        return new ByteArrayEntity(bytes);
+    }
 }
 #$@text#$@
     sinterpretationType
@@ -74,6 +88,8 @@ if(bytes == null){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -100,8 +116,6 @@ if(bytes == null){
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -124,6 +138,104 @@ if(bytes == null){
     false
     sid
     getBytes
+    @/@actions/@getMimeType
+    sname
+    getMimeType
+    sattributeName
+    mimeType
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getMimeType
+    @/@actions/@getCharset
+    sname
+    getCharset
+    sattributeName
+    charset
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getCharset
   @/@name
   sname
   name
@@ -166,9 +278,50 @@ if(bytes == null){
   false
   sid
   label
-  @/@bytes
+  @/@mimeType
   sname
-  bytes
+  mimeType
+  sinputtype
+  openWindow
+  ssize
+  50
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sinputattrs
+  xworker.things.p2020.p06.p12.MimeTypeDialog|returnType=contentType
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>同时设置charset才能生效。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  mimeType
+  @/@charset
+  sname
+  charset
   sreadOnly
   false
   sinheritDescription
@@ -181,6 +334,39 @@ if(bytes == null){
   true
   LallowNegative
   true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  charset
+  @/@bytes
+  sname
+  bytes
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex

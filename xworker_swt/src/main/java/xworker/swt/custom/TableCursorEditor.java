@@ -5,9 +5,12 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
 import org.eclipse.swt.custom.TableCursor;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.xmeta.ActionContext;
@@ -16,7 +19,7 @@ import org.xmeta.Thing;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 
-public class TableCursorEditor extends ItemEditor{
+public class TableCursorEditor extends ItemEditor implements MenuDetectListener{
 	private final String CURSOR = "__TableCursorEditor_key_curor__";
 	Table table;
 	TableCursor tableCursor;
@@ -36,7 +39,8 @@ public class TableCursorEditor extends ItemEditor{
 						
 			tableCursor = new TableCursor(table, style);
 			this.cursor = tableCursor;
-			table.setData(CURSOR, cursor);			
+			table.setData(CURSOR, cursor);	
+			tableCursor.addMenuDetectListener(this);
 			
 			//背景颜色
 			Color background = (Color) ResourceManager.createResource(thing.getString("background"), 
@@ -111,5 +115,14 @@ public class TableCursorEditor extends ItemEditor{
     	TableCursorEditor editor = new TableCursorEditor(table, self, actionContext);
     	actionContext.g().put(self.getMetadata().getName(), editor);
     }
+
+	@Override
+	public void menuDetected(MenuDetectEvent event) {
+		Menu menu = table.getMenu();
+		if(menu != null && !menu.isDisposed()) {
+			menu.setLocation(event.x, event.y);
+			menu.setVisible(true);
+		}
+	}
 
 }

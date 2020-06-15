@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="CipherActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <thing name="GenerateKey" extends="xworker.lang.actions.SelfAction" group="java.security">
+        <description><![CDATA[<p>用于生成一个新的对称密钥。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.java.security.CipherActions" methodName="generateKey"></JavaAction>
+            <GetString name="getAlgorithm" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="algorithm"></GetString>
+            <GetInt name="getKeysize" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+                 attributeName="keysize"></GetInt>
+            <GetObject name="getParams" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="params"></GetObject>
+            <GetObject name="getRandom" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="random"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="algorithm" _xmeta_id_="algorithms" inputtype="inputSelect" size="40">
+            <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+                <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+            </DataStore>
+        </attribute>
+        <attribute name="keysize"></attribute>
+        <attribute name="params"></attribute>
+        <attribute name="random"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="CreateSecureRandom" group="java.security">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.java.security.CipherActions" methodName="createSecureRandom"></JavaAction>
+            <GetString name="getAlgorithm" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="algorithm"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="algorithm" _xmeta_id_="algorithms" inputtype="inputSelect" size="40">
+            <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+                <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+            </DataStore>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Encrypt" extends="xworker.lang.actions.SelfAction,xworker.java.security.SecurityIndex"
+         group="java.security">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.java.security.CipherActions" methodName="encrypt"></JavaAction>
+            <GetString name="getTransformation" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="transformation"></GetString>
+            <GetObject name="getInput" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="input"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="transformation" inputtype="inputSelect" size="40">
+            <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+                <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+            </DataStore>
+        </attribute>
+        <attribute name="input" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Decrypt" _xmeta_id_="Encrypt1" extends="xworker.lang.actions.SelfAction,xworker.java.security.SecurityIndex"
+         group="java.security">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.java.security.CipherActions" methodName="decrypt"></JavaAction>
+            <GetString name="getTransformation" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="transformation"></GetString>
+            <GetObject name="getInput" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="input"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="transformation" inputtype="inputSelect" size="40">
+            <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+                <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+            </DataStore>
+        </attribute>
+        <attribute name="input" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

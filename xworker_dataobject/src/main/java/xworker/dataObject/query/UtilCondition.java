@@ -42,13 +42,13 @@ public class UtilCondition {
 	public static final byte eq = 1;
 	/** ！= */
 	public static final byte uneq = 2;
-	/** &lt; */
-	public static final byte gt = 3;
-	/** &lt;= */
-	public static final byte gteq = 4;
 	/** &gt; */
-	public static final byte lt = 5;
+	public static final byte gt = 3;
 	/** &gt;= */
+	public static final byte gteq = 4;
+	/** &lt; */
+	public static final byte lt = 5;
+	/** &lt;= */
 	public static final byte lteq = 6;
 	/** like */
 	public static final byte like = 7;

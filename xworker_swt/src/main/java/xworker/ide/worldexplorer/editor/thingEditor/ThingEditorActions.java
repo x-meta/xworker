@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -2806,7 +2807,7 @@ public class ThingEditorActions {
 		    ((Button) actionContext.get("viewMarkButton")).dispose();
 		    ((Button) actionContext.get("markButton")).dispose();
 		    ((Button) actionContext.get("guideButton")).dispose();
-		    ((Button) actionContext.get("assistCoolItem")).dispose();
+		    ((Item) actionContext.get("assistCoolItem")).dispose();
 		}
 		return null;
 	}
