@@ -20,7 +20,7 @@ public class ShellGuideThread implements Runnable{
 			}
 			
 			try {
-				guide.parent.getDisplay().syncExec(new Runnable() {
+				guide.maskComposite.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						try {
 							guide.checkCurrentNode();

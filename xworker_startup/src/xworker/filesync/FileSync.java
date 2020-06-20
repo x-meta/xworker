@@ -627,9 +627,6 @@ public class FileSync {
 			}
 						
 			String downloadUrl = p.getProperty("url", "https://www.xworker.org/do?sc=xworker.tools.update.Download");
-			if(project != null) {
-				downloadUrl = downloadUrl + "&project=" + project;
-			}
 			
 			String useMirror = p.getProperty("useMirror");
 			System.out.println("useMirror=" + useMirror);
@@ -639,6 +636,9 @@ public class FileSync {
 				if(url != null && !"".equals(url)) {
 					downloadUrl = url + "?sc=xworker.tools.update.Download";
 				}
+			}
+			if(project != null) {
+				downloadUrl = downloadUrl + "&project=" + project;
 			}
 			FileSync.download(downloadUrl, rootDir, fileListFile);
 		}catch(Exception e){

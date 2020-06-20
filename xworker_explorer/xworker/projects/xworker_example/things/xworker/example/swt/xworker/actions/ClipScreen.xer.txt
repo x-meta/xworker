@@ -1,4 +1,4 @@
-^1469605078847
+^1592299166991
 @
 sname
 shell
@@ -62,8 +62,6 @@ sredraw
 true
 svisible
 true
-sxw_cl_global
-false
 sdescriptors
 xworker.swt.widgets.Shell
 sinheritDescription
@@ -81,8 +79,6 @@ false
   shellFillLayout
   stype
   SWT.HORIZONTAL
-  sxw_cl_global
-  false
   sdescriptors
   xworker.swt.Layouts/@FillLayout
   sinheritDescription
@@ -134,8 +130,6 @@ false
   true
   svisible
   true
-  sxw_cl_global
-  false
   sdescriptors
   xworker.swt.Widgets/@Group
   sinheritDescription
@@ -150,35 +144,29 @@ false
   false
   sid
   group
-    @/@group/@groupRowLayout
+    @/@group/@GridLayout
     sname
-    groupRowLayout
-    sfill
-    false
-    sjustify
+    GridLayout
+    smakeColumnsEqualWidth
     false
     smarginWidth
-    0
+    5
     smarginHeight
-    0
+    5
     smarginLeft
-    3
+    0
     smarginTop
-    3
+    0
     smarginRight
-    3
+    0
     smarginBottom
-    3
-    spack
-    true
-    sspacing
-    3
-    stype
-    SWT.HORIZONTAL
-    swrap
-    true
+    0
+    shorizontalSpacing
+    5
+    sverticalSpacing
+    5
     sdescriptors
-    xworker.swt.Layouts/@RowLayout
+    xworker.swt.Layouts/@GridLayout
     sinheritDescription
     false
     sth_createIndex
@@ -187,10 +175,16 @@ false
     false
     sth_registDisabled
     false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
     sth_mark
     false
+    sth_registQueryOnlySelf
+    false
     sid
-    groupRowLayout
+    GridLayout
     @/@group/@clipButton
     sname
     clipButton
@@ -212,8 +206,6 @@ false
     true
     svisible
     true
-    sxw_cl_global
-    false
     sdescriptors
     xworker.swt.Widgets/@Button
     sinheritDescription
@@ -264,35 +256,50 @@ false
         false
         sid
         Listener
-          @/@group/@clipButton/@Listeners/@Listener/@ClipScreen
+          @/@group/@clipButton/@Listeners/@Listener/@GroovyAction
           sname
-          ClipScreen
-          stype
-          manual
-          sinterpretationType
-          Self
-          sattributeTemplate
-          false
-          schildsAttributeTemplate
-          false
-          svarScope
-          Local
+          GroovyAction
           sisSynchronized
           false
           sthrowException
           true
           suseOtherAction
           false
+          svarScope
+          Local
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.eclipse.swt.graphics.Image;
+
+//进行屏幕截图
+def imageData = clipScreen(actionContext);
+
+if(imageData != null){
+    def image = new Image(clipButton.getDisplay(), imageData);
+    canvas.setImage(image);
+    
+    //销毁之前的截图
+    def oldImage = actionContext.get("oldImage");
+    if(oldImage != null){
+        oldImage.dispose();
+    }
+    actionContext.g().put("oldImage", image);
+}
+#$@text#$@
+          sinterpretationType
+          Action
           screateLocalVarScope
           false
           ssaveReturn
           false
-          sdisableGlobalContext
+          sswitchResult
           false
           sdebugLog
           false
           sdescriptors
-          xworker.swt.actions.UtilActions/@ClipScreen
+          xworker.lang.actions.Actions/@GroovyAction
           sinheritDescription
           false
           sth_createIndex
@@ -301,7 +308,143 @@ false
           false
           sth_registDisabled
           false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
           sth_mark
           false
+          sth_registQueryOnlySelf
+          false
           sid
-          ClipScreen
+          GroovyAction
+            @/@group/@clipButton/@Listeners/@Listener/@GroovyAction/@ActionDefined
+            sname
+            ActionDefined
+            sdescriptors
+            xworker.lang.actions.Inout/@ActionDefined
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_noThingRegistViewer
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sth_registQueryOnlySelf
+            false
+            sid
+            ActionDefined
+              @/@group/@clipButton/@Listeners/@Listener/@GroovyAction/@ActionDefined/@ClipScreen
+              sname
+              clipScreen
+              stype
+              manual
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
+              sisSynchronized
+              false
+              sthrowException
+              true
+              screateLocalVarScope
+              false
+              ssaveReturn
+              false
+              sswitchResult
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
+              sdescriptors
+              xworker.swt.actions.UtilActions/@ClipScreen
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_mark
+              false
+              sid
+              ClipScreen
+    @/@group/@canvas
+    sname
+    canvas
+    sdescriptors
+    xworker.swt.Widgets/@ImageViewer
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    canvas
+      @/@group/@canvas/@GridData
+      sname
+      GridData
+      sstyle
+      FILL_BOTH
+      shorizontalIndent
+      0
+      swidth
+      -1
+      sheight
+      -1
+      shorizontalAlignment
+      BEGINNING
+      sverticalAlignment
+      CENTER
+      shorizontalSpan
+      1
+      sverticalSpan
+      1
+      sgrabExcessHorizontalSpace
+      false
+      sgrabExcessVerticalSpace
+      false
+      sdescriptors
+      xworker.swt.layout.LayoutDatas/@GridData
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      GridData

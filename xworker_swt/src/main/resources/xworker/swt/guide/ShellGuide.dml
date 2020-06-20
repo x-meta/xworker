@@ -2,27 +2,93 @@
 
 <thing name="ShellGuide" descriptors="xworker.lang.MetaDescriptor3" icon="icons/group_go.png">
     <description><![CDATA[<p>打开一个shell，遮住一个Composite，为这个Composite提供向导。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Composite getMaskComposite()</strong><br />
+	需要遮罩的Composite，也是需要在其上面执行向导的Composite。<br />
+	默认使用parent变量。<br />
+	&nbsp;</li>
+	<li><strong>ActionContext getActionContext()</strong><br />
+	返回SWT界面所在的变量上下文。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
 ]]></description>
     <actions>
         <JavaAction name="create" outerClassName="xworker.swt.guide.ShellGuide" methodName="create"></JavaAction>
         <GetObject name="getActionContext" descriptors="xworker.lang.actions.ActionUtil/@GetData"
              attributeName="actionContext"></GetObject>
+        <GetObject name="getMaskComposite" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="maskComposite"></GetObject>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
     <attribute name="en_label"></attribute>
-    <attribute name="actionContext" default="var:actionContext"></attribute>
+    <attribute name="maskComposite" _xmeta_id_="parent" size="40">
+        <description><![CDATA[<p>需要用阴影遮住的Composite，监听该Composite的Dispose事件，如果dispose了，那么向导也会退出。</p>
+
+<p>如果没有设置，默认使用parent变量。</p>
+]]></description>
+    </attribute>
+    <attribute name="actionContext" default="var:actionContext">
+        <description><![CDATA[<p>SWT界面的上下文，不是向导的上下文，执行向导节点的动作时使用该上下文，因为向导是要操控SWT界面的。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </attribute>
     <attribute name="description" inputtype="html"></attribute>
     <thing name="Guide" icon="icons/user.png">
         <description><![CDATA[<p><strong>向导节点</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 在向导上显示文本，也可以定位到某个控件，使得这个控件可以输入。</p>
 
-<p><strong>&nbsp;可以重写的方法</strong></p>
+<p>&nbsp;&nbsp;&nbsp; 可以不设置要定义的控件。</p>
+
+<p><strong>定位控件的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 按照以下顺序获取控件，当获取后就不执行后续的方法了。</p>
+
+<ol>
+	<li>如果getActiveControl()返回不为null。</li>
+	<li>通过模型的路径来定位控件。</li>
+</ol>
+
+<p><strong>自动进入下一向导节点的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以重写<strong>boolean finished()</strong>方法，如果finished()方法返回ture，那么自动进入下一节点。</p>
+
+<p><strong>可以重写的方法</strong></p>
 
 <ul>
-	<li><strong>void init()</strong><br />
-	初始化，变量上下文是parentContext，即向导所要展示的SWT界面的变量上下文。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+	<li><strong>void init(ShellGuide guide, Thing guideNode)</strong><br />
+	初始化，变量上下文是parentContext，即向导所要展示的SWT界面的变量上下文。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>boolean finished(ShellGuide guide, Thing guideNode)</strong><br />
+	是否已经结束。<br />
+	&nbsp;</li>
+	<li><strong>Control getActiveControl()</strong><br />
+	返回要激活的控件。<br />
+	&nbsp;</li>
+	<li><strong>Composite getActiveControlParent()</strong><br />
+	返回要定位的控件所属的父控件，可以不是直接的父。<br />
+	&nbsp;</li>
+	<li><strong>Thing getActiveControlThing()</strong><br />
+	返回要激活的控件的模型。<br />
+	&nbsp;</li>
+	<li><strong>boolean isAttribute()</strong><br />
+	要激活的控件是否是属性编辑器。<br />
+	&nbsp;</li>
+	<li><strong>String getClassName()</strong><br />
+	如果要激活的控件是属性编辑器，需要指定激活哪一个控件，用简单类名。<br />
+	&nbsp;</li>
+	<li><strong>Composite getMaskComposite()</strong><br />
+	设置新的需要遮罩的Composite，如果设置了，后续向导延续使用该Composite。<br />
+	&nbsp;</li>
+	<li><strong>ActionContext getMaskCompositeActionContext()</strong><br />
+	如果设置了新的需要遮罩的Composite，可以指定其变量上下文。<br />
+	&nbsp;</li>
 </ul>
 
 <p>&nbsp;&nbsp;</p>
@@ -32,17 +98,61 @@
             <NOOP name="finished"></NOOP>
             <GetObject name="getActiveControlParent" descriptors="xworker.lang.actions.ActionUtil/@GetData"
                  attributeName="activeControlParent"></GetObject>
+            <GetObject name="getActiveControl" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="activeControl"></GetObject>
+            <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="activeControlThing"></GetThing>
+            <GetBoolean name="isAttribute" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="activeControlIsAttribute"></GetBoolean>
+            <GetString name="getClassName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="activeControlClassName"></GetString>
+            <GetObject name="getMaskComposite" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="maskComposite"></GetObject>
+            <GetObject name="getMaskCompositeActionContext" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="maskCompositeActionContext"></GetObject>
+            <GetLong name="getDelay" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+                 attributeName="delay"></GetLong>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
-        <attribute name="activeControlParent" size="50">
-            <description><![CDATA[<p>要激活的Control的父，如果没有指定使用向导演示默认的。</p>
+        <attribute name="delay" default="5000">
+            <description><![CDATA[<p>当某个节点演示未到delay的时间时，即时finished()=true，也不进入下一个演示节点。</p>
+
+<p>单位毫秒。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControlThing" inputtype="dataSelector" size="60"></attribute>
-        <attribute name="activeControlIsAttribute" inputtype="truefalse" default="false"></attribute>
+        <attribute name="activeControl">
+            <description><![CDATA[<p>要激活的控件，即可以输入不会被遮罩的控件。</p>
+]]></description>
+        </attribute>
+        <attribute name="activeControlParent" size="50">
+            <description><![CDATA[<p>一般通过控件模型的路径来搜索控件，但一个界面中的多个控件可能是同一个模型创建的，此时需要指定对应的父控件，才能准确查找到需要激活的控件。</p>
+
+<p>默认使用当前遮罩的Composite。</p>
+]]></description>
+        </attribute>
+        <attribute name="activeControlThing" inputtype="dataSelector" size="60">
+            <description><![CDATA[<p>控件的模型路径，用来定位控件。</p>
+]]></description>
+        </attribute>
+        <attribute name="activeControlIsAttribute" inputtype="truefalse" default="false">
+            <description><![CDATA[<p>控件是否是属性编辑器。</p>
+]]></description>
+        </attribute>
         <attribute name="activeControlClassName" _xmeta_id_="controlClassName">
             <description><![CDATA[<p>如果不为空，那么会比较控件的类的SimpleName，符合的才是要激活的的控件。</p>
+]]></description>
+        </attribute>
+        <attribute name="maskComposite" size="40">
+            <description><![CDATA[<p>设置新的maskComposite。</p>
+]]></description>
+        </attribute>
+        <attribute name="maskCompositeActionContext">
+            <description><![CDATA[<p>如果设置了新的maskComposite，那么可以指定其所在的变量上下文。</p>
+
+<p>如果没有设置，默认通过Desinger从控件上获取。如果Designer为开启，那么可能获取不到而导致向导失败。</p>
+
+<p>&nbsp;</p>
 ]]></description>
         </attribute>
         <attribute name="description" inputtype="html"></attribute>
@@ -52,4 +162,8 @@
             <attribute name="name"></attribute>
         </thing>
     </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="guide" varName="guide" scope="2" className="xworker.swt.guide.ShellGuide"></Variable>
+        <Variable name="guideNode" varName="guideNode" scope="2" className="org.xmeta.Thing"></Variable>
+    </VariablesDescs>
 </thing>
