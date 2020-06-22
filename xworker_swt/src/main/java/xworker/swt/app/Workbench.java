@@ -366,6 +366,13 @@ public class Workbench {
 			CoolBarCreator.initCoolBar(mainCoolBar);
 		}
 		
+		//RightCoolbar
+		createItems(self, "rightCoolBar", "getRightCoolBar", "rightCoolBar", ac);
+		CoolBar rightCoolBar = ac.getObject("rightCoolBar");
+		if(rightCoolBar != null) {
+			CoolBarCreator.initCoolBar(rightCoolBar);
+		}
+		
 		//StatusBar
 		createItems(self, "statusBar", "getStatusBar", "mainStatusBar", ac);
 		CoolBar mainStatusBar = ac.getObject("mainStatusBar");

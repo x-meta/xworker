@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ThingEditor" descriptors="xworker.lang.MetaDescriptor3">
+    <actions>
+        <GroovyAction name="create">
+            <code><![CDATA[import groovy.lang.Binding;
+
+import org.xmeta.World;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.ui.swt.SwtBorder;
+import xworker.swt.events.SwtListener;
+import xworker.ui.editor.OutlineTreeDragAndDrop;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.MessageBox;
+
+import java.util.HashMap;
+import xworker.ide.assistor.Assistor;
+
+import xworker.ide.assistor.guide.actions.SelectProjectTree;
+
+//创建编辑界面和动作等
+def outlineThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
+def editorThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+def actionsThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions");
+
+actionContext.peek().put("parent", editorParent);
+editorThing.doAction("create", actionContext);
+
+actionContext.peek().put("parent", outlineParent);
+outlineThing.doAction("create", actionContext);
+
+actionsThing.doAction("create", actionContext);
+
+if(actionContext.get("thing") != null){    
+    def currentObj = actionContext.get("thing");
+    def thing = currentObj.getRoot();
+    def path = thing.metadata.path;
+    //log.info(path);
+    def tab = null;
+    for(item in centerTabFolder.items){
+        if(item.getData("tabPath") == path){
+            tab = item;
+        }
+    }
+       
+    def editorContext = null;
+    def editorActions = null;
+    if(tab == null){
+        //Tab不存在，创建新的Tab
+        tab = new CTabItem(centerTabFolder, SWT.NONE);
+        tab.setText(thing.getMetadata().getLabel());
+        tab.setToolTipText(thing.metadata.path);     
+        tab.setData("path", path);  
+        tab.setData("tabPath", path); 
+        //编辑事物的背景流程
+        tab.setData("backgroundFlow", "xworker.ide.worldexplorer.swt.flows.ThingEditorBackgroundFlow");
+       
+        //事物编辑器的概要、子事物、编辑事物等界面定义
+        def treeThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
+        //def childThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@propertiesComposite");
+        def contentThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+        def scriptThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions");
+                
+        ActionContext newContext = new ActionContext();
+        newContext.put("contentTab", tab);
+        newContext.put("explorerActions", actions);
+        newContext.put("explorerContext", actionContext);
+        newContext.put("utilBrowser", utilBrowser);
+        newContext.put("parent", outlineComposite);
+        newContext.put("outlineComposite", outlineComposite);
+        newContext.put("outlineStackLayout", outlineStackLayout);
+        
+        def scripts = scriptThing.doAction("create", newContext);
+        
+        def outlineTree = treeThing.doAction("create", newContext);
+        //OutlineTreeDragAndDrop.attach(outlineTree, newContext);
+        
+        //newContext.put("parent", childsComposite);
+        //def childComposite = childThing.doAction("create", newContext);
+        
+        newContext.put("parent", centerTabFolder);
+        def contentComposite = contentThing.doAction("create", newContext);        
+        
+        tab.setControl(contentComposite);
+        tab.setData("outlineTree", outlineTree);
+        //tab.setData("childComposite", childComposite);
+        tab.setData("scripts", scripts);
+        tab.setData("actionContext", newContext);
+        tab.setData("thingPath", thing.metadata.path);
+        tab.setData("thing", thing);
+        if(actionContext.get("thingImage") != null){
+            tab.setImage(thingImage);
+        }
+        
+        //显示Tab
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = outlineTree;
+        outlineComposite.layout();
+        //childsCompositeStackLayout.topControl = childComposite;
+        //childsComposite.layout();
+        
+        SwtBorder.attach(newContext.titleComposite);
+        SwtBorder.attach(newContext.childTitleComposite);
+
+        //显示数据对象
+        scripts.doAction("setThing", ["thing":thing]);
+        
+        if(currentObj != thing){
+            //此处要异步执行，因为ubuntu缘故setThing方法中有异步操作
+            outlineTree.display.asyncExec({
+                scripts.doAction("selectThing", ["thing":currentObj]);
+            });
+        }
+        
+        editorContext = newContext;
+        editorActions = scripts;
+    }else{
+        centerTabFolder.setSelection(tab);
+        outlineStackLayout.topControl = tab.getData("outlineTree");
+        outlineComposite.layout();
+        
+        //childsCompositeStackLayout.topControl = tab.getData("childComposite");
+        //childsComposite.layout();
+           
+        def scripts = tab.getData("scripts");        
+        if(currentObj != thing){            
+            scripts.doAction("selectThing", ["thing":currentObj]);
+        }
+        editorContext = scripts.actionContext;
+        editorActions = scripts;
+    }
+    
+    //通知辅助者选中了一个事物编辑器
+     Assistor.thingEditorSelected(tab, editorContext, editorActions);
+    
+    SelectProjectTree.selectProject("thing", thing.getMetadata().getPath());
+    return editorContext;
+}]]></code>
+        </GroovyAction>
+    </actions>
+</thing>

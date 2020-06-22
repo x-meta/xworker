@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Workbench name="SimpleExplorerNew" descriptors="xworker.swt.app.Workbench" bottomTab="true"
+     editSelf="false">
+    <Views>
+        <View name="nav" _xmeta_id_="xworker_nav" label="项目导航" id="xworker_nav" type="left"
+             composite="xworker.swt.app.views.ProjectTree/@tree" closeable="false"></View>
+        <View name="outline" _xmeta_id_="xworker_outline" label="概要" id="xworker_outline"
+             type="right" composite="xworker.swt.app.views.Outline/@outlineMainComposite"
+             closeable="false"></View>
+        <View name="console" _xmeta_id_="xworker_console" label="控制台" id="xworker_console"
+             type="bottom" composite="xworker.swt.app.views.SystemConsole/@styledText"
+             closeable="false"></View>
+        <View name="progress" _xmeta_id_="xworker_progress" label="进度" id="xworker_progress"
+             type="bottom" composite="xworker.ide.task.UserTaskManagerTabItem/@progressComposite/@composite"
+             closeable="false"></View>
+    </Views>
+    <CoolBar descriptors="xworker.swt.app.Workbench/@CoolBar,xworker.swt.Widgets/@CoolBar"
+         FLAT="true">
+        <Resource name="resources">
+            <Image name="saveImage" imageFile="/xworker/ide/images/save.gif"></Image>
+            <Image name="newImage" imageFile="/xworker/ide/images/new.gif"></Image>
+            <Image name="openImage" imageFile="/xworker/ide/images/open.gif"></Image>
+            <Color name="tabSelectBackground" type="" rgb="&quot;#D2E9FF&quot;"></Color>
+            <Image name="flowImage" imageFile="/xworker/ide/images/thingFlow.GIF"></Image>
+            <Image name="xImage" imageFile="icons/application_key.png"></Image>
+            <Image name="openThingImage" imageFile="/xworker/ide/images/openThing.gif"></Image>
+            <Image name="openActionImage" imageFile="/xworker/ide/images/openAction.gif"></Image>
+            <Image name="manongImage" _xmeta_id_="manong" imageFile="icons/world.png"></Image>
+            <Image name="taskImage" imageFile="icons/clock_go.png"></Image>
+            <Image name="flowTaskImage" imageFile="icons/chart_curve_go.png"></Image>
+            <Image name="guideImage" imageFile="icons/user.png"></Image>
+            <Image name="templateImage" imageFile="icons/shape_move_forwards.png"></Image>
+            <Image name="noteImage" imageFile="icons/note_edit.png"></Image>
+            <Image name="monitorImage" imageFile="icons/clock_pause.png"></Image>
+            <Image name="debugEditImage" imageFile="icons/bug_edit.png"></Image>
+            <Image name="functionImage" imageFile="icons/page_white_actionscript.png"></Image>
+            <Image name="topicImage" imageFile="icons/application_home.png"></Image>
+            <I18nResource>
+                <resource name="helpSpriteButton" label="帮助小精灵" en_label="Help Sprite"></resource>
+            </I18nResource>
+            <Image name="serviceImage" imageFile="icons/cog.png"></Image>
+            <Image name="databaseImage" imageFile="icons/database_gear.png"></Image>
+            <Image name="dataObjectImage" imageFile="icons/table_multiple.png"></Image>
+            <Image name="messageImage" imageFile="icons/email.png"></Image>
+            <Image name="thingImage" imageFile="icons/xworker/dataObject.gif"></Image>
+            <Image name="monitorImage" _xmeta_id_="monitorImage1" imageFile="icons/monitor.png"></Image>
+            <Image name="projectNavImage" imageFile="icons/org/eclipse/swt/widgets/Tree.gif"></Image>
+            <Image name="outlineImage" imageFile="icons/org/eclipse/eview16/outline_co.gif"></Image>
+            <Image name="progressImage" imageFile="icons/org/eclipse/progress/pview.gif"></Image>
+            <Image name="aiLearningImage" imageFile="icons/building_go.png"></Image>
+            <Image name="userTaskImage" imageFile="icons/user_go.png"></Image>
+        </Resource>
+        <GridData name="mainCoolBarGridData" descriptors="xworker.swt.Commons/@GridData"
+             style="FILL_HORIZONTAL"></GridData>
+        <CoolItem name="mainCollItem">
+            <ToolBar name="mainToolBar" FLAT="true" enabled="" redraw="" visible="">
+                <ToolItem name="topicToolItem" image="topicImage" toolTiptext="主页">
+                    <listeners>
+                        <Listener name="topicToolItemSelection">
+                            <openComposite name="openComposite" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="label:xworker.ide.worldexplorer.swt.i18n.TopicI18n/@main/@title"
+                                 compositePath="xworker.ui.topic.TopicShell/@mainComposite"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="newThingToolItem" _xmeta_id_="openToolItem" image="newImage"
+                     toolTiptext="新建事物">
+                    <listeners>
+                        <Listener name="openToolItemSelection">
+                            <GroovyAction name="GroovyAction" varScope="Global">
+                                <code><![CDATA[import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.util.SwtDialog;
+
+Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");
+
+def parentShell = projectTree.getShell();
+def newContext = new ActionContext();
+newContext.put("parent", parentShell);
+
+def newShell = dialogObject.doAction("create", newContext);
+
+SwtDialog dialog = new SwtDialog(parentShell, newShell, newContext);
+dialog.open();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="openActionItem" _xmeta_id_="saveToolItem" image="openThingImage"
+                     toolTiptext="打开动作">
+                    <listeners>
+                        <Listener name="saveToolItemSelection">
+                            <GroovyAction name="GroovyAction" varScope="Global">
+                                <code><![CDATA[import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "dataObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldexplorer.swt.dialogs.OpenThingDialog/@shell");
+def shell = shellObj.doAction("create", newContext);
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenThing:打开事物", actionContext));
+shell.open();
+/*
+import org.xmeta.ActionContext;
+import org.xmeta.util.UtilString;
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", shell);
+newContext.put("type", "scriptObject");
+newContext.put("explorerActions", actions);
+
+def shellObj = world.getThing("xworker.ide.worldexplorer.swt.dialogs.OpenThingDialog/@shell");
+def shell = shellObj.doAction("create", newContext);
+shell.setText(UtilString.getString("res:res.w_exp:menuItemOpenAction:打开动作", actionContext));
+shell.open();
+*/]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="specator" type="SEPARATOR"></ToolItem>
+                <ToolItem name="tasksItem" _xmeta_id_="workFlow1" image="taskImage" toolTiptext="lang:d=后台任务管理&amp;en=Background Tasks">
+                    <listeners>
+                        <Listener name="workFlowToolItemSelection">
+                            <openComposite name="openTaskManager" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 compositePath="xworker.ide.task.TaskManager/@mainCompostie"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="userTaskItem" _xmeta_id_="monitorItem" image="userTaskImage"
+                     toolTiptext="lang:d=用户任务&amp;en=User Tasks">
+                    <listeners>
+                        <Listener name="monitorItemSelection">
+                            <openComposite name="openMonitor" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="lang:d=用户任务&amp;en=User Tasks" compositePath="xworker.app.userflow.swt.UserFlowTask/@progressComposite"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="messageCenterItem" image="icons/comments.png" toolTiptext="lang:d=消息中心&amp;en=Message Center">
+                    <listeners>
+                        <Listener name="messageCenterlItemSelection" _xmeta_id_="workFlowToolItemSelection">
+                            <openComposite name="openMessageCenterManager" _xmeta_id_="openTaskManager" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 compositePath="xworker.lang.system.message.MessageDescriptorViewer/@messageViewer"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="resourceMonitorItem" _xmeta_id_="resourceStatusItem" image="monitorImage"
+                     toolTiptext="lang:d=资源监控&amp;en=Resource Monitor">
+                    <listeners>
+                        <Listener name="resouceStatusItemSelection" _xmeta_id_="monitorItemSelection">
+                            <openComposite name="openResouceStatus" _xmeta_id_="openMonitor" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="资源状态" compositePath="xworker.app.resource.swt.ResourceStatusViewer/@mainComposite"
+                                 en_label="Resource Status"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="resourceManagerItem" _xmeta_id_="openFunctionsItem" type="DROP_DOWN"
+                     image="dataObjectImage" toolTiptext="lang:d=资源管理&amp;en=Resources Manager">
+                    <listeners>
+                        <Listener name="dataObjectItemSelection" _xmeta_id_="openFunctionsItemSelection"
+                             label="openFunctionsItemSelection">
+                            <ShowMenuByEventWidgets descriptors="xworker.swt.actions.MenuActions/@ShowMenuAlignControl"
+                                 dynamic="true" newActionContext="true">
+                                <Menus>
+                                    <ThingRegistMenu name="Menu" descriptors="xworker.swt.Widgets/@ThingRegistMenu"
+                                         thing="xworker.ide.worldexplorer.swt.resources.ResourceMenus"
+                                         registType="child" itemPrefix="resource"></ThingRegistMenu>
+                                </Menus>
+                            </ShowMenuByEventWidgets>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="seperate2" type="SEPARATOR"></ToolItem>
+                <ToolItem name="debugEditToolItem" image="debugEditImage" toolTiptext="编辑调试信息">
+                    <listeners>
+                        <Listener name="debugEditToolItemSelection">
+                            <openComposite name="openComposite" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="调试信息" compositePath="xworker.ide.worldexplorer.swt.actions.DebugInfoEditor/@mainComposite"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="specator3" type="SEPARATOR"></ToolItem>
+                <ToolItem name="functionToolitem" image="functionImage" toolTiptext="函数交互式编程">
+                    <listeners>
+                        <Listener name="functionToolitemSelection">
+                            <openComposite name="run" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="交互函数" compositePath="xworker.ui.function.RunctionRunnerShell/@mainComposite"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <InteractiveUI name="mainToolbarUI" _xmeta_id_="projectTreeUI" descriptors="xworker.swt.Widgets/@InteractiveUI"
+                     label="主工具栏" commandIndex="xworker.ide.worldexplorer.swt.help.commander.MainToolbar"
+                     priority="" en_label="Main Toolbar" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
+            </ToolBar>
+        </CoolItem>
+    </CoolBar>
+    <RightCoolBar descriptors="xworker.swt.app.Workbench/@CoolBar1,xworker.swt.Widgets/@CoolBar"
+         FLAT="true">
+        <GridData name="mainCoolBarGridData" descriptors="xworker.swt.Commons/@GridData"
+             style="FILL_HORIZONTAL" width="300" horizontalAlignment="END"></GridData>
+        <CoolItem name="mainCollItem">
+            <ToolBar name="rightMainToolBar" _xmeta_id_="mainToolBar" FLAT="true" RIGHT="true"
+                 enabled="" redraw="" visible="">
+                <ToolItem name="commandAssistorItem" image="guideImage" text="label:xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@resources/@I18nResource/@helpSpriteButton">
+                    <listeners>
+                        <Listener name="openCommander">
+                            <Ognl name="openAssistor" expression="@xworker.command.CommandAssistor@open()"></Ognl>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="systemMessageItem" image="messageImage" text="label:xworker.ide.worldexplorer.swt.i18n.I18nResource/@SystemInfo/@systemMessageItem">
+                    <listeners>
+                        <Listener name="systemMessageItemSelection">
+                            <openComposite name="openComposite" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
+                                 title="系统通知" compositePath="xworker.notification.NotificationManager/@mainSashForm"></openComposite>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <InteractiveUI name="projectTreeUI" descriptors="xworker.swt.Widgets/@InteractiveUI"
+                     label="帮助小精灵" registThing="xworker.command.CommandAssistorIndex"
+                     registType="child" priority="" en_label="Help Sprite" en_group="Thing Explorer"
+                     th_createIndex="true" group="事物管理器"></InteractiveUI>
+            </ToolBar>
+        </CoolItem>
+    </RightCoolBar>
+    <Menu descriptors="xworker.swt.app.Workbench/@Menu,xworker.swt.Widgets/@Menu" style="BAR"
+         label="mainMenu">
+        <MenuItem name="menuFile" text="res:res.w_exp:menuFile:文件" style="CASCADE">
+            <Menu name="menuNewFile" visible="" enabled="">
+                <MenuItem name="menuOpenThingItem" text="res:res.w_exp:toolBarItemOpenThing:打开事物"
+                     image="openThingImage">
+                    <listeners>
+                        <Listener name="menuOpenThingItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openToolItem/@listeners/@openToolItemSelection/@GroovyAction"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuOpenActionItem" text="打开动作" image="openActionImage">
+                    <listeners>
+                        <Listener name="MenuOpenActionItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@saveToolItem/@listeners/@saveToolItemSelection/@GroovyAction"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuFileSaveItem" text="res:res.w_exp:menuItemSave:保存" style="PUSH"
+                     image="saveImage" accelerator="Ctrl+S">
+                    <listeners>
+                        <Listener name="menuFileSaveItemSelection">
+                            <GroovyAction isSynchronized="true" varScope="Global">
+                                <code><![CDATA[//取得当前编辑窗体中的Tab的actionContext
+def tab = centerTabFolder.getSelection();
+def tabActionContext = tab.getData("actionContext");
+
+if(tabActionContext != null){
+    //执行保存操作
+    saveEditor.run(actionContext, "editorContext", tabActionContext);
+    /*
+    //如果actionContext中有okButtonSelection，执行保存
+    def okButtonSelection = tabActionContext.get("okButtonSelection");
+    if(okButtonSelection != null){
+        okButtonSelection.handleEvent(null);
+    }*/
+}]]></code>
+                                <ActionDefined>
+                                    <SaveEditor name="saveEditor" descriptors="xworker.swt.xwidgets.app.AppActions/@Save"
+                                         editorContext="var:editorContext"></SaveEditor>
+                                </ActionDefined>
+                            </GroovyAction>
+                        </Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuFileSplit1" style="SEPARATOR"></MenuItem>
+                <MenuItem name="menuTasksItem" text="任务监控管理" image="taskImage">
+                    <listeners>
+                        <Listener name="menuTasksItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@workFlow1/@listeners/@workFlowToolItemSelection/@openTaskManager"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuFloatTaskItem" text="流程监控管理" image="flowTaskImage">
+                    <listeners>
+                        <Listener name="menuFloatTaskItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@workFlow11/@listeners/@workFlowToolItemSelection/@openTaskManager"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuFileSplit3" style="SEPARATOR"></MenuItem>
+                <MenuItem name="menuOpenFunctionItem" text="Open functions" image="xImage">
+                    <listeners>
+                        <Listener name="menuOpenFunctionItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem/@listeners/@openFunctionsItemSelection/@GroovyAction"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuMannongItem" text="码农的世界" image="manongImage">
+                    <listeners>
+                        <Listener name="menuMannongItemListener" _xmeta_id_="Listener"
+                             ref="workFlowToolItemSelection"></Listener>
+                    </listeners>
+                </MenuItem>
+                <MenuItem name="menuFileSplit2" style="SEPARATOR" enabled=""></MenuItem>
+                <MenuItem name="menuExit" text="res:res.w_exp:menuItemExit:退出" style="PUSH">
+                    <listeners>
+                        <Listener name="menuExitSelection">
+                            <GroovyAction name="GroovyAction" throwException="false" varScope="Global"
+                                 code="shell.dispose();" interpretationType=""></GroovyAction>
+                        </Listener>
+                    </listeners>
+                </MenuItem>
+            </Menu>
+        </MenuItem>
+    </Menu>
+</Workbench>
