@@ -12,7 +12,12 @@
                     <code><![CDATA[int width =(int) args[0];
 int height = (int) args[1];
 
-tipShell.setSize(tipShell.getSize().x, height + 80);
+def size = tipShell.getSize();
+def clientArea = tipShell.getClientArea();
+def borderX = size.x - clientArea.width;
+def borderY = size.y - clientArea.height;
+
+tipShell.setSize(size.x, borderY);
 //println args;]]></code>
                 </GroovyAction>
             </actions>

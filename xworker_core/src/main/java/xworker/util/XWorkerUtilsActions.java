@@ -98,6 +98,10 @@ public class XWorkerUtilsActions {
 		return XWorkerUtils.getIdeActionContainer();
 	}
 	
+	public static ActionContext getIdeActionContext(ActionContext actionContext) {
+		return XWorkerUtils.getIdeActionContainer().getActionContext();
+	}
+	
 	public static Object getIDEShell(ActionContext actionContext){
 		//Thing self = actionContext.getObject("self");
 		
