@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<Workbench name="SimpleExplorerNew" descriptors="xworker.swt.app.Workbench" bottomTab="true"
-     editSelf="false">
+<Workbench name="SimpleExplorer" _xmeta_id_="SimpleExplorerNew" descriptors="xworker.swt.app.Workbench"
+     bottomTab="true" editSelf="false">
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="view" varName="view" className="xworker.swt.app.View"></Variable>
+        <Variable name="editor" varName="editor" className="xworker.swt.app.IEditor"></Variable>
+    </VariablesDescs>
     <Views>
         <View name="nav" _xmeta_id_="xworker_nav" label="项目导航" id="xworker_nav" type="left"
              composite="xworker.swt.app.views.ProjectTree/@tree" closeable="false"></View>
@@ -76,7 +80,7 @@ import xworker.swt.util.SwtDialog;
 
 Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");
 
-def parentShell = projectTree.getShell();
+def parentShell = workbench.getShell();
 def newContext = new ActionContext();
 newContext.put("parent", parentShell);
 
@@ -206,7 +210,7 @@ shell.open();
         <CoolItem name="mainCollItem">
             <ToolBar name="rightMainToolBar" _xmeta_id_="mainToolBar" FLAT="true" RIGHT="true"
                  enabled="" redraw="" visible="">
-                <ToolItem name="commandAssistorItem" image="guideImage" text="label:xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@resources/@I18nResource/@helpSpriteButton">
+                <ToolItem name="commandAssistorItem" image="guideImage" text="label:xworker.ide.worldexplorer.swt.i18n.I18nResource/@SystemInfo/@helpSpriteButton">
                     <listeners>
                         <Listener name="openCommander">
                             <Ognl name="openAssistor" expression="@xworker.command.CommandAssistor@open()"></Ognl>
@@ -228,81 +232,60 @@ shell.open();
             </ToolBar>
         </CoolItem>
     </RightCoolBar>
-    <Menu descriptors="xworker.swt.app.Workbench/@Menu,xworker.swt.Widgets/@Menu" style="BAR"
-         label="mainMenu">
-        <MenuItem name="menuFile" text="res:res.w_exp:menuFile:文件" style="CASCADE">
-            <Menu name="menuNewFile" visible="" enabled="">
-                <MenuItem name="menuOpenThingItem" text="res:res.w_exp:toolBarItemOpenThing:打开事物"
-                     image="openThingImage">
-                    <listeners>
-                        <Listener name="menuOpenThingItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openToolItem/@listeners/@openToolItemSelection/@GroovyAction"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuOpenActionItem" text="打开动作" image="openActionImage">
-                    <listeners>
-                        <Listener name="MenuOpenActionItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@saveToolItem/@listeners/@saveToolItemSelection/@GroovyAction"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuFileSaveItem" text="res:res.w_exp:menuItemSave:保存" style="PUSH"
-                     image="saveImage" accelerator="Ctrl+S">
-                    <listeners>
-                        <Listener name="menuFileSaveItemSelection">
-                            <GroovyAction isSynchronized="true" varScope="Global">
-                                <code><![CDATA[//取得当前编辑窗体中的Tab的actionContext
-def tab = centerTabFolder.getSelection();
-def tabActionContext = tab.getData("actionContext");
+    <Menu name="Menu" descriptors="xworker.swt.app.Workbench/@Menu,xworker.swt.Widgets/@Menu"
+         style="BAR" label="mainMenu"></Menu>
+    <ActionContainer name="actions">
+        <GroovyAction name="refreshAllMenu">
+            <code><![CDATA[import xworker.lang.util.FuntionsUtil;
+import org.xmeta.ActionContext;
 
-if(tabActionContext != null){
-    //执行保存操作
-    saveEditor.run(actionContext, "editorContext", tabActionContext);
-    /*
-    //如果actionContext中有okButtonSelection，执行保存
-    def okButtonSelection = tabActionContext.get("okButtonSelection");
-    if(okButtonSelection != null){
-        okButtonSelection.handleEvent(null);
-    }*/
-}]]></code>
-                                <ActionDefined>
-                                    <SaveEditor name="saveEditor" descriptors="xworker.swt.xwidgets.app.AppActions/@Save"
-                                         editorContext="var:editorContext"></SaveEditor>
-                                </ActionDefined>
-                            </GroovyAction>
-                        </Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuFileSplit1" style="SEPARATOR"></MenuItem>
-                <MenuItem name="menuTasksItem" text="任务监控管理" image="taskImage">
-                    <listeners>
-                        <Listener name="menuTasksItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@workFlow1/@listeners/@workFlowToolItemSelection/@openTaskManager"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuFloatTaskItem" text="流程监控管理" image="flowTaskImage">
-                    <listeners>
-                        <Listener name="menuFloatTaskItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@workFlow11/@listeners/@workFlowToolItemSelection/@openTaskManager"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuFileSplit3" style="SEPARATOR"></MenuItem>
-                <MenuItem name="menuOpenFunctionItem" text="Open functions" image="xImage">
-                    <listeners>
-                        <Listener name="menuOpenFunctionItemSelection" ref="xworker.ide.worldexplorer.swt.SimpleExplorer/@shell1/@mainComposite/@mainCoolBar/@mainCollItem/@mainToolBar/@openFunctionsItem/@listeners/@openFunctionsItemSelection/@GroovyAction"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuMannongItem" text="码农的世界" image="manongImage">
-                    <listeners>
-                        <Listener name="menuMannongItemListener" _xmeta_id_="Listener"
-                             ref="workFlowToolItemSelection"></Listener>
-                    </listeners>
-                </MenuItem>
-                <MenuItem name="menuFileSplit2" style="SEPARATOR" enabled=""></MenuItem>
-                <MenuItem name="menuExit" text="res:res.w_exp:menuItemExit:退出" style="PUSH">
-                    <listeners>
-                        <Listener name="menuExitSelection">
-                            <GroovyAction name="GroovyAction" throwException="false" varScope="Global"
-                                 code="shell.dispose();" interpretationType=""></GroovyAction>
-                        </Listener>
-                    </listeners>
-                </MenuItem>
-            </Menu>
-        </MenuItem>
-    </Menu>
+//清除基本菜单
+int index = 0;
+def mainMenu = workbench.getMenuBar();
+for(item in mainMenu.getItems()){
+    //if(index != 0){
+        item.dispose();
+    //}
+    
+    index++;
+}
+
+def menuActionContext = new ActionContext();
+menuActionContext.put("parent", shell);
+menuActionContext.put("explorerShell", shell);
+menuActionContext.put("explorerActionContext", actionContext);
+menuActionContext.put("explorerContext", actionContext);
+menuActionContext.put("explorerActions",actions);
+menuActionContext.put("mainMenu", mainMenu);
+menuActionContext.put("workbench", workbench);
+FuntionsUtil.attachToMenu(mainMenu, menuActionContext);]]></code>
+        </GroovyAction>
+        <GroovyAction name="refreshProjectTree">
+            <code><![CDATA[def view = workbench.getView("xworker_nav");
+view.doAction("refreshProjectTree");]]></code>
+        </GroovyAction>
+    </ActionContainer>
+    <actions _xmeta_id_="actions1">
+        <GroovyAction name="init">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.notification.NotificationManager;
+import xworker.notification.SwtNotificationManagerListener;
+
+//IDE是Shell的，是有基本的功能，使用本ActionContainer扩充
+def actionsThing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@actions");
+XWorkerUtils.getIde().getActionContainer().append(actionsThing);
+
+//常用功能的启用
+def commonFeature = world.getThing("xworker.ide.worldexplorer.CommonFeatures");
+commonFeature.doAction("init", actionContext);
+
+//刷新菜单
+actions.doAction("refreshAllMenu", actionContext, "mainMenu", mainMenuBar);
+
+//系统通知加事件监听，有通知时显示数量
+def notifyListenerThing = world.getThing("xworker.notification.ExplorerMessageButtonListener");
+def notifyListener = new SwtNotificationManagerListener(notifyListenerThing, actionContext);
+NotificationManager.addListener(notifyListener);]]></code>
+        </GroovyAction>
+    </actions>
 </Workbench>

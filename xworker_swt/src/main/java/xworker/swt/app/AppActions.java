@@ -61,7 +61,7 @@ public class AppActions {
 		boolean closeable = self.doAction("isCloseable", actionContext);
 		Map<String, Object> params = self.doAction("getParams", actionContext);
 
-		workbench.openViewer(id, composite, type, closeable, params);
+		workbench.openView(id, composite, type, closeable, params);
 	}
 	
 	public static void closeEditor(ActionContext actionContext) {

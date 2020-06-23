@@ -20,6 +20,7 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	StackLayout layout;
 	Composite composite;
 	List<EditorImpl> editors = new ArrayList<EditorImpl>();
+	IEditor activeEditor = null;
 	
 	public CompositeEditorContainer(Composite composite, ActionContext actionContext) {
 		super(actionContext);
@@ -119,8 +120,16 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		}		
 		
 		this.fireOnActive(editor);
+		
+		activeEditor = editor;
 	}
 	
+	
+	@Override
+	public IEditor getActiveEditor() {
+		return activeEditor;
+	}
+
 	private EditorImpl getEditor(ActionContainer editorActions) {
 		for(EditorImpl editorImpl : editors) {
 			if(editorImpl.getActions() == editorActions) {
@@ -155,11 +164,15 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 
 	@Override
 	public void save() {
+		if(activeEditor != null) {
+			activeEditor.doSave();
+		}
+		/*
 		for(EditorImpl editorImpl : editors) {
 			if(editorImpl.isDirty()) {
 				editorImpl.doSave();
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -189,6 +202,9 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		editors.remove(impl);
 		
 		this.fireOnDisposed(editor);
+		if(impl == activeEditor) {
+			activeEditor = null;
+		}
 	}
 
 	@Override

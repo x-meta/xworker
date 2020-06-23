@@ -185,7 +185,11 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 		}
 	}
 	
-	public Thing getEditor() {
+	public Composite getEditor() {
+		return (Composite) control;
+	}
+	
+	public Thing getThing() {
 		return editor;
 	}
 
@@ -237,5 +241,20 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	@Override
 	public void fireStateChanged() {
 		editorContainer.fireStateChanged(this);
+	}
+
+	@Override
+	public Object doAction(String name) {
+		return actions.doAction(name, actionContext);
+	}
+
+	@Override
+	public Object doAction(String name, Object... params) {
+		return actions.doAction(name, actionContext, params);
+	}
+
+	@Override
+	public ActionContainer getActionContainer() {
+		return actions;
 	}
 }

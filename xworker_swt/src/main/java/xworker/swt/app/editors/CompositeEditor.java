@@ -156,6 +156,11 @@ public class CompositeEditor {
 		}else if(icon instanceof String) {
 			return SwtUtils.createImage(editorComposite, (String) icon, actionContext);
 		}else {
+			//参数没有设置，使用Compoiste模型的
+			if(compositeEditorParams.get("composite") != null){
+		    	Thing composite = (Thing) compositeEditorParams.get("composite");
+		    	return SwtUtils.getIcon(composite, editorComposite, actionContext);
+		    }
 			return null;
 		}
 		

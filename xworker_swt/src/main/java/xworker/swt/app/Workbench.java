@@ -1,16 +1,17 @@
 package xworker.swt.app;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,12 +22,11 @@ import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilMap;
 
 import xworker.swt.design.Designer;
-import xworker.swt.util.SwtUtils;
 import xworker.swt.widgets.CoolBarCreator;
 
 public class Workbench {
 	private static Logger logger = LoggerFactory.getLogger(Workbench.class);
-	private static final String VIEW_ID = "__Workbench_view_id__";
+	public static final String VIEW_ID = "__Workbench_view_id__";
 	
 	Thing thing;
 	ActionContainer actions;
@@ -79,7 +79,23 @@ public class Workbench {
 	public Shell getShell() {
 		return shell;
 	}
+	
+	public Menu getMenuBar() {
+		return actionContext.getObject("mainMenuBar");
+	}
 
+	public CoolBar getMainCoolBar() {
+		return actionContext.getObject("mainCoolBar");		
+	}
+	
+	public CoolBar getRightCoolBar() {
+		return actionContext.getObject("rightCoolBar");		
+	}
+	
+	public CoolBar getStatusBar() {
+		return actionContext.getObject("mainStatusBar");
+	}
+	
 	/**
 	 * 打开一个编辑器，如果编辑器已经存在则返回已有的编辑器。
 	 * 
@@ -100,9 +116,9 @@ public class Workbench {
 	 * @param view
 	 * @param type
 	 */
-	public void openViewer(String id, final Thing view, final String type) {
+	public View openView(String id, final Thing view, final String type) {
 		Map<String, Object> params = view.doAction("getParams", actionContext);
-		openViewer(id, view, type, true, params);
+		return openView(id, view, type, true, params);
 	}
 	
 	/**
@@ -113,10 +129,10 @@ public class Workbench {
 	 * @param type     打开的位置，left、right或bottom。
 	 * @param closeable 是否可以关闭
 	 */
-	public void openViewer(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
+	public View openView(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
 		if(view == null) {
 			logger.warn("Viewer is null, id=" + id);
-			return;
+			return null;
 		}
 		
 		if("editor".equals(type)) {
@@ -133,16 +149,18 @@ public class Workbench {
 			
 			Thing editor = World.getInstance().getThing("xworker.swt.app.editors.CompositeEditor");
 			openEditor(id, editor, params);
-			return;
+			return null;
 		}
 		
 		if(id == null || "".equals(id)) {
 			id = view.getMetadata().getPath();
 		}
 		
-		if(isViewExists(id)) {
-			return;
+		View v = getView(id);
+		if(v != null) {
+			return v;
 		}
+		final View vv = new View(id, view, params);
 		
 		//使用线程异步打开
 		final String iid = id;
@@ -156,47 +174,14 @@ public class Workbench {
 						tabFolder = bottomTabFolder;
 					}
 										
-					CTabItem item = new CTabItem(tabFolder, closeable ? SWT.CLOSE : SWT.NONE);
-					item.setData(VIEW_ID, iid);
-					item.setData(Designer.DATA_THING, view.getMetadata().getPath());
-					item.setText(view.getMetadata().getLabel());
-					
-					ActionContext ac = new ActionContext();
-					ac.put("parent", tabFolder);
-					ac.put("parentContext", actionContext);
-					ac.put("viewThing", view);
-					ac.put("workbench", Workbench.this);
-					ac.put("viewItem", item);
-					ac.put("params", params);
-					item.setData("actionContext", ac);
-					
-					Object result = view.doAction("create", ac);
-					Control control = null;
-					if(result instanceof ActionContainer) {
-						//是组件
-						control = ((ActionContainer) result).doAction("getControl", actionContext);
-						item.setData("component", result);
-					}else if(result instanceof Control) {
-						control = (Control) result;
-					}
-					
-					if(control != null) {
-						Image image = SwtUtils.getIcon(view, control, ac);
-						if(image != null) {
-							item.setImage(image);
-						}
-						item.setControl(control);
-					}
-					
-					tabFolder.setSelection(item);
-					Event event = new Event();
-					event.item = item;
-					tabFolder.notifyListeners(SWT.Selection, event);
+					vv.create(Workbench.this, tabFolder, closeable, actionContext);
 				}catch(Exception e) {
 					logger.warn("Open view exception, id=" + iid + ", view=" + view.getMetadata().getPath(), e);
 				}
 			}
 		});		
+		
+		return vv;
 	}
 	
 	/**
@@ -223,36 +208,46 @@ public class Workbench {
 		
 		return null;
 	}
-
+	
 	/**
-	 * 根据视图的标识返回对应的视图所在的变量上下文，如果不存在返回null。
+	 * 根据视图的标识返回一个视图。
 	 * 
 	 * @param id
 	 * @return
 	 */
-	public ActionContext getView(String id) {
-		CTabItem item = getViewItem(id);
+	public View getView(String id) {
+		CTabItem item = getViewItem(id, leftTabFolder); 
 		if(item != null) {
-			return (ActionContext) item.getData("actionContext");
-		}else {
-			return null;
+			return (View) item.getData();
 		}
+		
+	    item = getViewItem(id, rightTabFolder); 
+		if(item != null) {
+			return (View) item.getData();
+		}
+		
+		item = getViewItem(id, bottomTabFolder); 
+		if(item != null) {
+			return (View) item.getData();
+		}
+		
+		return null;
 	}
 	
-	private boolean isViewExists(String id) {
-		if(getViewItem(id, leftTabFolder) != null) {
-			return true;
+	/**
+	 * 根据编辑器的ID返回编辑器。
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public IEditor getEditor(String id) {
+		for(IEditor editor : editorContainer.getEditors()) {
+			if(editor.getId().equals(id)) {
+				return editor;
+			}
 		}
 		
-		if(getViewItem(id, rightTabFolder) != null) {
-			return true;
-		}
-		
-		if(getViewItem(id, bottomTabFolder) != null) {
-			return true;
-		}
-		
-		return false;
+		return null;
 	}
 	
 	private CTabItem getViewItem(String id, CTabFolder tabFolder) {
@@ -402,16 +397,13 @@ public class Workbench {
 				Thing viewThing = view.doAction("getComposite", actionContext);
 				
 				Map<String, Object> params = view.doAction("getParams", actionContext);
-				workbench.openViewer(id, viewThing, type, view.getBoolean("closeable"), params);
+				workbench.openView(id, viewThing, type, view.getBoolean("closeable"), params);
 			}
 		}
 		
 		shell.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				try{
-					//执行初始化
-					self.doAction("init", ac);
-					
 					//是否打开默认编辑自己
 					ActionContainer actions = ac.getObject("actions");
 					if(self.getBoolean("editSelf")) {
@@ -434,12 +426,18 @@ public class Workbench {
 							Object parent = ac.get(parentVarName);							
 							if(parent != null && parent instanceof CTabFolder) {
 								CTabFolder ctab = (CTabFolder) parent;
-								if(ctab.getItemCount() > 1) {
+								if(ctab.getItemCount() > 0) {
 									ctab.setSelection(0);
+									Event event = new Event();
+									event.item = ctab.getItems()[0];
+									ctab.notifyListeners(SWT.Selection, event);
 								}
 							}
 						}
 					}
+					
+					//执行初始化
+					self.doAction("init", ac);
 				}catch(Exception e) {
 					logger.error("init error, workbench=" + self.getMetadata().getPath(),  e);
 				}
@@ -471,4 +469,70 @@ public class Workbench {
 		}
 	}
 	
+	/**
+	 * 保存当前激活的编辑器的内容。
+	 */
+	public void save() {
+		editorContainer.save();
+	}
+	
+	/**
+	 * 保存所有已修改的编辑器的内容。
+	 * 
+	 */
+	public void saveAll() {
+		editorContainer.saveAll();
+	}
+	
+	/**
+	 * 返回是否有编辑器处于已修改状态。
+	 * 
+	 * @return
+	 */
+	public boolean isDirty() {
+		return editorContainer.isDirty();
+	}
+	
+	/**
+	 * 返回当前的编辑器。
+	 * 
+	 * @return 如果没有返回null
+	 */
+	public IEditor getActiveEditor() {
+		return editorContainer.getActiveEditor();
+	}
+	
+	/**
+	 * 返回所有编辑器的列表。
+	 * 
+	 * @return
+	 */
+	public List<IEditor> getEditors(){
+		return editorContainer.getEditors();
+	}
+	
+	/**
+	 * 返回所有的视图。
+	 * 
+	 * @return
+	 */
+	public List<View> getViews(){
+		List<View> views = new ArrayList<View>();
+		initViews(leftTabFolder, views);
+		initViews(rightTabFolder, views);
+		initViews(bottomTabFolder, views);
+		return views;
+	}
+	
+	private void initViews(CTabFolder tab, List<View> views) {
+		if(tab == null) {
+			return;
+		}
+		
+		for(CTabItem item : tab.getItems()) {
+			if(item.getData() instanceof View) {
+				views.add((View) item.getData());
+			}
+		}
+	}
 }

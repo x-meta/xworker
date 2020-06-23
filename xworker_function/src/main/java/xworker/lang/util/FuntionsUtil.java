@@ -174,11 +174,26 @@ public class FuntionsUtil  {
 		}
 	}
 	
-	public static void attachToMenu(Menu menu, ActionContext actionContext){
-		List<FunctionNode> nodeList = initFunctionNodes(actionContext);
-		for(FunctionNode node : nodeList){
-			init(menu, node, actionContext, true);
-		}
+	public static void attachToMenu(final Menu menu, final ActionContext actionContext){
+		new Thread(new Runnable() {
+			public void run() {
+				final List<FunctionNode> nodeList = initFunctionNodes(actionContext);
+				menu.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						try {
+							for(FunctionNode node : nodeList){
+								init(menu, node, actionContext, true);
+							}
+						}catch(Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				
+			}
+		}).start();
+		
+		
 	}
 	
 	public static void attachToMenuItem(MenuItem item, ActionContext actionContext){

@@ -115,8 +115,6 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		return false;
 	}
 
-
-
 	@Override
 	public void saveAll() {
 		for(CTabItem item : tabFolder.getItems()) {
@@ -126,8 +124,6 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 			}
 		}
 	}
-
-
 
 	@Override
 	public void save() {
@@ -140,8 +136,6 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 			}
 		}
 	}
-
-
 
 	private IEditor createEditor(String id, Thing editor, Map<String, Object> params) {
 		ActionContext editorContext = new ActionContext();
@@ -433,8 +427,6 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		return editors;
 	}
 
-
-
 	@Override
 	public void close(IEditor editor) {
 		if(editor == null) {
@@ -448,8 +440,6 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 				"container", this);
 	}
 
-
-
 	@Override
 	public void stateChanged(IEditorContainer editorContainer, IEditor editor) {
 		super.stateChanged(editorContainer, editor);
@@ -462,6 +452,15 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 			}
 		}
 		
+	}
+
+	@Override
+	public IEditor getActiveEditor() {
+		if(tabFolder.getSelection() != null) {
+			return getEditorUtils(tabFolder.getSelection());
+		}
+		
+		return null;
 	}
 	
 	

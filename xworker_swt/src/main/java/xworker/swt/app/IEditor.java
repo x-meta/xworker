@@ -16,6 +16,12 @@ public interface IEditor {
 	public static final String EDITOR_ID = "__IEditor_id__";
 	
 	/**
+	 * 返回编辑器的标识。
+	 * @return
+	 */
+	public String getId();
+	
+	/**
 	 * 设置编辑器要编辑的内容。参数有编辑器自行定义。
 	 * 
 	 * @param params
@@ -96,11 +102,14 @@ public interface IEditor {
 	public Thing getStatusBarConfig();
 	
 	/**
-	 * 返回编辑器事物本身。
+	 * 返回编辑器的Composite组件。
 	 * 
 	 * @return
 	 */
-	public Thing getEditor();
+	public Composite getEditor();
+	
+	/** 返回编辑器事物模型 */
+	public Thing getThing();
 	
 	/**
 	 * 返回编辑器自己的动作容器。
@@ -128,4 +137,10 @@ public interface IEditor {
 	 * 
 	 */
 	public void fireStateChanged();
+	
+	public Object doAction(String name);
+	
+	public Object doAction(String name, Object ... params);
+	
+	public ActionContainer getActionContainer();
 }

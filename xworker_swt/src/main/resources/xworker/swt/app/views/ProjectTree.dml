@@ -1,4 +1,4 @@
-%1545705168668
+%1592898446795
 @
 sname=shell
 stext=ProjectTree
@@ -193,7 +193,7 @@ openEditor(actionContext, "params",
             @/@tree/@Listeners/@projectTreeSelection/@GroovyAction/@ActionDefined/@xworker_swt_app_editors_XWorkerPackageViewer
             sname=openEditor
             seditorContainer=ognl:parentContext.editorContainer
-            sid=xworker.swt.app.editors.XWorkerPackageViewer
+            sid=xworker:xworker.swt.app.editors.XWorkerPackageViewer
             seditor=xworker.swt.app.editors.XWorkerPackageViewer
             sparams=var:params
             sinterpretationType=Self
@@ -202,9 +202,9 @@ openEditor(actionContext, "params",
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
+            sswitchResult=false
             sdisableGlobalContext=false
             sdebugLog=false
             sdescriptors=xworker.swt.app.AppActions/@OpenEditor
@@ -213,6 +213,350 @@ openEditor(actionContext, "params",
             sth_registMyChilds=false
             sth_registDisabled=false
             sth_mark=false
+      @/@tree/@Listeners/@projectTreeMenudetect
+      sname=projectTreeMenudetect
+      stype=MenuDetect
+      slabel=projectTreeMenudetect
+      sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+      sid=projectTreeMenudetect
+        @/@tree/@Listeners/@projectTreeMenudetect/@ProjectTreeMenuDetect
+        sname=ProjectTreeMenuDetect
+        slabel=ProjectTreeMenuDetect
+        sisSynchronized=false
+        sthrowException=false
+        suseOtherAction=false
+        svarScope=Global
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+import xworker.util.XWorkerUtils;
+
+for(item in projectTreeMenu.getItems()){
+    item.dispose();
+}
+
+//设置弹出菜单的变量
+def treeItem = projectTree.getSelection()[0];
+
+def data = treeItem.getData();
+//log.info(data.type);
+String menuPath = "";
+switch(data.type){
+    case "world":  
+    case "workingSet": 
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@projectComposite/@projectMenu";
+        break;
+    case "plugins":
+    case "projects":
+    case "virtuals":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataCenterComposite/@dataCenterMenu";
+        break;
+    case "thingManager":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@cactoryComposite/@facotyMenu";
+        break;
+    case "category":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@packageComposite/@packageMenu";
+        break;
+    case "thing":
+        menuPath = "xworker.ide.worldexplorer.swt.dataExplorerParts.ProjectTreeMenu/@shell/@dataObjectComposite/@dataObjectMenuItem";
+        break;
+}
+
+ActionContext newContext = new ActionContext();
+newContext.put("parent", projectTreeMenu);
+newContext.put("explorerActions", XWorkerUtils.getIdeActionContainer());
+newContext.put("explorerActionContext", XWorkerUtils.getIdeActionContainer().getActionContext());
+newContext.put("treeItem", treeItem);
+newContext.put("projectTree", projectTree);
+
+Thing menuObj = world.getThing(menuPath);
+if(menuObj != null){
+    for(child in menuObj.childs){
+        if(child.name == "versionMenu"){
+            continue;
+        }
+        child.doAction("create", newContext);
+    }
+}
+
+projectTreeMenu.setData("menuContext", newContext);
+return newContext;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sid=ProjectTreeMenuDetect
+      @/@tree/@Listeners/@projectTreeExpand
+      sname=projectTreeExpand
+      stype=Expand
+      sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=projectTreeExpand
+        @/@tree/@Listeners/@projectTreeExpand/@JavaAction
+        sname=JavaAction
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.ide.worldexplorer.actions.ProjectTreeActions
+        smethodName=projectTreeExpand
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_mark=false
+        sid=JavaAction
+      @/@tree/@Listeners/@projectTreeCollapse
+      sname=projectTreeCollapse
+      stype=Collapse
+      sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=projectTreeCollapse
+        @/@tree/@Listeners/@projectTreeCollapse/@JavaAction
+        sname=JavaAction
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.ide.worldexplorer.actions.ProjectTreeActions
+        smethodName=projectTreeCollapse
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_mark=false
+        sid=JavaAction
+    @/@tree/@projectTreeMenu
+    sname=projectTreeMenu
+    sstyle=DROP_DOWN
+    sNO_RADIO_GROUP=false
+    salign=LEFT_TO_RIGHT
+    svisible=true
+    senabled=true
+    slabel=projectTreeMenu
+    sdescriptors=xworker.swt.Commons/@Menu
+    sid=projectTreeMenu
+    @/@tree/@projectTreeDragSource
+    sname=projectTreeDragSource
+    sDROP_NONE=false
+    sDROP_COPY=true
+    sDROP_MOVE=true
+    sDROP_LINK=true
+    sdescriptors=xworker.swt.widgets.Control/@DragSource
+    sid=projectTreeDragSource
+      @/@tree/@projectTreeDragSource/@prjTxtTransfer
+      sname=prjTxtTransfer
+      stype=Text
+      sdescriptors=xworker.swt.dnd.DragSource/@Transfer
+      sid=prjTxtTransfer
+      @/@tree/@projectTreeDragSource/@prjTreeDragStrat
+      sname=prjTreeDragStrat
+      stype=DragStart
+      sdescriptors=xworker.swt.dnd.DragSource/@Listener
+      sid=prjTreeDragStrat
+        @/@tree/@projectTreeDragSource/@prjTreeDragStrat/@run
+        sname=run
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Global
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.Index;
+
+def selection = projectTree.getSelection();
+if (selection.length > 0) {
+    def item = selection[0];
+    if(item.getData().type != Index.TYPE_CATEGORY){
+        event.doit = false;
+    }else{
+        event.doit = true;
+    }
+} else {
+    event.doit = false;
+}
+#$@text#$@
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sid=run
+      @/@tree/@projectTreeDragSource/@prjTreeSetData
+      sname=prjTreeSetData
+      stype=DragSetData
+      sdescriptors=xworker.swt.dnd.DragSource/@Listener
+      sid=prjTreeSetData
+        @/@tree/@projectTreeDragSource/@prjTreeSetData/@run
+        sname=run
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Global
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+def item = projectTree.getSelection()[0];
+def index = item.getData();
+event.data = index.indexObject.thingManager.getName() + ":" + item.getData().getPath();
+#$@text#$@
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sid=run
+    @/@tree/@projectTreeDrogTarget
+    sname=projectTreeDrogTarget
+    sDROP_NONE=false
+    sDROP_COPY=true
+    sDROP_MOVE=true
+    sDROP_LINK=true
+    sdescriptors=xworker.swt.widgets.Control/@DropTarget
+    sid=projectTreeDrogTarget
+      @/@tree/@projectTreeDrogTarget/@prjTTextTransfer
+      sname=prjTTextTransfer
+      stype=Text
+      sdescriptors=xworker.swt.dnd.DropTarget/@Transfer
+      sid=prjTTextTransfer
+      @/@tree/@projectTreeDrogTarget/@prjTreeDragOver
+      sname=prjTreeDragOver
+      stype=DragOver
+      sdescriptors=xworker.swt.dnd.DropTarget/@Listener
+      sid=prjTreeDragOver
+        @/@tree/@projectTreeDrogTarget/@prjTreeDragOver/@run
+        sname=run
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Global
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.eclipse.swt.dnd.DND;
+import org.xmeta.Index;
+
+event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;;
+if(event.item != null){
+    //如果没有展开的节点，展开
+    //actions.doAction("expandProjectTreeItem", ["itemForExpand":event.item]);
+    
+    if(event.item.getData().type == Index.TYPE_CATEGORY || event.item.getData().type == Index.TYPE_THINGMANAGER){
+        event.detail = DND.DROP_MOVE;
+    }else{
+        event.detail = DND.DROP_NONE;
+    }
+}
+#$@text#$@
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sid=run
+      @/@tree/@projectTreeDrogTarget/@prjTreeDrop
+      sname=prjTreeDrop
+      stype=Drop
+      sdescriptors=xworker.swt.dnd.DropTarget/@Listener
+      sid=prjTreeDrop
+        @/@tree/@projectTreeDrogTarget/@prjTreeDrop/@run
+        sname=run
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Global
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+
+import org.xmeta.ActionContext;
+import org.xmeta.ThingManager;
+
+if(event.item != null){
+    def srcPath = event.data;
+    def srcName = srcPath;
+    if(srcPath.lastIndexOf(".") != -1){
+        srcName = srcPath.substring(srcPath.lastIndexOf(".") + 1);
+    }else{
+        srcName = srcPath.substring(srcPath.lastIndexOf(":") + 1);
+    }
+    def targetIndexObject = event.item.getData().getIndexObject();
+    def targetCategory = targetIndexObject;
+    if(targetIndexObject instanceof ThingManager){
+        targetCategory = targetIndexObject.getCategory(null);
+    }
+    
+    def targPath = targetCategory.getThingManager().getName() + ":" ;
+    if(targetCategory.name == null || targetCategory.name == ""){
+        targPath = targPath + srcName;
+    }else{
+        targPath = targPath + targetCategory.name + "." + srcName;
+    }
+    
+    def ac = new ActionContext();
+    ac.put("parent", shell);
+    ac.put("srcPath", srcPath);
+    ac.put("targPath", targPath);
+    ac.put("sourceTreeItem", projectTree.getSelection()[0]);
+    
+    def shellThing = world.get("xworker.ide.worldexplorer.swt.dialogs.ThingRefactorDialog/@shell");
+    def shell = shellThing.doAction("create", ac);
+    shell.open();
+    
+    def display = shell.display;
+    while (!shell.isDisposed()) {
+        if (!display.readAndDispatch()) display.sleep();
+    }
+    
+    if(ac.get("executed") == "true"){
+        //如果原始目录已移除，那么删除项目树中间的节点        
+        if(world.get(srcPath) == null && srcPath == projectTree.getSelection()[0].getData().path){
+            projectTree.getSelection()[0].dispose();
+        }
+        projectTree.setSelection(event.item);
+        
+        actions.doAction("refreshProjectTree");
+    }
+}
+#$@text#$@
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sid=run
+      @/@tree/@projectTreeDrogTarget/@prjTreeTargetEffect
+      sname=prjTreeTargetEffect
+      stype=TreeDropTargetEffect
+      sdescriptors=xworker.swt.dnd.DropTarget/@DragSourceEffect
+      sid=prjTreeTargetEffect
+    @/@tree/@projectTreeUI
+    sname=projectTreeUI
+    slabel=项目树
+    scommandIndex=xworker.ide.worldexplorer.swt.help.commander.ProjectTree
+    sen_label=Project Tree
+    sen_group=Thing Explorer
+    sdescriptors=xworker.swt.Widgets/@InteractiveUI
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sgroup=事物管理器
+    sth_mark=false
+    sid=projectTreeUI
     @/@tree/@actions
     sname=actions
     sdescriptors=xworker.swt.Widgets/@actions
@@ -284,6 +628,105 @@ openEditor(actionContext, "params",
       sth_registMyChilds=false
       sth_mark=false
       sid=expandProjectTreeItem
+      @/@tree/@actions/@refreshProjectTree
+      sname=refreshProjectTree
+      slabel=refreshProjectTree
+      sisSynchronized=false
+      sthrowException=false
+      suseOtherAction=false
+      suseOuterJava=true
+      souterClassName=xworker.ide.worldexplorer.actions.ProjectTreeActions
+      smethodName=refreshProjectTree
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+
+def item = projectTree.getSelection()[0];
+def data = item.getData();
+
+//item.removeAll();
+data.refresh();
+
+if(true){
+    def items = item.getItems();
+    def itemIndex = 0;
+    def itemRemoved = [];
+    //如果当前节点没有子节点，那么打开子节点
+    for(childIndex in data.childs){
+        //项目导航不显示树
+        if(childIndex.type == "thing") continue;
+        
+        if(itemIndex < items.length){
+            if(items[itemIndex].getData().getName() == childIndex.getName()){
+                itemIndex ++;
+                continue;
+            }else{
+                while(itemIndex < items.length && items[itemIndex].getData().getName() < childIndex.getName()){
+                    //节点已经被删除
+                    itemRemoved.add(items[itemIndex]);
+                    itemIndex ++;
+               }
+               
+               if(itemIndex < items.length && items[itemIndex].getData().getName() == childIndex.getName()){
+                   itemIndex ++;
+                   continue;
+               }else{
+                   //新增节点
+               }
+           }         
+        }
+        
+        TreeItem treeItem = new TreeItem(item, SWT.NONE, itemIndex);
+        treeItem.setText(childIndex.label);
+        treeItem.setData(childIndex);
+        switch(childIndex.type){
+            case "project":
+                treeItem.setImage(project1Image);
+                break;
+            case "thingManager":
+                treeItem.setImage(factoryImage);
+                break;
+            case "category":
+                treeItem.setImage(packageImage);
+                break;
+            case "dataObjectImage":
+                treeItem.setImage(dataObjectImage);
+                break;
+            case "workingSet":
+                treeItem.setImage(project1Image);
+                break;
+        }
+    }
+    
+    for(itemr in itemRemoved){
+        itemr.dispose();
+    }
+}
+
+//打开本节点关闭其他同级节点
+def parentItem = item.getParentItem();
+if(parentItem != null){
+    for(titem in parentItem.getItems()){
+         if(titem != item && titem.getExpanded()){
+             //titem.setExpanded(false);
+         }
+    }
+}
+item.setExpanded(true);
+#$@text#$@
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_mark=false
+      sid=refreshProjectTree
     @/@tree/@init
     sname=init
     sisSynchronized=false

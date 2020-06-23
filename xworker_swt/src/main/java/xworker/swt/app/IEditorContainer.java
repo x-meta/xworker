@@ -89,6 +89,13 @@ public interface IEditorContainer {
 	public List<IEditor> getEditors();
 	
 	/**
+	 * 返回当前处于激活状态的编辑器。
+	 * 
+	 * @return
+	 */
+	public IEditor getActiveEditor();
+	
+	/**
 	 * 返回编辑器容器自己的Composite。
 	 * 
 	 * @return
