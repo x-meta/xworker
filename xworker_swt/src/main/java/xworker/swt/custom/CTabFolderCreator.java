@@ -255,6 +255,16 @@ public class CTabFolderCreator {
 				if(control != null && control.isDisposed() == false) {
 					control.setVisible(true);
 					tabFolder.setTopRight(control);				
+				}else {
+					Thing topRightThing = itemThing.doAction("getTopRightControlThing", actionContext);
+					if(topRightThing != null) {
+						control= topRightThing.doAction("create", actionContext, "parent", tabFolder, "event", event);
+						if(control != null) {
+							event.item.setData(CTabFolderCTabItemCreator.TOPRIGHT, control);
+							control.setVisible(true);
+							tabFolder.setTopRight(control);	
+						}
+					}
 				}
 			}
 			

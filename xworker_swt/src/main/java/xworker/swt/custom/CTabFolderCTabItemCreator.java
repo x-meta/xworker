@@ -30,7 +30,7 @@ import xworker.swt.design.Designer;
 import xworker.swt.style.StyleSetStyleCreator;
 
 public class CTabFolderCTabItemCreator {
-	private static String TOPRIGHT = "__CTabFolderCTabItem_TOPRIGHT__"; 
+	public static String TOPRIGHT = "__CTabFolderCTabItem_TOPRIGHT__"; 
     public static Object create(ActionContext actionContext){
     	Thing self = actionContext.getObject("self");
         return create(actionContext, self, -1);
