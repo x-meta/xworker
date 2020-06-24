@@ -56,7 +56,7 @@ public class LabelToolTipOpenThread extends Thread{
 						control.setData("toolTipShell", toolTipShell);
 						toolTipShell.setData("listsner", listsner);
 						Point point = new Point(x, y);
-						toolTipShell.setLocation(point);						
+						toolTipShell.setLocation(point);	
 						
 						ActionContainer actions = (ActionContainer) toolTipShell.getData("actions");
 						Map<String, Object> param = new HashMap<String, Object>();

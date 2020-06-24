@@ -57,18 +57,25 @@ public class UtilBrowser implements StatusTextListener{
 	Display display;
 	Browser browser;
 	Thing utilBrowserThing;
+	UtilBrowserListener listener;
 	
 	/** -1 表示还未判断，0 表示不是， 1 表示是 */ 
 	private static byte isWebKit = -1;
 	
-	public static void attach(Browser browser, ActionContainer actions, Display display){
+	public static UtilBrowser attach(Browser browser, ActionContainer actions, Display display){
 		UtilBrowser ub = new UtilBrowser(display, actions);
 		ub.attach(browser);
+		return ub;
 	}
 	
-	public static void attach(Browser browser, ActionContext actionContext){
+	public static UtilBrowser attach(Browser browser, ActionContext actionContext){
 		UtilBrowser ub = new UtilBrowser(browser.getDisplay(), actionContext);
 		ub.attach(browser);
+		return ub;
+	}
+	
+	public void setListener(UtilBrowserListener listener) {
+		this.listener = listener;
 	}
 	
 	public static synchronized boolean isWebKit(){
@@ -167,6 +174,11 @@ public class UtilBrowser implements StatusTextListener{
 	
 	public void handle(String message){
 		try{
+			if(listener != null && listener.handleBrowserMessage(message)) {
+				//监听器已处理
+				return;
+			}
+			
 			//logger.info(message);
 			//通过?号后可以附加参数，同url的规则
 			Map<String, Object> params = new HashMap<String, Object>();

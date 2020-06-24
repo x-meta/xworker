@@ -74,6 +74,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		maskShell.setVisible(true);
 		tipShell.setVisible(true);
 		tipShell.setText(guideThing.getMetadata().getLabel());
+		tipShell.setFocus();
 		maskComposite.getShell().addControlListener(this);
 		maskComposite.addControlListener(this);
 		
@@ -131,6 +132,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			//启动检测线程
 			maskShell.setVisible(true);
 			tipShell.setVisible(true);
+			tipShell.setFocus();
 			tipShell.setText(guideThing.getMetadata().getLabel());
 		}else if(this.maskComposite != maskComposite) {
 			this.maskComposite.removeControlListener(this);

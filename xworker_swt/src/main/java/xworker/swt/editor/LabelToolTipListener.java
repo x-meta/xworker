@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -139,9 +140,15 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 			toolTipBrowser.setLocation(point);
 		}
 		
+		Browser browser = actionContext.getObject("browser");
+		String url = XWorkerUtils.getWebControlUrl(World.getInstance().getThing("xworker.ide.worldexplorer.swt.util.HtmlToolTipWeb"));
+		String content = (String) lastControl.getData("toolTip");
+		url = url + "&overflow=false&message=" + content;
+		browser.setUrl(url);
+		/*
 		ActionContainer actions = (ActionContainer) toolTipBrowser.getData("actions");
 		Map<String, Object> param = new HashMap<String, Object>();
-		String content = (String) lastControl.getData("toolTip");
+		
 		if(content != null && content.startsWith("thing=")) {
 			String thingPath = content.substring(6, content.length());
 			Thing attribute = World.getInstance().getThing(thingPath);
@@ -149,7 +156,7 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 			    	+ thingPath + "\">"+ attribute.getMetadata().getName() + "</a></u></b><br/><br/>";
 		}
 		param.put("message", content);
-		actions.doAction("setContent", param);
+		actions.doAction("setContent", param);*/
 		toolTipBrowser.setVisible(true);
 		toolTipBrowser.setFocus();
 		closeToolTip(lastControl);
