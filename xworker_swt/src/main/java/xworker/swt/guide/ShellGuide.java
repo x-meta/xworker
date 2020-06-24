@@ -11,6 +11,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -96,7 +97,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 * @param maskComposite
 	 * @param actionContext
 	 */
-	public void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
+	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
 		this.parentContext = maskActionContext;
 		if(this.maskComposite.getShell() != maskComposite.getShell()) {
 			this.maskComposite.getShell().removeControlListener(this);
@@ -109,7 +110,6 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			this.maskComposite.addDisposeListener(this);
 			
 			//shell不同了，重新创建maskShell和tipShell
-			maskShell.dispose();
 			tipShell.dispose();
 			
 			this.actionContext = new ActionContext();
@@ -123,8 +123,10 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			World world = World.getInstance();
 			//创建遮罩的Shell
 			Thing maskShellThing = world.getThing("xworker.swt.guide.prototypes.ShellGuideShell");
-			maskShell = maskShellThing.doAction("create", this.actionContext);
-			
+			Shell newMaskShell = maskShellThing.doAction("create", this.actionContext);
+			Shell oldMaskShell = maskShell;
+			maskShell = newMaskShell;
+			oldMaskShell.dispose();
 			
 			Thing tipShellThing = world.getThing("xworker.swt.guide.prototypes.ShellGuideTipShell");
 			tipShell = tipShellThing.doAction("create", actionContext, "parent", maskShell);	
@@ -252,10 +254,18 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		if(isDisposed()) {
 			return;
 		}
+		
+		Designer.setVisible(maskComposite);
 		nodeStartTime = System.currentTimeMillis();
-		Point location = maskComposite.toDisplay(maskComposite.getLocation());
-		maskShell.setLocation(location);
-		maskShell.setSize(maskComposite.getSize());
+		if(maskComposite instanceof Shell) {
+			Shell shell = (Shell) maskComposite;
+			maskShell.setLocation(shell.getLocation());
+			maskShell.setSize(maskComposite.getSize());
+		}else {
+			Point location = maskComposite.toDisplay(maskComposite.getLocation());		
+			maskShell.setLocation(location);
+			maskShell.setSize(maskComposite.getSize());
+		}
 		maskShell.setVisible(true);
 		
 		Button preButton = actionContext.getObject("preButton");
@@ -296,7 +306,19 @@ public class ShellGuide implements DisposeListener, ControlListener{
 												
 						Control control = getActiveControl(guideNode);
 						if(control != null) {
-							Point controlLocation  = control.getDisplay().map(control, maskComposite, new Point(0, 0));
+							//使控件可见
+							Designer.setVisible(control);
+							
+							Point controlLocation  = null;
+							if(maskComposite instanceof Shell) {
+								//Shell shell = (Shell) maskComposite;
+								//Point location = control.getLocation();
+								//controlLocation = control.getParent().toDisplay(location);
+								//Rectangle rec = shell.getClientArea();
+								controlLocation = control.getDisplay().map(control, maskShell, new Point(0, 0));
+							}else {
+								controlLocation = control.getDisplay().map(control, maskComposite, new Point(0, 0));								
+							}
 							
 							Region region = new Region();
 							region.add(0, 0, maskShell.getSize().x, maskShell.getSize().y);
@@ -321,7 +343,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		} 
 	}
 
-	public boolean isDisposed() {
+	public synchronized boolean isDisposed() {
 		return maskShell == null || maskShell.isDisposed();
 	}
 	
@@ -356,7 +378,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		}
 		ShellGuide guide = new ShellGuide(maskComposite, self, ac);
 		actionContext.g().put(self.getMetadata().getName(), guide);
-		return null;
+		return guide;
 	}
 
 	@Override

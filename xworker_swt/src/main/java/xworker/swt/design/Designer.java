@@ -24,6 +24,8 @@ import java.util.Stack;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -33,8 +35,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -291,6 +294,41 @@ public class Designer {
 	public static void setDesignEditMode(boolean designEditMode){
 		Designer designer = Designer.getDesigner();
 		designer.designEditMode = designEditMode;
+	}
+	
+	/**
+	 * 让指定的Control变得可见。
+	 * 
+	 * @param control
+	 */
+	public static void setVisible(Control control) {
+		Composite parent = control.getParent();
+		if(parent instanceof ScrolledComposite) {
+			ScrolledComposite sc = (ScrolledComposite) parent;
+			sc.showControl(control);
+		}else if(parent instanceof CTabFolder) {
+			CTabFolder tab = (CTabFolder) parent;
+			for(CTabItem item : tab.getItems()) {
+				if(item.getControl() == control) {
+					SwtUtils.setSelection(item);
+					break;
+				}
+			}
+		}else if(parent instanceof TabFolder) {
+			TabFolder tab = (TabFolder) parent;
+			for(TabItem item : tab.getItems()) {
+				if(item.getControl() == control) {
+					SwtUtils.setSelection(item);
+					break;
+				}
+			}
+		}else if(parent instanceof Shell) {
+			control.setVisible(true);
+		}
+		
+		if(parent != null) {
+			setVisible(parent);
+		}
 	}
 	
 	/**
@@ -1209,7 +1247,7 @@ public class Designer {
 			case Designer.UP:
 				if(rec.y - height > 0) {					
 					//可以在上面显示Shell
-					y = cl.y - height;
+					y = cl.y - height - 20;
 					if(rec.x + width < monitorSize.x + monitorSize.width) {
 						x = cl.x;
 					}else {

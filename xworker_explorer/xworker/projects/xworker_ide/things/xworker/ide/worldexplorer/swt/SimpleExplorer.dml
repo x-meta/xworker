@@ -285,7 +285,26 @@ actions.doAction("refreshAllMenu", actionContext, "mainMenu", mainMenuBar);
 //系统通知加事件监听，有通知时显示数量
 def notifyListenerThing = world.getThing("xworker.notification.ExplorerMessageButtonListener");
 def notifyListener = new SwtNotificationManagerListener(notifyListenerThing, actionContext);
-NotificationManager.addListener(notifyListener);]]></code>
+NotificationManager.addListener(notifyListener);
+
+//事物管理器的帮助小精灵
+def thing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@explorerUI");
+thing.doAction("create", actionContext, "parent", shell);
+
+thing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@editorUI");
+thing.doAction("create", actionContext, "parent", mainTabFolder);]]></code>
         </GroovyAction>
     </actions>
+    <InteractiveUI name="explorerUI" descriptors="xworker.swt.Widgets/@InteractiveUI" label="事物管理器"
+         commandIndex="xworker.ide.worldexplorer.swt.help.commander.ThingExplorer"
+         priority="" en_label="Thing Explorer" en_group="Thing Explorer" group="事物管理器">
+        <description><![CDATA[<h2>事物管理器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 事物管理器是XWorker的编辑和运行事物模型的平台，可以使用事物管理器开发和运行各种模型程序。</p>
+
+<p>&nbsp;</p>]]></description>
+    </InteractiveUI>
+    <InteractiveUI name="editorUI" descriptors="xworker.swt.Widgets/@InteractiveUI" label="工作区"
+         commandIndex="xworker.ide.worldexplorer.swt.help.commander.EditorTabFolder"
+         priority="" en_label="Working Area" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
 </Workbench>

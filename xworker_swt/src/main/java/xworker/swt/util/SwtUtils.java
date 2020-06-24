@@ -43,6 +43,8 @@ import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 //import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -65,6 +67,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.ExpandBar;
 import org.eclipse.swt.widgets.ExpandItem;
 import org.eclipse.swt.widgets.Label;
@@ -72,6 +75,8 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -1319,6 +1324,35 @@ public class SwtUtils {
 	public static void setThingDesc(String path, Browser browser) {
 		setThingDesc(World.getInstance().getThing(path), browser);
 	}
+	
+	/**
+	 * 选中一个CTabItem，并触发选择事件。
+	 * 
+	 * @param item
+	 */
+	public static void setSelection(CTabItem item) {
+		CTabFolder ctab = item.getParent();
+		ctab.setSelection(item);
+		Event event = new Event();
+		event.item = item;
+		event.widget = ctab;
+		ctab.notifyListeners(SWT.Selection, event);
+	}
+	
+	/**
+	 * 选中一个TabItem，并触发选择事件。
+	 * 
+	 * @param item
+	 */
+	public static void setSelection(TabItem item) {
+		TabFolder ctab = item.getParent();
+		ctab.setSelection(item);
+		Event event = new Event();
+		event.item = item;
+		event.widget = ctab;
+		ctab.notifyListeners(SWT.Selection, event);
+	}
+	
 	
 	/**
 	 * 向浏览器中设置事物的文档。

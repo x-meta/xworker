@@ -1,6 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <DesignTool name="ShellGuideDesigner" descriptors="xworker.swt.design.DesignTool" group="向导"
-     en_group="Guide" th_createIndex="true" th_registThing="design|xworker.swt.widgets.Widget">
-    <Composite name="shellGuideDesigner" width="640" height="480"></Composite>
+     en_group="Guide" th_createIndex="true" th_registThing="design|xworker.swt.widgets.Widget,design|xworker.swt.xworker.ThingEditor">
+    <Composite name="shellGuideDesigner" label="ShellGuide控件选择器" width="640" height="520" group="工具.向导"
+         en_label="Shell Guide Control Selector" en_group="tools.guide">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <SashForm name="mainSashForm" weights="30,70">
+                <Tree name="controlTree" FULL_SELECTION="false" HIDE_SELECTION="false"
+                     lineVisible="false" multipleColumns="false" headerVisible="false"
+                     sortIndicator="false" moveableColumns="false">
+                    <Listeners>
+                        <Listener name="treeSelection">
+                            <GroovyAction name="treeSelection">
+                                <code><![CDATA[import xworker.swt.design.Designer;
+
+//选择控件
+def data = event.item.data;
+actions.doAction("setControl", actionContext, "control", data.control);]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Tree>
+                <ThingForm name="thingForm">
+                    <Thing editCols="1">
+                        <attribute name="thing" size="60"></attribute>
+                        <attribute name="className" size="60"></attribute>
+                        <attribute name="isAttribute" inputtype="truefalse"></attribute>
+                    </Thing>
+                </ThingForm>
+            </SashForm>
+            <ActionContainer name="actions">
+                <GroovyAction name="handleNewControl">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+import xworker.swt.design.DesignShellActions;
+
+DesignShellActions.designTreeInit(actionContext, controlTree, newControl, false);
+actions.doAction("setControl", actionContext, "control", newControl);
+return true;]]></code>
+                </GroovyAction>
+                <GroovyAction name="setControl">
+                    <code><![CDATA[import xworker.swt.design.Designer;
+
+def thing = Designer.getThing(control);
+if(thing != null){
+    def cls = control.getClass().getName();
+    def attr = Designer.isAttribute(control);
+    
+    def values = [
+        "thing":thing.getMetadata().getPath(), "className":cls, "isAttribute":attr
+    ];
+    
+    thingForm.doAction("setValues", actionContext, "values", values);
+}]]></code>
+                    <ins>
+                        <param name="control"></param>
+                    </ins>
+                </GroovyAction>
+            </ActionContainer>
+            <Code name="init" descriptors="xworker.swt.Widgets/@Code">
+                <code><![CDATA[import xworker.swt.design.DesignTools;
+import xworker.swt.design.DesignShellActions;
+
+//注册toolActions
+parentContext.g().put("toolActions", actions);]]></code>
+            </Code>
+        </Composite>
+    </Composite>
 </DesignTool>

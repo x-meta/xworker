@@ -19,6 +19,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
 import xworker.swt.ActionContainer;
+import xworker.swt.util.UtilSwt;
 import xworker.util.ThingGroup;
 
 public class DesignToolDialog {
@@ -239,7 +240,7 @@ public class DesignToolDialog {
 			ac.put("parentContext", actionContext);
 			tools.doAction("run", ac);
 		}else {
-			shell.setSize(250,85);
+			shell.setSize(UtilSwt.getInt(250), UtilSwt.getInt(85));
 		}
 		
 		//迫使ScrollComposite重新布局			
