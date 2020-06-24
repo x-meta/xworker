@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
 import xworker.swt.util.UtilBrowserListener;
+import xworker.swt.util.UtilSwt;
 
 public class ToolTipStatusListener implements StatusTextListener, ProgressListener, UtilBrowserListener{
     Shell shell;
@@ -57,7 +58,7 @@ public class ToolTipStatusListener implements StatusTextListener, ProgressListen
             String[] sizes = content.split(":");
             int width = Integer.parseInt(sizes[1]) + 20;
             if(width < 420){
-                width = 420;
+                //width = 420;
             }
                 
             int height = Integer.parseInt(sizes[0]);
@@ -69,7 +70,11 @@ public class ToolTipStatusListener implements StatusTextListener, ProgressListen
             	Rectangle area = shell.getClientArea();
             	int bx = size.x - area.width;
             	int by = size.y - area.height;
-                shell.setSize(width + bx , height + 3 + by);                
+            	width = width + bx;
+            	height = height + 3 + by;
+            	width = UtilSwt.getInt(width);
+            	height = UtilSwt.getInt(height);
+                shell.setSize(width  , height);                
             }catch(Exception e){
                 shell.setSize(420, 300);
             }
