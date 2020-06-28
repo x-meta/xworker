@@ -314,6 +314,7 @@ public class Workbench {
 		config.put("hasBottomTab", self.getBoolean("bottomTab"));
 		config.put("hasStatusBar", self.getBoolean("statusBar"));
 		ac.put("config", config);
+		ac.put("parent", actionContext.get("parent"));
 		//Shell的标题
 		ac.put("title", self.getMetadata().getLabel());
 		ac.put("navLabel", self.doAction("getNavLabel", actionContext));

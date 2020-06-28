@@ -11,7 +11,6 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -46,10 +45,29 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	long nodeStartTime = -1;
 	Map<String, Object> datas = new HashMap<String, Object>();
 	
+	ShellGuideThread checker = null;
+	
 	public  ShellGuide(Composite maskComposite, Thing guideThing, ActionContext parentContext) {
 		this.maskComposite = maskComposite;
 		this.guideThing = guideThing;
 		this.parentContext = parentContext;
+				
+		init(true);
+	}
+	
+	public void init(final boolean first) {
+		maskComposite.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					doInit(first);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void doInit(boolean first) {
 		this.actionContext = new ActionContext();
 		actionContext.put("parentContext", parentContext);
 		if(maskComposite instanceof Shell) {
@@ -71,7 +89,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		tipShell = tipShellThing.doAction("create", actionContext, "parent", maskShell);	
 		
 		//启动检测线程
-		new Thread(new ShellGuideThread(this)).start();
+		checker = new ShellGuideThread(this);
+		new Thread(checker).start();
 		maskShell.setVisible(true);
 		tipShell.setVisible(true);
 		tipShell.setText(guideThing.getMetadata().getLabel());
@@ -79,8 +98,23 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		maskComposite.getShell().addControlListener(this);
 		maskComposite.addControlListener(this);
 		
-		setGuideThing(guideThing);
-		next();
+		if(first) {
+			//第一次启动时的初始化
+			setGuideThing(guideThing);
+			
+			next();
+		}else {
+			tipShell.setText(guideThing.getMetadata().getLabel());
+		}
+		
+		if(maskComposite instanceof Shell) {
+			Shell shell = (Shell) maskComposite;
+			maskShell.setLocation(shell.getLocation());
+		}else {
+			Point location = maskComposite.toDisplay(maskComposite.getLocation());
+			maskShell.setLocation(location);
+		}
+		maskShell.setSize(maskComposite.getSize());
 	}
 	
 	public void setData(String key, Object value) {
@@ -100,42 +134,10 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
 		this.parentContext = maskActionContext;
 		if(this.maskComposite.getShell() != maskComposite.getShell()) {
-			this.maskComposite.getShell().removeControlListener(this);
-			this.maskComposite.removeControlListener(this);
-			this.maskComposite.removeDisposeListener(this);
+			this.close();
+			this.init(false);
 			
-			this.maskComposite = maskComposite;
-			this.maskComposite.getShell().addControlListener(this);
-			this.maskComposite.addControlListener(this);
-			this.maskComposite.addDisposeListener(this);
-			
-			//shell不同了，重新创建maskShell和tipShell
-			tipShell.dispose();
-			
-			this.actionContext = new ActionContext();
-			actionContext.put("parentContext", parentContext);
-			if(maskComposite instanceof Shell) {
-				actionContext.put("parent", maskComposite);
-			}else {
-				actionContext.put("parent", maskComposite.getShell());
-			}
-			actionContext.put("guide", this);
-			World world = World.getInstance();
-			//创建遮罩的Shell
-			Thing maskShellThing = world.getThing("xworker.swt.guide.prototypes.ShellGuideShell");
-			Shell newMaskShell = maskShellThing.doAction("create", this.actionContext);
-			Shell oldMaskShell = maskShell;
-			maskShell = newMaskShell;
-			oldMaskShell.dispose();
-			
-			Thing tipShellThing = world.getThing("xworker.swt.guide.prototypes.ShellGuideTipShell");
-			tipShell = tipShellThing.doAction("create", actionContext, "parent", maskShell);	
-			
-			//启动检测线程
-			maskShell.setVisible(true);
-			tipShell.setVisible(true);
-			tipShell.setFocus();
-			tipShell.setText(guideThing.getMetadata().getLabel());
+			return;
 		}else if(this.maskComposite != maskComposite) {
 			this.maskComposite.removeControlListener(this);
 			this.maskComposite.removeDisposeListener(this);
@@ -208,6 +210,12 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 */
 	public void checkCurrentNode() {		
 		if(guideIndex >= 0 && guideIndex < guideNodes.size()) {
+			Thing guideNode = guideNodes.get(guideIndex);
+			Boolean finished = guideNode.doAction("autoFinished", parentContext);
+			if(finished == null || UtilData.isTrue(finished)) {
+				Button nextButton = actionContext.getObject("nextButton");
+				nextButton.setEnabled(true);
+			}
 			long delay = getDelay();
 			if(delay <= 0) {
 				return;
@@ -217,8 +225,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 				return;
 			}
 			
-			Thing guideNode = guideNodes.get(guideIndex);
-			if(UtilData.isTrue(guideNode.doAction("finished", parentContext))) {
+			
+			if(UtilData.isTrue(guideNode.doAction("autoFinished", parentContext))) {
 				next();
 			}
 		}
@@ -256,6 +264,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		}
 		
 		Designer.setVisible(maskComposite);
+		tipShell.setVisible(false);
 		nodeStartTime = System.currentTimeMillis();
 		if(maskComposite instanceof Shell) {
 			Shell shell = (Shell) maskComposite;
@@ -280,6 +289,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		} else {
 			nextButton.setText(UtilString.getString("lang:d=下一步&en=Next", actionContext));
 		}
+		nextButton.setEnabled(false);
 		
 		if(guideIndex < guideNodes.size()) {
 			Thing guideNode = guideNodes.get(guideIndex);
@@ -301,6 +311,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 					//放到display中执行，解决init方法中aysncExec后执行的问题
 					try {
 						//tooltip
+						
+						tipShell.setSize(640,480);
 						((Browser) ShellGuide.this.actionContext.get("browser")).setUrl(Designer.getUrlRoot() 
 								+ "do?sc=xworker.swt.xworker.design.MarkTooltipControl&thing=" + guideNode.getMetadata().getPath());
 												
@@ -334,6 +346,9 @@ public class ShellGuide implements DisposeListener, ControlListener{
 							loc.y = loc.y + (maskShell.getSize().y - tipShell.getSize().y) / 2;
 							tipShell.setLocation(loc);
 						}
+						
+						maskShell.setFocus();
+						tipShell.setFocus();
 					}catch(Exception e) {
 						e.printStackTrace();
 					}
@@ -347,7 +362,9 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		return maskShell == null || maskShell.isDisposed();
 	}
 	
-	public void close() {
+	private void doClose() {
+		checker.stop();
+		
 		maskComposite.removeDisposeListener(this);
 		maskComposite.removeControlListener(this);
 		maskComposite.getShell().removeControlListener(this);
@@ -358,6 +375,20 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		
 		if(tipShell != null && tipShell.isDisposed() == false) {
 			tipShell.dispose();
+		}
+	}
+	
+	public void close() {
+		if(maskComposite != null && maskComposite.isDisposed() == false) {
+			maskComposite.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						doClose();
+					}catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		}
 	}
 	
@@ -400,4 +431,14 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		
 		showCurrentGuide();
 	}
+
+	public Shell getMaskShell() {
+		return maskShell;
+	}
+
+	public Shell getTipShell() {
+		return tipShell;
+	}
+	
+	
 }

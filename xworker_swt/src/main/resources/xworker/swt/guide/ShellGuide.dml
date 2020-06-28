@@ -67,7 +67,10 @@
 	初始化，变量上下文是parentContext，即向导所要展示的SWT界面的变量上下文。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
 	&nbsp;</li>
 	<li><strong>boolean finished(ShellGuide guide, Thing guideNode)</strong><br />
-	是否已经结束。<br />
+	是否已经结束，返回null或true<strong>下一步</strong>按钮才可以激活。<br />
+	&nbsp;</li>
+	<li><strong>boolean autoFinished(ShellGuide node, Thing guideNode)</strong><br />
+	是否可以自动结束，如果返回true那么在等待时间结束后自动进入下一个向导节点。<br />
 	&nbsp;</li>
 	<li><strong>Control getActiveControl()</strong><br />
 	返回要激活的控件。<br />
@@ -96,6 +99,7 @@
 ]]></description>
         <actions>
             <NOOP name="init"></NOOP>
+            <NOOP name="autoFinished"></NOOP>
             <NOOP name="finished"></NOOP>
             <GetObject name="getActiveControlParent" descriptors="xworker.lang.actions.ActionUtil/@GetData"
                  attributeName="activeControlParent"></GetObject>
@@ -122,33 +126,35 @@
 <p>单位毫秒。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControl">
+        <attribute name="activeControl" group="ActiveControl">
             <description><![CDATA[<p>要激活的控件，即可以输入不会被遮罩的控件。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControlParent" size="50">
+        <attribute name="activeControlParent" size="50" group="ActiveControl">
             <description><![CDATA[<p>一般通过控件模型的路径来搜索控件，但一个界面中的多个控件可能是同一个模型创建的，此时需要指定对应的父控件，才能准确查找到需要激活的控件。</p>
 
 <p>默认使用当前遮罩的Composite。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControlThing" inputtype="dataSelector" size="60">
+        <attribute name="activeControlThing" inputtype="dataSelector" size="60" group="ActiveControl"
+             labelAlign="justify">
             <description><![CDATA[<p>控件的模型路径，用来定位控件。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControlIsAttribute" inputtype="truefalse" default="false">
+        <attribute name="activeControlIsAttribute" inputtype="truefalse" group="ActiveControl"
+             default="false">
             <description><![CDATA[<p>控件是否是属性编辑器。</p>
 ]]></description>
         </attribute>
-        <attribute name="activeControlClassName" _xmeta_id_="controlClassName">
+        <attribute name="activeControlClassName" _xmeta_id_="controlClassName" group="ActiveControl">
             <description><![CDATA[<p>如果不为空，那么会比较控件的类的SimpleName，符合的才是要激活的的控件。</p>
 ]]></description>
         </attribute>
-        <attribute name="maskComposite" size="40">
+        <attribute name="maskComposite" size="40" group="Mask">
             <description><![CDATA[<p>设置新的maskComposite。</p>
 ]]></description>
         </attribute>
-        <attribute name="maskCompositeActionContext">
+        <attribute name="maskCompositeActionContext" group="Mask">
             <description><![CDATA[<p>如果设置了新的maskComposite，那么可以指定其所在的变量上下文。</p>
 
 <p>如果没有设置，默认通过Desinger从控件上获取。如果Designer为开启，那么可能获取不到而导致向导失败。</p>

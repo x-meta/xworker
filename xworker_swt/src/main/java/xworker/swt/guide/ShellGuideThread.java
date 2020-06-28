@@ -8,13 +8,23 @@ package xworker.swt.guide;
  */
 public class ShellGuideThread implements Runnable{
 	ShellGuide guide;
+	boolean stop = false;
 	
 	public ShellGuideThread(ShellGuide guide) {
 		this.guide = guide;
 	}
+	
+	public void stop() {
+		stop = true;
+	}
+	
 	@Override
 	public void run() {
 		while(true) {
+			if(stop) {
+				break;
+			}
+			
 			if(guide.isDisposed()) {
 				break;
 			}

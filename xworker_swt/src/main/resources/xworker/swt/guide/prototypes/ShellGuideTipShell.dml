@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Shell name="tipShell" _xmeta_id_="ShellGuideTipShell" descriptors="xworker.swt.widgets.Shell"
-     MIN="false" MAX="false" TOOL="true" width="450" height="300" visible="false">
+     MIN="false" MAX="false" ON_TOP="true" TOOL="true" width="450" height="300" visible="false">
     <GridLayout name="GridLayout" marginWidth="0" marginHeight="0"></GridLayout>
     <Browser name="browser" javascriptEnabled="">
         <UtilBrowser name="UtilBrowser"></UtilBrowser>
@@ -9,7 +9,8 @@
         <BrowserFunction name="browserSetSize" _xmeta_id_="BrowserFunction">
             <actions>
                 <GroovyAction name="doFunction">
-                    <code><![CDATA[int width =(int) args[0];
+                    <code><![CDATA[import xworker.swt.util.UtilSwt;
+int width =(int) args[0];
 int height = (int) args[1];
 
 def size = tipShell.getSize();
@@ -17,8 +18,10 @@ def clientArea = tipShell.getClientArea();
 def borderX = size.x - clientArea.width;
 def borderY = size.y - clientArea.height;
 
-tipShell.setSize(borderX + width + 5, borderY + height + 50);
-//println "browserSize:" + args;]]></code>
+tipShell.setSize(UtilSwt.getInt(borderX + width + 5)
+     , UtilSwt.getInt(borderY + height + 50));
+//println "browserSize:" + args;
+tipShell.setVisible(true);]]></code>
                 </GroovyAction>
             </actions>
         </BrowserFunction>

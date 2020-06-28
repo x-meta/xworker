@@ -14,6 +14,24 @@ public class CommandAssistor {
 	private static Shell shell = null;
 	private static ActionContext actionContext = null;
 	
+	public static boolean isOpened() {
+		if(SwtUtils.isRWT()) {			
+			ActionContext actionContext = new ActionContext();
+			Shell shell = (Shell) XRWT.getAttribute(KEY, actionContext);
+			if(shell == null || shell.isDisposed()){
+				return false;
+			}else {
+				return true;
+			}
+		}else {
+			if(shell == null || shell.isDisposed()){
+				return false;
+			}else {
+				return true;
+			}
+		}
+	}
+	
 	public static void open(){
 		if(SwtUtils.isRWT()) {
 	

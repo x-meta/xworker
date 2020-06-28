@@ -872,6 +872,50 @@ public class ThingDescriptorForm {
 			}
 		}
 		
+		//初始化子分组，即在一个Tab中的表单使用Group分组的
+		Map<String, Thing> subGroups = new HashMap<String, Thing>();
+		for(int i=0; i<fs.size(); i++) {
+			Thing attr = fs.get(i);
+			String subGroup = attr.getStringBlankAsNull("subGroup");
+			if(subGroup != null) {
+				subGroup = UtilString.getString(subGroup, context);
+			}
+			
+			if(subGroup != null) {
+				fs.remove(i);
+				
+				int index = subGroup.indexOf("|");
+				String name = subGroup;
+				Map<String, String> params = null;
+				if(index != -1) {
+					name = subGroup.substring(0, index);
+					params = UtilString.getParams(subGroup.substring(index + 1, subGroup.length()));
+				}
+				
+				Thing subGroupThing = subGroups.get(name);
+				if(subGroupThing == null) {
+					subGroupThing = new Thing();
+					subGroupThing.set("formNoLabel", formNoLabel);
+					subGroupThing.set("name", "__subGroup__" + name);
+					subGroupThing.set("label", name);
+					subGroupThing.set("inputtype", "__subGroup__editor__");
+					subGroupThing.set("showLabel", "false");
+					subGroupThing.set("colspan", attr.get("colspan"));
+					subGroupThing.set("rowspan", attr.get("rowspan"));
+					fs.add(i, subGroupThing);
+					subGroups.put(name, subGroupThing);
+				}else {
+					i--;
+				}
+				
+				if(params != null) {
+					subGroupThing.getAttributes().putAll(params);
+				}
+				
+				subGroupThing.addChild(attr, false);
+			}
+		}
+		
 		//默认选择事件
 		Listener defaultSelection = context.getObject("defaultSelection");
 		

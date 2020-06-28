@@ -42,11 +42,6 @@ import xworker.swt.util.SwtUtils;
 public class SplitButton extends Button {
     
 	private final static int DEFAULT_SPACES = 21;
-    private final static String EMPTY_SPACE = FontsUtils.getSpaceByWidth(DEFAULT_SPACES);
-    private final static Color COLOR_WIDGET_NORMAL_SHADOW = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-    private final static Color COLOR_WIDGET_HIGHLIGHT_SHADOW = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
-    private final static Color COLOR__BLACK = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
-    
     private List<SplitButtonSelectionListener> listeners = new LinkedList<SplitButtonSelectionListener>();
     
     private int x1 = -1;
@@ -92,6 +87,10 @@ public class SplitButton extends Button {
 	            	int dx = -e.gc.getClipping().x;
 	                int dy = -e.gc.getClipping().y;
 	               
+	                Color COLOR_WIDGET_NORMAL_SHADOW = e.widget.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
+	                Color COLOR_WIDGET_HIGHLIGHT_SHADOW = e.widget.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
+	                Color COLOR__BLACK = e.widget.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+	                
 	            	e.gc.setForeground(COLOR_WIDGET_NORMAL_SHADOW);
 	            	e.gc.setBackground(COLOR_WIDGET_NORMAL_SHADOW);
 	            	e.gc.setLineWidth(1);
@@ -190,6 +189,7 @@ public class SplitButton extends Button {
     @Override
     public void setText(String string) {
         if (string != null) {
+        	String EMPTY_SPACE = FontsUtils.getSpaceByWidth(DEFAULT_SPACES);
             super.setText(string + EMPTY_SPACE);
         } 
     }

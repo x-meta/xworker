@@ -16,6 +16,7 @@ import xworker.swt.xworker.attributeEditor.editors.InputSelectAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.PathSelectorAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.RadioAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.SelectAttributeEditor;
+import xworker.swt.xworker.attributeEditor.editors.SubGroupEditor;
 import xworker.swt.xworker.attributeEditor.editors.TextAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.TextareaAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.TruefalseAttributeEditor;
@@ -56,6 +57,8 @@ public class AttributeEditorFactory {
 			return new FontSelectAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("image".equals(inputType)){
 			return new ImageAttributeEditor(formThing, attribute, gridData, actionContext);
+		}else if("__subGroup__editor__".equals(inputType)){
+			return new SubGroupEditor(formThing, attribute, gridData, actionContext);
 		}else {
 			return new DefaultAttributeEditor(formThing, attribute, gridData, actionContext);
 		}

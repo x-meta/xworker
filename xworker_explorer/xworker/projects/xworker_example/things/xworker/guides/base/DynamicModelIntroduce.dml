@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ShellGuide name="DynamicModelIntroduce" descriptors="xworker.swt.guide.ShellGuide" label="动态模型简介"
+     en_label="Dynamic Model" th_createIndex="true" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
+     group="-20000|xworker">
+    <actions>
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
+    </actions>
+    <Guide name="introduce" label="简介">
+        <description><![CDATA[<h2>动态模型简介</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型是一个模块化的编程方法，它的特点如下。</p>
+
+<ul>
+	<li><strong>基于其它编程语言</strong><br />
+	动态模型是一种抽象的编程方法，依赖其它编程语言来实现和运行。比如XWorker所使用的动态模型引擎X-Meta是使用Java实现的。<br />
+	<strong>&nbsp;</strong></li>
+	<li><strong>应用层的模块化编程</strong><br />
+	动态模型是应用层的编程方法。比如使用Java编写了一个功能模块，然后可以把它包装成模型，当我们需要使用该模块时可以通过配置模型来实现。<br />
+	&nbsp;</li>
+	<li><strong>实时的面向对象编程</strong><br />
+	动态模型实现了面向对象的编程方法，可以在系统运行时实时的对系统本身编程。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 点击下一步按钮我们将简单解释一下这三个特点。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="xml" label="基于其它编程语言">
+        <description><![CDATA[<h2>基于其它编程语言</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型的代码可以用XML来表示，XML通常用来表示数据，数据本身是不可以执行的，因此动态模型需要通过其它语言来解释执行。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如下面的XML就是一个模型的代码，<a href="javascript:invoke('shell:xworker.example.swt.SWTHelloWorld')">点击这里</a>可以执行它。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;Hello World&quot; width=&quot;400&quot;
+     height=&quot;300&quot; label=&quot;SWTHelloWorld&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Composite name=&quot;buttonComposite&quot; _xmeta_id_=&quot;8074&quot;&gt;
+        &lt;GridData name=&quot;buttonCompositeGridData&quot; _xmeta_id_=&quot;8075&quot; style=&quot;FILL_HORIZONTAL&quot;
+             horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+        &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot; _xmeta_id_=&quot;8076&quot;&gt;&lt;/RowLayout&gt;
+        &lt;Button name=&quot;closeButton&quot; _xmeta_id_=&quot;8077&quot; text=&quot;lang:d=关闭&amp;amp;en=Close&quot;&gt;
+            &lt;RowData name=&quot;RowData&quot; _xmeta_id_=&quot;8078&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
+            &lt;Listeners _xmeta_id_=&quot;8079&quot;&gt;
+                &lt;Listener name=&quot;closeButtonSelection&quot; _xmeta_id_=&quot;8080&quot;&gt;
+                    &lt;GroovyAction name=&quot;GroovyAction&quot; code=&quot;shell.close();&quot;&gt;&lt;/GroovyAction&gt;
+                &lt;/Listener&gt;
+            &lt;/Listeners&gt;
+        &lt;/Button&gt;
+    &lt;/Composite&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="appModule" label="应用层的模块化编程">
+        <description><![CDATA[<h2>应用层的模块化编程</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 应用层的模块化编程指出了动态模型的适用的场合，即算法之类的程序应该交给代码语言来编写，而要使用算法时可以在动态模型中来使用。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 因此模型通常是对功能和应用的封装，动态模型是为了可以通过简单的配置就能快速的使用它们。比如下面的模型代码是工作台的实例，它可以浏览和编辑文件等。可以<a href="javascript:invoke('action:xworker.guides.base.WorkbenchRunner')">点击这里</a>来运行。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Workbench name=&quot;WorkbenchExample&quot; descriptors=&quot;xworker.swt.app.Workbench&quot; coolBar=&quot;false&quot;
+     statusBar=&quot;false&quot; editSelf=&quot;false&quot;&gt;
+    &lt;Menu style=&quot;BAR&quot;&gt;
+        &lt;MenuItem name=&quot;fileMenuItem&quot; text=&quot;lang:d=文件&amp;amp;en=File&quot; style=&quot;CASCADE&quot;&gt;
+            &lt;Menu name=&quot;fileMenu&quot; style=&quot;POP_UP&quot;&gt;
+                &lt;MenuItem name=&quot;exitMenuItem&quot; text=&quot;lang:d=退出&amp;amp;en=Exit&quot;&gt;
+                    &lt;listeners&gt;
+                        &lt;Listener name=&quot;exitMenuItemSelection&quot;&gt;
+                            &lt;Dispose name=&quot;Dispose&quot; descriptors=&quot;xworker.swt.actions.ControlActions/@Dispose&quot;
+                                 controlList=&quot;shell&quot;&gt;&lt;/Dispose&gt;
+                        &lt;/Listener&gt;
+                    &lt;/listeners&gt;
+                &lt;/MenuItem&gt;
+            &lt;/Menu&gt;
+        &lt;/MenuItem&gt;
+    &lt;/Menu&gt;
+    &lt;Views&gt;
+        &lt;View name=&quot;fileExplorer&quot; label=&quot;文件浏览&quot; id=&quot;fileExplorer&quot; type=&quot;left&quot; composite=&quot;xworker.swt.app.views.FileTree/@menuTree&quot;
+             en_label=&quot;File Explorer&quot;&gt;&lt;/View&gt;
+    &lt;/Views&gt;
+&lt;/Workbench&gt;</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="realtimeProgramming" label="实时编程">
+        <description><![CDATA[<h2>同一个应用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 使用动态模型可以实现实时编程，既可以在系统运行时动态的对系统本身编程。XWorker也是使用动态模型编写的，使用XWorker编写模型程序，这些模型程序和XWorker其实是同一个系统。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 由于XWorker和使用XWorker开发的模型应用同属于一个系统，因此XWorker是一个开放的系统，使用的人越多它的功能就越丰富，并且每个人都可以使用和修改XWorker的每一个功能。</p>
+]]></description>
+    </Guide>
+</ShellGuide>
