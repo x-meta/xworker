@@ -7,20 +7,32 @@ import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class AppActions {
-	public static void openEditor(ActionContext actionContext) {
-		Thing self = actionContext.getObject("self");
+	public static void openEditor(final ActionContext actionContext) {
+		final Thing self = actionContext.getObject("self");
 		
-		String id = self.doAction("getId", actionContext);
+		final String id = self.doAction("getId", actionContext);
 		//println id;
-		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
-		Thing editor = self.doAction("getEditor", actionContext);
+		final IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
 		Map<String, Object> params = self.doAction("getParams", actionContext);
 		if(params == null) {
 			params = Collections.emptyMap();
 		}
-
-		editorContainer.openEditor(id, editor, params);
+		final Map<String, Object> ps = params;
+		
+		editorContainer.getComposite().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					Thing editor = self.doAction("getEditor", actionContext);
+					editorContainer.openEditor(id, editor, ps);
+				}catch(Exception e) {
+					Executor.error(AppActions.class.getSimpleName(), "open editor error", e);
+				}
+			}
+		});
+		
 	}
 	
 	public static void saveAllEdtiors(ActionContext actionContext) {
@@ -28,7 +40,15 @@ public class AppActions {
 		
 		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
 		if(editorContainer != null){
-		    editorContainer.saveAll();
+			editorContainer.getComposite().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						editorContainer.saveAll();
+					}catch(Exception e) {
+						Executor.error(AppActions.class.getSimpleName(), "save all editor error", e);
+					}
+				}
+			});		   
 		}
 	}
 	
@@ -37,7 +57,15 @@ public class AppActions {
 		
 		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
 		if(editorContainer != null){
-		    editorContainer.save();
+			editorContainer.getComposite().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						editorContainer.save();
+					}catch(Exception e) {
+						Executor.error(AppActions.class.getSimpleName(), "save all editor error", e);
+					}
+				}
+			});		   
 		}
 	}
 	
@@ -61,7 +89,16 @@ public class AppActions {
 		boolean closeable = self.doAction("isCloseable", actionContext);
 		Map<String, Object> params = self.doAction("getParams", actionContext);
 
-		workbench.openView(id, composite, type, closeable, params);
+		workbench.getShell().getDisplay().asyncExec(new Runnable(){
+			public void run() {
+				try {
+					workbench.openView(id, composite, type, closeable, params);
+				}catch(Exception e) {
+					Executor.error(AppActions.class.getSimpleName(), "open view error", e);
+				}
+			}
+		});
+		
 	}
 	
 	public static void closeEditor(ActionContext actionContext) {
@@ -80,9 +117,19 @@ public class AppActions {
 		}
 
 		//println editorContainer;
-		//println editor;
+		//println editor;		
 		if(editorContainer != null && editor != null){
-		    editorContainer.close(editor);
+			final IEditorContainer ed = editorContainer;
+			final IEditor edi = editor;
+			editorContainer.getComposite().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						ed.close(edi);
+					}catch(Exception e) {
+						Executor.error(AppActions.class.getSimpleName(), "save all editor error", e);
+					}
+				}
+			});			
 		}
 	}
 }

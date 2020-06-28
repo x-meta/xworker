@@ -1131,7 +1131,7 @@ public class Designer {
 		//先看看是否适合显示在最下面，提示框的右下角在窗口内符合
 		Point shellLocation = null;
 		if(height < size.y){
-			shellLocation = getTooltipLocation(control, location, cl, size, width, height, monitorSize, new int[]{Designer.RIGHT, Designer.LEFT, Designer.BOTTOM, Designer.UP});
+			shellLocation = getTooltipLocation(control, location, cl, size, width, height, monitorSize, new int[]{Designer.RIGHT, Designer.LEFT, Designer.UP, Designer.BOTTOM});
 		}else{
 			shellLocation = getTooltipLocation(control, location, cl, size, width, height, monitorSize, new int[]{Designer.BOTTOM, Designer.UP, Designer.RIGHT, Designer.LEFT});
 		}
@@ -1247,7 +1247,7 @@ public class Designer {
 			case Designer.UP:
 				if(rec.y - height > 0) {					
 					//可以在上面显示Shell
-					y = cl.y - height - 20;
+					y = cl.y - height;
 					if(rec.x + width < monitorSize.x + monitorSize.width) {
 						x = cl.x;
 					}else {
@@ -1276,7 +1276,7 @@ public class Designer {
 				
 				break;
 			case Designer.RIGHT:
-				if(rec.width + width < monitorSize.width) {
+				if(rec.width + width < monitorSize.width + monitorSize.x) {
 					x = cl.x + size.x;
 					y = cl.y;
 					if(rec.y + height > monitorSize.height) {

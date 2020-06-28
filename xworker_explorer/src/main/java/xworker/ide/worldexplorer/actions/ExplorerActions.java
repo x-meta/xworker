@@ -37,6 +37,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
+import xworker.ide.worldexplorer.dialogs.NewThingDialog;
 import xworker.lang.actions.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtDialog;
@@ -303,6 +304,14 @@ public class ExplorerActions {
 			}			
 		});
 		//dialog.open();
+	}
+	
+	public static Shell getNewThingDialog(ActionContext actionContext) {
+		if( NewThingDialog.instance != null &&  NewThingDialog.instance.shell.isDisposed() == false) {
+			return  NewThingDialog.instance.shell;
+		}else {
+			return null;			
+		}
 	}
 	
 	public static void startBackgroudThread(ActionContext actionContext){

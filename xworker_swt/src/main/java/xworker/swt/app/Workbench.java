@@ -13,19 +13,19 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.widgets.CoolBarCreator;
 
 public class Workbench {
-	private static Logger logger = LoggerFactory.getLogger(Workbench.class);
+	//private static Logger logger = LoggerFactory.getLogger(Workbench.class);
+	private static final String TAG = Workbench.class.getName();
 	public static final String VIEW_ID = "__Workbench_view_id__";
 	
 	Thing thing;
@@ -131,7 +131,7 @@ public class Workbench {
 	 */
 	public View openView(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
 		if(view == null) {
-			logger.warn("Viewer is null, id=" + id);
+			Executor.warn(TAG, "Viewer is null, id=" + id);
 			return null;
 		}
 		
@@ -176,7 +176,7 @@ public class Workbench {
 										
 					vv.create(Workbench.this, tabFolder, closeable, actionContext);
 				}catch(Exception e) {
-					logger.warn("Open view exception, id=" + iid + ", view=" + view.getMetadata().getPath(), e);
+					Executor.warn(TAG, "Open view exception, id=" + iid + ", view=" + view.getMetadata().getPath(), e);
 				}
 			}
 		});		
@@ -242,7 +242,15 @@ public class Workbench {
 	 */
 	public IEditor getEditor(String id) {
 		for(IEditor editor : editorContainer.getEditors()) {
-			if(editor.getId().equals(id)) {
+			if(editor == null) {
+				Executor.warn(TAG, "editor is null");
+				continue;
+			}
+			if(editor.getId() == null) {
+				Executor.warn(TAG, "editor is is null");
+				continue;
+			}
+			if(editor != null && editor.getId().equals(id)) {
 				return editor;
 			}
 		}
@@ -440,7 +448,7 @@ public class Workbench {
 					//执行初始化
 					self.doAction("init", ac);
 				}catch(Exception e) {
-					logger.error("init error, workbench=" + self.getMetadata().getPath(),  e);
+					Executor.error(TAG, "init error, workbench=" + self.getMetadata().getPath(),  e);
 				}
 			}
 		});

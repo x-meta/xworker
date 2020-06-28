@@ -10,6 +10,8 @@
             <actions>
                 <GroovyAction name="doFunction">
                     <code><![CDATA[import xworker.swt.util.UtilSwt;
+import xworker.swt.design.Designer;
+
 int width =(int) args[0];
 int height = (int) args[1];
 
@@ -20,6 +22,9 @@ def borderY = size.y - clientArea.height;
 
 tipShell.setSize(UtilSwt.getInt(borderX + width + 5)
      , UtilSwt.getInt(borderY + height + 50));
+if(actionContext.get("control") != null && control.isDisposed() == false){     
+    Designer.attachTo(tipShell, control);
+}
 //println "browserSize:" + args;
 tipShell.setVisible(true);]]></code>
                 </GroovyAction>

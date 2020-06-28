@@ -40,11 +40,12 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 		actionContext.put("editor", this);
 	}
 	
-	public EditorImpl(IEditorContainer editorContainer, Thing editor, ActionContainer actions, ActionContext actionContext) {
+	public EditorImpl(IEditorContainer editorContainer, Thing editor, String id, ActionContainer actions, ActionContext actionContext) {
 		this.editorContainer = editorContainer;
 		this.editor = editor;
 		this.actions = actions;
 		this.actionContext = actionContext;
+		this.id = id;
 		actionContext.put("editor", this);
 	}
 	

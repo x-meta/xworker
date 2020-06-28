@@ -45,40 +45,46 @@ import xworker.util.XWorkerUtils;
 
 @ActionClass(creator="create")
 public class NewThingDialog {
+	/** 实例 */
+	public static NewThingDialog instance = null;
+	
 	World world = World.getInstance();
 	
 	@ActionField
-	Button selectButton;
+	public Shell shell;
 	
 	@ActionField
-	Button pathSelectButton;
+	public Button selectButton;
 	
 	@ActionField
-	Button okButton;
+	public Button pathSelectButton;
 	
 	@ActionField
-	Button cancelButton;
+	public Button okButton;
 	
 	@ActionField
-	Text descriptorText;
+	public Button cancelButton;
 	
 	@ActionField
-	Text pathText;
+	public Text descriptorText;
 	
 	@ActionField
-	Text searchText;
+	public Text pathText;
 	
 	@ActionField
-	DataTable historyTable;
+	public Text searchText;
 	
 	@ActionField
-	Tree categoryTree;
+	public DataTable historyTable;
 	
 	@ActionField
-	ActionContainer actions;
+	public Tree categoryTree;
 	
 	@ActionField
-	Browser historyBorwser;
+	public ActionContainer actions;
+	
+	@ActionField
+	public Browser historyBorwser;
 	
 	public static NewThingDialog create(ActionContext actionContext) {
 		String key = "__NewThingDialog__key__";
@@ -87,6 +93,8 @@ public class NewThingDialog {
 			ac = new NewThingDialog();
 			actionContext.g().put(key, ac);
 		}
+		
+		instance = ac;
 		return ac;
 	}
 	

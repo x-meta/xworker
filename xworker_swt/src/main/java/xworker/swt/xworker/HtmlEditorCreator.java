@@ -196,6 +196,7 @@ public class HtmlEditorCreator {
     	newContext.put("htmlThing", actionContext.get("htmlThing"));
 
     	((ActionContainer) newContext.get("actions")).doAction("init");
+    	SwtUtils.centerShell(browser.getShell(), newShell);
     	newShell.setVisible(true);
     }
     

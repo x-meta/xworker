@@ -47,6 +47,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	
 	ShellGuideThread checker = null;
 	
+	boolean init = true;
+	
 	public  ShellGuide(Composite maskComposite, Thing guideThing, ActionContext parentContext) {
 		this.maskComposite = maskComposite;
 		this.guideThing = guideThing;
@@ -62,13 +64,17 @@ public class ShellGuide implements DisposeListener, ControlListener{
 					doInit(first);
 				}catch(Exception e) {
 					e.printStackTrace();
+				}finally {
+					init = false;
 				}
 			}
 		});
 	}
 	
 	private void doInit(boolean first) {
-		this.actionContext = new ActionContext();
+		if(this.actionContext == null) {
+			this.actionContext = new ActionContext();
+		}
 		actionContext.put("parentContext", parentContext);
 		if(maskComposite instanceof Shell) {
 			actionContext.put("parent", maskComposite);
@@ -115,6 +121,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			maskShell.setLocation(location);
 		}
 		maskShell.setSize(maskComposite.getSize());
+		init = false;
 	}
 	
 	public void setData(String key, Object value) {
@@ -132,9 +139,11 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 * @param actionContext
 	 */
 	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
-		this.parentContext = maskActionContext;
+		init = true;
+		this.parentContext = maskActionContext;		
 		if(this.maskComposite.getShell() != maskComposite.getShell()) {
-			this.close();
+			this.doClose();
+			this.maskComposite = maskComposite;
 			this.init(false);
 			
 			return;
@@ -208,25 +217,27 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 * 检查当前节点是否已经完成了。
 	 * 
 	 */
-	public void checkCurrentNode() {		
+	public synchronized void checkCurrentNode() {		
+		Button nextButton = actionContext.getObject("nextButton");
+		if(nextButton == null || nextButton.isDisposed()) {
+			return;
+		}
+		
 		if(guideIndex >= 0 && guideIndex < guideNodes.size()) {
 			Thing guideNode = guideNodes.get(guideIndex);
-			Boolean finished = guideNode.doAction("autoFinished", parentContext);
+			Boolean finished = guideNode.doAction("canNext", parentContext);
 			if(finished == null || UtilData.isTrue(finished)) {
-				Button nextButton = actionContext.getObject("nextButton");
 				nextButton.setEnabled(true);
 			}
 			long delay = getDelay();
-			if(delay <= 0) {
-				return;
-			}
-			if(System.currentTimeMillis() - nodeStartTime < delay) {
-				//未到延迟时间
-				return;
-			}
+			if(delay > 0) {
+				if(System.currentTimeMillis() - nodeStartTime < delay) {
+					//未到延迟时间
+					return;
+				}
+			}						
 			
-			
-			if(UtilData.isTrue(guideNode.doAction("autoFinished", parentContext))) {
+			if(UtilData.isTrue(guideNode.doAction("finished", parentContext))) {
 				next();
 			}
 		}
@@ -279,10 +290,15 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		
 		Button preButton = actionContext.getObject("preButton");
 		Button nextButton = actionContext.getObject("nextButton");
-		if(guideIndex <= 0 || guideNodes.size() <= 0) {
+		if(guideIndex <= 0 || guideNodes.size() <= 0) {			
 			preButton.setEnabled(false);
 		}else {
-			preButton.setEnabled(true);
+			Thing guideNode = guideNodes.get(guideIndex);
+			if(guideNode.getBoolean("disablePreButton")) {
+				preButton.setEnabled(false);
+			}else {
+				preButton.setEnabled(true);
+			}
 		}
 		if(guideIndex == guideNodes.size() - 1) {
 			nextButton.setText(UtilString.getString("lang:d=结束&en=End", actionContext));
@@ -295,7 +311,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			Thing guideNode = guideNodes.get(guideIndex);
 			//是否设置新的遮罩
 			Composite maskCompoiste = guideNode.doAction("getMaskComposite", parentContext,"guide", this, "guideNode", guideNode);
-			if(maskCompoiste != null) {
+			if(maskCompoiste != null && maskCompoiste != this.maskComposite) {
 				ActionContext maskActionContext = guideNode.doAction("getMaskCompositeActionContext", parentContext,"guide", this, "guideNode", guideNode);
 				if(maskActionContext == null) {
 					maskActionContext = Designer.getActionContext(maskCompoiste);
@@ -317,6 +333,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 								+ "do?sc=xworker.swt.xworker.design.MarkTooltipControl&thing=" + guideNode.getMetadata().getPath());
 												
 						Control control = getActiveControl(guideNode);
+						actionContext.g().put("control", control);
 						if(control != null) {
 							//使控件可见
 							Designer.setVisible(control);
@@ -359,6 +376,11 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	}
 
 	public synchronized boolean isDisposed() {
+		if(init) {
+			//还在初始化
+			return false;
+		}
+		
 		return maskShell == null || maskShell.isDisposed();
 	}
 	
@@ -438,6 +460,18 @@ public class ShellGuide implements DisposeListener, ControlListener{
 
 	public Shell getTipShell() {
 		return tipShell;
+	}
+
+	public Thing getGuideThing() {
+		return guideThing;
+	}
+
+	public ActionContext getActionContext() {
+		return actionContext;
+	}
+
+	public ActionContext getParentContext() {
+		return parentContext;
 	}
 	
 	

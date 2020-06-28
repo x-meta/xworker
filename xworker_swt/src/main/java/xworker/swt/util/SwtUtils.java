@@ -657,17 +657,8 @@ public class SwtUtils {
 	    }
 	}
 	
-	/**
-	 * 居中一个Shell。
-	 * 
-	 * @param shell
-	 */
-	public static void centerShell(Shell shell){
+	public static void centerShell(Shell parent, Shell shell) {
 		Rectangle rec = null;
-		Shell parent = null;
-		if(shell.getParent() instanceof Shell) {
-			parent = (Shell) shell.getParent();
-		}
 		
 		if(parent != null && parent != shell) {
 			rec = parent.getBounds();
@@ -675,14 +666,25 @@ public class SwtUtils {
 			int x = rec.width / 2 - srec.width / 2;
 			int y = rec.height / 2 - srec.height / 2;
 			shell.setLocation (new Point(x + rec.x, y + rec.y));
-		}else {
-			Display display = Display.getCurrent();
-			rec = display.getPrimaryMonitor().getClientArea();
+		}else {			
+			rec = shell.getMonitor().getClientArea();
 			Rectangle srec = shell.getBounds();
 			int x = rec.width / 2 - srec.width / 2;
 			int y = rec.height / 2 - srec.height / 2;
 			shell.setLocation (new Point(x, y));
-		}		
+		}	
+	}
+	/**
+	 * 居中一个Shell。
+	 * 
+	 * @param shell
+	 */
+	public static void centerShell(Shell shell){
+		if(shell.getParent() instanceof Shell) {
+			centerShell((Shell) shell.getParent(), shell);
+		}else {
+			centerShell(null, shell);
+		}
 	}
 	
 	public static Dialog createDialog(final Shell shell, final ActionContext actionContext){
