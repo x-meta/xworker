@@ -1,4 +1,4 @@
-^1586868242109
+^1593356102449
 @
 sname
 ThingEdtior
@@ -16,6 +16,560 @@ sth_registDisabled
 false
 sth_mark
 false
+  @/@propertiesComposite
+  sname
+  childsComposite
+  sBORDER
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_FOCUS
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  slabel
+  childsComposite
+  sdescriptors
+  xworker.swt.Widgets/@Composite
+  sid
+  propertiesComposite
+    @/@propertiesComposite/@childsCompositeGridLayout
+    sname
+    childsCompositeGridLayout
+    smakeColumnsEqualWidth
+    false
+    smarginWidth
+    5
+    smarginHeight
+    5
+    smarginLeft
+    0
+    smarginTop
+    0
+    smarginRight
+    0
+    smarginBottom
+    0
+    shorizontalSpacing
+    5
+    sverticalSpacing
+    5
+    slabel
+    childsCompositeGridLayout
+    sdescriptors
+    xworker.swt.Layouts/@GridLayout
+    sid
+    childsCompositeGridLayout
+    @/@propertiesComposite/@structCombo
+    sname
+    structCombo
+    stype
+    DROP_DOWN
+    sREAD_ONLY
+    false
+    slabel
+    structCombo
+    sdescriptors
+    xworker.swt.Widgets/@Combo
+    sid
+    structCombo
+      @/@propertiesComposite/@structCombo/@listeners
+      sname
+      listeners
+      slabel
+      listeners
+      sdescriptors
+      xworker.swt.events.Listeners/@listeners
+      sid
+      listeners
+        @/@propertiesComposite/@structCombo/@listeners/@descriptsComboSelection
+        sname
+        descriptsComboSelection
+        stype
+        Selection
+        slabel
+        descriptsComboSelection
+        sdescriptors
+        xworker.swt.events.Listeners/@listeners/@Listener
+        sid
+        descriptsComboSelection
+          @/@propertiesComposite/@structCombo/@listeners/@descriptsComboSelection/@GroovyAction
+          sname
+          GroovyAction
+          slabel
+          GroovyAction
+          sisSynchronized
+          false
+          sthrowException
+          false
+          suseOtherAction
+          false
+          Scode
+#$@text#$@
+int index = structCombo.getSelectionIndex();
+
+def descriptors = structCombo.getData();
+def descriptor = descriptors.get(index);
+
+childScripts.doAction("selectDescriptor", ["descriptor":descriptor, "thing":structCombo.getData("thing")]);
+#$@text#$@
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sid
+          GroovyAction
+    @/@propertiesComposite/@childTree
+    sname
+    childTree
+    sselectStyle
+    SINGLE
+    sV_SCROLL
+    true
+    sH_SCROLL
+    true
+    sCHECK
+    false
+    sFULL_SELECTION
+    true
+    sHIDE_SELECTION
+    false
+    sBORDER
+    false
+    slineVisible
+    false
+    smultipleColumns
+    false
+    sheaderVisible
+    false
+    ssortIndicator
+    false
+    smoveableColumns
+    false
+    sheadImages
+    false
+    ssubImages
+    false
+    slabel
+    childTree
+    sdescriptors
+    ,xworker.swt.widgets.Tree
+    sid
+    childTree
+      @/@propertiesComposite/@childTree/@childTreeGridData
+      sname
+      childTreeGridData
+      sstyle
+      FILL_BOTH
+      shorizontalIndent
+      0
+      swidth
+      -1
+      sheight
+      -1
+      shorizontalAlignment
+      BEGINNING
+      sverticalAlignment
+      CENTER
+      shorizontalSpan
+      1
+      sverticalSpan
+      1
+      sgrabExcessHorizontalSpace
+      false
+      sgrabExcessVerticalSpace
+      false
+      slabel
+      childTreeGridData
+      sdescriptors
+      xworker.swt.Commons/@GridData
+      sid
+      childTreeGridData
+      @/@propertiesComposite/@childTree/@listeners
+      sname
+      listeners
+      slabel
+      listeners
+      sdescriptors
+      xworker.swt.events.Listeners/@listeners
+      sid
+      listeners
+        @/@propertiesComposite/@childTree/@listeners/@childTreeSelection
+        sname
+        childTreeSelection
+        stype
+        Selection
+        slabel
+        childTreeSelection
+        sdescriptors
+        xworker.swt.events.Listeners/@listeners/@Listener
+        sid
+        childTreeSelection
+          @/@propertiesComposite/@childTree/@listeners/@childTreeSelection/@GroovyAction
+          sname
+          GroovyAction
+          slabel
+          GroovyAction
+          sisSynchronized
+          false
+          sthrowException
+          false
+          suseOtherAction
+          false
+          svarScope
+          Global
+          sdisableGlobalContext
+          false
+          Scode
+#$@text#$@
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+import xworker.swt.events.SwtListener;
+import xworker.listeners.SwtMenuListener;
+import org.xmeta.util.UtilString;
+
+import org.eclipse.swt.SWT;
+
+def treeItem = childTree.getSelection()[0];
+def objStruct = treeItem.getData();
+if(objStruct == null) return;
+
+newThingDescriptor = objStruct;
+def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
+def webUrl = globalConfig.getString("webUrl");
+childTitleLabel.setText(UtilString.getString("res:res.w_exp:addLabel添加：", actionContext) + objStruct.metadata.name + "（" + objStruct.metadata.label + "）");
+String toolTipText = "<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" + objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
+if(objStruct.metadata.description != null){
+    String ttText = objStruct.metadata.description;
+    childTitleLabel.setData("toolTip", toolTipText + ttText);
+}else{
+    childTitleLabel.setData("toolTip", toolTipText);
+}
+
+for(child in addChildComposite.getChildren()){
+    child.dispose();
+    addChildComposite.removeControl(child);
+}
+
+//初始化编辑内容窗体
+Thing structForm = new Thing();
+structForm.set("descriptors", "xworker.swt.xworker.ThingDescritporForm");
+structForm.name = "contentForm";
+structForm.descriptorPath = objStruct.metadata.path;
+structForm.H_SCROLL = "true";
+structForm.V_SCROLL = "true";
+
+def thing = new Thing("", "", objStruct.metadata.path, false);
+ActionContext context = new ActionContext();
+context.put("parent", addChildComposite);
+context.put("thing", thing);
+context.put("addChildOkButtonSelection", addChildOkButtonSelection);
+
+def structFormObj = structForm.doAction("create", context);
+context = structFormObj.getData();
+context.put("thing", thing);
+context.put("addChildOkButtonSelection", addChildOkButtonSelection);
+context.contentFormModel.defaultSelection = "addChildOkButtonSelection";
+context.contentFormModel.doAction("init", context);
+context.contentFormModel.doAction("setValue", context);
+
+currentAddModel = context.contentFormModel;
+currentAddModelContext =  context;
+
+addChildComposite.layout();
+
+if(contentEditCompositeStackLayout.topControl != childComposite){
+    contentEditComposite.setData("oldTopControl", contentEditCompositeStackLayout.topControl);
+    contentEditCompositeStackLayout.topControl = childComposite;
+    contentEditComposite.layout();
+}
+
+if(actionContext.get("helpBrowserAction") != null){
+    helpBrowserAction.doAction("setThing", ["thing":newThingDescriptor]);
+}
+//log.info("helpBrowserAction=" + helpBrowserAction);
+#$@text#$@
+          sdescriptors
+          xworker.lang.actions.Actions/@GroovyAction
+          sid
+          GroovyAction
+    @/@propertiesComposite/@scripts
+    sname
+    childScripts
+    slabel
+    childScripts
+    sdescriptors
+    xworker.swt.Widgets/@actions
+    sid
+    scripts
+      @/@propertiesComposite/@scripts/@initChilds
+      sname
+      initChilds
+      slabel
+      initChilds
+      sisSynchronized
+      false
+      sthrowException
+      false
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+def dataObject = _request.get("dataObject");
+
+def descriptors = dataObject.getMetadata().getDescriptors();
+
+structCombo.removeAll();
+structCombo.setData("descriptors", descriptors);
+for(des in descriptors){
+    structCombo.add(des.metadata.label);
+}
+
+log.info("ini childs");
+structCombo.setData("dataObject", dataObject);
+structCombo.select(0);
+
+childScripts.exec("selectDescriptor", ["descriptor":descriptors[0], "dataObject":dataObject]);
+#$@text#$@
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      initChilds
+      @/@propertiesComposite/@scripts/@selectDescriptor
+      sname
+      selectDescriptor
+      slabel
+      selectDescriptor
+      sisSynchronized
+      false
+      sthrowException
+      false
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+def desChilds = descriptor.getAllChilds("thing");
+long start = System.currentTimeMillis();
+//查找并添加注册的子事物
+try{
+    def registThing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
+    def rchilds = registThing.doAction("query", actionContext, ["thing":descriptor, "noDescriptor":true, "registType":"child"]);
+    for(rc in rchilds){
+        def child = world.getThing(rc.get("path"));
+        if(child != null){
+            if(child.getBoolean("registMyChilds")){
+                for(cchild in child.getChilds()){
+                    descChilds.add(cchild);
+                }
+            }else{
+                desChilds.add(child);
+            }
+        }
+    }
+}catch(Exception e){
+    log.info("add regist child error", e);
+}
+
+//log.info("getAllChildsTime: " + (System.currentTimeMillis() - start);
+dess = [];
+for(des in desChilds){
+    if(des.getString("many") == "false"){
+        if(currentThing.getChilds(des.metadata.name).size() != 0){
+            continue;
+        }
+    }
+    dess.add(des);
+}
+//log.info("Filter by many: " + (System.currentTimeMillis() - start);
+//分组
+def root = ["childs":[]];
+for(des in dess){
+    def group = des.getString("group");
+    if(group == null || group == ""){
+        root.childs.add(des);
+    }else{
+        for(grs in group.split("[,]")){
+            def gs = grs.split("[.]");
+            def subRoot = null;
+            def currentRoot = root;
+            for(g in gs){
+                subRoot = currentRoot.get(g);
+                if(subRoot == null){ 
+                    subRoot = ["childs":[]];
+                    subRoot.put("__name__", g);
+                    currentRoot.put(g, subRoot);
+                }
+                currentRoot = subRoot;
+            }
+            subRoot.childs.add(des);
+        }
+    }
+}
+
+//log.info("grgoup time: " + (System.currentTimeMillis() - start);
+//构造子节点树
+childTree.removeAll();
+createTree(childTree, root);
+//log.info("createTreeItem time: " + (System.currentTimeMillis() - start);
+
+def createTree(item, aroot){
+    def groups = [];
+    for(key in aroot.keySet()){
+        def v = aroot.get(key);
+        if(v instanceof Map){
+            groups.add(v);
+        }
+    }
+    
+    //为group排序
+    Collections.sort(groups, [
+            compare : {
+               o1, o2->
+               if(o1.__name__.toLowerCase() < o2.__name__.toLowerCase()) return -1;
+               if(o1.__name__.toLowerCase() == o2.__name__.toLowerCase()) return 0;
+               return 1;
+            }
+        ] as Comparator);
+    for(g in groups){
+        Collections.sort(g.childs, [
+                compare : {
+                   o1, o2->
+                   if(o1.metadata.label.toLowerCase() < o2.metadata.label.toLowerCase()) return -1;
+                   if(o1.metadata.label.toLowerCase() == o2.metadata.label.toLowerCase()) return 0;
+                   return 1;
+                }
+            ] as Comparator);
+        def subItem = new TreeItem(item, SWT.NONE);
+        subItem.setText(g.__name__);
+        createTree(subItem, g);
+    }
+
+    Collections.sort(aroot.childs, [
+                compare : {
+                   o1, o2->
+                   if(o1.metadata.label.toLowerCase() < o2.metadata.label.toLowerCase()) return -1;
+                   if(o1.metadata.label.toLowerCase() == o2.metadata.label.toLowerCase()) return 0;
+                   return 1;
+                }
+            ] as Comparator);
+    for(child in aroot.childs){
+       
+        def subItem = new TreeItem(item, SWT.NONE);
+        subItem.setText(child.metadata.label);
+        subItem.setData(child);
+    }
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      selectDescriptor
+      @/@propertiesComposite/@scripts/@selectChildList
+      sname
+      selectChildList
+      slabel
+      selectChildList
+      sisSynchronized
+      false
+      sthrowException
+      false
+      suseOtherAction
+      false
+      svarScope
+      Global
+      Scode
+#$@text#$@
+import groovy.lang.Binding;
+
+import org.xmeta.DataObject;
+import org.xmeta.util.UtilDefault;
+import org.xmeta.plugin.view.swt.SwtListener;
+import org.xmeta.listener.SwtMenuListener;
+
+import org.eclipse.swt.SWT;
+
+def selectIndex = childList.getSelectionIndex();
+if(selectIndex == -1) return;
+def objStruct = childList.getData().get(selectIndex);
+
+childTitleLabel.setText("添加：" + objStruct.metadata.name + "（" + objStruct.metadata.label + "）");
+String toolTipText = "<b><u>" + objStruct.getMetadata().getName() + "</u></b><br/><br/>";    			    
+if(objStruct.getString("description") != null){
+    String ttText = objStruct.getString("description");
+    childTitleLabel.setData("toolTip", toolTipText + ttText);
+}else{
+    childTitleLabel.setData("toolTip", toolTipText);
+}
+
+//初始化编辑内容窗体
+DataObject structForm = new DataObject();
+structForm.setAttribute("descriptors", "view.objects.swt.xworker.StructureForm");
+structForm.name = "contentForm";
+structForm.structurePath = objStruct.metadata.path;
+structForm.H_SCROLL = "true";
+structForm.V_SCROLL = "true";
+
+for(child in addChildComposite.getChildren()){
+    child.dispose();
+    addChildComposite.removeControl(child);
+}
+
+def dataObject = new DataObject();
+Binding cbin = new Binding();
+cbin.setVariable("binding", cbin);
+cbin.setVariable("parent", addChildComposite);
+cbin.setVariable("dataObject", dataObject);
+cbin.setVariable("addChildOkButtonSelection", addChildOkButtonSelection);
+def structFormObj = structForm.exec("create", cbin);
+
+cbin.contentFormModel.defaultSelection = "addChildOkButtonSelection";
+cbin.contentFormModel.exec("init", cbin);
+cbin.contentFormModel.exec("setValue", cbin);
+binding.setVariable("currentAddModel", cbin.contentFormModel);
+binding.setVariable("currentAddModelBin", cbin);
+addChildComposite.layout();
+
+contentEditCompositeStackLayout.topControl = childComposite;
+contentEditComposite.layout();
+#$@text#$@
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      selectChildList
   @/@outlineTree
   sname
   outlineTree
@@ -788,560 +1342,6 @@ def initChild(treeItem, dataObj, actions){
             xworker.lang.actions.Actions/@GroovyAction
             sid
             GroovyAction
-  @/@propertiesComposite
-  sname
-  childsComposite
-  sBORDER
-  false
-  sH_SCROLL
-  false
-  sV_SCROLL
-  false
-  sNO_BACKGROUND
-  false
-  sNO_FOCUS
-  false
-  sNO_MERGE_PAINTS
-  false
-  sNO_REDRAW_RESIZE
-  false
-  sNO_RADIO_GROUP
-  false
-  sEMBEDDED
-  false
-  sDOUBLE_BUFFERED
-  false
-  slabel
-  childsComposite
-  sdescriptors
-  xworker.swt.Widgets/@Composite
-  sid
-  propertiesComposite
-    @/@propertiesComposite/@childsCompositeGridLayout
-    sname
-    childsCompositeGridLayout
-    smakeColumnsEqualWidth
-    false
-    smarginWidth
-    5
-    smarginHeight
-    5
-    smarginLeft
-    0
-    smarginTop
-    0
-    smarginRight
-    0
-    smarginBottom
-    0
-    shorizontalSpacing
-    5
-    sverticalSpacing
-    5
-    slabel
-    childsCompositeGridLayout
-    sdescriptors
-    xworker.swt.Layouts/@GridLayout
-    sid
-    childsCompositeGridLayout
-    @/@propertiesComposite/@structCombo
-    sname
-    structCombo
-    stype
-    DROP_DOWN
-    sREAD_ONLY
-    false
-    slabel
-    structCombo
-    sdescriptors
-    xworker.swt.Widgets/@Combo
-    sid
-    structCombo
-      @/@propertiesComposite/@structCombo/@listeners
-      sname
-      listeners
-      slabel
-      listeners
-      sdescriptors
-      xworker.swt.events.Listeners/@listeners
-      sid
-      listeners
-        @/@propertiesComposite/@structCombo/@listeners/@descriptsComboSelection
-        sname
-        descriptsComboSelection
-        stype
-        Selection
-        slabel
-        descriptsComboSelection
-        sdescriptors
-        xworker.swt.events.Listeners/@listeners/@Listener
-        sid
-        descriptsComboSelection
-          @/@propertiesComposite/@structCombo/@listeners/@descriptsComboSelection/@GroovyAction
-          sname
-          GroovyAction
-          slabel
-          GroovyAction
-          sisSynchronized
-          false
-          sthrowException
-          false
-          suseOtherAction
-          false
-          Scode
-#$@text#$@
-int index = structCombo.getSelectionIndex();
-
-def descriptors = structCombo.getData();
-def descriptor = descriptors.get(index);
-
-childScripts.doAction("selectDescriptor", ["descriptor":descriptor, "thing":structCombo.getData("thing")]);
-#$@text#$@
-          sdescriptors
-          xworker.lang.actions.Actions/@GroovyAction
-          sid
-          GroovyAction
-    @/@propertiesComposite/@childTree
-    sname
-    childTree
-    sselectStyle
-    SINGLE
-    sV_SCROLL
-    true
-    sH_SCROLL
-    true
-    sCHECK
-    false
-    sFULL_SELECTION
-    true
-    sHIDE_SELECTION
-    false
-    sBORDER
-    false
-    slineVisible
-    false
-    smultipleColumns
-    false
-    sheaderVisible
-    false
-    ssortIndicator
-    false
-    smoveableColumns
-    false
-    sheadImages
-    false
-    ssubImages
-    false
-    slabel
-    childTree
-    sdescriptors
-    ,xworker.swt.widgets.Tree
-    sid
-    childTree
-      @/@propertiesComposite/@childTree/@childTreeGridData
-      sname
-      childTreeGridData
-      sstyle
-      FILL_BOTH
-      shorizontalIndent
-      0
-      swidth
-      -1
-      sheight
-      -1
-      shorizontalAlignment
-      BEGINNING
-      sverticalAlignment
-      CENTER
-      shorizontalSpan
-      1
-      sverticalSpan
-      1
-      sgrabExcessHorizontalSpace
-      false
-      sgrabExcessVerticalSpace
-      false
-      slabel
-      childTreeGridData
-      sdescriptors
-      xworker.swt.Commons/@GridData
-      sid
-      childTreeGridData
-      @/@propertiesComposite/@childTree/@listeners
-      sname
-      listeners
-      slabel
-      listeners
-      sdescriptors
-      xworker.swt.events.Listeners/@listeners
-      sid
-      listeners
-        @/@propertiesComposite/@childTree/@listeners/@childTreeSelection
-        sname
-        childTreeSelection
-        stype
-        Selection
-        slabel
-        childTreeSelection
-        sdescriptors
-        xworker.swt.events.Listeners/@listeners/@Listener
-        sid
-        childTreeSelection
-          @/@propertiesComposite/@childTree/@listeners/@childTreeSelection/@GroovyAction
-          sname
-          GroovyAction
-          slabel
-          GroovyAction
-          sisSynchronized
-          false
-          sthrowException
-          false
-          suseOtherAction
-          false
-          svarScope
-          Global
-          sdisableGlobalContext
-          false
-          Scode
-#$@text#$@
-import org.xmeta.Thing;
-import org.xmeta.ActionContext;
-
-import xworker.swt.events.SwtListener;
-import xworker.listeners.SwtMenuListener;
-import org.xmeta.util.UtilString;
-
-import org.eclipse.swt.SWT;
-
-def treeItem = childTree.getSelection()[0];
-def objStruct = treeItem.getData();
-if(objStruct == null) return;
-
-newThingDescriptor = objStruct;
-def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
-def webUrl = globalConfig.getString("webUrl");
-childTitleLabel.setText(UtilString.getString("res:res.w_exp:addLabel添加：", actionContext) + objStruct.metadata.name + "（" + objStruct.metadata.label + "）");
-String toolTipText = "<b><u><a href=\"" + webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + objStruct.getMetadata().getPath() + "\">" + objStruct.getMetadata().getName() + "</a></u></b><br/><br/>";    			    
-if(objStruct.metadata.description != null){
-    String ttText = objStruct.metadata.description;
-    childTitleLabel.setData("toolTip", toolTipText + ttText);
-}else{
-    childTitleLabel.setData("toolTip", toolTipText);
-}
-
-for(child in addChildComposite.getChildren()){
-    child.dispose();
-    addChildComposite.removeControl(child);
-}
-
-//初始化编辑内容窗体
-Thing structForm = new Thing();
-structForm.set("descriptors", "xworker.swt.xworker.ThingDescritporForm");
-structForm.name = "contentForm";
-structForm.descriptorPath = objStruct.metadata.path;
-structForm.H_SCROLL = "true";
-structForm.V_SCROLL = "true";
-
-def thing = new Thing("", "", objStruct.metadata.path, false);
-ActionContext context = new ActionContext();
-context.put("parent", addChildComposite);
-context.put("thing", thing);
-context.put("addChildOkButtonSelection", addChildOkButtonSelection);
-
-def structFormObj = structForm.doAction("create", context);
-context = structFormObj.getData();
-context.put("thing", thing);
-context.put("addChildOkButtonSelection", addChildOkButtonSelection);
-context.contentFormModel.defaultSelection = "addChildOkButtonSelection";
-context.contentFormModel.doAction("init", context);
-context.contentFormModel.doAction("setValue", context);
-
-currentAddModel = context.contentFormModel;
-currentAddModelContext =  context;
-
-addChildComposite.layout();
-
-if(contentEditCompositeStackLayout.topControl != childComposite){
-    contentEditComposite.setData("oldTopControl", contentEditCompositeStackLayout.topControl);
-    contentEditCompositeStackLayout.topControl = childComposite;
-    contentEditComposite.layout();
-}
-
-if(actionContext.get("helpBrowserAction") != null){
-    helpBrowserAction.doAction("setThing", ["thing":newThingDescriptor]);
-}
-//log.info("helpBrowserAction=" + helpBrowserAction);
-#$@text#$@
-          sdescriptors
-          xworker.lang.actions.Actions/@GroovyAction
-          sid
-          GroovyAction
-    @/@propertiesComposite/@scripts
-    sname
-    childScripts
-    slabel
-    childScripts
-    sdescriptors
-    xworker.swt.Widgets/@actions
-    sid
-    scripts
-      @/@propertiesComposite/@scripts/@initChilds
-      sname
-      initChilds
-      slabel
-      initChilds
-      sisSynchronized
-      false
-      sthrowException
-      false
-      suseOtherAction
-      false
-      svarScope
-      Global
-      sdisableGlobalContext
-      false
-      Scode
-#$@text#$@
-def dataObject = _request.get("dataObject");
-
-def descriptors = dataObject.getMetadata().getDescriptors();
-
-structCombo.removeAll();
-structCombo.setData("descriptors", descriptors);
-for(des in descriptors){
-    structCombo.add(des.metadata.label);
-}
-
-log.info("ini childs");
-structCombo.setData("dataObject", dataObject);
-structCombo.select(0);
-
-childScripts.exec("selectDescriptor", ["descriptor":descriptors[0], "dataObject":dataObject]);
-#$@text#$@
-      sdescriptors
-      xworker.lang.actions.Actions/@GroovyAction
-      sid
-      initChilds
-      @/@propertiesComposite/@scripts/@selectDescriptor
-      sname
-      selectDescriptor
-      slabel
-      selectDescriptor
-      sisSynchronized
-      false
-      sthrowException
-      false
-      suseOtherAction
-      false
-      svarScope
-      Global
-      sdisableGlobalContext
-      false
-      Scode
-#$@text#$@
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-
-import java.util.Collections;
-import java.util.Comparator;
-
-def desChilds = descriptor.getAllChilds("thing");
-long start = System.currentTimeMillis();
-//查找并添加注册的子事物
-try{
-    def registThing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
-    def rchilds = registThing.doAction("query", actionContext, ["thing":descriptor, "noDescriptor":true, "registType":"child"]);
-    for(rc in rchilds){
-        def child = world.getThing(rc.get("path"));
-        if(child != null){
-            if(child.getBoolean("registMyChilds")){
-                for(cchild in child.getChilds()){
-                    descChilds.add(cchild);
-                }
-            }else{
-                desChilds.add(child);
-            }
-        }
-    }
-}catch(Exception e){
-    log.info("add regist child error", e);
-}
-
-//log.info("getAllChildsTime: " + (System.currentTimeMillis() - start);
-dess = [];
-for(des in desChilds){
-    if(des.getString("many") == "false"){
-        if(currentThing.getChilds(des.metadata.name).size() != 0){
-            continue;
-        }
-    }
-    dess.add(des);
-}
-//log.info("Filter by many: " + (System.currentTimeMillis() - start);
-//分组
-def root = ["childs":[]];
-for(des in dess){
-    def group = des.getString("group");
-    if(group == null || group == ""){
-        root.childs.add(des);
-    }else{
-        for(grs in group.split("[,]")){
-            def gs = grs.split("[.]");
-            def subRoot = null;
-            def currentRoot = root;
-            for(g in gs){
-                subRoot = currentRoot.get(g);
-                if(subRoot == null){ 
-                    subRoot = ["childs":[]];
-                    subRoot.put("__name__", g);
-                    currentRoot.put(g, subRoot);
-                }
-                currentRoot = subRoot;
-            }
-            subRoot.childs.add(des);
-        }
-    }
-}
-
-//log.info("grgoup time: " + (System.currentTimeMillis() - start);
-//构造子节点树
-childTree.removeAll();
-createTree(childTree, root);
-//log.info("createTreeItem time: " + (System.currentTimeMillis() - start);
-
-def createTree(item, aroot){
-    def groups = [];
-    for(key in aroot.keySet()){
-        def v = aroot.get(key);
-        if(v instanceof Map){
-            groups.add(v);
-        }
-    }
-    
-    //为group排序
-    Collections.sort(groups, [
-            compare : {
-               o1, o2->
-               if(o1.__name__.toLowerCase() < o2.__name__.toLowerCase()) return -1;
-               if(o1.__name__.toLowerCase() == o2.__name__.toLowerCase()) return 0;
-               return 1;
-            }
-        ] as Comparator);
-    for(g in groups){
-        Collections.sort(g.childs, [
-                compare : {
-                   o1, o2->
-                   if(o1.metadata.label.toLowerCase() < o2.metadata.label.toLowerCase()) return -1;
-                   if(o1.metadata.label.toLowerCase() == o2.metadata.label.toLowerCase()) return 0;
-                   return 1;
-                }
-            ] as Comparator);
-        def subItem = new TreeItem(item, SWT.NONE);
-        subItem.setText(g.__name__);
-        createTree(subItem, g);
-    }
-
-    Collections.sort(aroot.childs, [
-                compare : {
-                   o1, o2->
-                   if(o1.metadata.label.toLowerCase() < o2.metadata.label.toLowerCase()) return -1;
-                   if(o1.metadata.label.toLowerCase() == o2.metadata.label.toLowerCase()) return 0;
-                   return 1;
-                }
-            ] as Comparator);
-    for(child in aroot.childs){
-       
-        def subItem = new TreeItem(item, SWT.NONE);
-        subItem.setText(child.metadata.label);
-        subItem.setData(child);
-    }
-}
-#$@text#$@
-      sinterpretationType
-      Action
-      screateLocalVarScope
-      false
-      ssaveReturn
-      false
-      sdebugLog
-      false
-      sdescriptors
-      xworker.lang.actions.Actions/@GroovyAction
-      sid
-      selectDescriptor
-      @/@propertiesComposite/@scripts/@selectChildList
-      sname
-      selectChildList
-      slabel
-      selectChildList
-      sisSynchronized
-      false
-      sthrowException
-      false
-      suseOtherAction
-      false
-      svarScope
-      Global
-      Scode
-#$@text#$@
-import groovy.lang.Binding;
-
-import org.xmeta.DataObject;
-import org.xmeta.util.UtilDefault;
-import org.xmeta.plugin.view.swt.SwtListener;
-import org.xmeta.listener.SwtMenuListener;
-
-import org.eclipse.swt.SWT;
-
-def selectIndex = childList.getSelectionIndex();
-if(selectIndex == -1) return;
-def objStruct = childList.getData().get(selectIndex);
-
-childTitleLabel.setText("添加：" + objStruct.metadata.name + "（" + objStruct.metadata.label + "）");
-String toolTipText = "<b><u>" + objStruct.getMetadata().getName() + "</u></b><br/><br/>";    			    
-if(objStruct.getString("description") != null){
-    String ttText = objStruct.getString("description");
-    childTitleLabel.setData("toolTip", toolTipText + ttText);
-}else{
-    childTitleLabel.setData("toolTip", toolTipText);
-}
-
-//初始化编辑内容窗体
-DataObject structForm = new DataObject();
-structForm.setAttribute("descriptors", "view.objects.swt.xworker.StructureForm");
-structForm.name = "contentForm";
-structForm.structurePath = objStruct.metadata.path;
-structForm.H_SCROLL = "true";
-structForm.V_SCROLL = "true";
-
-for(child in addChildComposite.getChildren()){
-    child.dispose();
-    addChildComposite.removeControl(child);
-}
-
-def dataObject = new DataObject();
-Binding cbin = new Binding();
-cbin.setVariable("binding", cbin);
-cbin.setVariable("parent", addChildComposite);
-cbin.setVariable("dataObject", dataObject);
-cbin.setVariable("addChildOkButtonSelection", addChildOkButtonSelection);
-def structFormObj = structForm.exec("create", cbin);
-
-cbin.contentFormModel.defaultSelection = "addChildOkButtonSelection";
-cbin.contentFormModel.exec("init", cbin);
-cbin.contentFormModel.exec("setValue", cbin);
-binding.setVariable("currentAddModel", cbin.contentFormModel);
-binding.setVariable("currentAddModelBin", cbin);
-addChildComposite.layout();
-
-contentEditCompositeStackLayout.topControl = childComposite;
-contentEditComposite.layout();
-#$@text#$@
-      sdescriptors
-      xworker.lang.actions.Actions/@GroovyAction
-      sid
-      selectChildList
   @/@rightComposite
   sname
   mainComposite
@@ -12756,30 +12756,19 @@ if(dialogThing == null){
     xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@thingEditorInteractiveUI
     sregistType
     child
+    spriority
+    0
     Sdescription
 #$@text#$@
-<h2>事物编辑器</h2>
+<h2>模型编辑器</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 编辑事物模型的工具。</p>
+<p>&nbsp;&nbsp;&nbsp; 用于编辑和运行具体的模型。</p>
 
-<h3>1.编辑事物模型的主要方法</h3>
+<h3>编辑模型的方法&nbsp;</h3>
 
-<ul>
-	<li>编辑模型的属性。</li>
-	<li>编辑模型的节点。</li>
-</ul>
+<p>&nbsp;&nbsp;&nbsp; 如要学习如何在模型编辑器中编辑模型，请参看教程（<strong>动态模型-&gt;编辑模型-&gt;编辑模型）</strong>，教程可以在工作台的帮助菜单中打开。&nbsp;&nbsp;</p>
 
-<h3>2.主要工具</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 是模型的节点树的右键菜单，包含了一些常用功能。</p>
-
-<h3>3.主要帮助</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 鼠标移动到标题和节点的属性会显示模型的相关文档。如果是在XWorker的事物管理器中，那么在概要栏中会显示模型的文档和对象的类、继承和行为等。</p>
-
-<h3>4.其它辅助工具</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 是菜单和工具栏。其中菜单是根据模型动态生成的，工具栏是一些常用功能。</p>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
@@ -12800,9 +12789,17 @@ if(dialogThing == null){
     false
     sth_registDisabled
     false
+    sth_noThingRegistViewer
+    false
     sgroup
     事物编辑器
+    sth_fileMonitor
+    false
+    sth_deprecated
+    false
     sth_mark
+    false
+    sth_registQueryOnlySelf
     false
     sid
     thingEditorInteractiveUI

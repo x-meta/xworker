@@ -260,51 +260,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	}
 
 	public void mouseDown(MouseEvent event) {
-		try{
-			Control newControl = (Control) event.widget;
-			
-			//鼠标中键，是设计，只有在设计器打开时才能使用
-			if(event.button == 2 && Designer.isEnabled()){
-				boolean setNewControl = false;
-				if(control != null && !control.isDisposed() && control != newControl){
-					setNewControl = true;
-				}else if((event.stateMask & SWT.CTRL) == SWT.CTRL){
-					if(control == newControl){
-						removeCurrentControl();
-						designDialog.close();
-					}else{
-						setNewControl = true;
-					}					
-				}
-				
-				if(setNewControl && Designer.getThing(newControl) != null){
-					setCurrentControL(newControl);
-					
-					if(designDialog.isOpened() == false){
-						designDialog.show(newControl, null);
-					}
-				}		
-			}
-			
-			//交互组件
-			InteractiveUI ui = getInteractiveUI(newControl);
-			if(ui != null && ui.isEnabled()){
-				List<InteractiveListener> listeners = Designer.getInteractiveListeners(ui.getListenerName());
-				if(listeners != null){
-					for(int i=0; i<listeners.size(); i++) {
-						InteractiveListener interactiveListener = listeners.get(i);
-						if(interactiveListener == null || interactiveListener.isDisposed()) {
-							listeners.remove(i);
-							i--;
-						}else {
-							interactiveListener.connected(ui);
-						}
-					}					
-				}
-			}
-		}catch(Throwable t){
-			log.error("design control mouse click", t);
-		}
+		
 	}
 
 	public InteractiveUI getInteractiveUI(Control control){
@@ -444,6 +400,51 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	}
 	
 	public void mouseUp(MouseEvent event) {
+		try{
+			Control newControl = (Control) event.widget;
+			
+			//鼠标中键，是设计，只有在设计器打开时才能使用
+			if(event.button == 2 && Designer.isEnabled()){
+				boolean setNewControl = false;
+				if(control != null && !control.isDisposed() && control != newControl){
+					setNewControl = true;
+				}else if((event.stateMask & SWT.CTRL) == SWT.CTRL){
+					if(control == newControl){
+						removeCurrentControl();
+						designDialog.close();
+					}else{
+						setNewControl = true;
+					}					
+				}
+				
+				if(setNewControl && Designer.getThing(newControl) != null){
+					setCurrentControL(newControl);
+					
+					if(designDialog.isOpened() == false){
+						designDialog.show(newControl, null);
+					}
+				}		
+			}
+			
+			//交互组件
+			InteractiveUI ui = getInteractiveUI(newControl);
+			if(ui != null && ui.isEnabled()){
+				List<InteractiveListener> listeners = Designer.getInteractiveListeners(ui.getListenerName());
+				if(listeners != null){
+					for(int i=0; i<listeners.size(); i++) {
+						InteractiveListener interactiveListener = listeners.get(i);
+						if(interactiveListener == null || interactiveListener.isDisposed()) {
+							listeners.remove(i);
+							i--;
+						}else {
+							interactiveListener.connected(ui);
+						}
+					}					
+				}
+			}
+		}catch(Throwable t){
+			log.error("design control mouse click", t);
+		}
 	}
 
 	@Override
