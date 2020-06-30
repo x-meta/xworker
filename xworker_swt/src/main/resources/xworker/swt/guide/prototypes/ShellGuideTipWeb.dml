@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SimpleControl name="ShellGuideTipWeb" descriptors="xworker.http.controls.SimpleControl">
+    <view>
+        <otherHeads><![CDATA[<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" media="all" href="js/syntaxhighlighter/styles/shCoreEclipse.css" />
+<link rel="stylesheet" type="text/css" media="all" href="js/syntaxhighlighter/styles/shThemeEclipse.css" />
+<script type="text/javascript" src="js/syntaxhighlighter/scripts/shCore.js"></script>
+<script type="text/javascript" src="js/syntaxhighlighter/scripts/shAutoloader.js"></script>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+<style type="text/css">
+<!--
+body {
+	overflow: hidden;
+    margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>]]></otherHeads>
+        <JQuery name="JQuery" descriptors="xworker.html.jquery.JQuery" version="jquery-2.0.3.min.js"></JQuery>
+        <code name="code">
+            <code><![CDATA[<div id="all" style="width:100%;">
+<div id="messageDiv" style='width:100%;color:#000000;border: 0px #000000 solid; font-size: 12px;'>
+<#if world.getThing(request.getParameter("thing"))?exists>
+<#assign thing = world.getThing(request.getParameter("thing"))/>
+</#if>
+<#if thing?exists>
+${thing.getMetadata().getDescription()?if_exists}
+<#else>
+Thing not exists!
+</#if>
+</div>
+</div>]]></code>
+        </code>
+        <code name="code" _xmeta_id_="code1">
+            <code><![CDATA[<script type="text/javascript">
+$(document).ready(function(){    
+   
+    var xhrefs = $("[xworker_href]");
+    for(i=0; i<xhrefs.length; i++){
+        alert(xhrefs[i]);
+    }
+});    
+
+function path()
+{
+  var args = arguments,
+      result = []
+      ;
+        
+  for(var i = 0; i < args.length; i++)
+      result.push(args[i].replace('@', 'js/syntaxhighlighter/scripts/'));
+        
+  return result
+};
+  
+SyntaxHighlighter.autoloader.apply(null, path(
+  'applescript            @shBrushAppleScript.js',
+  'actionscript3 as3      @shBrushAS3.js',
+  'bash shell             @shBrushBash.js',
+  'coldfusion cf          @shBrushColdFusion.js',
+  'cpp c                  @shBrushCpp.js',
+  'c# c-sharp csharp      @shBrushCSharp.js',
+  'css                    @shBrushCss.js',
+  'delphi pascal          @shBrushDelphi.js',
+  'diff patch pas         @shBrushDiff.js',
+  'erl erlang             @shBrushErlang.js',
+  'groovy                 @shBrushGroovy.js',
+  'java                   @shBrushJava.js',
+  'jfx javafx             @shBrushJavaFX.js',
+  'js jscript javascript  @shBrushJScript.js',
+  'perl pl                @shBrushPerl.js',
+  'php                    @shBrushPhp.js',
+  'text plain             @shBrushPlain.js',
+  'py python              @shBrushPython.js',
+  'ruby rails ror rb      @shBrushRuby.js',
+  'sass scss              @shBrushSass.js',
+  'scala                  @shBrushScala.js',
+  'sql                    @shBrushSql.js',
+  'vb vbnet               @shBrushVb.js',
+  'xml xhtml xslt html    @shBrushXml.js'
+));
+SyntaxHighlighter.all();
+</script>]]></code>
+        </code>
+        <OnReady descriptors="xworker.html.jquery.JQueryWidgets/@OnReady">
+            <ScriptCode name="ScriptCode">
+                <code><![CDATA[var height = $(document.body).outerHeight(true);
+var width = $(document.body).outerWidth(true);
+
+//alert(browserSetSize);
+if(browserSetSize){
+    browserSetSize(width, height);
+}]]></code>
+            </ScriptCode>
+        </OnReady>
+    </view>
+    <result name="success" value="xworker.swt.guide.prototypes.ShellGuideTipWeb/@view"></result>
+</SimpleControl>

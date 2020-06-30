@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ShellGuideActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <description><![CDATA[<p>ShellGuide相关的动作。</p>
+]]></description>
+    <thing name="GetThingEditorControl" extends="xworker.lang.actions.SelfAction" group="swt.guide.ShellGuide.ThingEditor">
+        <actions>
+            <GroovyAction name="run" _xmeta_id_="getActiveControl">
+                <code><![CDATA[//获取事物的编辑器 
+def thing = guide.getData("thing");
+def editor = workbench.getEditor(thing.getMetadata().getPath());
+
+def thingEditor = editor.getActionContext().get("thingEditor");
+guide.setData("thingEditor", thingEditor);
+return editor.getEditor();]]></code>
+                <Variables>
+                    <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
+                </Variables>
+            </GroovyAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

@@ -7,6 +7,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 public class ActionContainerActions {
+	//xworker.lang.actions.ActionContainerAction/@actions/@run
 	public static Object run(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		

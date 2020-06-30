@@ -1,4 +1,4 @@
-%1574928318318
+%1593485480305
 @
 sname=ThingEditor
 slabel=ThingEditor
@@ -370,14 +370,20 @@ if(actionContext.get("thing") != null){
     Scode=
 #$@text#$@
 if(actionContext.get("thing") != null){
-    return thing.getRoot().getMetadata().getPath();
+    def thingManager = thing.getMetadata().getThingManager();
+    if(thingManager != null){
+        return thingManager.getName() + "/" + thing.getRoot().getMetadata().getPath();
+    }else{
+            return thing.getRoot().getMetadata().getPath();
+    }
 }else{
-    return "ThingEditor";
+    return "null/ThingEditor";
 }
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false

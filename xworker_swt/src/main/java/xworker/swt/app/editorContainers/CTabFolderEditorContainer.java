@@ -164,6 +164,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		item.setData(EDITOR_ACTIONS, actions);
 		
 		EditorImpl editorUtil = new EditorImpl(this, editor, id, actions, editorContext);
+		editorUtil.setControl(editorControl);
 
 		item.setData(EDITOR, editorUtil);
 		

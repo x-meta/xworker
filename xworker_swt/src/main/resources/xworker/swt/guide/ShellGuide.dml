@@ -11,7 +11,7 @@
 	默认使用parent变量。<br />
 	&nbsp;</li>
 	<li><strong>ActionContext getActionContext()</strong><br />
-	返回SWT界面所在的变量上下文。&nbsp;&nbsp;&nbsp;</li>
+	返回SWT界面所在的变量上下文。如果返回null，那么尝试从MaskComposite上取变量上下文，如果还为null，那么使用当前变量上下文。&nbsp;&nbsp;&nbsp;</li>
 </ul>
 
 <p>&nbsp;</p>
@@ -40,7 +40,7 @@
 ]]></description>
     </attribute>
     <attribute name="description" inputtype="html"></attribute>
-    <thing name="Guide" icon="icons/user.png">
+    <thing name="Guide" extends="xworker.swt.guide.ShellGuideNode" icon="icons/user.png">
         <description><![CDATA[<p><strong>向导节点</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 在向导上显示文本，也可以定位到某个控件，使得这个控件可以输入。</p>
@@ -123,10 +123,11 @@
                  attributeName="maskCompositeActionContext"></GetObject>
             <GetLong name="getDelay" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
                  attributeName="delay"></GetLong>
+            <NOOP name="afterInited"></NOOP>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
-        <attribute name="delay" default="5000">
+        <attribute name="delay" default="2000">
             <description><![CDATA[<p>当某个节点演示未到delay的时间时，即时finished()=true，也不进入下一个演示节点。</p>
 
 <p>单位毫秒。</p>
@@ -169,6 +170,7 @@
 ]]></description>
         </attribute>
         <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
+        <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="description" inputtype="html"></attribute>
         <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
              label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"

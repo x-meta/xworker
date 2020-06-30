@@ -219,7 +219,8 @@ public class ThingEditorActions {
 		if(thing == null){
 		    //节点已经被删除
 			Action showErr = actionContext.getObject("showErr");
-		    showErr.run(actionContext, "message", "节点已经被删除！");
+			String msg = UtilString.getString("lang:d=节点已经被删除！&en=Node has been deleted!", actionContext);
+		    showErr.run(actionContext, "message", msg);
 		    
 		    return null;
 		}else{    
@@ -1291,6 +1292,7 @@ public class ThingEditorActions {
 	        }
 	    }
 	}
+	
 	public Object showAddChild(ActionContext actionContext) {
 		if(UtilData.isTrue(actionContext.get("doInitChildTree")) == false){
 		    //如果子节点树没有初始化，那么初始化
@@ -1317,6 +1319,10 @@ public class ThingEditorActions {
 		Browser childDescBrowser = actionContext.getObject("childDescBrowser");
 		Thing objStruct = actionContext.getObject("objStruct");
 		Thing newThingDescriptor = descriptor;
+		if(objStruct == null) {
+			objStruct= descriptor;
+		}
+		actionContext.g().put("newThingDescriptor", objStruct);
 		Listener addChildSelectionListener = actionContext.getObject("addChildSelectionListener");
 
 		Thing globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
@@ -1472,9 +1478,64 @@ public class ThingEditorActions {
 	    }
 	}
 	
+	/**
+	 * 返回当前是否是XML编辑器。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
 	public Object isXmlEditor(ActionContext actionContext) {
-		//返回当前是否是XML编辑器
+		
 		Composite xmlComposite = actionContext.getObject("xmlComposite");
+		return editPartCompositeStackLayout.topControl == xmlComposite;
+	}
+	
+	/**
+	 * 返回当前是否是表单编辑器。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public boolean isFormEditor(ActionContext actionContext) {
+		Composite xmlComposite = actionContext.getObject("contentEditComposite");
+		return editPartCompositeStackLayout.topControl == xmlComposite;
+	}
+	
+	/**
+	 * 返回当前是否是添加子节界面。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public boolean isAddChild(ActionContext actionContext) {
+		Composite xmlComposite = actionContext.getObject("addChildSashForm");
+		return editPartCompositeStackLayout.topControl == xmlComposite;
+	}
+	
+	/**
+	 * 返回添加子节点当前选中的描述者。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public Thing getAddChildSelectedDescriptor(ActionContext actionContext) {
+		Tree childTree = actionContext.getObject("childTree");
+		TreeItem[] items = childTree.getSelection();
+		if(items != null && items.length > 0) {
+			return (Thing) items[0].getData();
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * 返回当前是否是向导界面。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public boolean isGuideEditor(ActionContext actionContext) {
+		Composite xmlComposite = actionContext.getObject("guideComposite");
 		return editPartCompositeStackLayout.topControl == xmlComposite;
 	}
 	

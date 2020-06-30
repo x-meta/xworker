@@ -1183,6 +1183,7 @@ public class Designer {
 	public static Control getControl(Control control, String thingPath, boolean isAttribute, String simpleClassName) {
 		String thing = (String) control.getData(Designer.DATA_THING);
 		String name = control.getClass().getSimpleName();
+		System.out.println(name + " : " + thing);
 		if(thingPath.equals(thing) && name.equals(simpleClassName)) {			
 			if(isAttribute && UtilData.isTrue(control.getData(Designer.DATA_ISATTRIBUTE))) {
 				return control;
@@ -1245,7 +1246,7 @@ public class Designer {
 				
 				break;
 			case Designer.UP:
-				if(rec.y - height > 0) {					
+				if(rec.y - height > monitorSize.y) {					
 					//可以在上面显示Shell
 					y = cl.y - height;
 					if(rec.x + width < monitorSize.x + monitorSize.width) {
@@ -1259,7 +1260,7 @@ public class Designer {
 				
 				break;
 			case Designer.LEFT:
-				if(rec.x - width > 0) {
+				if(rec.x - width > monitorSize.x) {
 					//可以在左面放下
 					x = cl.x - width;
 					y = cl.y;
@@ -1294,7 +1295,7 @@ public class Designer {
 		}
 		
 		
-		//那里都不行，就放在控件上面先
+		//那里都不行，就放在控件上面先，因为控件本身可能就很大
 		return new Point(cl.x, cl.y + 20);
 	}
 	

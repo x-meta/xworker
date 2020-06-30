@@ -93,7 +93,9 @@ public class MessageBoxActionsMessageBoxCreator {
         }
         
         MessageBox box = new MessageBox(shell, style);
-        box.setText(title);
+        if(title != null) {
+        	box.setText(title);
+        }
         box.setMessage(message);
         
         final Map<String, Object> vars = self.doAction("getVariables", actionContext);

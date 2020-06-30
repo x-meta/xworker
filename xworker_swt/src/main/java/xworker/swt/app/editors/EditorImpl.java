@@ -233,6 +233,10 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	public Control getControl() {
 		return control;
 	}
+	
+	public void setControl(Control control) {
+		this.control = control;
+	}
 
 	@Override
 	public IEditorContainer getEditorContainer() {

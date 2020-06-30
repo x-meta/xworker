@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ShellGuide name="DefineModelTutorials" descriptors="xworker.swt.guide.ShellGuide" label="定义模型"
+     en_label="Define Model" en_group="-20000|Dynamic Model.100|Define Model" th_createIndex="true"
+     th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex" group="-20000|动态模型.100|定义模型">
+    <actions>
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
+    </actions>
+    <Guide name="Guide" label="简介">
+        <description><![CDATA[<h2>定义模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 本教程将演示如何定义一个模型。</p>
+
+<h3>面向对象</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型是一个面向对象的编程方法，定义一个模型就是定义模型的类，用来描述一个模型的属性、行为和子节点等。&nbsp;&nbsp;&nbsp;</p>
+
+<h2>&nbsp;</h2>
+]]></description>
+    </Guide>
+    <ThingEditorGuideInitor descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="创建Person">
+        <actions>
+            <GroovyAction name="getThing">
+                <code><![CDATA[import org.xmeta.Thing;
+
+def thing = new Thing("xworker.lang.MetaDescriptor3");
+thing.set("name", "Person");
+guide.setData("person", thing);
+
+return thing;]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingEditorGuideInitor>
+    <ThingEditor name="person" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="Person" disablePreButton="true">
+        <description><![CDATA[<h2>Person</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在本教程里我们将定义一个类Person，然后用它来创建具体的对象实例ZhangSan。</p>
+
+<h3>xworker.lang.MetaDescriptor3</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 要定义一个类，常用模型xworker.lang.MetaDescriptor3，xworker.lang.MetaDescriptor3用于创建类模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 现在教程已经创建了一个Person模型。</p>
+]]></description>
+    </ThingEditor>
+    <FormAttribute name="name" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@FormAttribute"
+         label="编辑名字" attribute="xworker.lang.MetaDescriptor3/@name" className="Text"
+         disablePreButton="true">
+        <description><![CDATA[<h2>名字</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 定义一个模型应该要设置名字。</p>
+]]></description>
+    </FormAttribute>
+    <ThingEditorGuideInitor _xmeta_id_="ThingEditorGuideInitor1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="创建Zhangsan">
+        <actions>
+            <GroovyAction name="getThing">
+                <code><![CDATA[import org.xmeta.Thing;
+
+def thing = new Thing(person.getMetadata().getPath());
+thing.set("name", "ZhangSan");
+guide.setData("zhangsan", thing);
+
+return thing;]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingEditorGuideInitor>
+    <ThingForm name="ThingForm" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor1"
+         label="ZhangSan" disablePreButton="true">
+        <description><![CDATA[<h2>ZhangSan</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动态模型可以实现实时编程，可以动态的修改对象和类，因此不用完全定义好类Person，就可以用它来创建实例了，后续可以随时修改。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 当前本教程已经使用Person创建了对象实例ZhangSan。由于Person还未定义属性，可以看到ZhangSan也没有属性可以编辑。</p>
+]]></description>
+    </ThingForm>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="切换到Person" thing="var:person"></ThingEditorGuideInitor>
+    <AddChildButton name="AddChildButton" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
+         label="添加子节点" clickThenNext="true"></AddChildButton>
+</ShellGuide>
