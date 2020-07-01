@@ -33,8 +33,9 @@ return thing;]]></code>
             </GroovyAction>
         </actions>
     </ThingEditorGuideInitor>
-    <ThingEditor name="person" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
-         label="Person" disablePreButton="true">
+    <FormAttribute name="person" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@FormAttribute"
+         label="Person" attribute="xworker.lang.MetaDescriptor3/@descriptors" className="Text"
+         disablePreButton="true">
         <description><![CDATA[<h2>Person</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 在本教程里我们将定义一个类Person，然后用它来创建具体的对象实例ZhangSan。</p>
@@ -45,7 +46,7 @@ return thing;]]></code>
 
 <p>&nbsp;&nbsp;&nbsp; 现在教程已经创建了一个Person模型。</p>
 ]]></description>
-    </ThingEditor>
+    </FormAttribute>
     <FormAttribute name="name" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@FormAttribute"
          label="编辑名字" attribute="xworker.lang.MetaDescriptor3/@name" className="Text"
          disablePreButton="true">
@@ -80,5 +81,112 @@ return thing;]]></code>
     <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
          label="切换到Person" thing="var:person"></ThingEditorGuideInitor>
     <AddChildButton name="AddChildButton" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
-         label="添加子节点" clickThenNext="true"></AddChildButton>
+         label="添加子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
+        <description><![CDATA[<h2>定义Person的属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 现在我们切换到Person模型来定义Person的属性，请点击<strong>添加子节点</strong>按钮进入添加子节点界面。</p>
+]]></description>
+    </AddChildButton>
+    <AddChildDescriptors name="AddChildDescriptors" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildDescriptors"
+         label="选择属性" descriptor="xworker.lang.MetaDescriptor3/@attribute" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>定义属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 请选择属性节点。</p>
+]]></description>
+    </AddChildDescriptors>
+    <AddChildFormAttribute name="AddChildFormAttribute" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置名称" attribute="xworker.lang.MetaDescriptor3/@attribute/@name" className="Text"
+         disablePreButton="true" text="name">
+        <description><![CDATA[<h2>设置属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在这里设置属性的名字。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildAddButton name="AddChildAddButton" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
+         label="添加属性子节点" thingName="attribute" attributeName="name" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>添加name子节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击添加按钮增加name属性子节点。</p>
+]]></description>
+    </AddChildAddButton>
+    <InnerOutline name="InnerOutline" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@InnerOutline"
+         label="选择name属性" selectThing="ognl:thing.getThing(&quot;attribute@0&quot;)" action="selectThing"
+         disablePreButton="true">
+        <description><![CDATA[<h2>name属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;现在可以看到已经为Person模型添加了name属性子节点，这也就为类Person定义了name属性。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;点击<strong>下一步</strong>按钮转到模型ZhangSan，我们会发现ZhangSan此时也有了name属性。</p>
+]]></description>
+    </InnerOutline>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor3" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="转到张三" thing="var:zhangsan"></ThingEditorGuideInitor>
+    <ThingForm _xmeta_id_="ThingForm1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor1"
+         label="zhangsanName属性" disablePreButton="true">
+        <description><![CDATA[<h2>张三的name属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 这时我们可以看到ZhangSan已经有了name属性了。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, zhangsan);"></GroovyAction>
+        </actions>
+    </ThingForm>
+    <ThingEditorGuideInitor _xmeta_id_="ThingEditorGuideInitor21" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="切换到Person" thing="var:person">
+        <actions descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions1">
+            <GroovyAction name="afterInited">
+                <code><![CDATA[import org.xmeta.Thing;
+
+person.addChild(addAttribute("age", "", []));
+person.addChild(addAttribute("sex", "select", ["男", "女"]));
+person.addChild(addAttribute("birthDay", "datePick", []));
+person.addChild(addAttribute("memo", "html", []));
+
+def thingEditor = guide.getData("thingEditor");
+thingEditor.doAction("refreshRoot", actionContext);
+
+def addAttribute(name, inputtype, values){
+    def attr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
+    attr.set("name", name);
+    attr.set("inputtype", inputtype);
+    for(value in values){ 
+        def v = new Thing("xworker.lang.MetaDescriptor3/@attribute/@value");
+        v.set("name", value);
+        v.set("value", value);
+        attr.addChild(v);
+    }
+    return attr;
+}]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingEditorGuideInitor>
+    <ThingEditor descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="更多属性" disablePreButton="true">
+        <description><![CDATA[<h2>更多属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 用同样的方法，我们可以为Person定义更多的属性。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="afterInited">
+                <code><![CDATA[thingEditor.doAction("showFormEditor", actionContext);
+thingEditor.doAction("openThing", actionContext, "thing", thing);]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor31" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="转到张三" thing="var:zhangsan"></ThingEditorGuideInitor>
+    <ThingForm _xmeta_id_="ThingForm11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor1"
+         label="zhangsanName属性" disablePreButton="true">
+        <description><![CDATA[<h2>张三的name属性</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以看到张三现在已经有了更多的属性，并且有些属性也有自己的编辑方式，如果选择日期和下拉框等。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 关于属性的编辑方法可以参看更多其它教程，点击下一步按钮我们为Person定义行为。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, zhangsan);"></GroovyAction>
+        </actions>
+    </ThingForm>
 </ShellGuide>

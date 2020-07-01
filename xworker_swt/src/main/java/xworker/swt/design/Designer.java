@@ -1183,7 +1183,7 @@ public class Designer {
 	public static Control getControl(Control control, String thingPath, boolean isAttribute, String simpleClassName) {
 		String thing = (String) control.getData(Designer.DATA_THING);
 		String name = control.getClass().getSimpleName();
-		System.out.println(name + " : " + thing);
+		//System.out.println(name + " : " + thing);
 		if(thingPath.equals(thing) && name.equals(simpleClassName)) {			
 			if(isAttribute && UtilData.isTrue(control.getData(Designer.DATA_ISATTRIBUTE))) {
 				return control;

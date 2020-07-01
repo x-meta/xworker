@@ -45,6 +45,7 @@ return editor.getEditor();]]></code>
                     <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
                 </Variables>
             </GroovyAction>
+            <ValueFactory name="isTipVisible" type="boolean" value="false"></ValueFactory>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
@@ -102,18 +103,37 @@ if(thing == null){
     return false;
 }
 
+
+def action = self.doAction("getAction", actionContext);
 def tree = guide.getActiveControl();
 def items = tree.getSelection();
 if(items.length > 0){
-    return  items[0].getData() == thing;
+    if(items[0].getData() == thing){
+        if(action == "autoFinish"){
+            return true;
+        }
+    }else{
+        if(action == "selectThing"){
+            thingEditor.doAction("selectThing", actionContext, "thing", thing, "refresh", false);
+        }
+    }
 }
 
 return false;]]></code>
             </GroovyAction>
+            <GetString name="getAction" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="action"></GetString>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
-        <attribute name="selectThing"></attribute>
+        <attribute name="selectThing" size="60">
+            <description><![CDATA[<p>设置要选择的模型，后续动作见acion。</p>
+]]></description>
+        </attribute>
+        <attribute name="action" inputtype="select" default="atuoFinish">
+            <value name="atuoFinish" value="atuoFinish"></value>
+            <value name="selectThing" value="selectThing"></value>
+        </attribute>
         <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="description" inputtype="html"></attribute>
@@ -131,7 +151,7 @@ return false;]]></code>
             <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.thing.GetThing"
                  thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@structComposite"></GetThing>
             <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
-            <Ognl name="init" expression="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext)"></Ognl>
+            <Ognl name="init" expression="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext, null)"></Ognl>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
@@ -268,26 +288,57 @@ if(text != null && text != ""){
                  thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childTreeDescSash"></GetThing>
             <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
             <GroovyAction name="finished">
-                <code><![CDATA[def descriptor = self.doAction("getDescriptor", actionContext);
+                <code><![CDATA[//设置添加子节点的描述者
+def descriptor = self.doAction("getDescriptor", actionContext);
 if(descriptor == null){
     return false;
 }
+
 def desc = thingEditor.doAction("getAddChildSelectedDescriptor", actionContext);
-if(descriptor == desc){
-    return true;
-}else{
+def action = self.doAction("getAction", actionContext);
+if(action == "setChildDescriptor"){
+    //选中添子节点指定的描述者
+    if(descriptor != desc){
+        thingEditor.doAction("selectChildTreeNode", actionContext, 
+             "thingPath", descriptor.getMetadata().getPath());
+    }
+    //不自动结束
     return false;
+}else{
+    if(descriptor == desc){
+        return true;
+    }else{
+        return false;
+    }
 }]]></code>
             </GroovyAction>
             <GetThing name="getDescriptor" descriptors="xworker.lang.actions.ActionUtil/@getThing"
                  attributeName="descriptor"></GetThing>
-            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></Ognl>
+            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext, null)"></Ognl>
+            <GetString name="getAction" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="action"></GetString>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
         <attribute name="descriptor" _xmeta_id_="selectThing" inputtype="dataSelector" size="60">
             <description><![CDATA[<p>如果设置了，且用户选择了对应的模型，则会自动跳到下一步。</p>
 ]]></description>
+        </attribute>
+        <attribute name="action" inputtype="select" default="autoFinish">
+            <description><![CDATA[<p>如果设置了descriptor，那么可以选择动作：</p>
+
+<ul>
+	<li><strong>autoFinsih</strong><br />
+	如果用户在添加子节点的列表上选择了该描述者，那么自动结束当前节点。<br />
+	&nbsp;</li>
+	<li><strong>setChildDescriptor</strong><br />
+	在添加子节点界面上，设置该descriptor生成添加子节点的表单。&nbsp;不会在列表中选中该节点（因为列表是异步加载的且可变的），也不会自动结束。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+            <value name="autoFinish" value="autoFinish"></value>
+            <value name="setChildDescriptor" value="setChildDescriptor"></value>
         </attribute>
         <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
@@ -305,12 +356,21 @@ if(descriptor == desc){
             <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.thing.GetThing"
                  thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentComposite"></GetThing>
             <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
-            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></Ognl>
+            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext, null)"></Ognl>
+            <GetJsonObject name="getValues" descriptors="xworker.lang.actions.ActionUtil/@GetJsonObject"
+                 attributeName="values"></GetJsonObject>
+            <GroovyAction name="finished">
+                <code><![CDATA[def values = self.doAction("getValues", actionContext);
+if(values != null){
+    thingEditor.doAction("setAddChildValues", actionContext, "values", values);
+}]]></code>
+            </GroovyAction>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
         <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
+        <attribute name="values" inputtype="textarea"></attribute>
         <attribute name="description" inputtype="html"></attribute>
         <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
              label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
@@ -319,16 +379,41 @@ if(descriptor == desc){
         </thing>
     </thing>
     <thing name="AddChildAddButton" extends="xworker.swt.guide.ShellGuideNode" group="ThingEditor.child">
-        <description><![CDATA[<p>定位到添加子节点的表单上。</p>
+        <description><![CDATA[<p>定位到添加子节点的添加按钮上。</p>
+
+<p>如果设置了thingName和attributeName，那么可以用来判断是否可以自动到下一个节点。</p>
 ]]></description>
         <actions>
             <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.thing.GetThing"
                  thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentButtonComposite/@addChildButton"></GetThing>
             <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
-            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></Ognl>
+            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext, null)"></Ognl>
+            <GroovyAction name="finished">
+                <code><![CDATA[def thingName = self.doAction("getThingName", actionContext);
+def attributeName = self.doAction("getAttributeName", actionContext);
+
+//println thingName + ":" + attributeName;
+if(thingName != null && attributeName != null){
+    for(child in thing.getChilds()){
+        if(child.isThingByName(thingName) && child.get("name") == attributeName){
+            return true;
+        }
+    }
+    
+    return false;
+}else{
+    return false;
+}]]></code>
+            </GroovyAction>
+            <GetString name="getThingName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="thingName"></GetString>
+            <GetString name="getAttributeName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="attributeName"></GetString>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
+        <attribute name="thingName"></attribute>
+        <attribute name="attributeName" _xmeta_id_="attrubteName"></attribute>
         <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="description" inputtype="html"></attribute>
@@ -343,10 +428,24 @@ if(descriptor == desc){
         <description><![CDATA[<p>定位到添加子节点的表单上。</p>
 ]]></description>
         <actions>
-            <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.thing.GetThing"
-                 thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentComposite"></GetThing>
-            <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
-            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext);"></Ognl>
+            <Ognl name="init" expression="thingEditor.doAction(&quot;showAddChild&quot;, actionContext, null)"></Ognl>
+            <GroovyAction name="afterInited">
+                <code><![CDATA[def text = self.doAction("getText", actionContext);
+if(text != null && text != ""){
+    try{
+        activeControl.setText(text);
+    }catch(Exception e){        
+    }
+}]]></code>
+            </GroovyAction>
+            <GetString name="getText" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="text"></GetString>
+            <GetString name="getClassName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="className"></GetString>
+            <ValueFactory name="isAttribute" type="boolean" value="true"></ValueFactory>
+            <GetThing name="getActiveControlThing" _xmeta_id_="getActiveControlThing1" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="attribute"></GetThing>
+            <GroovyAction name="getActiveControlParent" code="return thingEditor.getActionContext().get(&quot;childComposite&quot;);"></GroovyAction>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
