@@ -40,12 +40,14 @@ def editor = workbench.getEditor(thing.getMetadata().getPath());
 def thingEditor = editor.getActionContext().get("thingEditor");
 guide.setData("editor", editor);
 guide.setData("thingEditor", thingEditor);
+
 return editor.getEditor();]]></code>
                 <Variables>
                     <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
                 </Variables>
             </GroovyAction>
             <ValueFactory name="isTipVisible" type="boolean" value="false"></ValueFactory>
+            <ValueFactory name="getDelay" type="long" value="0"></ValueFactory>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
@@ -393,6 +395,7 @@ if(values != null){
 def attributeName = self.doAction("getAttributeName", actionContext);
 
 //println thingName + ":" + attributeName;
+def thing = thingEditor.doAction("getCurrentThing", actionContext);
 if(thingName != null && attributeName != null){
     for(child in thing.getChilds()){
         if(child.isThingByName(thingName) && child.get("name") == attributeName){
@@ -445,7 +448,8 @@ if(text != null && text != ""){
             <ValueFactory name="isAttribute" type="boolean" value="true"></ValueFactory>
             <GetThing name="getActiveControlThing" _xmeta_id_="getActiveControlThing1" descriptors="xworker.lang.actions.ActionUtil/@getThing"
                  attributeName="attribute"></GetThing>
-            <GroovyAction name="getActiveControlParent" code="return thingEditor.getActionContext().get(&quot;childComposite&quot;);"></GroovyAction>
+            <GroovyAction name="getActiveControlParent" code="return thingEditor.getActionContext().get(&quot;thingContext&quot;).get(&quot;addChildSashForm&quot;);"></GroovyAction>
+            <GroovyAction name="getActiveControl" code="return null;"></GroovyAction>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
@@ -463,6 +467,25 @@ if(text != null && text != ""){
             <description><![CDATA[<p>如果不为空，那么把值通过setText方法设置到控件上。</p>
 ]]></description>
         </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ActionsCombo" extends="xworker.swt.guide.ShellGuideNode" group="ThingEditor">
+        <description><![CDATA[<p>定位到动作下拉列表框。</p>
+]]></description>
+        <actions>
+            <GetThing name="getActiveControlThing" descriptors="xworker.lang.actions.thing.GetThing"
+                 thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@methodCoolItem/@methodToolbar"></GetThing>
+            <RefAction name="getActiveControlParent" refActionPath="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor/@actions/@getActiveControl"></RefAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="disablePreButton" inputtype="truefalse" default="false"></attribute>
+        <attribute name="disableNextButton" inputtype="truefalse" default="false"></attribute>
         <attribute name="description" inputtype="html"></attribute>
         <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
              label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"

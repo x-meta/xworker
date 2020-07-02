@@ -146,7 +146,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 * 切换到新的Composite上，即遮罩到新的Composite上。
 	 * 
 	 * @param maskComposite
-	 * @param actionContext
+	 * @param maskActionContext
 	 */
 	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
 		init = true;

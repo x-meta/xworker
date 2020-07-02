@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ShellGuide name="DefineModelTutorials" descriptors="xworker.swt.guide.ShellGuide" label="定义模型"
-     en_label="Define Model" en_group="-20000|Dynamic Model.100|Define Model" th_createIndex="true"
-     th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex" group="-20000|动态模型.100|定义模型">
+     en_label="Define Model" en_group="-20000|Dynamic Model.100|Define Model" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
+     group="-20000|动态模型.100|定义模型">
+    <description><![CDATA[<h2>定义动作</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 请选择动作节点。</p>
+]]></description>
     <actions>
         <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
         <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
@@ -12,9 +16,11 @@
 
 <p>&nbsp;&nbsp;&nbsp; 本教程将演示如何定义一个模型。</p>
 
-<h3>面向对象</h3>
+<h3>定义模型的方法</h3>
 
-<p>&nbsp;&nbsp;&nbsp; 动态模型是一个面向对象的编程方法，定义一个模型就是定义模型的类，用来描述一个模型的属性、行为和子节点等。&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; 动态模型是一个<strong>面向对象</strong>的编程方法，定义一个模型就是<strong>定义模型的类</strong>，用来描述一个模型的属性、行为和子节点等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在动态模型里对象、类、行为等都是用模型来表示的，所以模型的<strong>类也是模型</strong>。</p>
 
 <h2>&nbsp;</h2>
 ]]></description>
@@ -56,7 +62,7 @@ return thing;]]></code>
 ]]></description>
     </FormAttribute>
     <ThingEditorGuideInitor _xmeta_id_="ThingEditorGuideInitor1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
-         label="创建Zhangsan">
+         label="创建Zhangsan" th_nodeColor="RED">
         <actions>
             <GroovyAction name="getThing">
                 <code><![CDATA[import org.xmeta.Thing;
@@ -73,13 +79,13 @@ return thing;]]></code>
          label="ZhangSan" disablePreButton="true">
         <description><![CDATA[<h2>ZhangSan</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;动态模型可以实现实时编程，可以动态的修改对象和类，因此不用完全定义好类Person，就可以用它来创建实例了，后续可以随时修改。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在动态模型里对象是动态的，可以随时修改对象的类和行为等，也可以随时修改类模型，类模型修改后对应的对象实例也会随时变化。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 当前本教程已经使用Person创建了对象实例ZhangSan。由于Person还未定义属性，可以看到ZhangSan也没有属性可以编辑。</p>
+<p>&nbsp;&nbsp;&nbsp; 因此我们可以在Person还未完全定义好的情况下就用它来创建对象实例，当前本教程已经使用Person创建了对象实例ZhangSan。由于Person还未定义属性，可以看到ZhangSan的属性是空的。</p>
 ]]></description>
     </ThingForm>
     <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
-         label="切换到Person" thing="var:person"></ThingEditorGuideInitor>
+         label="切换到Person-添加属性" thing="var:person" th_nodeColor="RED"></ThingEditorGuideInitor>
     <AddChildButton name="AddChildButton" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
          label="添加子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
         <description><![CDATA[<h2>定义Person的属性</h2>
@@ -98,9 +104,11 @@ return thing;]]></code>
     <AddChildFormAttribute name="AddChildFormAttribute" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
          label="设置名称" attribute="xworker.lang.MetaDescriptor3/@attribute/@name" className="Text"
          disablePreButton="true" text="name">
-        <description><![CDATA[<h2>设置属性</h2>
+        <description><![CDATA[<h2>编写Groovy代码</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 在这里设置属性的名字。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可以在Groovy模型里直接编写Groovy代码。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在这里self变量是方法的调用者本身， 即如果执行的ZhangSan这个模型的sayHello方法，那么self变量就是ZhangSan模型自己。</p>
 ]]></description>
     </AddChildFormAttribute>
     <AddChildAddButton name="AddChildAddButton" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
@@ -189,4 +197,211 @@ thingEditor.doAction("openThing", actionContext, "thing", thing);]]></code>
             <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, zhangsan);"></GroovyAction>
         </actions>
     </ThingForm>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor22" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="切换到Person-添加行为" thing="var:person" th_nodeColor="RED"></ThingEditorGuideInitor>
+    <AddChildButton name="AddChildButton" _xmeta_id_="AddChildButton1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
+         label="添加子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
+        <description><![CDATA[<h2>定义Person的行为</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 现在我们切换到Person模型来定义Person的行为，请点击<strong>添加子节点</strong>按钮进入添加子节点界面。</p>
+]]></description>
+    </AddChildButton>
+    <AddChildDescriptors name="AddChildDescriptors" _xmeta_id_="AddChildDescriptors1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildDescriptors"
+         label="选择动作" descriptor="xworker.lang.MetaDescriptor3/@actions" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>定义动作</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 请选择动作节点。</p>
+]]></description>
+    </AddChildDescriptors>
+    <AddChildAddButton name="AddChildAddButton" _xmeta_id_="AddChildAddButton1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
+         label="添加动作子节点" thingName="actions" attributeName="actions" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>添加动作子节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击添加按钮增加动作子节点。</p>
+]]></description>
+    </AddChildAddButton>
+    <InnerOutline name="InnerOutline" _xmeta_id_="InnerOutline1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@InnerOutline"
+         label="选择动作" selectThing="ognl:thing.getThing(&quot;actions@0&quot;)" action="selectThing"
+         disablePreButton="true">
+        <description><![CDATA[<h2>actions节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;actions节点用于定义模型的行为，它的子节点是具体的行为。注意，只有第一个actions子节点才是动作行为的定义节点，如有多个actions子节点，其它不是行为定义节点。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;点击<strong>下一步</strong>按钮转让我们添加一个sayHello方法。</p>
+]]></description>
+    </InnerOutline>
+    <AddChildButton name="AddChildButton" _xmeta_id_="AddChildButton11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
+         label="添加子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
+        <description><![CDATA[<h2>定义Person的行为</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 现在我们切换到Person模型来定义Person的行为，请点击<strong>添加子节点</strong>按钮进入添加子节点界面。</p>
+]]></description>
+    </AddChildButton>
+    <AddChildDescriptors name="AddChildDescriptors" _xmeta_id_="AddChildDescriptors11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildDescriptors"
+         label="选择Groovy" descriptor="xworker.lang.actions.Actions/@GroovyAction" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>选择一个动作模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在动态模型里动作是可以运行的，相当于函数和方法，我们可以使用动作类模型来定义模型的行为。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在XWorker里有很多动作类的模型，在这里我们使用GroovyAction模型，<strong>请在分组_actions.code下选择GroovyAction</strong>。</p>
+
+<h3>GroovyAction</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; GroovyAction是Groovy脚本模型，可以用来编写Groovy脚本。</p>
+]]></description>
+    </AddChildDescriptors>
+    <AddChildFormAttribute name="AddChildFormAttribute" _xmeta_id_="AddChildFormAttribute2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置名称" attribute="xworker.lang.actions.GroovyAction/@name1" className="Text"
+         disablePreButton="true" text="sayHello">
+        <description><![CDATA[<h2>设置动作的名字</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动作的名字也是模型行为的名字，在这里我们设置为sayHello。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildFormAttribute name="AddChildFormAttribute" _xmeta_id_="AddChildFormAttribute1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置代码" attribute="xworker.lang.actions.GroovyAction/@code1" className="StyledText"
+         disablePreButton="true" text="println self.get(&quot;name&quot;) + &quot; say hello world!&quot;;">
+        <description><![CDATA[<h2>编写Groovy代码</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可以在Groovy模型里直接编写Groovy代码。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在这里self变量是方法的调用者本身， 即如果执行的ZhangSan这个模型的sayHello方法，那么self变量就是ZhangSan模型自己。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildAddButton name="AddChildAddButton" _xmeta_id_="AddChildAddButton2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
+         label="添加sayHello" thingName="GroovyAction" attributeName="sayHello" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>添加行为sayHello</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击添加按钮增加sayHello动作子节点。</p>
+]]></description>
+    </AddChildAddButton>
+    <ThingEditor _xmeta_id_="ThingEditor1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="显示Person" disablePreButton="true">
+        <description><![CDATA[<h2>完成方法定义</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在我们为Person定义了一个sayHello方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击下一步按钮我们切换到ZhangSan模型，使用ZhangSan模型来执行sayHello方法。</p>
+]]></description>
+        <actions descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ActionsCombo/@actions1">
+            <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, thing);"></GroovyAction>
+        </actions>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor32" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="转到张三" thing="var:zhangsan"></ThingEditorGuideInitor>
+    <ActionsCombo descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ActionsCombo"
+         label="执行sayHello" disablePreButton="true">
+        <description><![CDATA[<h2>执行sayHello方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;请在动作下拉列表中选择sayHello，然后点击右边的<input alt="" src="icons/xworker/run24_24.gif" style="width: 16px; height: 16px;" type="image" />下拉菜单，任何一个方式都可以执行。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果执行正常，那么在控制台中应该可以看到打印出来的是&rdquo;ZhangSan say hello world!&ldquo;。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, thing);"></GroovyAction>
+        </actions>
+    </ActionsCombo>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor221" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="切换到Person-添加子模型" thing="var:person" th_nodeColor="RED"></ThingEditorGuideInitor>
+    <AddChildButton name="AddChildButton" _xmeta_id_="AddChildButton12" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
+         label="添加子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
+        <description><![CDATA[<h2>定义子模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在动态模型里，每一个模型节点都是独立的对象，因此子模型也是独立的对象，定义Person的子模型的方法和定义Person是一致的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 假设Person可以有Child，下面我们来定义Child子模型。</p>
+]]></description>
+    </AddChildButton>
+    <AddChildDescriptors name="AddChildDescriptors" _xmeta_id_="AddChildDescriptors12" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildDescriptors"
+         label="选择事物" descriptor="xworker.lang.MetaDescriptor3/@thing" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>定义事物</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 请选择事物节点。</p>
+]]></description>
+    </AddChildDescriptors>
+    <AddChildFormAttribute name="AddChildFormAttribute" _xmeta_id_="AddChildFormAttribute21" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置名称" attribute="xworker.lang.MetaDescriptor3/@name" className="Text"
+         disablePreButton="true" text="Child">
+        <description><![CDATA[<h2>设置子模型的名字</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在这里我们设置子模型的名字是Child。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildFormAttribute name="AddChildFormAttribute" _xmeta_id_="AddChildFormAttribute11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置继承" attribute="xworker.lang.MetaDescriptor3/@extends" className="Text"
+         disablePreButton="true" text="ognl:person.getMetadata().getPath()">
+        <description><![CDATA[<h2>设置继承</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;由于Child也是Person（比如ZhangSan的子XiaoMing也是人），所以可以让Child继承Person，这样Child就有了Person的属性和行为。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildAddButton name="AddChildAddButton" _xmeta_id_="AddChildAddButton11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
+         label="添加Child子节点" thingName="thing" attributeName="Child" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>添加Child节点</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击添加按钮添加Child子节点。</p>
+]]></description>
+    </AddChildAddButton>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor321" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="转到张三" thing="var:zhangsan"></ThingEditorGuideInitor>
+    <AddChildButton _xmeta_id_="AddChildButton112" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildButton"
+         label="添加ZhangSan子节点" clickThenNext="true" disablePreButton="true" disableNextButton="true">
+        <description><![CDATA[<h2>添加XiaoMing</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 当Person定义了Child子模型后，ZhangSan就可以添加Child了，这里我们演示添加ZhangSan的子XiaoMing。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 请点击<strong>添加子节点</strong>按钮进入下一步。</p>
+]]></description>
+        <actions descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ActionsCombo/@actions1">
+            <GroovyAction name="afterInited" code="thingEditor.doAction(&quot;openThing&quot;, actionContext, &quot;thing&quot;, thing);"></GroovyAction>
+        </actions>
+    </AddChildButton>
+    <AddChildDescriptors name="AddChildDescriptors" _xmeta_id_="AddChildDescriptors111" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildDescriptors"
+         label="选择Child" descriptor="ognl:person.getThing(&quot;thing@0&quot;)" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>选择Child模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Child模型是Person定义的，请选择Child模型。</p>
+]]></description>
+    </AddChildDescriptors>
+    <AddChildFormAttribute name="AddChildFormAttribute" _xmeta_id_="AddChildFormAttribute22" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildForm1"
+         label="设置名称" attribute="ognl:person.getThing(&quot;attribute@name&quot;)" className="Text"
+         disablePreButton="true" text="XiaoMing">
+        <description><![CDATA[<h2>设置Child的名字</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在这里我们设置Child的名字为XiaoMing，同时我们也可以发现Child继承了Person的全部属性。</p>
+]]></description>
+    </AddChildFormAttribute>
+    <AddChildAddButton name="AddChildAddButton" _xmeta_id_="AddChildAddButton111" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@AddChildAddButton"
+         label="添加XaioMing子节点" thingName="Child" attributeName="XiaoMing" disablePreButton="true"
+         disableNextButton="true">
+        <description><![CDATA[<h2>添加XiaoMing</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击添加按钮添加XiaoMing子节点。</p>
+]]></description>
+    </AddChildAddButton>
+    <ThingEditor name="ThingEditor" _xmeta_id_="ThingEditor2" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="结束" disablePreButton="true">
+        <description><![CDATA[<h2>结束</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 到这里本教程就结束了，简单总结如下：</p>
+
+<ul>
+	<li><strong>面向对象</strong><br />
+	动态模型是面向对象的，定义一个模型就是定义对象的类，类模型用于定义属性、行为和子模型等。<br />
+	&nbsp;</li>
+	<li><strong>都是模型</strong><br />
+	对象、类和行为等等都是模型。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    </ThingEditor>
 </ShellGuide>
