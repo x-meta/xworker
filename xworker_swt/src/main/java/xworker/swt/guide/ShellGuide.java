@@ -369,11 +369,15 @@ public class ShellGuide implements DisposeListener, ControlListener{
 						try {
 							//tooltip
 							
-							tipShell.setSize(640,480);
-							String url = Designer.getUrlRoot() 
-									+ "do?sc=xworker.swt.guide.prototypes.ShellGuideTipWeb&thing=" + guideNode.getMetadata().getPath();
-							//System.out.println(url);
-							((Browser) ShellGuide.this.actionContext.get("browser")).setUrl(url);
+							Boolean tipVisible = guideNode.doAction("isTipVisible", actionContext);
+							if(tipVisible == null || tipVisible == true) {
+								//tipShell再设置了网页后在网页ready事件里被打开，见xworker.swt.guide.prototypes.ShellGuideTipShell/@browser/@BrowserFunction/@actions/@doFunction								
+								tipShell.setSize(640,480);
+								String url = Designer.getUrlRoot() 
+										+ "do?sc=xworker.swt.guide.prototypes.ShellGuideTipWeb&thing=" + guideNode.getMetadata().getPath();
+								//System.out.println(url);
+								((Browser) ShellGuide.this.actionContext.get("browser")).setUrl(url);
+							}
 													
 							activeControl = getActiveControl(guideNode);
 							ShellGuide.this.setData("activeControl", activeControl);
