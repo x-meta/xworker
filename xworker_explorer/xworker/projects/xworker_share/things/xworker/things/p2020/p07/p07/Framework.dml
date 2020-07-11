@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ShellGuide name="Framework" descriptors="xworker.swt.guide.ShellGuide" label="框架" en_label="Framework"
+     en_group="-20000|Dynamic Model.100|Define Model" th_createIndex="true" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
+     group="-20000|动态模型.100|定义模型" th_sortWeight="100">
+    <actions>
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
+    </actions>
+    <Guide name="realtimeProgramming" label="简介">
+        <description><![CDATA[<h2>框架</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型适合用于编写各种框架。</p>
+
+<h3>HTML生成框架</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 本教程以以一个生成HTML的框架为例，来讲述如何定义和使用框架。</p>
+]]></description>
+    </Guide>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开HTML" thing="xworker.example.web.html.HTML/@actions/@toHtml"></ThingEditorGuideInitor>
+    <ThingEditor name="ThingForm" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="HTML" disablePreButton="true">
+        <description><![CDATA[<h2>HTML</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 首先我们来定义HTML模型，在这里教程已经打开了HTML模型。</p>
+
+<h3>toHtml方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;toHtml用于生成HTML，主要是遍历子节点生成子节点的HTML代码。</p>
+
+<pre class="brush:groovy;">
+String html = &quot;&lt;html&gt;\n&lt;body&gt;\n&quot;;
+
+//self是当前模型，执行子节点的toHtml方法，并把返回值添加到整个html张
+for(child in self.getChilds()){
+    String code = child.doAction(&quot;toHtml&quot;, actionContext);
+    if(code != null){
+        html = html + code + &quot;\n&quot;;
+    }
+}
+
+html = html + &quot;&lt;/body&gt;&lt;/html&gt;&quot;;
+
+//返回生成的html代码
+return html;</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开H" thing="xworker.example.web.html.H/@actions/@toHtml"></ThingEditorGuideInitor>
+    <ThingEditor name="ThingForm" _xmeta_id_="ThingForm1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="H" disablePreButton="true">
+        <description><![CDATA[<h2>H标签</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在教程打开了H模型，H模型也有一个toHtml方法，用于生成H标签相关的内容。</p>
+]]></description>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开P" thing="xworker.example.web.html.P/@actions/@toHtml"></ThingEditorGuideInitor>
+    <ThingEditor name="ThingForm" _xmeta_id_="ThingForm11" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="P" disablePreButton="true">
+        <description><![CDATA[<h2>P标签</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在教程打开了P模型，P模型也有一个toHtml方法，用于生成P标签相关的内容。</p>
+]]></description>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor111" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开Widgets" thing="xworker.example.web.html.Widgets"></ThingEditorGuideInitor>
+    <ThingEditor name="ThingForm" _xmeta_id_="ThingForm111" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="Widgets" disablePreButton="true">
+        <description><![CDATA[<h2>Widgets</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Widgets模型用于汇总像H和P这样的模型，在Widgets模型下创建相关子节点，并让这些子节点继承响应的模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 另外第三方的模型也可以注册到Widgets模型下。</p>
+]]></description>
+    </ThingEditor>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor1111" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开Markdown" thing="xworker.example.web.html.Markdown"></ThingEditorGuideInitor>
+    <FormAttribute descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@FormAttribute"
+         label="markDown" descriptor="xworker.lang.MetaThing" attribute="xworker.lang.MetaThing/@th_registThing"
+         className="Text" disablePreButton="true">
+        <description><![CDATA[<h2>第三方扩展</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;第三方可以通过注册的方式把模型注册到框架下。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如当前打开的Markdown模型，它以child的方式注册到了Widgets模型下，相当于它是Widgets的子节点了。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="getDescriptor">
+                <code><![CDATA[//选择MetaThing
+def descs = thing.getDescriptors();
+return descs.get(descs.size() - 1);]]></code>
+            </GroovyAction>
+        </actions>
+    </FormAttribute>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor1112" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开HTML" thing="xworker.example.web.html.HTML"></ThingEditorGuideInitor>
+    <FormAttribute name="FormAttribute" _xmeta_id_="FormAttribute1" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@FormAttribute"
+         label="HTMLExtends" attribute="xworker.lang.MetaDescriptor3/@extends" className="Text"
+         disablePreButton="true">
+        <description><![CDATA[<h2>继承</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在让HTML模型继承Widgets模型，这样HTML就可以使用Widgets所定义的子模型，以及第三方注册到Widgets的子模型。</p>
+]]></description>
+    </FormAttribute>
+    <ThingEditorGuideInitor name="ThingEditorGuideInitor" _xmeta_id_="ThingEditorGuideInitor11121" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开TestHTML" thing="xworker.example.web.html.TestHTML"></ThingEditorGuideInitor>
+    <ThingEditor name="ThingForm" _xmeta_id_="ThingForm112" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="TestHTML" disablePreButton="true">
+        <description><![CDATA[<h2>测试框架</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在框架已经编写完成了，我们用HTML模型来编写一个TestHTML来测试一下。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过菜单HTML-&gt;ToHTML来打开浏览TestHTML模型生成的代码。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </ThingEditor>
+    <Guide name="Guide" label="总结" disablePreButton="true">
+        <description><![CDATA[<h2>总结</h2>
+
+<ul>
+	<li><strong>约定行为</strong><br />
+	要写框架，要预先约定好框架的行为。比如生成HTML框架的示例约定了每个模型需要实现toHtml方法。<br />
+	&nbsp;</li>
+	<li><strong>集合模型</strong><br />
+	可以编写一个集合模型，通过继承的方法把框架分散的模型集合在一起。<br />
+	&nbsp;</li>
+	<li><strong>第三方扩展</strong><br />
+	第三方的模型可以通过注册的方式把自己的模型添加到框架中。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+</ShellGuide>

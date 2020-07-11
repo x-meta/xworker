@@ -29,8 +29,8 @@ public class TableDataStoreDataObjectListener extends DelayTask implements DataO
 
 	@Override
 	public void run() {
-		if(tableItem.isDisposed() == false) {
-			tableItem.getParent().getDisplay().asyncExec(new Runnable() {
+		if(tableItem.isDisposed() == false) {			
+			tableItem.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					try {
 						TableDataStoreListener.updateItem(dataStore, tableItem, dataObject, actionContext);

@@ -1,4 +1,4 @@
-%1576150938006
+%1594384714904
 @
 sname=shell
 stext=Examples
@@ -121,8 +121,16 @@ sth_mark=false
         Scode=
 #$@text#$@
 import xworker.util.XWorkerUtils;
+import org.xmeta.ActionContext;
 
 if(actionContext.get("thing") != null){
+    def type = thing.get("type");
+    def ac = new ActionContext();
+    thing.doAction("init", ac);
+    if(ac.get("content") == thing && type == "thingDesc"){
+        browser.setText("");
+        return;
+    }
     def url = XWorkerUtils.getThingDescUrl(thing);
     browser.setUrl(url);
 }
@@ -130,6 +138,7 @@ if(actionContext.get("thing") != null){
         sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdebugLog=false
         sdescriptors=xworker.lang.actions.Actions/@GroovyAction
         sinheritDescription=false

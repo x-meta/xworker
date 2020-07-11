@@ -23,10 +23,9 @@ if(thing == null){
 }
 
 //IDE打开事物的编辑器
-XWorkerUtils.ideOpenThing(thing);
-guide.setData("thing", thing);]]></code>
+guide.setData("thing", thing);
+XWorkerUtils.ideOpenThing(thing);]]></code>
             </GroovyAction>
-            <ValueFactory name="finished" type="boolean" value="true"></ValueFactory>
             <GetThing name="getThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
                  attributeName="thing"></GetThing>
             <getIDEShell name="getMaskComposite" _xmeta_id_="getMaskComposite1" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
@@ -34,7 +33,7 @@ guide.setData("thing", thing);]]></code>
             <GroovyAction name="getActiveControl">
                 <code><![CDATA[//获取事物的编辑器 
 def thing = guide.getData("thing");
-def editor = workbench.getEditor(thing.getMetadata().getPath());
+def editor = workbench.getEditor(thing.getRoot().getMetadata().getPath());
 
 //设置事物编辑器，让后续可以直接使用
 def thingEditor = editor.getActionContext().get("thingEditor");
@@ -48,6 +47,22 @@ return editor.getEditor();]]></code>
             </GroovyAction>
             <ValueFactory name="isTipVisible" type="boolean" value="false"></ValueFactory>
             <ValueFactory name="getDelay" type="long" value="0"></ValueFactory>
+            <GroovyAction name="finished">
+                <code><![CDATA[def thing = self.doAction("getThing", actionContext);
+if(thing == null){
+    return false;
+}else{
+    if(workbench.getEditor(thing.getRoot().getMetadata().getPath()) != null){   
+        //确保文件已经打开
+        return true;
+    }else{
+        return false;
+    }
+}]]></code>
+                <Variables>
+                    <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
+                </Variables>
+            </GroovyAction>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
@@ -69,7 +84,7 @@ return editor.getEditor();]]></code>
             <GroovyAction name="getActiveControl">
                 <code><![CDATA[//获取事物的编辑器 
 def thing = guide.getData("thing");
-def editor = workbench.getEditor(thing.getMetadata().getPath());
+def editor = workbench.getEditor(thing.getRoot().getMetadata().getPath());
 
 def thingEditor = editor.getActionContext().get("thingEditor");
 guide.setData("thingEditor", thingEditor);
@@ -238,9 +253,19 @@ if(text != null && text != ""){
             </GroovyAction>
             <GetString name="getText" descriptors="xworker.lang.actions.ActionUtil/@GetString"
                  attributeName="text"></GetString>
+            <GetThing name="getDescriptor" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="descriptor"></GetThing>
+            <GroovyAction name="init">
+                <code><![CDATA[def descriptor = self.doAction("getDescriptor", actionContext);
+//println descriptor
+if(descriptor != null){
+    thingEditor.doAction("selectDescriptor", actionContext, "descriptor", descriptor);
+}]]></code>
+            </GroovyAction>
         </actions>
         <attribute name="name"></attribute>
         <attribute name="label"></attribute>
+        <attribute name="descriptor" inputtype="dataSelector" size="60"></attribute>
         <attribute name="attribute" _xmeta_id_="selectThing" inputtype="dataSelector" size="60">
             <description><![CDATA[<p>属性的描述者的路径。</p>
 ]]></description>

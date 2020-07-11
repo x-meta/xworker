@@ -8,7 +8,9 @@
 <ul>
 	<li><strong>Composite getMaskComposite()</strong><br />
 	需要遮罩的Composite，也是需要在其上面执行向导的Composite。<br />
-	默认使用parent变量。<br />
+	如果getMaskComposite()返回null，那么执行Thing getShell()方法，如果getShell()方法返回不为null，那么执行create方法创建Shell，把Shell作为要遮罩的Composite。<br />
+	如果getShell()也返回null，那么默认使用parent变量。<br />
+	如果parent变量为null或者不是Composite，那么抛出异常。<br />
 	&nbsp;</li>
 	<li><strong>ActionContext getActionContext()</strong><br />
 	返回SWT界面所在的变量上下文。如果返回null，那么尝试从MaskComposite上取变量上下文，如果还为null，那么使用当前变量上下文。&nbsp;&nbsp;&nbsp;</li>
@@ -23,6 +25,8 @@
              attributeName="actionContext"></GetObject>
         <GetObject name="getMaskComposite" descriptors="xworker.lang.actions.ActionUtil/@GetData"
              attributeName="maskComposite"></GetObject>
+        <GetThing name="getShell" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="shell" childThingName="Shell"></GetThing>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -39,6 +43,7 @@
 <p>&nbsp;</p>
 ]]></description>
     </attribute>
+    <attribute name="shell" inputtype="dataSelector" size="60"></attribute>
     <attribute name="description" inputtype="html"></attribute>
     <thing name="Guide" extends="xworker.swt.guide.ShellGuideNode" icon="icons/user.png">
         <description><![CDATA[<p><strong>向导节点</strong></p>
@@ -195,4 +200,5 @@
             <menu name="run" label="运行" url="action:run"></menu>
         </menuSetting>
     </sswtMenus>
+    <thing name="Shell" extends="xworker.swt.widgets.Shell" inheritDescription="true"></thing>
 </thing>

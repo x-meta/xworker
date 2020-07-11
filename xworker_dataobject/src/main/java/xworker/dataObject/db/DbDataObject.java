@@ -85,7 +85,8 @@ public class DbDataObject {
 			    }
 			}
 			if(type == null){
-	    		throw new XMetaException("Can not find determine condition value type, condition=" + condition);
+	    		Executor.warn(TAG, "Can not find determine condition value type, condition=" + condition);
+	    		type = "string";
 		    }
 
 		    DbUtil.setParameterValue(pst, index + i, type , c.get("value"));

@@ -1295,8 +1295,17 @@ public class Designer {
 		}
 		
 		
-		//那里都不行，就放在控件上面先，因为控件本身可能就很大
-		return new Point(cl.x, cl.y + 20);
+		//那里都不行
+		rec = control.getBounds();
+		if(width < rec.width && height < rec.height) {
+			//如果窗口被控件小，那么居中
+			x = rec.width / 2 - width / 2;
+			y = rec.height / 2 - height / 2;
+			return new Point(x + cl.x, y + cl.y);
+		}else {		
+			//直接放在控件上，留出一点点距离
+			return new Point(cl.x, cl.y + 20);
+		}
 	}
 	
 	/**

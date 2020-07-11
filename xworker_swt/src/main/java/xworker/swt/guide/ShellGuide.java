@@ -15,6 +15,7 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -82,9 +83,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	}
 	
 	private void doInit(boolean first) {
-		if(this.actionContext == null) {
-			this.actionContext = new ActionContext();
-		}
+		this.actionContext = new ActionContext();
 		actionContext.put("parentContext", parentContext);
 		if(maskComposite instanceof Shell) {
 			actionContext.put("parent", maskComposite);
@@ -103,6 +102,14 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		
 		Thing tipShellThing = world.getThing("xworker.swt.guide.prototypes.ShellGuideTipShell");
 		tipShell = tipShellThing.doAction("create", actionContext, "parent", maskShell);	
+//		tipShell.addDisposeListener(new DisposeListener() {
+//
+//			@Override
+//			public void widgetDisposed(DisposeEvent arg0) {
+//				System.out.println("TipShell disposed");
+//			}
+//			
+//		});
 		
 		//启动检测线程
 		checker = new ShellGuideThread(this);
@@ -150,11 +157,12 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	 */
 	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
 		init = true;
+		Designer.setVisible(maskComposite);
 		this.parentContext = maskActionContext;		
 		if(this.maskComposite.getShell() != maskComposite.getShell()) {
 			this.doClose();
 			this.maskComposite = maskComposite;
-			this.init(false);
+			doInit(false);
 			
 			return;
 		}else if(this.maskComposite != maskComposite) {
@@ -166,8 +174,13 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			this.maskComposite.addDisposeListener(this);
 		}
 		
-		Point location = maskComposite.toDisplay(maskComposite.getLocation());
-		maskShell.setLocation(location);
+		if(maskComposite instanceof Shell) {
+			Shell shell = (Shell) maskComposite;
+			maskShell.setLocation(shell.getLocation());
+		}else {
+			Point location = maskComposite.toDisplay(maskComposite.getLocation());
+			maskShell.setLocation(location);
+		}
 		maskShell.setSize(maskComposite.getSize());
 	}
 	
@@ -352,7 +365,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 				Thing guideNode = guideNodes.get(guideIndex);
 				//是否设置新的遮罩
 				Composite maskCompoiste = doAction(guideNode, "getMaskComposite");
-				if(maskCompoiste != null && maskCompoiste != this.maskComposite) {
+				if(maskCompoiste != null && maskCompoiste != this.maskComposite && maskComposite.isDisposed() == false) {
 					ActionContext maskActionContext = doAction(guideNode, "getMaskCompositeActionContext");
 					if(maskActionContext == null) {
 						maskActionContext = Designer.getActionContext(maskCompoiste);
@@ -371,7 +384,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 							
 							Boolean tipVisible = guideNode.doAction("isTipVisible", actionContext);
 							if(tipVisible == null || tipVisible == true) {
-								//tipShell再设置了网页后在网页ready事件里被打开，见xworker.swt.guide.prototypes.ShellGuideTipShell/@browser/@BrowserFunction/@actions/@doFunction								
+								//tipShell再设置了网页后在网页ready事件里被打开，见xworker.swt.guide.prototypes.ShellGuideTipShell/@browser/@BrowserFunction/@actions/@doFunction
+								Shell tipShell = getTipShell();
 								tipShell.setSize(640,480);
 								String url = Designer.getUrlRoot() 
 										+ "do?sc=xworker.swt.guide.prototypes.ShellGuideTipWeb&thing=" + guideNode.getMetadata().getPath();
@@ -445,9 +459,11 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	private void doClose() {
 		checker.stop();
 		
-		maskComposite.removeDisposeListener(this);
-		maskComposite.removeControlListener(this);
-		maskComposite.getShell().removeControlListener(this);
+		if(maskComposite != null && maskComposite.isDisposed() == false) {
+			maskComposite.removeDisposeListener(this);
+			maskComposite.removeControlListener(this);
+			maskComposite.getShell().removeControlListener(this);
+		}
 		
 		if(maskShell != null && maskShell.isDisposed() == false) {
 			maskShell.dispose();
@@ -460,10 +476,15 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	
 	public void close() {
 		if(maskComposite != null && maskComposite.isDisposed() == false) {
+			final Control control = maskComposite;
 			maskComposite.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					try {
-						doClose();
+						if(control.isDisposed() || control != ShellGuide.this.maskComposite) {
+							//System.out.println("already closed!");
+						}else {
+							doClose();
+						}
 					}catch(Exception e) {
 						e.printStackTrace();
 					}
@@ -480,6 +501,19 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	public static Object create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		Composite maskComposite = self.doAction("getMaskComposite", actionContext);
+		ActionContext ac = null;
+		if(maskComposite == null) {
+			Thing shellThing = self.doAction("getShell", actionContext);
+			if(shellThing != null) {
+				ac = new ActionContext();
+				ac.put("parentContext", actionContext);
+				ac.put("parent", Display.getCurrent().getActiveShell());
+				Shell shell = shellThing.doAction("create", ac);
+				maskComposite = shell;
+				shell.setVisible(true);
+			}
+		}
+		
 		if(maskComposite == null) {
 			maskComposite = actionContext.getObject("parent");
 		}
@@ -489,7 +523,9 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			}
 		}
 		
-		ActionContext ac = self.doAction("getActionContext", actionContext);
+		if(ac == null) {
+			ac = self.doAction("getActionContext", actionContext);
+		}
 		if(ac == null) {
 			ac = Designer.getActionContext(maskComposite);
 		}

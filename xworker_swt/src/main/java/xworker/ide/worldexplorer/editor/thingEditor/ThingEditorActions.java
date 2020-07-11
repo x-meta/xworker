@@ -252,8 +252,9 @@ public class ThingEditorActions {
 		//log.info("open thing " + treeThing);
 		treeItem.setData(treeThing);
 		Thing currentThing = actionContext.getObject("currentThing");
-		if(treeThing == currentThing){
-		    //return;
+		if(treeThing == currentThing && !UtilData.isTrue(actionContext.get("forceOpen"))){
+			//这里代码之前是注释掉了，可能存在什么问题吧
+		    return;
 		}else if(currentThing != null && UtilData.isTrue(actions.doAction("isXmlEditor", actionContext))
 				&& UtilData.isTrue(actionContext.get("modified"))){
 		    if(UtilData.isTrue(actions.doAction("save")) == false){
@@ -1448,22 +1449,30 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public void selectDescriptor(ActionContext actionContext) {
-		Thing descriptor = actionContext.getObject("descriptor");
+		final Thing descriptor = actionContext.getObject("descriptor");
 		if(descriptor == null) {
 			throw new ActionException("Cat not set descriptor, please set descriptor paramter!");
 		}
-		
-		
+				
 		Combo descriptorsCombo = actionContext.getObject("descriptorsCombo");
-		List<Thing> descriptors = (List<Thing>) descriptorsCombo.getData();
-		for(int i = 0; i<descriptors.size(); i++) {
-			if(descriptors.get(i) == descriptor) {
-				descriptorsCombo.select(i);
-				break;
+		descriptorsCombo.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				try {
+					List<Thing> descriptors = (List<Thing>) descriptorsCombo.getData();
+					for(int i = 0; i<descriptors.size(); i++) {
+						if(descriptors.get(i).getMetadata().getPath().equals(descriptor.getMetadata().getPath())) {
+							descriptorsCombo.select(i);
+							break;
+						}
+					}
+					
+					descriptComboSelection(actionContext);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
 			}
-		}
+		});
 		
-		descriptComboSelection(actionContext);
 	}
 	
 	private void selectChildTreeNodeGetItem(Tree tree, TreeItem item, String thingPath, Listener childTreeSelection) {
@@ -2003,6 +2012,11 @@ public class ThingEditorActions {
 		Label titleLabel = actionContext.getObject("titleLabel");
 		ToolBar toolBar = actionContext.getObject("toolBar");
 		Composite structComposite = actionContext.getObject("structComposite");
+		
+		if(descriptorsCombo.getSelectionIndex() < 0) {
+			//没有选择
+			return null;
+		}
 		
 		int index = descriptorsCombo.getSelectionIndex();
 		Thing objStruct = ((List<Thing>) descriptorsCombo.getData()).get(index);
