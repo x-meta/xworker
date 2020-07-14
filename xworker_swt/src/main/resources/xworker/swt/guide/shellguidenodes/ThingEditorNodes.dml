@@ -24,6 +24,7 @@ if(thing == null){
 
 //IDE打开事物的编辑器
 guide.setData("thing", thing);
+//println thing.getMetadata().getPath();
 XWorkerUtils.ideOpenThing(thing);]]></code>
             </GroovyAction>
             <GetThing name="getThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
@@ -48,14 +49,21 @@ return editor.getEditor();]]></code>
             <ValueFactory name="isTipVisible" type="boolean" value="false"></ValueFactory>
             <ValueFactory name="getDelay" type="long" value="0"></ValueFactory>
             <GroovyAction name="finished">
-                <code><![CDATA[def thing = self.doAction("getThing", actionContext);
+                <code><![CDATA[import xworker.lang.executor.Executor;
+
+def TAG = "xworker.swt.guide.shellguidenodes.ThingEditorNodes.p_1016783914.finished";
+def thing = guide.getData("thing");// self.doAction("getThing", actionContext);
 if(thing == null){
+    Executor.debug(TAG, "thing is null");
     return false;
 }else{
+    //println thing.getMetadata().getPath();
     if(workbench.getEditor(thing.getRoot().getMetadata().getPath()) != null){   
         //确保文件已经打开
+        Executor.debug(TAG, "thing is opened");
         return true;
     }else{
+        Executor.debug(TAG, "thing is not opened");
         return false;
     }
 }]]></code>
