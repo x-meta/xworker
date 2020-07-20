@@ -1,5 +1,6 @@
 package xworker.swt.reacts.xworker;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import xworker.swt.xworker.ThingFormListener;
 
 public class ThingFormDataReactor extends WidgetDataReactor implements ThingFormListener {
 	ThingForm form;
+	//由于ThingForm触发的是update，因此要保证对象是唯一的，而不是可能通过thingForm每次返回不同的对象 */
+	Map<String, Object> values = new HashMap<String, Object>();
 		
 	public ThingFormDataReactor(ThingForm form, Thing self, ActionContext actionContext) {
 		super(form.getControl(), self, actionContext);
@@ -101,8 +104,11 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 			control.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					try {
-						Object values = thingForm.getValues();
-						ThingFormDataReactor.this.fireUpdated(DataReactorUtils.toObjectList(values), getContext());
+						Map<String, Object> values = thingForm.getValues();
+						ThingFormDataReactor.this.values.clear();
+						ThingFormDataReactor.this.values.putAll(values);
+						
+						ThingFormDataReactor.this.fireUpdated(DataReactorUtils.toObjectList(ThingFormDataReactor.this.values), getContext());
 					}catch(Exception e) {
 						Executor.error(ThingFormDataReactor.class.getName(), 
 								"Invoke modified error, path=" + getSelf().getMetadata().getPath(), e);
@@ -110,10 +116,18 @@ public class ThingFormDataReactor extends WidgetDataReactor implements ThingForm
 					}
 				}
 			});
-		}
-		
+		}		
 	}
 
+	/**
+	 * 从ThingForm上取值并触发updated事件。
+	 */
+	public void fireUpdated() {
+		if(form != null) {
+			modified(form);
+		}
+	}
+	
 	@Override
 	public void defaultSelection(ThingForm thingForm) {
 		Object values = thingForm.getValues();

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -41,6 +42,7 @@ import org.xmeta.util.UtilString;
 import xworker.lang.actions.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.design.sync.SwtSyncer;
+import xworker.swt.style.StyleSetStyleCreator;
 import xworker.swt.util.PoolableControlFactory;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtUtils;
@@ -52,6 +54,7 @@ import xworker.util.XWorkerUtils;
 
 public class ShellCreator {
 	private static Logger logger = LoggerFactory.getLogger(ShellCreator.class);
+	private static Thread systemExitChecker = null;
 	
     public static Object create(ActionContext actionContext){
     	World world = World.getInstance();
@@ -158,6 +161,14 @@ public class ShellCreator {
 		//更新属性和创建子节点等
 		actionContext.peek().put("shell", shell);
 		actionContext.peek().put("self", self);
+		
+		//窗口的图标
+		Image image = (Image) StyleSetStyleCreator.createResource(self.getString("image"), 
+                "xworker.swt.graphics.Image", "imageFile", actionContext);
+        if(image != null){
+            shell.setImage(image);
+        }
+        
 		try{
 			//保存变量
 			actionContext.getScope(0).put(self.getString("name"), shell);
@@ -186,29 +197,13 @@ public class ShellCreator {
 							return;
 						}
 						
-						//如果父窗口还存在，不退出
-						if(self.getParent() != null && self.getParent().isDisposed() == false){
+						if(systemExitChecker != null && systemExitChecker.isAlive()) {
+							//系统检查退出的线程依然存在，只要一个就够了
 							return;
 						}
-						
-						Display display = self.getDisplay();
-						Shell[] shells = display.getShells();
-						boolean hasMore = false;
-						Shell other = null;
-						for(Shell shell : shells) {
-							if(shell != self && shell.getParent() != self) {
-								hasMore = true;
-								other = shell;
-								break;
-							}
-						}
-						
-						if(hasMore == false){
-							logger.info("System exit");
-							System.exit(0);
-						}else{							
-							logger.info("Has other shell, system not exit, current=" + event.widget + ", otherShell=" + other);
-						}
+						final Display display = self.getDisplay();
+						systemExitChecker = new Thread(new SystemExitor(self, display));
+						systemExitChecker.start();						
 					}					
 				});
 			}
@@ -495,13 +490,59 @@ public class ShellCreator {
     public static void url(ActionContext actionContext){
     	SwtAppIde ide = actionContext.getObject("ide");
     	String url = actionContext.getObject("url");
-    	
-    	
     }
     
     public static void executeIdeAction(ActionContext actionContext){
     	SwtAppIde ide = actionContext.getObject("ide");
     	Shell editorShell = (Shell) PoolableControlFactory.borrowControl((Shell) ide.getIDEShell(), "xworker.swt.xwidgets.prototypes.SimpleThingEditor", actionContext);
+    }
+    
+    public static class SystemExitor implements Runnable{
+    	Display display;
+    	Shell self;
+    	boolean hasMore;
+    	Shell other = null;
     	
+    	public SystemExitor(Shell self, Display display) {
+    		this.self = self;
+    		this.display = display;
+    	}
+    	
+    	public void run() {
+			while(true) {
+				hasMore = false;
+				other = null;
+				
+				if(display != null && display.isDisposed() == false) {
+					display.syncExec(new Runnable() {
+						public void run() {
+							Shell[] shells = display.getShells();									
+							
+							for(Shell shell : shells) {
+								if(shell != self && shell.getParent() != self) {
+									hasMore = true;
+									other = shell;
+									break;
+								}
+							}
+						}
+					});
+					
+				}
+				
+				if(hasMore == false){
+					logger.info("System exit");
+					System.exit(0);
+				}else{							
+					//logger.info("Has other shell, system not exit, current=" + self + ", otherShell=" + other);
+				}
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
     }
 }

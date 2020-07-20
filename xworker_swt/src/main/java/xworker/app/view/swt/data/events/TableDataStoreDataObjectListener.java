@@ -10,6 +10,12 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectListener;
 import xworker.task.DelayTask;
 
+/**
+ * 数据对象监听器，绑定到数据对象和TableItem上，当数据对象更新后更新TableItem，当TableItem销毁时从数据对象上移除监听。
+ * 
+ * @author zhangyuxiang
+ *
+ */
 public class TableDataStoreDataObjectListener extends DelayTask implements DataObjectListener, DisposeListener{
 	Thing dataStore;
 	DataObject dataObject;

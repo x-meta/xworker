@@ -1,4 +1,4 @@
-^1591249780934
+^1594716480054
 @
 sname
 DataStoreActions
@@ -3273,7 +3273,10 @@ if(dataStore == null){
         
 //获取要编辑的数据对象
 def dataObjects = self.doAction("getDataObjects", actionContext);
-if(dataObjects == null){
+if(!(dataObjects instanceof List)){
+    dataObjects = null;
+}
+if(dataObjects == null || dataObjects.size() == 0){
     def getAction = world.getAction("xworker.app.view.swt.data.DataStoreActions/@GetDataObjects/@actions/@run");
     dataObjects = getAction.run(actionContext);
 }
@@ -3385,6 +3388,8 @@ return dataObjects;
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false
@@ -6737,10 +6742,8 @@ def selectTreeItemData(dataObjects, item){
   public
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>在数据仓库中插入一条新的的记录。</p>
-#$@text#$@
+  sdescription
+  <p>在数据仓库中插入一条新的的记录。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -7209,10 +7212,8 @@ return dataObject;
     true
     sinheritDescription
     false
-    Sdescription
-#$@text#$@
-<p>插入到DataStore前是否执行数据对象的create方法。</p>
-#$@text#$@
+    sdescription
+    <p>插入到DataStore前是否执行数据对象的create方法。</p>
     svalidateAllowBlank
     true
     LvalidateOnBlur

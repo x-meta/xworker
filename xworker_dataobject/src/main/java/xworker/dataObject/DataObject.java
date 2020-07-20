@@ -554,7 +554,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * @return
 	 */
 	public Object update(ActionContext actionContext, Condition condition){
-		return delete(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+		return update(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
 	}
 	
 	/**

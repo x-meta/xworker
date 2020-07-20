@@ -662,13 +662,13 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 	}
 	
 	/**
-	 * 数据对象查询的结果是List<DataObject>，把它转化为DataObjectList，这样DataStore可以监听插入和移除等事件。
+	 * 数据对象查询的结果是List&lt;DataObject&gt;，把它转化为DataObjectList，这样DataStore可以监听插入和移除等事件。
 	 * 
 	 * @param store
 	 * @param records
 	 * @return
 	 */
-	private static DataObjectList setDataObjectList(Thing store, List<DataObject> records) {
+	public static DataObjectList setDataObjectList(Thing store, List<DataObject> records) {
 		DataStore ds = (DataStore) store.get("dataStore");
 		try {
 			ds.setEventEnabled(false);
@@ -693,52 +693,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		}
 		           
 		if(self.getBoolean("loadBackground") && !SwtUtils.isRWT()){			
-		    Runnable runnable = new Runnable(){
-		        public void run() {
-		            DataObject.beginThreadCache();
-		            Thing sourceDataObject = (Thing) ((Thing) store.get("dataObject")).getData("sourceDataObject");
-		            DataStore dataStore = (DataStore) store.get("dataStore");
-		            UserTask userTask = DataObject.getUserTask(sourceDataObject, acContext);
-		            try{
-		                //源数据对象		                
-		                if(sourceDataObject == null){
-		                	PageInfo pageInfo  = PageInfo.getPageInfo(store.get("pageInfo"));
-		                	sourceDataObject = (Thing) pageInfo.get("sourceDataObject");
-		                }
-		                if(sourceDataObject == null){
-		                    sourceDataObject = (Thing) store.get("dataObject");
-		                }
-		                store.put("userTask", userTask);
-		                List<DataObject> records = null;
-		                acContext.peek().putAll(UtilMap.toMap("store", store, "conditionData", store.get("params"), 
-                				"conditionConfig", store.get("queryConfig"), "pageInfo", store.get("pageInfo")));
-		                if(dataStore.sourceDatas != null) {
-		                	records = DataObjectUtil.query(dataStore.sourceDatas, acContext);
-		                }else {
-		                	records = sourceDataObject.doAction("query", acContext);
-		            	}
-		                DataObjectList datas = setDataObjectList(store, records);
-		                store.put("records", datas);            
-		            }catch(Exception e) {
-		            	Executor.error(TAG, "Load dataobject error, dataObject=" + sourceDataObject, e);
-		            }finally{
-		                DataObject.finishThreadCache();
-		                if(userTask != null) {
-		                	userTask.finished();
-		                }
-		                store.put("userTask", null);
-		            }
-		            //log.info("records=" + store.records);
-		            store.put("dataLoaded", true);
-		            
-		            //如果是动态查询，重新初始化数据对象
-		            initDataObject(store, acContext);
-		            store.doAction("fireEvent", acContext, UtilMap.toMap("eventName", "onLoaded"));
-		            //store.doAction("fireEvent", acContext, ["eventName":"afterLoaded"]);
-		        }
-		    };
-		    		    
-		    new Thread(runnable).start();
+		    new Thread(new DataStoreLoader(store, actionContext)).start();
 		}else{
 		    //执行查询
 		    DataObject.beginThreadCache();

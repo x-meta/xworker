@@ -71,6 +71,16 @@ public class IconsUtils {
 				icons.add(new Icon(icon, file));
 			}
 		}
+		
+		String image = getIcon(thing.getString("image"));
+		if(image != null && context.get(image) == null) {
+			File file = new File(World.getInstance().getPath() + "/webroot/" + image);
+			if(file.exists()) {
+				context.put(image, image);
+				
+				icons.add(new Icon(image, file));
+			}
+		}
 	}
 	
 	private static String getIcon(String icon) {

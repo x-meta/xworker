@@ -331,6 +331,12 @@ public class TreeModelTreeListenerCreator {
             
             //检查节点打开状态
             checkExpand(item, treeModel, treeNode,id.toString(), childs != null, treeNodes, actionContext);
+            
+            //触发已经初始化的事件
+            Thing modelThing = (Thing) treeModel.get("modelThing");
+            if(modelThing != null) {
+            	modelThing.doAction("onTreeItemInited", actionContext, "treeItem", item, "treeNode", treeNode);
+            }
         }
     }
     

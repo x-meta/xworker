@@ -730,7 +730,7 @@ public class DbDataObject {
 			if(conditionConfig == null){
 			    conditionConfig = new Thing();
 			}
-			
+			Executor.debug(TAG, "" +  conditionConfig);
 			//分页信息
 			Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");		
 			

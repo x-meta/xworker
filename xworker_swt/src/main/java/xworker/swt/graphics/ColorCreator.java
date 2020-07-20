@@ -58,6 +58,9 @@ public class ColorCreator {
 		if(color == null) {
 			//不是系统的颜色，按照rgb格式
 			int[] rgbs = UtilSwt.parseRGB(rgb);
+			if(rgbs == null) {
+				return null;
+			}
 			color = new Color(null, rgbs[0], rgbs[1], rgbs[2]);
 		}
 		return color;

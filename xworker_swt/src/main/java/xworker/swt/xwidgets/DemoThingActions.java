@@ -112,7 +112,12 @@ public class DemoThingActions {
         editorActions.doAction("setThing", actionContext, "thing", thing);
         
         //在描述者里显示事物
-        descEditorActions.doAction("setThing", actionContext, "thing",  ((Thing) thing).getDescriptor());
+        Thing desc = ((Thing) thing).getDescriptor();
+        Thing ext = desc.getExtends().size() > 0 ? desc.getExtends().get(0) : null;
+        if(ext != null && desc.getChilds("attribute").size() == 0) {
+        	desc = ext;
+        }
+        descEditorActions.doAction("setThing", actionContext, "thing", desc);
         
         actionContext.getScope(0).put("thing", thing);
     }

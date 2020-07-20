@@ -453,6 +453,11 @@ public class XWorkerTreeUtil {
 		if(th_nodeColor != null && !"".equals(th_nodeColor)){
 			th_nodeColor = th_nodeColor.toUpperCase();
 	          Color color = null;
+	          int style = SwtUtils.getSWT(th_nodeColor);
+	          if(style != SWT.NONE) {
+	        	  color = Display.getCurrent().getSystemColor(style);
+	          }
+	          /**
 	          if("BLUE".equals(th_nodeColor)){
 	        	  color = Display.getCurrent().getSystemColor(SWT.COLOR_BLUE);
 	          }else if("CYAN".equals(th_nodeColor)){
@@ -481,7 +486,7 @@ public class XWorkerTreeUtil {
               color = Display.getCurrent().getSystemColor(SWT.COLOR_RED);
 	          }else if("YELLOW".equals(th_nodeColor)){
               color = Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW);	                  
-	          }          
+	          }          */
 	          
 	          return color;        
 	     }

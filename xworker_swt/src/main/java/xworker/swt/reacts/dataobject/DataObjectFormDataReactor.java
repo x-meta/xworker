@@ -100,7 +100,14 @@ public class DataObjectFormDataReactor extends WidgetDataReactor implements Data
 				}
 			});
 		}
-		
-		
+	}
+	
+	/**
+	 * 从DataObjectForm上取数据对象并触发updated事件。
+	 */
+	public void fireUpdated() {
+		if(form != null) {
+			onMidified(form);
+		}
 	}
 }
