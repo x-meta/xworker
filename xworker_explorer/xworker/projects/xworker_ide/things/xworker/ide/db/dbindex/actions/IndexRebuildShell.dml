@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=重建索引&amp;en=Rebuld Indexs"
+     style="PRIMARY_MODAL" label="IndexRebuildShell">
+    <GridLayout name="GridLayout"></GridLayout>
+    <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+        <GridData name="GridData" descriptors="xworker.swt.layout.LayoutDatas/@GridData"
+             style="FILL_BOTH"></GridData>
+    </StyledText>
+    <TextExecutorService name="executorService" _xmeta_id_="Menu" descriptors="xworker.lang.executor.swt.TextExecutorService"
+         text="var:logText"></TextExecutorService>
+    <Composite name="buttonComposite">
+        <GridData name="GridData" style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+        <RowLayout name="RowLayout"></RowLayout>
+        <Button name="startButton" text="lang:d=开始&amp;en=Start">
+            <Event name="onSelection">
+                <GroovyAction name="GroovyAction">
+                    <code><![CDATA[import xworker.lang.executor.Executor;
+
+def actionContext = actionContext;
+
+new Thread({
+    Executor.push(executorService);
+    
+    try{
+        def thing = world.getThing("xworker.ide.db.dbindex.actions.IndexBuilder");
+        //closeButton.setEnabled(false);
+        
+        thing.doAction("run", actionContext);   
+    }finally{
+        Executor.pop();
+        //closeButton.setEnabled(true);
+    }
+}).start();]]></code>
+                </GroovyAction>
+            </Event>
+        </Button>
+        <Button name="closeButton" text="lang:d=关闭&amp;en=Close">
+            <Event name="onSelection">
+                <GroovyAction name="GroovyAction" code="shell.dispose();"></GroovyAction>
+            </Event>
+        </Button>
+    </Composite>
+</Shell>

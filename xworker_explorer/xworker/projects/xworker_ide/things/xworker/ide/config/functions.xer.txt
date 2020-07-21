@@ -1,4 +1,4 @@
-^1594775464994
+^1595315271071
 @
 sname
 functions
@@ -372,6 +372,134 @@ xworker.lang.util.Functions
       false
       sid
       importExeistsProject
+      @/@file/@import/@importPrjProjects
+      sname
+      importPrjProjects
+      slabel
+      导入XWorker源码下项目
+      sen_label
+      Import XWorker Source Projects
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import java.io.File;
+import org.xmeta.Thing;
+
+def projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+
+def file = new java.io.File(".");
+if(!file.getCanonicalPath().endsWith("xworker_explorer")){
+    //不是在XWorker的代码目录下
+    return;
+}
+def parent = file.getCanonicalFile().getParentFile();
+for(childFile in parent.listFiles()){
+    def name = childFile.getName();
+    if(name == "xworker_explorer"){
+        continue;
+    }
+    
+    def prjFile = new File(childFile, "./src/main/resources/");
+    if(prjFile.exists()){
+        //println name + " is project";
+        def have = false;
+        for(pc in projectSet.getChilds()){
+            if(pc.getMetadata().getName() == name){
+                have = true;
+                break;
+            }
+        }
+        
+        if(!have){
+            def prj = new Thing("xworker.ide.worldexplorer.things.ProjectSet/@ProjectDir");
+            prj.set("name", name);
+            prj.set("dir", prjFile.getCanonicalPath());
+            projectSet.addChild(prj);
+        }
+    }
+}
+
+projectSet.save();
+projectSet.doAction("run", actionContext);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sonlyRegist
+      false
+      sdescriptors
+      xworker.lang.util.Functions/@function
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      importPrjProjects
+      @/@file/@import/@rebuildIndex
+      sname
+      rebuildIndex
+      slabel
+      重建索引
+      sen_label
+      Rebuild Indexs
+      ssingleInstance
+      true
+      sanotherThread
+      false
+      spath
+      xworker.ide.db.dbindex.actions.IndexRebuildShell
+      sdisabled
+      false
+      sonlyRegist
+      false
+      sdescriptors
+      xworker.lang.util.Functions/@openSwtShell
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      rebuildIndex
     @/@file/@Export
     sname
     Export

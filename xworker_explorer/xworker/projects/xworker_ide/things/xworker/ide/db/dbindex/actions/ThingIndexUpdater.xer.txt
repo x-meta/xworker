@@ -1,4 +1,4 @@
-^1592209628553
+^1595316017796
 @
 sname
 ThingIndexUpdater
@@ -118,9 +118,10 @@ if(actionContext.get("thing") != null && thing instanceof Thing){
     false
     Scode
 #$@text#$@
-import org.slf4j.LoggerFactory;
+import xworker.lang.executor.Executor;
 
-def log = LoggerFactory.getLogger(this.class);
+def TAG = "xworker.ide.db.dbindex.actions.ThingIndexUpdater.p1635071115.doUpdate";
+//def log = LoggerFactory.getLogger(this.class);
 def config = self.doAction("getConfig", actionContext);
 
 //每次只更新最多100个事物
@@ -145,7 +146,7 @@ for(thingPath in ths.keySet()){
         //更新事物索引
         def index = thingPath.indexOf(":");
         if(index == -1){
-            log.info("thing index updator,path=" + thingPath);
+            Executor.info(TAG, "thing index updator,path=" + thingPath);
         }
         def thingManagerName = thingPath.substring(0, index);
         thingPath = thingPath.substring(index + 1, thingPath.length());
@@ -167,10 +168,10 @@ for(thingPath in ths.keySet()){
             }finally{
                 out.close();
             }
-            //log.info("thing index updated, thing=" + thingPath);
+            //Executor.info(TAG, "thing index updated, thing=" + thingPath);
         }
     }catch(Exception e){
-        log.info("update thing index error, thing=" + thingPath, e);
+        Executor.info(TAG, "update thing index error, thing=" + thingPath, e);
     }
 }
 
@@ -187,9 +188,9 @@ for(deleteThing in deletedList){
             file.delete();
         }
         
-        log.info("thing index deleted, thing=" + thingManagerName + ":" + deleteThing);
+        Executor.info(TAG, "thing index deleted, thing=" + thingManagerName + ":" + deleteThing);
     }catch(Exception e){
-        log.error("delete thing index error, thing=" + deleteThing, e);
+        Executor.error(TAG, "delete thing index error, thing=" + deleteThing, e);
     }
 }
 #$@text#$@
@@ -200,6 +201,8 @@ for(deleteThing in deletedList){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false

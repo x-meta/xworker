@@ -1,4 +1,4 @@
-^1548159656608
+^1595316438724
 @
 sname
 ThingIndex
@@ -147,8 +147,6 @@ def getLimitStr(str, length){
         false
         sdataSourcePath
         xworker.ide.db.datasource.XWorkerDataSource
-        sconflicting
-        ignore
         sdisable
         false
         sonError
@@ -237,8 +235,6 @@ action.run(actionContext);
         true
         sdataSourcePath
         xworker.ide.db.datasource.XWorkerDataSource
-        sconflicting
-        ignore
         sdisable
         false
         sonError
@@ -385,8 +381,6 @@ try{
         true
         sdataSourcePath
         xworker.ide.db.datasource.XWorkerDataSource
-        sconflicting
-        ignore
         sdisable
         false
         sonError
@@ -444,22 +438,25 @@ try{
 #$@text#$@
 import xworker.dataObject.DataObject;
 import xworker.ide.index.ThingIndexUtils;
+import xworker.lang.executor.Executor;
 
-updateIndex(thing, con);
+def TAG = "xworker.ide.db.dbindex.actions.ThingIndexActions.p_1627852610.updateThingIndexNoContext";
 
-def updateIndex(thing, con){
+updateIndex(thing, con, TAG);
+
+def updateIndex(thing, con, TAG){
     def pst = null;
     def rs = null;
-    def debug = false;
-    
+    def debug = true;
+
     if(debug){
-        log.info("更新索引:" + thing.getMetadata().getPath());
+        Executor.trace(TAG, "更新索引:" + thing.getMetadata().getPath());
     }
     try{        
         def thingIndex = self.doAction("getThingIndexNoContext", actionContext, ["thing":thing]);
         if(actionContext.get("rebulid") != true && thingIndex != null && thingIndex.lastModified.getTime() == thing.metadata.lastModified){
             if(debug){
-                log.info("事物索引已经存在，不需要重新建立索引");
+                Executor.trace(TAG, "事物索引已经存在，不需要重新建立索引");
             }
             return thingIndex;
         }
@@ -473,7 +470,7 @@ def updateIndex(thing, con){
             def thingId = 0;
             if(thingIndex != null){
                 if(debug){
-                    log.info("事物索引已经存在，先删除原有索引");
+                    Executor.trace(TAG, "事物索引已经存在，先删除原有索引");
                 }
                 thingId = thingIndex.id;
                 if(thingId == null){
@@ -506,7 +503,7 @@ def updateIndex(thing, con){
                 pst.close();
             }else{
                 if(debug){
-                    log.info("事物索引不存在，创建新的索引");
+                    Executor.trace(TAG, "事物索引不存在，创建新的索引");
                 }
                 
                 //插入索引           
@@ -586,7 +583,7 @@ def updateIndex(thing, con){
             //插入注册信息
             def registThingDefault = null;//ModelRegistor.getRegistorsPath(thing.getMetadata().getPath());
             if(debug){
-                log.info("ModelRegistor=" + registThingDefault);
+                Executor.trace(TAG, "ModelRegistor=" + registThingDefault);
             }
             def registThing = thing.getStringBlankAsNull("th_registThing");
             if(registThingDefault != null){
@@ -598,7 +595,7 @@ def updateIndex(thing, con){
             }
             if(registThing != null && registThing != ""){   
                 if(debug){ 
-                    log.info("registThing=" + registThing);            
+                    Executor.trace(TAG, "registThing=" + registThing);            
                 }
                 for(registStr in registThing.split("[,]")){
                     def rts = registStr.split("[|]");
@@ -610,11 +607,11 @@ def updateIndex(thing, con){
                     def registTh = world.getThing(rts[1]);
                     if(registTh != null){
                         if(debug){
-                            log.info("插入注册事物，regist=" + registType + ",registThing=" + registTh);
+                            Executor.trace(TAG, "插入注册事物，regist=" + registType + ",registThing=" + registTh);
                         }
                         def registThingIndex = self.doAction("getThingIndexNoContext", actionContext, ["thing":registTh, "forceCreate":true]);
                         if(debug){
-                            log.info("regist thing index=" + registThingIndex);
+                            Executor.trace(TAG, "regist thing index=" + registThingIndex);
                         }
                         
                         if(registThingIndex == null){
@@ -629,13 +626,13 @@ def updateIndex(thing, con){
                         pst.execute();
                     }else{
                         if(debug){
-                            log.info("注册到的事物不存在，不需要注册事物, registThingPath=" + rts[1]);
+                            Executor.trace(TAG, "注册到的事物不存在，不需要注册事物, registThingPath=" + rts[1]);
                         }
                     }
                 }
             }else{
                 if(debug){
-                    log.info("注册类型不存在，不需要注册事物");
+                    Executor.trace(TAG, "注册类型不存在，不需要注册事物");
                 }
             }
             
@@ -657,7 +654,7 @@ def updateIndex(thing, con){
     }    
     
     for(child in thing.getChilds()){
-        updateIndex(child, con);
+        updateIndex(child, con, TAG);
     }
 }
 
@@ -693,6 +690,8 @@ def getLimitStr(str, length){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false

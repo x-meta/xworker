@@ -1,4 +1,4 @@
-^1595213407710
+^1595315647641
 @
 sname
 IndexBuilder
@@ -64,6 +64,10 @@ false
 #$@text#$@
 import org.xmeta.util.UtilThing;
 import org.xmeta.thingManagers.JarThingManager;
+import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
+
+def TAG = "xworker.ide.db.dbindex.actions.IndexBuilder";
 
 //等待5秒，因为jar事物管理器好初始化
 Thread.sleep(5000);
@@ -74,7 +78,7 @@ def innerThingManagers = UtilThing.getThingIfNotExistsCreate(
 innerThingManagers.doAction("clear", actionContext);
      
 //检查_lcoal事物管理器
-println("Check _local");
+Executor.info(TAG, "Check _local");
 def _local = world.getThingManager("_local");
 if(_local == null){
     world.createThingManager("_local", null);
@@ -89,19 +93,21 @@ checkApp.run(actionContext);
 
 
 //检查数据库
-println("Check database");
+Executor.info(TAG, "Check database");
 def dbadmin = world.getThing("xworker.ide.db.dbindex.actions.DbAdminActions");
 dbadmin.doAction("checkDb", actionContext);
 
 //装载所有项目
-println("Load all projects");
-projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
-if(projectSet != null){
-	projectSet.doAction("run", actionContext);
+if(XWorkerUtils.getIde() == null){
+    Executor.info(TAG, "Load all projects");
+    projectSet = world.getThing("_local.xworker.worldExplorer.ProjectSet");
+    if(projectSet != null){
+    	projectSet.doAction("run", actionContext);
+    }
 }
 
 //遍历所有的事物
-println("Check all things");
+Executor.info(TAG, "Check all things");
 int count = 0;
 def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
 
@@ -114,7 +120,7 @@ try{
         if("_transient" == thingManager.getName()){
             continue;
         }
-        System.out.println("ThingManager : " + thingManager.getName());
+        Executor.info(TAG, "ThingManager : " + thingManager.getName());
         innerThingManagers.doAction("add", actionContext, "name", thingManager.getName());
     	
         def iter = thingManager.iterator(null, true);
@@ -125,12 +131,12 @@ try{
            // }
             if(updator.doAction("checkThingIndex", actionContext, [
                  thing: thing, con: con])){
-                 System.out.println("Thing index updated : " + thing.metadata.path);
+                 Executor.info(TAG, "Thing index updated : " + thing.metadata.path);
             }
             count++;
         }
     }
-    System.out.println("Total " + count + " things checked");
+    Executor.info(TAG, "Total " + count + " things checked");
     con.commit();
 }catch(Exception e){
     con.rollback();
@@ -141,14 +147,14 @@ try{
 }
 
 //删除无效索引
-println("Delete invalid index");
+Executor.info(TAG, "Delete invalid index");
 updator.doAction("removeInvalidIndex", actionContext);
 
 //解压JarThingManager中的资源
-println "Deflate resoruces in jar......";
+Executor.info(TAG,  "Deflate resoruces in jar......");
 for(thingManager in world.getThingManagers()){
      if(thingManager instanceof JarThingManager){
-          println "Defalte resources in " + thingManager.getName() + "...";
+          Executor.info(TAG,  "Defalte resources in " + thingManager.getName() + "...");
           try{
               thingManager.deflateResources();
           }catch(Exception e){
@@ -157,8 +163,11 @@ for(thingManager in world.getThingManagers()){
      }
 }
 
+Executor.info(TAG, "Index updated.");
 //退出系统，在更新xworker后退出进程
-System.exit(0);
+if(XWorkerUtils.getIde() == null){
+    System.exit(0);
+}
 #$@text#$@
     sinterpretationType
     Action

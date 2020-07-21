@@ -1,4 +1,4 @@
-^1467770070848
+^1595315743908
 @
 sname
 IndexActions
@@ -16,10 +16,8 @@ smodifier
 public
 sinheritDescription
 false
-Sdescription
-#$@text#$@
+sdescription
 <p>事物索引相关的动作。</p>
-#$@text#$@
 snotXmlAttribute
 false
 sjson_isArray
@@ -34,26 +32,26 @@ sth_registDisabled
 false
 sth_mark
 false
-@/@UpdateIndex
-sname
-UpdateThingIndex
-sdescriptors
-xworker.lang.MetaDescriptor3/@thing
-sextends
-xworker.lang.actions.SelfAction
-smany
-true
-seditCols
-2
-sinitialization
-false
-sgroup
-xworker.index
-smodifier
-public
-sinheritDescription
-false
-Sdescription
+  @/@UpdateIndex
+  sname
+  UpdateThingIndex
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  sgroup
+  xworker.index
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
 #$@text#$@
 <p>更新指定事物管理器和目录下的索引。</p>
 
@@ -69,52 +67,55 @@ Sdescription
 
 <p>&nbsp;</p>
 #$@text#$@
-snotXmlAttribute
-false
-sjson_isArray
-false
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-UpdateIndex
-@/@UpdateIndex/@actions
-sname
-actions
-sdescriptors
-xworker.lang.MetaDescriptor3/@actions
-sinheritDescription
-false
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-actions
-@/@UpdateIndex/@actions/@run
-sname
-run
-sisSynchronized
-false
-sthrowException
-true
-suseOtherAction
-false
-svarScope
-Local
-sdisableGlobalContext
-false
-Scode
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  UpdateIndex
+    @/@UpdateIndex/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@UpdateIndex/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
 #$@text#$@
+import xworker.lang.executor.Executor;
+def TAG = "xworker.ide.db.dbindex.actions.IndexActions.p_1099458788.run";
+
 //事物管理器
 def thingManager = world.getThingManager(self.doAction("getThingManager", actionContext));
 def category = self.doAction("getCategory", actionContext);
@@ -129,297 +130,291 @@ def con = datasource.doAction("getConnection", actionContext);
 try{
     con.setAutoCommit(false);    
 
-	log.info("ThingManager : " + thingManager.getName() + ", category ：" + category);
+	   Executor.info(TAG, "ThingManager : " + thingManager.getName() + ", category ：" + category);
 	
     def iter = thingManager.iterator(category, true);
     while(iter.hasNext()){
         def thing = iter.next();
         if(updator.doAction("checkThingIndex", actionContext, [
              thing: thing, con: con])){
-            log.info("Thing index updated : " + thing.metadata.path);
+            Executor.info(TAG, "Thing index updated : " + thing.metadata.path);
         }
         count++;
     }
-    log.info("Total " + count + " things checked");
+    Executor.info(TAG, "Total " + count + " things checked");
     con.commit();
 }catch(Exception e){
     con.roolback();
-    log.error("update ${thingManager} : ${category} thing index error, action=" + self.getMetadata().getPath(), e);
+    Executor.error(TAG, "update ${thingManager} : ${category} thing index error, action=" + self.getMetadata().getPath(), e);
 }finally{   
    con.setAutoCommit(true);
    con.close();
 }
 #$@text#$@
-sinterpretationType
-Action
-screateLocalVarScope
-false
-ssaveReturn
-false
-sdebugLog
-false
-sdescriptors
-xworker.lang.actions.Actions/@GroovyAction
-sinheritDescription
-false
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-run
-@/@UpdateIndex/@actions/@getThingManager
-sname
-getThingManager
-sattributeName
-thingManager
-snotNull
-true
-sinterpretationType
-Self
-sattributeTemplate
-false
-schildsAttributeTemplate
-false
-svarScope
-Local
-sisSynchronized
-false
-sthrowException
-true
-suseOtherAction
-false
-screateLocalVarScope
-false
-ssaveReturn
-false
-sdisableGlobalContext
-false
-sdebugLog
-false
-sdescriptors
-xworker.lang.actions.ActionUtil/@GetString
-sinheritDescription
-false
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-getThingManager
-@/@UpdateIndex/@actions/@getCategory
-sname
-getCategory
-sattributeName
-category
-snotNull
-false
-sinterpretationType
-Self
-sattributeTemplate
-false
-schildsAttributeTemplate
-false
-svarScope
-Local
-sisSynchronized
-false
-sthrowException
-true
-suseOtherAction
-false
-screateLocalVarScope
-false
-ssaveReturn
-false
-sdisableGlobalContext
-false
-sdebugLog
-false
-sdescriptors
-xworker.lang.actions.ActionUtil/@GetString
-sinheritDescription
-false
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-getCategory
-@/@UpdateIndex/@name
-sname
-name
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-name
-@/@UpdateIndex/@label
-sname
-label
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-label
-@/@UpdateIndex/@thingManager
-sname
-thingManager
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-Sdescription
-#$@text#$@
-<p>事物管理器的名称，不能为空。</p>
-#$@text#$@
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-thingManager
-@/@UpdateIndex/@category
-sname
-category
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-Sdescription
-#$@text#$@
-<p>要更新索引的目录，如果为空表示更新事物管理器下所有的事物。</p>
-#$@text#$@
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-category
-@/@UpdateIndex/@description
-sname
-description
-sinputtype
-html
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_registDisabled
-false
-sth_mark
-false
-sid
-description
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      run
+      @/@UpdateIndex/@actions/@getThingManager
+      sname
+      getThingManager
+      sattributeName
+      thingManager
+      snotNull
+      true
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getThingManager
+      @/@UpdateIndex/@actions/@getCategory
+      sname
+      getCategory
+      sattributeName
+      category
+      snotNull
+      false
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      svarScope
+      Local
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.ActionUtil/@GetString
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      getCategory
+    @/@UpdateIndex/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@UpdateIndex/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@UpdateIndex/@thingManager
+    sname
+    thingManager
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>事物管理器的名称，不能为空。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingManager
+    @/@UpdateIndex/@category
+    sname
+    category
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>要更新索引的目录，如果为空表示更新事物管理器下所有的事物。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    category
+    @/@UpdateIndex/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    description
