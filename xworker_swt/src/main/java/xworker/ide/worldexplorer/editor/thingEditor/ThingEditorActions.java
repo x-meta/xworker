@@ -253,8 +253,8 @@ public class ThingEditorActions {
 		treeItem.setData(treeThing);
 		Thing currentThing = actionContext.getObject("currentThing");
 		if(treeThing == currentThing && !UtilData.isTrue(actionContext.get("forceOpen"))){
-			//这里代码之前是注释掉了，可能存在什么问题吧
-		    return;
+			//这里代码之前是注释掉了，主要是其它原因，如点击节点未选中，模型修改了但界面没变化等
+		    //return;
 		}else if(currentThing != null && UtilData.isTrue(actions.doAction("isXmlEditor", actionContext))
 				&& UtilData.isTrue(actionContext.get("modified"))){
 		    if(UtilData.isTrue(actions.doAction("save")) == false){
