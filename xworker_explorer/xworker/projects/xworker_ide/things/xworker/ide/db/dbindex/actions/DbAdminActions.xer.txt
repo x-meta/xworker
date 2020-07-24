@@ -1,4 +1,4 @@
-^1558517405950
+^1595574941711
 @
 sname
 DbAdmin
@@ -38,8 +38,6 @@ public
     false
     sthrowException
     true
-    suseOtherAction
-    false
     screateLocalVarScope
     false
     ssaveReturn
@@ -152,7 +150,7 @@ try{
         //检查数据库文件是否已修改
         def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig",
                  "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
-        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerIDEDatabase");
+        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerDDL");
         if(config.getLong("ideDbLastModified") != dbThing.getMetadata().getLastModified()){
              createTables = true;
              log.info("XWorker database tables has changed");
@@ -207,7 +205,7 @@ try{
         //保存更新时间
         def config = UtilThing.getThingIfNotExistsCreate("_local.xworker.config.XWorkerInitConfig", 
                         "_local", "xworker.ide.config.decriptors.XWorkerInitConfig");
-        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerIDEDatabase");
+        def dbThing = world.getThing("xworker.ide.db.dbindex.ddl.XWorkerDDL");
         config.put("ideDbLastModified", dbThing.getMetadata().getLastModified());
         config.save();                 
     }
@@ -241,6 +239,8 @@ def delete(file){
         screateLocalVarScope
         false
         ssaveReturn
+        false
+        sswitchResult
         false
         sdebugLog
         false

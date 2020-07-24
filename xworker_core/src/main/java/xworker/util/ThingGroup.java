@@ -179,6 +179,7 @@ public class ThingGroup implements Comparable<ThingGroup>{
 				ThingGroup child = childs.get(i);
 				if(child.thing != null && child.thing.getBoolean("groupDescriptor")) {
 					this.thing = child.thing;
+					this.sortWeight = child.sortWeight;
 					childs.remove(i);		
 					break;
 				}

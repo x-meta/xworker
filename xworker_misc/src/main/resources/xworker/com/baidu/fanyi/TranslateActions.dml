@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="TranslateActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <description><![CDATA[<p>百度翻译相关的API。</p>
+]]></description>
+    <thing name="Translate" extends="xworker.lang.actions.SelfAction" group="com.baidu.fanyi">
+        <actions>
+            <GroovyAction name="run">
+                <code><![CDATA[import java.net.URLEncoder;
+def appid = self.doAction("getAppid", actionContext);
+def query = self.doAction("getQuery", actionContext);
+def key = self.doAction("getKey", actionContext);
+def salt = "" + System.currentTimeMillis();
+def from = self.doAction("getFrom", actionContext);
+def to = self.doAction("getTo", actionContext);
+
+def str = appid + query + salt + key;
+def sign = md5(actionContext, "message", str);
+
+def params = [
+    "q":query,
+    "from":from,
+    "to": to,
+    "appid":appid,
+    "salt":salt,
+    "sign":sign
+]
+
+//println key;
+//println params;
+def url = "http://api.fanyi.baidu.com/api/trans/vip/translate?q=" + 
+    URLEncoder.encode(query, "utf-8") + "&from=" + from + "&to=" + to +
+    "&appid=" + appid + "&salt=" + salt + "&sign=" + sign;
+//println url;    
+//def json = get(actionContext, "uri", url);
+def json = post(actionContext, "params", params);
+//println json;
+return parse(actionContext, "json", json);]]></code>
+                <ActionDefined>
+                    <MessageDigest name="md5" descriptors="xworker.java.security.MessageDigest"
+                         algorithm="MD5" input="var:message" resultType="hexLowerCase"></MessageDigest>
+                    <HttpPost name="post" _xmeta_id_="pst" descriptors="xworker.httpclient.HttpPost"
+                         uri="http://api.fanyi.baidu.com/api/trans/vip/translate">
+                        <entity>
+                            <UrlEncodedFormEntity name="UrlEncodedFormEntity" charset="utf-8" params="var:params"></UrlEncodedFormEntity>
+                        </entity>
+                    </HttpPost>
+                    <JsonParse name="parse" descriptors="xworker.lang.actions.text.JsonActions/@parse"
+                         jsonText="var:json"></JsonParse>
+                    <HttpGet name="get" descriptors="xworker.httpclient.HttpGet" uri="var:uri"></HttpGet>
+                </ActionDefined>
+            </GroovyAction>
+            <GetString name="getFrom" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="from"></GetString>
+            <GetString name="getTo" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="to"></GetString>
+            <GetString name="getAppid" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="appid"></GetString>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getQuery" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="query"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="from" inputtype="textarea" default="auto"></attribute>
+        <attribute name="to" inputtype="textarea" default="en"></attribute>
+        <attribute name="appid" inputtype="textarea"></attribute>
+        <attribute name="key" inputtype="textarea"></attribute>
+        <attribute name="query" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

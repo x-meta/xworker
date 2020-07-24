@@ -475,12 +475,12 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	}
 	
 	public void close() {
-		if(maskComposite != null && maskComposite.isDisposed() == false) {
+		if(maskShell != null && maskShell.isDisposed() == false) {
 			final Control control = maskComposite;
-			maskComposite.getDisplay().asyncExec(new Runnable() {
+			maskShell.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					try {
-						if(control.isDisposed() || control != ShellGuide.this.maskComposite) {
+						if(maskShell.isDisposed() || control != ShellGuide.this.maskComposite) {
 							//System.out.println("already closed!");
 						}else {
 							doClose();
@@ -538,8 +538,8 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	}
 
 	@Override
-	public void controlMoved(ControlEvent e) {
-		if(e.widget == maskComposite.getShell()) {
+	public void controlMoved(ControlEvent e) {		
+		if(maskComposite != null && maskComposite.isDisposed() == false && e.widget == maskComposite.getShell()) {
 			Point location = maskComposite.toDisplay(maskComposite.getLocation());
 			maskShell.setLocation(location);
 			maskShell.setSize(maskComposite.getSize());

@@ -630,12 +630,17 @@ public class XWorkerTreeUtil {
 					}else{
 						path = path + "." + gs[i];
 					}
+					String pathKey = path;
+					int index = pathKey.indexOf("|"); 
+					if(index != -1) {
+						pathKey = pathKey.substring(index + 1, pathKey.length());
+					}
 					
-					ThingGroup cacheGroup = folderGroupCache.get(path);
+					ThingGroup cacheGroup = folderGroupCache.get(pathKey);
 					if(cacheGroup == null){
 						cacheGroup = new ThingGroup(null, gs[i]);
 						parentGroup.getChilds().add(cacheGroup);
-						folderGroupCache.put(path, cacheGroup);
+						folderGroupCache.put(pathKey, cacheGroup);
 					}
 					
 					parentGroup = cacheGroup;

@@ -30,15 +30,17 @@ public class ShellGuideThread implements Runnable{
 			}
 			
 			try {
-				guide.maskComposite.getDisplay().syncExec(new Runnable() {
-					public void run() {
-						try {
-							guide.checkCurrentNode();
-						}catch(Exception e) {
-							e.printStackTrace();						
+				if(guide.maskComposite != null && guide.maskComposite.isDisposed() == false) {
+					guide.maskComposite.getDisplay().syncExec(new Runnable() {
+						public void run() {
+							try {
+								guide.checkCurrentNode();
+							}catch(Exception e) {
+								e.printStackTrace();						
+							}
 						}
-					}
-				});
+					});
+				}
 				
 			}catch(Exception e) {
 				e.printStackTrace();

@@ -132,7 +132,7 @@ public class DatePickerComboDataPickerCompositeCreator {
         }
         
         //设置光标为指定日期
-        dateTable.pack();
+        //dateTable.pack();
         dateTable.showItem(dateTable.getItems()[week]);
         if(weekDay == 0){
             weekDay = 7;
