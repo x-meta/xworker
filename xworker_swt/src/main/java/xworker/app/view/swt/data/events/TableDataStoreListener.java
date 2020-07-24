@@ -38,8 +38,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -49,6 +47,7 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 import xworker.swt.custom.ItemRowEditor;
 import xworker.swt.custom.TableCellEditor;
 import xworker.swt.custom.TableCursorEditorCreator;
@@ -56,7 +55,8 @@ import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtUtils;
 
 public class TableDataStoreListener {
-	private static Logger log = LoggerFactory.getLogger(TableDataStoreListener.class);
+	//private static Logger log = LoggerFactory.getLogger(TableDataStoreListener.class);
+	private static final String TAG = TableDataStoreListener.class.getName();
 	
 	/**
 	 * 列转要显示的字符串。
@@ -106,7 +106,7 @@ public class TableDataStoreListener {
 		            }
 		        }catch(Exception e){
 		            v = null;
-		            log.warn("TableDataStoreListener: get display error," + disField, e);
+		            Executor.warn(TAG, "TableDataStoreListener: get display error," + disField, e);
 		        }
 		    }
 		        
@@ -380,7 +380,7 @@ public class TableDataStoreListener {
 			        table.pack();
 			        table.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onRemove error", t);
+			        Executor.error(TAG, "TableDataStoreListener onRemove error", t);
 			    }
 			}
 		});
@@ -428,7 +428,7 @@ public class TableDataStoreListener {
 			        }
 			        table.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onUpdate error", t);
+			        Executor.error(TAG, "TableDataStoreListener onUpdate error", t);
 			    }
 			}
 		});
@@ -465,7 +465,7 @@ public class TableDataStoreListener {
 			            tableItem.setData("_store_record", record);*/
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onInsert error", t);
+			        Executor.error(TAG, "TableDataStoreListener onInsert error", t);
 			    }
 			}
 		});
@@ -493,7 +493,7 @@ public class TableDataStoreListener {
 			        TableItem item = new TableItem(table, SWT.NONE);
 			        item.setText("loading...");
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener beforeLoad error", t);
+			        Executor.error(TAG, "TableDataStoreListener beforeLoad error", t);
 			    }
 			}
 		});
@@ -664,7 +664,7 @@ public class TableDataStoreListener {
 			        }
 			        
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onLoaded error", t);
+			        Executor.error(TAG, "TableDataStoreListener onLoaded error", t);
 			    }
 			}
 		};
@@ -720,7 +720,7 @@ public class TableDataStoreListener {
 			        //重新组建表格的列
 			        Thing dataObject = (Thing) store.get("dataObject");
 			        if(dataObject == null){
-			            log.info("TableDataStoreListener store dataObject is null");
+			            Executor.info(TAG, "TableDataStoreListener store dataObject is null");
 			            return;
 			        }
 			        
@@ -823,7 +823,7 @@ public class TableDataStoreListener {
 				        item.setText("loading...");
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onReconfig error", t);
+			        Executor.error(TAG, "TableDataStoreListener onReconfig error", t);
 			    }    	
 			}
 		});
