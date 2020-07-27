@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.spi.LocationInfo;
 import org.slf4j.helpers.MessageFormatter;
 
 import xworker.lang.executor.ExecuteRequest;
@@ -37,9 +38,13 @@ public abstract class AbstractLogService implements ExecutorService{
 		
 		sb.append(" ");
 		sb.append(getLevelName(level));
-		sb.append(" ");
+		sb.append(" (");
 		sb.append(TAG);
-		sb.append(" ");
+		//sb.append(":");  //不准确，取消打印行数，比如在Groovy脚本时
+		//LocationInfo locationInfo = new LocationInfo(new Throwable(), TAG);
+		//sb.append(locationInfo.fullInfo);
+		
+		sb.append(") ");
 		sb.append(msg);
 		
 		log(level, sb.toString());
@@ -53,9 +58,12 @@ public abstract class AbstractLogService implements ExecutorService{
 		
 		sb.append(" ");
 		sb.append(getLevelName(level));
-		sb.append(" ");
+		sb.append(" (");
 		sb.append(TAG);
-		sb.append(" ");
+        //sb.append(":");  //不准确，取消打印行数，比如在Groovy脚本时
+		//LocationInfo locationInfo = new LocationInfo(new Throwable(), TAG);
+		//sb.append(locationInfo.getLineNumber());
+		sb.append(") ");
 		sb.append(msg);
 		sb.append("\n");
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();

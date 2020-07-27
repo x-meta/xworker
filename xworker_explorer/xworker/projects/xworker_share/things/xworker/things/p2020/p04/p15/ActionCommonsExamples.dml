@@ -18,10 +18,11 @@ println javaHome;]]></code>
     </GroovyAction>
     <GroovyAction name="actionListener">
         <code><![CDATA[import groovy.sql.Sql;
+import xworker.lang.executor.Executor;
 
 def sql = new Sql(con);
 sql.eachRow("select count(*) as count from tblThings", {
-    println "Thing count form db is " + it.count;
+    Executor.info("ActionListener", "Thing count form db is " + it.count);
 });]]></code>
         <contexts>
             <DataSouceActionContext name="DataSouceActionContext" dataSourcePath="_local.xworker.db.XWorkerIDEDataSource"></DataSouceActionContext>

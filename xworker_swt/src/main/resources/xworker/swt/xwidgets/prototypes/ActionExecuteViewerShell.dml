@@ -1,4 +1,4 @@
-%1586928767469
+%1595658555437
 @
 sname=ActionExecuteViewerShell
 stext=动作执行浏览器
@@ -634,6 +634,19 @@ if(!executeThread.running){
         sth_registDisabled=false
         sth_mark=false
         sid=thingForm
+      @/@mainSashForm/@cTabFolder/@executorService
+      sname=executorService
+      screateItemsOnCTabFodler=true
+      sdescriptors=xworker.swt.Widgets/@SWTExecutorService
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=executorService
     @/@mainSashForm/@actions
     sname=actions
     sdescriptors=xworker.swt.Widgets/@actions
@@ -833,11 +846,15 @@ contextComposite.layout();
 #$@text#$@
 import xworker.ide.worldexplorer.swt.actions.ActionExecuteViewerThread;
 
-_g.put("executeThread", new ActionExecuteViewerThread(actionContext));
+def executeThread = new ActionExecuteViewerThread(actionContext);
+executeThread.setExecutorService(executorService);
+
+_g.put("executeThread", executeThread);
 #$@text#$@
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.swt.widgets.Widget/@Code
     sinheritDescription=false

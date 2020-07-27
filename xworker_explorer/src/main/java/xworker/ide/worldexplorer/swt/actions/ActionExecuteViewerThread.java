@@ -10,6 +10,8 @@ import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
+import xworker.lang.executor.ExecutorService;
 
 public class ActionExecuteViewerThread implements Runnable{
 	ActionContext actionContext;
@@ -21,6 +23,7 @@ public class ActionExecuteViewerThread implements Runnable{
 	ActionContainer actions;
 	Thing startActionThing;
 	Thread thread;
+	ExecutorService executorService;
 	
 	public ActionExecuteViewerThread(ActionContext actionContext){
 		this.actionContext = actionContext;
@@ -36,6 +39,14 @@ public class ActionExecuteViewerThread implements Runnable{
 		actions = actionContext.getObject("actions");
 	}
 	
+	public ExecutorService getExecutorService() {
+		return executorService;
+	}
+
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
+
 	public void checkStatus(){
 		Thing actionThing = actionContext.getObject("actionThing");
 		
@@ -105,11 +116,20 @@ public class ActionExecuteViewerThread implements Runnable{
 		running = true;
 		actionThingContext = actionContext.getObject("actionThingContext");
 		try{
+			if(executorService != null) {
+				Executor.push(executorService);
+			}
 			Bindings bindings = actionThingContext.push();
 			bindings.put("actionExecutor", this);
 			bindings.setContextThing(World.getInstance().getThing("xworker.ide.worldexplorer.swt.actions.ActionExecuteViewerContext"));
 			if(startActionThing != null){
-				final Object result = startActionThing.doAction("run", actionThingContext);
+				Object r = null;
+				if(startActionThing.isThingByName("Action")) {
+					r = startActionThing.getAction().run(actionThingContext);
+				}else {
+					r = startActionThing.doAction("run", actionContext);
+				}
+				final Object result = r;
 				nextButton.getDisplay().asyncExec(new Runnable(){
 					public void run(){
 						actions.doAction("setResult", actionContext, "result", result);
@@ -117,15 +137,19 @@ public class ActionExecuteViewerThread implements Runnable{
 				});
 				
 			}
-			
-			
 		}catch(final Exception e){
-			nextButton.getDisplay().asyncExec(new Runnable(){
-				public void run(){
-					actions.doAction("setResult", actionContext, "result", e);
-				}
-			});
+			if(nextButton.isDisposed() == false) {
+				nextButton.getDisplay().asyncExec(new Runnable(){
+					public void run(){
+						actions.doAction("setResult", actionContext, "result", e);
+					}
+				});
+			}
 		}finally{
+			if(executorService != null) {
+				Executor.pop();
+			}
+			
 			running = false;
 			actionThingContext.pop();
 			if(nextButton.isDisposed() == false){
