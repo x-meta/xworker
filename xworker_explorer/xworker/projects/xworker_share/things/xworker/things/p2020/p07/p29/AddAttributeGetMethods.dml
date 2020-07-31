@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="AddAttributeGetMethods" descriptors="xworker.lang.util.ThingGuide" label="添加属性的Get方法"
+     en_label="Add attribute get methods" en_group="Model" th_createIndex="true" th_registThing="guide|xworker.lang.actions.Actions"
+     group="模型">
+    <Composite>
+        <description><![CDATA[<p>添加属性的相关Get方法。如果未设置方法的，则不添加。</p>
+]]></description>
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <Table name="table">
+                <DataStore name="dataStore">
+                    <dataObjects>
+                        <AbstractDataObject gridEditable="true">
+                            <actions>
+                                <GroovyAction name="doQuery">
+                                    <code><![CDATA[import xworker.dataObject.DataObject;
+
+def actions = thingGuide.getEditThing();
+def thing = actions.getParent();
+if(thing == null){
+    return [];
+}
+
+def datas = [];
+for(child in thing.getChilds("attribute")){
+    def name = child.getMetadata().getName();
+    if(exists(actions, name)){
+        //已经定义了相关Get方法
+        continue;
+    }
+    
+    def data = new DataObject("xworker.things.p2020.p07.p29.AddAttributeGetMethods/@Composite/@Composite/@table/@dataStore/@dataObjects/@AbstractDataObject");
+    data.put("attribute", child.getMetadata().getName());
+    datas.add(data);
+}
+
+return datas;
+
+def exists(actions, name){
+    for(ac in actions.getChilds()){
+        if(name == ac.getString("attributeName")){
+            return true;
+        }
+    }
+    
+    return false;
+}]]></code>
+                                </GroovyAction>
+                            </actions>
+                            <attribute name="attribute" label="属性" editable="false" gridWidth="200"></attribute>
+                            <attribute name="method" label="方法" default="GetString" inputtype="select"
+                                 gridWidth="200">
+                                <DataStore>
+                                    <dataObjects>
+                                        <AbstractDataObject valueName="name" displayName="name" storeAutoLoad="true">
+                                            <actions>
+                                                <GroovyAction name="doQuery">
+                                                    <code><![CDATA[import xworker.dataObject.DataObject;
+
+def datas = [];
+def names = [];
+def thing = world.getThing("xworker.lang.actions.ActionUtil");
+for(child in thing.getChilds()){
+    names.add(child.getMetadata().getName());
+}
+
+Collections.sort(names);
+for(name in names){
+    def data = new DataObject("xworker.things.p2020.p07.p29.AddAttributeGetMethods/@Composite/@Composite/@table/@dataStore/@dataObjects/@AbstractDataObject/@method/@DataStore/@dataObjects/@AbstractDataObject");
+    data.put("name", name);
+    datas.add(data);
+}
+
+return datas;]]></code>
+                                                </GroovyAction>
+                                            </actions>
+                                            <attribute name="name" label="名字" key="true" gridWidth="200"></attribute>
+                                        </AbstractDataObject>
+                                    </dataObjects>
+                                </DataStore>
+                            </attribute>
+                        </AbstractDataObject>
+                    </dataObjects>
+                </DataStore>
+            </Table>
+        </Composite>
+        <actions>
+            <GroovyAction name="doFinish">
+                <code><![CDATA[import org.xmeta.Thing;
+
+//当前节点
+def actions = thingGuide.getEditThing();
+def actionUtil = world.getThing("xworker.lang.actions.ActionUtil");
+
+for(item in table.getItems()){
+    def data = item.getData();
+    
+    if(data.method != null && data.method != ""){
+        def method = getMethod(actionUtil, data.method);
+        if(method != null){
+            def action = new Thing(method.getMetadata().getPath());
+            def name = null;
+            if(method.getMetadata().getName() == "GetBoolean"){
+                name = "is" + cap(actionContext, "str", data.attribute);
+            }else{
+                name = "get" + cap(actionContext, "str", data.attribute);
+            }
+            action.put("name", name);
+            action.put("attributeName", data.attribute);
+            actions.addChild(action);
+        }
+    }
+}
+
+def getMethod(actionUtil, name){
+    for(ac in actionUtil.getChilds()){
+        if(ac.getMetadata().getName() == name){ 
+            return ac;
+        }
+    }
+    
+    return null;
+}]]></code>
+                <ActionDefined>
+                    <capitalize name="cap" descriptors="xworker.lang.actions.utils.StringUtils/@capitalize"
+                         str="var:str"></capitalize>
+                </ActionDefined>
+            </GroovyAction>
+        </actions>
+    </Composite>
+</ThingGuide>

@@ -1,16 +1,25 @@
-%1548850934257
+%1596102240457
 @
 sname=WebAppContext
 slabel=WebAppContext
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
+sdefaultEditor=form
 Sdescription=
 #$@text#$@
-<p>WebAppContext。</p>
+<p>WebAppContext。可以发布war、web应用和静态目录等。</p>
+
+<p><strong>事件：</strong></p>
+
+<ul>
+	<li><strong>void init(Server server, WebAppContext context)</strong><br />
+	执行额外的初始化操作。</li>
+</ul>
 
 <p><strong>可以重写的方法：</strong></p>
 
@@ -28,10 +37,7 @@ Sdescription=
 	欢迎文件数组。<br />
 	&nbsp;</li>
 	<li><strong>boolean isDirAllowed()</strong><br />
-	是否允许列目录。<br />
-	&nbsp;</li>
-	<li><strong>void init(Server server, WebAppContext context)</strong><br />
-	执行额外的初始化操作。</li>
+	是否允许列目录。</li>
 </ul>
 
 <p>&nbsp;</p>
@@ -84,7 +90,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -106,7 +111,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -128,7 +132,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -151,7 +154,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -173,7 +175,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -188,24 +189,70 @@ sth_mark=false
     @/@actions/@init
     sname=init
     sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
     sdebugLog=false
-    sdescriptors=xworker.lang.actions.Actions/@NOOP
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
     sth_mark=false
     sid=init
+      @/@actions/@init/@ins
+      sisValidate=false
+      sname=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=ins
+        @/@actions/@init/@ins/@context
+        sname=context
+        stype=org.eclipse.jetty.webapp.WebAppContext
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=context
+        @/@actions/@init/@ins/@context1
+        sname=handler
+        stype=org.eclipse.jetty.webapp.WebAppContext
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=context1
   @/@name
   sname=name
   sshowLabel=true
@@ -243,16 +290,13 @@ sth_mark=false
   @/@webApp
   sname=webApp
   sinputtype=file
-  sshowLabel=true
   ssize=60
+  sshowLabel=true
   smodifier=public
   sreadOnly=false
   sdefault=.
   sinheritDescription=false
-  Sdescription=
-#$@text#$@
-<p>文件目录或war文件的路径。</p>
-#$@text#$@
+  sdescription=<p>文件目录或war文件的路径。</p>
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true
@@ -284,9 +328,10 @@ sth_mark=false
   @/@resourceBase
   sname=resourceBase
   sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
   smodifier=public
   sreadOnly=false
-  sdefault=.
   sinheritDescription=false
   svalidateAllowBlank=true
   LvalidateOnBlur=true
@@ -318,6 +363,36 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=dirAllowed
+  @/@useXWorkerClassLoader
+  sname=useXWorkerClassLoader
+  sinputtype=truefalse
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sdefault=false
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>是否使用XWorker的ClassLoader。</p>
+
+<p>在XWorker中使用，对于独立的WEB应用一般不要使用，否则类加载会出问题。</p>
+#$@text#$@
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=useXWorkerClassLoader
   @/@welcomeFiles
   sname=welcomeFiles
   sinputtype=textarea
@@ -355,3 +430,514 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=description
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@var
+    sname=var
+    svarName=_thingName_
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=org.eclipse.jetty.webapp.WebAppContext
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=var
+  @/@WebSocket
+  sname=WebSocket
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=false
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>增加对Java的WebSocket的支持。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=WebSocket
+    @/@WebSocket/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=actions
+      @/@WebSocket/@actions/@create
+      sname=create
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      suseInnerJava=false
+      souterClassName=xworker.jetty.handlers.WebAppContextActions
+      smethodName=createWebSocket
+      sdisableGlobalContext=false
+      sattributeTemplate=false
+      sinterpretationType=Action
+      svarScope=Global
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=create
+    @/@WebSocket/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=name
+    @/@WebSocket/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=label
+    @/@WebSocket/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=description
+    @/@WebSocket/@Endpoint
+    sname=Endpoint
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    smany=true
+    seditCols=2
+    sformNoLabel=false
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=false
+    Sdescription=
+#$@text#$@
+<p>添加一个Endpoint。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li>void create(ServerContainer serverContainer)<br />
+	自行添加Endpoint。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=Endpoint
+      @/@WebSocket/@Endpoint/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaDescriptor3/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=actions
+        @/@WebSocket/@Endpoint/@actions/@create
+        sname=create
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.jetty.handlers.WebAppContextActions
+        smethodName=createEndpoint
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=create
+        @/@WebSocket/@Endpoint/@actions/@42523
+        sname=getEndpointClass
+        sattributeName=endpointClass
+        snotNull=false
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.ActionUtil/@GetClass
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=42523
+      @/@WebSocket/@Endpoint/@name
+      sname=name
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=name
+      @/@WebSocket/@Endpoint/@label
+      sname=label
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=label
+      @/@WebSocket/@Endpoint/@endpointClass
+      sname=endpointClass
+      sinputtype=openWindow
+      ssize=60
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sinputattrs=xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=endpointClass
+      @/@WebSocket/@Endpoint/@description
+      sname=description
+      sinputtype=html
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=description
+      @/@WebSocket/@Endpoint/@actions1
+      sname=actions
+      slabel=Actions
+      sdescriptors=xworker.lang.MetaDescriptor2/@thing
+      sextends=xworker.lang.actions.Actions
+      smany=true
+      seditCols=2
+      szh_label=动作
+      sinheritDescription=true
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions1
+        @/@WebSocket/@Endpoint/@actions1/@name
+        sname=name
+        sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+        sid=name
+    @/@WebSocket/@XWorkerEndpoint
+    sname=XWorkerEndpoint
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    smany=true
+    seditCols=2
+    sformNoLabel=false
+    sinitialization=false
+    smodifier=public
+    sinheritDescription=false
+    Sdescription=
+#$@text#$@
+<p>XWorker默认的Endpoint，监听资源/socketx/*，其中*是事物的路径。</p>
+#$@text#$@
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=XWorkerEndpoint
+      @/@WebSocket/@XWorkerEndpoint/@actions
+      sname=actions
+      sdescriptors=xworker.lang.MetaDescriptor3/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=actions
+        @/@WebSocket/@XWorkerEndpoint/@actions/@create
+        sname=create
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        suseOuterJava=true
+        suseInnerJava=false
+        souterClassName=xworker.jetty.handlers.WebAppContextActions
+        smethodName=createXWorkerEndpoint
+        sdisableGlobalContext=false
+        sattributeTemplate=false
+        sinterpretationType=Action
+        svarScope=Global
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@JavaAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=create
+      @/@WebSocket/@XWorkerEndpoint/@name
+      sname=name
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=name
+      @/@WebSocket/@XWorkerEndpoint/@label
+      sname=label
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=label
+      @/@WebSocket/@XWorkerEndpoint/@description
+      sname=description
+      sinputtype=html
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
+      sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=description
+  @/@actions1
+  sname=actions
+  slabel=Actions
+  sdescriptors=xworker.lang.MetaDescriptor2/@thing
+  sextends=xworker.lang.actions.Actions
+  smany=true
+  seditCols=2
+  szh_label=动作
+  sinheritDescription=true
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions1
+    @/@actions1/@name
+    sname=name
+    sdescriptors=xworker.lang.MetaDescriptor2/@attribute
+    sid=name

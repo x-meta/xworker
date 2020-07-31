@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ShellGuide name="DynamicModelIntroduce" descriptors="xworker.swt.guide.ShellGuide" label="编程平台"
+<ShellGuide name="DynamicModelIntroduce" descriptors="xworker.swt.guide.ShellGuide" label="动态模型"
      en_label="Dynamic Model" groupDescriptor="true" en_group="-20000|Dynamic Model"
      th_createIndex="true" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
      group="-20000|动态模型" th_sortWeight="-2000">
@@ -9,20 +9,63 @@
         <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
     </actions>
     <Guide name="realtimeProgramming" label="简介">
-        <description><![CDATA[<h2>编程平台</h2>
+        <description><![CDATA[<h2>动态模型</h2>
 
-<p>&nbsp;&nbsp;&nbsp; XWorker是动态模型的编程平台。使用动态模型可以实现快速编程和实施编程。下面是动态模型的基本原理。</p>
+<p>&nbsp;&nbsp;&nbsp; XWorker是动态模型的编程平台，本教程讲简单介绍一些动态模型的基础知识。</p>
 
-<ul>
-	<li><strong>使用数据表示对象</strong><br />
-	动态模型实现了面向对象编程方法，它使用树形结构的数据来表示对象，这样可以在系统运行时动态创建和修改对象。<br />
-	&nbsp;</li>
-	<li><strong>迭代解释执行</strong><br />
-	在动态模型里，一个对象的行为可以用其它对象来解释执行，这个解释执行过程时迭代的，最终迭代到动态模型引擎来执行。<br />
-	&nbsp;</li>
-	<li><strong>脚本语言模型</strong><br />
-	可以把各种脚本语言定义成模型对象，这样理论上就可以在运行时能够编写各种应用了。</li>
-</ul>
+<h3>下一步</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 请点击<strong>下一步按钮</strong>继续浏览动态模型的介绍。</p>
+]]></description>
+    </Guide>
+    <Guide name="Guide" label="模型代码">
+        <description><![CDATA[<h2>模型代码</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型实现了面向对象编程方法，它使用树形结构的数据来表示对象，模型可以用XML来表示。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如下面的XML代码就是一个模型，还可以<a href="javascript:invoke('shell:xworker.example.swt.SWTHelloWorld')">点击这里</a>来运行它。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;Hello World&quot; width=&quot;400&quot;
+     height=&quot;300&quot; label=&quot;SWTHelloWorld&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Composite name=&quot;buttonComposite&quot; _xmeta_id_=&quot;8074&quot;&gt;
+        &lt;GridData name=&quot;buttonCompositeGridData&quot; _xmeta_id_=&quot;8075&quot; style=&quot;FILL_HORIZONTAL&quot;
+             horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+        &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot; _xmeta_id_=&quot;8076&quot;&gt;&lt;/RowLayout&gt;
+        &lt;Button name=&quot;closeButton&quot; _xmeta_id_=&quot;8077&quot; text=&quot;lang:d=关闭&amp;amp;en=Close&quot;&gt;
+            &lt;RowData name=&quot;RowData&quot; _xmeta_id_=&quot;8078&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
+            &lt;Listeners _xmeta_id_=&quot;8079&quot;&gt;
+                &lt;Listener name=&quot;closeButtonSelection&quot; _xmeta_id_=&quot;8080&quot;&gt;
+                    &lt;Dispose name=&quot;Dispose&quot; descriptors=&quot;xworker.swt.actions.ControlActions/@Dispose&quot;
+                         controlList=&quot;shell&quot;&gt;&lt;/Dispose&gt;
+                &lt;/Listener&gt;
+            &lt;/Listeners&gt;
+        &lt;/Button&gt;
+    &lt;/Composite&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="Guide" _xmeta_id_="Guide1" label="集成API和功能">
+        <description><![CDATA[<h2>集成各种API和功能</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 使用动态模型可以把各种API和功能包装成模型，然后通过模型来快速的编写相关的应用。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如下面的模型是一个显示二维码的例子，其中ZXingCanvas是对ZXing的API的封装和扩展，可以<a href="javascript:invoke('shell:xworker.example.util.barcode.QRCodeExample')">点击这里</a>来运行。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;QRCodeExample&quot; width=&quot;640&quot;
+     height=&quot;480&quot; label=&quot;QRCodeExample&quot;&gt;
+    &lt;FillLayout name=&quot;FillLayout&quot; type=&quot;SWT.VERTICAL&quot;&gt;&lt;/FillLayout&gt;
+    &lt;ZXingCanvas name=&quot;zxing&quot; descriptors=&quot;xworker.com.google.zxing.ZXingCanvas&quot; message=&quot;123456789&quot;
+         barcodeFormat=&quot;QR_CODE&quot;&gt;&lt;/ZXingCanvas&gt;
+&lt;/Shell&gt;</pre>
 
 <p>&nbsp;</p>
 ]]></description>

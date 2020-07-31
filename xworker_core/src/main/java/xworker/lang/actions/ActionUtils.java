@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.beanutils.ConstructorUtils;
@@ -80,7 +81,7 @@ public class ActionUtils {
 			return null;
 		}
 		
-		return UtilData.getBoolean(UtilData.getData(realSelf, attributeName, actionContext), self.getBoolean("defaultValue"));
+		return UtilData.getBoolean(data, self.getBoolean("defaultValue"));
 	}
 	
 	public static BigInteger getBigInteger(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
@@ -416,6 +417,17 @@ public class ActionUtils {
 		}
 		
 		return str;
+	}
+	
+	public static Locale getLocale(ActionContext actionContext) throws Exception{
+		Object l = getObject(actionContext);
+		if(l instanceof Locale) {
+			return (Locale) l;
+		}else if(l == null) {
+			return null;
+		}else {
+			return new Locale(String.valueOf(l));
+		}
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

@@ -20,6 +20,9 @@ public class CodeViewer {
 		this.self = self;
 		this.actions = actions;
 		this.control = control;
+		
+		codeName = self.doAction("getCodeName", actions.getActionContext());
+		codeType = self.doAction("getCodeType", actions.getActionContext());
 	}
 	
 	public void setCode(String codeName, String codeType, String code){

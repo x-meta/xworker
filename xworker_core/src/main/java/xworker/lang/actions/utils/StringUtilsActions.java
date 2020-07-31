@@ -498,7 +498,7 @@ public class StringUtilsActions {
 	public static String capitalize(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		String str  = (String) self.doAction("getStr", actionContext);
-		return StringUtils.lowerCase(str);
+		return StringUtils.capitalize(str);
 	}
 	
 	public static String uncapitalize(ActionContext actionContext){

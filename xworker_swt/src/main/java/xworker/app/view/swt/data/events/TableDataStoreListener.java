@@ -52,6 +52,7 @@ import xworker.swt.custom.ItemRowEditor;
 import xworker.swt.custom.TableCellEditor;
 import xworker.swt.custom.TableCursorEditorCreator;
 import xworker.swt.events.SwtListener;
+import xworker.swt.form.ThingDescriptorForm;
 import xworker.swt.util.SwtUtils;
 
 public class TableDataStoreListener {
@@ -135,6 +136,7 @@ public class TableDataStoreListener {
 		//在表格编辑时重新生成column的符合编辑的属性定义，尤其是生成数据仓库。
 		//String type = "edit";
 		Thing attribute = (Thing) actionContext.get("column");
+		Thing oldAttribute = attribute;
 		Thing column = (Thing) actionContext.get("column");
 		Thing at = (Thing) column.get("EditConfig@0");
 
@@ -159,38 +161,44 @@ public class TableDataStoreListener {
 		attribute.setData("_originalityAttributePath", attributePath);
 
 		String inputtype = attribute.getStringBlankAsNull("inputtype");
-		if(UtilData.equalsOne(inputtype, new String[]{"select","inputSelect","multSelect"})){             
-		     String dobj = attribute.getString("relationDataObject");
-		     String inputattrs = attribute.getStringBlankAsNull("inputattrs");
-		     if(dobj != null && !"".equals(dobj) && inputattrs == null){
-		         //如果属性是多对一关联其他属性的，并且是下拉选择框，那么初始化相关下拉框的功能
-		          Thing dataStore = new Thing("xworker.swt.Commons/@DataStore");
-		          dataStore.initDefaultValue();                      
-		          dataStore.put("paging", "no"); //下拉列表不分页
-		          String store = attribute.getStringBlankAsNull("store");
-		          if(store != null){
-		              //字段定义了引擎其他数据仓库
-		              dataStore.put("storeRef", attribute.getString("store"));
-		              dataStore.put("attachToParent", "true");
-		              dataStore.put("loadBackground", "true");
-		          }else{
-		              //创建数据仓库
-		              dataStore.put("dataObject", attribute.getString("relationDataObject"));
-		              dataStore.put("queryConfig", attribute.getString("relationQueryConfig"));
-		              if(dataStore.getStringBlankAsNull("queryConfig") == null){
-		                  Thing qcfg = (Thing) column.get("SelectCondition@0");
-		                  if(qcfg != null){
-		                      dataStore.put("queryConfig", qcfg.getMetadata().getPath());
-		                  }
-		              }
-		              dataStore.put("autoLoad", "true");
-		              dataStore.put("attachToParent", "true");
-		              dataStore.put("loadBackground", "true");
-		              dataStore.put("labelField", attribute.getString("relationLabelField"));
-		          }
-		          attribute.setData("dataStore", dataStore);
-		          attribute.put("inputattrs", dataStore.getMetadata().getPath());
-		     }             
+		if (UtilData.equalsOne(inputtype, new String[] { "select", "inputSelect", "multSelect" })) {
+			Thing dataStoreThing = ThingDescriptorForm.getDataStoreThing(oldAttribute);
+			if(dataStoreThing != null) {
+				attribute.setData("dataStore", dataStoreThing);
+				attribute.put("inputattrs", dataStoreThing.getMetadata().getPath());
+			}else{
+				String dobj = attribute.getString("relationDataObject");
+				String inputattrs = attribute.getStringBlankAsNull("inputattrs");
+				if (dobj != null && !"".equals(dobj) && inputattrs == null) {
+					// 如果属性是多对一关联其他属性的，并且是下拉选择框，那么初始化相关下拉框的功能
+					Thing dataStore = new Thing("xworker.swt.Commons/@DataStore");
+					dataStore.initDefaultValue();
+					dataStore.put("paging", "no"); // 下拉列表不分页
+					String store = attribute.getStringBlankAsNull("store");
+					if (store != null) {
+						// 字段定义了引擎其他数据仓库
+						dataStore.put("storeRef", attribute.getString("store"));
+						dataStore.put("attachToParent", "true");
+						dataStore.put("loadBackground", "true");
+					} else {
+						// 创建数据仓库
+						dataStore.put("dataObject", attribute.getString("relationDataObject"));
+						dataStore.put("queryConfig", attribute.getString("relationQueryConfig"));
+						if (dataStore.getStringBlankAsNull("queryConfig") == null) {
+							Thing qcfg = (Thing) column.get("SelectCondition@0");
+							if (qcfg != null) {
+								dataStore.put("queryConfig", qcfg.getMetadata().getPath());
+							}
+						}
+						dataStore.put("autoLoad", "true");
+						dataStore.put("attachToParent", "true");
+						dataStore.put("loadBackground", "true");
+						dataStore.put("labelField", attribute.getString("relationLabelField"));
+					}
+					attribute.setData("dataStore", dataStore);
+					attribute.put("inputattrs", dataStore.getMetadata().getPath());
+				}
+			}
 		}
 
 		return attribute;

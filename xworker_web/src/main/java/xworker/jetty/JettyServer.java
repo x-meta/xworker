@@ -2,9 +2,13 @@ package xworker.jetty;
 
 import java.io.File;
 
-import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.AsyncNCSARequestLog;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.NCSARequestLog;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.Slf4jRequestLog;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +37,11 @@ public class JettyServer {
 			server.stop();
 		}
 		
-		int port = self.doAction("getPort", actionContext);
+		int port = self.doAction("getPort", actionContext);		
 		boolean stopAtShutDown = UtilData.isTrue(self.doAction("isStopAtShutdown", actionContext));
 		
-		server =  null;
+		server =  new Server();
 		if(UtilData.isTrue(self.doAction("isSsl", actionContext))) {
-			server = new Server();
-
 	        // create factory for ssl
 	        final SslContextFactory sslContextFactory = new SslContextFactory();
 
@@ -51,26 +53,70 @@ public class JettyServer {
 	        String keyStorePassword = self.doAction("getKeyStorePassword", actionContext);
 	        sslContextFactory.setKeyStorePassword(keyStorePassword);
 	        
-	        ServerConnector httpConnector = new ServerConnector(server);
-	        httpConnector.setPort(port);
-	        
 	        // create connector for https
 	        ServerConnector httpsConnector = new ServerConnector(server, sslContextFactory);
+	        int sslPort = self.doAction("getSslPort", actionContext);
+	        if(sslPort <= 0) {
+	        	sslPort = 443;
+	        }
 	        httpsConnector.setPort(443);
 	        
 	        // Set connector
-	        server.setConnectors(new Connector[] { httpConnector, httpsConnector });
-		}else {
-			server = new Server(port);
+	        server.addConnector(httpsConnector);
 		}
+		
+		if(port > 0) {
+	        ServerConnector httpConnector = new ServerConnector(server);
+	        httpConnector.setPort(port);
+	        server.addConnector(httpConnector);
+		}
+
+		
+		server.setDumpAfterStart(self.doAction("isDumpAfterStart", actionContext));
+		server.setDumpBeforeStop(self.doAction("isDumpBeforeStop", actionContext));
+		
 		putServer(self, server, actionContext);
 		
 		server.setStopAtShutdown(stopAtShutDown);
 		//创建Handler
-		actionContext.peek().put("server", server);
+		actionContext.peek().put("server", server);		
 		for(Thing handlers : self.getChilds("Handlers")) {
+			boolean setted = false;
 			for(Thing handler : handlers.getChilds()) {
-				handler.doAction("create", actionContext);
+				Handler h = handler.doAction("create", actionContext);
+				if(h != null) {
+					server.setHandler(h);
+					setted = true;
+					break;
+				}
+			}
+			
+			if(setted) {
+				break;
+			}
+		}
+		
+		
+		//创建Connector
+		for(Thing connectors : self.getChilds("Connectors")) {
+			for(Thing connector : connectors.getChilds()) {
+				connector.doAction("create", actionContext);
+			}
+		}
+		
+		for(Thing logs : self.getChilds("RequestLogs")) {
+			boolean ok = false;
+			for(Thing log : logs.getChilds()) {
+				RequestLog l = log.doAction("create", actionContext);
+				if(l != null) {
+					server.setRequestLog(l);
+					ok = true;
+					break;
+				}
+			}
+			
+			if(ok) {
+				break;
 			}
 		}
 		
@@ -142,5 +188,68 @@ public class JettyServer {
 	
 	private static void putServer(Thing thing, Server server, ActionContext actionContext){
 		ObjectManager.put("xworker.jetty.Jetty", thing, server, actionContext);
+	}
+	
+	
+	public static NCSARequestLog createNCSARequestLog(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		NCSARequestLog log = new NCSARequestLog();
+		Boolean isAppend = self.doAction("isAppend", actionContext);
+		if(isAppend != null) {
+			log.setAppend(isAppend);
+		}
+		
+		log.setFilename(self.doAction("getFilename", actionContext));
+		
+		String dateFormat = self.doAction("getLogFileDateFormat", actionContext);
+		if(dateFormat != null && !"".equals(dateFormat)) {
+			log.setFilenameDateFormat(dateFormat);
+		}
+		
+		int retainDays = self.doAction("getRetainDays", actionContext);
+		if(retainDays > 0) {
+			log.setRetainDays(retainDays);
+		}
+		
+		AbstractNCSARequestLogThing.init(log, self, actionContext);
+		return log;
+	}
+	
+	public static AsyncNCSARequestLog ceateAsyncNCSARequestLog(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		AsyncNCSARequestLog log = new AsyncNCSARequestLog();
+		Boolean isAppend = self.doAction("isAppend", actionContext);
+		if(isAppend != null) {
+			log.setAppend(isAppend);
+		}
+		
+		log.setFilename(self.doAction("getFilename", actionContext));
+		
+		String dateFormat = self.doAction("getLogFileDateFormat", actionContext);
+		if(dateFormat != null && !"".equals(dateFormat)) {
+			log.setFilenameDateFormat(dateFormat);
+		}
+		
+		int retainDays = self.doAction("getRetainDays", actionContext);
+		if(retainDays > 0) {
+			log.setRetainDays(retainDays);
+		}
+		
+		AbstractNCSARequestLogThing.init(log, self, actionContext);
+		return log;
+	}
+	
+	public static Slf4jRequestLog ceateSlf4jRequestLog(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		Slf4jRequestLog log = new Slf4jRequestLog();
+		String loggerName = self.doAction("getLoggerName", actionContext);
+		if(loggerName != null) {
+			log.setLoggerName(loggerName);
+		}
+		AbstractNCSARequestLogThing.init(log, self, actionContext);
+		
+		return log;
 	}
 }
