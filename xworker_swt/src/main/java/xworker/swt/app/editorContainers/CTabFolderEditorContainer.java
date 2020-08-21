@@ -465,5 +465,14 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 		return null;
 	}
 	
-	
+	@Override
+	public IEditor getEditor(String id) {
+		for(IEditor editor : getEditors()) {
+			if(editor.getId().equals(id)) {
+				return editor;
+			}
+		}
+		
+		return null;
+	}
 }

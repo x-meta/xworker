@@ -463,6 +463,44 @@ public class XWorkerUtils {
 	}
 	
 	/**
+	 * 打开一个Editor，如果Editor已经打开那么是设置参数。
+	 * 
+	 * @param id
+	 * @param editor
+	 * @param params
+	 */
+	public static Object openEditor(String id, Thing editor, Map<String, Object> params) {
+		IIde ide = getIde();
+		if(ide != null){
+			return ide.getActionContainer().doAction("openEditor", ide.getActionContext(), 
+					"id", id, "editor", editor, "params", params);
+		}else{
+			Executor.warn(TAG, "Ide is not setted");
+			return null;
+		}
+	}
+	
+	/**
+	 * 在工作台IDE上打开一个视图。
+	 * 
+	 * @param id
+	 * @param type 可选值left,right,top,button之一
+	 * @param closeable
+	 * @param composite
+	 * @param params
+	 */
+	public static Object openView(String id, String type, boolean closeable, Thing composite, Map<String, Object> params) {
+		IIde ide = getIde();
+		if(ide != null){
+			return ide.getActionContainer().doAction("openView", ide.getActionContext(), 
+					"id", id, "type", type, "params", params, "composite", composite);
+		}else{
+			Executor.warn(TAG, "Ide is not setted");
+			return null;
+		}
+	}
+	
+	/**
      * 获取显示事物Description的URL地址。
      * 
      * @param thing 事物

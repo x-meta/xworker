@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="LocalVariables" descriptors="xworker.swt.xworker.ThingRegistThing" label="局部变量"
+     type="thingDesc" group="dynamicModel.-1000|Actions.variables" icon="icons/html.png"
+     th_sortWeight="20" simpleBrowser="true" en_label="Local Variables" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>局部变量</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 局部变量是指只有当前线程可以访问到的，并以可以通过ActionContext的pop()移除的变量。</p>
+
+<h2>1.通过压入栈设置局部变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 通过ActionConext的push()方法可以压入一个变量栈，通过该变量栈设置的变量是相对局部的。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+
+ActionContext actionContext = new ActionContext();
+
+//压入并返回一个变量栈
+Bindings bindings = actionContext.push();
+
+try{
+    //在压入的变量栈里设置的变量是局部的
+    bindings.put(key, object);
+}finally{
+    //pop()方法必须和push()是成对的，并且要放在finally里确保能够被执行
+    actionContext.pop();
+
+     //执行pop()后，设置的局部变量就被移除了
+}</pre>
+
+<h2>2.通过l()方法返回局部变量栈</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 一些动作模型，尤其是语法类的模型，肯能会把一个变量栈标记为局部变量栈，标记过的布局变量栈可以通过l()方法获取。</p>
+
+<h3>2.1.标记布局变量栈</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 通常在语法类模型里设置。比如Begin模型，Begin模型的是实现代码块{}的作用，Begin模型的实现代码示意如下。</p>
+
+<pre class="brush:groovy;">
+//压入一个栈
+Bindings bindings = actionContext.push();
+
+try{
+    //设置为局部变量栈
+    bindings.setVarScopeFlag();
+
+    //具备变量一般是为子动作使用的，Thing是模型，self是当前Begin模型
+    for(Thing child in self.getChilds()){
+         //遍历子节点执行
+         child.getAction().run(actionContext);
+    }
+}finally{
+    actionContext.pop();
+}</pre>
+
+<h3>2.2.获取局部遍历栈</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 通过actionContext.l()方法获取局部变量栈，如果没有变量栈是设置为局部，那么返回null。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Bindings;
+
+Bindings localBindings = actionContext.l();</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickFunction>

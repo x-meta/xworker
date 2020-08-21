@@ -212,4 +212,15 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		return composite;
 	}
 
+	@Override
+	public IEditor getEditor(String id) {
+		for(IEditor editor : editors) {
+			if(editor.getId().equals(id)) {
+				return editor;
+			}
+		}
+		
+		return null;
+	}
+
 }

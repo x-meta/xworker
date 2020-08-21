@@ -22,8 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -35,10 +33,12 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.dataObject.http.ConditionHttpUtils;
+import xworker.lang.executor.Executor;
 import xworker.util.DebugUtils;
 
 public class ConditionCreator {	
-	private static Logger logger = LoggerFactory.getLogger(ConditionCreator.class);
+	//private static Logger logger = LoggerFactory.getLogger(ConditionCreator.class);
+	private static final String TAG = ConditionCreator.class.getName();
 
 	
     public static Object getValidConditions(ActionContext actionContext){
@@ -181,7 +181,7 @@ public class ConditionCreator {
 	    	}
 	        
 	        if(debug) {
-	            logger.info("conditionsql=" + sql);
+	            Executor.info(TAG, "conditionsql=" + sql);
 	        }
 	        return sql;
         }finally {
@@ -215,7 +215,7 @@ public class ConditionCreator {
 		
 		    //log.info("xxx=" + condition.dataName + "=" + value);
 		    if(debug){
-		    	logger.info(condition.getString("dataName") + "=" + value);
+		    	Executor.info(TAG, condition.getString("dataName") + "=" + value);
 		    }
 		    
 		    if(value != null || condition.getBoolean("ignoreNull") == false){
@@ -439,7 +439,7 @@ public class ConditionCreator {
         	try{
         		cValue = OgnlUtil.getValue(dataName, condition);
         	}catch(Exception e){
-        		logger.info("get condition exception, dataName=" + dataName + ",thing=" + thing.getMetadata().getPath() 
+        		Executor.info(TAG, "get condition exception, dataName=" + dataName + ",thing=" + thing.getMetadata().getPath() 
         				+ "," + e.getMessage());
         	}
         }
@@ -498,7 +498,16 @@ public class ConditionCreator {
             //Object cValue = getConditionValue(self, self.getString("dataName"), condition, actionContext);
             
             //数据参数值
-            Object value = OgnlUtil.getValue(self.getString("attributeName"), data);
+        	String name = self.getStringBlankAsNull("attributeName");
+        	Object value = null;
+        	if(name != null && data != null) {
+        		try {
+        			value = OgnlUtil.getValue(name, data);
+        		}catch(Exception e) {
+        			Executor.info(TAG, "get condition exception, dataName=" + name + ",thing=" + self.getMetadata().getPath() 
+            				+ ",data= " + data, e);
+        		}
+        	}            
         
             //log.info("conditionValue:" + self.name + "=" + cValue);
             //log.info("dataValue:" + self.dataName + "=" + value);

@@ -172,7 +172,7 @@ public class ThingGroup implements Comparable<ThingGroup>{
 		}		
 	}
 	
-	public void sort(){
+	private void init() {
 		if(this.thing == null) {
 			//自己是分组，寻找子节点，查看是否有分组描述的模型
 			for(int i=0; i<childs.size(); i++) {
@@ -180,17 +180,31 @@ public class ThingGroup implements Comparable<ThingGroup>{
 				if(child.thing != null && child.thing.getBoolean("groupDescriptor")) {
 					this.thing = child.thing;
 					this.sortWeight = child.sortWeight;
+					this.weightCount = 0;
 					childs.remove(i);		
 					break;
 				}
 			}
 		}
 		
+		for(int i=0; i<childs.size(); i++) {
+			ThingGroup child = childs.get(i);
+			child.init();
+		}
+	}
+	
+	private void sort_() {
 		Collections.sort(childs);		
 		
 		for(ThingGroup group : childs){
-			group.sort();
+			group.sort_();
 		}
+	}
+	
+	public void sort(){
+		init();
+		
+		sort_();		
 	}
 	
 	public List<ThingGroup> getChilds(){

@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -586,13 +587,24 @@ public class FileActions {
 	public static void writeByteArrayToFile(ActionContext actionContext) throws IOException{
 		Thing self = actionContext.getObject("self");
 		File file = getFile(self, "getFile", actionContext);
-		byte[] data = (byte[]) self.doAction("getData", actionContext);
-		//Integer off = (Integer) self.doAction("getOff", actionContext);
-		//Integer len = (Integer) self.doAction("getLen", actionContext);
+		byte[] data = (byte[]) self.doAction("getData", actionContext);		
+		Integer off = (Integer) self.doAction("getOff", actionContext);
+		Integer len = (Integer) self.doAction("getLen", actionContext);
 		Boolean append = (Boolean) self.doAction("getAppend", actionContext);
-		
+		long fileOffset = self.doAction("getFileOffset", actionContext);
+		if(fileOffset > 0) {
+			RandomAccessFile ra = new RandomAccessFile(file, "rw");
+			try {
+				ra.seek(fileOffset);
+				ra.write(data, off, len);
+				ra.close();
+			}finally {
+				ra.close();
+			}
+		} else {
 		//if(off != null && len != null && off >=0 && len >= 0){
-			FileUtils.writeByteArrayToFile(file, data, append);
+		FileUtils.writeByteArrayToFile(file, data, off, len, append);
+		}
 		//}
 	}
 	

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="PassPamrameters" descriptors="xworker.swt.xworker.ThingRegistThing" label="传递参数"
+     type="thingDesc" group="dynamicModel.-1000|Actions.managevariables" icon="icons/html.png"
+     th_sortWeight="70" simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>传递参数</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 这里是指在Java或脚本下执行动作或对象的行为时的传参方法。</p>
+
+<h2>1.动作或行为的参数是类似的</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 执行动作一般是执行org.xmeta.Action.run(...)相关的方法，执行行为一般是执行org.xmeta.Thing.doAction(actionName, ...)相关的方法。无论是执行哪一个，...部分的参数是类似的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 下面以执行模型的行为为例，列几个常用的方法。</p>
+
+<h2>2.不传参数</h2>
+
+<pre class="brush:groovy;">
+ActionContext actionContext = ...;
+
+//执行行为没有参数
+thing.doAction(name, actionContext);</pre>
+
+<h2>3.使用Map&lt;String, Object&gt;传参</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用Map&lt;String, Object&gt;来传参。</p>
+
+<pre class="brush:as3;">
+ActionContext actionContext = ...;
+
+//参数
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+//设置参数
+params.put(name, value);
+
+//执行行为使用Map参数
+thing.doAction(name, actionContext, params);</pre>
+
+<h2>4.使用Object[]传参</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 实际上会把Object[]转化为Map&lt;String, Object&gt;，数组应该是name-value-name-value...的顺序。</p>
+
+<pre class="brush:groovy;">
+ActionContext actionContext = ...;
+
+//执行行为使用Object[]传参，可以有多个，要成对出现
+thing.doAction(name, actionContext, &quot;name&quot;, nameValue, &quot;age&quot;, ageValue...);</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickFunction>

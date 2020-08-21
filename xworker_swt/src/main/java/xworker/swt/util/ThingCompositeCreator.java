@@ -34,7 +34,7 @@ public class ThingCompositeCreator {
 	}
 	
 	/**
-	 * 设置模板模型。
+	 * 设置用于创建界面的Composite模型。
 	 * 
 	 * @param compositeThing
 	 */
@@ -52,7 +52,7 @@ public class ThingCompositeCreator {
 	}
 	
 	/**
-	 * 设置替换模板模型的根节点的模型。
+	 * 用于替换setCompositeThing(Thing Composite)方法设置的界面模型的根节点，使得用户可以自定义界面的根节点。
 	 * 
 	 * @param replaceComposite
 	 */

@@ -1,4 +1,4 @@
-%1596092214430
+%1596509384388
 @
 sname=JettyServer
 slabel=JettyServer
@@ -13,16 +13,52 @@ Sdescription=
 #$@text#$@
 <p>Jetty服务器，版本从Jetty9开始。</p>
 
-<p><strong>SSL的KeyStore的生成方法</strong></p>
+<p><strong>实例和变量</strong></p>
 
-<pre class="brush:plain;">
-keytool -genkey -dname &quot;cn=localhost, ou=XWorker.org., o=XWorker.org, l=xworker, st=xworker, c=CN&quot; -alias jetty -keystore jettykeystore.jks -storepass xworker -keypass xworker -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -validity 3650 -ext SAN=dns:localhost
-</pre>
+<p>&nbsp;&nbsp;&nbsp; 每一个JettyServer模型只会同时有一个Server的实例，使用独立的新的变量上下文，可以通过下面的方法获取实例。</p>
 
-<p><strong>从KeyStore生成证书</strong></p>
+<ul>
+	<li><strong>ThingObject&lt;Server&gt; getServer()</strong><br />
+	返回模型所保存的Server实例。</li>
+</ul>
 
-<pre class="brush:plain;">
-keytool -export -alias jetty -storepass xworker -file cert.crt -keystore jettykeystore.jks</pre>
+<p>&nbsp;&nbsp;&nbsp; JettyServer内部创建的变量都保存到全局上下文中。</p>
+
+<p><strong>Jetty基础</strong></p>
+
+<ul>
+	<li><strong>Connectors</strong><br />
+	连接器。用于监听端口或其它连接服务器的方式。JettyServer模型本身可以快速设置监听，如还有其它要求则可以通过Connectors子节点自行添加。<br />
+	&nbsp;</li>
+	<li><strong>Handlers</strong><br />
+	处理器，用于处理连接。WEB应用、统计、IP限制等等都属于处理器。处理器需要在Handlers子节点中添加。<br />
+	&nbsp;</li>
+	<li><strong>RequestLogs</strong><br />
+	请求日志。记录日志的方法。</li>
+</ul>
+
+<p><strong>WEB应用</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 处理WEB应用的Handler是WebAppContext，可以用它来发布WAR或目录。</p>
+
+<p><strong>SSL</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如要使用SSL，那么需要指定keystore和storepass。使用Java生成政府的方法如下：</p>
+
+<ul>
+	<li><strong>SSL的KeyStore的生成方法</strong><br />
+	keytool -genkey -dname &quot;cn=localhost, ou=XWorker.org., o=XWorker.org, l=xworker, st=xworker, c=CN&quot; -alias jetty -keystore jettykeystore.jks -storepass xworker -keypass xworker -keyalg RSA -keysize 2048 -sigalg SHA256withRSA -validity 3650 -ext SAN=dns:localhost<br />
+	&nbsp;</li>
+	<li><strong>从KeyStore生成证书</strong><br />
+	keytool -export -alias jetty -storepass xworker -file cert.crt -keystore jettykeystore.jks</li>
+</ul>
+
+<p><strong>事件</strong></p>
+
+<ul>
+	<li><strong>void init(Server server)</strong><br />
+	当Jetty的服务器启动后执行。&nbsp;</li>
+</ul>
 
 <p><strong>可以重写的方法：</strong></p>
 
@@ -32,9 +68,6 @@ keytool -export -alias jetty -storepass xworker -file cert.crt -keystore jettyke
 	&nbsp;</li>
 	<li><strong>boolean isStopAtShutdown()</strong><br />
 	是否在JVM结束时stop。<br />
-	&nbsp;</li>
-	<li><strong>void init(Server server)</strong><br />
-	执行额外的初始化操作。&nbsp;<br />
 	&nbsp;</li>
 	<li><strong>boolean isSsl()</strong><br />
 	是否使用SSL。<br />
@@ -372,6 +405,57 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=getSslPort
+    @/@actions/@getVariables
+    sname=getVariables
+    sattributeName=variables
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getVariables
+    @/@actions/@getServer
+    sname=getServer
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.jetty.JettyServer
+    smethodName=getServerObject
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getServer
   @/@name
   sname=name
   sshowLabel=true
@@ -491,6 +575,29 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=stopAtShutdown
+  @/@variables
+  sname=variables
+  sinputtype=textarea
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=variables
   @/@description
   sname=description
   sinputtype=html
@@ -630,7 +737,7 @@ sth_mark=false
 
 <p><strong>其他</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 其它一般是独立功能的Handle。</p>
+<p>&nbsp;&nbsp;&nbsp; 其它一般是独立功能的Handler。</p>
 #$@text#$@
   snotXmlAttribute=false
   sjson_isArray=false
@@ -716,7 +823,10 @@ sth_mark=false
   sinitialization=false
   smodifier=public
   sinheritDescription=false
-  sdescription=<p>只有第一个子节点会生效。</p>
+  Sdescription=
+#$@text#$@
+<p>日志，只有第一个子节点会生效。</p>
+#$@text#$@
   snotXmlAttribute=false
   sjson_isArray=false
   sth_createIndex=false
@@ -804,6 +914,10 @@ sth_mark=false
   sinitialization=false
   smodifier=public
   sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>连接器，可以设置多个。</p>
+#$@text#$@
   snotXmlAttribute=false
   sjson_isArray=false
   sth_createIndex=false
@@ -895,7 +1009,7 @@ sth_mark=false
   sid=VariablesDescs
     @/@VariablesDescs/@var
     sname=var
-    svarName=_thingName_
+    svarName=server
     spassive=false
     sscope=0
     stype=object
@@ -910,3 +1024,156 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=var
+  @/@sswtMenus
+  sname=sswtMenus
+  sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=sswtMenus
+    @/@sswtMenus/@menuDefine
+    sname=menuDefine
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=menuDefine
+      @/@sswtMenus/@menuDefine/@Jetty
+      sname=Jetty
+      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=Jetty
+    @/@sswtMenus/@menuSetting
+    sname=menuSetting
+    smenuType=Jetty
+    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=menuSetting
+      @/@sswtMenus/@menuSetting/@start
+      sname=start
+      slabel=Start
+      sisSplit=false
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=start
+        @/@sswtMenus/@menuSetting/@start/@actions
+        sname=actions
+        sdescriptors=xworker.lang.Menu/@actions
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=actions
+          @/@sswtMenus/@menuSetting/@start/@actions/@run
+          sname=run
+          sthingPath=var:currentThing
+          sactionName=start
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@ThingAction1
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=run
+      @/@sswtMenus/@menuSetting/@stopStope
+      sname=stop
+      slabel=Stop
+      sisSplit=false
+      sattachParam=true
+      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=stopStope
+        @/@sswtMenus/@menuSetting/@stopStope/@actions
+        sname=actions
+        sdescriptors=xworker.lang.Menu/@actions
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=actions
+          @/@sswtMenus/@menuSetting/@stopStope/@actions/@run
+          sname=run
+          sthingPath=var:currentThing
+          sactionName=stop
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@ThingAction1
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=run

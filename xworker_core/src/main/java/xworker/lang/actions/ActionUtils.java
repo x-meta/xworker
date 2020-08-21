@@ -250,21 +250,26 @@ public class ActionUtils {
 		String attributeName = self.getString("attributeName");
 		String value = realSelf.getStringBlankAsNull(attributeName);
 		if(value != null){
+			Thing thing = null;
 			World world = World.getInstance();
-			Thing thing = world.getThing(value);
+			if(value.indexOf(":") != -1) {
+				Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
+				if(obj instanceof Thing){
+					return (Thing) obj;
+				}else if(obj instanceof String){
+					thing = world.getThing((String) obj);
+					if(thing != null){
+						return thing;
+					}
+				}
+			}
+						
+			thing = world.getThing(value);
 			if(thing != null){
 				return thing;
 			}
 			
-			Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
-			if(obj instanceof Thing){
-				return (Thing) obj;
-			}else if(obj instanceof String){
-				thing = world.getThing((String) obj);
-				if(thing != null){
-					return thing;
-				}
-			}
+			
 		}
 		
 		String childThingName = self.getStringBlankAsNull("childThingName");

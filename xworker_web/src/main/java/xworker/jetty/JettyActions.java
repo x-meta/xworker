@@ -14,7 +14,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 
-import xworker.cache.object.ObjectContext;
+import xworker.cache.object.ThingObject;
 import xworker.cache.object.ObjectManager;
 
 public class JettyActions {
@@ -38,7 +38,7 @@ public class JettyActions {
 	}
 
 	private static Server getServer(Thing thing){
-		ObjectContext context = ObjectManager.get("xworker.jetty.Jetty", thing);
+		ThingObject context = ObjectManager.get("xworker.jetty.Jetty", thing);
 		if(context != null){
 			return (Server) context.getObject();
 		}else{

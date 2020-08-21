@@ -150,11 +150,15 @@ public class HttpUtilActions {
 			int index = type.lastIndexOf(".");
 			if(index > 0) {
 				type = type.substring(index - 1, type.length());
+			} else {
+				type = null;
 			}
 			
-			List<DataObject> datas = DataObjectUtil.query(typeThing.getMetadata().getPath(), UtilMap.toMap("fileExt", type), actionContext);
-			if(datas.size() > 0) {
-				contentType = datas.get(0).getString("contentType");
+			if(type != null) {
+				List<DataObject> datas = DataObjectUtil.query(typeThing.getMetadata().getPath(), UtilMap.toMap("fileExt", type), actionContext);
+				if(datas.size() > 0) {
+					contentType = datas.get(0).getString("contentType");
+				}
 			}
 		}
 		

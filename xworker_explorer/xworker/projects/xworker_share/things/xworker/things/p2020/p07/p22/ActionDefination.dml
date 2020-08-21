@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <QuickFunction name="ActionDefination" descriptors="xworker.swt.xworker.ThingRegistThing" label="定义动作"
-     type="thingDesc" group="-1000|Actions.-800|definition" groupDescriptor="true" icon="icons/html.png"
-     th_sortWeight="-800" simpleBrowser="true" en_label="Defination" th_createIndex="true"
-     th_registThing="child|xworker.example.ExamplesIndex">
-    <description><![CDATA[<h2>动作定义示例</h2>
+     type="thingDesc" group="dynamicModel.-1000|Actions.-800|definition" groupDescriptor="true"
+     icon="icons/html.png" th_sortWeight="800" simpleBrowser="true" en_label="Defination"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>定义动作</h1>
 
-<p>&nbsp;&nbsp;&nbsp; 动作定义示例展示的是对象类动作。示例有两个模型，分别是IteratorFileLine和IteratorFileLineJava。它们的功能是一样，用于遍按行遍历文件的内容，是分别用GroovyAction和JavaAction实现的。</p>
+<p>&nbsp;&nbsp;&nbsp; 定义新的动作一般是定义对象类的动作。</p>
 
-<h3>file属性和getFile()方法</h3>
+<h2>1.实现run方法</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 动作相当于函数和方法，有时需要外部传入的参数。</p>
+<p>&nbsp;&nbsp;&nbsp; 对象类的动作需要实现一个名为run的方法。</p>
+
+<h2>2.继承SelfAction</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类的动作一般要继承xworker.lang.actions.SelfAction模型，这样在run方法里可以通过self变量获取动作自己。</p>
+
+<h2>3.通过属性和行为传参</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 对象类动作一般通过属性和行为一起传参数据。比如一个对象类动作需要一个名为file的参数，那么可以设置一个名为file的属性，并设置一个名为getFile的方法。其中getFile方法一般是使用分组_actions.thingaction下的动作实现的。</p>
+
+<h2>4.事件和回调</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 一般通过重写行为来实现事件和回调的功能。</p>
+
+<h2>5.示例说明</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 示例有两个模型，分别是IteratorFileLine和IteratorFileLineJava。它们的功能是一样，用于遍按行遍历文件的内容，是分别用GroovyAction和JavaAction实现的。</p>
+
+<h3>5.1.file属性和getFile()方法</h3>
 
 <p>&nbsp;&nbsp;&nbsp; file属性和getFile()方法展示的是一般处理传入参数的方法。getFile()方法用于返沪需要遍历的文件。getFile()方法的默认实现是从file属性上取值，根据值返回相应的对象。如果默认的getFile()方法不能满足需要，用户也可以重写getFile()方法。</p>
 
-<h3>doLine()</h3>
+<h3>5.2.doLine()</h3>
 
 <p>&nbsp;&nbsp;&nbsp; 用于可以通过重写doLine()方法来处理遍历时文件的每一行数据。</p>
 

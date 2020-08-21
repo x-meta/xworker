@@ -410,7 +410,7 @@ public class DataObjectEditor {
 	}
 	
 	public static void setItemStatus(ToolItem item, boolean status){
-	     if(item != null){
+	     if(item != null && item.isDisposed() == false){
 	         item.setEnabled(status);
 	     }
 	}

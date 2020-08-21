@@ -59,6 +59,7 @@ public class Task implements Runnable{
 	private Map<String, Object> parameters;
 	/** Thread方式执行时创建的Thread */
 	private Thread thread;
+	private Map<String, Object> data;
 	
 	public Task(Thing thing, ActionContext actionContext, boolean callback, boolean callbackCancel, boolean schedule){
 		synchronized(Task.class){
@@ -90,6 +91,26 @@ public class Task implements Runnable{
 		if(parameters == null){
 			parameters = UtilAction.getChildChildsResultMap(thing, "Variables", actionContext);
 		}*/
+	}
+	
+	public void set(String key, Object value) {
+		if(data == null) {
+			data = new HashMap<String, Object>();
+		}
+		
+		data.put(key, value);
+	}
+	
+	public Object get(String key) {
+		if(data == null) {
+			return null;
+		}
+		
+		return data.get(key);
+	}
+	
+	public Map<String, Object> getData(){
+		return data;
 	}
 
 	public int getId(){

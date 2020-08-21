@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Editor name="FunctionEditor" descriptors="xworker.swt.app.Editor">
+    <EditorComposite>
+        <FillLayout name="FillLayout"></FillLayout>
+        <ExtendWidget name="ExtendWidget" extendWidgetPath="xworker.ui.function.FunctionRequestShell/@composite"></ExtendWidget>
+    </EditorComposite>
+    <OutlineComposite>
+        <FillLayout name="FillLayout"></FillLayout>
+        <Code name="createOutline" descriptors="xworker.swt.Widgets/@Code">
+            <code><![CDATA[import org.xmeta.ActionContext;
+
+def browserThing = world.getThing("xworker.ui.session.swt.DialogOutline/@composite");
+def ac = new ActionContext();
+try{
+    ac.push().put("parent", OutlineComposite);
+    def outline = browserThing.doAction("create", ac);
+    actionContext.getScope(0).put("paramHelpBrowserUIHandler", ac.get("paramHelpBrowserUIHandler"));
+    actionContext.getScope(0).put("functionHelpBrowserUIHandler", ac.get("functionHelpBrowserUIHandler")); 
+    actionContext.getScope(0).put("browserUIHandler", ac.get("browserUIHandler")); 
+       
+    	
+}finally{
+    ac.pop();
+}]]></code>
+        </Code>
+    </OutlineComposite>
+    <ActionContainer name="actions" extends="xworker.swt.app.editors.NoopActionContainer,xworker.ui.function.FunctionRequestShell/@composite/@actions">
+        <GroovyAction name="setContent">
+            <code><![CDATA[//把request保存的全局变量上下文中
+actionContext.g().put("request", params.request);
+
+//初始化handler
+actions.doAction("initHandlers", actionContext, "handlers", params.handlers);
+//初始化函数请求
+actions.doAction("initFunctionRequest", actionContext, "rquest", params.request);]]></code>
+        </GroovyAction>
+        <GroovyAction name="getSimpleTitle" code="return request.getThing().getMetadata().getLabel();"></GroovyAction>
+        <GroovyAction name="getTitle" code="return request.getThing().getMetadata().getPath();"></GroovyAction>
+        <GroovyAction name="isSameContent" code="return request == params.request;"></GroovyAction>
+        <GroovyAction name="doDispose">
+            <code><![CDATA[import xworker.ui.function.FunctionRequestUIFactory;
+
+FunctionRequestUIFactory.removeUI(request);]]></code>
+        </GroovyAction>
+    </ActionContainer>
+</Editor>

@@ -20,6 +20,14 @@ public interface IEditorContainer {
 	public IEditor openEditor(String id, Thing editor, Map<String, Object> params);
 	
 	/**
+	 * 返回指定ID的编辑器，如果存在则返回，否则返回null。
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public IEditor getEditor(String id);
+	
+	/**
 	 * 编辑器的状态变更了，通知编辑器容器。
 	 * 
 	 * @param editorActions

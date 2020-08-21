@@ -8,22 +8,22 @@ import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
 /**
- * 对象的上下文。
+ * 和模型相关的对象。
  * 
  * @author Administrator
  *
  */
-public class ObjectContext {
+public class ThingObject<T> {
 	/** 对象实例 */
-	Object object;
+	T object;
 	
-	/** 生成对象的事物 */
+	/** 生成对象的模型 */
 	Thing thing;
 	
-	/** 事物在生成对象时的变量上下文 */
+	/** 变量上下文 */
 	ActionContext actionContext;
 	
-	public ObjectContext(Thing thing, Object object, ActionContext actionContext){
+	public ThingObject(Thing thing, T object, ActionContext actionContext){
 		this.thing = thing;
 		this.object = object;
 		this.actionContext = actionContext;
@@ -35,7 +35,7 @@ public class ObjectContext {
 	 * @param name
 	 * @return
 	 */
-	public Object doAction(String name){
+	public <V> V doAction(String name){
 		return thing.doAction(name, actionContext, UtilMap.toMap(new Object[]{"object", object}));
 	}
 
@@ -46,7 +46,7 @@ public class ObjectContext {
 	 * @param params
 	 * @return
 	 */
-	public Object doAction(String name, Map<String, Object> params){
+	public <V> V doAction(String name, Map<String, Object> params){
 		Map<String, Object> p = new HashMap<String, Object>();
 		if(params != null){
 			p.putAll(params);
@@ -55,12 +55,16 @@ public class ObjectContext {
 		
 		return thing.doAction(name, actionContext, p);
 	}	
+		
+	public <V> V doAction(String name, Object ... params) {
+		return thing.doExec(name, actionContext, params);
+	}
 	
-	public Object getObject() {
+	public T getObject() {
 		return object;
 	}
 
-	public void setObject(Object object) {
+	public void setObject(T object) {
 		this.object = object;
 	}
 
@@ -70,6 +74,14 @@ public class ObjectContext {
 
 	public void setThing(Thing thing) {
 		this.thing = thing;
+	}
+	
+	public <V> V get(String  key) {
+		if(actionContext != null) {
+			return actionContext.getObject(key);
+		}
+		
+		return null;
 	}
 
 	public ActionContext getActionContext() {

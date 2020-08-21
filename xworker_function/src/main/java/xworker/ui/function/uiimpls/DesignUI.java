@@ -15,11 +15,11 @@
 ******************************************************************************/
 package xworker.ui.function.uiimpls;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
@@ -28,10 +28,11 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.swt.app.IEditor;
 import xworker.swt.design.Designer;
 import xworker.ui.function.FunctionRequest;
 import xworker.ui.function.FunctionRequestUI;
-import xworker.ui.function.FunctionRequestUIFactory;
+import xworker.util.XWorkerUtils;
 
 /**
  * 在事物管理器上打开一个设计函数流程的UI。
@@ -60,6 +61,17 @@ public class DesignUI extends FunctionRequestUI{
 		    return;
 		}
 
+		Thing editor = World.getInstance().getThing("xworker.ui.function.FunctionEditor");
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("request", functionRequest);
+		params.put("handlers", this.handlers);
+		String editorId = "functionRequest_" + String.valueOf(functionRequest.hashCode());
+		
+		IEditor ieditor = (IEditor) XWorkerUtils.openEditor(editorId, editor, params);
+		this.actionContext = ieditor.getActionContext();
+		
+		/*
+		
 		//要打开的事物
 		String thingPath = "xworker.ui.function.FunctionRequestShell/@composite";
 		final String compositeId = "functionRequest_" + String.valueOf(functionRequest.hashCode());
@@ -82,7 +94,7 @@ public class DesignUI extends FunctionRequestUI{
 			
 				//创建UI
 				CTabItem citem = (CTabItem) actions.doAction("openCompoisteAtTab", UtilMap.toMap(new Object[]{"compositeThing", thing, "title", title, "path", compositeId}));
-				if(citem != tabItem){
+				if(citem != tabItem){					
 					tabItem = citem;
 					
 					//第一次初始化
@@ -105,7 +117,7 @@ public class DesignUI extends FunctionRequestUI{
 		
 		if(!display.isDisposed()){
 			display.syncExec(runnable);
-		}
+		}*/
 	}
 	
 	@Override

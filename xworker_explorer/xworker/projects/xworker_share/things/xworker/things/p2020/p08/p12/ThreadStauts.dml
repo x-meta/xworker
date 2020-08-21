@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="ThreadStauts" descriptors="xworker.swt.xworker.ThingRegistThing" label="线程状态"
+     type="thingDesc" group="dynamicModel.-1000|Actions.variables" icon="icons/html.png"
+     th_sortWeight="50" simpleBrowser="true" en_label="Thread Stauts" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>线程状态</h1>
+
+<h2>1.简介</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;线程状态用于语法类的模型，比如Break、Coninue、Return、Try/Catch等等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 语法类模型通常不是单独生效的。比如Break和Continue一般是在循环里使用的，因此Break和Continue模型一般是循环模型的子节点，这些模型在循环模型被调用。</p>
+
+<h2>2.While模型示例</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; While模型是循环，循环时执行子节点，如果子节点执行后变量上下文的线程状态设置为BREAK或CONTINUE等等时，则会做相应的处理。While模型的实现的示意代码如下。</p>
+
+<pre class="brush:java;">
+//判断是否满足while的条件
+while(IfCreator.checkCondition(self, actionContext)){ 
+        //执行子节点
+	for (Thing child : childActions.getChilds()) {
+		Action action = world.getAction(child);
+		if (action != null) {
+			result = action.run(actionContext, null, true);
+		}
+
+                //判断子节点的线程状态
+		int sint = actionContext.getStatus();
+		if (sint != ActionContext.RUNNING) {
+			break;
+		}
+	}
+
+	//判断循环的状态
+	if (actionContext.getStatus() == ActionContext.BREAK) {
+		actionContext.setStatus(ActionContext.RUNNING);
+		break;
+	} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+		actionContext.setStatus(ActionContext.RUNNING);
+		continue;
+	} else if (actionContext.getStatus() != ActionContext.RUNNING) {
+		break;
+	}
+}</pre>
+
+<h2>3.Break模型实例</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Break模型用于设置线程的状态为BREAK。代码如下。</p>
+
+<pre class="brush:java;">
+public class BreakCreator {
+	public static void run(ActionContext context){	    
+        context.setStatus(ActionContext.BREAK);
+    }	
+
+}</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickFunction>

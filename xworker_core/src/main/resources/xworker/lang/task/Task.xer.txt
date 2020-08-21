@@ -1,4 +1,4 @@
-^1585710545581
+^1596683647335
 @
 sname
 Task
@@ -32,6 +32,14 @@ Sdescription
 
 <p>&nbsp;&nbsp;&nbsp; 如果params设置了则从变量上下文中获取，支持ognl:var:等，否则或者通过Variables子节点设置，返回的是Map&lt;String, Object&gt;。</p>
 
+<p><strong>定时任务</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在Schedule中设置。</p>
+
+<p><strong>固定日期的定时任务</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如每天三点中执行的任务，那么选择fixTime=true,fixTimeStr=03:00，timeUnit=DAYS，period=1。</p>
+
 <p><strong>可以重写的方法</strong></p>
 
 <ul>
@@ -48,16 +56,13 @@ Sdescription
 	返回要执行的事物或动作。<br />
 	&nbsp;</li>
 	<li><strong>String getActionName()</strong><br />
-	返回要执行的动作名。如果为null或空，那么把ActionThing转化为动作执行，否则执行ActionThing对应的行为。执行的参数间doTask方法</li>
+	返回要执行的动作名。如果为null或空，那么把ActionThing转化为动作执行，否则执行ActionThing对应的行为。执行的参数间doTask方法<br />
+	　</li>
+	<li><strong>Composite createUI(Task task)</strong><br />
+	创建UI，在XWorekr的任务管理器中选中一个任务时，可以创建自定义的UI来显示相关内容。</li>
 </ul>
 
-<p><strong>定时任务</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 在Schedule中设置。</p>
-
-<p><strong>固定日期的定时任务</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 比如每天三点中执行的任务，那么选择fixTime=true,fixTimeStr=03:00，timeUnit=DAYS，period=1。</p>
+<p>&nbsp;</p>
 #$@text#$@
 snotXmlAttribute
 false
@@ -264,6 +269,64 @@ false
     false
     sid
     createUI
+      @/@actions/@createUI/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      ins
+        @/@actions/@createUI/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.Task
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        task
     @/@actions/@doTask
     sname
     doTask
@@ -1464,10 +1527,8 @@ false
   false
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>要执行的动作事物。</p>
-#$@text#$@
+  sdescription
+  <p>要执行的动作事物。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur
@@ -1511,10 +1572,8 @@ false
   false
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>要执行的动作名。</p>
-#$@text#$@
+  sdescription
+  <p>要执行的动作名。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur

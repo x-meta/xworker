@@ -1,6 +1,7 @@
 package xworker.jetty;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.jetty.server.AsyncNCSARequestLog;
 import org.eclipse.jetty.server.Handler;
@@ -10,26 +11,27 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.Slf4jRequestLog;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
-import xworker.cache.object.ObjectContext;
 import xworker.cache.object.ObjectManager;
+import xworker.cache.object.ThingObject;
+import xworker.lang.executor.Executor;
 
 public class JettyServer {
-	private static Logger logger = LoggerFactory.getLogger(JettyServer.class);
+	//private static Logger logger = LoggerFactory.getLogger(JettyServer.class);
+	private final static String TAG = JettyServer.class.getName();
+	private final static String CACHE_KEY = "xworker.jetty.Jetty"; 
 	
-	public static Server start(ActionContext actionContext) throws Exception {
-		Thing self = actionContext.getObject("self");
+	public static Server start(ActionContext parentContext) throws Exception {
+		Thing self = parentContext.getObject("self");
 		
 		Server server = getServer(self);
 		if(server != null) {
 			if(server.isStarted() || server.isStarting() || server.isRunning()) {
-				logger.warn("JettyServer alreay started, path=" + self.getMetadata().getPath());
+				Executor.warn(TAG, "JettyServer alreay started, path=" + self.getMetadata().getPath());
 				//正在运行或启动中
 				return server;
 			}
@@ -37,10 +39,18 @@ public class JettyServer {
 			server.stop();
 		}
 		
+		//创建独立的变量上下文
+		ActionContext actionContext = new ActionContext();
+		Map<String, Object> variables = self.doAction("getVariables", actionContext);
+		if(variables != null) {
+			actionContext.g().putAll(variables);
+		}
+		
 		int port = self.doAction("getPort", actionContext);		
 		boolean stopAtShutDown = UtilData.isTrue(self.doAction("isStopAtShutdown", actionContext));
 		
 		server =  new Server();
+		actionContext.g().put("server", server);
 		if(UtilData.isTrue(self.doAction("isSsl", actionContext))) {
 	        // create factory for ssl
 	        final SslContextFactory sslContextFactory = new SslContextFactory();
@@ -177,13 +187,25 @@ public class JettyServer {
 		}
 	}
 	
-	private static Server getServer(Thing thing){
-		ObjectContext context = ObjectManager.get("xworker.jetty.Jetty", thing);
+	@SuppressWarnings("unchecked")
+	public static Server getServer(Thing thing){
+		ThingObject<Server> context = (ThingObject<Server>) ObjectManager.get(CACHE_KEY, thing);
 		if(context != null){
 			return (Server) context.getObject();
 		}else{
 			return null;
 		}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ThingObject<Server> getServerObject(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		return (ThingObject<Server>) ObjectManager.get(CACHE_KEY, self);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ThingObject<Server> getServerObject(Thing thing){
+		return (ThingObject<Server>) ObjectManager.get(CACHE_KEY, thing);
 	}
 	
 	private static void putServer(Thing thing, Server server, ActionContext actionContext){

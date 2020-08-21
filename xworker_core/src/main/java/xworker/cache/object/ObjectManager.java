@@ -19,7 +19,7 @@ public class ObjectManager {
 	/**
 	 * 对象缓存。
 	 */
-	private static Map<String, Map<String, ObjectContext>> objectCaches = new HashMap<String, Map<String, ObjectContext>>();
+	private static Map<String, Map<String, ThingObject<?>>> objectCaches = new HashMap<String, Map<String, ThingObject<?>>>();
 	
 	/**
 	 * 使用事物的描述者作为类型获对象上下文。
@@ -27,7 +27,7 @@ public class ObjectManager {
 	 * @param thing
 	 * @return
 	 */
-	public static ObjectContext get(Thing thing){
+	public static ThingObject<?> get(Thing thing){
 		return get(thing.getDescriptor().getMetadata().getPath(), thing);
 	}
 	
@@ -38,8 +38,8 @@ public class ObjectManager {
 	 * @param thing
 	 * @return
 	 */
-	public static ObjectContext get(String type, Thing thing){
-		Map<String, ObjectContext> contexts = objectCaches.get(type);
+	public static ThingObject<?> get(String type, Thing thing){
+		Map<String, ThingObject<?>> contexts = objectCaches.get(type);
 		if(contexts != null){
 			return contexts.get(thing.getMetadata().getPath());
 		}
@@ -66,14 +66,15 @@ public class ObjectManager {
 	 * @param object
 	 * @param actionContext
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void put(String type, Thing thing, Object object, ActionContext actionContext){
-		Map<String, ObjectContext> contexts = objectCaches.get(type);
+		Map<String, ThingObject<?>> contexts = objectCaches.get(type);
 		if(contexts == null){
-			contexts = new HashMap<String, ObjectContext>();
+			contexts = new HashMap<String, ThingObject<?>>();
 			objectCaches.put(type, contexts);
 		}
 		
-		ObjectContext context = new ObjectContext(thing, object, actionContext);
+		ThingObject<?> context = new ThingObject(thing, object, actionContext);
 		contexts.put(thing.getMetadata().getPath(), context);
 	}
 	
@@ -93,7 +94,7 @@ public class ObjectManager {
 	 * @param thing
 	 */
 	public static void remove(String type, Thing thing){
-		Map<String, ObjectContext> contexts = objectCaches.get(type);
+		Map<String, ThingObject<?>> contexts = objectCaches.get(type);
 		if(contexts != null){
 			contexts.remove(thing.getMetadata().getPath());
 		}
@@ -115,11 +116,11 @@ public class ObjectManager {
 		return list;
 	}
 	
-	public static List<ObjectContext> getObjectContextList(String type){
-		Map<String, ObjectContext> contexts = objectCaches.get(type);
-		List<ObjectContext> list = new ArrayList<ObjectContext>();
+	public static List<ThingObject<?>> getThingObjectList(String type){
+		Map<String, ThingObject<?>> contexts = objectCaches.get(type);
+		List<ThingObject<?>> list = new ArrayList<ThingObject<?>>();
 		if(contexts != null){
-			for(String key : contexts.keySet()){
+			for(String key : contexts.keySet()){ 
 				list.add(contexts.get(key));
 			}
 		}
@@ -127,7 +128,7 @@ public class ObjectManager {
 		return list;
 	}
 	
-	public static Map<String, ObjectContext> getObjectContexts(String type){
+	public static Map<String, ThingObject<?>> getThingObjectMap(String type){
 		return objectCaches.get(type);
 	}
 }

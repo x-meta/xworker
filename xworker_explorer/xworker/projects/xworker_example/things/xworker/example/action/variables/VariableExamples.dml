@@ -1,4 +1,4 @@
-%1595659727662
+%1597754109308
 @
 sname=VariableExamples
 slabel=VariableExamples
@@ -280,8 +280,15 @@ Executor.info(TAG, file.getName());
   Scode=
 #$@text#$@
 //修改局部变量，Modify local variables
+def localBindings = actionContext.l();
+if(localBindings != null){
+    //局部变量范围可能不存在，如果没有设置的化
+    localBindings.put("x", 1);
+}
+
+//顶部的变量栈对通常是设置给子节点用的
 def bindings = actionContext.peek();
-bindings.peek().put("x", 1);
+bindings.put("x", 1);
 
 //修改全局变量，Modify global variables
 actionContext.g().put("x", 1);
@@ -289,6 +296,7 @@ actionContext.g().put("x", 1);
   sinterpretationType=Action
   screateLocalVarScope=false
   ssaveReturn=false
+  sswitchResult=false
   sdebugLog=false
   sdescriptors=xworker.lang.actions.Actions/@GroovyAction
   sinheritDescription=false

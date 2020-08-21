@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="CallObject" descriptors="xworker.swt.xworker.ThingRegistThing" label="调用Java对象"
+     type="thingDemo" path="xworker.things.p2020.p08.p14.CallObject/@ActionThing/@callJavaObject"
+     group="dynamicModel.-1000|Actions.commonactions.javaaction" icon="icons/application.png"
+     th_sortWeight="20" en_label="Call Object" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>调用Java对象</h1>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction也可以调用Java对象的方法。参看下面几个注解。</p>
+
+<h2>1.@ActionClass</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;ActionClass注解用来说明如果调用的是Java对象的方法，那么要指明获取对象的方法，其中获取对象的方法必须是静态的参数固定为ActionContext的方法，获取对象的方法名设定在creator上。</p>
+
+<h2>2.@ActionField</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个字段设定为ActionField，那么每次执行方法是都会为该字段赋值，该字段最好是public以避免不能正确赋值。</p>
+
+<h2>3.调用对象的方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction需要指定要调用的方法，可以用参数的注解。</p>
+
+<h2>4.Java代码示例</h2>
+
+<pre class="brush:java;">
+package xworker.examples;
+
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionClass;
+import org.xmeta.annotation.ActionField;
+
+@ActionClass(creator=&quot;getUser&quot;)
+public class User {
+	@ActionField
+	public String name;
+	
+	int age;
+	
+	public void println() {
+		System.out.println(name + &quot; age is &quot; + age);
+	}
+	
+	public static User getUser(ActionContext actionContext) {
+		User user = new User();
+		user.age = 20;
+		return user;
+	}
+}
+</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    <ActionThing>
+        <JavaAction name="callJavaObject" outerClassName="xworker.examples.User" methodName="println"></JavaAction>
+    </ActionThing>
+</QuickFunction>

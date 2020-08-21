@@ -76,7 +76,8 @@ public class AppTaskManager {
 				taskThing.put("singleInstance", "true");
 				taskThing.put("group", "xworker.app");
 				taskThing.put("schedule", "true");
-				setTaskThingDesc(taskThing);
+				taskThing.put("taskDataObject", taskObj);
+				setTaskThingDesc(taskThing);				
 				//taskThing.getMetadata().setPath(thingPath);
 				taskThing.getMetadata().setLastModified(lastModified);
 				taskThing.doAction("run", actionContext);
@@ -123,12 +124,16 @@ public class AppTaskManager {
 		Thing actionThing = World.getInstance().getThing(actionPath);
 		if(actionThing != null){
 			taskThing.put("label", actionThing.getString("label"));
-			String description = actionThing.getStringBlankAsNull("description");
+			String description = actionThing.getMetadata().getDescription();
+			/*
 			if(description == null){
 				description = "";
 			}
-			description = "动作事物：<a href=\"javascript:invoke('thing:" + actionPath + "')\">" + actionPath + "</a></p>" +
-					description;
+			description = "<a href=\"javascript:invoke('thing:" + actionPath + "')\">" + actionPath + "</a></p>" +
+					description;*/
+			taskThing.put("description", description);
+		}else {
+			String description = "Action not exists, action=" + actionPath;
 			taskThing.put("description", description);
 		}
 		
