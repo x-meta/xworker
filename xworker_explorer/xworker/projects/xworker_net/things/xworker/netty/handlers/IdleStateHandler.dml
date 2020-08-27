@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="IdleStateHandler" descriptors="xworker.lang.MetaDescriptor3">
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.io.netty.handlers.HandlerActions"
+             methodName="createIdleStateHandler"></JavaAction>
+        <GetInt name="getReaderIdleTimeSeconds" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="readerIdleTimeSeconds"></GetInt>
+        <GetInt name="getWriterIdleTimeSeconds" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="writerIdleTimeSeconds"></GetInt>
+        <GetInt name="getAllIdleTimeSeconds" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="allIdleTimeSeconds"></GetInt>
+        <JavaAction name="onReaderIdle" outerClassName="xworker.io.netty.handlers.IdleThingHandler"
+             methodName="onReaderIdle"></JavaAction>
+        <NOOP name="onWriterIdel"></NOOP>
+        <NOOP name="onAllIdel"></NOOP>
+        <GetBoolean name="isEvent" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="event"></GetBoolean>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="readerIdleTimeSeconds"></attribute>
+    <attribute name="writerIdleTimeSeconds"></attribute>
+    <attribute name="allIdleTimeSeconds"></attribute>
+    <attribute name="event">
+        <description><![CDATA[<p>如果选中，那么会同时添加一个Handler处理相关的事件，此Hanlder将调用本模型的相关方法。</p>
+
+<ul>
+	<li><strong>onReaderIdle(ChannelHandlerContext ctx, Object evt)</strong><br />
+	读空闲。默认实现ctx.close();<br />
+	&nbsp;</li>
+	<li><strong>onWriterIdel(ChannelHandlerContext ctx, Object evt)</strong><br />
+	写空闲。默认实现不操作，应该发送一个心跳之类的数据包。<br />
+	&nbsp;</li>
+	<li><strong>onAllIdel(ChannelHandlerContext ctx, Object evt)</strong><br />
+	所有空闲。默认实现不操作。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

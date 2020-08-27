@@ -55,7 +55,7 @@ public class StaticDataObjectList {
 		Thing staticThing = self.doAction("getStaticThing", actionContext);
 		Thing dataDesc = self.doAction("getDataObject", actionContext);
 		if(dataDesc == null) {
-			throw new ActionException("DataDesc can not be null, path=" + self.getMetadata().getPath());
+			throw new ActionException("DataObject can not be null, path=" + self.getMetadata().getPath());
 		}
 		if(staticThing == null) {
 			staticThing = self;
@@ -64,7 +64,7 @@ public class StaticDataObjectList {
 		}
 		
 		//创建或返回数据对象列表		
-		String staticKey = "StaticDataObjectList：" + dataDesc.getMetadata().getPath();
+		String staticKey = "StaticDataObjectList：" + staticThing.getMetadata().getPath();
 		String scope = self.doAction("getScope", actionContext);
 		if("world".equals(scope)){
 			dataObjectList = World.getInstance().getData(staticKey);

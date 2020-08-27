@@ -1,6 +1,8 @@
 package xworker.swt.browser;
 
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -9,12 +11,13 @@ import xworker.swt.util.SwtUtils;
 import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
-public class TextContent {
+public class TextContent implements ProgressListener {
 	Thing thing;
 	Browser browser;
 	ActionContext actionContext;
 	ActionContext parentContext;
 	String text;
+	boolean ready = false;
 	
 	public TextContent(Thing thing, Browser browser, ActionContext parentContext) {
 		this.thing = thing;
@@ -29,6 +32,7 @@ public class TextContent {
 		Thing function = world.getThing("xworker.swt.browser.prototypes.TextContentBrowser/@getXWText");
 		function.doAction("create", actionContext, "parent", browser);
 		
+		browser.addProgressListener(this);
 		if(UtilData.isTrue(thing.doAction("isLoadUrl", parentContext))) {
 			String url = thing.doAction("getUrl", parentContext);
 			if(url == null || "".equals(url)) {
@@ -45,6 +49,9 @@ public class TextContent {
 		this.text = text;
 				
 		//告诉浏览器取内容
+		if(ready == false) {
+			return;
+		}
 		SwtUtils.evaluateBrowserScript(browser, "updateXWText()", null, actionContext);
 	}
 	
@@ -74,5 +81,18 @@ public class TextContent {
 		TextContent textContent = new TextContent(self, browser, actionContext);
 		actionContext.g().put(self.getMetadata().getName(), textContent);
 		return textContent;
+	}
+
+	@Override
+	public void changed(ProgressEvent arg0) {
+	}
+
+	@Override
+	public void completed(ProgressEvent arg0) {
+		ready = true;
+		
+		if(text != null) {
+			SwtUtils.evaluateBrowserScript(browser, "updateXWText()", null, actionContext);
+		}
 	}
 }

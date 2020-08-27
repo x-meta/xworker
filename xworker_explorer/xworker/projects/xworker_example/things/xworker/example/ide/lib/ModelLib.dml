@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="ModelLib" descriptors="xworker.lang.ActionThing" label="打包模型库">
+    <FileDialog name="ExportModelLib" _xmeta_id_="ExportHelloWorld1" descriptors="xworker.swt.actions.DialogActions/@FileDialog"
+         label="保存文件对话框" style="SAVE" fileName="model_lib.jar">
+        <actions descriptors="xworker.lang.actions.SelfAction/@actions1">
+            <JarCompressWithEntrys name="onSelected" _xmeta_id_="export" descriptors="xworker.util.jar.JarActions/@JarCompressWithEntrys"
+                 jarFile="var:fileName">
+                <manifest><![CDATA[Manifest-Version: 1.0
+Main-Class: org.springframework.boot.loader.JarLauncher
+Start-Class: org.xmeta.util.JarRunner
+XWorker-Thing: HelloWorld
+XWorker-Action: run
+XWorker-Home: .
+End:end]]></manifest>
+                <description><![CDATA[<p>导出可执行的Jar，执行的是某个事物模型。默认包含xworker_core模型库。</p>
+
+<p><strong>使用：</strong></p>
+
+<ul>
+	<li><strong>jarFile</strong><br />
+	要到处的Jar文件名。</li>
+	<li><strong>mainifest</strong><br />
+	修改manifest的XWorker-Thing和XWorker-Action来制定要执行的事物和方法。</li>
+</ul>
+
+<p><strong>依赖XWorker</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 该脚本依赖XWorker来执行，执行时系统已经装好了XWorker。</p>]]></description>
+                <Entrys>
+                    <StringEntry name="HelloWorld" path="HelloWorld.dml">
+                        <content><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="HelloWorld" descriptors="xworker.lang.ActionThing">
+    <Println name="Println" message="Hello World!"></Println>
+</ActionThing>]]></content>
+                    </StringEntry>
+                    <StringEntry name="dml" path=".dml" content="name=mylib"></StringEntry>
+                </Entrys>
+            </JarCompressWithEntrys>
+        </actions>
+    </FileDialog>
+</ActionThing>

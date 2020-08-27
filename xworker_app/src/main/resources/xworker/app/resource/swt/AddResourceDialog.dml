@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=添加资源监控&amp;en=Add resource for monitor"
+     label="AddResourceDialog">
+    <GridLayout name="GridLayout"></GridLayout>
+    <ThingDescripitonBrowser name="description">
+        <description><![CDATA[<p>如何添加资源监控？参看下面的模型。</p>
+
+<p><strong>数据对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 每一个资源监控是一个数据对象，数据数据对象是放到StaticDataObjectList中的。见<strong>CheckMayTask</strong>节点。</p>
+
+<p><strong>定时器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 监控是一般是定时定时执行的，所以放在定时器中。定时监控资源并修改相应的数据对象的属性。</p>
+]]></description>
+        <GridData name="GridData" style="FILL_HORIZONTAL" height="200"></GridData>
+    </ThingDescripitonBrowser>
+    <ThingEditor name="thingEditor">
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+        <actions>
+            <GroovyAction name="getThing">
+                <code><![CDATA[import org.xmeta.Thing;
+
+def path = "dataObjectListPath";
+if(actionContext.get("dataObjectList") != null){
+    path = dataObjectList.getMetadata().getPath();
+}
+
+def xml = template(actionContext, "path", path);
+
+def thing = new Thing();
+thing.parseXML(xml);
+
+return thing;]]></code>
+                <ActionDefined>
+                    <Freemarker name="template" descriptors="xworker.lang.text.Freemarker">
+                        <code><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+
+<Task name="ResourceTaskExample" descriptors="xworker.lang.task.Task"
+     schedule="true" period="6000">
+    <actions descriptors="xworker.lang.actions.SelfAction/@actions1">
+        <Begin name="doTask">
+            <actions>
+                <GetDataObjectFormList name="CheckMayTask" _xmeta_id_="checkHoliday" descriptors="xworker.dataObject.staticdata.StaticDataActions/@GetDataObjectFormList"
+                     staticDataObjectList="${path}"
+                     keyValues="&quot;myTaskId&quot;:resourceId" createIfNotExists="true" update="true">
+                    <actions>
+                        <GroovyAction name="getAttributes">
+                            <code><![CDATA[import xworker.util.UtilData;
+
+import java.lang.management.ManagementFactory;
+
+//设置属性
+def attrs = [:];
+def bean = ManagementFactory.getClassLoadingMXBean();
+//源为自己
+attrs.put("source", self.getMetadata().getPath());
+//简要信息
+attrs.put("info", """加载：${r"$"}{bean.getLoadedClassCount()}
+总数：${r"$"}{bean.getTotalLoadedClassCount()}
+卸载：${r"$"}{bean.getUnloadedClassCount()}""".toString());
+attrs.put("name", "监控的名字");
+attrs.put("memo", "<b>详细信息描述。</b>");]]></code>
+                        </GroovyAction>
+                    </actions>
+                </GetDataObjectFormList>
+            </actions>
+        </Begin>
+        <CreateWidget name="createUI" descriptors="xworker.swt.actions.CommonActions/@CreateWidgets">
+            <Widget>
+                <Composite>
+                    <FillLayout name="FillLayout"></FillLayout>
+                    <DataObjectContainer name="dataObjectContainer" _xmeta_id_="DataObjectContainer" descriptors="xworker.app.view.swt.widgets.DataObjectContainer"></DataObjectContainer>
+                    <StaticDataObjectList name="dataObjectList" _xmeta_id_="AppStatus" descriptors="xworker.app.view.swt.data.StaticDataObjectList"
+                         dataObject="xworker.app.resource.dataobjects.ResourceStatus"
+                         scope="world" staticThing="${path}"
+                         bindTo="dataObjectContainer" initAction="xworker.app.resource.dataobjects.ResourceStatus/@actions/@initIndexs"
+                         th_thingRegistViewer="xworker.app.resource.swt.ResourceStatusThingRegistViewer"
+                         ></StaticDataObjectList>
+                </Composite>
+            </Widget>
+        </CreateWidget>
+    </actions>
+</Task>]]></code>
+                    </Freemarker>
+                </ActionDefined>
+            </GroovyAction>
+        </actions>
+    </ThingEditor>
+</Shell>

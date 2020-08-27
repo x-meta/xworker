@@ -1,10 +1,11 @@
-%1576300214424
+%1598339122285
 @
 sname=DataObjectBinder
 sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.dataObject.swt.bind.BinderItems
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
@@ -12,19 +13,17 @@ Sdescription=
 #$@text#$@
 <p><strong>数据对象绑定器</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 可以把一个数据对象的属性和控件的属性绑定在一起，当修改数据对象的属性时控件相对应的属性也会发生变化，也可以从控件上获取对应的属性值填充到数据对象中。</p>
+<p>&nbsp;&nbsp;&nbsp; 可以把一个数据对象的属性和控件的属性绑定在一起，当数据对象的属性发生了变化后可以自动更新到控件上，也可以从控件上获取对应的属性值填充到数据对象中。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如把一个数据对象的color属性绑定到一个控件的前景色上，修改了数据对象的color属性的值后，控件的前景色就会自动变化。</p>
 
 <p><strong>返回值和保存变量</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;返回和保存的是DataObjectBinder对象，如果是引用则不保存变量。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;返回和保存的是xworker.dataObject.swt.bind.DataObjectBinder对象，如果是引用则不保存变量。</p>
 
-<p>使用方法</p>
+<p><strong>使用方法</strong></p>
 
-<p>&nbsp;</p>
-
-<p>和控件的绑定器，监听数据对象的变化，并把变化传递给控件。</p>
-
-<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; 需要指定数据对象，绑定控件用子节点。</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -297,11 +296,16 @@ sth_registQueryOnlySelf=false
   sname=binderInstance
   sinputtype=openWindow
   sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
   smodifier=public
   sinputattrs=xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|descriptor=xworker.dataObject.swt.bind.DataObjectBinder,seperator=%2C,returnType=name,append=false
   sreadOnly=false
   sinheritDescription=false
-  sdescription=<p>一个数据对象可能会绑定到多个控件上，在这种情况下最好使用第一个设置过的DataObjectBinder。</p>
+  Sdescription=
+#$@text#$@
+<p>使用已经存在的DataObjectBinder，而不是创建新的DataObjectBinder。</p>
+#$@text#$@
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true
@@ -376,10 +380,16 @@ sth_registQueryOnlySelf=false
   @/@updateInterval
   sname=updateInterval
   sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
   smodifier=public
   sreadOnly=false
   sdefault=500
   sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>当数据对象发生了变更后，多长时间后执行更新空间的操作。</p>
+#$@text#$@
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true
@@ -403,14 +413,19 @@ sth_registQueryOnlySelf=false
   sinheritDescription=false
   Sdescription=
 #$@text#$@
-<p>绑定规则。</p>
+<p>可以用文本快速绑定，规则如下。</p>
 
 <ul>
 	<li><strong>一行一个规则。</strong></li>
 	<li><strong># //开头的是注释。</strong></li>
-	<li><strong>widgetName:attributeName&gt;bindType,bindType</strong><br />
-	一行只能一个控件，控件后用:分割，后面是数据对象属性和绑定类型的匹配，如name&gt;text，即属性name绑定到控件的text上，如果名字和绑定类型相同，可以不用写属性名，如button:background。</li>
+	<li><strong>widgetName:attributeName1&gt;bindType1,attributeName2&gt;bindType2,...</strong><br />
+	一行只能绑定一个控件，可以绑定多个属性。<br />
+	如okButton:name&gt;text,color&gt;background，把数据对象的name属性绑定到控件okButton的text上，把c数据对象的olor属性绑定到控件的背景色上。</li>
 </ul>
+
+<p><strong>绑定类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 绑定类型是注册到Java类xworker.dataObject.swt.bind.BindItemFactory上的。</p>
 
 <p>&nbsp;</p>
 #$@text#$@

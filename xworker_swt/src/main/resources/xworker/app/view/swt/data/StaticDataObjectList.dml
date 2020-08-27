@@ -1,27 +1,27 @@
-%1574325632084
+%1598342514771
 @
 sname=StaticDataObjectList
 slabel=StaticDataObjectList
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>获取或创建一个数据对象列表，并把数据对象列表保存到全局变量上下文中。</p>
+<p><strong>StaticDataObjectList</strong></p>
 
-<p><strong>数据对象列表的顺序</strong></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 创建并保存一个DataObjectList对象，通常保存在动作上下文的全局变量栈或保存到系统全局（保存到World中）。</p>
 
-<ol>
-	<li>如果getStaticThing()返回不为null，如果它是DataObject下的StaticDataObjectList模型，那么使用它返回DataObjectList，否则使用它的getStaticData(&quot;StaticDataObjectList&quot;)方法返回数据对象列表。</li>
-	<li>自行创建数据对象列表，见getDataObject()方法和scope属性的文档。<strong>&nbsp;&nbsp; </strong></li>
-</ol>
+<p><strong>保存变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; DataObjectList实例会保存到全局变量上下文中。另外通过scope和staticThing属性控制实例的唯一性，具体参看scope和staticThing属性的文档。</p>
 
 <p><strong>绑定</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 可以绑定到各种控件上，绑定时会创建一个DataStore，变量名是本事物名+DataStore.</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可以绑定到各种控件上，绑定时会创建一个DataStore，变量名是本事物名+DataStore。</p>
 
 <p><span style="color: rgb(255, 0, 0);"><strong>批量修改</strong></span></p>
 
@@ -308,6 +308,7 @@ sth_mark=false
     svarScope=Global
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@JavaAction
     sinheritDescription=false
@@ -414,18 +415,17 @@ sth_mark=false
   slabelVAlign=baseline
   smodifier=public
   sreadOnly=false
-  sdefault=global
   sinheritDescription=false
   Sdescription=
 #$@text#$@
-<p>数据对象的保存范围。</p>
+<p>DataObjectList的实例保存到那个地方，和staticThing属性一起生效。</p>
 
 <ul>
 	<li><strong>world</strong><br />
-	数据对象保存到World的data中，key用dataObject描述者的路径加其它组合。<br />
+	保存到World的data中。<br />
 	&nbsp;</li>
-	<li><strong>global</strong><br />
-	数据对象保存到当前变量上下文的全局变量栈中，key是数据对象描述者的路径。&nbsp;&nbsp;</li>
+	<li><strong>thing</strong><br />
+	数据对象保存到指定模型上的。&nbsp;&nbsp;</li>
 </ul>
 
 <p>&nbsp;</p>
@@ -465,18 +465,6 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=thing
-    @/@scope/@actionContext
-    sname=actionContext
-    svalue=actionContext
-    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@value
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_fileMonitor=false
-    sth_mark=false
-    sth_registQueryOnlySelf=false
-    sid=actionContext
   @/@staticDataObjectList
   sname=staticThing
   sinputtype=dataSelector
@@ -487,6 +475,16 @@ sth_mark=false
   smodifier=public
   sreadOnly=false
   sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>静态模型，如果没有设定使用当前模型。</p>
+
+<p><strong>有两个作用：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果是StaticDataObjectList，那么通过它返回DataObjectList里，相当于引用。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果不是StaticDataObjectList，那么DataObjectList实例的存储的key是StaticDataObjectList:&lt;模型路径&gt;，其中模型路径是statcThing模型的路径。</p>
+#$@text#$@
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true
@@ -554,6 +552,22 @@ sth_mark=false
   smodifier=public
   sreadOnly=false
   sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>创建DataObjectList实例时执行的动作，执行后也会执行init方法。</p>
+
+<p><strong>参数：</strong></p>
+
+<ul>
+	<li><strong>self: Thing</strong><br />
+	当前StaticDataObjectList模型。<br />
+	&nbsp;</li>
+	<li><strong>dataObjectList: DataObjectList</strong><br />
+	DataObjectList实例。</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true

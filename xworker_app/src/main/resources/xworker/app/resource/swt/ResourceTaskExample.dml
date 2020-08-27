@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Task name="ResourceTaskExample" descriptors="xworker.lang.task.Task" group="工作.监控"
+     schedule="true" period="6000" description="&lt;p&gt;每隔10分钟执行一次，检测数据库和应用的状态等。&lt;/p&gt;">
+    <actions descriptors="xworker.lang.actions.SelfAction/@actions1">
+        <Begin name="doTask">
+            <actions>
+                <GetDataObjectFormList name="CheckMayTask" _xmeta_id_="checkHoliday" descriptors="xworker.dataObject.staticdata.StaticDataActions/@GetDataObjectFormList"
+                     staticDataObjectList="xworker.things.p2019.p07.p31.SystemStatusIndex"
+                     keyValues="&quot;myTaskId&quot;:resourceId" createIfNotExists="true" update="true">
+                    <actions>
+                        <GroovyAction name="getAttributes">
+                            <code><![CDATA[import xworker.util.UtilData;
+
+import java.lang.management.ManagementFactory;
+
+//设置属性
+def attrs = [:];
+def bean = ManagementFactory.getClassLoadingMXBean();
+attrs.put("source", "xworker.things.p2019.p07.p31.SystemMonitor/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader");
+attrs.put("info", """加载：${bean.getLoadedClassCount()}
+总数：${bean.getTotalLoadedClassCount()}
+卸载：${bean.getUnloadedClassCount()}""".toString());
+attrs.put("name", UtilData.getString("lang:d=类加载器&en=ClassLoader", actionContext));
+attrs.put("memo", "<b>详细信息描述。</b>");]]></code>
+                        </GroovyAction>
+                    </actions>
+                </GetDataObjectFormList>
+            </actions>
+        </Begin>
+        <CreateWidget name="createUI" descriptors="xworker.swt.actions.CommonActions/@CreateWidgets">
+            <Widget>
+                <Composite>
+                    <FillLayout name="FillLayout"></FillLayout>
+                    <DataObjectContainer name="dataObjectContainer" _xmeta_id_="DataObjectContainer" descriptors="xworker.app.view.swt.widgets.DataObjectContainer"></DataObjectContainer>
+                    <StaticDataObjectList name="dataObjectList" _xmeta_id_="AppStatus" descriptors="xworker.app.view.swt.data.StaticDataObjectList"
+                         dataObject="xworker.app.resource.dataobjects.ResourceStatus"
+                         scope="world" staticThing="xworker.things.p2019.p07.p31.SystemStatusIndex"
+                         bindTo="dataObjectContainer" initAction="xworker.app.resource.dataobjects.ResourceStatus/@actions/@initIndexs"
+                         th_thingRegistViewer="xworker.app.resource.swt.ResourceStatusThingRegistViewer"
+                         group="工作"></StaticDataObjectList>
+                </Composite>
+            </Widget>
+        </CreateWidget>
+    </actions>
+</Task>
