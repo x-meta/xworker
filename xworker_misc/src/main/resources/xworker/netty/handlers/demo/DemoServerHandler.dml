@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DemoServerHandler" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.netty.handlers.ChannelInboundHandler">
+    <description><![CDATA[<p>用于XWorker的SWT的NettyDemo控件，可以输出日志到NettyDemo上。</p>
+]]></description>
+    <actions descriptors="xworker.lang.MetaThing/@actions">
+        <GroovyAction name="channelRead">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append(msg);
+}
+
+ctx.channel().writeAndFlush("Server echo: " + msg + "\n");]]></code>
+        </GroovyAction>
+        <GroovyAction name="channelActive">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append("channelActive");
+}]]></code>
+        </GroovyAction>
+        <GroovyAction name="channelInactive">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append("channelInactive");
+}]]></code>
+        </GroovyAction>
+        <GroovyAction name="channelRegistered">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append("channelRegistered");
+}]]></code>
+        </GroovyAction>
+        <GroovyAction name="channelUnregistered">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append("channelUnregistered");
+}]]></code>
+        </GroovyAction>
+        <GroovyAction name="exceptionCaught">
+            <code><![CDATA[if(parentContext.serverConsole != null){
+    parentContext.serverConsole.append("exceptionCaught");
+    parentContext.serverConsole.append(cause);
+}]]></code>
+        </GroovyAction>
+    </actions>
+</thing>

@@ -1,17 +1,16 @@
 package xworker.io.netty;
 
+import java.util.Map;
+
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.util.UtilData;
 
-import io.netty.bootstrap.ServerBootstrap;
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import xworker.lang.executor.Executor;
 
@@ -27,71 +26,84 @@ public class NettyClient {
 	public NettyClient(Thing thing, ActionContext parentContext) {
 		this.thing = thing;
 		actionContext = new ActionContext();
+		Map<String, Object> variables = thing.doAction("getVariables", parentContext);
+		if(variables != null) {
+			actionContext.putAll(variables);
+		}
+		
 		actionContext.put("parentContext", parentContext);
+		
+		host = thing.doAction("getHost", actionContext);
+		port = thing.doAction("getPort", actionContext);				
 	}
 
-	public void start() {
-		if (isStarted()) {
+	public void connect() {
+		if (isConnected()) {
 			return;
 		}
-
-		host = thing.doAction("getHost", actionContext);
-		port = thing.doAction("getPort", actionContext);
-		EventLoopGroup bossGroup = new NioEventLoopGroup();
-		EventLoopGroup workerGroup = new NioEventLoopGroup();
+		
+		int connectTimeOut = thing.doAction("getConnectTimeOut", actionContext);
+		
+		NioEventLoopGroup workerGroup = new NioEventLoopGroup(1);
+				
 		try {
-			ServerBootstrap bootstrap = new ServerBootstrap();
-			bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-					.childHandler(new ChannelInitializer<SocketChannel>() {
-						@Override
-						public void initChannel(SocketChannel ch) throws Exception {
-							ChannelPipeline pipeline = ch.pipeline();
+			Bootstrap b = new Bootstrap(); 
+	        b.group(workerGroup);
+	        for(Thing channels : thing.getAllChilds("Channels")) {
+	        	for(Thing channel : channels.getChilds()) {
+	        		channel.doAction("create", actionContext, "bootstrap", b);
+	        	}
+	        }
+	        b.channel(NioSocketChannel.class); 
+	        b.option(ChannelOption.SO_KEEPALIVE, true); 
+	        b.option(ChannelOption.SO_RCVBUF, 1024 * 1204 * 2);
+	        b.option(ChannelOption.TCP_NODELAY, true);
 
-							for (Thing handlers : thing.getChilds("Handlers")) {
-								for (Thing handlerThing : handlers.getChilds()) {
-									Object handler = handlerThing.doAction("create", actionContext, "channel", ch);
-									if (handler instanceof ChannelHandler) {
-
-										pipeline.addLast(handlerThing.getMetadata().getName(),
-												(ChannelHandler) handler);
-									}
-								}
-							}
-						}
-					});
-
-			channelFuture = bootstrap.bind(port);
+	        if(connectTimeOut > 0) {
+	        	b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeOut);
+	        }
+	        b.handler(new NettyClientChannelInitializer(this));
+	         
+	        // Start the client.	        
+			channelFuture = b.connect(host, port).sync();			
 			channelFuture.addListener(new GenericFutureListener<ChannelFuture>() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					if (future.isSuccess()) {
-						thing.doAction("startSuccess", actionContext, "nettyClient", this);
-					} else if (future.cause() != null) {
-						thing.doAction("startFailure", actionContext, "nettyClient", this, "cause", future.cause());
-					} else if (future.isCancelled()) {
-						thing.doAction("startCancelled", actionContext, "nettyClient", this);
+					if(future.isSuccess()) {
+						thing.doAction("startSuccess", actionContext, "nettyClient", NettyClient.this);
+					}else if(future.cause() != null) {
+						thing.doAction("startFailure", actionContext, "nettyClient", NettyClient.this, "cause", future.cause());
+					}else if(future.isCancelled()) {
+						thing.doAction("startCancelled", actionContext, "nettyClient", NettyClient.this);
 					}
 				}
-
+				
 			});
-
+			
 			channelFuture.channel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					thing.doAction("closed", actionContext, "nettyClient", this);
+					workerGroup.shutdownGracefully();
+					
+					thing.doAction("closed", actionContext, "nettyClient", NettyClient.this);
 				}
-
+				
 			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
+			
+			//thing.doAction("startSuccess", actionContext, "nettyClient", NettyClient.this);
+        } catch (Exception e) {
 			workerGroup.shutdownGracefully();
-			bossGroup.shutdownGracefully();
+			
+			thing.doAction("startFailure", actionContext, "nettyClient", NettyClient.this, "cause", e);
 		}
 	}
 
-	public boolean isStarted() {
-		return channelFuture != null && (channelFuture.isDone() == false || channelFuture.isSuccess());
+	public boolean isConnected() {
+		if(isClosed()) {
+			return false;
+		}
+		
+		return channelFuture != null && (channelFuture.isDone() == true && channelFuture.isSuccess());
 	}
 
 	public boolean isClosed() {
@@ -131,6 +143,25 @@ public class NettyClient {
 			channelFuture.channel().close();
 		}
 	}
+	
+	public void sendMessage(Object message, boolean flush){
+		if(!isClosed()) {
+			channelFuture.channel().write(message);
+			if(flush) {
+				channelFuture.channel().flush();
+			}
+		}
+	}
+	
+	public void sendMessage(Object message) {
+		sendMessage(message, true);
+	}
+	
+	public void flush() {
+		if(!isClosed()) {
+			channelFuture.channel().flush();
+		}
+	}
 
 	public static void startSuccess(ActionContext actionContext) {
 		NettyClient client = actionContext.getObject("nettyClient");
@@ -158,27 +189,53 @@ public class NettyClient {
 	public static NettyClient create(ActionContext actionContext) {
 		String key = "nettyClient";
 		Thing self = actionContext.getObject("self");
-		NettyClient nettyClient = self.getData(key);
-
-		if (nettyClient == null) {
+		NettyClient nettyClient = null;
+		if(UtilData.isTrue(self.doAction("isSingleInstance", actionContext))) {
+			nettyClient = self.getData(key);
+	
+			if (nettyClient == null) {
+				nettyClient = new NettyClient(self, actionContext);
+				self.setData(key, nettyClient);
+			}
+		}else {
 			nettyClient = new NettyClient(self, actionContext);
-			self.setData(key, nettyClient);
 		}
-
-		actionContext.g().put(self.getMetadata().getName(), nettyClient);
 
 		return nettyClient;
 	}
 
-	public static NettyClient start(ActionContext actionContext) {
+	public static void remove(ActionContext actionContext) {
+		String key = "nettyClient";
+		Thing self = actionContext.getObject("self");
+		NettyClient nettyClient = self.getData(key);
+		if(nettyClient != null) {
+			self.setData(key, null);
+			nettyClient.close();
+		}
+	}
+	
+	public static NettyClient connect(ActionContext actionContext) {
 		NettyClient client = create(actionContext);
-		client.start();
+		client.connect();
 		return client;
 	}
 
 	public static NettyClient close(ActionContext actionContext) {
 		NettyClient client = create(actionContext);
 		client.close();
+		return client;
+	}
+	
+	public static NettyClient getNettyClient(ActionContext actionContext) {
+		return create(actionContext);
+	}
+	
+	public static NettyClient run(ActionContext actionContext) {
+		NettyClient client = create(actionContext);
+		if(client != null && client.isConnected() == false) {
+			client.connect();
+		}
+		
 		return client;
 	}
 

@@ -1,4 +1,4 @@
-%1595990959207
+%1599111067391
 @
 sname=OverwriteMethods
 slabel=重写方法
@@ -91,13 +91,14 @@ sth_registQueryOnlySelf=false
       sid=sashForm
         @/@selectMethod/@Composite/@sashForm/@list
         sname=list
-        sstyle=SINGLE
+        sstyle=MULTI
         sH_SCROLL=true
         sV_SCROLL=true
         sBORDER=false
         scapture=false
         senabled=true
         sredraw=true
+        spack=false
         svisible=true
         sdescriptors=xworker.swt.Widgets/@List
         sinheritDescription=false
@@ -243,13 +244,14 @@ if(list.getSelectionCount() == 0){
     noActionMsg(actionContext);
     return false;
 }else{
-    thingGuide.setData("action", list.getSelection()[0]);
+    thingGuide.setData("actions", list.getSelection());
     return true;
 }
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false
@@ -384,16 +386,18 @@ if(descriptor == null){
     noActionMsg(actionContext);
     return false;
 }else{
-    def name = thingGuide.getData("action");
-    def actionThing = new Thing(name, null, descriptor.getMetadata().getPath(), false);
-    
-    thingGuide.getEditThing().addChild(actionThing);
+    for(name in thingGuide.getData("actions")){
+        def actionThing = new Thing(name, null, descriptor.getMetadata().getPath(), false);
+        
+        thingGuide.getEditThing().addChild(actionThing);
+    }
     return true;
 }
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AbstractDataObject name="NetworkInterface" descriptors="xworker.dataObject.AbstractDataObject" group="java.net"
+     storeAutoLoad="true" storeAutoSave="false" storeBatch="false" th_createIndex="true"
+     th_registThing="child|xworker.dataObject.DataObjectIns">
+    <actions>
+        <GroovyAction name="doQuery">
+            <code><![CDATA[import java.net.NetworkInterface;
+import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectUtil;
+
+def datas = [];
+for(network in NetworkInterface.getNetworkInterfaces()){
+    def data = new DataObject("xworker.java.net.NetworkInterface");
+    data.put("name", network.getName());
+    data.put("displayName", network.getDisplayName());
+    if(network.getHardwareAddress() != null){
+        data.put("hardwareAddress", hex(actionContext, "data", network.getHardwareAddress()));
+    }
+    data.put("index", network.getIndex());
+    data.put("MTU", network.getMTU());
+    data.put("loopback", network.isLoopback());
+    data.put("pointToPoint", network.isPointToPoint());
+    data.put("up", network.isUp());
+    data.put("virtual", network.isVirtual());
+    data.put("supportsMulticast", network.supportsMulticast());
+    
+    datas.add(data);
+}
+
+return DataObjectUtil.query(datas, actionContext);]]></code>
+            <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                <Variable name="network" varName="network" className="java.net.NetworkInterface"></Variable>
+            </VariablesDescs>
+            <ActionDefined>
+                <encodeHexString name="hex" descriptors="xworker.org.apache.commons.codec.binary.BinaryActions/@encodeHexString"
+                     data="var:data"></encodeHexString>
+            </ActionDefined>
+        </GroovyAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="displayName" gridWidth="300"></attribute>
+    <attribute name="hardwareAddress" gridWidth="100"></attribute>
+    <attribute name="index" type="int"></attribute>
+    <attribute name="MTU" type="int"></attribute>
+    <attribute name="loopback" type="boolean" inputtype="truefalse"></attribute>
+    <attribute name="pointToPoint" _xmeta_id_="pointToPoint()" type="boolean" inputtype="truefalse"></attribute>
+    <attribute name="up" _xmeta_id_="isUp" type="boolean" inputtype="truefalse"></attribute>
+    <attribute name="virtual" _xmeta_id_="isVirtual" type="boolean" inputtype="truefalse"></attribute>
+    <attribute name="supportsMulticast" type="boolean" inputtype="truefalse"></attribute>
+    <QueryFormDataObject>
+        <AbstractDataObject>
+            <attribute name="name"></attribute>
+            <attribute name="displayName" gridWidth="300"></attribute>
+            <attribute name="up" _xmeta_id_="isUp" type="boolean" inputtype="truefalseselect"></attribute>
+            <attribute name="virtual" _xmeta_id_="isVirtual" type="boolean" inputtype="truefalseselect"></attribute>
+        </AbstractDataObject>
+    </QueryFormDataObject>
+    <Condition>
+        <Condition name="name" attributeName="name" dataName="name" operator="10"></Condition>
+        <Condition name="displayName" attributeName="displayName" dataName="displayName" operator="10"></Condition>
+        <Condition name="up" attributeName="up" dataName="up"></Condition>
+        <Condition name="vritual" attributeName="vritual" dataName="vritual"></Condition>
+    </Condition>
+</AbstractDataObject>

@@ -395,6 +395,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		    DataStore dataStore = new DataStore(store, actionContext);
 		    store.put("dataStore", dataStore);
 		    store.put("records", dataStore.datas);
+		    store.put("parent", actionContext.get("parent"));
 		    //store.put("removedRecords", dataStore.removedRecords);
 		    
 		    //数据对象

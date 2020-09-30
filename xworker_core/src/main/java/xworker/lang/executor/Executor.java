@@ -17,11 +17,11 @@ import xworker.lang.executor.services.Log4jService;
  */
 public class Executor {
 	private static final String TAG = Executor.class.getName();
-	public final static byte TRACE = 0;
-	public final static byte DEBUG = 1;
-	public final static byte INFO = 2;
-	public final static byte WARN = 3;
-	public final static byte ERROR = 4;
+	public final static byte TRACE = 1;
+	public final static byte DEBUG = 2;
+	public final static byte INFO = 3;
+	public final static byte WARN = 4;
+	public final static byte ERROR = 5;
 	
 	/** 执行服务 */
 	private static ThreadLocal<Stack<ExecutorService>> executorServices = new ThreadLocal<Stack<ExecutorService>>();

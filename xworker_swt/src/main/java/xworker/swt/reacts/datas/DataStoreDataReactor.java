@@ -34,6 +34,10 @@ public class DataStoreDataReactor extends DataReactor implements DataStoreListen
 		
 		this.dataStore = DataStore.getDataStore(dataStore);
 		this.control = self.doAction("getControl", actionContext);
+		if(control == null && dataStore.get("parent") instanceof Control) {
+			//使用dataStore创建时的parnet的控件
+			this.control = dataStore.getObject("parent");
+		}
 		if(control == null) {
 			Executor.warn(TAG, "Should set the control of this DataStoreDataReactor, path=" + self.getMetadata().getPath());
 		}else {

@@ -27,6 +27,9 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+import xworker.lang.executor.ExecutorService;
+
 public class DebugAction {
 	private static Logger logger = LoggerFactory.getLogger("Debug");	
 	private static final String START_TIME = "__debugation_startTime__";
@@ -51,10 +54,9 @@ public class DebugAction {
 		
 		DebugInfo debugInfo = Debuger.getDebugInfo(Thread.currentThread());
 		Debuger debuger = Debuger.getDebuger();
-			
 		
 		//添加TraceContext到变量上下文中，以便子动作等也能打印
-		boolean actionTrace = debuger.getActionDebugInfo(thing, Debuger.TRACE, actionContext); 
+		boolean actionTrace = debuger.getActionDebugInfo(thing, Debuger.TRACE, actionContext); 		
 		if(debuger.isTrace()  || debugInfo.isTrace() || actionTrace){
 			printThingActionTrace(thing, actionName, actionContext);
 			
@@ -73,8 +75,7 @@ public class DebugAction {
 				}
 			}
 		}
-		
-		
+				
 		if(debuger.getDoActionDebugInfo(thing, actionName, Debuger.BREAK_POINT_INIT, actionContext)){
 			//onDoaction调试时不显示onDoAction自己，但启动调试状态
 			debugInfo.nextAction = DebugInfo.STEP_OVER;
@@ -180,6 +181,17 @@ public class DebugAction {
 
 		//是否有trace，如果有初始化trace的动作上下文
 		Debuger debuger = Debuger.getDebuger();
+		
+		//日志级别
+		byte loggerLevel = debuger.getActionDebugLoggerLevel(action.getThing(), actionContext);
+		if(loggerLevel > 0) {
+			byte currentLoggerLevel = Executor.getLogLevel();
+			ExecutorService executorService = Executor.getExecutorService();
+			executorService.setLogLevel(loggerLevel);
+			actionContext.g().put("loggerLevel", currentLoggerLevel);
+			actionContext.g().put("executorService", executorService);
+		}
+		
 		DebugInfo debugInfo = Debuger.getDebugInfo(Thread.currentThread());	
 		boolean actionTrace = debuger.getActionDebugInfo(action.getThing(), Debuger.TRACE, actionContext); 
 		if(debuger.isTrace() || debugInfo.isTrace() || actionTrace){
@@ -235,6 +247,15 @@ public class DebugAction {
 		if(isOndoAction(action)) {
 			return;
 		}
+		
+		//恢复日志级别
+		Byte loggerLevel = actionContext.getObject("loggerLevel");
+		if(loggerLevel != null) {
+			ExecutorService executorService = actionContext.getObject("executorService");
+			if(executorService != null) {
+				executorService.setLogLevel(loggerLevel);
+			}			
+		}
 				
 		long endTime = System.nanoTime();
 		
@@ -267,7 +288,7 @@ public class DebugAction {
 				return;
 			}
 			debugInfo.startDebug(acContext, DebugInfo.ACTION_STATUS_SUCCESS);
-		}
+		}		
 	}
 	
 	public static void exception(ActionContext actionContext){
@@ -283,6 +304,15 @@ public class DebugAction {
 		}
 				
 		long endTime = System.nanoTime();
+		
+		//恢复日志级别
+		Byte loggerLevel = actionContext.getObject("loggerLevel");
+		if(loggerLevel != null) {
+			ExecutorService executorService = actionContext.getObject("executorService");
+			if(executorService != null) {
+				executorService.setLogLevel(loggerLevel);
+			}			
+		}
 		
 		//上下文所在动作上下文
 		Thing context = (Thing) actionContext.get("self");

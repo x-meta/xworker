@@ -1,12 +1,10 @@
 package xworker.lang.actions;
 
-import java.io.IOException;
+import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,19 +41,24 @@ public class With {
 				Object res = resList.get(i);
 				try {
 					close(res, actionContext);
-				}catch(Exception e) {
-					
+				}catch(Exception e) {					
 				}
 			}
 		}		
 	}
 	
-	public static void close(Object obj, ActionContext actionContext) throws IOException, SQLException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public static void close(Object obj, ActionContext actionContext) throws Exception {
 		if(obj == null) {
 			return;
 		}
 		
-		if(obj instanceof InputStream) {
+		if(obj instanceof AutoCloseable) {
+			AutoCloseable closeable = (AutoCloseable) obj;
+			closeable.close();
+		}else if(obj instanceof Closeable){
+			Closeable closeable = (Closeable) obj;
+			closeable.close();
+		}else if(obj instanceof InputStream) {
 			((InputStream) obj).close();
 		}else if(obj instanceof OutputStream) {
 			((OutputStream) obj).close();

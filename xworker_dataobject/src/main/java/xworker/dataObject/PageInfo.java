@@ -171,7 +171,11 @@ public class PageInfo{
 		data.put(DataObjectConstants.PAGEINFO_START, start);
 	}
 
-
+	/**
+	 * 条目的截止。
+	 * 
+	 * @return
+	 */
 	public int getLimit() {
 		return getInt(DataObjectConstants.PAGEINFO_LIMIT);
 	}

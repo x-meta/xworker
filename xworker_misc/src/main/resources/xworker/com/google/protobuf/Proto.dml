@@ -6,10 +6,19 @@
     <actions>
         <GroovyAction name="httpDo">
             <code><![CDATA[import org.xmeta.Thing;
+import org.xmeta.cache.ThingEntry;
 
 if(requestBean.action == "proto"){
     response.setContentType("text/plain; charset=utf-8");
     response.writer.println(self.doAction("toString", actionContext));
+    return;
+}
+
+def key = "__docThing__";
+def docEntry = self.getData(key);
+if(docEntry != null && docEntry.isChanged() == false){
+    //使用缓存
+    docEntry.getThing().doAction("httpDo", actionContext);
     return;
 }
 
@@ -46,6 +55,8 @@ refresh.set("href", "do?sc=" + self.getMetadata().getPath());
 refresh.set("label", "Refresh");
 doc.addChild(refresh);
 
+//设置到缓存中
+self.setData(key, new ThingEntry(doc));
 doc.doAction("httpDo", actionContext);
 
 def addMenu(doc, name){
@@ -93,30 +104,32 @@ def addGroupItems(menu, group, things){
     }
 }]]></code>
         </GroovyAction>
-        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="data">
+        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="proto">
             <description><![CDATA[<p>用于生成proto文件的html。</p>
 ]]></description>
             <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
-                <templateCode><![CDATA[<pre>
-syntax="${data.syntax?default("proto2")}";
-<#if data.import?exists && data.import != "">
-import ${data.import};
+                <templateCode><![CDATA[<a onClick="window.clipboardData.setData('text',$('#protoContent').html());alert('已拷贝到剪贴板。')"  href="javascript:void(0)">copy</a>
+<pre id="protoContent">
+syntax="${proto.syntax?default("proto2")}";
+<#if proto.import?exists && proto.import != "">
+import ${proto.import};
 </#if>
-<#if data.package?exists && data.package != "">
-package ${data.package};
+<#if proto.package?exists && proto.package != "">
+package ${proto.package};
 </#if>
-<#if data.java_package?exists && data.java_package != "">
-option java_package="${data.java_package}";
+<#if proto.java_package?exists && proto.java_package != "">
+option java_package="${proto.java_package}";
 </#if>
-<#if data.java_outer_classname?exists && data.java_outer_classname != "">
-option java_outer_classname="${data.java_outer_classname}";
+<#if proto.java_outer_classname?exists && proto.java_outer_classname != "">
+option java_outer_classname="${proto.java_outer_classname}";
 </#if>
+${proto.properties?if_exists}
 
-<#list data.doAction("getEnums", actionContext) as enu>
+<#list proto.doAction("getEnums", actionContext) as enu>
 ${enu.doAction("toProto", actionContext)}
 
 </#list>
-<#list data.doAction("getMessages", actionContext) as msg>
+<#list proto.doAction("getMessages", actionContext) as msg>
 ${msg.doAction("toProto", actionContext)}
 
 </#list>
@@ -245,37 +258,19 @@ public class TestProtocolTools {
 	
 	public static void addMessages() {
 		//添加各种协议
-		<#list data.getChilds("messages") as messages>
-		<#list messages.getChilds("message") as message>
-		<#if message.receiver == "server" || message.receiver == "all">
+		<#list data.doAction("getToServerMessages", actionContext) as message>
 		<#assign name = message.getMetadata().getName()/>
 		//${message.getMetadata().getLabel()}
 		${name}.Builder ${name?uncap_first} = ${name}.newBuilder();
 		<#if message.getStringBlankAsNull("responseMessage")?exists>
 		messages.put(${message.responseMessage}.class , new TestMessageEntry(${name?uncap_first}.build()));
-		</#if>
+		</#if>		
 		
-		</#if>
-		</#list>
-		<#list messages.getChilds("RequestResponse") as reqresp>
-		<#list reqresp.getChilds("message") as message>
-		<#if message.getStringBlankAsNull("receiver")?exists && (message.receiver == "server" || message.receiver == "all")>
-		<#assign name = message.getMetadata().getName()/>
-		//${message.getMetadata().getLabel()}
-		${name}.Builder ${name?uncap_first} = ${name}.newBuilder();
-		<#if message.getStringBlankAsNull("responseMessage")?exists>
-		messages.put(${message.responseMessage}.class , new TestMessageEntry(${name?uncap_first}.build()));
-		</#if>
-		
-		</#if>
-		</#list>
-		</#list>
 		</#list>
 	}
 	
-	<#list data.getChilds("messages") as messages>
-    <#list messages.getChilds("message") as message>
-    <#if (message.receiver == "server" || message.receiver == "all") && message.getStringBlankAsNull("responseMessage")?exists>
+	<#list data.doAction("getToServerMessages", actionContext) as message>
+    <#if message.getStringBlankAsNull("responseMessage")?exists>
 	@Handler(reqType = ${message.responseMessage}.class)
 	public static void handle${message.responseMessage}(${message.responseMessage} resp, Session session) {
 		TestMessageEntry entry = messages.get(${message.responseMessage}.class);
@@ -290,32 +285,93 @@ public class TestProtocolTools {
 	
 	</#if>
 	</#list>
-	<#list messages.getChilds("RequestResponse") as reqresp>
-    <#list reqresp.getChilds("message") as message>
-    <#if message.getStringBlankAsNull("receiver")?exists && (message.receiver == "server" || message.receiver == "all") && message.getStringBlankAsNull("responseMessage")?exists>
-    /**
-     * ${message.getMetadata().getLabel()}<p/>
-     * ${message.getMetadata().getDescription()?if_exists}
-     */
-	@Handler(reqType = ${message.responseMessage}.class)
-	public static void handle${message.responseMessage}(${message.responseMessage} resp, Session session) {
-		TestMessageEntry entry = messages.get(${message.responseMessage}.class);
-		if(entry != null) {
-			entry.setStatus(TestMessageEntry.SUCCESS);
-			
-			//如果失败
-			//entry.setStatus(TestMessageEntry.FAILURE);
-			//entry.setInfo("错误的信息...");
-		}
-	}
 	
-	</#if>
-    </#list>
-    </#list>
-	</#list>
+	static class TestMessageEntry {
+		public static final byte INIT = 0;
+		public static final byte SUCCESS = 1;
+		public static final byte FAILURE = 2;
+		public static final byte WAITRESPONSE = 3;
+		
+		/** 请求消息  */
+		Message req;
+		
+		/** 回复的消息 */
+		Message resp;
+		
+		/** 状态 */
+		byte status = 0;
+		
+		/** 信息 */
+		String info;
+		
+		public TestMessageEntry() {		
+		}
+		
+		public TestMessageEntry(Message req) {
+			this.req = req;
+		}
+
+		public Message getReq() {
+			return req;
+		}
+
+		public void setReq(Message req) {
+			this.req = req;
+		}
+
+		public MessageLite getResp() {
+			return resp;
+		}
+
+		public void setResp(Message resp) {
+			this.resp = resp;
+		}
+
+		public byte getStatus() {
+			return status;
+		}
+
+		public void setStatus(byte status) {
+			this.status = status;
+		}
+
+		public String getInfo() {
+			return info;
+		}
+
+		public void setInfo(String info) {
+			this.info = info;
+		}
+	}	
 }]]></templateCode>
             </TextTemplate>
         </Begin>
+        <GroovyAction name="getToServerMessages">
+            <code><![CDATA[//获取所有消息
+def messages = self.doAction("getMessages", actionContext);
+
+def msgs = [];
+for(msg in messages){
+    if(msg.receiver == "server" || msg.receiver == "all"){
+        msgs.add(msg);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <GroovyAction name="getToClientMessages">
+            <code><![CDATA[//获取所有消息
+def messages = self.doAction("getMessages", actionContext);
+
+def msgs = [];
+for(msg in messages){
+    if(msg.receiver == "client" || msg.receiver == "all"){
+        msgs.add(msg);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -335,6 +391,10 @@ public class TestProtocolTools {
     </attribute>
     <attribute name="handlerDir" _xmeta_id_="handlerClassName" size="60">
         <description><![CDATA[<p>生成Java代码时，要生成的handler要生成到那个目录下。</p>
+]]></description>
+    </attribute>
+    <attribute name="properties" inputtype="textarea">
+        <description><![CDATA[<p>可用于编写额外的属性。</p>
 ]]></description>
     </attribute>
     <attribute name="description" inputtype="html"></attribute>
@@ -601,7 +661,7 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
 //接收方：${data.receiver?if_exists}
 message ${data.getMetadata().getName()}{
     <#list data.getChilds("Field") as f>
-    ${f.modifier?if_exists} ${f.type?if_exists} ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
+    <#if (proto.syntax?exists && proto.syntax == "proto2") || f.modifier == "repeated">${f.modifier?if_exists} </#if>${f.type?if_exists} ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
     </#list>    
     <#list data.getChilds("enum") as enu>
     
@@ -629,6 +689,91 @@ content.set("contentThing", self.getMetadata().getPath());
 content.set("label", self.getMetadata().getLabel());
 
 return content;]]></code>
+                </GroovyAction>
+                <GroovyAction name="toJsonData">
+                    <code><![CDATA[//类型定义
+def typeD = world.getThing("xworker.com.google.protobuf.Proto/@messages/@message/@Field/@type");
+def types = typeD.getChilds();
+
+def toJsonDataContext = actionContext.get("toJsonDataContext");
+if(toJsonDataContext == null){
+    toJsonDataContext = [:];
+    actionContext.peek().put("toJsonDataContext", toJsonDataContext);
+}
+
+def json = "{\n";
+def fields = self.getChilds("Field");
+for(i=0; i<fields.size(); i++){
+    def field = fields.get(i);
+    if(field.modifier == "repeated"){
+        json = json + "    \"" + field.name + "\":[\n";
+        def proto = getProto(field.type, self, actionContext);
+        if(proto != null && toJsonDataContext.get(proto) == null){
+             toJsonDataContext.put(proto, proto);
+             def childJson = proto.doAction("toJsonData", actionContext);
+             if(childJson != null){
+                 for(cj in childJson.split("[\n]")){
+                     json = json + "    " + cj + "\n";
+                 }
+             }
+        }
+        json = json + "    ]"
+    }else{
+        json = json + "    \"" + field.name + "\":";
+        if(field.type == "string"){
+            json = json + "\"\"";
+        }else if(field.type == "bytes"){
+            json = json + "\"hex:\"";
+        }else if(isBaseType(field.type, types)){
+            json = json + "0";
+        }else{
+            def proto = getProto(field.type, self, actionContext);
+            if(proto != null){
+                 def childJson = proto.doAction("toJsonData", actionContext);
+                 if(childJson != null){
+                     for(cj in childJson.split("[\n]")){
+                         json = json + "    " + cj + "\n";
+                     }
+                 }
+            }
+        }        
+    }
+    if(i < fields.size() - 1){
+        json = json + ",\n";
+    }else{
+        json = json + "\n";
+    }
+}
+
+json = json + "}";
+
+return json;
+
+def getProto(name, self, actionContext){
+    def root = self;
+    while(root.getThingName() != "Proto"){
+        root = root.getParent();
+    }
+    
+    def messages = root.doAction("getMessages", actionContext);
+    for(message in messages){
+        if(message.name == name){
+            return message;
+        }
+    }
+    
+    return null;
+}
+
+def isBaseType(type, types){
+    for(t in types){
+        if(t.name == type){
+            return true;
+        }
+    }
+    
+    return false;
+}]]></code>
                 </GroovyAction>
             </actions>
             <attribute name="name"></attribute>
@@ -668,6 +813,7 @@ return content;]]></code>
                     <value name="bytes" value="bytes"></value>
                 </attribute>
                 <attribute name="index"></attribute>
+                <attribute name="defaultValue" inputtype="textarea"></attribute>
                 <attribute name="description" inputtype="html"></attribute>
             </thing>
             <sswtMenus>
@@ -697,8 +843,8 @@ actions.doAction("save", actionContext);]]></code>
             <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
                  inheritDescription="true" icon="icons/email.png"></thing>
         </thing>
-        <thing name="RequestResponse" icon="icons/folder_go.png">
-            <description><![CDATA[<p>用来定义成对的协议。</p>
+        <thing name="messageGroup" _xmeta_id_="RequestResponse" icon="icons/folder_go.png">
+            <description><![CDATA[<p>消息子分组。</p>
 ]]></description>
             <actions>
                 <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
@@ -712,7 +858,7 @@ content.set("contentThing", self.getMetadata().getPath());
 content.set("label", self.getMetadata().getLabel());
 
 /*
-for(child in self.getChilds()){
+for(child in self.getChilds("message")){
     def childContent = child.doAction("toDocThing", actionContext);
     if(childContent != null){
         content.addChild(childContent);
@@ -733,6 +879,9 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
 <pre class="brush:java;">
 <#list data.getChilds("message") as msg>
 <#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
     @Handler(reqType = ${msg.getMetadata().getName()}.class)
     public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
         <#if msg.getStringBlankAsNull("responseMessage")?exists>
@@ -740,6 +889,7 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
         session.sendMessage(resp.build());
         </#if>
     }
+    
 </#if>
 </#list>
 </pre>
@@ -748,6 +898,9 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
 <pre class="brush:java;">
 <#list data.getChilds("message") as msg>
 <#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
     @Handler(reqType = ${msg.getMetadata().getName()}.class)
     public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
         <#if msg.getStringBlankAsNull("responseMessage")?exists>
@@ -755,6 +908,7 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
         session.sendMessage(resp.build());
         </#if>
     }
+    
 </#if>
 </#list>
 </pre>]]></templateCode>

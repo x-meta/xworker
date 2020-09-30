@@ -378,6 +378,24 @@ public class ThingEditorChildActions {
 		//for(child in desChilds){
 		//    log.info("child=" + child);
 		//}
+		//过滤不需要的，即excludeDescriptorsForChilds执行的描述者下的子节点
+		Map<String, String> excludes = new HashMap<String, String>();
+		String excludeDescriptorsForChilds = descriptor.getStringBlankAsNull("excludeDescriptorsForChilds");
+		if(excludeDescriptorsForChilds != null) {
+			for(String ext : excludeDescriptorsForChilds.split("[,]")) {
+				excludes.put(ext, ext);
+			}
+			
+			for(int i=0; i<desChilds.size(); i++) {
+				Thing child = desChilds.get(i);
+				if(excludes.get(child.getParent().getMetadata().getPath()) != null) {
+					//父节点，即描述者在excludeDescriptorsForChilds中排除了
+					desChilds.remove(i);
+					i--;
+				}
+						
+			}
+		}
 		//查找并添加注册的子事物
 		try{
 		    Thing registThing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
@@ -387,8 +405,16 @@ public class ThingEditorChildActions {
 		        for(DataObject rc : rchilds){
 		            //log.info("child=" + rc);
 		            Thing child = world.getThing((String) rc.get("path"));        
-		    
+		            if(excludes.get(child.getMetadata().getPath()) != null) {
+		            	continue;
+		            }
+		            
 		            if(child != null){
+		            	//作用域是private的也不添加
+                    	if("private".equals(child.getString("modifier"))) {
+                    		continue;
+                    	}
+                    	
 		                if(child.getBoolean("th_registMyChilds")){
 		                    for(Thing cchild : child.getChilds()){
 		                    	//屏蔽注册的不添加

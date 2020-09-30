@@ -80,13 +80,63 @@ public class JschActions {
 		}
 	}
 	
-	public static void main(String args[]){
-		String bstr = "60, 112, 32, 115, 116, 121, 108, 101, 61, 34, 98, 97, 99, 107, 103, 114, 111, 117, 110, 100, 45, 99, 111, 108, 111, 114, 58, 114, 103, 98, 40, 50, 53, 53, 44, 32, 49, 54, 53, 44, 32, 48, 41, 34, 62, -26, -120, -111, 58, 32, 50, 48, 49, 52, 45, 48, 53, 45, 48, 53, 38, 110, 98, 115, 112, 59, 49, 54, 58, 51, 55, 58, 49, 57, 60, 98, 114, 47, 62, -24, -127, -118, -27, -92, -87, -27, -73, -78, -27, -69, -70, -25, -85, -117, -17, -68, -116, -25, -108, -88, -26, -120, -73, -26, -96, -121, -24, -81, -122, -17, -68, -102, 38, 110, 98, 115, 112, 59, -26, -118, -128, -26, -100, -81, -26, -108, -81, -26, -116, -127, -17, -68, -116, -25, -108, -88, -26, -120, -73, -27, -112, -115, -25, -89, -80, -17, -68, -102, 49, 49, 49, 49, 49, 60, 47, 112, 62, 60, 98, 114, 47, 62, 0, 0, 0, 19, 50, 48, 49, 52, 45, 48, 53, 45, 48, 53, 32, 49, 54, 58, 51, 55, 58, 49, 57, 0, 0, 99, 60, 112, 32, 115, 116, 121, 108, 101, 61, 34, 98, 97, 99, 107, 103, 114, 111, 117, 110, 100, 45, 99, 111, 108, 111, 114, 58, 114, 103, 98, 40, 50, 53, 53, 44, 32, 49, 54, 53, 44, 32, 48, 41, 34, 62, -26, -120, -111, 58, 32, 50, 48, 49, 52, 45, 48, 53, 45, 48, 53, 38, 110, 98, 115, 112, 59, 49, 54, 58, 51, 55, 58, 50, 52, 60, 98, 114, 47, 62, 110, 105, 104, 97, 111, 38, 110, 98, 115, 112, 59, 60, 47, 112, 62, 60, 98, 114, 47, 62";
-		String bbs[] = bstr.split("[,]");
-		byte[] bs = new byte[bbs.length];
-		for(int i=0; i<bs.length; i++){
-			bs[i] = Byte.parseByte(bbs[i].trim());
+	public static JSch createJSch(ActionContext actionContext) throws JSchException {
+		Thing self = actionContext.getObject("self");
+		
+		String key = "__jsch_key__"; 
+		JSch jsch = self.getStaticData(key);
+		if(jsch == null) {
+			jsch = new JSch();
+			String knownHosts = self.doAction("getKnownHosts", actionContext);
+			if(knownHosts != null && !"".equals(knownHosts)) {
+				jsch.setKnownHosts(knownHosts);
+			}
+			
+			for(Thing child : self.getChilds()) {
+				child.doAction("create", actionContext, "jsch", jsch);
+			}
+			
+			self.setStaticData(key, jsch);
 		}
-		System.out.println(new String(bs));;
+		
+		return jsch;
+	}
+	
+	public static void createConfigs(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		//JSch jsch = actionContext.getObject("jsch");
+		
+		for(Thing child : self.getChilds()) {
+			String value = child.getStringBlankAsNull("value");
+			if(value != null) {
+				JSch.setConfig(child.getMetadata().getName(), value);
+			}
+		}
+	}
+	
+	public static void createIdentities(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		for(Thing child : self.getChilds()) {
+			child.doAction("create", actionContext);
+		}
+	}
+	
+	public static void createIdentity(ActionContext actionContext) throws JSchException {
+		Thing self = actionContext.getObject("self");
+		JSch jsch = actionContext.getObject("jsch");
+		String prvkey = self.doAction("getPrvkey", actionContext);
+		String pubkey = self.doAction("getPubkey", actionContext);
+		byte[] passphrase = self.doAction("getPassphrase", actionContext);
+		
+		if(prvkey != null) {
+			if(pubkey != null && passphrase != null) {
+				jsch.addIdentity(prvkey, pubkey, passphrase);
+			}else if(passphrase != null) {
+				jsch.addIdentity(prvkey, passphrase);
+			}else {
+				jsch.addIdentity(prvkey);
+			}
+		}
+				
 	}
 }

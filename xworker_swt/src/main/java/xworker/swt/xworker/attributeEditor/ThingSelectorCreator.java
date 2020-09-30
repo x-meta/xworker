@@ -26,6 +26,8 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.swt.util.SwtDialog;
+import xworker.swt.util.SwtDialogCallback;
 import xworker.swt.xworker.AttributeEditor;
 
 public class ThingSelectorCreator {
@@ -83,6 +85,18 @@ public class ThingSelectorCreator {
     	Thing dialogObject = World.getInstance().getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
     	Shell newShell = (Shell) dialogObject.doAction("create", actionContext);
     	
+    	SwtDialog dialog = new SwtDialog(shell, newShell, actionContext);
+    	dialog.open(new SwtDialogCallback() {
+
+			@Override
+			public void disposed(Object result) {
+				if(result != null) {
+					 text.setText(String.valueOf(result));
+				}
+			}
+    		
+    	});
+    	/*
     	newShell.open();
     	Display display = newShell.getDisplay();
         while (!newShell.isDisposed()) {
@@ -95,5 +109,6 @@ public class ThingSelectorCreator {
     	String result = (String) actionContext.get("result");
     	if(result != null)
     	    text.setText(result);
+    	    */
     }
 }

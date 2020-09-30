@@ -88,7 +88,7 @@ public class ThingForm implements Listener, ModifyListener{
 	}
 	
 	public Control getControl() {
-		return (Control) form.getData("");
+		return (Control) form.getData("parent");
 	}
 
 	/** 

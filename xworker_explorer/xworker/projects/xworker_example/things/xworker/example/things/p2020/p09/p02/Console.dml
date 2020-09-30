@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="Console" descriptors="xworker.swt.xworker.ThingRegistThing" type="composite"
+     group="-800|SWT.-10000|Introduce.4000|custom.styledtext" icon="icons/application.png"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>Console</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Console用于向StyledText或Text方便输入字符串用的。可以自动滚动到底，也可以设置最大输入字符数，超过的字符将会被删除。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 示例每隔5秒输入一个字符串和一个异常。</p>
+]]></description>
+    <Composite>
+        <FillLayout name="fillLayout"></FillLayout>
+        <StyledText name="styledText" style="MULTI" H_SCROLL="true" V_SCROLL="true">
+            <Console name="console"></Console>
+        </StyledText>
+        <RunAction>
+            <Task params="console" schedule="true" period="5000">
+                <actions descriptors="xworker.lang.actions.SelfAction/@actions1">
+                    <DisplayExec name="doTask" descriptors="xworker.swt.actions.DisplayActions/@DisplayExec"
+                         widgetForDisplay="styledText" cancelTaskOnWidgetDisposed="true">
+                        <actions>
+                            <GroovyAction name="doAction">
+                                <code><![CDATA[import org.xmeta.ActionException;
+
+console.append("This is console");
+
+console.append(new ActionException("This is a exception"));]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </DisplayExec>
+                </actions>
+            </Task>
+        </RunAction>
+    </Composite>
+</QuickFunction>

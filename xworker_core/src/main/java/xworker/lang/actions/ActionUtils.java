@@ -7,8 +7,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,6 +35,7 @@ import org.xmeta.Category;
 import org.xmeta.Thing;
 import org.xmeta.ThingManager;
 import org.xmeta.World;
+import org.xmeta.cache.ThingObjectEntry;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
@@ -591,25 +594,86 @@ public class ActionUtils {
 		return org.xmeta.util.UtilAction.parseClass(className);
 	}
 	
-	public static Class<?>[] parseClasses(String classNames) throws ClassNotFoundException{
-		return org.xmeta.util.UtilAction.parseClasses(classNames);
+	public static Class<?> parseClass(ClassLoader classLoader, String className) throws ClassNotFoundException{
+		return org.xmeta.util.UtilAction.parseClass(classLoader, className);
+	}
+	
+	public static Class<?>[] parseClasses(ClassLoader classLoader, String classNames) throws ClassNotFoundException{
+		return org.xmeta.util.UtilAction.parseClasses(classLoader, classNames);
 	}
 	
 	public static Object getClass_(ActionContext actionContext) throws ClassNotFoundException, OgnlException, IOException {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
+		ClassLoader classLoader = getClassLoader(realSelf, self);
 		String attributeName = self.getString("attributeName");
 		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
 		if(obj == null) {
 			return null;
 		}else {
 			if(obj instanceof String) {
-				return parseClass((String) obj);
+				return parseClass(classLoader, (String) obj);
 			}else {
 				return obj.getClass();
 			}
 		}
+	}
+	
+	public static ClassLoader getClassLoader(ActionContext actionContext) throws MalformedURLException {
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		return  getClassLoader(realSelf, self);
+	}
+	
+	private static ClassLoader getClassLoader(final Thing realSelf, final Thing self) throws MalformedURLException {
+		ThingObjectEntry<ClassLoader> objectEntry = realSelf.getData(self.getMetadata().getPath());
+		if(objectEntry == null) {
+			objectEntry = new ThingObjectEntry<ClassLoader>(realSelf) {
+				Thing rs = realSelf;
+				Thing s = self;
+				@Override
+				protected ClassLoader createObject() {			
+
+					String classPathAttributeName = s.getStringBlankAsNull("classPathAttributeName");
+					if(classPathAttributeName == null) {
+						return World.getInstance().getClassLoader();
+					}else {
+						final String classPath = rs.getStringBlankAsNull(classPathAttributeName);
+						if(classPath == null) {
+							return World.getInstance().getClassLoader();
+						}else {
+							List<URL> urls = new ArrayList<URL>();
+							for(String path : classPath.split("[,]")) {
+								path = path.trim();
+								if("".equals(path)) {
+									continue;
+								}
+								
+								try {
+									urls.add(new File(path).toURI().toURL());
+								}catch(Exception e) {									
+								}
+							}
+							
+							if(urls.size() > 0) {
+								URL[] uls = new URL[urls.size()];
+								urls.toArray(uls);
+								
+								return new URLClassLoader(uls, World.getInstance().getClassLoader());
+							}else {
+								return World.getInstance().getClassLoader();
+							}
+						}
+					}
+				}
+			};
+			realSelf.setData(self.getMetadata().getPath(), objectEntry);
+		}				
+		
+		return objectEntry.getObject();
+		
 	}
 	
 	public static Object getClasses(ActionContext actionContext) throws ClassNotFoundException, OgnlException, IOException {
@@ -617,6 +681,8 @@ public class ActionUtils {
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
+		
+		ClassLoader classLoader = getClassLoader(realSelf, self);
 		String values = realSelf.getString(attributeName);
 		if(values == null || "".equals(values)) {
 			return new Class<?>[0];
@@ -629,7 +695,7 @@ public class ActionUtils {
 					clses[i] = null;
 				}else {
 					if(obj instanceof String) {
-						clses[i] = parseClass((String) obj);
+						clses[i] = parseClass(classLoader, (String) obj);
 					}else {
 						clses[i] = obj.getClass();
 					}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ProtobufMessages" descriptors="xworker.lang.MetaDescriptor3" icon="icons/comments.png">
+    <description><![CDATA[<p>可以用来定义Protobuf的消息。</p>
+]]></description>
+    <actions>
+        <GetThings name="getProtos" descriptors="xworker.lang.actions.ActionUtil/@GetThins"
+             attributeName="protos"></GetThings>
+        <GetClassLoader name="getClassLoader" descriptors="xworker.lang.actions.ActionUtil/@GetClassLoader"
+             classPathAttributeName="classPaths"></GetClassLoader>
+        <GetClasses name="getClasses" _xmeta_id_="getMessageClasses" descriptors="xworker.lang.actions.ActionUtil/@GetClasses"
+             attributeName="messageClasses" classPathAttributeName="classPaths"></GetClasses>
+        <JavaAction name="getMessageFactory" outerClassName="xworker.com.google.proto.ProtobufMessages"
+             methodName="getMessageFactory"></JavaAction>
+        <JavaAction name="clearMessageFactory" outerClassName="xworker.com.google.proto.ProtobufMessages"
+             methodName="clearMessageFactory"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="protos" inputtype="textarea"></attribute>
+    <attribute name="messageClasses" inputtype="textarea"></attribute>
+    <attribute name="classPaths" inputtype="textarea"></attribute>
+    <attribute name="nettyClient" _xmeta_id_="host" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Message" icon="icons/email.png">
+        <actions>
+            <GroovyAction name="generateJsonData">
+                <code><![CDATA[def message = self.doAction("getMessageProto", actionContext);
+if(message == null){
+    return "";
+}else{
+    return message.doAction("toJsonData", actionContext);
+}]]></code>
+            </GroovyAction>
+            <GetThing name="getMessageProto" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="messageProto"></GetThing>
+            <JavaAction name="createMessage" outerClassName="xworker.com.google.proto.ProtobufMessages"
+                 methodName="createMessage"></JavaAction>
+            <GetString name="getJsonData" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="jsonData"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="messageProto" inputtype="openWindow" size="60" inputattrs="xworker.com.google.protobuf.prototypes.ProtoMessageSelector"></attribute>
+        <attribute name="jsonData" inputtype="textarea" inputattrs="codeName=json codeType=json wrap=false fillBoth=true cols= rows="></attribute>
+        <attribute name="description" inputtype="html" group="Description"></attribute>
+        <sswtMenus>
+            <menuDefine>
+                <menu name="Message"></menu>
+            </menuDefine>
+            <menuSetting menuType="Message">
+                <menu name="generateJsonData" label="GenerateJsonData" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=json&amp;actionName=generateJsonData"></menu>
+            </menuSetting>
+        </sswtMenus>
+    </thing>
+    <thing name="Group" icon="icons/folder.gif">
+        <actions name="actions"></actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Message" extends="xworker.com.google.protobuf.ProtobufMessages/@Message"
+             inheritDescription="true"></thing>
+        <thing name="Group" extends="xworker.com.google.protobuf.ProtobufMessages/@Group"
+             inheritDescription="true"></thing>
+    </thing>
+    <sswtMenus>
+        <menuSetting _xmeta_id_="ProtobufMessages" menuType="ProtobufMessages">
+            <menu name="nettyTestProto" label="NettyProtobufTestTools" shell="xworker.netty.protobuf.ProtobufTestTools"></menu>
+        </menuSetting>
+        <menuDefine>
+            <menu name="ProtobufMessages"></menu>
+        </menuDefine>
+    </sswtMenus>
+</thing>

@@ -33,6 +33,7 @@ import org.xmeta.ThingManager;
 import org.xmeta.ThingManagerListener;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 public  class Debuger implements ActionListener, ThingManagerListener{
@@ -394,6 +395,15 @@ public  class Debuger implements ActionListener, ThingManagerListener{
 			return thing.getBoolean(type);
 		}else{
 			return false;
+		}
+	}
+	
+	public byte getActionDebugLoggerLevel(Thing action, ActionContext actionContext) {
+		Thing thing = actionDebugInfo.get(action.getMetadata().getPath());
+		if(thing != null){
+			return thing.getByte("loggerLevel");
+		}else{
+			return -1;
 		}
 	}
 	

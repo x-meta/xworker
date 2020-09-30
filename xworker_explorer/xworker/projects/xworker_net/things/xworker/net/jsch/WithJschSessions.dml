@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="WithJschSessions" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.actions.SelfAction"
+     group="com.jcraft.jsch" th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions">
+    <description><![CDATA[<p>使用Jsch会话执行动作，会自动释放会话。</p>
+
+<p>会话</p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过Sessions节点设置，可以设置多个，会分别执行。</p>
+
+<p>要执行的动作</p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过DoActions节点设置，执行每个动作前会放入session和sessionThing两个变量。</p>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.net.jsch.WithJschSessions" methodName="run"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Sessions" extends="xworker.net.jsch.Sessions" inheritDescription="true"></thing>
+    <thing name="DoActions">
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="session" varName="session" className="com.jcraft.jsch.Session"></Variable>
+            <Variable name="sessionThing" varName="sessionThing" className="org.xmeta.Thing"></Variable>
+        </VariablesDescs>
+    </thing>
+</thing>

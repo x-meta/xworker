@@ -134,6 +134,12 @@ public class SwtTextUtils {
 		}
 	}
 	
+	public static void clearSelection(Object obj) {
+		if(obj instanceof Text) {
+			((Text) obj).clearSelection();
+		}
+	}
+	
 	public static void showSelection(Object obj) {
 		if(obj instanceof Text) {
 			Text text = (Text) obj;

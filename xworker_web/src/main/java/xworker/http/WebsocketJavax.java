@@ -32,12 +32,10 @@ public class WebsocketJavax {
 		System.out.println("Greeting received:" + message);
 	}
 
-	@OnMessage
 	public void processBinaryMessage(byte[] b, boolean last, Session session) {
 		System.out.println("收到部分二进制数据");
 	}
 	
-	@OnMessage
 	public void processBinaryMessage(byte[] b, Session session) {
 		System.out.println("收到全部二进制数据");
 	}

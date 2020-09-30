@@ -1041,20 +1041,29 @@ public class ThingEditorActions {
 		Map<String, String> acss = new HashMap<String, String>();
 		Map<String, String> acds = new HashMap<String, String>();
 		for(Thing ac : actionThings){
+			List<Thing> acThings = thing.getActionThings(ac.getMetadata().getName());
 		    acs.add(ac.getMetadata().getName());
 		    acss.put(ac.getMetadata().getName(), ac.getMetadata().getPath());
+		    //获取usage，可能会从定义上取值
+		    for(Thing acThing : acThings) {
+		    	String usage = acThing.getStringBlankAsNull("usage");
+		    	if(usage != null) {
+		    		acds.put("usage_" + ac.getMetadata().getName(), usage);
+		    		break;
+		    	}
+		    }
 		    Thing parent = ac.getParent().getParent(); 
 		    if(parent != null){
 		        String acDescriptor = parent.getMetadata().getLabel();
 		        acds.put(ac.getMetadata().getName(), acDescriptor);
-		        acds.put("type_" + ac.getMetadata().getName(), ac.getDescriptor().getMetadata().getLabel());
+		        acds.put("type_" + ac.getMetadata().getName(), ac.getDescriptor().getMetadata().getLabel());		        
 		    }
 		}
 		Collections.sort(acs);
 
 		for(String ac : acs){
 		    TableItem titem = new TableItem(actionsTable, SWT.NONE);
-		    titem.setText(new String[] {ac, acds.get("type_" + ac), acds.get(ac)});
+		    titem.setText(new String[] {ac, acds.get("usage_" + ac), acds.get("type_" + ac), acds.get(ac)});
 		    titem.setData(xworker.util.UtilData.toMap("path", acss.get(ac)));
 		    titem.setData("name", ac);
 		}

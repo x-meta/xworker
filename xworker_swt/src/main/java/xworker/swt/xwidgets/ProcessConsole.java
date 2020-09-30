@@ -110,6 +110,9 @@ public class ProcessConsole {
 				SwtTextUtils.append(outText, ExceptionUtil.toString(e));
 				SwtTextUtils.showSelection(outText);
 			}
+		} else {
+			SwtTextUtils.append(outText, "No process\r\n");
+			SwtTextUtils.showSelection(outText);
 		}
 		text.setText("");
 	}

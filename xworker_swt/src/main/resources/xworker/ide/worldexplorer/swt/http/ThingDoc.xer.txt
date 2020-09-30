@@ -1,4 +1,4 @@
-^1576133081754
+^1600243562376
 @
 sname
 ThingDoc
@@ -905,6 +905,232 @@ return "success";
     sth_registDisabled
     false
     sth_mark
+    false
+    sid
+    success
+  @/@showThingAction
+  sname
+  showThingAction
+  sdescription
+  <p>显示一个模型的某个行为的文档。</p>
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  showThingAction
+    @/@showThingAction/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@showThingAction/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.util.ActionDesc;
+
+//参数
+def thing = world.getThing(requestBean.thing);
+def action = requestBean.action;
+
+//结果
+def actions = [];
+if(thing != null && action != null){
+    def acs = thing.getActionThings(action);
+    for(ac in acs){
+        actions.add(new ActionDesc(ac));
+    }
+}
+
+_g.put("actions", actions);
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      doAction
+    @/@showThingAction/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    view
+      @/@showThingAction/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<p><b>${requestBean.action?if_exists}</b></p>
+
+<#list actions as action>
+<p>
+<b>定义在：</b><a href="javascript:invoke('thing:${action.thing.metadata.path}')">${action.thing.getParent().getParent().metadata.label}</a><br/>
+${action.description?if_exists}
+<b>用途：</b>${action.thing.usage?if_exists}<br/>
+<b>返回值：</b>${action.returnType}<br/>
+<b>参数列表：</b><br/>
+<#list action.params as param>
+<b>&nbsp;&nbsp;${param.name} </b>: ${param.type}<br/>
+${param.description?if_exists}
+</#list>
+</p>
+</#list>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      code
+    @/@showThingAction/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;charset=UTF-8
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@showThingAction/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
     false
     sid
     success

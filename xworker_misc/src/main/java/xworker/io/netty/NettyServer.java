@@ -1,5 +1,7 @@
 package xworker.io.netty;
 
+import java.util.Map;
+
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -26,6 +28,11 @@ public class NettyServer {
 	public NettyServer(Thing thing, ActionContext parentContext) {
 		this.thing = thing;
 		actionContext = new ActionContext();
+		Map<String, Object> variables = thing.doAction("getVariables", parentContext);
+		if(variables != null) {
+			actionContext.putAll(variables);
+		}
+		
 		actionContext.put("parentContext", parentContext);
 	}
 	
@@ -39,8 +46,18 @@ public class NettyServer {
 		EventLoopGroup workerGroup = new NioEventLoopGroup();
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap(); 
-			bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class) 
-					.childHandler(new ChannelInitializer<SocketChannel>() { 
+			for(Thing channels : thing.getAllChilds("Channels")) {
+	        	for(Thing channel : channels.getChilds()) {
+	        		channel.doAction("create", actionContext, "bootstrap", bootstrap);
+	        	}
+	        }
+
+			bootstrap.group(bossGroup, workerGroup);
+			if(port > 0) {
+				bootstrap.channel(NioServerSocketChannel.class);
+			}
+			
+			bootstrap.childHandler(new ChannelInitializer<SocketChannel>() { 
 						@Override
 						public void initChannel(SocketChannel ch) throws Exception {
 							ChannelPipeline pipeline = ch.pipeline();
@@ -48,26 +65,31 @@ public class NettyServer {
 							for(Thing handlers : thing.getChilds("Handlers")) {								
 								for(Thing handlerThing : handlers.getChilds()) {
 									Object handler = handlerThing.doAction("create", actionContext, "channel", ch);
-									if(handler instanceof ChannelHandler) {
-										
+									if(handler instanceof ChannelHandler) {										
 										pipeline.addLast(handlerThing.getMetadata().getName(), (ChannelHandler) handler);
+									}else if(handler instanceof ChannelHandler[]) {
+										ChannelHandler hds[] = (ChannelHandler[]) handler;
+										for(int i=0; i<hds.length ; i++) {
+											if(hds[i] != null) {
+												pipeline.addLast(handlerThing.getMetadata().getName() + "_" + i, hds[i]);
+											}
+										}
 									}
 								}
 							}
 						}
 					});
 			
-			
 			channelFuture = bootstrap.bind(port);
 			channelFuture.addListener(new GenericFutureListener<ChannelFuture>() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
 					if(future.isSuccess()) {
-						thing.doAction("startSuccess", actionContext, "nettyServer", this);
+						thing.doAction("startSuccess", actionContext, "nettyServer", NettyServer.this);
 					}else if(future.cause() != null) {
-						thing.doAction("startFailure", actionContext, "nettyServer", this, "cause", future.cause());
+						thing.doAction("startFailure", actionContext, "nettyServer", NettyServer.this, "cause", future.cause());
 					}else if(future.isCancelled()) {
-						thing.doAction("startCancelled", actionContext, "nettyServer", this);
+						thing.doAction("startCancelled", actionContext, "nettyServer", NettyServer.this);
 					}
 				}
 				
@@ -76,19 +98,24 @@ public class NettyServer {
 			channelFuture.channel().closeFuture().addListener(new GenericFutureListener<ChannelFuture>() {
 				@Override
 				public void operationComplete(ChannelFuture future) throws Exception {
-					thing.doAction("closed", actionContext, "nettyServer", this);
+					workerGroup.shutdownGracefully();
+					bossGroup.shutdownGracefully();
+					thing.doAction("closed", actionContext, "nettyServer", NettyServer.this);
 				}
 				
 			});
+			
+			//thing.doAction("startSuccess", actionContext, "nettyServer", NettyServer.this);
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			workerGroup.shutdownGracefully();
-			bossGroup.shutdownGracefully();
+			thing.doAction("startFailure", actionContext, "nettyServer", NettyServer.this, "cause", e);
 		}
 	}
 	
 	public boolean isStarted() {
+		if(isClosed()) {
+			return false;
+		}
+		
 		return channelFuture != null && (channelFuture.isDone() == false  || channelFuture.isSuccess());
 	}
 	
@@ -162,9 +189,14 @@ public class NettyServer {
 			self.setData(key, nettyServer);
 		}
 		
-		actionContext.g().put(self.getMetadata().getName(), nettyServer);
+		//actionContext.g().put(self.getMetadata().getName(), nettyServer);
 		
 		return nettyServer;
+	}
+	
+	
+	public static NettyServer getNettyServer(ActionContext actionContext) {
+		return create(actionContext);
 	}
 	
 	public static  NettyServer start(ActionContext actionContext) {

@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="JSch" _xmeta_id_="Jsch" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>JSch用于配置SSH和获取Session等。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.net.jsch.JschActions" methodName="createJSch"></JavaAction>
+        <GetString name="getKnownHosts" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="knownHosts"></GetString>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="knownHosts" inputtype="file" size="60">
+        <description><![CDATA[<p>Knownhosts的文件名。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Configs">
+        <description><![CDATA[<p>设置JSch。注意这些设置是全局的，修改会影响系统全局的JSch配置。</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.net.jsch.JschActions" methodName="createConfigs"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="kex">
+            <attribute name="name" default="kex"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256,diffie-hellman-group-exchange-sha1,diffie-hellman-group1-sha1"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="server_host_key" _xmeta_id_="kex1">
+            <attribute name="name" default="server_host_key"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="ssh-rsa,ssh-dss,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes192-cbc" _xmeta_id_="kex2">
+            <attribute name="name" default="aes192-cbc"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES192CBC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="signature.rsa" _xmeta_id_="kex3">
+            <attribute name="name" default="signature.rsa"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SignatureRSA"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="hmac-md5" _xmeta_id_="kex4">
+            <attribute name="name" default="hmac-md5"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.HMACMD5"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="userauth.publickey" _xmeta_id_="kex5">
+            <attribute name="name" default="userauth.publickey"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.UserAuthPublicKey"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="MaxAuthTries" _xmeta_id_="kex6">
+            <attribute name="name" default="MaxAuthTries"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="6"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="diffie-hellman-group-exchange-sha1" _xmeta_id_="kex7">
+            <attribute name="name" default="diffie-hellman-group-exchange-sha1"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHGEX"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdh-sha2-nistp384" _xmeta_id_="kex8">
+            <attribute name="name" default="ecdh-sha2-nistp384"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHEC384"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="cipher.c2s" _xmeta_id_="kex9">
+            <attribute name="name" default="cipher.c2s"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="arcfour256" _xmeta_id_="kex10">
+            <attribute name="name" default="arcfour256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.ARCFOUR256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="mac.c2s" _xmeta_id_="kex11">
+            <attribute name="name" default="mac.c2s"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="hmac-md5,hmac-sha1,hmac-sha2-256,hmac-sha1-96,hmac-md5-96"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="keypairgen.rsa" _xmeta_id_="kex12">
+            <attribute name="name" default="keypairgen.rsa"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.KeyPairGenRSA"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="sha-384" _xmeta_id_="kex13">
+            <attribute name="name" default="sha-384"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SHA384"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="hmac-sha2-256" _xmeta_id_="kex14">
+            <attribute name="name" default="hmac-sha2-256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.HMACSHA256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdsa-sha2-nistp521" _xmeta_id_="kex15">
+            <attribute name="name" default="ecdsa-sha2-nistp521"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SignatureECDSA521"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdh-sha2-nistp256" _xmeta_id_="kex16">
+            <attribute name="name" default="ecdh-sha2-nistp256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHEC256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="userauth.password" _xmeta_id_="kex17">
+            <attribute name="name" default="userauth.password"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.UserAuthPassword"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="lang.c2s" _xmeta_id_="kex18">
+            <attribute name="name" default="lang.c2s"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="md5" _xmeta_id_="kex19">
+            <attribute name="name" default="md5"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.MD5"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="arcfour128" _xmeta_id_="kex20">
+            <attribute name="name" default="arcfour128"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.ARCFOUR128"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="sha-256" _xmeta_id_="kex21">
+            <attribute name="name" default="sha-256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SHA256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="sha-512" _xmeta_id_="kex22">
+            <attribute name="name" default="sha-512"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SHA512"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="dh" _xmeta_id_="kex23">
+            <attribute name="name" default="dh"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.DH"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="zlib" _xmeta_id_="kex24">
+            <attribute name="name" default="zlib"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jcraft.Compression"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="userauth.gssapi-with-mic" _xmeta_id_="kex25">
+            <attribute name="name" default="userauth.gssapi-with-mic"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.UserAuthGSSAPIWithMIC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="diffie-hellman-group14-sha1" _xmeta_id_="kex26">
+            <attribute name="name" default="diffie-hellman-group14-sha1"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHG14"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="gssapi-with-mic.krb5" _xmeta_id_="kex27">
+            <attribute name="name" default="gssapi-with-mic.krb5"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jgss.GSSContextKrb5"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="CheckCiphers" _xmeta_id_="kex28">
+            <attribute name="name" default="CheckCiphers"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="aes256-ctr,aes192-ctr,aes128-ctr,aes256-cbc,aes192-cbc,aes128-cbc,3des-ctr,arcfour,arcfour128,arcfour256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="none" _xmeta_id_="kex29">
+            <attribute name="name" default="none"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.CipherNone"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="userauth.keyboard-interactive" _xmeta_id_="kex30">
+            <attribute name="name" default="userauth.keyboard-interactive"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.UserAuthKeyboardInteractive"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="compression.c2s" _xmeta_id_="kex31">
+            <attribute name="name" default="compression.c2s"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="none"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="compression_level" _xmeta_id_="kex32">
+            <attribute name="name" default="compression_level"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="6"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdsa-sha2-nistp384" _xmeta_id_="kex33">
+            <attribute name="name" default="ecdsa-sha2-nistp384"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SignatureECDSA384"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="cipher.s2c" _xmeta_id_="kex34">
+            <attribute name="name" default="cipher.s2c"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-ctr,aes192-cbc,aes256-ctr,aes256-cbc"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="mac.s2c" _xmeta_id_="kex35">
+            <attribute name="name" default="mac.s2c"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="hmac-md5,hmac-sha1,hmac-sha2-256,hmac-sha1-96,hmac-md5-96"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="signature.dss" _xmeta_id_="kex36">
+            <attribute name="name" default="signature.dss"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SignatureDSA"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="CheckKexes" _xmeta_id_="kex37">
+            <attribute name="name" default="CheckKexes"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="diffie-hellman-group14-sha1,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="pbkdf" _xmeta_id_="kex38">
+            <attribute name="name" default="pbkdf"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.PBKDF"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdsa-sha2-nistp256" _xmeta_id_="kex39">
+            <attribute name="name" default="ecdsa-sha2-nistp256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SignatureECDSA256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="random" _xmeta_id_="kex40">
+            <attribute name="name" default="random"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.Random"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="hmac-md5-96" _xmeta_id_="kex41">
+            <attribute name="name" default="hmac-md5-96"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.HMACMD596"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="lang.s2c" _xmeta_id_="kex42">
+            <attribute name="name" default="lang.s2c"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdh-sha2-nistp" _xmeta_id_="kex43">
+            <attribute name="name" default="ecdh-sha2-nistp"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.ECDHN"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="diffie-hellman-group1-sha1" _xmeta_id_="kex44">
+            <attribute name="name" default="diffie-hellman-group1-sha1"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHG1"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="HashKnownHosts" _xmeta_id_="kex45">
+            <attribute name="name" default="HashKnownHosts"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="no"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ClearAllForwardings" _xmeta_id_="kex46">
+            <attribute name="name" default="ClearAllForwardings"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="no"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="arcfour" _xmeta_id_="kex47">
+            <attribute name="name" default="arcfour"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.ARCFOUR"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="hmac-sha1-96" _xmeta_id_="kex48">
+            <attribute name="name" default="hmac-sha1-96"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.HMACSHA196"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="zlib@openssh.com" _xmeta_id_="kex49">
+            <attribute name="name" default="zlib@openssh.com"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jcraft.Compression"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="diffie-hellman-group-exchange-sha256" _xmeta_id_="kex50">
+            <attribute name="name" default="diffie-hellman-group-exchange-sha256"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHGEX256"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="compression.s2c" _xmeta_id_="kex51">
+            <attribute name="name" default="compression.s2c"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="none"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes128-ctr" _xmeta_id_="kex52">
+            <attribute name="name" default="aes128-ctr"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES128CTR"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="StrictHostKeyChecking" _xmeta_id_="kex53">
+            <attribute name="name" default="StrictHostKeyChecking"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="ask"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes128-cbc" _xmeta_id_="kex54">
+            <attribute name="name" default="aes128-cbc"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES128CBC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="keypairgen.dsa" _xmeta_id_="kex55">
+            <attribute name="name" default="keypairgen.dsa"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.KeyPairGenDSA"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="PreferredAuthentications" _xmeta_id_="kex56">
+            <attribute name="name" default="PreferredAuthentications"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="gssapi-with-mic,publickey,keyboard-interactive,password"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="sha-1" _xmeta_id_="kex57">
+            <attribute name="name" default="sha-1"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.SHA1"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes256-ctr" _xmeta_id_="kex58">
+            <attribute name="name" default="aes256-ctr"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES256CTR"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="keypairgen.ecdsa" _xmeta_id_="kex59">
+            <attribute name="name" default="keypairgen.ecdsa"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.KeyPairGenECDSA"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="blowfish-cbc" _xmeta_id_="kex60">
+            <attribute name="name" default="blowfish-cbc"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.BlowfishCBC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes256-cbc" _xmeta_id_="kex61">
+            <attribute name="name" default="aes256-cbc"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES256CBC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="ecdh-sha2-nistp521" _xmeta_id_="kex62">
+            <attribute name="name" default="ecdh-sha2-nistp521"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.DHEC521"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="3des-ctr" _xmeta_id_="kex63">
+            <attribute name="name" default="3des-ctr"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.TripleDESCTR"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="hmac-sha1" _xmeta_id_="kex64">
+            <attribute name="name" default="hmac-sha1"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.HMACSHA1"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="3des-cbc" _xmeta_id_="kex65">
+            <attribute name="name" default="3des-cbc"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.TripleDESCBC"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="userauth.none" _xmeta_id_="kex66">
+            <attribute name="name" default="userauth.none"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.UserAuthNone"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="CheckSignatures" _xmeta_id_="kex67">
+            <attribute name="name" default="CheckSignatures"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="aes192-ctr" _xmeta_id_="kex68">
+            <attribute name="name" default="aes192-ctr"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="value" inputtype="textarea" inputattrs="codeName= codeType= wrap=true fillBoth=true cols= rows="
+                 default="com.jcraft.jsch.jce.AES192CTR"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+    </thing>
+    <thing name="Identities">
+        <description><![CDATA[<p>Identity应该适用于无密码登录的。</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.net.jsch.JschActions" methodName="createIdentities"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Identity">
+            <actions>
+                <JavaAction name="create" outerClassName="xworker.net.jsch.JschActions" methodName="createIdentity"></JavaAction>
+                <GetString name="getPrvkey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                     attributeName="prvkey" usage="params">
+                    <outs>
+                        <param name="return" type="java.lang.String"></param>
+                    </outs>
+                </GetString>
+                <GetString name="getPubkey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                     attributeName="pubkey" usage="params">
+                    <outs>
+                        <param name="return" type="java.lang.String"></param>
+                    </outs>
+                </GetString>
+                <GetBytes name="getPassphrase" descriptors="xworker.lang.actions.ActionUtil/@GetBytes"
+                     attributeName="passphrase" usage="params">
+                    <outs>
+                        <param name="return" type="byte[]"></param>
+                    </outs>
+                </GetBytes>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="prvkey" inputtype="textarea"></attribute>
+            <attribute name="pubkey" inputtype="textarea"></attribute>
+            <attribute name="passphrase" inputtype="textarea"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+    </thing>
+</thing>

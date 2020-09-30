@@ -1,4 +1,4 @@
-%1557716266139
+%1601450869820
 @
 sname=With
 slabel=With
@@ -6,25 +6,41 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.lang.actions.SelfAction
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>With语法模型用于需要创建和释放资源的场合。它的代码示意如下。</p>
+<p>With语法模型用于需要创建和释放资源的场合。</p>
 
-<pre class="brush:as3;">
-List&lt;Object&gt; resources = new ArrayList&lt;Object&gt;();
-try{
-    //创建资源并放到变量下文和resources中
-}finally{
-    //释放资源
-     for(Object resource : resources){
-           resource.close();
-     }
-}</pre>
+<p><strong>资源创建</strong></p>
 
-<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; Resources节点下的模型作为动作执行，其返回值被视为资源，会以模型名放入到局部变量中，在结束后执行释放。</p>
+
+<p><strong>执行和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 执行第一个Do节点下的动作，返回动作执行的结果。</p>
+
+<p><strong>资源释放</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 资源是按照倒序释放的，即最后创建的资源首先释放，最开始创建的资源最后释放。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 支持释放的Java类型。</p>
+
+<ul>
+	<li><strong>java.lang.AutoCloseable</strong></li>
+	<li><strong>java.io.Closeable</strong></li>
+	<li><strong>org.xmeta.util.ActionContainer</strong><br />
+	执行ActionContainer的close()方法。</li>
+	<li><strong>通过反射获取close()方法并执行</strong></li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 其它类型的Java对象不执行释放操作。</p>
+
+<p><strong>异常处理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在释放资源时的异常不会抛出。</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false

@@ -1,4 +1,4 @@
-^1586349043341
+^1598963361154
 @
 sname
 RegisByThing
@@ -146,6 +146,7 @@ def keys = [];
 def keywords = actionContext.get("keywords");
 def registType = actionContext.get("registType");
 def thing = actionContext.get("thing");
+def exclues = actionContext.get("exclues");
 def pageInfo = actionContext.get("pageInfo");
 if(actionContext.get("conditionData") != null){
     keywords = conditionData.keywords;
@@ -210,6 +211,7 @@ if(thing != null){
                 if(addPath(paths, desc.metadata.path, context)){
                     for(ext in desc.getAllExtends()){
                         if(ext != thingIndex){
+                            addExcludes(ext, context);
                             addPath(paths, ext.metadata.path, context);
                         }
                     }
@@ -222,9 +224,10 @@ if(thing != null){
     if(thing.getBoolean("th_registQueryOnlySelf")){
     }else{   
         for(ext in thing.getExtends()){
-            //println ext;
+            //println ext;            
             if(addPath(paths, ext.metadata.path, context)){
                 for(extt in ext.getAllExtends()){
+                    addExcludes(extt, context);
                     if(extt != thingIndex){
                         addPath(paths, extt.metadata.path, context);
                     }
@@ -241,7 +244,8 @@ if(thing != null){
          }
     }  
     ThingUtils.setSearchRegistLocal(null);
-    Executor.debug(TAG, "paths=", paths);
+    Executor.debug(TAG, "includes={}", paths);
+    Executor.debug(TAG, "excludes={}", context);
     //log.info("paths=" + paths);
     //log.info("context=" + context);
     
@@ -383,7 +387,7 @@ try{
     def ds =[];
     def descthing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
     def tmpThing = new Thing();
-    while(rs.next()){
+    while(rs.next()){        
         //构造对象
         def data = new DataObject(descthing);
         data.setInited(false);
@@ -415,8 +419,10 @@ try{
 }
 
 def addExcludes(thing, context){
+    def TAG = "xworker.ide.db.dbindex.app.dataObject.RegistsByThing.p_1052623121.query";
     def excludeDescriptorsForChilds = thing.getStringBlankAsNull("excludeDescriptorsForChilds");
-    if(excludeDescriptorsForChilds != null){
+    Executor.trace(TAG, "thing={}, excludeDescriptorsForChilds={}", thing.getMetadata().getPath(), excludeDescriptorsForChilds);
+    if(excludeDescriptorsForChilds != null){        
         for(ex in excludeDescriptorsForChilds.split("[,]")){
             ex = ex.trim();            
             if(ex != ""){
@@ -546,6 +552,41 @@ def addPath(paths, path, context){
         xworker.lang.actions.Inout/@ins/@param
         sid
         noDescriptor
+        @/@actions/@query/@ins/@exclues
+        sname
+        exclues
+        stype
+        java.util.List
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>查询时需要排除的父节点。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        sid
+        exclues
     @/@actions/@test
     sname
     test

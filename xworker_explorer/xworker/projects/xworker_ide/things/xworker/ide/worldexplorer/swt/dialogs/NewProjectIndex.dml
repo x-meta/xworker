@@ -1,4 +1,4 @@
-%1484018247266
+%1599616285769
 @
 sname=NewProjectIndex
 slabel=NewProjectIndex
@@ -134,8 +134,8 @@ sth_mark=false
           sname=file
           slabel=项目目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=true
@@ -544,8 +544,8 @@ return world.getThingManager(values.name);
           sname=dir
           slabel=项目目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=true
@@ -563,8 +563,8 @@ return world.getThingManager(values.name);
           sname=file
           slabel=Jar文件
           sinputtype=file
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=false
@@ -685,7 +685,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -832,8 +831,8 @@ return null;
           sname=dir
           slabel=项目目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=true
@@ -851,8 +850,8 @@ return null;
           sname=driverClass
           slabel=JDBC驱动
           sinputtype=openWindow
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sinputattrs=xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|
           sreadOnly=false
           sinheritDescription=false
@@ -871,8 +870,8 @@ return null;
           @/@jdbcProject/@Composite/@thingForm/@Thing/@things
           sname=url
           slabel=URL
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=false
@@ -1072,7 +1071,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -1208,8 +1206,8 @@ return null;
           sname=dir
           slabel=项目目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=true
@@ -1226,8 +1224,8 @@ return null;
           @/@redisProject/@Composite/@thingForm/@Thing/@file
           sname=host
           slabel=Host
-          sshowLabel=true
           ssize=50
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=true
@@ -1404,7 +1402,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -1583,7 +1580,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -1657,12 +1653,16 @@ def findProjects(file, projects){
             pfile = new File(file, "dml.prj");            
         }
         if(pfile.exists() == false){
+            pfile = new File(file, ".dml");            
+        }
+        if(pfile.exists() == false){
             pfile = new File(file, "config.properties");            
         }
                 
         if(pfile.exists()){
             //读取项目
             def prjName = getPrjName(pfile);
+            //println prjName;
             if(prjName == null){
                 prjName = file.getName();
             }
@@ -1682,6 +1682,7 @@ def findProjects(file, projects){
 }
 
 def getPrjName(pfile){
+    def name = null;
     pfile.eachLine {
         if(it.trim() == ""){
             
@@ -1690,18 +1691,23 @@ def getPrjName(pfile){
             def iss = it.split("[=]");
             if(iss.length == 2){
                 if(iss[0] == "projectName"){
-                     return iss[1];
+                     name = iss[1];
+                     return name;
+                }else if(iss[0] == "name"){                
+                     name = iss[1];
+                     return name;
                 }
             }
         }
     }  
     
-    return null;
+    return name;
 }
 #$@text#$@
                 sinterpretationType=Action
                 screateLocalVarScope=false
                 ssaveReturn=false
+                sswitchResult=false
                 sdebugLog=false
                 sdescriptors=xworker.lang.actions.Actions/@GroovyAction
                 sinheritDescription=false
@@ -2180,8 +2186,8 @@ if(thingManagers.size() > 0){
           sname=file
           slabel=文件目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=false
@@ -2392,7 +2398,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2423,7 +2428,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2447,7 +2451,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2477,7 +2480,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2499,7 +2501,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2522,7 +2523,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2553,7 +2553,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2574,7 +2573,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2753,8 +2751,8 @@ return null;
           sname=file
           slabel=文件目录
           sinputtype=filePath
-          sshowLabel=true
           ssize=60
+          sshowLabel=true
           sreadOnly=false
           sinheritDescription=false
           svalidateAllowBlank=false
@@ -2885,7 +2883,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2916,7 +2913,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2940,7 +2936,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -2970,7 +2965,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -2992,7 +2986,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -3015,7 +3008,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -3046,7 +3038,6 @@ return null;
             svarScope=Local
             sisSynchronized=false
             sthrowException=true
-            suseOtherAction=false
             screateLocalVarScope=false
             ssaveReturn=false
             sdisableGlobalContext=false
@@ -3067,7 +3058,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false
@@ -3090,7 +3080,6 @@ return null;
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
         sdisableGlobalContext=false

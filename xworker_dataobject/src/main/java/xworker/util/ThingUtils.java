@@ -69,6 +69,8 @@ public class ThingUtils {
 	 */
 	private static ThreadLocal<List<String>> searchRegistLocal = new ThreadLocal<List<String>>();
 	
+
+	
 	/**
 	 * 移除一个事物的actions子节点。
 	 * 

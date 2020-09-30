@@ -18,6 +18,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.swt.ActionContainer;
+import xworker.swt.app.editors.EditorImpl;
 import xworker.swt.util.SwtUtils;
 import xworker.util.IIde;
 
@@ -71,10 +72,20 @@ public class SwtAppIde implements IIde, Listener{
 				if(shell != null){
 					shell.forceActive();
 				}
-				ActionContext bin = (ActionContext)actions.doAction("openThing", UtilMap.toMap(new Object[]{"thing", thing}));
 				
-				if(bin != null){
-					ActionContext modelBin = (ActionContext) bin.get("currentModelContext");
+				Object obj = actions.doAction("openThing", UtilMap.toMap(new Object[]{"thing", thing}));
+				ActionContext modelBin = null;
+				if(obj instanceof ActionContext) {
+					ActionContext bin = (ActionContext) obj;
+					
+					if(bin != null){
+						modelBin = (ActionContext) bin.get("currentModelContext");						
+					}
+				}else if(obj instanceof EditorImpl) {
+					EditorImpl editor = (EditorImpl) obj;
+					modelBin = editor.getActionContext().getObject("currentModelContext");
+				}
+				if(modelBin != null) {
 					StyledText input = (StyledText) modelBin.get(codeAttrName + "Input");
 	                if(input != null){
 	                	try{

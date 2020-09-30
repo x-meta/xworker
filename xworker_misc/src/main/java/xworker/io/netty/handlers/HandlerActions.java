@@ -1,6 +1,7 @@
 package xworker.io.netty.handlers;
 
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -27,6 +28,10 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
@@ -308,6 +313,54 @@ public class HandlerActions {
 			return new LengthFieldPrepender(lengthFieldLength, lengthAdjustment, lengthIncludesLengthFieldLength); 
 		}else {
 			return new LengthFieldPrepender(lengthFieldLength, lengthAdjustment);
+		}
+	}
+	
+	public static StringDecoder createStringDecoder(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		String charset = self.doAction("getCharset", actionContext);
+		if(charset != null && !"".equals(charset)) {
+			return new StringDecoder(Charset.forName(charset));
+		}else {
+			return new StringDecoder();
+		}
+	}
+	
+	public static StringEncoder createStringEncoder(ActionContext actionContext) {
+		
+		Thing self = actionContext.getObject("self");
+		
+		String charset = self.doAction("getCharset", actionContext);
+		if(charset != null && !"".equals(charset)) {
+			return new StringEncoder(Charset.forName(charset));
+		}else {
+			return new StringEncoder();
+		}
+	}
+	
+	public static LoggingHandler createLoggingHandler(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		String loggerName = self.doAction("getLoggerName", actionContext);
+		LogLevel level = LogLevel.DEBUG;
+		String l = self.doAction("getLevel", actionContext);
+		if("TRACE".equals(l)) {
+			level = LogLevel.TRACE;
+		} else if("DEBUG".equals(l)) {
+			level = LogLevel.DEBUG;
+		} else if("INFO".equals(l)) {
+			level = LogLevel.INFO;
+		} else if("WARN".equals(l)) {
+			level = LogLevel.WARN;
+		} else if("ERROR".equals(l)) {
+			level = LogLevel.ERROR;
+		} 
+		
+		if(loggerName == null || "".equals(loggerName)) {
+			return new LoggingHandler(level);
+		}else {
+			return new LoggingHandler(loggerName, level);
 		}
 	}
 }

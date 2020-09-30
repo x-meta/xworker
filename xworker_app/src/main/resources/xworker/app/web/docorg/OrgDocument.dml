@@ -1,4 +1,4 @@
-^1586229535568
+^1600071167723
 @
 sname
 OrgDocument
@@ -823,6 +823,7 @@ self.doAction(nextAc, actionContext);
 import org.apache.commons.io.FileUtils;
 
 //检查服务器资源是否都已经安装了
+println "check resource, path=" + self.getMetadata().getPath();
 if(self.getData("checkResource") == true){
     self.setData("checking", false);
     return true;
@@ -830,6 +831,7 @@ if(self.getData("checkResource") == true){
 
 //self.setData("checking", null);
 if(self.getData("checking") == true){
+    println "checking resource...";
     return false;
 }else{
     self.setData("checking", true) ;
@@ -843,8 +845,9 @@ if(self.getData("checking") == true){
     }
     
     def params = [root: root, wroot: wroot, doc: self];
-    self.doAction("checkTask", actionContext, ["params": params]);
+    self.doAction("checkTask", actionContext, "params", params);
     
+    println("check task started!");
     return false;
 }
 #$@text#$@
@@ -853,6 +856,8 @@ if(self.getData("checking") == true){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -941,12 +946,14 @@ if(self.getData("checking") == true){
     false
     scallbackCancel
     false
-    ssingleInstance
+    sthread
     false
+    ssingleInstance
+    true
     ssaveAsGlobalVar
     false
     sparams
-    params
+    var:params
     sschedule
     false
     sfixedRate
@@ -972,6 +979,8 @@ if(self.getData("checking") == true){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdisableGlobalContext
     false
@@ -1025,6 +1034,7 @@ if(self.getData("checking") == true){
 #$@text#$@
 import org.apache.commons.io.FileUtils;
 
+println "begin check resource"
 //检查extjs
 checkJs("js/extjs", root, wroot);
 checkJs("js/xworker", root, wroot);
@@ -1038,9 +1048,11 @@ checkJs("js/jquery/jquery-2.0.3.min.js", root, wroot);
 checkJs("js/bootstrap-3.3.5", root, wroot);
 
 doc.setData("checkResource", true);
+println "check resource, doc path=" + doc.getMetadata().getPath();
 return true;
 
 def checkJs(path, root, wroot){
+    println "check " + path;
     def extjsDir = new File(root, path);
     if(!extjsDir.exists()){
         File src = new File(wroot, "/webroot/" + path);
@@ -1050,6 +1062,7 @@ def checkJs(path, root, wroot){
             FileUtils.copyDirectory(src, extjsDir);
         }
     }
+    println "check finished " + path;
 }
 #$@text#$@
         sinterpretationType
@@ -1057,6 +1070,8 @@ def checkJs(path, root, wroot){
         screateLocalVarScope
         false
         ssaveReturn
+        false
+        sswitchResult
         false
         sdebugLog
         false

@@ -224,6 +224,7 @@ public class ScpTo {
 			}
 		}
 	}
+	
 	static int checkAck(InputStream in) throws IOException {
 		int b = in.read();
 		// b may be 0 for success,

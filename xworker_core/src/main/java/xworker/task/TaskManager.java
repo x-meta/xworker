@@ -239,9 +239,9 @@ public class TaskManager {
 			}		
 		}else{
 			//非定时任务
-			task = (Task) tasks.get(self.getMetadata().getPath());
-			if(singleInstance && tasks.get(self.getMetadata().getPath()) != null){
-				return task;
+			List<Task> taskList = tasks.get(self.getMetadata().getPath());
+			if(singleInstance && taskList != null && taskList.size() > 0){
+				return taskList.get(0);
 			}
 					
 			task = new Task(self, actionContext, callback, callbackCancel, false);

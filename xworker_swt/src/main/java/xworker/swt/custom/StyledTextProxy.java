@@ -20,7 +20,7 @@ import org.xmeta.Thing;
  *
  */
 public class StyledTextProxy {
-	private static Logger logger = LoggerFactory.getLogger(StyledTextProxy.class);
+	//private static Logger logger = LoggerFactory.getLogger(StyledTextProxy.class);
 	
 	private static final String NAME = "org.eclipse.swt.custom.StyledText";
 	private static Class<?> styledTextCls = null;
@@ -33,6 +33,7 @@ public class StyledTextProxy {
 	private static Method getLineCount = null;
 	private static Method getWordWrap = null;
 	private static Method setSelection = null;
+	private static Method clearSelection = null;
 	private static Method showSelection = null;
 	private static Method getSelection = null;
 	private static Method getLineAtOffset = null;
@@ -214,6 +215,23 @@ public class StyledTextProxy {
 					throw (RuntimeException) t;
 				}else {
 					throw new ActionException("Invoke StyledText method setSelection error", t);
+				}
+			}
+		}		
+	}
+	
+	public static void clearSelection(Object obj) {
+		if(clearSelection == null) {
+			clearSelection = getMethod("clearSelection", int.class, int.class);
+		}
+		if(clearSelection != null) {
+			try {
+				clearSelection.invoke(obj);
+			} catch (Throwable t) {
+				if(t instanceof RuntimeException) {
+					throw (RuntimeException) t;
+				}else {
+					throw new ActionException("Invoke StyledText method clearSelection error", t);
 				}
 			}
 		}		

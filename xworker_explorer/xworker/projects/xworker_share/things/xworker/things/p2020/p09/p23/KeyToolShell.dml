@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="KeyTool" label="KeyToolShell">
+    <GridLayout name="GridLayout"></GridLayout>
+    <SashForm name="mainSashForm" style="VERTICAL" weights="60,40">
+        <SashForm name="topSashForm" weights="30,70">
+            <Tree name="menuTree" FULL_SELECTION="false" HIDE_SELECTION="false" BORDER="true"
+                 lineVisible="false" multipleColumns="false" headerVisible="false" sortIndicator="false"
+                 moveableColumns="false">
+                <TreeModels>
+                    <ThingTreeModel thingPath="xworker.things.p2020.p09.p23.KeyToolThing" rootVisiable="false">
+                        <actions>
+                            <GroovyAction name="getChildThings">
+                                <code><![CDATA[//目的是只生成一层，即第一层子节点
+def things = [];
+def root = world.getThing("xworker.things.p2020.p09.p23.KeyToolThing");
+
+if(thing == root){
+    for(th in root.getChilds()){
+        things.add(th);
+    }
+}
+
+return things;]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingTreeModel>
+                </TreeModels>
+                <Listeners>
+                    <Listener>
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import org.xmeta.Thing;
+
+def thing = event.item.getData()._source;
+def formThing = event.item.getData("formThing");
+if(formThing == null){
+    formThing = new Thing(thing.getMetadata().getPath());
+    event.item.setData("formThing", formThing);
+}
+
+thingForm.doAction("setThing", actionContext, "thing", formThing);
+executeButton.setEnabled(true);]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Tree>
+            <Composite name="thingFormComposite" BORDER="true">
+                <ThingForm name="thingForm" column="1">
+                    <GridData name="GridData" style="FILL_BOTH"></GridData>
+                </ThingForm>
+                <GridLayout name="GridLayout"></GridLayout>
+                <Composite name="buttonComposite" _xmeta_id_="29052">
+                    <GridData name="buttonCompositeGridData" _xmeta_id_="29053" style="FILL_HORIZONTAL"
+                         horizontalAlignment="END"></GridData>
+                    <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="29054"></RowLayout>
+                    <Button name="executeButton" _xmeta_id_="29055" text="lang:d=执行&amp;en=Execute"
+                         enabled="false">
+                        <RowData name="RowData" _xmeta_id_="29056" width="80"></RowData>
+                        <Listeners _xmeta_id_="29057">
+                            <Listener name="executeButtonSelection" _xmeta_id_="29058">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[import org.eclipse.swt.custom.CTabItem;
+import java.lang.ProcessBuilder;
+import org.xmeta.ActionContext;
+import org.xmeta.util.ExceptionUtil;
+
+def thing = thingForm.doAction("getFormThing", actionContext);
+def cmd = thing.doAction("getCmdArrayString", actionContext);
+//println "cmdis:" + cmd;
+//println guide.getEditThing();
+cmd = "keytool\n-" + thing.getThingName() + "\n" + cmd;
+def cmdarray = cmd.split("[\n]");
+for(i=0; i<cmdarray.length; i++){
+    cmdarray[i] = cmdarray[i].trim();
+}
+if(cmdarray.length > 0){
+    //def file = new File(cmdarray[0]);
+    def name = thing.getThingName();
+    
+    println cmdarray;
+    def pb = new ProcessBuilder(cmdarray);
+    
+    def ac = new ActionContext();
+    ac.put("parent", processTabFolder);
+    def pthing = world.getThing("xworker.tools.process.ProcessExecutor/@PreparedWidgets/@processTabFodler/@item");
+    pthing.doAction("create", ac);
+    ac.item.setText(name);
+    processTabFolder.setSelection(ac.item);
+    
+    try{
+        def process =  pb.start();
+        ac.processConsole.doAction("setProcess", ac, "process", process);
+    }catch(Exception e){
+        def message = ExceptionUtil.toString(e);
+        ac.processConsole.doAction("setMessage", ac, "message", message);
+    }
+}]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                </Composite>
+            </Composite>
+        </SashForm>
+        <CTabFolder name="processTabFolder" BORDER="true"></CTabFolder>
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+    </SashForm>
+</Shell>
