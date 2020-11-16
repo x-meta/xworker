@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=动作执行器&amp;en=Action Executor"
+     label="ActionExecutor">
+    <FillLayout name="FillLayout"></FillLayout>
+    <CTabFolder name="mainTabFolder" label="动作执行器" en_label="ActionExecutor">
+        <CTabItem name="actionsTabItem" text="lang:d=动作&amp;en=Action">
+            <Composite name="actionComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <SashForm name="actionSashForm" weights="30,70">
+                    <SashForm name="actionsSashForm" style="VERTICAL" weights="70,30">
+                        <ThingRegistor name="actionSelector" thing="xworker.lang.actions.Actions"
+                             registType="child" autoLoad="true"></ThingRegistor>
+                        <Composite name="paramComposite" BORDER="true">
+                            <Table name="actionParamsTable">
+                                <DataStore name="actionParamsDataStore" autoLoad="false">
+                                    <dataObjects>
+                                        <AbstractDataObject>
+                                            <actions name="actions"></actions>
+                                            <attribute name="name" _xmeta_id_="nae" label="名称"
+                                                 gridWidth="100" en_label="Name"></attribute>
+                                            <attribute name="param" label="参数名" gridWidth="100"
+                                                 en_label="Param"></attribute>
+                                            <attribute name="paramValue" label="参数值" gridWidth="300"
+                                                 en_label="Param Value"></attribute>
+                                        </AbstractDataObject>
+                                    </dataObjects>
+                                </DataStore>
+                                <GridData name="GridData" style="FILL_BOTH"></GridData>
+                            </Table>
+                            <GridLayout name="GridLayout"></GridLayout>
+                            <Composite name="buttonComposite" _xmeta_id_="4857">
+                                <GridData name="buttonCompositeGridData" _xmeta_id_="4858"
+                                     style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+                                <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="4859"></RowLayout>
+                                <Button name="executeButton" _xmeta_id_="4860" text="lang:d=执行(&amp;amp;R)&amp;en=Execute(&amp;amp;R)">
+                                    <RowData name="RowData" _xmeta_id_="4861" width="80"></RowData>
+                                    <Listeners _xmeta_id_="4862">
+                                        <Listener name="executeButtonSelection" _xmeta_id_="4863"></Listener>
+                                    </Listeners>
+                                </Button>
+                            </Composite>
+                        </Composite>
+                    </SashForm>
+                    <Composite name="actionDescComposite" BORDER="true"></Composite>
+                </SashForm>
+            </Composite>
+        </CTabItem>
+    </CTabFolder>
+</Shell>
