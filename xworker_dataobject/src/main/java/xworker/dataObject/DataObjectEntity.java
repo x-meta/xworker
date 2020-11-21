@@ -386,7 +386,7 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 */
 	public Object update(ActionContext actionContext, Condition condition){
 		if(data != null) {
-			return data.delete(actionContext, condition);
+			return data.update(actionContext, condition);
 		}
 		
 		return null; 

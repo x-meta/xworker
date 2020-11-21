@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
+import java.util.jar.JarEntry;
 
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -11,18 +12,35 @@ import org.xmeta.Thing;
 import org.xmeta.ThingCoder;
 import org.xmeta.World;
 
+import xworker.util.UtilData;
+
 public class ThingEntry implements CompressEntry{
 	Thing thing;
 	String path;
 	byte[] bytes = null;
+	boolean store;
+	
+	public ThingEntry(Thing thing, String path, boolean store) {
+		this.thing = thing;
+		this.path = path;
+		this.store = store;
+		
+		init();
+	}
 	
 	public ThingEntry(Thing thing, ActionContext actionContext){
 		this.thing = thing.doAction("getThing", actionContext);
 		this.path = thing.doAction("getPath", actionContext);
+		this.store =  UtilData.isTrue(thing.doAction("isStore", actionContext));
+		
 		if(this.thing == null) {
 			throw new ActionException("Thing is null, entryPath=" + thing.getMetadata().getPath());
 		}
 		
+		init();
+	}
+	
+	private void init() {
 		if(this.path == null || this.path.trim().equals("")) {
 			this.path = this.thing.getMetadata().getPath();
 		}
@@ -83,8 +101,7 @@ public class ThingEntry implements CompressEntry{
 
 	@Override
 	public int getMethod() {
-		// TODO Auto-generated method stub
-		return 0;
+		return store ? JarEntry.STORED : -1;
 	}
 
 }

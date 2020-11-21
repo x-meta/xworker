@@ -20,6 +20,7 @@ import java.io.InputStream;
 import org.eclipse.swt.widgets.Widget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xmeta.util.ExceptionUtil;
 
 import xworker.swt.functions.AutoScroll;
 import xworker.swt.util.SwtTextUtils;
@@ -75,8 +76,22 @@ public class StyledTextInputStreamRunnable implements Runnable, AutoScroll{
 					}
 				});			
 			}
-		}catch(Exception e){
+		}catch(final Exception e){
 			logger.info("get data form inputStream error", e);
+			
+			if(text != null && text.isDisposed() == false) {
+				//是InputStream结束了
+				text.getDisplay().asyncExec(new Runnable(){
+					public void run(){
+						SwtTextUtils.append(text, ExceptionUtil.toString(e));
+						
+						if(autoScroolToBottom){
+							SwtTextUtils.scrollToBottom(text);
+							 //text.showSelection();
+						}
+					}
+				});
+			}
 		}
 	}
 

@@ -3,7 +3,6 @@ package xworker.swt.reacts.events;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
@@ -17,7 +16,6 @@ import org.xmeta.util.ActionContainer;
 
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
-import xworker.swt.reacts.widgets.ComboDataReactor;
 
 public class SelectionDataReactor extends WidgetDataReactor implements Listener{	
 	private static Logger logger = LoggerFactory.getLogger(SelectionDataReactor.class);

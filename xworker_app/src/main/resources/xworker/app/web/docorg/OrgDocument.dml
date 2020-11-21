@@ -1,4 +1,4 @@
-^1600071167723
+^1602570309555
 @
 sname
 OrgDocument
@@ -216,6 +216,8 @@ def getContent(request, category, self){
         }else{
             content = category;
         }
+    }else if(content == null){
+        content = self;
     }
     
     return content;
@@ -229,6 +231,9 @@ def getCategory(request, self){
         category = world.getThing(c);
     }
     if(category == null){
+        //如果没有cat，现在跳转到主页
+        return null;
+        /*
         category = self.getThing("Category@0");
         if(category == null){
             category = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
@@ -239,7 +244,7 @@ def getCategory(request, self){
             if(child.thingName == "Category"){
                 return child;
             }
-        }
+        }*/
     }
     
     return category;
@@ -823,7 +828,7 @@ self.doAction(nextAc, actionContext);
 import org.apache.commons.io.FileUtils;
 
 //检查服务器资源是否都已经安装了
-println "check resource, path=" + self.getMetadata().getPath();
+//println "check resource, path=" + self.getMetadata().getPath();
 if(self.getData("checkResource") == true){
     self.setData("checking", false);
     return true;
@@ -1375,6 +1380,58 @@ if((uName == null || uName == userName)
     false
     sid
     checkLogin
+    @/@actions/@toHtml
+    sname
+    toHtml
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+def html = "";
+def desc = self.getMetadata().getDescription();
+if(desc != null){
+    html = desc;
+}
+return html;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    toHtml
   @/@name
   sname
   name
@@ -1770,6 +1827,81 @@ if((uName == null || uName == userName)
   false
   sid
   Category
+    @/@Category/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@Category/@actions/@toHtml
+      sname
+      toHtml
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+def html = "";
+def desc = self.getMetadata().getDescription();
+if(desc != null){
+    html = desc;
+}
+return html;
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      toHtml
     @/@Category/@name
     sname
     name

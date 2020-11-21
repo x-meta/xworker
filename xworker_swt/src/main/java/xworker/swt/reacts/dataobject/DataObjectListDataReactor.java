@@ -14,14 +14,18 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
 import xworker.dataObject.DataObjectListListener;
 import xworker.swt.reacts.DataReactor;
+import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.DataReactorUtils;
 
 public class DataObjectListDataReactor extends DataReactor implements DataObjectListListener{
 	DataObjectList dataObjectList;
+	int max = 0;
+	
 	public DataObjectListDataReactor(DataObjectList dataObjectList, Thing self, ActionContext actionContext) {
 		super(self, actionContext);
 
 		this.dataObjectList = dataObjectList;
+		this.max = self.doAction("getMax", actionContext);
 		Widget parent = this.getParentWidget(actionContext);
 		dataObjectList.addListener(this);
 		if(parent != null && parent.isDisposed() == false) {
@@ -39,6 +43,27 @@ public class DataObjectListDataReactor extends DataReactor implements DataObject
 		}
 		
 		this.fireLoaded(null);
+	}
+	
+	public void setDataObjectList(DataObjectList dataObjectList) {
+		if(dataObjectList == null) {
+			return;
+		}
+		
+		if(this.dataObjectList == dataObjectList) {
+			return;
+		}
+		
+		if(dataObjectList != null) {
+			dataObjectList.removeListener(this);
+		}
+		
+		this.dataObjectList = dataObjectList;
+		this.dataObjectList.addListener(this);
+		
+		List<Object> datas = new ArrayList<Object>();
+		datas.addAll(dataObjectList);
+		this.fireLoaded(datas, null);
 	}
 
 	public static Object create(ActionContext actionContext) {
@@ -85,5 +110,62 @@ public class DataObjectListDataReactor extends DataReactor implements DataObject
 	public void onSeted(DataObjectList list, int index, DataObject newDataObject, DataObject oldDataObject) {
 		this.fireRemoved(DataReactorUtils.toObjectList(oldDataObject), null);
 		this.fireAdded(index, DataReactorUtils.toObjectList(newDataObject), null);
+	}
+
+	@Override
+	protected void doOnSelected(List<Object> datas, DataReactorContext context) {
+		dataObjectList.clear();
+		
+		for(Object data : datas) {
+			if(data instanceof DataObject) {
+				dataObjectList.add((DataObject) data);
+			}
+		}
+		
+	}
+
+	@Override
+	protected void doOnUnselected(DataReactorContext context) {
+		dataObjectList.clear();
+	}
+
+	@Override
+	protected void doOnAdded(int index, List<Object> datas, DataReactorContext context) {
+		for(Object data : datas) {
+			if(data instanceof DataObject) {
+				dataObjectList.add(index, (DataObject) data);
+				index++;
+			}
+		}
+		
+		if(max > 0) {
+			while(dataObjectList.size() > max) {
+				dataObjectList.remove(0);
+			}
+		}
+	}
+
+	@Override
+	protected void doOnRemoved(List<Object> datas, DataReactorContext context) {
+		dataObjectList.removeAll(datas);
+	}
+
+	@Override
+	protected void doOnUpdated(List<Object> datas, DataReactorContext context) {		
+	}
+
+	@Override
+	protected void doOnLoaded(List<Object> datas, DataReactorContext context) {
+		dataObjectList.clear();
+		dataObjectList.begin();
+		try {
+			for(Object data : datas) {
+				if(data instanceof DataObject) {
+					dataObjectList.add((DataObject) data);
+				}
+			}
+		}finally {
+			dataObjectList.finish();
+		}
 	}
 }

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="PreferencesEditor"
+     label="PreferencesEditor">
+    <Composite name="mainComposite" label="参数配置" en_label="Preferences" icon="icons/database_table.png">
+        <FillLayout name="FillLayout"></FillLayout>
+        <SashForm name="mainSashForm" weights="30,70">
+            <Composite name="treeComposite" BORDER="true">
+                <GridLayout name="GridLayout"></GridLayout>
+                <Tree name="tree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
+                     multipleColumns="false" headerVisible="false" sortIndicator="false"
+                     moveableColumns="false">
+                    <Event name="onSelection">
+                        <GroovyAction>
+                            <code><![CDATA[import org.xmeta.Thing;
+
+def thing = tree.getSelection()[0].getData();
+if(thing instanceof Thing){
+    openThing(actionContext, "thingPath", thing.getMetadata().getPath(), "thing", thing);
+}]]></code>
+                            <ActionDefined>
+                                <OpenThingEditor name="openThing" descriptors="xworker.swt.actions.CTabFolderActions/@OpenThingEditor"
+                                     thingPath="var:thingPath" cTabFolder="var:mainTabFolder"
+                                     tabItemText="ognl:thing.getMetadata().getLabel()"
+                                     tabItemKey="ognl:thing.getMetadata().getPath()"
+                                     tabContentKey="ognl:thing.getMetadata().getPath()"></OpenThingEditor>
+                            </ActionDefined>
+                        </GroovyAction>
+                    </Event>
+                    <GridData name="GridData" style="FILL_BOTH"></GridData>
+                </Tree>
+                <Composite name="buttonComposite" _xmeta_id_="19187">
+                    <GridData name="buttonCompositeGridData" _xmeta_id_="19188" style="FILL_HORIZONTAL"
+                         horizontalAlignment="END"></GridData>
+                    <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="19189"></RowLayout>
+                    <Button name="refreshButton" _xmeta_id_="19190" text="lang:d=刷新&amp;en=Refresh">
+                        <RowData name="RowData" _xmeta_id_="19191" width="80"></RowData>
+                        <Listeners _xmeta_id_="19192">
+                            <Listener name="refreshButtonSelection" _xmeta_id_="19193">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[//清空树
+for(item in tree.getItems()){
+   item.dispose();
+}
+
+//重新加载配置
+def action = world.getAction("xworker.ide.worldexplorer.swt.tools.PreferencesEditor/@mainComposite/@init");
+action.run(actionContext);]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                </Composite>
+            </Composite>
+            <CTabFolder name="mainTabFolder" BORDER="true">
+                <CTabItem name="helpItem" text="lang:d=帮助&amp;en=Help">
+                    <Composite name="helpCompoiste">
+                        <FillLayout name="FillLayout"></FillLayout>
+                        <ThingDescBrowser name="ThingDescBrowser" nohead="true">
+                            <description><![CDATA[<h1>用户偏好配置(Preferences)</h1>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;用户可以设置的参数配置。&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<h2>如何定义配置模型？</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 编写一个模型配置模型，把该模型以child方式注册到xworker.lang.util.PreferencesIndex下。系统会把该模型克隆一份，保存为模型管理器_local下的_local.xworker.preferences.xxx模型，其中xxx是该模型路径的修改。用户最终的配置是_local.xworker.preferences.xxx模型。</p>
+
+<h2>如何获取配置</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过Java类xworker.util.XWorkerUtils的静态方法getPreference()获取。</p>
+
+<ul>
+	<li><strong>Thing XWorkerUtils.getPreference(Thing defaultConfig)</strong><br />
+	defualtConfig是默认配置模型，不能为null。</li>
+</ul>
+
+<h2>注意事项</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 用户是根据默认配置模型描述者来确定唯一性的，因此一个配置模型的描述者只能对应一个配置模型，不要用同一个描述者编写两个及以上的默认配置模型。</p>
+
+<p>&nbsp;</p>
+]]></description>
+                        </ThingDescBrowser>
+                    </Composite>
+                </CTabItem>
+            </CTabFolder>
+        </SashForm>
+        <Code name="init">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+//获取已注册的默认配置
+def registorThing = world.getThing("xworker.lang.util.PreferencesIndex");
+def things = XWorkerUtils.searchRegistThings(registorThing, "child", null, actionContext);
+
+//转化为用户的配置实例
+def configs = [];
+for(thing in things){
+    configs.add(XWorkerUtils.getPreference(thing));
+}
+
+//显示到树上
+XWorkerTreeUtil.showThingsOnTreeByGroup(configs, tree, actionContext);]]></code>
+        </Code>
+    </Composite>
+    <FillLayout name="FillLayout"></FillLayout>
+</Shell>

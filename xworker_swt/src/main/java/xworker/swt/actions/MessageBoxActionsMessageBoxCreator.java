@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
-import org.xmeta.util.UtilAction;
 
 import xworker.lang.actions.ActionUtils;
 import xworker.swt.util.DialogCallback;

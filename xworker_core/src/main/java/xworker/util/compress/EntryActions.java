@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.ThingManager;
+import org.xmeta.World;
+import org.xmeta.thingManagers.FileThingManager;
 
 import xworker.util.Patterns;
 import xworker.util.UtilData;
@@ -138,5 +141,32 @@ public class EntryActions {
 	public static XWorkerModuleEntry createXWorkerModuleEntry(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		return new XWorkerModuleEntry(self, actionContext);
+	}
+
+	public static CompressEntry createThingManagerEntry(ActionContext actionContext) throws IOException {
+		Thing self = actionContext.getObject("self");
+				
+		String path = self.doAction("getPath", actionContext);
+		boolean store = UtilData.isTrue(self.doAction("isStore", actionContext));
+		ThingManager thingManager = null;
+		if(UtilData.isTrue(self.doAction("isUseCurrentThingManager", actionContext))) {
+			thingManager = self.getMetadata().getThingManager();
+		}else {
+			String name = self.doAction("getThingManager", actionContext);
+			thingManager = World.getInstance().getThingManager(name);
+		}
+		
+		if(thingManager == null) {
+			throw new ActionException("ThingManager is null, entry=" + self.getMetadata().getPath());
+		}
+		
+		if(thingManager instanceof FileThingManager) {
+			FileThingManager fileThingManager = (FileThingManager) thingManager;
+			File rootDir = fileThingManager.getThingRootFile();
+			return new DirectoryEntry(rootDir, rootDir, path, store, 
+					new Patterns(null, false), new Patterns(null, true));
+		} else {
+			return new ThingManagerEntry(thingManager, path, store);
+		}
 	}
 }

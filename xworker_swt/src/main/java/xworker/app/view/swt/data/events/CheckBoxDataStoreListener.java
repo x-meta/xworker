@@ -29,6 +29,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
 import xworker.swt.form.FormModifyListener;
 
@@ -128,7 +129,7 @@ public class CheckBoxDataStoreListener {
 			            		modifyListener.setEnable(lisEnable);
 			            	}
 				        }
-			            composite.setData("_store_records", rs);
+			            composite.setData(DataStore.STORE_RECORDS, rs);
 			            self.doAction("setSelection", actionContext);
 			        
 			            composite.layout();
@@ -326,6 +327,9 @@ public class CheckBoxDataStoreListener {
 		            }
 			        
 			        composite.layout();
+			        if(composite.getParent() != null) {
+			        	composite.getParent().layout();
+			        }
 			    }catch(Throwable t){
 			        log.error("CheckBoxDataStoreListener onInsert error", t);
 			    }

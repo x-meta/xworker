@@ -277,6 +277,11 @@ public class ProcessManager {
 		actionContext.g().put("currentConsole", console);		
 	}
 	
+	public static void checkCurrentConsoleStatus(ActionContext actionContext) {
+		Object currentConsole = actionContext.getObject("currentConsole");
+		checkToolItemsStatus(currentConsole, actionContext);
+	}
+	
 	private static void checkToolItemsStatus(Object obj, ActionContext actionContext) {
 		actionContext.g().put("currentConsole", obj);	
 		
@@ -406,6 +411,8 @@ public class ProcessManager {
 			consoles.add(processConsole);
 			
 			processConsole.create(actionContext);
+			
+			ProcessManager.showProcess(processConsole, actionContext);
 		}
 	}
 }

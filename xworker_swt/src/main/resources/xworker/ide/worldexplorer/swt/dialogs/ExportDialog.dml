@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="Exports" width="800"
+     height="600" label="ExportDialog">
+    <FillLayout name="FillLayout"></FillLayout>
+    <GuideComposite>
+        <Guide>
+            <Composite name="selectExportGuides">
+                <Composite>
+                    <FillLayout name="FillLayout"></FillLayout>
+                    <ThingRegistor thing="xworker.lang.util.indexs.ExportIndex" registType="child"
+                         showContent="true" contentDisplayType="Composite" contentDefaultOpenMethod="thingDescBrowser">
+                        <actions>
+                            <GroovyAction name="selected">
+                                <code><![CDATA[if(thing != null){
+    nextButton.setEnabled(true);
+    actionContext.g().put("thing", thing);
+}else{
+    nextButton.setEnabled(false);
+}]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingRegistor>
+                </Composite>
+                <Buttons>
+                    <NextButton name="nextButton" disabled="true"></NextButton>
+                </Buttons>
+                <actions>
+                    <GroovyAction name="nodeFinished" code="guide.callGuide(thing);"></GroovyAction>
+                </actions>
+            </Composite>
+        </Guide>
+    </GuideComposite>
+</Shell>

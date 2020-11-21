@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FunctionRequestUIHandlerProxy name="ProcessConsole" descriptors="xworker.ui.function.FunctionRequestUIHandlerProxy"
+     th_createIndex="true" th_registThing="child|xworker.lang.function.Functions" group="java.lang">
+    <description><![CDATA[<p>启动一个进程，并打开进程的控制台。</p>
+]]></description>
+    <Composite>
+        <GridLayout name="GridLayout"></GridLayout>
+        <ProcessConsole name="processConsole" destroyOnDispose="true">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </ProcessConsole>
+        <Code name="init">
+            <code><![CDATA[import java.lang.ProcessBuilder;
+import org.xmeta.util.ExceptionUtil;
+
+def pb = new ProcessBuilder(cmdarray);
+     
+try{
+    def process =  pb.start();
+    processConsole.doAction("setProcess", actionContext, "process", process);
+}catch(Exception e){
+    def message = ExceptionUtil.toString(e);
+    processConsole.doAction("setMessage", actionContext, "message", message);
+}]]></code>
+        </Code>
+    </Composite>
+    <Parameter name="cmdarray"></Parameter>
+</FunctionRequestUIHandlerProxy>

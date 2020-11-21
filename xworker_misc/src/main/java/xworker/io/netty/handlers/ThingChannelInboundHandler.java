@@ -1,11 +1,17 @@
 package xworker.io.netty.handlers;
 
+import java.net.InetAddress;
+
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import xworker.lang.executor.Executor;
 
 public class ThingChannelInboundHandler implements ChannelInboundHandler {
@@ -42,6 +48,16 @@ public class ThingChannelInboundHandler implements ChannelInboundHandler {
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		thing.doAction("channelActive", actionContext, "ctx", ctx);
+		
+		if(UtilData.isTrue(thing.doAction("isSslOperationComplete", actionContext))) {
+			ctx.pipeline().get(SslHandler.class).handshakeFuture().addListener(
+	                new GenericFutureListener<Future<Channel>>() {
+	                    @Override
+	                    public void operationComplete(Future<Channel> future) throws Exception {
+	                    	thing.doAction("sslOperationComplete", actionContext, "ctx", ctx);
+	                    }
+	        });
+		}
 	}
 
 	@Override
@@ -144,5 +160,10 @@ public class ThingChannelInboundHandler implements ChannelInboundHandler {
 	public static void exceptionCaught(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		handleEvent(self, "exceptionCaught", actionContext);
+	}
+	
+	public static void sslOperationComplete(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		handleEvent(self, "sslOperationComplete", actionContext);
 	}
 }

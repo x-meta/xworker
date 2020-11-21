@@ -28,10 +28,13 @@ import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.mqtt.MqttDecoder;
+import io.netty.handler.codec.mqtt.MqttEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
@@ -198,14 +201,6 @@ public class HandlerActions {
 		return new HttpContentCompressor(compressionLevel, windowBits, memLevel);
 	}
 	
-	public static HttpObjectAggregator createHttpObjectAggregator(ActionContext actionContext) {
-		Thing self = actionContext.getObject("self");
-		
-		int maxContentLength = self.doAction("getMaxContentLength", actionContext);
-		
-		return new HttpObjectAggregator(maxContentLength);
-	}
-	
 	public static HttpRequestDecoder createHttpRequestDecoder(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
@@ -362,5 +357,39 @@ public class HandlerActions {
 		}else {
 			return new LoggingHandler(loggerName, level);
 		}
+	}
+	
+	public static MqttDecoder createMqttDecoder(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		int maxBytesInMessage = self.doAction("getMaxBytesInMessage", actionContext);
+		if(maxBytesInMessage > 0) {
+			return new MqttDecoder(maxBytesInMessage);
+		}else {
+			return new MqttDecoder();
+		}
+	}
+	
+	public static MqttEncoder createMqttEncoder(ActionContext actionContext) {
+		return MqttEncoder.INSTANCE;
+	}
+	
+	public static HttpObjectAggregator createHttpObjectAggregator(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		int maxContentLength = self.doAction("getMaxContentLength", actionContext);
+		Boolean closeOnExpectationFailed = self.doAction("isCloseOnExpectationFailed", actionContext);
+		
+		if(closeOnExpectationFailed != null) {
+			return new HttpObjectAggregator(maxContentLength, closeOnExpectationFailed);
+		}else {
+			return new HttpObjectAggregator(maxContentLength);
+		}
+	}
+	
+	public static ChunkedWriteHandler createChunkedWriteHandler(ActionContext actionContext) {
+		//Thing self = actionContext.getObject("self");
+		
+		return new ChunkedWriteHandler();
 	}
 }

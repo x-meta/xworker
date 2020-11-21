@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="SimpleControl" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.netty.handlers.http.HttpHandler"
+     group="常用" icon="icons/org/eclipse/swt/browser/Browser.gif" en_group="Common" th_createIndex="true"
+     th_registThing="child|xworker.lang.util.DescriptorsIndex">
+    <description><![CDATA[<p>一个简单的MVC框架WebControl。是xworker.http.controls.SimpleControl的Netty复制版，注意不支持Servlet。</p>
+
+<p><strong>默认变量</strong></p>
+
+<ul>
+	<li><strong>requestBean：xworker.io.netty.handlers.http.RequestBean</strong><br />
+	可以通过Object get(name)或String getParameter(name)方法获取参数。<br />
+	&nbsp;</li>
+	<li><strong>ctx: io.netty.channel.ChannelHandlerContext</strong><br />
+	ChannelHandlerContext。<br />
+	&nbsp;</li>
+	<li><strong>requestMethod：String</strong><br />
+	GET、POST或DELETE等等。<br />
+	&nbsp;</li>
+	<li><strong>session：xworker.io.netty.handlers.http.HttpSession</strong><br />
+	可以通过setAttribute(String, Object)方法设置，通过Object getAttribute(String)方法取值。<br />
+	&nbsp;</li>
+	<li><strong>request: io.netty.handler.codec.http.FullHttpRequest</strong><br />
+	Http请求。</li>
+</ul>
+
+<p><strong>MVC</strong></p>
+
+<ul>
+	<li><strong>Model</strong><br />
+	约定是doAction方法，doAction方法应返回字符串，指向Control的一个结果，如果没有实现，默认返回的是字符串success。<br />
+	&nbsp;</li>
+	<li><strong>View</strong><br />
+	可以通过添加界面定义view子节点来定义界面，可以添加多个。<br />
+	&nbsp;</li>
+	<li><strong>Control</strong><br />
+	是当前事物本身，Control首先调用doAction方法，然后根据doAction的返回值匹配结果（Result），然后执行结果的doResult方法输出页面。</li>
+</ul>
+
+<p><strong>权限校验</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 权限校验是可选的，如果checkPermission=true，那么会调用xworker.security.SecurityManager.doCheck(byte type, String permission, String action, String path , ActionContext actionContext)方法校验权限。</p>
+
+<p>&nbsp;&nbsp; 可参看：<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.security.SecurityHandler">权限管理器</a>。</p>
+
+<p><strong>登录校验</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 登录校验是可选的，如果checkLogin=true，那么调用doCheckLogin方法，doCheckLogin方法返回ture/false，如果为false那么表示没有登录，Control则不进行下一步的操作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; doCheckLogin的默认实现，默认实现是在session中检查loginAttribute个定的属性是否为null，如果为null校验失败，则跳转到loginUrl，并返回false，否则返回true。</p>
+
+<p>&nbsp;&nbsp;&nbsp; doCheckLogin可以重写。</p>
+]]></description>
+    <actions name="scripts">
+        <JavaAction name="doRequest" _xmeta_id_="httpDo" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.io.netty.handlers.http.full.SimpleControl" methodName="doRequest"></JavaAction>
+        <JavaAction name="doCheckLogin" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+             methodName="doCheckLogin"></JavaAction>
+        <GetString name="getContextPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="contextPath"></GetString>
+        <GetBoolean name="isControls" _xmeta_id_="isSc" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="controls"></GetBoolean>
+        <JavaAction name="httpDo" _xmeta_id_="httpDo1" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+             methodName="httpDo"></JavaAction>
+    </actions>
+    <attribute name="name" label="名称" labelAlign="" labelVAlign="" modifier="" validateAllowBlank="false"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false" en_label="Name"></attribute>
+    <attribute name="label" label="标签" size="40" labelAlign="" labelVAlign="" modifier="" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false" en_label="Label"></attribute>
+    <attribute name="pathRegex" size="40"></attribute>
+    <attribute name="contextPath" size="50"></attribute>
+    <attribute name="controls" _xmeta_id_="sc" inputtype="truefalse" default="true">
+        <description><![CDATA[<p>是否是WEB集合。如果为true，那么将从参数sc或路径中获取执行的SimpleControl模型，否则是自己。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </attribute>
+    <attribute name="scriptPath" label="脚本路径" inputtype="dataSelector" size="60" colspan="2"
+         labelAlign="" labelVAlign="" modifier="" description="&lt;p&gt;WebControl所执行的脚本，如果是引用其他地方的脚本，那么可以在这里设置，否则可以通过添加脚本子节点来编写脚本，如果没有脚本那么默认的脚本执行结果是success。&lt;/p&gt;"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false" en_label="ScriptPath"></attribute>
+    <attribute name="description" label="描述" inputtype="html" showLabel="" labelAlign="" labelVAlign=""
+         modifier="" inputattrs="Width='180';Height='100';ToolbarSet=&quot;SwtEdit&quot;" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false" en_label="Description"></attribute>
+    <thing name="actions" label="动作" extends="xworker.lang.MetaDescriptor3/@actions" en_label="Action">
+        <description><![CDATA[<p><strong>业务逻辑</strong></p>
+
+<p>WEB应用执行时会调用<strong>doAction</strong>方法，doAction是业务逻辑代码，可在此事物下添加名为doAction动作。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>如果doAction方法存在，那么doAction执行后应该返回一个字符串，这个字符串对应一个结果的名称，即WEB应用要使用哪个结果输出页面。</p>
+
+<p><strong>默认返回值</strong></p>
+
+<p>如果doAction不存在，或doAction返回的不是字符串，那么返回的结果名称默认为<strong>success</strong>，即输出名为success的结果所定义的页面。</p>]]></description>
+    </thing>
+    <thing name="view" label="界面定义" extends="xworker.html.base.view" inheritDescription="true"
+         en_label="View"></thing>
+    <thing name="result" label="结果处理" icon="icons/application_side_expand.png" en_label="Result">
+        <description><![CDATA[<p><strong>什么是结果？</strong></p>
+
+<p>结果是WEB应用的输出定义，可以输出网页，也可以输出Excel等。</p>
+
+<p><strong>结果的匹配方式</strong></p>
+
+<p>结果的名字是要和doAction的返回值匹配的，如果相同就执行对应的结果的doResult输出界面。</p>]]></description>
+        <actions name="scripts">
+            <JavaAction name="doResult" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="doResult"></JavaAction>
+            <JavaAction name="redirect" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="redirect"></JavaAction>
+            <JavaAction name="freemarker" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="freemarker"></JavaAction>
+            <JavaAction name="form" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="form"></JavaAction>
+            <JavaAction name="excel" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="excel"></JavaAction>
+            <JavaAction name="control" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="control"></JavaAction>
+            <JavaAction name="template" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="template"></JavaAction>
+            <JavaAction name="dataSet" _xmeta_id_="dataModel" throwException="false" outerClassName="xworker.io.netty.handlers.http.full.SimpleControl"
+                 methodName="dataSet"></JavaAction>
+        </actions>
+        <attribute name="name" label="名称" labelAlign="" labelVAlign="" modifier="" default="success"
+             description="处理类型的名称，是脚本的返回值，通常是success, failuer等字符串。" validateOnBlur="false"
+             allowDecimals="false" allowNegative="false" en_label="Name"></attribute>
+        <attribute name="type" label="类型" inputtype="inputSelect" labelAlign="" labelVAlign=""
+             modifier="" default="form" validateOnBlur="false" allowDecimals="false" allowNegative="false"
+             en_label="Type">
+            <description><![CDATA[<p>这里包含了一些预先定义好的输出类型。</p>
+
+<ul>
+	<li><strong>界面</strong><br />
+	对应界面定义（view）事物，值参数是界面事物的路径。<br />
+	界面会先调用toHtml生成HTML代码并保存到缓存文件中，生成界面时会用Freemarker把HTML代码当做模板和当前动作上下文合并生成最终的HTML，所以在界面里可以使用freemarker相关标签。<br />
+	&nbsp;</li>
+	<li><strong>模板</strong><br />
+	模板为事物模板，值指向是事物模板的路径。<br />
+	&nbsp;</li>
+	<li><strong>重定向</strong><br />
+	值对应的是重新定向的URL地址。<br />
+	&nbsp;</li>
+	<li><strong>freemarker模板</strong><br />
+	值对应的是freemarker模板的路径，模板的根路径是World的路径，模板也可以和Java类打包放在一起，也可以和事物放在一起。<br />
+	&nbsp;</li>
+	<li><strong>web控制</strong><br />
+	可以指向另外一个WebControl。<br />
+	&nbsp;</li>
+	<li><strong>Excel</strong><br />
+	输出结果是Exel类型。</li>
+</ul>
+
+<p><br />
+<strong>自定义类型</strong></p>
+
+<p>&nbsp;&nbsp; &nbsp;可以输入一个自定义的类型名称，然后在结果里实现一个相同名称的动作，改动作负责输出界面。</p>]]></description>
+            <value name="form" label="界面" value="form" en_label="View"></value>
+            <value name="template" label="模板" value="template" en_label="Template"></value>
+            <value name="freemarker" label="freemarker模板" value="freemarker" en_label="Freemarker"></value>
+            <value name="redirect" label="重定向" value="redirect" en_label="Redirect"></value>
+            <value name="control" label="web控制" value="control" en_label="Control"></value>
+            <value name="excel" label="Excel" value="excel"></value>
+            <value name="dataSet" _xmeta_id_="dataModel" label="数据集合" value="dataSet"
+                 en_label="DataSet"></value>
+            <value name="unset" label="未设定" value="unset" en_label="Undefined"></value>
+        </attribute>
+        <attribute name="contentType" label="ContentType" inputtype="inputSelect" size="40"
+             colspan="2" labelAlign="" labelVAlign="" modifier="" default="text/html;charset=UTF-8"
+             validateAllowBlank="false" validateOnBlur="false" allowDecimals="false"
+             allowNegative="false">
+            <description><![CDATA[<p>页面的内容类型。</p>
+<p>接收${}这样的模板字符，使用freemarker规范。</p>]]></description>
+            <value name="html" value="text/html;charset=UTF-8"></value>
+            <value name="text" value="text/plain;charset=UTF-8"></value>
+            <value name="word" value="application/msword"></value>
+            <value name="excel" value="application/vnd.ms-excel"></value>
+            <value name="pdf" value="application/pdf"></value>
+        </attribute>
+        <attribute name="value" label="值" inputtype="dataSelector" size="60" colspan="2" labelAlign=""
+             labelVAlign="" modifier="" inputattrs="type=config" validateAllowBlank="false"
+             validateOnBlur="false" allowDecimals="false" allowNegative="false" en_label="Value">
+            <description><![CDATA[<p>相对于类型的值。<br />
+&nbsp;</p>
+<p>接收${}这样的模板字符，使用freemarker规范。</p>]]></description>
+        </attribute>
+        <thing name="region" label="子区域" en_label="Region">
+            <description><![CDATA[<p><strong>子区域的作用</strong></p>
+
+<p>子区域是一种反向生成页面的方法，可以先生成子区域的HTML代码，然后在合并到主页面中。</p>
+
+<p>比如某些WEB应用输出的HTML的区域是固定的，可能包含有头、左面、右面和底部几个区域，而子区域则是用于生成这些区域的HTML代码。</p>
+
+<p><strong>子区域的动作</strong></p>
+
+<p>子区域的<strong>doRegion</strong>方法输出一个结果，子区域在doRegion方法中会根据不同的类型来以调用和类型名相同的具体方法。</p>]]></description>
+            <attribute name="name" label="名称" showLabel="" labelAlign="" labelVAlign="" modifier=""
+                 validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"
+                 en_label="Name"></attribute>
+            <attribute name="type" label="类型" inputtype="select" showLabel="" labelAlign=""
+                 labelVAlign="" modifier="" default="form" validateAllowBlank="" validateOnBlur="false"
+                 allowDecimals="false" allowNegative="false" en_label="Type">
+                <value name="form" label="表单" value="form" en_label="Form"></value>
+                <value name="freemarker" label="freemarker模板" value="freemarker" en_label="Freemarker"></value>
+                <value name="control" label="Web流程定义" value="control" en_label="Control"></value>
+                <value name="script" label="脚本" value="script" en_label="Script"></value>
+            </attribute>
+            <attribute name="value" label="值" inputtype="dataSelector" size="60" showLabel=""
+                 labelAlign="" labelVAlign="" modifier="" description="&lt;p&gt;接收${}这样的模板字符，使用freemarker规范。&lt;/p&gt;"
+                 validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"
+                 en_label="Value"></attribute>
+            <actions name="scripts">
+                <JavaAction name="doRegion" descriptors="xworker.lang.actions.JavaAction,xworker.lang.actions.GroovyAction"
+                     outerClassName="xworker.http.ResultView" methodName="doRegion"></JavaAction>
+                <JavaAction name="form" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.http.ResultView"
+                     methodName="form"></JavaAction>
+                <JavaAction name="freemarker" descriptors="xworker.lang.actions.JavaAction"
+                     outerClassName="xworker.http.ResultView" methodName="freemarker"></JavaAction>
+                <JavaAction name="control" descriptors="xworker.lang.actions.JavaAction"
+                     outerClassName="xworker.netty.handlers.http.full.SimpleControlRegionCreator"
+                     methodName="control" interpretationType="" varScope=""></JavaAction>
+                <JavaAction name="script" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.netty.handlers.http.full.SimpleControlRegionCreator"
+                     methodName="script" interpretationType="" varScope=""></JavaAction>
+            </actions>
+        </thing>
+        <thing name="actions" label="动作" extends="xworker.lang.MetaDescriptor3/@actions"
+             inheritDescription="true" en_label="Actions"></thing>
+    </thing>
+    <sswtMenus name="sswtMenus" extends="xworker.http.ControlSet/@swtMenus1"></sswtMenus>
+    <attribute name="checkPermission" inputtype="truefalse" group="Permission" labelAlign=""
+         labelVAlign="" modifier="" default="false">
+        <description><![CDATA[<p>如果为true，那么使用XWorke内置的权限管理校验权限。</p>
+
+<p><strong>参看</strong>：<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.security.SecurityHandler">权限管理器</a></p>]]></description>
+    </attribute>
+    <attribute name="permission" size="50" group="Permission" labelAlign="" labelVAlign="" modifier=""></attribute>
+    <attribute name="action" group="Permission" labelAlign="" labelVAlign="" modifier=""></attribute>
+    <attribute name="checkLogin" inputtype="truefalse" group="Login" labelAlign="" labelVAlign=""
+         modifier="" default="false" description="&lt;p&gt;是否检查登录状态。&lt;/p&gt;"></attribute>
+    <attribute name="loginAttribute" size="40" group="Login" labelAlign="" labelVAlign="" modifier=""></attribute>
+    <attribute name="loginUrl" size="60" group="Login" labelAlign="" labelVAlign="" modifier=""></attribute>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="session" varName="session" className="xworker.io.netty.handlers.http.HttpSession"></Variable>
+        <Variable name="request" varName="request" className="io.netty.handler.codec.http.FullHttpRequest"></Variable>
+        <Variable name="requestBean" varName="requestBean" className="xworker.io.netty.handlers.http.HttpRequestBean"></Variable>
+        <Variable name="requestMethod" varName="requestMethod" className="java.lang.String"></Variable>
+        <Variable name="session" _xmeta_id_="session1" varName="requestMethod" className="xworker.io.netty.handlers.http.HttpSession"></Variable>
+    </VariablesDescs>
+</thing>

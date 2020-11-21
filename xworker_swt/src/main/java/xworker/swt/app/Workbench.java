@@ -23,7 +23,7 @@ import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.widgets.CoolBarCreator;
 
-public class Workbench {
+public class Workbench implements IEditorListener{
 	//private static Logger logger = LoggerFactory.getLogger(Workbench.class);
 	private static final String TAG = Workbench.class.getName();
 	public static final String VIEW_ID = "__Workbench_view_id__";
@@ -36,6 +36,7 @@ public class Workbench {
 	CTabFolder rightTabFolder;
 	CTabFolder bottomTabFolder;
 	Shell shell;
+	IEditor currentEditor;
 	
 	public Workbench(Thing thing, ActionContainer actions, ActionContext actionContext) {
 		this.thing = thing;
@@ -46,6 +47,10 @@ public class Workbench {
 		this.rightTabFolder = actionContext.getObject("rightTabFolder");
 		this.bottomTabFolder = actionContext.getObject("bottomTabFolder");
 		this.shell = actionContext.getObject("shell");
+		
+		if(editorContainer != null) {
+			editorContainer.addIEditorListener(this);
+		}
 	}
 	
 	public Thing getThing() {
@@ -544,4 +549,55 @@ public class Workbench {
 			}
 		}
 	}
+
+	@Override
+	public void onCreated(IEditorContainer editorContainer, IEditor editor) {
+	}
+
+	@Override
+	public void onActive(IEditorContainer editorContainer, IEditor editor) {
+		this.currentEditor = editor;
+		
+		setTitle();
+	}
+	
+	private void setTitle() {
+		String title = thing.getMetadata().getLabel();
+		if(currentEditor != null) {
+			String editorTitle = currentEditor.getTitle();
+			if(editorTitle == null) {
+				editorTitle = currentEditor.getSimpleTitle();
+			}
+			title = title + " - " + editorTitle;
+			
+			if(currentEditor.isDirty()) {
+				title = title + " *";
+			}
+		}
+		
+		final String t = title;
+		shell.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				shell.setText(t);
+			}
+		});		
+	}
+
+	@Override
+	public void onDisposed(IEditorContainer editorContainer, IEditor editor) {
+		if(currentEditor == editor) {
+			currentEditor = null;
+			
+			setTitle();
+		}
+	}
+
+	@Override
+	public void stateChanged(IEditorContainer editorContainer, IEditor editor) {
+		if(currentEditor == editor) {
+			setTitle();
+		}
+	}
+
+	
 }

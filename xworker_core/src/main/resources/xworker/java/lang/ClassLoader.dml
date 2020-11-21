@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ClassLoader" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.actions.SelfAction"
+     group="_actions.java" th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions">
+    <description><![CDATA[<p>创建并返回一个ClassLoader。</p>
+
+<p><strong>缓存</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 创建的ClassLoader缓存到World中，可以通过clearClassLoader方法清除，清除后在重新获取ClassLoader是重新创建。</p>
+
+<p><strong>创建ClassLoader</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;会创建一个URLClassLoader，如果没有设置classPath，那么默认返回parentClassLoader。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="getClassLoader" outerClassName="xworker.lang.ClassLoaderActions"
+             methodName="getClassLoader"></JavaAction>
+        <JavaAction name="clearClassLoader" outerClassName="xworker.lang.ClassLoaderActions"
+             methodName="clearClassLoader"></JavaAction>
+        <GetStringList name="getClassPaths" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="classPaths" usage="params"></GetStringList>
+        <GetObject name="getParentClassLoader" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="parentClassLoader"></GetObject>
+        <GetBoolean name="isWorldClassLoader" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="worldClassLoader"></GetBoolean>
+        <JavaAction name="run" outerClassName="xworker.lang.ClassLoaderActions" methodName="getClassLoader"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="parentClassLoader" size="60"></attribute>
+    <attribute name="worldClassLoader" inputtype="truefalse" default="true">
+        <description><![CDATA[<p>如果没有设置ClassLoader是否默认使用World.getInstance().getClassLoader()。</p>
+]]></description>
+    </attribute>
+    <attribute name="classPaths" inputtype="textarea"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

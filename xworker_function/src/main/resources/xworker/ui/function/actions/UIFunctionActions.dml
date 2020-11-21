@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="UIFunctionActions" descriptors="xworker.lang.MetaDescriptor3" many="" editCols=""
+     modifier="" th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions">
+    <thing name="SetParameterFunctionWithPrototype" extends="xworker.lang.actions.SelfAction"
+         group="ui.function">
+        <description><![CDATA[<p>使用函数原型设置当前函数参数的函数。</p>
+
+<p>用于有界面的函数的界面中。</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <GroovyAction name="run">
+                <code><![CDATA[import xworker.ui.function.FunctionRequestUtil;
+
+//函数请求变量
+def ac = request.getActionContext();
+def fnRequest = request.getRequestMessage();
+
+def thing = self.doAction("getFunctionPrototype", actionContext);
+
+if(thing != null){
+    FunctionRequestUtil.replaceFunctionRequestWithPrototype(fnRequest, thing, actionContext);
+}]]></code>
+            </GroovyAction>
+            <GetThing name="getFunctionPrototype" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="functionPrototype" usage="params"></GetThing>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="functionPrototype" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="FunctionPrototype" extends="xworker.lang.function.Function" inheritDescription="true"></thing>
+    </thing>
+</thing>

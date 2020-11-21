@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="RegistToMe" descriptors="xworker.lang.util.ThingGuide" autoExecute="true"
+     th_createIndex="true" th_registThing="guide|xworker.lang.util.ThingIndex">
+    <ActionNode>
+        <actions>
+            <GroovyAction name="doAction">
+                <code><![CDATA[def thing = thingGuide.getEditThing();
+def path = thing.getMetadata().getPath();
+def newThingAttributes = thing.getStringBlankAsNull("newThingAttributes");
+if(newThingAttributes == null || newThingAttributes.indexOf(path) == -1){
+    if(newThingAttributes == null){
+        newThingAttributes = "";
+    }else{
+        newThingAttributes = newThingAttributes + "\n";
+    }
+    newThingAttributes = newThingAttributes + "\"true\":th_createIndex,\n\"child|" + path + "\":th_registThing";
+    thing.set("newThingAttributes", newThingAttributes);
+    thing.save();
+}]]></code>
+            </GroovyAction>
+        </actions>
+    </ActionNode>
+</ThingGuide>

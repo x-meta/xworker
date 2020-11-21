@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=可用变量&amp;en=Available variables"
+     label="AvaiableVariableDialog">
+    <FillLayout name="FillLayout"></FillLayout>
+    <SashForm name="mainSashForm" weights="30,70">
+        <Tree name="varTree" CHECK="true" FULL_SELECTION="false" HIDE_SELECTION="false"
+             BORDER="true" lineVisible="false" multipleColumns="false" headerVisible="false"
+             sortIndicator="false" moveableColumns="false">
+            <Event name="onSelection">
+                <GroovyAction>
+                    <code><![CDATA[def vars = [];
+for(item in varTree.getItems()){
+   if(item.getChecked()){
+       vars.add(item.getData());
+   }
+}
+
+def code = template(actionContext, "vars", vars);
+if(code != null){
+    codeText.setText(code);
+}]]></code>
+                    <ActionDefined>
+                        <TextTemplate name="template" _xmeta_id_="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                            <templateCode><![CDATA[########################################################
+<#list vars as var>
+<#if var.className?exists && var.className != "">
+    ${var.className} ${var.name} = actionContext.getObject("${var.name}");
+<#else>
+    Object ${var.name} = actionContext.get("${var.name}");
+</#if>
+</#list>
+
+########################################################
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionClass;
+import org.xmeta.annotation.ActionField;
+ 
+@ActionClass(creator="createInstance")
+public class MyClass {
+    public static MyClass createInstance(ActionContext actionContext){
+        //return new MyClass();    
+        String key = MyClass.class.getName();
+        MyClass obj = actionContext.getObject(key);
+        if(obj == null){
+            obj = new MyClass();
+            actionContext.g().put(key, obj);
+        }
+        
+        return obj;
+    }    
+    <#list vars as var>
+    <#if var.className?exists && var.className != "">
+        
+    @ActionField
+    public ${var.className} ${var.name};
+    <#else>
+        
+    @ActionField
+    public Object ${var.name};
+    </#if>
+    </#list> 
+}]]></templateCode>
+                        </TextTemplate>
+                    </ActionDefined>
+                    <VariablesDescs _xmeta_id_="3627" descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                        <Variable name="item" _xmeta_id_="3628" varName="item" className="org.eclipse.swt.widgets.TreeItem"></Variable>
+                    </VariablesDescs>
+                </GroovyAction>
+            </Event>
+        </Tree>
+        <CTabFolder name="mainTabFolder" BORDER="true">
+            <CTabItem name="codeItem" text="lang:d=代码&amp;en=Code">
+                <StyledText name="codeText" style="MULTI" H_SCROLL="true" V_SCROLL="true">
+                    <Colorer name="Colorer" codeName="java" codeType="java"></Colorer>
+                </StyledText>
+            </CTabItem>
+            <CTabItem name="helpItem" text="lang:d=帮助&amp;en=Help">
+                <ThingDescBrowser name="ThingDescBrowser" nohead="true">
+                    <description><![CDATA[<h1>可用变量</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 可用变量是一些当前模型可能可以使用的变量，这些变量通常是通过<strong>VariablesDesc</strong>定义的。</p>
+
+<h2>代码</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 选择变量，会通过模板生成的一些可能会用到的参考代码。</p>
+
+<h2>不精确</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可能有些变量在这里没有列出，也有可能一些列出的变量实际并不存在，不过大部分变量应该都可以使用。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+                </ThingDescBrowser>
+            </CTabItem>
+        </CTabFolder>
+        <Code name="init">
+            <code><![CDATA[import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import xworker.swt.xworker.codeassist.CodeHelper;
+
+def vars = CodeHelper.getVariableDescs(currentThing, actionContext);
+Collections.sort(vars);
+
+for(var in vars){
+    def item = new TreeItem(varTree, SWT.NONE);
+    item.setText(var.getName());    
+    item.setData(var);
+}]]></code>
+        </Code>
+    </SashForm>
+</Shell>

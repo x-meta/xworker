@@ -817,4 +817,36 @@ public class XWorkerUtils {
 		return thingUtils.searchRegistThings(registorThing, registType, keywords, parent, noDescriptor, actionContext);
 	}
 	
+	/**
+	 * 根据默认首选项返回对应的首选项实例模型。
+	 * 
+	 * @param defaultConfig
+	 * @return
+	 */
+	public static Thing getPreference(String defaultConfig) {
+		return getPreference(World.getInstance().getThing(defaultConfig));
+	}
+	
+	/**
+	 * 根据默认首选项返回对应的首选项实例模型。
+	 * 
+	 * @param defaultConfig
+	 * @return
+	 */
+	public static Thing getPreference(Thing defaultConfig) {
+		String path = defaultConfig.getRoot().getMetadata().getPath();
+		if(defaultConfig.getRoot() != defaultConfig) {
+			path = path + "." + defaultConfig.getMetadata().getName();
+		}
+		path = "_local.xworker.preferences." + path.replace('.', '_');
+		Thing config = World.getInstance().getThing(path);
+		if(config == null) {
+			config = defaultConfig.detach();
+			config.set("th_createIndex", false);
+			config.set("th_registThing", null);
+			config.saveAs("_local", path);
+		}
+
+		return config;
+	}
 }

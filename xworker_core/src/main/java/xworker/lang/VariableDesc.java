@@ -89,6 +89,12 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	}
 
 	public String getClassName() {
+		if(THING.equals(type)) {
+			return "org.xmeta.Thing";
+		}else if(ACTIONCONTAINER.equals(type)) {
+			return "org.xmeta.util.ActionContainer";
+		}
+		
 		return className;
 	}
 

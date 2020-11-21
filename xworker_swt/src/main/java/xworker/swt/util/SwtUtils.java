@@ -77,6 +77,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -91,6 +93,8 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
+import xworker.app.view.swt.data.DataStore;
+import xworker.dataObject.DataObject;
 import xworker.swt.ActionContainer;
 import xworker.swt.actions.MenuActions;
 import xworker.swt.browser.BrowserCallback;
@@ -1494,6 +1498,149 @@ public class SwtUtils {
 		}
 		
 		return values;
+	}
+	
+	/**
+	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象，如果控件选中了多个也只会返回第一个。如果未绑定或未选择返回null。
+	 * 
+	 * @param control
+	 * @param index
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static DataObject getSelectedDataObject(Control control) {
+		if(control instanceof Combo) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			Combo combo = (Combo) control;
+			int index = combo.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				return datas.get(index);
+			}
+		}else if(control instanceof CCombo) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			CCombo combo = (CCombo) control;
+			int index = combo.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				return datas.get(index);
+			}
+		}else if(control instanceof org.eclipse.swt.widgets.List) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			org.eclipse.swt.widgets.List list = (org.eclipse.swt.widgets.List) control;
+			int index = list.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				return datas.get(index);
+			}
+		}else if(control instanceof Table) {
+			Table table = (Table) control;
+			TableItem items[] = table.getSelection();
+			if(items != null && items.length > 0) {
+				return (DataObject) items[0].getData();
+			}
+		}else if(control instanceof Tree) {
+			Tree tree = (Tree) control;
+			TreeItem items[] = tree.getSelection();
+			if(items != null && items.length > 0) {
+				return (DataObject) items[0].getData();
+			}
+		}else if(control instanceof Composite) {
+			for(Control child : ((Composite) control).getChildren()) {
+				if(child instanceof Button) {
+					Button button = (Button) child;
+					if(button.getSelection()) {
+						return (DataObject) button.getData();
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象的列表。如果未绑定或未选择返回null。
+	 * 
+	 * @param control
+	 * @param index
+	 * 
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<DataObject> getSelectedDataObjects(Control control) {
+		List<DataObject> list = new ArrayList<DataObject>();
+		if(control instanceof Combo) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			Combo combo = (Combo) control;
+			int index = combo.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				list.add(datas.get(index));
+			}
+		}else if(control instanceof CCombo) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			CCombo combo = (CCombo) control;
+			int index = combo.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				list.add(datas.get(index));
+			}
+		}else if(control instanceof org.eclipse.swt.widgets.List) {
+			List<DataObject> datas = (List<DataObject>) control.getData(DataStore.STORE_RECORDS);
+			if(datas == null || datas.size() == 0) {
+				return null;
+			}
+			
+			org.eclipse.swt.widgets.List llist = (org.eclipse.swt.widgets.List) control;
+			int index = llist.getSelectionIndex();
+			if(index >= 0 && index < datas.size()) {
+				list.add(datas.get(index));
+			}
+		}else if(control instanceof Table) {
+			Table table = (Table) control;
+			TableItem items[] = table.getSelection();
+			if(items != null) {
+				for(TableItem item : items) {
+					list.add((DataObject) item.getData());
+				}
+			}
+		}else if(control instanceof Tree) {
+			Tree tree = (Tree) control;
+			TreeItem items[] = tree.getSelection();
+			if(items != null) {
+				for(TreeItem item : items) {
+					list.add((DataObject) item.getData());
+				}
+			}
+		}else if(control instanceof Composite) {
+			for(Control child : ((Composite) control).getChildren()) {
+				if(child instanceof Button) {
+					Button button = (Button) child;
+					if(button.getSelection()) {
+						list.add((DataObject) button.getData());
+					}
+				}
+			}
+		}
+		
+		return list;
 	}
 	
 	/**

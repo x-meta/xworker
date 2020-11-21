@@ -298,6 +298,25 @@ public class DataObject extends HashMap<String, Object> {
 	public BigInteger getBigInteger(String key){
 		return UtilData.getBigInteger(get(key), null);
 	}
+	
+	/**
+	 * 一般为可以展示并可以选择数据对象列表的界面使用。
+	 * 
+	 * @return
+	 */
+	public boolean isChecked() {
+		return getBoolean(DataObject.CHECKED_ATTRIBUTE_NAME);
+	}
+	
+	/**
+	 * 一般为可以展示并可以选择数据对象列表的界面使用。
+	 * 
+	 * @return
+	 */
+	public void setChecked(boolean checked) {
+		this.set(DataObject.CHECKED_ATTRIBUTE_NAME, checked);
+	}
+	
 	/**
 	 * 设置数据对象的键值。
 	 * 
@@ -1121,7 +1140,7 @@ public class DataObject extends HashMap<String, Object> {
 	}
 	
 	/**
-	 * 把自己的元数据等复制到指定数据对象，内部共用基数数据，如爆粗。
+	 * 把自己的元数据等复制到指定数据对象，内部共用基数数据。
 	 * 
 	 * @param dataObject
 	 */

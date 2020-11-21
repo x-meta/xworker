@@ -1,4 +1,4 @@
-^1597975052414
+^1605333586541
 @
 sname
 shell
@@ -101,9 +101,25 @@ false
   true
   sdescriptors
   xworker.swt.Widgets/@Composite
+  sinheritDescription
+  false
   sth_createIndex
   false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sicon
+  icons/page_white_actionscript.png
+  sth_fileMonitor
+  false
+  sth_deprecated
+  false
   sth_mark
+  false
+  sth_registQueryOnlySelf
   false
   sid
   composite
@@ -1744,7 +1760,7 @@ functionRequest.run(actionContext);
           simage
           runParameterImage
           stoolTiptext
-          执行当前参数
+          lang:d=执行当前参数&en=Execute current parameter
           senabled
           false
           sdescriptors
@@ -1847,7 +1863,7 @@ param.run();
           simage
           addParameterImage
           stoolTiptext
-          添加参数
+          lang:d=添加参数&en=Add Parameter
           senabled
           false
           sdescriptors
@@ -1944,7 +1960,7 @@ FunctionManager.sendAddParameterRequest(functionRequest);
           simage
           removeParameterImage
           stoolTiptext
-          删除参数
+          lang:d=删除参数&en=Remove parameter
           senabled
           false
           sdescriptors
@@ -2047,7 +2063,7 @@ if(box.open() == SWT.OK){
           simage
           paramUpImage
           stoolTiptext
-          上移参数
+          lang:d=上移参数&en=Move parameter up
           senabled
           false
           sdescriptors
@@ -2172,7 +2188,7 @@ if(functionRequest.moveParamUp(param)){
           simage
           paramDownImage
           stoolTiptext
-          下移参数
+          lang:d=下移参数&ne=Move parameter down.
           senabled
           false
           sdescriptors
@@ -2297,7 +2313,7 @@ if(functionRequest.moveParamDown(param)){
           simage
           toConstantsImage
           stoolTiptext
-          把参数值转化为常量
+          lang:d=把参数值转化为常量&en=Convert parameter to constant
           senabled
           true
           sdescriptors
@@ -2349,20 +2365,98 @@ if(functionRequest.moveParamDown(param)){
               false
               sid
               4671
-                @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@GroovyAction
+                @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@MessageBox
                 sname
-                GroovyAction
+                MessageBox
+                sshell
+                ognl:coolBar.getShell()
+                sicon
+                ICON_QUESTION
+                sbuttons
+                OK | CANCEL
+                stitle
+                lang:d=转化参数为常量&en=Convert parameter to constant
+                smessage
+                lang:d=想要把参数值转化为常量模型么？&en=Do you want to convert parameter values to constant models?
+                sinterpretationType
+                Self
+                sattributeTemplate
+                false
+                schildsAttributeTemplate
+                false
+                svarScope
+                Local
                 sisSynchronized
                 false
                 sthrowException
                 true
-                suseOtherAction
+                screateLocalVarScope
                 false
-                svarScope
-                Local
+                ssaveReturn
+                false
+                sswitchResult
+                false
                 sdisableGlobalContext
                 false
-                Scode
+                sdebugLog
+                false
+                sdescriptors
+                xworker.swt.actions.MessageBoxActions/@MessageBox
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_noThingRegistViewer
+                false
+                sth_fileMonitor
+                false
+                sth_mark
+                false
+                sth_registQueryOnlySelf
+                false
+                sid
+                MessageBox
+                  @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@MessageBox/@actions
+                  sname
+                  actions
+                  sdescriptors
+                  xworker.swt.actions.MessageBoxActions/@MessageBox/@actions1
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_registDisabled
+                  false
+                  sth_noThingRegistViewer
+                  false
+                  sth_fileMonitor
+                  false
+                  sth_mark
+                  false
+                  sth_registQueryOnlySelf
+                  false
+                  sid
+                  actions
+                    @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@MessageBox/@actions/@GroovyAction
+                    sname
+                    ok
+                    sisSynchronized
+                    false
+                    sthrowException
+                    true
+                    suseOtherAction
+                    false
+                    svarScope
+                    Local
+                    sdisableGlobalContext
+                    false
+                    Scode
 #$@text#$@
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
@@ -2374,55 +2468,135 @@ import org.xmeta.Thing;
 def item = requestTree.getSelection()[0];
 def param = item.getData("param");
 def functionRequest = item.getData();
-
-def box = new MessageBox(coolBar.getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
-box.setText("转为常量");
-box.setMessage("确定要把当前函数转为常量么？转为常量后函数参数和子节点都会被删除。");            
-if(SWT.OK == box.open()){
-    def name = null;
-    def value = null;
-    def valueThing = null;
-    if(param != null){
-        name = param.getName();
-        value = param.getValue();
-        valueThing = param.getSavedValueThing();
-    }else{
-        name = functionRequest.getThing().getMetadata().getName();
-        value = functionRequest.getValue();
-        
-        valueThing = functionRequest.getThing().doAction("getSavedValueThing", 
-            actionContext, ["name":name, "value":value]);
-    }
-    if(valueThing == null){
-         valueThing = FunctionRequestUtil.getValueThing(name, value);
-    }
-    if(functionRequest != null){
-        valueThing.put("name", functionRequest.getThing().getMetadata().getName());
-        functionRequest.init(valueThing, false);
-    }else{
-        param.setValueThing(valueThing, value);
-    }
+def name = null;
+def value = null;
+def valueThing = null;
+if(param != null){
+    name = param.getName();
+    value = param.getValue();
+    valueThing = param.getSavedValueThing();
+}else{
+    name = functionRequest.getThing().getMetadata().getName();
+    value = functionRequest.getValue();
     
-    
-    actions.doAction("refreshFunctionTree", actionContext, 
-        ["parentItem":item, "functionRequest":functionRequest, "currentRequest":null]);
-  
+    valueThing = functionRequest.getThing().doAction("getSavedValueThing", 
+        actionContext, ["name":name, "value":value]);
 }
+if(valueThing == null){
+     valueThing = FunctionRequestUtil.getValueThing(name, value);
+}
+if(valueThing == null){
+    error(actionContext);
+    return;
+}
+
+if(functionRequest != null){
+    valueThing.put("name", functionRequest.getThing().getMetadata().getName());
+    functionRequest.init(valueThing, false);
+}else{
+    param.setValueThing(valueThing, value);
+}
+    
+    
+actions.doAction("refreshFunctionTree", actionContext, 
+        ["parentItem":item, "functionRequest":functionRequest, "currentRequest":null]);
 #$@text#$@
-                sinterpretationType
-                Action
-                screateLocalVarScope
-                false
-                ssaveReturn
-                false
-                sdescriptors
-                xworker.lang.actions.Actions/@GroovyAction
-                sth_createIndex
-                false
-                sth_mark
-                false
-                sid
-                GroovyAction
+                    sinterpretationType
+                    Action
+                    screateLocalVarScope
+                    false
+                    ssaveReturn
+                    false
+                    sswitchResult
+                    false
+                    sdebugLog
+                    false
+                    sdescriptors
+                    xworker.lang.actions.Actions/@GroovyAction
+                    sth_createIndex
+                    false
+                    sth_mark
+                    false
+                    sid
+                    GroovyAction
+                      @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@MessageBox/@actions/@GroovyAction/@ActionDefined
+                      sname
+                      ActionDefined
+                      sdescriptors
+                      xworker.lang.actions.Inout/@ActionDefined
+                      sinheritDescription
+                      false
+                      sth_createIndex
+                      false
+                      sth_registMyChilds
+                      false
+                      sth_registDisabled
+                      false
+                      sth_noThingRegistViewer
+                      false
+                      sth_fileMonitor
+                      false
+                      sth_mark
+                      false
+                      sth_registQueryOnlySelf
+                      false
+                      sid
+                      ActionDefined
+                        @/@composite/@coolBar/@paramsCoolItem/@paramsToolbar/@4668311/@4670/@4671/@MessageBox/@actions/@GroovyAction/@ActionDefined/@error
+                        sname
+                        error
+                        sshell
+                        ognl:coolBar.getShell()
+                        sicon
+                        ICON_ERROR
+                        sbuttons
+                        OK
+                        stitle
+                        lang:d=转化参数为常量&en=Convert parameter to constant
+                        smessage
+                        lang:d=转化失败，不支持的对象类型。&en=Conversion failed, unsupported object type.
+                        sinterpretationType
+                        Self
+                        sattributeTemplate
+                        false
+                        schildsAttributeTemplate
+                        false
+                        svarScope
+                        Local
+                        sisSynchronized
+                        false
+                        sthrowException
+                        true
+                        screateLocalVarScope
+                        false
+                        ssaveReturn
+                        false
+                        sswitchResult
+                        false
+                        sdisableGlobalContext
+                        false
+                        sdebugLog
+                        false
+                        sdescriptors
+                        xworker.swt.actions.MessageBoxActions/@MessageBox
+                        sinheritDescription
+                        false
+                        sth_createIndex
+                        false
+                        sth_registMyChilds
+                        false
+                        sth_registDisabled
+                        false
+                        sth_noThingRegistViewer
+                        false
+                        sth_fileMonitor
+                        false
+                        sth_mark
+                        false
+                        sth_registQueryOnlySelf
+                        false
+                        sid
+                        error
       @/@composite/@coolBar/@viewCoolItem
       sname
       viewCoolItem
@@ -2764,13 +2938,15 @@ if(sashForm.getMaximizedControl() == null){
           salignment
           LEFT
           stext
-          函数栈：
+          lang:d=函数栈：&en=Stack:
           scapture
           false
           senabled
           true
           sredraw
           true
+          spack
+          false
           svisible
           true
           sdescriptors
@@ -3069,13 +3245,15 @@ actions.doAction("initFunctionRequest", actionContext, ["request": stackFunction
             salignment
             LEFT
             stext
-            函数语法树：
+            lang:d=函数语法树：&en=Syntax tree:
             scapture
             false
             senabled
             true
             sredraw
             true
+            spack
+            false
             svisible
             true
             sdescriptors
@@ -3357,6 +3535,8 @@ mainComposite.layout();
                   screateLocalVarScope
                   false
                   ssaveReturn
+                  false
+                  sswitchResult
                   false
                   sdebugLog
                   false
@@ -4677,8 +4857,16 @@ actionContext.g().put("thingForm_modify", false);
                       xworker.lang.function.Functions
                       sregistType
                       child
+                      sparent
+                      false
                       ssearchByKeywords
                       true
+                      sshowContent
+                      false
+                      scontentDisplayType
+                      Composite
+                      sforceUseDefaultOpenMethod
+                      false
                       sshowDescBrowser
                       true
                       sdescBrowserRight
@@ -4687,6 +4875,12 @@ actionContext.g().put("thingForm_modify", false);
                       true
                       scache
                       true
+                      scheck
+                      false
+                      sdescritporForNewThing
+                      xworker.swt.xworker.ThingRegistThing
+                      sdescritporChilds
+                      false
                       sdescriptors
                       xworker.swt.Widgets/@ThingRegistSelector
                       sth_createIndex
@@ -5010,7 +5204,7 @@ def thing = functionsSelector.doAction("getThing");
 if(thing == null){
     def box = new MessageBox(buttonComposite.getShell(), SWT.ICON_WARNING | SWT.OK);
     box.setText("选择函数原型");
-    box.setMessage("当前选中的函数 原型不存在或是一个目录！");            
+    box.setMessage("当前选中的函数原型不存在或是一个目录！");            
     box.open();
     return;
 }
@@ -5065,6 +5259,8 @@ if(functionRequest != null || (param != null && param.getValueThing() != null)){
                               screateLocalVarScope
                               false
                               ssaveReturn
+                              false
+                              sswitchResult
                               false
                               sdebugLog
                               false
@@ -5303,8 +5499,16 @@ if(param != null){
                       xworker.lang.function.FunctionInstance
                       sregistType
                       child
+                      sparent
+                      false
                       ssearchByKeywords
                       true
+                      sshowContent
+                      false
+                      scontentDisplayType
+                      Composite
+                      sforceUseDefaultOpenMethod
+                      false
                       sshowDescBrowser
                       true
                       sdescBrowserRight
@@ -5313,6 +5517,12 @@ if(param != null){
                       true
                       scache
                       true
+                      scheck
+                      false
+                      sdescritporForNewThing
+                      xworker.swt.xworker.ThingRegistThing
+                      sdescritporChilds
+                      false
                       sdescriptors
                       xworker.swt.Widgets/@ThingRegistSelector
                       sth_createIndex
@@ -6172,8 +6382,16 @@ def functionRequest = item.getData();
 //执行脚本并获取参数值
 def gthing = world.getThing("xworker.ui.function.swt.SelectFunctionGroovy");
 gthing.set("code", codeText.getText());
-def result = gthing.getAction().run(functionRequest.getActionContext());
+def ac = actionContext;
+if(functionRequest != null){
+    ac = functionRequest.getActionContext();
+}
+def result = gthing.getAction().run(ac);
 
+
+select(actionContext, "functionRequest", functionRequest, "result", result,
+        "param", param);
+/*(        
 def box = new MessageBox(groovyComposite.getShell(), SWT.ICON_INFORMATION | SWT.YES | SWT.NO | SWT.CANCEL);
 box.setText("Groovy执行结果");
 box.setMessage("选择'是'把Groovy当做函数，'否'仅替换参数值。");
@@ -6187,7 +6405,7 @@ if(r == SWT.YES || r == SWT.NO){
             def thing = new Thing("xworker.lang.function.values.GroovyValue");
             thing.getAttributes().putAll(functionRequest.getThing().getAttributes());
             thing.put("code", codeText.getText());
-	        functionRequest.init(thing, false);
+	           functionRequest.init(thing, false);
             
             actions.doAction("refreshFunctionTree", actionContext,  ["parentItem":item, "functionRequest":functionRequest, "currentRequest":null]);
             //functionRequest.getCallback().ok(result, FunctionStatus.RUNNING, actionContext);
@@ -6201,13 +6419,17 @@ if(r == SWT.YES || r == SWT.NO){
         param.setValue(result, param.getValueThing());
         param.callback();
     }
-}
+}*/
 #$@text#$@
                               sinterpretationType
                               Action
                               screateLocalVarScope
                               false
                               ssaveReturn
+                              false
+                              sswitchResult
+                              false
+                              sdebugLog
                               false
                               sdescriptors
                               xworker.lang.actions.Actions/@GroovyAction
@@ -6217,6 +6439,221 @@ if(r == SWT.YES || r == SWT.NO){
                               false
                               sid
                               GroovyAction
+                                @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@paramFnSetTabItem/@paramComposite/@ctabFolder/@groovyItem/@groovyComposite/@10887/@10890/@10892/@10893/@GroovyAction/@ActionDefined
+                                sname
+                                ActionDefined
+                                sdescriptors
+                                xworker.lang.actions.Inout/@ActionDefined
+                                sinheritDescription
+                                false
+                                sth_createIndex
+                                false
+                                sth_registMyChilds
+                                false
+                                sth_registDisabled
+                                false
+                                sth_noThingRegistViewer
+                                false
+                                sth_fileMonitor
+                                false
+                                sth_mark
+                                false
+                                sth_registQueryOnlySelf
+                                false
+                                sid
+                                ActionDefined
+                                  @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@paramFnSetTabItem/@paramComposite/@ctabFolder/@groovyItem/@groovyComposite/@10887/@10890/@10892/@10893/@GroovyAction/@ActionDefined/@select
+                                  sname
+                                  select
+                                  sshell
+                                  ognl:groovyComposite.getShell()
+                                  sicon
+                                  ICON_ERROR
+                                  sbuttons
+                                  YES | NO
+                                  stitle
+                                  lang:d=保存结果&en=Save Result
+                                  smessage
+                                  lang:d=选择'是'把Groovy当做函数，'否'仅替换参数值。&en=Choose yes to treat groovy as a function and no to replace only the parameter values.
+                                  sinterpretationType
+                                  Self
+                                  sattributeTemplate
+                                  false
+                                  schildsAttributeTemplate
+                                  false
+                                  svarScope
+                                  Local
+                                  sisSynchronized
+                                  false
+                                  sthrowException
+                                  true
+                                  screateLocalVarScope
+                                  false
+                                  ssaveReturn
+                                  false
+                                  sswitchResult
+                                  false
+                                  sdisableGlobalContext
+                                  false
+                                  sdebugLog
+                                  false
+                                  sdescriptors
+                                  xworker.swt.actions.MessageBoxActions/@MessageBox
+                                  sinheritDescription
+                                  false
+                                  sth_createIndex
+                                  false
+                                  sth_registMyChilds
+                                  false
+                                  sth_registDisabled
+                                  false
+                                  sth_noThingRegistViewer
+                                  false
+                                  sth_fileMonitor
+                                  false
+                                  sth_mark
+                                  false
+                                  sth_registQueryOnlySelf
+                                  false
+                                  sid
+                                  select
+                                    @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@paramFnSetTabItem/@paramComposite/@ctabFolder/@groovyItem/@groovyComposite/@10887/@10890/@10892/@10893/@GroovyAction/@ActionDefined/@select/@actions
+                                    sname
+                                    actions
+                                    sdescriptors
+                                    xworker.swt.actions.MessageBoxActions/@MessageBox/@actions1
+                                    sinheritDescription
+                                    false
+                                    sth_createIndex
+                                    false
+                                    sth_registMyChilds
+                                    false
+                                    sth_registDisabled
+                                    false
+                                    sth_noThingRegistViewer
+                                    false
+                                    sth_fileMonitor
+                                    false
+                                    sth_mark
+                                    false
+                                    sth_registQueryOnlySelf
+                                    false
+                                    sid
+                                    actions
+                                      @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@paramFnSetTabItem/@paramComposite/@ctabFolder/@groovyItem/@groovyComposite/@10887/@10890/@10892/@10893/@GroovyAction/@ActionDefined/@select/@actions/@yes
+                                      sname
+                                      yes
+                                      sisSynchronized
+                                      false
+                                      sthrowException
+                                      true
+                                      suseOtherAction
+                                      false
+                                      svarScope
+                                      Local
+                                      sdisableGlobalContext
+                                      false
+                                      Scode
+#$@text#$@
+import org.xmeta.Thing;
+
+if(param == null){
+    def thing = new Thing("xworker.lang.function.values.GroovyValue");
+    thing.getAttributes().putAll(functionRequest.getThing().getAttributes());
+    thing.put("code", codeText.getText());
+    functionRequest.init(thing, false);
+    
+    actions.doAction("refreshFunctionTree", actionContext,  ["parentItem":item, "functionRequest":functionRequest, "currentRequest":null]);
+    //functionRequest.getCallback().ok(result, FunctionStatus.RUNNING, actionContext);
+    FunctionManager.finishRequest(functionRequest, result);
+}else{
+    //函数的回调，并返回原始界面
+    param.setGroovyValue(result, codeText.getText());
+    param.callback();
+}
+#$@text#$@
+                                      sinterpretationType
+                                      Action
+                                      screateLocalVarScope
+                                      false
+                                      ssaveReturn
+                                      false
+                                      sswitchResult
+                                      false
+                                      sdebugLog
+                                      false
+                                      sdescriptors
+                                      xworker.lang.actions.Actions/@GroovyAction
+                                      sinheritDescription
+                                      false
+                                      sth_createIndex
+                                      false
+                                      sth_registMyChilds
+                                      false
+                                      sth_registDisabled
+                                      false
+                                      sth_noThingRegistViewer
+                                      false
+                                      sth_fileMonitor
+                                      false
+                                      sth_mark
+                                      false
+                                      sth_registQueryOnlySelf
+                                      false
+                                      sid
+                                      yes
+                                      @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@paramFnSetTabItem/@paramComposite/@ctabFolder/@groovyItem/@groovyComposite/@10887/@10890/@10892/@10893/@GroovyAction/@ActionDefined/@select/@actions/@no
+                                      sname
+                                      no
+                                      sisSynchronized
+                                      false
+                                      sthrowException
+                                      true
+                                      suseOtherAction
+                                      false
+                                      svarScope
+                                      Local
+                                      sdisableGlobalContext
+                                      false
+                                      Scode
+#$@text#$@
+if(param == null){
+    FunctionManager.finishRequest(functionRequest, result);
+}else{
+    param.setValue(result, param.getValueThing());
+    param.callback();
+}
+#$@text#$@
+                                      sinterpretationType
+                                      Action
+                                      screateLocalVarScope
+                                      false
+                                      ssaveReturn
+                                      false
+                                      sswitchResult
+                                      false
+                                      sdebugLog
+                                      false
+                                      sdescriptors
+                                      xworker.lang.actions.Actions/@GroovyAction
+                                      sinheritDescription
+                                      false
+                                      sth_createIndex
+                                      false
+                                      sth_registMyChilds
+                                      false
+                                      sth_registDisabled
+                                      false
+                                      sth_noThingRegistViewer
+                                      false
+                                      sth_fileMonitor
+                                      false
+                                      sth_mark
+                                      false
+                                      sth_registQueryOnlySelf
+                                      false
+                                      sid
+                                      no
             @/@composite/@sashForm/@mainComposite/@contentComposite/@contentTableFolder/@contentTabFolderGridData
             sname
             contentTabFolderGridData

@@ -49,6 +49,7 @@ public class WebSocketHandler {
 		doAction(session, "onTextMessage", "session", session, "text", text);
 	}
 	
+	@OnWebSocketMessage
 	public void onBinaryMessage(Session session, byte[] buf, int offset, int length) {
 		doAction(session, "onBinaryMessage", "session", session, "buf", buf, "offset", offset, "length", length);
 	}

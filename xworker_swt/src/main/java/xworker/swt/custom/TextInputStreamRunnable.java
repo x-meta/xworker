@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.util.ExceptionUtil;
 
 import ognl.OgnlException;
 import xworker.swt.functions.AutoScroll;
@@ -53,9 +54,23 @@ public class TextInputStreamRunnable implements Runnable, AutoScroll{
 						}
 					}
 				});			
-			}
-		}catch(Exception e){
+			}					
+		}catch(final Exception e){
 			logger.info("get data form inputStream error", e);
+			
+			if(text != null && text.isDisposed() == false) {
+				//是InputStream结束了
+				text.getDisplay().asyncExec(new Runnable(){
+					public void run(){
+						text.append(ExceptionUtil.toString(e));
+						
+						if(autoScroolToBottom){
+							 text.setTopIndex(text.getLineCount() - 1);
+							 //text.showSelection();
+						}
+					}
+				});
+			}
 		}
 	}
 

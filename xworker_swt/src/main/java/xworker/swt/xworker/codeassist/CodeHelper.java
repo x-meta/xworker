@@ -165,5 +165,17 @@ public class CodeHelper {
 		
 		return null;
 	}
+	
+	public static List<VariableDesc> getVariableDescs(Thing thing, ActionContext actionContext){
+		List<VariableDesc> descs = new ArrayList<VariableDesc>();
+		for(VariableProvider provider : variableProviders) {
+			List<VariableDesc> ds = provider.getVariables(null, 0, Collections.emptyList(), thing, actionContext);
+			if(ds != null) {
+				descs.addAll(ds);
+			}
+		}
+		
+		return descs;
+	}
 }
 

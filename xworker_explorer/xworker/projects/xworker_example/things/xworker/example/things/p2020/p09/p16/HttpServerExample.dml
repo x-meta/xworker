@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="HttpServerExample" descriptors="xworker.swt.xworker.ThingRegistThing" type="composite"
+     group="io.netty" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p>使用Netty编写的Http服务器示例。</p>
+
+<p><strong>HttpServerHandler</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; HttpServerHandler是XWorker编写的一个Handler，用于处理FullHttpRequest，可以用来快速实现一个简单的HttpSever。</p>
+
+<p><strong>示例说明</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; HttpServerHandler下有3个Http处理器。</p>
+
+<ul>
+	<li><strong>helloworld</strong><br />
+	是一个SimpleControl，处理固定的url。<br />
+	&nbsp;</li>
+	<li><strong>SimpleControl</strong><br />
+	是一个SimpleControl，通过sc参数指定要执行的SimpleControl模型。<br />
+	&nbsp;</li>
+	<li><strong>StaticFile</strong><br />
+	静态文件浏览。<br />
+	&nbsp;</li>
+	<li><strong>FileUpload</strong><br />
+	文件上传示例。<br />
+	&nbsp;</li>
+	<li><strong>WebSocket</strong><br />
+	WebSocket示例，网页似乎只能IE或Edge下正常。</li>
+</ul>
+
+<p><strong>SimpleControl</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是一个简单的MVC框架，使用了xworker_web下的模型。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <Composite label="HttpServerExample">
+        <thing name="Netty" descriptors="xworker.lang.MetaThing/@thing">
+            <actions>
+                <NOOP name="create"></NOOP>
+            </actions>
+            <DemoNettyServer descriptors="xworker.netty.demo.NettyDemo/@DemoNettyServer" port="8080">
+                <Handlers>
+                    <JavaSSLServerHandler name="JavaSSLServerHandler" keyStoreType="pkcs12" keyStore="xworker:config/ssl/server.jks"
+                         keyStorePassword="xworker"></JavaSSLServerHandler>
+                    <HttpServerCodec name="HttpServerCodec"></HttpServerCodec>
+                    <HttpObjectAggregator name="HttpObjectAggregator" maxContentLength="314572800"></HttpObjectAggregator>
+                    <WebSocketServerCompressionHandler name="WebSocketServerCompressionHandler"></WebSocketServerCompressionHandler>
+                    <WebSocketServerProtocolHandler name="WebSocketServerProtocolHandler" websocketPath="/socket"></WebSocketServerProtocolHandler>
+                    <ChunkedWriteHandler name="ChunkedWriteHandler"></ChunkedWriteHandler>
+                    <WebSocketFrameHandler>
+                        <actions descriptors="MetaThing/@actions">
+                            <GroovyAction name="onText" _xmeta_id_="onTextMessage">
+                                <code><![CDATA[import java.text.SimpleDateFormat;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+
+def sf = new SimpleDateFormat("HH:mm:ss");
+def message = frame.text();
+//println text;
+def response = alice(actionContext, "message", message);
+
+//println response;
+if(response != null){
+    TextWebSocketFrame data = new TextWebSocketFrame(response);
+    ctx.writeAndFlush(data);
+}]]></code>
+                                <ActionDefined>
+                                    <Alice name="alice" descriptors="xworker.ai.chatterbean.Alice"></Alice>
+                                </ActionDefined>
+                            </GroovyAction>
+                        </actions>
+                    </WebSocketFrameHandler>
+                    <HttpServerHandler>
+                        <SimpleControl name="helloworld" descriptors="xworker.netty.handlers.http.HttpServerHandlers/@SimpleControl"
+                             pathRegex="/helloworld" contextPath="/" controls="">
+                            <view>
+                                <htmlCode name="htmlCode">
+                                    <htmlCode><![CDATA[<p>Hello world!</p>
+]]></htmlCode>
+                                </htmlCode>
+                            </view>
+                            <result name="success" value="xworker.example.things.p2020.p09.p16.HttpServerExample/@Composite/@Netty/@DemoNettyServer/@Handlers/@HttpServerHandler/@helloworld/@view"></result>
+                        </SimpleControl>
+                        <SimpleControl name="SimpleControl" descriptors="xworker.netty.handlers.http.HttpServerHandlers/@SimpleControl"
+                             pathRegex="/do.*" contextPath="/"></SimpleControl>
+                        <StaticFile name="StaticFile" pathRegex=".*" contextPath="/" fileRoot="xworker:webroot"></StaticFile>
+                    </HttpServerHandler>
+                </Handlers>
+                <Handler>
+                    <LoggingHandler name="LoggingHandler" loggerName="Test"></LoggingHandler>
+                </Handler>
+            </DemoNettyServer>
+        </thing>
+        <FillLayout name="FillLayout"></FillLayout>
+        <CTabFolder name="mainTabFolder">
+            <CTabItem name="demoTab" text="Example">
+                <Composite descriptors="xworker.swt.xworker.ThingRegistThing/@Composite"
+                     label="HttpServerExample">
+                    <GridLayout name="GridLayout" numColumns="2"></GridLayout>
+                    <Label name="port" text="Port:"></Label>
+                    <Text name="portText" BORDER="true" text="8080">
+                        <GridData name="GridData" width="200"></GridData>
+                    </Text>
+                    <Composite name="buttonComposite" _xmeta_id_="3651">
+                        <GridData name="buttonCompositeGridData" _xmeta_id_="3652" style="FILL_HORIZONTAL"
+                             horizontalAlignment="END" horizontalSpan="2"></GridData>
+                        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="3653"></RowLayout>
+                        <Button name="serverButton" _xmeta_id_="3654" text="lang:d=启动&amp;en=Start">
+                            <RowData name="RowData" _xmeta_id_="3655" width="80"></RowData>
+                            <Listeners _xmeta_id_="3656">
+                                <Listener name="connectButtonSelection" _xmeta_id_="3657">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[def server = actions.doAction("getServer", actionContext);
+
+if(server.isStarted() == false){
+    server.getThing().set("port", portText.getText());
+    
+    server.start();
+}else{
+    server.close();
+}
+
+actions.doAction("setButtonStatus", actionContext);]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                        <Button name="helloWorldButton" _xmeta_id_="3658" text="HelloWorld">
+                            <Listeners _xmeta_id_="3660">
+                                <Listener name="helloWorldButtonSelection" _xmeta_id_="3661">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[webBrowser.doAction("openUrl", actionContext, "name", "HellowWorld", 
+    "url", "https://localhost:" + portText.getText() + "/helloworld");]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                        <Button name="simpleContorlButton" _xmeta_id_="3662" text="Session">
+                            <Listeners _xmeta_id_="3664">
+                                <Listener name="simpleContorlButtonSelection" _xmeta_id_="3665">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[webBrowser.doAction("openUrl", actionContext, "name", "SimpleControl", 
+    "url", "https://localhost:" + portText.getText() + "/do?sc=xworker.example.things.p2020.p09.p16.LoginExample");]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                        <Button name="staticFileButton" _xmeta_id_="3666" text="StaticFile">
+                            <Listeners _xmeta_id_="3668">
+                                <Listener name="staticFileButtonSelection" _xmeta_id_="3669">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[webBrowser.doAction("openUrl", actionContext, "name", "StaticFile", 
+    "url", "https://localhost:" + portText.getText() + "/");]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                        <Button name="uploadFileButton" _xmeta_id_="36661" text="UploadFile">
+                            <Listeners _xmeta_id_="3668">
+                                <Listener name="uploadFileButtonSelection" _xmeta_id_="3669">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[webBrowser.doAction("openUrl", actionContext, "name", "UploadFile", 
+    "url", "https://localhost:" + portText.getText() + "/do?sc=xworker.example.things.p2020.p09.p16.FileUploadExample");]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                        <Button name="websocketButton" _xmeta_id_="366611" text="WebSocket">
+                            <Listeners _xmeta_id_="3668">
+                                <Listener name="webSocketButtonSelection" _xmeta_id_="3669">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[webBrowser.doAction("openUrl", actionContext, "name", "WebSocket", 
+    "url", "https://localhost:" + portText.getText() + "/do?sc=xworker.example.things.p2020.p09.p16.TestAliceWebSocket");]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                    </Composite>
+                    <ActionContainer name="actions">
+                        <GroovyAction name="getServer">
+                            <code><![CDATA[def nettyServerThing = world.getThing("xworker.example.things.p2020.p09.p16.HttpServerExample/@Composite/@Netty/@DemoNettyServer");
+return nettyServerThing.doAction("getNettyServer", actionContext);]]></code>
+                        </GroovyAction>
+                        <GroovyAction name="getClient" code="return nettyClientThing.doAction(&quot;getNettyClient&quot;, actionContext);"></GroovyAction>
+                        <DisplayExec name="setButtonStatus" _xmeta_id_="setButtonStatus1" descriptors="xworker.swt.actions.DisplayActions/@DisplayExec"
+                             widgetForDisplay="ognl:mainTabFolder.getShell()">
+                            <actions>
+                                <GroovyAction name="doAction" _xmeta_id_="setButtonStatus">
+                                    <code><![CDATA[import org.xmeta.util.UtilString;
+
+def server = actions.doAction("getServer", actionContext);
+if(server.isStarted()){
+    serverButton.setText(UtilString.getString("lang:d=停止&en=Stop", actionContext));
+}else{
+    serverButton.setText(UtilString.getString("lang:d=启动&en=Start", actionContext));
+}]]></code>
+                                </GroovyAction>
+                            </actions>
+                        </DisplayExec>
+                    </ActionContainer>
+                    <Code name="init">
+                        <code><![CDATA[def server = actions.doAction("getServer", actionContext);
+server.getActionContext().g().put("parentContext"	, actionContext);
+
+//根据client和server的状态设置按钮的状态
+actions.doAction("setButtonStatus", actionContext);]]></code>
+                    </Code>
+                    <WebBrowser name="webBrowser">
+                        <GridData name="GridData" style="FILL_BOTH" horizontalSpan="2"></GridData>
+                    </WebBrowser>
+                </Composite>
+            </CTabItem>
+            <CTabItem name="thingTabITem" text="HttpServer">
+                <ThingEditor name="ThingEditor" thingPath="xworker.example.things.p2020.p09.p16.HttpServerExample/@Composite/@Netty/@DemoNettyServer"></ThingEditor>
+            </CTabItem>
+        </CTabFolder>
+    </Composite>
+</QuickFunction>

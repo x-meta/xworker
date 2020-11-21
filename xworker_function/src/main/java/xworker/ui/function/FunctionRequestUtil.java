@@ -76,8 +76,9 @@ public class FunctionRequestUtil {
 			valueTh = new Thing("xworker.lang.function.values.BooleanValue");
 			valueTh.put("value", String.valueOf(value));
 		}else {
-			valueTh = new Thing("xworker.lang.function.values.NullValue");
-			valueTh.put("value", String.valueOf(value));
+			//valueTh = new Thing("xworker.lang.function.values.NullValue");
+			//valueTh.put("value", String.valueOf(value));
+			return null;
 		}  
 		
 		valueTh.put("name", name);
@@ -230,6 +231,36 @@ public class FunctionRequestUtil {
 		}
 	}
 	
+	/**
+	 * 使用新的函数实例替代当前正在实行的函数，采用调用函数实例的方法。
+	 * 
+	 * @param functionRequest
+	 * @param newFunctionThing
+	 */
+	public static void replaceFunctionRequestWithIntance(FunctionRequest functionRequest, Thing functionInstance, ActionContext actionContext){
+		Thing valueThing = new Thing("xworker.ui.function.common.CallFunction");            
+        valueThing.put("name", functionRequest.getThing().getMetadata().getName());
+        Thing functionPath = new Thing("xworker.lang.function.values.StringValue");
+        functionPath.put("name", "functionPath");
+        functionPath.put("value", functionInstance.getMetadata().getPath());
+        valueThing.addChild(functionPath);        
+        
+        replaceFunctionRequest(functionRequest, valueThing, actionContext);
+	}
+	
+	/**
+	 * 使用新的函数原型替代当前正在实行的函数。
+	 * 
+	 * @param functionRequest
+	 * @param newFunctionThing
+	 */
+	public static void replaceFunctionRequestWithPrototype(FunctionRequest functionRequest, Thing functionPrototype, ActionContext actionContext){
+		Thing valueThing = new Thing(functionPrototype.getMetadata().getPath());
+        valueThing.set("name", functionRequest.getThing().getMetadata().getName());
+        
+        replaceFunctionRequest(functionRequest, valueThing, actionContext);
+	}
+		
 	/**
 	 * 使用新的函数替代当前正在实行的函数。
 	 * 

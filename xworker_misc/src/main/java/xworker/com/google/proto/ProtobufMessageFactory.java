@@ -38,6 +38,15 @@ public class ProtobufMessageFactory {
     		init(classes);
     	}
     }
+    
+    public  ProtobufMessageFactory(Class<?>[] classes, Thing thing, ActionContext actionContext) throws NoSuchMethodException, SecurityException {
+    	this.thing = thing;
+    	this.actionContext = actionContext;
+    	
+    	if(classes != null) {
+    		init(classes);
+    	}
+    }
 
     public Object decode(String messageType, String json) throws Exception {
     	Object objBuilder = newBuilder(messageType);

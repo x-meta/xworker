@@ -1,4 +1,4 @@
-%1525317180094
+%1603346526365
 @
 sname=shell
 stext=lang:d=选择动作&en=Select Action
@@ -41,7 +41,6 @@ sth_createIndex=false
 sth_registMyChilds=false
 sth_registDisabled=false
 sth_mark=false
-sid=shell
   @/@shellGridLayout
   sname=shellGridLayout
   smakeColumnsEqualWidth=false
@@ -451,15 +450,27 @@ def params = UtilString.getParams(param, ",");
 def indicator = params.thing;
 def attributeThing = null;
 if(indicator == null || indicator == "" || indicator == "self"){
+    attributeThing = parentContext.thing;
+}else if(indicator == "parent"){
     attributeThing = parentContext.thing.parent;
+}else if(indicator == "parent.parent"){
+    attributeThing = parentContext.thing.parent.parent;
 }else if(indicator.startsWith("action:")){
     def action = indicator.substring(7, indicator.length());
     //log.info("action=" + action + ", parentContext=" + parentContext.getLabel());
     attributeThing = parentContext.thing.doAction(action, parentContext);
-}else{
+}else if(indicator.startsWith("attribute:")){
     def values = parentContext.model.doAction("getValue", parentContext);
+    def name = indicator.substring(10, indicator.length());
     //log.info("values=" + values);
-    attributeThing = world.getThing(values.get(indicator));
+    attributeThing = world.getThing(values.get(name));
+}else{
+    attributeThing = world.getThing(indicator);
+    if(attributeThing == null){
+        def values = parentContext.model.doAction("getValue", parentContext);
+        //log.info("values=" + values);
+        attributeThing = world.getThing(values.get(indicator));
+    }
 }
 if(attributeThing == null){
     return;
@@ -513,6 +524,7 @@ def addThingAttribute(name, thing, attributes, context){
   sinterpretationType=Action
   screateLocalVarScope=false
   ssaveReturn=false
+  sswitchResult=false
   sdebugLog=false
   sdescriptors=xworker.swt.Widgets/@Code
   sth_createIndex=false

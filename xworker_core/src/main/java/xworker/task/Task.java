@@ -81,6 +81,7 @@ public class Task implements Runnable{
 		if(taskParams != null) {
 			parameters.putAll(taskParams);
 		}
+		parameters.put("parentContext", actionContext);
 		/*
 		 * 
 		String params = thing.getStringBlankAsNull("params");

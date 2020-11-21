@@ -1,9 +1,17 @@
 package xworker.util;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
@@ -145,5 +153,44 @@ public class XWorkerUtilsActions {
 		String descriptor = (String) self.doAction("getDescriptor", actionContext);
 		
 		return XWorkerUtils.getThingIfNotExistsCreate(thing, thingManager, descriptor);
+	}
+	
+	public static Thing getPreference(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		Thing defaultConfig = self.doAction("getDefaultConfig", actionContext);
+		return XWorkerUtils.getPreference(defaultConfig);
+	}
+	
+	public static void compileJavaFiles(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		
+		String classPath = self.doAction("getClassPath", actionContext);
+		String sourcePath = self.doAction("getSourcePath", actionContext);
+		String targetDir = self.doAction("getTargetDir", actionContext);
+		List<String> javaFiles = self.doAction("getJavaFiles", actionContext);
+		
+		World world = World.getInstance();
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		if(compiler != null){
+			StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+			Iterable<? extends JavaFileObject> compilationUnits1 =	fileManager.getJavaFileObjectsFromStrings(javaFiles);
+						
+			String bootClass = System.getProperty("sun.boot.class.path");
+			String classPath_ = world.getClassLoader().getCompileClassPath();
+			String cp = classPath + File.pathSeparator + bootClass + File.pathSeparator + classPath_;
+			List<String> options = null;
+			if(sourcePath != null && !"".equals(sourcePath)){
+				options = Arrays.asList("-cp", cp, "-sourcepath", sourcePath, "-d", world.getPath() + "/work/actionClasses");
+			}else{
+				options = Arrays.asList("-cp", cp, "-d", targetDir);
+			}
+			compiler.getTask(null, fileManager, null, options, null, compilationUnits1).call();
+			
+		}else{
+			throw new ActionException("Can not get JavaCompiler from ToolProvider, path=" + self.getMetadata().getPath());
+		}
+	
 	}
 }

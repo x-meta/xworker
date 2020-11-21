@@ -38,6 +38,8 @@ public class DialogActionsDirectoryDialogCreator {
 			shell = (Shell) XWorkerUtils.getIDEShell();
 		}
         
+        String text = self.doAction("getText", actionContext);
+        String message = self.doAction("getMessage", actionContext);
         if(SwtUtils.isRWT()) {
         	ActionContext ac = new ActionContext();
         	ac.put("parent", shell);
@@ -51,6 +53,9 @@ public class DialogActionsDirectoryDialogCreator {
         	
         	Thing dialogThing = World.getInstance().getThing("xworker.swt.actions.prototypes.RWTDirectoryDialog");
         	Shell dialogShell = dialogThing.doAction("create", ac);
+        	if(text != null && !"".equals(text)) {
+        		dialogShell.setText(text);
+        	}
         	dialogShell.setVisible(true);
         	return null;
         }else {
@@ -59,9 +64,13 @@ public class DialogActionsDirectoryDialogCreator {
 	        if(filterPath != null && !"".equals(filterPath)){
 	            dialog.setFilterPath(UtilString.getString(filterPath, actionContext));
 	        }
-	        String message = self.getString("message");
+	        
 	        if(message != null && !"".equals(message)){
 	            dialog.setMessage(UtilString.getString(message, actionContext));
+	        }
+	        
+	        if(text != null && !"".equals(text)) {
+	        	dialog.setText(text);
 	        }
 	        
 	        String dir = dialog.open();

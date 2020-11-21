@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SimpleControl name="TestAliceWebSocket" descriptors="xworker.netty.handlers.http.full.SimpleControl">
+    <view descriptors="xworker.http.controls.SimpleControl/@view" title="TestAliceWebSocket">
+        <JQuery name="JQuery" descriptors="xworker.html.jquery.JQuery" version="jquery-1.11.3.min.js"></JQuery>
+        <div name="contentDiv" _xmeta_id_="content" id="content"></div>
+        <textField name="inputText" value="who are you?" size="30"></textField>
+        <button name="sendButton" value="发送">
+            <event name="onClick" value="sendText()"></event>
+        </button>
+        <code name="code">
+            <code><![CDATA[<script language="javascript">
+
+var url = "";
+//alert(window.location.protocol);
+if(window.location.protocol == "https:"){
+    url = "wss://";
+}else{
+    url = "ws://";
+}
+url = url + window.location.host + "/socket";
+//alert(url);
+//alert($("#content"));
+// 初始化一个 WebSocket 对象
+var ws = new WebSocket(url);
+
+// 建立 web socket 连接成功触发事件
+ws.onopen = function () {
+  // 使用 send() 方法发送数据
+  ws.send("Hello World!");
+  //alert("数据发送中...");
+};
+
+// 接收服务端数据时触发事件
+ws.onmessage = function (evt) {
+  var received_msg = evt.data;
+  //alert($("#content"));
+  //alert(received_msg);
+  $("#content").html(received_msg);
+};
+
+// 断开 web socket 连接成功触发事件
+ws.onclose = function () {
+   $("#content").html("WebSocket session closed!");
+};
+
+function sendText(){    
+    var text = $("#inputText").val();
+    //alert(text);
+    ws.send(text);
+}
+</script>]]></code>
+        </code>
+    </view>
+    <result name="success" value="xworker.example.things.p2020.p09.p16.TestAliceWebSocket/@view"></result>
+</SimpleControl>

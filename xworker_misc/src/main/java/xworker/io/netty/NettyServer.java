@@ -3,7 +3,9 @@ package xworker.io.netty;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.util.ExceptionUtil;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -57,14 +59,36 @@ public class NettyServer {
 				bootstrap.channel(NioServerSocketChannel.class);
 			}
 			
+			for(Thing handlers : thing.getChilds("Handler")) {								
+				for(Thing handlerThing : handlers.getChilds()) {
+					Object handler = handlerThing.doAction("create", actionContext);
+					if(handler instanceof ChannelHandler) {										
+						bootstrap.handler((ChannelHandler) handler);
+					}else if(handler instanceof ChannelHandler[]) {
+						ChannelHandler hds[] = (ChannelHandler[]) handler;
+						for(int i=0; i<hds.length ; i++) {
+							if(hds[i] != null) {
+								bootstrap.handler((ChannelHandler) hds[i]);
+							}
+						}
+					}
+				}
+			}
+			
 			bootstrap.childHandler(new ChannelInitializer<SocketChannel>() { 
 						@Override
 						public void initChannel(SocketChannel ch) throws Exception {
 							ChannelPipeline pipeline = ch.pipeline();
 							
-							for(Thing handlers : thing.getChilds("Handlers")) {								
+							for(Thing handlers : thing.getChilds("Handlers")) {
+								Object handler = null;
 								for(Thing handlerThing : handlers.getChilds()) {
-									Object handler = handlerThing.doAction("create", actionContext, "channel", ch);
+									//try {
+										handler = handlerThing.doAction("create", actionContext, "channel", ch);
+									//}catch(Throwable e) {										
+									//	throw new ActionException("Init handler error, handler=" + handlerThing.getMetadata().getPath() + "\n"
+									//			+ ExceptionUtil.getRootMessage(e));
+									//}
 									if(handler instanceof ChannelHandler) {										
 										pipeline.addLast(handlerThing.getMetadata().getName(), (ChannelHandler) handler);
 									}else if(handler instanceof ChannelHandler[]) {
@@ -77,6 +101,7 @@ public class NettyServer {
 									}
 								}
 							}
+							
 						}
 					});
 			

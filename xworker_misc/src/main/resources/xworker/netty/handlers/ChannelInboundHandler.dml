@@ -75,13 +75,25 @@
                 <param name="cause" type="java.lang.Throwable"></param>
             </ins>
         </JavaAction>
+        <JavaAction name="sslOperationComplete" outerClassName="xworker.io.netty.handlers.ThingChannelInboundHandler"
+             methodName="sslOperationComplete" usage="event">
+            <ins>
+                <param name="ctx" type="io.netty.channel.ChannelHandlerContext"></param>
+            </ins>
+        </JavaAction>
         <GetBoolean name="isPrintLog" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
              attributeName="printLog" usage="params"></GetBoolean>
+        <GetBoolean name="isSslOperationComplete" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="sslOperationComplete" usage="event"></GetBoolean>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
     <attribute name="printLog" inputtype="truefalse" modifier="" default="true">
         <description><![CDATA[<p>在默认实现的事件里是否打印日志。</p>
+]]></description>
+    </attribute>
+    <attribute name="sslOperationComplete" inputtype="truefalse">
+        <description><![CDATA[<p>如果为true，那么监听SslHandler的SSL握手成功后的事件，可以通过重写sslOperationComplete方法来监听。</p>
 ]]></description>
     </attribute>
     <attribute name="description" inputtype="html"></attribute>

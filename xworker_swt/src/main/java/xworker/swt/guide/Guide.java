@@ -1,7 +1,8 @@
 package xworker.swt.guide;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -16,12 +17,9 @@ import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class Guide {
-	/** 向导事物 */
-	Thing thing;
-	/** 当前节点 */
-	Thing currentNode;
-	/** 向导展示过的历史节点 */
-	List<Thing> historyNodes = new ArrayList<Thing>();
+	Stack<GuideEntry> guideStack = new Stack<GuideEntry>();
+	///** 向导展示过的历史节点 */
+	//List<Thing> historyNodes = new ArrayList<Thing>();
 	/** 父变量上下文 */
 	ActionContext parentContext;
 	/** 当前节点变量上下文 */
@@ -34,9 +32,10 @@ public class Guide {
 	boolean showHeader = false;
 	/** 标题的标签 */
 	Label headerLabel = null;	
+	Map<String, Object> datas = new HashMap<String, Object>();
 	
 	public Guide(Composite contentComposite, Composite buttonComposite, Thing thing, ActionContext parentContext){
-		this.thing = thing;
+		guideStack.push(new GuideEntry(thing));
 		this.parentContext = parentContext;
 		this.contentComposite = contentComposite;		
 		this.buttonComposite = buttonComposite;
@@ -53,38 +52,79 @@ public class Guide {
 	 * @param node
 	 */
 	public void go(Thing node){
-		currentNode = node;
-		historyNodes.add(currentNode);
+		guideStack.peek().setCurrentNode(node);
 		showCurrentNode();
 	}
 	
+	/**
+	 * 设置一个新的向导模型，替换当前层级的向导。
+	 * 
+	 * @param thing
+	 */
 	public void setGuide(Thing thing){
-		this.thing = thing;
-		currentNode = null;
+		guideStack.pop();
+		guideStack.push(new GuideEntry(thing));
+		next();
+	}
+	
+	/**
+	 * 调用一个新的向导模型。
+	 * 
+	 * @param thing
+	 */
+	public void callGuide(Thing thing) {
+		guideStack.push(new GuideEntry(thing));
 		next();
 	}
 	
 	/**
 	 * 转到下一个节点。
 	 */
-	public void next(){
-		currentNode = getNextNode(currentNode);		
-		historyNodes.add(currentNode);
-		showCurrentNode();
+	public void next(){		
+		Thing currentNode = getCurrentNode();
+		if(currentNode != null && nodeActionContext != null) {
+			if(UtilData.isTrue(currentNode.doAction("nodeFinished", nodeActionContext))){
+				return;
+			}
+		}
+		
+		Thing nextNode = null;
+		while(guideStack.size() > 0) {
+			nextNode = guideStack.peek().getNextNode(nodeActionContext);
+			if(nextNode == null && guideStack.size() > 1) {
+				guideStack.pop();
+			} else {
+				break;
+			}
+		}
+		if(nextNode != null) {
+			showCurrentNode();
+		}
 	}
 	
 	/**
 	 * 转到上一个节点。
 	 */
 	public void pre() {
-		if(historyNodes.size() > 1) {
-			historyNodes.remove(historyNodes.size() - 1);
-			currentNode = historyNodes.get(historyNodes.size() - 1);
+		Thing nextNode = guideStack.peek().getPreNode();
+		if(nextNode == null && guideStack.size() > 1) {
+			guideStack.pop();
+			nextNode = guideStack.peek().getCurrentNode();
+		}
+		
+		if(nextNode != null) {
 			showCurrentNode();
 		}
 	}
+	
+	public Thing getCurrentNode() {
+		return guideStack.peek().getCurrentNode();
+	}
 		
 	protected void showCurrentNode(){
+		Thing thing = guideStack.peek().getThing();
+		Thing currentNode = guideStack.peek().getCurrentNode();
+		
 		//在XWorker的主页下，重置概要栏中的文档
 		Browser topicBrowser = UtilData.getParentContextValue(parentContext, "topicBrowser");
 		if(topicBrowser != null) {
@@ -122,24 +162,25 @@ public class Guide {
 			contentComposite.layout();
 			buttonComposite.layout();
 			buttonComposite.getParent().layout();
+			
+			currentNode.doAction("nodeInit", nodeActionContext);
 		}
 	}
 	
-	public Thing getNextNode(Thing node){
-		if(node == null){
-			return thing.getChildAt(0);
-		}else{
-			Thing parentNode = node.getParent();
-			if(parentNode == null){
-				return null;
-			}else{
-				Thing nextNode = parentNode.getChildBy(currentNode, 1);
-				if(nextNode != null){
-					return nextNode;
-				}else{
-					return getNextNode(parentNode);
-				}
-			}
-		}
+	public void setData(String key, Object value) {
+		datas.put(key, value);
 	}
+	
+	public void putDatas(Map<String, Object> values) {
+		datas.putAll(values);;
+	}
+	
+	public Object getData(String key) {
+		return datas.get(key);
+	}
+	
+	public Map<String, Object> getDatas(){
+		return datas;
+	}
+
 }

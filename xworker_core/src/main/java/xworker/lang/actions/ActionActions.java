@@ -15,6 +15,7 @@
 ******************************************************************************/
 package xworker.lang.actions;
 
+import java.awt.Desktop.Action;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -165,7 +166,7 @@ public class ActionActions {
 		List<VariableDesc> list = new ArrayList<VariableDesc>();
 		for(Thing child : thing.getChilds()) {
 			//获得被动定义的变量
-			VariableDesc var = new VariableDesc(child.getMetadata().getName(), VariableDesc.ACTION, null, child);
+			VariableDesc var = new VariableDesc(child.getMetadata().getName(), VariableDesc.ACTION, org.xmeta.Action.class.getName(), child);
 			list.add(var);
 		}
 		

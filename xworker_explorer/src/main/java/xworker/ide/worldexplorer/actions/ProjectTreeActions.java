@@ -1,6 +1,8 @@
 package xworker.ide.worldexplorer.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -11,8 +13,11 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Index;
+import org.xmeta.Thing;
+import org.xmeta.ThingManager;
 import org.xmeta.util.UtilMap;
 
+import xworker.service.ServiceManager;
 import xworker.swt.ActionContainer;
 import xworker.swt.events.SwtListener;
 
@@ -160,4 +165,127 @@ public class ProjectTreeActions {
 		
 		expandedItemCahces.put(data, data);
 	}
+	
+	public static void init(final ActionContext actionContext) {
+		Index index = Index.getInstance();
+		org.xmeta.util.ActionContainer actions = actionContext.getObject("actions");
+	    org.eclipse.swt.widgets.Tree projectTree = actionContext.getObject("projectTree");
+	    
+		projectTree.setData(index);
+		for(Index subIndex : index.getChilds()){
+		    actions.doAction("initProjectTreeItem", actionContext, 
+		        "item", projectTree, "index", subIndex);
+		    //TreeItem projectItem = new TreeItem(projectTree, SWT.NONE);
+		    //projectItem.setText(UtilString.getString("res:res.w_exp:" + index.getLabel() + ":" + index.getLabel(), actionContext));
+		    //projectItem.setData(index);
+		    //projectItem.setImage(projectImage);
+		}
+		
+		ServiceManager.regist(new ProjectTreeService() {			
+			@Override
+			public void locate(Thing thing) {
+				actionContext.push().put("object", thing);
+				try {
+					ProjectTreeActions.locate(actionContext);
+				}finally {
+					actionContext.pop();
+				}
+			}
+			
+		}, ProjectTreeService.class);
+	}
+	
+	public static void locate(ActionContext actionContext) {
+		Object object = actionContext.get("object");
+		if(object == null) {
+			return;
+		}
+		
+		org.eclipse.swt.widgets.Tree projectTree = actionContext.getObject("projectTree");
+		if(object instanceof Thing) {
+			Thing thing = (Thing) object;
+			Index index = findIndex(thing);
+			List<Index> indexs = new ArrayList<Index>();
+			while(index.getParent() != null) {
+				indexs.add(0, index);
+				index = index.getParent();
+			}
+			
+			TreeItem item = null;
+			for(Index idx : indexs) {
+				if(item == null) {
+					for(TreeItem itm : projectTree.getItems()) {
+						if(itm.getData() == idx) {
+							item = itm;
+							break;
+						}
+					}
+				} else {
+					if(item.getItemCount() == 0) {
+						for(Index childIndex : idx.getParent().getChilds()){
+							Bindings bindings = actionContext.push();
+							bindings.put("item", item);
+							bindings.put("index", childIndex);
+							initProjectTreeItem(actionContext);
+						}
+					}
+					
+					for(TreeItem itm : item.getItems()) {
+						if(itm.getData() == idx) {
+							item = itm;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(item != null) {
+				projectTree.setSelection(item);
+				projectTree.showSelection();
+			}
+		}
+	}
+	
+	private static Index findIndex(Thing thing) {
+		Index index = findIndex(thing.getMetadata().getThingManager());
+		if(index == null) {
+			return null;
+		}
+		
+		String path = thing.getMetadata().getPath();
+		int offset = path.lastIndexOf(".");
+		if(offset != -1) {
+			path = path.substring(0, offset);
+		}
+		
+		String paths[] = path.split("[.]");		
+		for(String name : paths) {
+			for(Index child : index.getChilds()) {
+				if(child.getType().equals(Index.TYPE_CATEGORY) && child.getName().equals(name)) {
+					index = child;
+					break;
+				}
+			}
+		}
+		
+		return index;
+	}
+	
+	private static Index findIndex(ThingManager thingManager) {
+		Index index = Index.getInstance();
+		for(Index child : index.getChilds()) {
+			if(child.getIndexObject() == thingManager) {
+				return child;
+			}
+			
+			for(Index cchild : child.getChilds()) {
+				if(cchild.getIndexObject() == thingManager) {
+					return cchild;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
 }

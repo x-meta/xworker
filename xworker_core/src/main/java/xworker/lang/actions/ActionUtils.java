@@ -799,6 +799,49 @@ public class ActionUtils {
 		}
 	}
 	
+	public static Object getCachedObject(ActionContext actionContext) {
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		Boolean isStatic = self.doAction("isStatic", actionContext);
+		Boolean monitorModify = self.doAction("isMonitorModify", actionContext);
+		String cacheKey = self.doAction("getCacheKey", actionContext);
+		String actionName = self.doAction("getActionName", actionContext);
+		
+		Object data = null;
+		if(isStatic) {
+			if(monitorModify) {
+				data = realSelf.getStaticCachedData(cacheKey);
+				if(data == null) {
+					data = realSelf.doAction(actionName, actionContext);
+					realSelf.setStaticCachedData(cacheKey, data);
+				}
+			}else {
+				data = realSelf.getStaticData(cacheKey);
+				if(data == null) {
+					data = realSelf.doAction(actionName, actionContext);
+					realSelf.setStaticData(cacheKey, data);
+				}
+			}
+		}else {
+			if(monitorModify) {
+				data = realSelf.getCachedData(cacheKey);
+				if(data == null) {
+					data = realSelf.doAction(actionName, actionContext);
+					realSelf.setCachedData(cacheKey, data);
+				}
+			}else {
+				data = realSelf.getData(cacheKey);
+				if(data == null) {
+					data = realSelf.doAction(actionName, actionContext);
+					realSelf.setData(cacheKey, data);
+				}
+			}
+		}
+		
+		return data;
+	}
+	
 	public static Object createObject(ActionContext actionContext) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException{
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);

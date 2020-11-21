@@ -68,8 +68,13 @@ public class JavaActions {
 		}
 		
 		Object[] args = new Object[constructorChilds.size()];
-		Class<?> cls = Class.forName(className);
-		
+		Class<?> cls = null;
+		ClassLoader classLoader = self.doAction("getClassLoader", actionContext);
+		if(classLoader != null) {
+			cls = classLoader.loadClass(className);
+		}else {
+			cls = Class.forName(className);
+		}
 		
 		for(int i=0; i < constructorChilds.size(); i++){
 			Thing child = constructorChilds.get(i);
@@ -94,16 +99,14 @@ public class JavaActions {
 		}
 		
 		//设置对象的属性
-		for(Thing child : self.getChilds()) {
-			if("Constructor".equals(child.getThingName())) {
-				continue;
+		for(Thing attributes : self.getChilds("Attributes")) {
+			for(Thing child : attributes.getChilds()) {
+				String name = child.getMetadata().getName();
+				
+				Object value = child.getAction().run(actionContext);
+				
+				Ognl.setValue(name, obj, value);
 			}
-			
-			String name = child.getMetadata().getName();
-			
-			Object value = child.getAction().run(actionContext);
-			
-			Ognl.setValue(name, obj, value);
 		}
 		
 		return obj;

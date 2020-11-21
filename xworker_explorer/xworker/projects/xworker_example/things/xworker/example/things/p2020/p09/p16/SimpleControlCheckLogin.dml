@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SimpleControl name="SimpleControlCheckLogin" descriptors="xworker.netty.handlers.http.full.SimpleControl"
+     checkLogin="true" loginAttribute="xworker.example.web.login.LoginExample" loginUrl="do?sc=xworker.example.web.login.LoginExample">
+    <actions>
+        <GroovyAction name="doAction">
+            <code><![CDATA[def name = session.getAttribute("xworker.example.things.p2020.p09.p16.LoginExample");
+actionContext.g().put("name", name);
+
+if(name == null){
+    return "redirect";
+}
+return "success";]]></code>
+            <ActionDefined>
+                <SendRedirect name="redirect" descriptors="xworker.netty.handlers.http.HttpActions/@SendRedirect"
+                     url="var:url"></SendRedirect>
+            </ActionDefined>
+        </GroovyAction>
+    </actions>
+    <view descriptors="xworker.http.controls.SimpleControl/@view" doctype="" title="Logined">
+        <otherHeads><![CDATA[<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<LINK REL ="stylesheet" TYPE="text/css" HREF="fckeditor/2_6beta1/editor/css/fck_editorarea.css" TITLE="Style"/>
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>]]></otherHeads>
+        <htmlCode name="htmlCode">
+            <htmlCode><![CDATA[<h3>Welcome ${name?if_exists}!</h3>
+
+<p>如果看到这个界面，表示已经登录过了。</p>
+]]></htmlCode>
+        </htmlCode>
+    </view>
+    <result name="success" value="xworker.example.things.p2020.p09.p16.SimpleControlCheckLogin/@view"></result>
+    <result name="redirect" type="redirect" value="/do?sc=xworker.example.things.p2020.p09.p16.LoginExample"></result>
+</SimpleControl>

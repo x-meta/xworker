@@ -12,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.dataObject.DataObject;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
+import xworker.swt.util.SwtUtils;
 
 public class ComboDataReactor extends WidgetDataReactor implements Listener{
 	private static Logger logger = LoggerFactory.getLogger(ComboDataReactor.class);
@@ -31,11 +33,19 @@ public class ComboDataReactor extends WidgetDataReactor implements Listener{
 	public void handleEvent(Event event) {
 		int index = combo.getSelectionIndex();
 		List<Object> datas = this.getDatas();
+		List<Object> ds = new ArrayList<Object>();
 		
-		if(index >= 0 && index < datas.size()) {
-			List<Object> ds = new ArrayList<Object>();
+		if(datas == null || datas.size() == 0) {
+			//可能是绑定了数据仓库
+			List<DataObject> dobjs = SwtUtils.getSelectedDataObjects(combo);
+			if(dobjs != null && dobjs.size() > 0){
+				ds.add(dobjs.get(0));
+			}
+		}else {
 			ds.add(datas.get(index));
-			
+		}
+		
+		if(ds.size() > 0) {
 			this.fireSelected(ds, getContext());
 		}else {
 			this.fireUnselected(getContext());

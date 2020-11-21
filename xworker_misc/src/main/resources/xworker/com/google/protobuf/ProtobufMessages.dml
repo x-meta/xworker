@@ -14,12 +14,50 @@
              methodName="getMessageFactory"></JavaAction>
         <JavaAction name="clearMessageFactory" outerClassName="xworker.com.google.proto.ProtobufMessages"
              methodName="clearMessageFactory"></JavaAction>
+        <JavaAction name="decodeBytes" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="decodeBytes">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+                <param name="message" type="byte[]"></param>
+            </ins>
+        </JavaAction>
+        <JavaAction name="decodeJson" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="decodeJson">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+                <param name="message" type="java.lang.String"></param>
+            </ins>
+        </JavaAction>
+        <JavaAction name="newBuilder" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="newBuilder">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+            </ins>
+        </JavaAction>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
-    <attribute name="protos" inputtype="textarea"></attribute>
-    <attribute name="messageClasses" inputtype="textarea"></attribute>
-    <attribute name="classPaths" inputtype="textarea"></attribute>
+    <attribute name="protos" inputtype="textarea">
+        <description><![CDATA[<p>协议的定义模型，可以有多个，如有多个使用英文逗号分隔。</p>
+]]></description>
+    </attribute>
+    <attribute name="messageClasses" inputtype="textarea">
+        <description><![CDATA[<p>消息的完整类名，如com.xxx.messages.Messages。如有多个使用英文逗号分隔。</p>
+]]></description>
+    </attribute>
+    <attribute name="classPaths" inputtype="textarea">
+        <description><![CDATA[<p>类的根路径，即classpath，如有多个使用英文逗号分隔。</p>
+]]></description>
+    </attribute>
     <attribute name="nettyClient" _xmeta_id_="host" inputtype="dataSelector" size="60"></attribute>
     <attribute name="description" inputtype="html"></attribute>
     <thing name="Message" icon="icons/email.png">
@@ -66,6 +104,7 @@ if(message == null){
     <sswtMenus>
         <menuSetting _xmeta_id_="ProtobufMessages" menuType="ProtobufMessages">
             <menu name="nettyTestProto" label="NettyProtobufTestTools" shell="xworker.netty.protobuf.ProtobufTestTools"></menu>
+            <menu name="ClearMessageFactory" url="action:clearMessageFactory"></menu>
         </menuSetting>
         <menuDefine>
             <menu name="ProtobufMessages"></menu>

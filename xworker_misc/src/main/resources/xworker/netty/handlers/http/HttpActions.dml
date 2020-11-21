@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="HttpActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <thing name="SendRedirect" extends="xworker.lang.actions.SelfAction" group="io.netty.http">
+        <description><![CDATA[<p>运行后返回一个包含重定向地址的FullHttpResponse。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.handlers.http.HttpActions"
+                 methodName="sendRedirect"></JavaAction>
+            <GetString name="getUrl" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="url" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="url" size="60"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="AddCookie" extends="xworker.lang.actions.SelfAction" group="io.netty.http">
+        <description><![CDATA[<p>添加一个Cookie到responseCookies中，responseCookies是XWorker的HttpServerHandler中默认添加到response中的。</p>
+
+<p>参看xworker.netty.handlers.http.HttpServerHandler。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.handlers.http.HttpActions"
+                 methodName="addCookie"></JavaAction>
+            <GetString name="getValue" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value" usage="params"></GetString>
+            <GetString name="getCookieName" _xmeta_id_="cookieName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="cookieName" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="cookieName"></attribute>
+        <attribute name="value" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

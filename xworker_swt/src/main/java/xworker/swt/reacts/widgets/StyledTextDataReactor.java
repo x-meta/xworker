@@ -62,12 +62,7 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 				text.append("\n");
 			}
 		}else {
-			resetText();
-			
-			for(Object data : datas) {
-				text.append(String.valueOf(data));
-				text.append("\n");
-			}
+			resetText();			
 		}
 	}
 
@@ -90,7 +85,11 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 
 	@Override
 	protected void widgetDoOnAdded(int index, List<Object> datas, DataReactorContext context) {
-		widgetDoOnSelected(datas, context);
+		//		widgetDoOnSelected(datas, context);
+		for(Object data : datas) {
+			text.append(String.valueOf(data));
+			text.append("\n");
+		}
 	}
 
 	@Override
@@ -102,7 +101,8 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 
 	@Override
 	protected void widgetDoOnUpdated(List<Object> datas, DataReactorContext context) {
-		widgetDoOnSelected(datas, context);
+		//widgetDoOnSelected(datas, context);
+		resetText();
 	}
 
 	@Override

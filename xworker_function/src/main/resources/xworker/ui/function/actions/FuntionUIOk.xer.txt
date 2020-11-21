@@ -1,4 +1,4 @@
-^1421062080266
+^1605269910791
 @
 sname
 FuntionUIOk
@@ -12,6 +12,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 sgroup
@@ -24,26 +26,29 @@ Sdescription
 #$@text#$@
 <p>在函数的界面请求里执行函数的Ok回调操作，即确认并返回值。</p>
 
-<p><strong>返回值result</strong></p>
+<p><strong>返回值的获取方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 函数的返回值从当前变量上下文actionContext中取，返回值的变量名为result。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 按照以下顺序。</p>
 
-<p><strong>SWT快捷方式</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 可以迅速的从SWT控件中取值</p>
-
-<ul>
+<ol>
+	<li><strong>Object getResult()</strong><br />
+	默认通过result属性。<br />
+	&nbsp;</li>
 	<li><strong>swtTableData</strong><br />
-	值是swt的table变量名，取表格选中的行的getData()值。<br />
+	获取表格中选中的一条记录。<br />
 	&nbsp;</li>
 	<li><strong>setTableDataList</strong><br />
-	取选中的表格的行的getData()值的列表。<br />
+	获取表格中选中的多条记录。<br />
 	&nbsp;</li>
 	<li><strong>swtTableCheckedDataList</strong><br />
-	取表格行复选框checked状态为true的getData()值的列表。</li>
-</ul>
+	获取checked的记录。</li>
+</ol>
+
+<p>&nbsp;</p>
 #$@text#$@
 snotXmlAttribute
+false
+sjson_isArray
 false
 sth_createIndex
 true
@@ -53,31 +58,33 @@ sth_registMyChilds
 false
 sth_mark
 false
-@/@actions
-sname
-actions
-sdescriptors
-xworker.lang.MetaDescriptor3/@actions
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@actions/@run
-sname
-run
-sisSynchronized
-false
-sthrowException
-true
-suseOtherAction
-false
-svarScope
-Local
-sdisableGlobalContext
-false
-Scode
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
 #$@text#$@
 import xworker.ui.function.FunctionRequestUtil;
 import org.xmeta.util.UtilData;
@@ -89,9 +96,9 @@ def fnRequest = request.getRequestMessage();
 def swtTableData = self.getStringBlankAsNull("swtTableData");
 def swtTableDataList = self.getStringBlankAsNull("swtTableDataList");
 def swtTableCheckedDataList = self.getStringBlankAsNull("swtTableCheckedDataList");
-def resultStr = self.getStringBlankAsNull("result");
-if(resultStr != null){
-    actionContext.peek().put("result", UtilData.getData(self, "result", actionContext));
+def result = self.doAction("getResult", actionContext);
+if(result != null){
+    actionContext.peek().put("result", result);
 }else if(swtTableData != null){
     def datas = getTableDatas(actionContext.get(swtTableData));
     if(datas.size() > 0){
@@ -134,218 +141,289 @@ def getTableDatasChecked(table){
     return datas;
 }
 #$@text#$@
-sinterpretationType
-Action
-screateLocalVarScope
-false
-ssaveReturn
-false
-sdescriptors
-xworker.lang.actions.Actions/@GroovyAction
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@name
-sname
-name
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@label
-sname
-label
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@result
-sname
-result
-sshowLabel
-true
-ssize
-50
-sreadOnly
-false
-sdefault
-var:result
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@description
-sname
-description
-sinputtype
-html
-sshowLabel
-true
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@swtTableData
-sname
-swtTableData
-sshowLabel
-true
-sgroup
-SWT
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@swtTableDataList
-sname
-swtTableDataList
-sshowLabel
-true
-sgroup
-SWT
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
-@/@swtTableCheckedDataList
-sname
-swtTableCheckedDataList
-sshowLabel
-true
-sgroup
-SWT
-sreadOnly
-false
-sinheritDescription
-false
-svalidateAllowBlank
-true
-LvalidateOnBlur
-true
-LallowDecimals
-true
-LallowNegative
-true
-snotXmlAttribute
-false
-sdescriptors
-xworker.lang.MetaDescriptor3/@attribute
-sth_createIndex
-false
-sth_registMyChilds
-false
-sth_mark
-false
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    run
+    @/@actions/@getResult
+    sname
+    getResult
+    sattributeName
+    result
+    snotNull
+    false
+    svariable
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    getResult
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@result
+  sname
+  result
+  ssize
+  50
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  var:result
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  result
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@swtTableData
+  sname
+  swtTableData
+  sgroup
+  SWT
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  swtTableData
+  @/@swtTableDataList
+  sname
+  swtTableDataList
+  sgroup
+  SWT
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  swtTableDataList
+  @/@swtTableCheckedDataList
+  sname
+  swtTableCheckedDataList
+  sgroup
+  SWT
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  swtTableCheckedDataList

@@ -21,6 +21,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.ui.UIRequest;
+import xworker.ui.function.FunctionParameter;
+import xworker.ui.function.FunctionRequest;
 import xworker.ui.swt.AbstractSWTUIHandler;
 
 /**
@@ -74,6 +76,14 @@ public class CompositeUIHandler extends AbstractSWTUIHandler{
 		ActionContext ac = new ActionContext(this.actionContext);
 		ac.peek().put("parent", composite);
 		ac.peek().put("request", request);
+		ac.put("parentContext", this.actionContext);
+		//参数
+		if(request.getRequestMessage() instanceof FunctionRequest) {
+			FunctionRequest fr = (FunctionRequest) request.getRequestMessage();
+			for(FunctionParameter param : fr.getParameters()) {
+				ac.put(param.getName(), param.getValue());
+			}
+		}
 		request.getThing().doAction("create", ac);
 		
 		composite.layout();
