@@ -1,4 +1,4 @@
-%1605928930180
+%1606025669128
 @
 sname=Guide
 slabel=Guide
@@ -1616,6 +1616,24 @@ browser.setUrl(url);
       suseOtherAction=false
       svarScope=Local
       sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//创建界面
+def compositeThing = world.getThing("xworker.swt.guide.prototypes.Form/@thingForm");
+compositeThing.doAction("create", actionContext);
+
+def thing = self.doAction("getThing", parentContext);
+def isDescriptor = self.doAction("isDescriptor", parentContext);
+
+if(isDescriptor){
+    thingForm.doAction("setDescriptor", actionContext, "descriptor", thing);
+}else{
+    thingForm.doAction("setThing", actionContext, "thing", thing);
+}
+
+//初始化时总是使用guide保存的值初始化
+thingForm.doAction("setValues", actionContext, "values", guide.getDatas());
+#$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
@@ -1631,6 +1649,111 @@ browser.setUrl(url);
       sth_mark=false
       sth_registQueryOnlySelf=false
       sid=create
+      @/@ThingForm/@actions/@getThing
+      sname=getThing
+      sattributeName=thing
+      schildThingName=Thing
+      schildThingFirstChild=false
+      sreturnSelf=false
+      snotNull=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@getThing
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=getThing
+      @/@ThingForm/@actions/@isDescriptor
+      sname=isDescriptor
+      sattributeName=descriptor
+      sBoolean=false
+      sinterpretationType=Self
+      sattributeTemplate=false
+      schildsAttributeTemplate=false
+      svarScope=Local
+      sisSynchronized=false
+      sthrowException=true
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdisableGlobalContext=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=isDescriptor
+      @/@ThingForm/@actions/@thingForm
+      sname=thingForm
+      scolumn=1
+      sH_SCROLL=true
+      sV_SCROLL=true
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      sBORDER=false
+      sdescriptors=xworker.swt.Widgets/@ThingForm
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=thingForm
+      @/@ThingForm/@actions/@nodeFinished
+      sname=nodeFinished
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//把值保存到向导
+def values = thingForm.doAction("getValues", actionContext);
+
+guide.putDatas(values);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=nodeFinished
     @/@ThingForm/@name
     sname=name
     sshowLabel=true
@@ -1677,7 +1800,8 @@ browser.setUrl(url);
     sid=label
     @/@ThingForm/@thing
     sname=thing
-    sinputtype=60
+    sinputtype=dataSelector
+    ssize=60
     sshowLabel=true
     slabelAlign=right
     slabelVAlign=baseline
@@ -1706,6 +1830,7 @@ browser.setUrl(url);
     slabelVAlign=baseline
     smodifier=public
     sreadOnly=false
+    sdefault=true
     sinheritDescription=false
     svalidateAllowBlank=true
     LvalidateOnBlur=true

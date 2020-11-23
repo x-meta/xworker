@@ -40,12 +40,20 @@ switch(logLevelCombo.getText()){
 
 def actionContext = actionContext;
 def thing = thing;
+def actionName = actionContext.get("actionName");
 
 Executor.startThread({
     Executor.push(executorService);
     try{
         Executor.info("Executor", "Start execute action, thing=" + thing.getMetadata().getPath());
-        Object result = thing.getAction().run(actionContext);
+        Object result = null;
+        if(actionName != null){
+            //调用事物的动作
+            result = thing.doAction(actionName, actionContext);
+        }else{
+            //作为动作执行
+            result = thing.getAction().run(actionContext);
+        }
         Executor.info("Executor", "Action finished, result=" + result);
     }catch(Exception e){
         Executor.error("Executor", "Action has expection", e);

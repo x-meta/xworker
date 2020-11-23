@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="UpdateIndexWithExecutor" descriptors="xworker.lang.MetaDescriptor3">
+    <actions>
+        <RunActionWithExecutor name="run" descriptors="xworker.ide.worldexplorer.swt.actions.ActionsUtils/@RunActionWithExecutor"
+             thing="xworker.ide.db.dbindex.actions.UpdateIndexWithExecutor" actionName="update"></RunActionWithExecutor>
+        <GroovyAction name="update" th_createIndex="true">
+            <code><![CDATA[import org.xmeta.util.UtilThing;
+import org.xmeta.thingManagers.JarThingManager;
+import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
+
+def TAG = "xworker.ide.db.dbindex.actions.UpdateIndexWithExecutor.p_1126688765.update";
+
+//遍历所有的事物
+Executor.info(TAG, "Check all things");
+int count = 0;
+def updator = world.getThing("xworker.ide.db.dbindex.actions.ThingIndexUpdater");
+
+//获取事务，执行事务模式，能够大大提高sqlite的插入速度
+def datasource = world.getThing("xworker.ide.db.datasource.XWorkerDataSource");
+def con = datasource.doAction("getConnection", actionContext);
+try{
+    con.setAutoCommit(false);    
+    for(thingManager in world.getThingManagers()){
+        //println thingManager.getName();
+        if("_transient" == thingManager.getName()){
+            continue;
+        }
+        Executor.info(TAG, "ThingManager : " + thingManager.getName());
+       
+        def iter = thingManager.iterator(null, true);
+        while(iter.hasNext()){
+            def thing = iter.next();
+            //if( thingManager.getName() == "xworker_core"){
+            //    System.out.println(thing.metadata.path);
+           // }
+            if(updator.doAction("checkThingIndex", actionContext, [
+                 thing: thing, con: con])){
+                 Executor.info(TAG, "Thing index updated : " + thing.metadata.path);
+            }
+            count++;
+        }
+    }
+    Executor.info(TAG, "Total " + count + " things checked");
+    con.commit();
+}catch(Exception e){
+    con.rollback();
+    e.printStackTrace();
+}finally{   
+   con.setAutoCommit(true);
+   con.close();
+}
+
+//删除无效索引
+Executor.info(TAG, "Delete invalid index");
+updator.doAction("removeInvalidIndex", actionContext);
+
+Executor.info(TAG, "Index updated.");]]></code>
+        </GroovyAction>
+    </actions>
+</thing>
