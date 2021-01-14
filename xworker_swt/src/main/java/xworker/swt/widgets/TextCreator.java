@@ -59,7 +59,7 @@ public class TextCreator {
 		    
 		Composite parent = (Composite) actionContext.get("parent");
 		Text text = new Text(parent, style);
-		
+		 
 		//父类的初始化方法
 		Bindings bindings = actionContext.push(null);
 		bindings.put("control", text);

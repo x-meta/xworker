@@ -1,4 +1,4 @@
-%1562225952337
+%1609221687521
 @
 sname=Notification
 slabel=Notification
@@ -6,6 +6,7 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.lang.system.message.Message,xworker.lang.actions.SelfAction
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 sgroup=xworker.system.notification
 smodifier=public
@@ -13,6 +14,14 @@ sinheritDescription=false
 Sdescription=
 #$@text#$@
 <p>&nbsp;&nbsp;&nbsp; 通知系统发送信息或者交互请求等。</p>
+
+<p><strong>消息标识</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过getMessageId()来确定通知，标识相同的会作为一个消息，显示的标签会显示通知的次数。</p>
+
+<p><strong>消息展示</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过设置QuickFunction来展示，可以访问的变量有notification、message和messageContext等。</p>
 
 <p><strong>等级</strong></p>
 
@@ -90,17 +99,19 @@ sth_mark=false
     @/@actions/@isPersistent
     sname=isPersistent
     sattributeName=persistent
+    sBoolean=false
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=params
     sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
     sinheritDescription=false
     sth_createIndex=false
@@ -117,11 +128,12 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=params
     sdescriptors=xworker.lang.actions.ActionUtil/@GetLong
     sinheritDescription=false
     sth_createIndex=false
@@ -139,17 +151,48 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=event
     sinheritDescription=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
     sth_mark=false
     sid=onExpired
+      @/@actions/@onExpired/@ins
+      sisValidate=false
+      sname=ins
+      sdescriptors=xworker.lang.actions.Inout/@ins
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=ins
+        @/@actions/@onExpired/@ins/@notification
+        sname=notification
+        stype=xworker.notification.Notification
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=notification
     @/@actions/@getLevel
     sname=getLevel
     sattributeName=level
@@ -160,11 +203,12 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=params
     sdescriptors=xworker.lang.actions.ActionUtil/@GetString
     sinheritDescription=false
     sth_createIndex=false
@@ -175,17 +219,19 @@ sth_mark=false
     @/@actions/@isSync
     sname=isSync
     sattributeName=sync
+    sBoolean=false
     sinterpretationType=Self
     sattributeTemplate=false
     schildsAttributeTemplate=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=params
     sdescriptors=xworker.lang.actions.ActionUtil/@GetBoolean
     sinheritDescription=false
     sth_createIndex=false
@@ -358,3 +404,33 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=expireTimeout
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@notification
+    sname=notification
+    svarName=notification
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=xworker.notification.Notification
+    sstaticClass=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=notification

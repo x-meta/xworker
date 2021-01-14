@@ -6,6 +6,12 @@
 <p><strong>变量上下文</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; 执行create方法时会创建NettClient对象，NettClient会创建自己的变量上下文，并把当前的变量上下文放到perantContext变量中。</p>
+
+<p><strong>自动重连</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果autoReconnect=true，那么一秒检测一次连接的连接状态，如果连接是关闭的，那么每10秒重连一次，直到连接上。可以通过int nettyClient.getWaitReconnectTime()获取重连的倒计时（秒）</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果主动调用了close、remove等方法，那么会关闭自动重连。</p>
 ]]></description>
     <actions>
         <JavaAction name="create" outerClassName="xworker.io.netty.NettyClient" methodName="create"></JavaAction>
@@ -14,26 +20,26 @@
         <JavaAction name="startFailure" outerClassName="xworker.io.netty.NettyClient" methodName="startFailure"
              usage="event">
             <ins>
-                <param name="nettyServer" type="xworker.io.netty.NettyServer"></param>
+                <param name="nettyClient" _xmeta_id_="nettyServer" type="xworker.io.netty.NettyClient"></param>
                 <param name="cause" type="java.lang.Throwable"></param>
             </ins>
         </JavaAction>
         <JavaAction name="startCancelled" outerClassName="xworker.io.netty.NettyClient" methodName="startCancelled"
              usage="event">
             <ins>
-                <param name="nettyServer" type="xworker.io.netty.NettyServer"></param>
+                <param name="nettyClient" _xmeta_id_="nettyServer" type="xworker.io.netty.NettyClient"></param>
             </ins>
         </JavaAction>
         <JavaAction name="startSuccess" outerClassName="xworker.io.netty.NettyClient" methodName="startSuccess"
              usage="event">
             <ins>
-                <param name="nettyServer" type="xworker.io.netty.NettyServer"></param>
+                <param name="nettyClient" _xmeta_id_="nettyServer" type="xworker.io.netty.NettyClient"></param>
             </ins>
         </JavaAction>
         <JavaAction name="closed" _xmeta_id_="startSuccess1" outerClassName="xworker.io.netty.NettyClient"
              methodName="closed" usage="event">
             <ins>
-                <param name="nettyServer" type="xworker.io.netty.NettyServer"></param>
+                <param name="nettyClient" _xmeta_id_="nettyServer" type="xworker.io.netty.NettyClient"></param>
             </ins>
         </JavaAction>
         <JavaAction name="connect" _xmeta_id_="create1" outerClassName="xworker.io.netty.NettyClient"
@@ -58,6 +64,17 @@
         </JavaAction>
         <GetBoolean name="isSingleInstance" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
              attributeName="singleInstance"></GetBoolean>
+        <JavaAction name="onReconnect" outerClassName="xworker.io.netty.NettyClient" methodName="onReconnect">
+            <ins>
+                <param name="nettyClient" _xmeta_id_="nettyServer" type="xworker.io.netty.NettyClient"></param>
+            </ins>
+        </JavaAction>
+        <GetBoolean name="isAutoReconnect" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="autoReconnect"></GetBoolean>
+        <JavaAction name="doTask" outerClassName="xworker.io.netty.NettyClient" methodName="doTask">
+            <description><![CDATA[<p>用于检测是否要自动重连的任务动作。</p>
+]]></description>
+        </JavaAction>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -70,6 +87,7 @@
 <p>如果为false，那么每次执行create方法都会创建一个NettyClient实例，用户自行管理NettyClient实例。不能通过getNettyClient方法获取实例。</p>
 ]]></description>
     </attribute>
+    <attribute name="autoReconnect" inputtype="truefalse" default="false"></attribute>
     <attribute name="variables" inputtype="textarea"></attribute>
     <attribute name="description" inputtype="html"></attribute>
     <thing name="Handlers" extends="xworker.netty.HandlerIndex">

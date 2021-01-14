@@ -7,7 +7,7 @@ import java.util.Stack;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
-import xworker.lang.executor.services.Log4jService;
+import xworker.lang.executor.services.JavaLoggingService;
 
 /**
  * 执行事物模型的执行器，提供日志和UI请求等服务。
@@ -26,10 +26,14 @@ public class Executor {
 	/** 执行服务 */
 	private static ThreadLocal<Stack<ExecutorService>> executorServices = new ThreadLocal<Stack<ExecutorService>>();
 	
-	private static ExecutorService defaultExecutorService = new Log4jService();
+	private static ExecutorService defaultExecutorService = new JavaLoggingService();
 	
 	/** tag设置的日志级别 */
-	private static Map<String, Byte> tagLogLevels = new HashMap<String, Byte>();	
+	private static Map<String, Byte> tagLogLevels = new HashMap<String, Byte>();
+	
+	/** 执行器监听器，监听所有的操作，外加一个notify。注意处理的性能不要影响其它程序。 */
+	private static ExecutorListener listener = null;
+	
 	/**
 	 * 设置默认的Executor服务。
 	 * 
@@ -70,6 +74,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String message) {
+		if(listener != null) {
+			listener.trace(TAG, message);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
 			return;
 		}
@@ -81,6 +89,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String message, Throwable t) {
+		if(listener != null) {
+			listener.trace(TAG, message, t);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
 			return;
 		}
@@ -92,6 +104,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object arg) {
+		if(listener != null) {
+			listener.trace(TAG, format, arg);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
 			return;
 		}
@@ -103,6 +119,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object arg1, Object arg2) {
+		if(listener != null) {
+			listener.trace(TAG, format, arg1, arg2);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
 			return;
 		}
@@ -154,6 +174,10 @@ public class Executor {
 	}
 	
 	public static void trace(String TAG, String format, Object ...arguments) {
+		if(listener != null) {
+			listener.trace(TAG, format, arguments);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
 			return;
 		}
@@ -165,6 +189,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String message) {
+		if(listener != null) {
+			listener.debug(TAG, message);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
 			return;
 		}
@@ -176,6 +204,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String message, Throwable t) {
+		if(listener != null) {
+			listener.debug(TAG, message, t);
+		}		
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
 			return;
 		}
@@ -187,6 +219,11 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object arg) {
+		if(listener != null) {
+			listener.debug(TAG, format, arg);
+		}
+		
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
 			return;
 		}
@@ -198,6 +235,10 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object arg1, Object arg2) {
+		if(listener != null) {
+			listener.debug(TAG, format, arg1, arg2);
+		}		
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
 			return;
 		}
@@ -209,6 +250,11 @@ public class Executor {
 	}
 	
 	public static void debug(String TAG, String format, Object ...arguments) {
+		if(listener != null) {
+			listener.debug(TAG, format, arguments);
+		}
+		
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
 			return;
 		}
@@ -220,6 +266,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String message) {
+		if(listener != null) {
+			listener.info(TAG, message);
+		}		
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
 			return;
 		}
@@ -231,6 +281,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String message, Throwable t) {
+		if(listener != null) {
+			listener.info(TAG, message, t);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
 			return;
 		}
@@ -242,6 +296,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object arg) {
+		if(listener != null) {
+			listener.info(TAG, format, arg);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
 			return;
 		}
@@ -253,6 +311,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object arg1, Object arg2) {
+		if(listener != null) {
+			listener.info(TAG, format, arg1, arg2);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
 			return;
 		}
@@ -264,6 +326,10 @@ public class Executor {
 	}
 	
 	public static void info(String TAG, String format, Object ...arguments) {
+		if(listener != null) {
+			listener.info(TAG, format, arguments);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
 			return;
 		}
@@ -275,6 +341,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String message) {
+		if(listener != null) {
+			listener.warn(TAG, message);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
 			return;
 		}
@@ -286,6 +356,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String message, Throwable t) {
+		if(listener != null) {
+			listener.warn(TAG, message, t);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
 			return;
 		}
@@ -297,6 +371,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object arg) {
+		if(listener != null) {
+			listener.warn(TAG, format, arg);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
 			return;
 		}
@@ -308,6 +386,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object arg1, Object arg2) {
+		if(listener != null) {
+			listener.warn(TAG, format, arg1, arg2);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
 			return;
 		}
@@ -319,6 +401,10 @@ public class Executor {
 	}
 	
 	public static void warn(String TAG, String format, Object ...arguments) {
+		if(listener != null) {
+			listener.warn(TAG, format, arguments);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
 			return;
 		}
@@ -330,6 +416,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String message) {
+		if(listener != null) {
+			listener.error(TAG, message);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
 			return;
 		}
@@ -341,6 +431,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String message, Throwable t) {
+		if(listener != null) {
+			listener.error(TAG, message, t);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
 			return;
 		}
@@ -352,6 +446,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object arg) {
+		if(listener != null) {
+			listener.error(TAG, format, arg);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
 			return;
 		}
@@ -363,6 +461,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object arg1, Object arg2) {
+		if(listener != null) {
+			listener.error(TAG, format, arg1, arg2);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
 			return;
 		}
@@ -374,6 +476,10 @@ public class Executor {
 	}
 	
 	public static void error(String TAG, String format, Object ...arguments) {
+		if(listener != null) {
+			listener.error(TAG, format, arguments);
+		}
+		
 		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
 			return;
 		}
@@ -392,13 +498,23 @@ public class Executor {
 	 * @param actionContext
 	 */
 	public static void requestUI(Thing request, ActionContext actionContext) {
+		ExecuteRequest rui = new ExecuteRequest(request, actionContext);
+		
+		if(listener != null) {
+			listener.requestUI(rui);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
-			service.requestUI(new ExecuteRequest(request, actionContext));
+			service.requestUI(rui);
 		}
 	}
 	
 	public static void requestUI(ExecuteRequest request) {
+		if(listener != null) {
+			listener.requestUI(request);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.requestUI(request);
@@ -521,6 +637,10 @@ public class Executor {
 	}
 	
 	public static void print(Object message) {
+		if(listener != null) {
+			listener.print(message);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.print(message);
@@ -528,6 +648,10 @@ public class Executor {
 	}
 
 	public static void println(Object message) {
+		if(listener != null) {
+			listener.println(message);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.println(message);
@@ -535,6 +659,10 @@ public class Executor {
 	}
 
 	public static void errPrint(Object message) {
+		if(listener != null) {
+			listener.errPrint(message);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.errPrint(message);
@@ -542,6 +670,10 @@ public class Executor {
 	}
 
 	public static void errPrintln(Object message) {
+		if(listener != null) {
+			listener.errPrintln(message);
+		}
+		
 		ExecutorService service = getExecutorService();
 		if(service != null) {
 			service.errPrintln(message);
@@ -573,5 +705,19 @@ public class Executor {
 				}
 			}
 		}).start();
+	}
+	
+	public static ExecutorListener getListener() {
+		return listener;
+	}
+	
+	public static void setListener(ExecutorListener listener) {
+		Executor.listener = listener;
+	}
+	
+	public static void notify(String message, Thing thing, ActionContext actionContext) {
+		if(listener != null) {
+			listener.notify(message, thing, actionContext);
+		}
 	}
 }

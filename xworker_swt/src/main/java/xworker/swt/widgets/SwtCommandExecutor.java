@@ -22,7 +22,8 @@ public class SwtCommandExecutor {
 		
 		//删除不必要的按钮
 		if(self.getBoolean("commandEditable") == false) {
-			((Control) ac.get("openCommandButton")).dispose();
+			((Control) ac.get("editDomainButton")).dispose();
+			((Control) ac.get("editcommandButton")).dispose();
 		}
 		
 		Button closeButton = ac.getObject("closeButton");
@@ -34,7 +35,7 @@ public class SwtCommandExecutor {
 		ActionContext domainContext = self.doAction("getDomainContext", actionContext);
 		
 		CommandExecutor ce = new CommandExecutor(commandDomain, ac, domainContext);
-		ac.put("executor", ce);
+		ac.g().put("executor", ce);
 		if(commandDomain != null) {
 			//初始化
 			ce.reset();

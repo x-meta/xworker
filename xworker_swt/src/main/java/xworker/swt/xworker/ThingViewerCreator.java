@@ -30,6 +30,7 @@ import org.xmeta.World;
 import org.xmeta.codes.XmlCoder;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.form.ThingDescriptorForm;
 import xworker.swt.util.XWorkerTreeUtil;
@@ -175,6 +176,7 @@ public class ThingViewerCreator {
     	    String xml = XmlCoder.encodeToString(thing);
     	     
     	    xmlText.setCode("xml", "xml", xml);
+    	    Executor.info(ThingViewerCreator.class.getName(), xml);
     	    
     	    //触发selection事件
     	    Thing viewerThing = actionContext.getObject("viewerThing");

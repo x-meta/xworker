@@ -13,7 +13,7 @@ import xworker.lang.executor.Executor;
 
 public class Configuration {
 	private static final String TAG = Configuration.class.getName();
-	private static final String CONFIG_PROFILE_KEY = "__cofnig__profile__";
+	//private static final String CONFIG_PROFILE_KEY = "__cofnig__profile__";
 	//配置缓存
 	private static Map<String, ThingEntry> cache = new HashMap<String, ThingEntry>();	
 	private static String profile;

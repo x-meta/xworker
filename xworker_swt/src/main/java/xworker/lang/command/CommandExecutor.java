@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -14,11 +15,10 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.ExceptionUtil;
 import org.xmeta.util.MapData;
 import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilMap;
@@ -30,7 +30,8 @@ import xworker.swt.xwidgets.SelectContent;
 import xworker.util.XWorkerUtils;
 
 public class CommandExecutor extends MapData{
-	private static Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
+	//private static Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
+	//private static final String TAG = CommandExecutor.class.getName();
 	
 	Stack<CommandDomain>  domainStack = new Stack<CommandDomain>();
 	
@@ -195,6 +196,30 @@ public class CommandExecutor extends MapData{
 		}*/
 	}
 	
+	/**
+	 * 设置执行器中的浏览器中的网页地址。
+	 * 
+	 * @param url
+	 */
+	public void setUrl(String url) {
+		Browser browser = actionContext.getObject("browser");
+		if(url != null) {
+			browser.setUrl(url);
+		}		
+	}
+	
+	/**
+	 * 设置执行器中的浏览器中网页内容。
+	 * 
+	 * @param html
+	 */
+	public void setHtml(String html) {
+		Browser browser = actionContext.getObject("browser");
+		if(html != null) {
+			browser.setText(html);
+		}
+	}
+	
 	public void select(SelectContent content, String text){		
 		if(rootCmd == null){
 			if(content == null){
@@ -329,12 +354,13 @@ public class CommandExecutor extends MapData{
 		}
 				
 		item.setText(label);
-		if(!command.isReady()){
-			item.setBackground(item.getParent().getDisplay().getSystemColor(SWT.COLOR_RED));
+		if(!command.isExecuted()){
+			item.setBackground(item.getParent().getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		}else{
-			TreeItem tempItem = new TreeItem(item.getParent(), SWT.None);
-			item.setBackground(tempItem.getBackground());
-			tempItem.dispose();
+			item.setBackground(item.getParent().getBackground());
+			//TreeItem tempItem = new TreeItem(item.getParent(), SWT.None);
+			//item.setBackground(tempItem.getBackground());
+			//tempItem.dispose();
 		}
 		
 		for(Command child : command.getParams()){
@@ -378,12 +404,14 @@ public class CommandExecutor extends MapData{
 					reset();
 				}
 			}catch(Exception e){
-				logger.error("execute command error", e);
+				String html = "<pre>" + ExceptionUtil.toString(e) + "</pre>";
+				setHtml(html);
+				//Executor.error(TAG, "execute command error", e);
 			}
 		}
 	}
 	
-	public boolean checkStatus(Tree tree, TreeItem item){
+	public boolean checkStatus(Tree tree, TreeItem item){		
 		if(item.getItems().length > 0){
 			for(TreeItem childItem : item.getItems()){
 				if(!checkStatus(tree, childItem)){
@@ -393,8 +421,8 @@ public class CommandExecutor extends MapData{
 		}
 		
 		Command command = (Command) item.getData();
-		if(command.isReady()){
-			
+		initTreeItem(item, command);
+		if(command.isReady()){		
 			for(TreeItem child : item.getItems()){
 				if(checkStatus(tree, child) == false){
 					return false;
@@ -492,11 +520,11 @@ public class CommandExecutor extends MapData{
 		Button editDomainButton = actionContext.getObject("editDomainButton");
 		if(domainPath == null) {
 			domainPath = UtilString.getString("lang:d=未设置命令域&en=Command domain not setted", actionContext);
-			if(editDomainButton != null) {
+			if(editDomainButton != null && editDomainButton.isDisposed() == false) {
 				editDomainButton.setEnabled(false);
 			}
 		}else {
-			if(editDomainButton != null) {
+			if(editDomainButton != null && editDomainButton.isDisposed() == false) {
 				editDomainButton.setEnabled(true);
 			}
 		}

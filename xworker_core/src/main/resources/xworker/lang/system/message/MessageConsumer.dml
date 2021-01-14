@@ -1,16 +1,25 @@
-%1565852398034
+%1609159376990
 @
 sname=MessageConsumer
 slabel=MessageConsumer
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
 <p>消息的消费者。</p>
+
+<p><strong>注册和取消注册</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果要系统启动时就自动注册，那么把模型以child注册到xworker.lang.system.message.MessageConsumerIndex。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过模型自行注册和取消可以通过regist和unregist方法，regist时会创建一个新的变量上下文。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 也可以自行创建MessageConsumer对象，然后通过MessageCenter订阅和取消订阅消息。</p>
 
 <p><strong>需要重写的方法</strong></p>
 
@@ -57,7 +66,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -80,7 +88,6 @@ sth_mark=false
     svarScope=Local
     sisSynchronized=false
     sthrowException=true
-    suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
     sdisableGlobalContext=false
@@ -93,6 +100,60 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=getTopics
+    @/@actions1/@regist
+    sname=regist
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.system.message.MessageActions
+    smethodName=regist
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=regist
+    @/@actions1/@unregist
+    sname=unregist
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.system.message.MessageActions
+    smethodName=unregist
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=unregist
   @/@name
   sname=name
   sshowLabel=true
@@ -142,7 +203,22 @@ sth_mark=false
   smodifier=public
   sreadOnly=false
   sinheritDescription=false
-  sdescription=<p>要监听的消息主题（对应消息的group属性），可以有多个，如有多个使用英文逗号分割。</p>
+  Sdescription=
+#$@text#$@
+<p>要订阅的消息主题，可以有多个，如有多个使用英文逗号分割。</p>
+
+<p><strong>主题规则：</strong></p>
+
+<ul>
+	<li><strong>一般</strong><br />
+	如/a/b/c/d，子主题用/分割。<br />
+	&nbsp;</li>
+	<li><strong>通配符#</strong><br />
+	如#/d，/a/#/d，/a/#等，#匹配所有。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
   svalidateAllowBlank=true
   LvalidateOnBlur=true
   LallowDecimals=true

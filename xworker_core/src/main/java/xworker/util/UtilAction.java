@@ -22,15 +22,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
+
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import xworker.actions.GroovyAction;
 
 /**
  * 与动作相关的工具类。
@@ -109,6 +115,59 @@ public class UtilAction {
 	 */
 	public static Object runAsGroovy(Thing thing, ActionContext actionContext){
 		return runAsGroovy(thing, "code", actionContext, null);
+	}
+	
+	/**
+	 * 如果一个模型继承了GroovyAction,但它又重写了run方法，此时还想作为GroovyAction运行，那么可以在重写的run方法中调用本方法。
+	 * @param thing
+	 * @param actionContext
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws NoSuchMethodException
+	 * @throws SecurityException
+	 * @throws IOException
+	 */
+	public static Object runGroovyAction(Thing thing, ActionContext actionContext) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
+		try {
+			Bindings bindings = actionContext.push();
+			for(Thing vars : thing.getChilds("Variables")){
+	        	for(Thing var : vars.getChilds()){
+	        		String key = var.getMetadata().getName();
+	        		Object value = var.getAction().run(actionContext, null, true);
+	        		bindings.put(key, value);
+	        	}
+	        }
+			
+			for(Thing acs : thing.getChilds("ActionDefined")) {
+				for(Thing ac : acs.getChilds()) {
+					bindings.put(ac.getMetadata().getName(), ac.getAction());
+				}
+			}
+			
+			Action action = thing.getAction();
+			action.checkChanged();
+			return GroovyAction.run(action, actionContext);
+		}finally {
+			
+			actionContext.pop();
+		}
+	}
+	
+	/**
+	 * 执行Groovy脚本。
+	 * 
+	 * @param code
+	 * @param actionContext
+	 * @return
+	 */
+	public static Object runGroovy(String code, ActionContext actionContext) {
+		Binding binding = new Binding(actionContext);
+		GroovyShell shell = new GroovyShell(binding);
+		return shell.evaluate(code);
 	}
 	
 	/**

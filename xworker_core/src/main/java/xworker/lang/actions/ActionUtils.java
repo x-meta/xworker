@@ -1,7 +1,10 @@
 package xworker.lang.actions;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,6 +17,7 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.MethodUtils;
@@ -427,6 +432,59 @@ public class ActionUtils {
 		return str;
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Properties getProperties(ActionContext actionContext) throws IOException, OgnlException{
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String attributeName = self.getString("attributeName");
+		actionContext.peek().put("self", realSelf); //如果attributename是：ognl:self...的情形确定self正确
+		Object data = UtilData.getData(realSelf, attributeName, actionContext);
+		if(data instanceof Properties) {
+			return (Properties) data;
+		}else if(data instanceof InputStream) {
+			Properties p = new Properties();
+			p.load((InputStream) data);
+			return p;
+		}else if(data instanceof byte[]) {
+			Properties p = new Properties();
+			p.load(new ByteArrayInputStream((byte[]) data));
+			return p;
+		}else if(data instanceof File) {
+			File file = (File) data;
+			Properties p = new Properties();
+			FileInputStream fin = new FileInputStream(file);
+			try {
+				p.load(fin);
+			} finally {
+				fin.close();
+			}
+			return p;
+		}else if(data instanceof String) {
+			File file =  new File((String) data);
+			if(file.exists()) {
+				Properties p = new Properties();
+				FileInputStream fin = new FileInputStream(file);
+				try {
+					p.load(fin);
+				} finally {
+					fin.close();
+				}
+				return p;
+			}else {
+				Properties p = new Properties();
+				p.load(new ByteArrayInputStream(((String) data).getBytes()));
+				return p;
+			}
+		}else if(data instanceof Map) {
+			Properties p = new Properties();
+			p.putAll((Map) data);
+			return p;
+		}else {
+			return null;
+		}
+	}
+	
 	public static Locale getLocale(ActionContext actionContext) throws Exception{
 		Object l = getObject(actionContext);
 		if(l instanceof Locale) {
@@ -454,12 +512,24 @@ public class ActionUtils {
 				if(splitLine) {
 					for(String line : value.split("[\n]")) {						
 						for(String v : line.split("[" + delimiter + "]")) {
-							list.add(v.trim());
+							v = v.trim();
+							if(!"".equals(v)) {
+								if(v.equals("\"\"") || v.equals("''")) {
+									v = "";
+								}
+								list.add(v);
+							}
 						}
 					}
 				}else {
 					for(String v : value.split("[" + delimiter + "]")) {
-						list.add(v.trim());
+						v = v.trim();
+						if(!"".equals(v)) {
+							if(v.equals("\"\"") || v.equals("''")) {
+								v = "";
+							}
+							list.add(v);
+						}
 					}
 				}
 				return list;
@@ -1441,12 +1511,90 @@ public class ActionUtils {
 		
 		String name = realSelf.getStringBlankAsNull(self.getString("attributeName"));
 		//String descriptor = self.getString("configDescriptor");
-		
+		if(name != null && name.startsWith("_c_.")) {
+			name = name.substring(4, name.length());
+		}
 		Thing config = Configuration.getConfiguration(name, realSelf, actionContext);
 		if(config == null && self.getBoolean("notNull")){
 			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
 		}
 		
 		return config;
+	}
+	
+	public static Duration getDuration(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String attributeName = self.getString("attributeName");
+		Object v = UtilData.getData(realSelf, attributeName, actionContext);
+		if(v == null) {
+			v = self.getLong("defaultValue");
+		}
+		
+		if(v instanceof Duration) {
+			return (Duration) v;
+		}else if(v instanceof Long) {
+			return Duration.ofMillis((long) v);
+		}else if(v instanceof String) {
+			String str = (String) v;
+			try {
+				long time = Long.parseLong(str);
+				return Duration.ofMillis(time);
+			}catch(Exception e) {
+				str = str.toLowerCase().trim();
+				Duration d = Duration.ofMillis(0);
+				int index1 = 0;
+				int index2 = 0;
+				while(index2 < str.length()) {
+					index2 ++;
+					if(str.charAt(index2) == 'd') {
+						int number = Integer.parseInt(str.substring(index1, index2));
+						d = d.plusDays(number);
+						index1 = index2 + 1;
+						index2 = index1;
+					}else if(str.charAt(index2) == 'h') {
+						int number = Integer.parseInt(str.substring(index1, index2));
+						d = d.plusHours(number);
+						index1 = index2 + 1;
+						index2 = index1;
+					}else if(str.charAt(index2) == 'm') {
+						boolean isMs = false;
+						if(index2 < str.length() - 1 && str.charAt(index2 + 1) == 's') {
+							isMs = true;
+						}
+						int number = Integer.parseInt(str.substring(index1, index2));
+						if(isMs) {
+							d = d.plusMillis(number);
+							index1 = index2 + 2;
+							index2 = index1;
+						}else {
+							d= d.plusMinutes(number);
+							index1 = index2 + 1;
+							index2 = index1;
+						}
+					}else if(str.charAt(index2) == 's') {
+						int number = Integer.parseInt(str.substring(index1, index2));
+						d = d.plusSeconds(number);
+						index1 = index2 + 1;
+						index2 = index1;
+					}else if(str.charAt(index2) == 'n') {
+						int number = Integer.parseInt(str.substring(index1, index2));
+						d = d.plusNanos(number);
+						index1 = index2 + 1;
+						index2 = index1;
+					}
+					
+				}
+				
+				return d;
+			}
+		}
+		
+		if(self.getBoolean("notNull")){
+			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
+		}
+		
+		return null;
 	}
 }

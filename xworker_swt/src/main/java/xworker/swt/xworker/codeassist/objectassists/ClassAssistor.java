@@ -10,6 +10,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import xworker.java.assist.Javaassist;
@@ -25,7 +26,13 @@ public class ClassAssistor implements ObjectAssistor{
 	@Override
 	public List<CodeAssitContent> getContents(VariableDesc var, Thing thing, ActionContext actionContext) {
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
-		initContents(var.getClassName(), list);
+		String className = var.getClassName();
+		//过滤泛型，如Map<String, Object>
+		int index = className.indexOf("<");
+		if(index != -1) {
+			className = className.substring(0, index);
+		}
+		initContents(className, list);
 		
 		return list;
 	}
@@ -66,6 +73,31 @@ public class ClassAssistor implements ObjectAssistor{
 						}
 						methodName = methodName + ")";
 						label = label + "): " + rtype;
+						list.add(new CodeAssitContent(methodName, label, "methodImage"));
+					}
+				}
+
+				for(CtConstructor contr : ctClass.getConstructors()) {
+					if((contr.getModifiers() & Modifier.PUBLIC) == Modifier.PUBLIC){
+						List<ParameterInfo> params = Javaassist.getParameterInfo(contr);
+						String label = "new " + ctClass.getSimpleName() + "(";
+						String methodName = "(";
+						for(int i=0; i<params.size(); i++){
+							methodName = methodName + params.get(i).getName();
+							String type = params.get(i).getType();
+							int lastIndex = type.lastIndexOf(".");
+							if(lastIndex != -1){
+								type = type.substring(lastIndex + 1, type.length());
+							}
+							label = label + type + " " + params.get(i).getName();
+							if(i < params.size() - 1){
+								methodName = methodName + ", ";
+								label = label + ", ";
+							}
+						}
+						
+						methodName = methodName + ");";
+						label = label + ");";
 						list.add(new CodeAssitContent(methodName, label, "methodImage"));
 					}
 				}

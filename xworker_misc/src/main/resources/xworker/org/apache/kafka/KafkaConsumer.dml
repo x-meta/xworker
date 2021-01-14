@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="KafkaConsumer" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.org.apache.kafka.Kafka">
+    <description><![CDATA[<p>Kafka的消费者。执行后启动一个线程接收Kafka的消息，通过重写onRecords()方法接收消息。更多文档请参看帮助小精灵。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 返回KafkaConsumerRunner对象，通过KafkaConsumerRunner.shutdown()方法可以关闭Kafka接收者。</p>
+
+<p><strong>单实例</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只创建一个实例。如果执行时发现模型已经变更，则会停止之前的实例，然后创建新的实例并执行。</p>
+
+<p><strong>可以监听的事件</strong></p>
+
+<ul>
+	<li><strong>void onRecords(ConsumerRecords records, KafkaConsumer consumer, KafkaConsumerRunner runner)</strong><br />
+	接收消息。<br />
+	&nbsp;</li>
+	<li><strong>void beforeInit(Properties config)</strong><br />
+	创建消费者之前的事件。<br />
+	&nbsp;</li>
+	<li><strong>void afterInit(KafkaConsumer consumer）</strong><br />
+	创建消费者之后的事件。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <GetString name="getKeyDeserializer" _xmeta_id_="18430" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="keyDeserializer" usage="params"></GetString>
+        <GetString name="getValueDeserializer" _xmeta_id_="18431" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="valueDeserializer" usage="params"></GetString>
+        <GetProperties name="getConfig" _xmeta_id_="18432" descriptors="xworker.lang.actions.ActionUtil/@GetProperties"
+             attributeName="config" usage="params"></GetProperties>
+        <JavaAction name="run" outerClassName="xworker.org.apache.kafka.XWorkerKafkaConsumer"
+             methodName="run" actionClassLoader="xworker.org.apache.kafka.KafkaClassLoader"></JavaAction>
+        <GetLong name="getPollTimeout" _xmeta_id_="18863" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="pollTimeout" usage="params"></GetLong>
+        <JavaAction name="onRecords" outerClassName="xworker.org.apache.kafka.XWorkerKafkaConsumer"
+             methodName="onRecords" actionClassLoader="xworker.org.apache.kafka.KafkaClassLoader"
+             usage="event">
+            <ins>
+                <param name="records" type="org.apache.kafka.clients.consumer.ConsumerRecords"></param>
+                <param name="record" type="org.apache.kafka.clients.consumer.ConsumerRecord"></param>
+                <param name="consumer" type="org.apache.kafka.clients.consumer.KafkaConsumer"></param>
+            </ins>
+        </JavaAction>
+        <NOOP name="beforeInit" _xmeta_id_="onInit" usage="event">
+            <ins>
+                <param name="config" _xmeta_id_="properties" type="java.util.Properties"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="afterInit" usage="event">
+            <ins>
+                <param name="consumer" type="org.apache.kafka.clients.consumer.KafkaConsumer"></param>
+            </ins>
+        </NOOP>
+        <GetStringList name="getTopics" _xmeta_id_="20754" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="topics" usage="params"></GetStringList>
+        <JavaAction name="close" outerClassName="xworker.org.apache.kafka.XWorkerKafkaConsumer"
+             methodName="close" actionClassLoader="xworker.org.apache.kafka.KafkaClassLoader"></JavaAction>
+        <JavaAction name="getKafkaConsumer" outerClassName="xworker.org.apache.kafka.XWorkerKafkaConsumer"
+             methodName="getXWorkerKafkaConsumer" actionClassLoader="xworker.org.apache.kafka.KafkaClassLoader"></JavaAction>
+        <GroovyAction name="forceClose">
+            <code><![CDATA[def key = "CONSUMER";
+def producer = self.getStaticData(key);
+if(producer == null){
+    return;
+}
+producer.close();
+self.setStaticData(key, null);]]></code>
+        </GroovyAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="keyDeserializer" inputtype="inputSelect" default="org.apache.kafka.common.serialization.StringDeserializer">
+        <value name="ByteArrayDeserializer" value="org.apache.kafka.common.serialization.ByteArrayDeserializer"></value>
+        <value name="ByteBufferDeserializer" value="org.apache.kafka.common.serialization.ByteBufferDeserializer"></value>
+        <value name="BytesDeserializer" value="org.apache.kafka.common.serialization.BytesDeserializer"></value>
+        <value name="DoubleDeserializer" value="org.apache.kafka.common.serialization.DoubleDeserializer"></value>
+        <value name="FloatDeserializer" value="org.apache.kafka.common.serialization.FloatDeserializer"></value>
+        <value name="IntegerDeserializer" value="org.apache.kafka.common.serialization.IntegerDeserializer"></value>
+        <value name="LongDeserializer" value="org.apache.kafka.common.serialization.LongDeserializer"></value>
+        <value name="SessionWindowedDeserializer" value="org.apache.kafka.streams.kstream.SessionWindowedDeserializer"></value>
+        <value name="ShortDeserializer" value="org.apache.kafka.common.serialization.ShortDeserializer"></value>
+        <value name="StringDeserializer" value="org.apache.kafka.common.serialization.StringDeserializer"></value>
+        <value name="TimeWindowedDeserializer" _xmeta_id_="_TimeWindowedDeserializer"
+             value="org.apache.kafka.streams.kstream.TimeWindowedDeserializer"></value>
+        <value name="UUIDDeserializer" value="org.apache.kafka.common.serialization.UUIDDeserializer"></value>
+        <value name="VoidDeserializer" value="org.apache.kafka.common.serialization.VoidDeserializer"></value>
+    </attribute>
+    <attribute name="valueDeserializer" extends="xworker.org.apache.kafka.KafkaConsumer/@keyDeserializer"
+         inputtype="inputSelect" default="org.apache.kafka.common.serialization.StringDeserializer"></attribute>
+    <attribute name="pollTimeout" default="1000">
+        <description><![CDATA[<p>单位毫秒。</p>
+]]></description>
+    </attribute>
+    <attribute name="config" inputtype="textarea">
+        <default><![CDATA[bootstrap.servers=
+group.id=
+enable.auto.commit=true
+auto.commit.interval.ms=1000]]></default>
+    </attribute>
+    <attribute name="topics" inputtype="textarea"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="var" varName="_thingName_" passive="true" scope="1" className="xworker.org.apache.kafka.KafkaConsumerRunner"></Variable>
+    </VariablesDescs>
+</thing>

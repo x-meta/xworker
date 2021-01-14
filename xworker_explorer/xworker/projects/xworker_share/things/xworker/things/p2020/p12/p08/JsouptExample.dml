@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="JsouptExample" descriptors="xworker.swt.xworker.ThingRegistThing" type="composite"
+     group="org.jsoup" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>Jsoup示例</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Jsoup可以用来分析网页，可以做网络爬虫。</p>
+]]></description>
+    <Composite label="Jsoup Example">
+        <FillLayout name="FillLayout"></FillLayout>
+        <SashForm name="mainSashForm" style="VERTICAL" weights="60,40">
+            <SashForm name="topSashForm" weights="30,70">
+                <Composite name="menuComposite" BORDER="true">
+                    <GridLayout name="GridLayout"></GridLayout>
+                    <Tree name="tree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
+                         multipleColumns="false" headerVisible="false" sortIndicator="false"
+                         moveableColumns="false">
+                        <Listeners>
+                            <Listener name="treeSelection">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[def thing = event.item.getData();
+
+executeButton.setEnabled(true	);
+
+thingEditor.doAction("setThing", actionContext, "thing", thing);]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                        <GridData name="GridData" style="FILL_BOTH"></GridData>
+                    </Tree>
+                    <Button name="executeButton" text="lang:d=执行&amp;en=Execute" enabled="false">
+                        <Event name="onSelection">
+                            <GroovyAction name="executeButtonSelection">
+                                <code><![CDATA[import xworker.lang.executor.Executor;
+
+logText.setText("");
+def executorService = executorService;
+def thing = tree.getSelection()[0].getData();
+def actionContext = actionContext;
+new Thread({
+    Executor.push(executorService);
+    try{
+        thing.doAction("run", actionContext);
+    }finally{
+        Executor.pop();
+    }
+}).start();]]></code>
+                            </GroovyAction>
+                        </Event>
+                        <GridData name="GridData" horizontalAlignment="END"></GridData>
+                    </Button>
+                </Composite>
+                <ThingEditor name="thingEditor" saveActionContainer="true"></ThingEditor>
+            </SashForm>
+            <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+                <GridData name="GridData" descriptors="xworker.swt.layout.LayoutDatas/@GridData"
+                     style="FILL_BOTH"></GridData>
+            </StyledText>
+            <TextExecutorService name="executorService" descriptors="xworker.lang.executor.swt.TextExecutorService"
+                 text="var:logText"></TextExecutorService>
+        </SashForm>
+        <Code name="init">
+            <code><![CDATA[import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.TreeItem;
+import xworker.swt.util.XWorkerTreeUtil;
+
+def thing = world.getThing("xworker.things.p2020.p12.p08.JsoupExampleActions");
+for(child in thing.getChilds()){
+    def item = new TreeItem(tree, SWT.NONE);
+    item.setData(child);
+    XWorkerTreeUtil.initItem(item, child, actionContext);
+}]]></code>
+        </Code>
+    </Composite>
+</QuickFunction>

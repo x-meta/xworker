@@ -10,6 +10,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.ExceptionUtil;
 import org.xmeta.util.UtilMap;
 
 public class Command {
@@ -21,6 +22,9 @@ public class Command {
 	
 	/** 参数的值 */
 	private Object result;
+	
+	/** 当命令是选择器器，选中的内容。 */
+	private Object selectedContnet;
 	
 	/** 当前命令的参数列表 */
 	private List<Command> params = new ArrayList<Command>();
@@ -116,8 +120,14 @@ public class Command {
 				bindings.put(cons.getMetadata().getName(), cons.doAction("getValue", actionContext));
 			}
 			
-			executed = true;
-			result = commandThing.doAction("run", actionContext);			
+			executed = true; //不能放到后面
+			try {
+				result = commandThing.doAction("run", actionContext);
+			}catch(Exception e) {
+				executed = false;
+				String html = "<pre>" + ExceptionUtil.toString(e) + "</pre>";
+				executor.setHtml(html);
+			}
 		}finally{
 			actionContext.pop();
 		}
@@ -234,6 +244,8 @@ public class Command {
 	}
 	
 	public void setContent(Object content) {
+		this.selectedContnet = content;
+		
 		if(commandThing != null) {
 			doAction("onContent", UtilMap.toMap("content", content));
 		}
@@ -296,7 +308,11 @@ public class Command {
 			return null;
 		}
 	}
-	
+		
+	public Object getSelectedContnet() {
+		return selectedContnet;
+	}
+
 	public Shell getShell(){
 		return executor.getShell();
 	}

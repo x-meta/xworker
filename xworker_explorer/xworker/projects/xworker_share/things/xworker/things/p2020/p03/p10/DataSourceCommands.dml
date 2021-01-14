@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <CommandDomain name="DataSourceCommands" descriptors="xworker.lang.command.CommandDomain" th_createIndex="true"
-     th_registThing="child|xworker.lang.command.CommandIndex" th_registMyChilds="true">
+     th_registThing="child|xworker.lang.command.CommandIndex" th_registMyChilds="true"
+     group="xworker.db">
     <PredefinedCommands>
-        <Command name="SelectDataSource" label="选择数据源" hasContents="true">
+        <Command name="SelectDataSource" label="选择数据源">
             <actions>
                 <GroovyAction name="getContents">
                     <code><![CDATA[import org.xmeta.Thing;
@@ -40,22 +41,7 @@ return contents;]]></code>
         <actions>
             <StartThead name="run" _xmeta_id_="run1" descriptors="xworker.java.lang.ThreadActions/@StartThead"
                  variables="dataSource">
-                <GroovyAction name="check" _xmeta_id_="run">
-                    <code><![CDATA[import xworker.lang.executor.Executor;
-
-def TAG = "xworker.things.p2020.p03.p10.DataSourceCommands.p422530353.check";
-Executor.info(TAG, "Start check datasource, " + dataSource);
-try{
-    def con = dataSource.doAction("getConnection", actionContext);
-    if(con != null){
-        Executor.info(TAG, "Datasource is connected!");
-    }else{
-            Executor.info(TAG, "Datasource is not connected!");
-    }
-}catch(Exception e){
-    Executor.info(TAG, "Datasource is not connected!", e);
-}]]></code>
-                </GroovyAction>
+                <thing name="check" _xmeta_id_="run" descriptors="MetaThing"></thing>
             </StartThead>
         </actions>
     </Command>

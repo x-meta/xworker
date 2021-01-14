@@ -1,13 +1,15 @@
-%1579082538369
+%1607584108883
 @
 sname=ActionListener
 slabel=ActionListener
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
+scolor=BLUE
 Sdescription=
 #$@text#$@
 <p><strong>动作监听器</strong></p>
@@ -20,11 +22,27 @@ Sdescription=
 	<li><strong>void doInit(ActionListener listener)</strong><br />
 	执行初始化，在被监听的动作执行前执行。<br />
 	&nbsp;</li>
-	<li><strong>void doSuccess(ActionListener listener)</strong><br />
+	<li><strong>void doSuccess(ActionListener listener, Object result)</strong><br />
 	动作执行成功后触发的事件，在被监听的动作执行后且没有发生异常时执行。<br />
 	&nbsp;</li>
 	<li><strong>void doException(ActionListener listener, Throwable exception)</strong><br />
 	动作执行发生异常时的时间，在被监听的动作执行后且发生异常时执行。<strong>&nbsp;&nbsp; </strong></li>
+</ul>
+
+<p><strong>ActionListener的常用方法</strong></p>
+
+<ul>
+	<li><strong>Action getAction()</strong><br />
+	返回正在监听执行的动作。<br />
+	&nbsp;</li>
+	<li><strong>Thing getActionThing()</strong><br />
+	返回正在监听执行的动作模型。<br />
+	&nbsp;</li>
+	<li><strong>Object getFromAc(String key和putToAc(String key, Object)</strong><br />
+	向正在监听的动作的上下文中取变量和设置变量，其中设置变量是这知道顶层的栈中，被监听的动作可以访问这些变量。<br />
+	&nbsp;</li>
+	<li><strong>Object getFormMe(String key)和putToMe(String key, Object)</strong><br />
+	向监听器自身的动作上下文中取变量和设置变量，通常用于管理监听器自己产生的变量，如数据库连接等。</li>
 </ul>
 
 <p>&nbsp;&nbsp;</p>
@@ -234,6 +252,23 @@ sth_mark=false
         sth_fileMonitor=false
         sth_mark=false
         sid=context
+        @/@actions/@doSucsess/@ins/@result
+        sname=result
+        stype=java.lang.Object
+        stypeCheck=false
+        soptional=true
+        scheck=false
+        scheckLevel=exception
+        sdescriptors=xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=result
     @/@actions/@doException
     sname=doException
     sunimplementedException=false

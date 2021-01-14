@@ -2,8 +2,7 @@ package xworker.task;
 
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import xworker.lang.executor.Executor;
 
 /**
  * 延迟执行任务。可以频繁的请求任务，但任务不会多次执行，它最多会在指定间隔的频率执行。
@@ -12,7 +11,8 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class DelayTask {
-	private static Logger logger = LoggerFactory.getLogger(DelayTask.class);
+	//private static Logger logger = LoggerFactory.getLogger(DelayTask.class);
+	private static final String TAG = DelayTask.class.getName();
 	
 	int interval = 500;
 	long lastExecuteTime = 0;
@@ -24,40 +24,44 @@ public abstract class DelayTask {
 	}
 	
 	public void doTask() {
-		synchronized(lockObj) {
+		synchronized(this) {
 			if(waittingExecute) {
+				//正在等待执行中
 				return;
-			}else {
-				waittingExecute = true;
-				long waitTime = System.currentTimeMillis() - lastExecuteTime;
-				if(waitTime > interval) {
-					//如果大于更新间隔，立即执行
-					try {
-						run();
-					}finally {
-						lastExecuteTime = System.currentTimeMillis();
-						waittingExecute = false;
-					}
-				}else {
-					//延迟执行
-					TaskManager.getScheduledExecutorService().schedule(new Runnable() {
-						public void run() {
-							synchronized(lockObj) {
-								try {
-									DelayTask.this.run();
-								}catch(Exception e) {
-									logger.error("Execute delay task error", e);
-								}finally {
-									lastExecuteTime = System.currentTimeMillis();
-									waittingExecute = false;
-								}
-							}
-						}
-					}, interval - waitTime, TimeUnit.MILLISECONDS);
+			}
+		}
+		
+		waittingExecute = true;
+		//延迟执行
+		TaskManager.getScheduledExecutorService().schedule(new TaskRunnable(this),
+				interval, TimeUnit.MILLISECONDS);	
+	}
+	
+	public abstract void run();
+	
+	static class TaskRunnable implements Runnable{
+		DelayTask task;
+		long lastExecuteTime;
+		
+		public TaskRunnable(DelayTask task) {
+			this.task = task;
+			this.lastExecuteTime = task.lastExecuteTime;
+		}
+		
+		public void run() {
+			synchronized(task){
+				task.waittingExecute = false;
+			}
+			synchronized(task.lockObj) {
+				try {
+					task.run();				
+				}catch(Exception e) {
+					Executor.error(TAG, "Execute delay task error", e);
+				}finally {
+					task.lastExecuteTime = System.currentTimeMillis();
+					
 				}
 			}
 		}
 	}
-	
-	public abstract void run();
 }

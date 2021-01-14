@@ -230,9 +230,9 @@ public class TableCursorEditorCreator {
 		}
     }
         
-	@ActionParams(names="cursorThing,cursor,item")
-    public static Thing getEditorThing(Thing cursorThing, TableCursor cursor, TableItem item, ActionContext actionContext) {
-    	return getEditorThing1(cursorThing, cursor.getColumn(), item, actionContext);
+	@ActionParams(names="self,item, column")
+    public static Thing getEditorThing(Thing cursorThing, TableItem item, int column, ActionContext actionContext) {
+    	return getEditorThing1(cursorThing, column, item, actionContext);
     }
 
     @SuppressWarnings("unchecked")

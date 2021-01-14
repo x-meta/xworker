@@ -1,11 +1,13 @@
 package xworker.io.netty.handlers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.util.UtilData;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -39,7 +41,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import xworker.lang.executor.Executor;
-import xworker.util.UtilData;
 
 public class HandlerActions {
 	private static final String TAG = HandlerActions.class.getName();
@@ -391,5 +392,18 @@ public class HandlerActions {
 		//Thing self = actionContext.getObject("self");
 		
 		return new ChunkedWriteHandler();
+	}
+	
+	public static ChannelHandler[] createClassHandler(ActionContext actionContext) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Thing self = actionContext.getObject("self");
+		
+		Class<?>[] clss = self.doAction("getClasses", actionContext);
+		ChannelHandler[] handlers = new ChannelHandler[clss.length];
+		for(int i =0; i < clss.length; i++) {
+			ChannelHandler handler = (ChannelHandler) clss[i].getConstructor(new Class<?>[] {}).newInstance(new Object[] {});
+			handlers[i] = handler;
+		}
+		
+		return handlers;
 	}
 }

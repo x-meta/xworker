@@ -3,18 +3,18 @@ package xworker.io.netty;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
 import org.xmeta.Thing;
-import org.xmeta.util.ExceptionUtil;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import xworker.lang.executor.Executor;
@@ -26,6 +26,7 @@ public class NettyServer {
 	ActionContext actionContext;
 	private ChannelFuture channelFuture;
 	int port;
+	NettySessionManager sessionManager = new NettySessionManager();
 	
 	public NettyServer(Thing thing, ActionContext parentContext) {
 		this.thing = thing;
@@ -36,6 +37,7 @@ public class NettyServer {
 		}
 		
 		actionContext.put("parentContext", parentContext);
+		actionContext.put("sessionManager", sessionManager);
 	}
 	
 	public void start() {
@@ -75,10 +77,39 @@ public class NettyServer {
 				}
 			}
 			
-			bootstrap.childHandler(new ChannelInitializer<SocketChannel>() { 
+			bootstrap.childHandler(new ChannelInitializer<Channel>() { 
 						@Override
-						public void initChannel(SocketChannel ch) throws Exception {
+						public void initChannel(Channel ch) throws Exception {
 							ChannelPipeline pipeline = ch.pipeline();
+							NettySession session = new NettySession(sessionManager, ch);
+							session.setAttribute(NettySession.KEY, session);
+							
+							pipeline.addLast(new ChannelInboundHandlerAdapter() {
+								@Override
+								public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+
+									thing.doAction("sessionConnected", actionContext, "session", session, "ctx", ctx);
+								}
+
+								@Override
+								public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+									super.channelUnregistered(ctx);
+									
+									//Channel channel = ctx.channel();
+									//System.out.println("客户端断开：" + channel);
+									//NettySession session = NettySession.getSession(channel);
+									
+									thing.doAction("sessionClosed", actionContext, "session", session, "ctx", ctx);
+									
+									session.dispose();																	
+								}
+
+								@Override
+								public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+										throws Exception {
+									thing.doAction("exceptionCaught", actionContext, "session", session, "ctx", ctx, "cause", cause);
+								}
+							});
 							
 							for(Thing handlers : thing.getChilds("Handlers")) {
 								Object handler = null;
@@ -204,6 +235,12 @@ public class NettyServer {
 		Executor.info(TAG, "Netty server({}) is closed.", server.getThing().getMetadata().getPath());
 	}
 	
+	public static void exceptionCaught(ActionContext actionContext) {
+		NettyServer server = actionContext.getObject("nettyServer");
+		Throwable cause = actionContext.getObject("cause");
+		Executor.info(TAG, "Netty server({}) exceptionCaught.", server.getThing().getMetadata().getPath(), cause);
+	}
+		
 	public static NettyServer create(ActionContext actionContext) {
 		String key = "nettyServer";
 		Thing self = actionContext.getObject("self");

@@ -19,6 +19,7 @@ import org.xmeta.World;
 import xworker.swt.design.Designer;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtDialog;
+import xworker.util.XWorkerUtils;
 
 public class IdeActions {
 	/** 所有项目树的菜单集合，string[]第一位是菜单变量名，第二位是菜单动作变量名 */
@@ -109,7 +110,10 @@ public class IdeActions {
 		ActionContext newThingContext = getNewThingDialogActionContext();
 		
 		Tree projectTree = (Tree) explorerContext.get("projectTree");
-		TreeItem treeItem = projectTree.getSelection()[0];
+		TreeItem treeItem = null;
+		if(projectTree != null) {
+			treeItem = projectTree.getSelection()[0];
+		}
 		
 		Shell dialogShell = null;
 		if(newThingContext != null){
@@ -123,7 +127,7 @@ public class IdeActions {
 			World world = World.getInstance();
 			Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");
 			
-			Shell parentShell = treeItem.getParent().getShell();
+			Shell parentShell = (Shell) XWorkerUtils.getIDEShell();
 
 			String descriptorPath = actionContext.getObject("descriptorPath");
 			Map<String, Object> initValues = actionContext.getObject("initValues");
@@ -132,7 +136,9 @@ public class IdeActions {
 			newContext.put("treeItem", treeItem);
 			newContext.put("explorerContxt", explorerContext);
 			newContext.put("explorerActions", actionContext.get("explorerActions"));
-			newContext.put("categoryPath", ((Index) treeItem.getData()).getPath());
+			if(treeItem != null) {
+				newContext.put("categoryPath", ((Index) treeItem.getData()).getPath());
+			}
 			newContext.put("parent", parentShell);
 			newContext.put("thingInitValues", initValues);
 			

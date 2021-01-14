@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Composite name="CategoryClassLoaderViewer" descriptors="xworker.swt.widgets.Composite"
+     label="CategoryClassLoaders">
+    <FillLayout name="FillLayout"></FillLayout>
+    <SashForm name="sashForm" style="VERTICAL" weights="40,60">
+        <Composite name="mainComposite" BORDER="true">
+            <GridLayout name="GridLayout"></GridLayout>
+            <Browser name="browser">
+                <GridData name="GridData" style="FILL_BOTH"></GridData>
+            </Browser>
+            <Composite name="buttonComposite" _xmeta_id_="5393">
+                <GridData name="buttonCompositeGridData" _xmeta_id_="5394" style="FILL_HORIZONTAL"
+                     horizontalAlignment="END"></GridData>
+                <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="5395"></RowLayout>
+                <Button name="applyButton" _xmeta_id_="5396" text="Apply">
+                    <Listeners _xmeta_id_="5398">
+                        <Listener name="applyButtonSelection" _xmeta_id_="5399">
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.lang.executor.Executor;
+
+def thing = thing;
+def executorService = executorService;
+def actionContext = actionContext;
+new Thread({
+    Executor.push(executorService);
+    try{
+        thing.doAction("apply", actionContext);
+    }catch(Exception e){
+        Executor.error("CategoryClassLoader", "Apply error", e);
+    }finally{
+        Executor.pop();
+    }
+}).start();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+                <Button name="applyForceButton" _xmeta_id_="5400" text="Apply Force">
+                    <Listeners _xmeta_id_="5402">
+                        <Listener name="applyForceButtonSelection" _xmeta_id_="5403">
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.lang.executor.Executor;
+
+def thing = thing;
+def executorService = executorService;
+def actionContext = actionContext;
+new Thread({
+    Executor.push(executorService);
+    try{
+        thing.doAction("applyForce", actionContext);
+    }catch(Exception e){
+        Executor.error("CategoryClassLoader", "Apply force error", e);
+    }finally{
+        Executor.pop();
+    }
+}).start();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+                <Button name="copytoXWorkerButton" _xmeta_id_="5404" text="Copy to XWorker">
+                    <Listeners _xmeta_id_="5406">
+                        <Listener name="copytoXWorkerButtonSelection" _xmeta_id_="5407">
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[import xworker.lang.executor.Executor;
+
+def thing = thing;
+def executorService = executorService;
+def actionContext = actionContext;
+new Thread({
+    Executor.push(executorService);
+    try{
+        thing.doAction("copyToXWorker", actionContext);
+    }catch(Exception e){
+        Executor.error("CategoryClassLoader", "Copy to XWorker error", e);
+    }finally{
+        Executor.pop();
+    }
+}).start();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+            </Composite>
+        </Composite>
+        <StyledText name="text" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true"
+             BORDER="true"></StyledText>
+    </SashForm>
+    <TextExecutorService name="executorService" _xmeta_id_="executorServer" descriptors="xworker.lang.executor.swt.TextExecutorService"
+         text="var:text"></TextExecutorService>
+    <Code name="init">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+actionContext.g().put("thing", thing);
+
+//设置要显示的内容
+browser.setUrl(XWorkerUtils.getThingDescUrl(thing));]]></code>
+    </Code>
+</Composite>

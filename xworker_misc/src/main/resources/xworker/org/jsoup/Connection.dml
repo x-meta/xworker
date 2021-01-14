@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="actions" descriptors="xworker.lang.MetaDescriptor3" label="Connection" extends="xworker.org.jsoup.Commons">
+    <description><![CDATA[<p><strong>变量：</strong></p>
+
+<ul>
+	<li><strong>connection</strong>: org.jsoup.Connection</li>
+</ul>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="run"></JavaAction>
+        <GetInt name="getTimeoutMillis" _xmeta_id_="45981" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="timeoutMillis" usage="params"></GetInt>
+        <GetString name="getUserAgent" _xmeta_id_="45982" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="userAgent" usage="params"></GetString>
+        <GetInt name="getMaxBodySize" _xmeta_id_="45983" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="maxBodySize" usage="params"></GetInt>
+        <GetBoolean name="isIgnoreContentType" _xmeta_id_="45984" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="ignoreContentType" usage="params"></GetBoolean>
+        <GetBoolean name="isIgnoreHttpErrors" _xmeta_id_="45985" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="ignoreHttpErrors" usage="params"></GetBoolean>
+        <GetBoolean name="isFollowRedirects" _xmeta_id_="45986" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="followRedirects" usage="params"></GetBoolean>
+        <GetString name="getUrl" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="url" usage="params"></GetString>
+        <GetParameters name="getDatas" _xmeta_id_="46656" descriptors="xworker.lang.actions.ActionUtil/@GetData1"
+             attributeName="datas" usage="params"></GetParameters>
+        <GetParameters name="getHeads" _xmeta_id_="46657" descriptors="xworker.lang.actions.ActionUtil/@GetData1"
+             attributeName="heads" usage="params"></GetParameters>
+        <GetParameters name="getCookies" _xmeta_id_="46658" descriptors="xworker.lang.actions.ActionUtil/@GetData1"
+             attributeName="cookies" usage="params"></GetParameters>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="url" inputtype="60"></attribute>
+    <attribute name="timeoutMillis"></attribute>
+    <attribute name="userAgent" inputtype="textarea" size="60"></attribute>
+    <attribute name="maxBodySize"></attribute>
+    <attribute name="ignoreContentType" inputtype="truefalseselect"></attribute>
+    <attribute name="ignoreHttpErrors" inputtype="truefalseselect"></attribute>
+    <attribute name="followRedirects" inputtype="truefalse" default="true"></attribute>
+    <attribute name="datas" inputtype="text"></attribute>
+    <attribute name="heads" inputtype="text"></attribute>
+    <attribute name="cookies" inputtype="text"></attribute>
+    <attribute name="descrption" inputtype="html"></attribute>
+    <thing name="Header">
+        <description><![CDATA[<p>设置header，使用name和value属性。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="header"></JavaAction>
+            <GetString name="getName" _xmeta_id_="47686" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="name" usage="params"></GetString>
+            <GetString name="getValue" _xmeta_id_="47687" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="value" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Data">
+        <description><![CDATA[<p>设置数据，即要提交到服务器的参数。使用name和value属性。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="data"></JavaAction>
+            <GetString name="getName" _xmeta_id_="47686" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="name" usage="params"></GetString>
+            <GetString name="getValue" _xmeta_id_="47687" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="value" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Cookie">
+        <description><![CDATA[<p>设置需要提交到服务求的Cookie，使用name和value两个属性。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="cookie"></JavaAction>
+            <GetString name="getName" _xmeta_id_="47686" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="name" usage="params"></GetString>
+            <GetString name="getValue" _xmeta_id_="47687" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="value" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Post" extends="xworker.jsoup.Document">
+        <description><![CDATA[<p><strong>变量：</strong></p>
+
+<ul>
+	<li><strong>document</strong>: org.jsoup.nodes.Document&nbsp;&nbsp;</li>
+</ul>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="post"></JavaAction>
+        </actions>
+        <thing name="Exception">
+            <description><![CDATA[<p>当Post或Get等发送异常时会进入到这里，此时会忽略其它节点，会传入变量exception。如果不发生异常则不会执行Exception节点，会执行其它节点。</p>
+]]></description>
+            <actions>
+                <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementsActions"
+                     methodName="run"></JavaAction>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                <Variable name="exception" varName="exception" scope="2" className="java.lang.Exception"></Variable>
+            </VariablesDescs>
+        </thing>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="document" varName="document" scope="2" className="xworker.jsoup.Document"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="Get" extends="xworker.jsoup.Document">
+        <description><![CDATA[<p><strong>变量：</strong></p>
+
+<ul>
+	<li><strong>document</strong>: org.jsoup.nodes.Document&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ConnectionActions" methodName="get"></JavaAction>
+        </actions>
+        <thing name="Exception" extends="xworker.org.jsoup.Connection/@Post/@Exception"
+             inheritDescription="true"></thing>
+    </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="connection" varName="connection" scope="2" className="org.jsoup.Connection"></Variable>
+    </VariablesDescs>
+</thing>

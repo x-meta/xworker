@@ -16,7 +16,7 @@ public class ActionVariableProvider implements VariableProvider{
 	}
 	
 	public static List<VariableDesc> getActionVariables(String code, int offset,  List<String> statements, Thing thing, ActionContext actionContext) {
-		 List<VariableDesc> vars = VariableDesc.getActionInputParams(thing);
+		 List<VariableDesc> vars = VariableDesc.getActionInputParams(thing, actionContext);
 		 
 		Thing parent = thing.getParent();
 		if(parent == null) {
@@ -31,12 +31,12 @@ public class ActionVariableProvider implements VariableProvider{
 		
 		//动作行为所属的对象
 		parent = parent.getParent();
-		
+				
 		String name = thing.getMetadata().getName();
-		for(Thing desc : parent.getDescriptors()) {
-			Thing actionThing = desc.getActionThing(name);
+		List<Thing> actionThings = parent.getActionThings(name);
+		for(Thing actionThing : actionThings) {
 			if(actionThing != null) {
-				List<VariableDesc> vs = VariableDesc.getActionInputParams(actionThing);
+				List<VariableDesc> vs = VariableDesc.getActionInputParams(actionThing, actionContext);
 				for(VariableDesc v : vs) {
 					boolean have = false;
 					for(VariableDesc var : vars) {
@@ -50,8 +50,6 @@ public class ActionVariableProvider implements VariableProvider{
 						vars.add(v);
 					}
 				}
-				
-				break;
 			}
 		}
 		

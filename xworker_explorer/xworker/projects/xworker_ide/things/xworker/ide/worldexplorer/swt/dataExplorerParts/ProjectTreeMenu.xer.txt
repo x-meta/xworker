@@ -1,4 +1,4 @@
-^1594351117903
+^1609322740105
 @
 sname
 GroovyAction
@@ -858,6 +858,7 @@ import org.xmeta.Thing;
 import org.xmeta.ActionContext;
 
 import xworker.swt.util.SwtDialog;
+import xworker.lang.system.message.MessageCenter;
 
 Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell");
 
@@ -876,13 +877,17 @@ def newShell = dialogObject.doAction("create", newContext);
 
 world.setData("__xworker_ide_newThingDialog__", newContext);
 SwtDialog dialog = new SwtDialog(parentShell, newShell, newContext);
-dialog.open();
+dialog.open(null);
+
+MessageCenter.publish("/xworker/ide/projecttree/opennewthingdialog", dialog, actionContext);
 #$@text#$@
               sinterpretationType
               Action
               screateLocalVarScope
               false
               ssaveReturn
+              false
+              sswitchResult
               false
               sdebugLog
               false
@@ -956,6 +961,7 @@ import org.xmeta.Thing;
 import org.xmeta.ActionContext;
 
 import xworker.swt.util.SwtDialog;
+import xworker.lang.system.message.MessageCenter;
 
 Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewCategoryDialog/@shellt");
 
@@ -971,13 +977,17 @@ newContext.put("parent", parentShell);
 def newShell = dialogObject.doAction("create", newContext);
 
 SwtDialog dialog = new SwtDialog(parentShell, newShell, newContext);
-dialog.open();
+dialog.open(null);
+
+MessageCenter.publish("/xworker/ide/projecttree/opennewcategorydialog", dialog, actionContext);
 #$@text#$@
               sinterpretationType
               Action
               screateLocalVarScope
               false
               ssaveReturn
+              false
+              sswitchResult
               false
               sdebugLog
               false
@@ -1053,6 +1063,7 @@ import org.xmeta.Thing;
 import org.xmeta.ActionContext;
 
 import xworker.swt.util.SwtDialog;
+import xworker.lang.system.message.MessageCenter;
 
 Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.dialogs.NewFileDialog");
 
@@ -1068,13 +1079,17 @@ newContext.put("parent", parentShell);
 def newShell = dialogObject.doAction("create", newContext);
 
 SwtDialog dialog = new SwtDialog(parentShell, newShell, newContext);
-dialog.open();
+dialog.open(null);
+
+MessageCenter.publish("/xworker/ide/projecttree/opennewfiledialog", dialog, actionContext);
 #$@text#$@
               sinterpretationType
               Action
               screateLocalVarScope
               false
               ssaveReturn
+              false
+              sswitchResult
               false
               sdebugLog
               false
@@ -1160,12 +1175,14 @@ import xworker.util.XWorkerUtils;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
+import xworker.lang.system.message.MessageCenter;
 
 def ac = new ActionContext();
 ac.put("parent", XWorkerUtils.getIDEShell());
 ac.put("thingManager", treeItem.getData().getIndexObject());
 def thing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.DeleteProjectDialog");
 thing.doAction("run", ac);
+MessageCenter.publish("/xworker/ide/projecttree/thingmanager/delete/dialog", ac, actionContext);
 return;
 
 def index = treeItem.getData();
@@ -1226,6 +1243,8 @@ def deleteWorkingSet(thing, thingManagerName){
               screateLocalVarScope
               false
               ssaveReturn
+              false
+              sswitchResult
               false
               sdebugLog
               false
@@ -1363,51 +1382,127 @@ def deleteWorkingSet(thing, thingManagerName){
             false
             sid
             attributeMenuItem
-              @/@shell/@cactoryComposite/@facotyMenu/@attributeMenuItem/@listeners/@attributeMenuItem/@attributeMenuItemSelection
+              @/@shell/@cactoryComposite/@facotyMenu/@attributeMenuItem/@listeners/@attributeMenuItem/@MessageBox
               sname
-              attributeMenuItemSelection
+              MessageBox
+              sshell
+              ognl:projectTree.getShell()
+              sicon
+              ICON_INFORMATION
+              sbuttons
+              OK
+              stitle
+              lang:d=事物管理器&en=ThingManager
+              sinterpretationType
+              Self
+              sattributeTemplate
+              false
+              schildsAttributeTemplate
+              false
+              svarScope
+              Local
               sisSynchronized
               false
               sthrowException
               true
-              suseOtherAction
-              false
-              svarScope
-              Local
-              sdisableGlobalContext
-              false
-              Scode
-#$@text#$@
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-
-def treeItem = projectTree.getSelection()[0];
-def thingManager = treeItem.getData().getIndexObject();
-println(thingManager);
-
-def box = new MessageBox(projectTree.getShell(), SWT.NONE);
-box.setText("事物管理器属性");
-box.setMessage(thingManager.toString());
-box.open();
-#$@text#$@
-              sinterpretationType
-              Action
               screateLocalVarScope
               false
               ssaveReturn
               false
+              sswitchResult
+              false
+              sdisableGlobalContext
+              false
+              sdebugLog
+              false
               sdescriptors
-              xworker.lang.actions.Actions/@GroovyAction
+              xworker.swt.actions.MessageBoxActions/@MessageBox
               sinheritDescription
               false
               sth_createIndex
               false
               sth_registMyChilds
               false
+              sth_registDisabled
+              false
+              sth_noThingRegistViewer
+              false
+              sth_fileMonitor
+              false
               sth_mark
               false
+              sth_registQueryOnlySelf
+              false
               sid
-              attributeMenuItemSelection
+              MessageBox
+                @/@shell/@cactoryComposite/@facotyMenu/@attributeMenuItem/@listeners/@attributeMenuItem/@MessageBox/@actions
+                sname
+                actions
+                sdescriptors
+                xworker.lang.actions.SelfAction/@actions1
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_noThingRegistViewer
+                false
+                sth_fileMonitor
+                false
+                sth_mark
+                false
+                sth_registQueryOnlySelf
+                false
+                sid
+                actions
+                  @/@shell/@cactoryComposite/@facotyMenu/@attributeMenuItem/@listeners/@attributeMenuItem/@MessageBox/@actions/@attributeMenuItemSelection
+                  sname
+                  getMessage
+                  sisSynchronized
+                  false
+                  sthrowException
+                  true
+                  suseOtherAction
+                  false
+                  svarScope
+                  Local
+                  sdisableGlobalContext
+                  false
+                  Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+
+def treeItem = projectTree.getSelection()[0];
+def thingManager = treeItem.getData().getIndexObject();
+//println(thingManager);
+return thingManager.toString();
+#$@text#$@
+                  sinterpretationType
+                  Action
+                  screateLocalVarScope
+                  false
+                  ssaveReturn
+                  false
+                  sswitchResult
+                  false
+                  sdebugLog
+                  false
+                  sdescriptors
+                  xworker.lang.actions.Actions/@GroovyAction
+                  sinheritDescription
+                  false
+                  sth_createIndex
+                  false
+                  sth_registMyChilds
+                  false
+                  sth_mark
+                  false
+                  sid
+                  attributeMenuItemSelection
         @/@shell/@cactoryComposite/@facotyMenu/@factorySpet2
         sname
         factorySpet2
@@ -1484,6 +1579,7 @@ import org.xmeta.Index;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
+import xworker.lang.system.message.MessageCenter;
 
 //通过索引找到updateindex的目录
 def index = treeItem.getData();
@@ -1511,6 +1607,8 @@ new Thread({
 }).start();
 
 tip(actionContext);
+MessageCenter.publish("/xworker/ide/projecttree/index/rebuild", index, actionContext);
+
 def deleteFile(file){
     if(file.isDirectory()){
         for(childFile in file.listFiles()){

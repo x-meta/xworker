@@ -56,56 +56,66 @@ public class ExecutorActions {
 		}
 		Object[] array = new Object[list.size()];
 		list.toArray(array);
+		ExecutorService service = self.doAction("getExecutorService", actionContext);
+		try {
+			if(service != null) {
+				Executor.push(service);
+			}
 		
-		if("debug".equals(level)) {
-			if(array.length == 0) {
-				if(t == null) {
-					Executor.debug(TAG, message);
+			if("debug".equals(level)) {
+				if(array.length == 0) {
+					if(t == null) {
+						Executor.debug(TAG, message);
+					}else {
+						Executor.debug(TAG, message, t);
+					}
 				}else {
-					Executor.debug(TAG, message, t);
+					Executor.debug(TAG, message, array);
+				}
+			}else if("trace".equals(level)) {
+				if(array.length == 0) {
+					if(t == null) {
+						Executor.trace(TAG, message);
+					}else {
+						Executor.trace(TAG, message, t);
+					}
+				}else {
+					Executor.trace(TAG, message, array);
+				}
+			}else if("warn".equals(level)) {
+				if(array.length == 0) {
+					if(t == null) {
+						Executor.warn(TAG, message);
+					}else {
+						Executor.warn(TAG, message, t);
+					}
+				}else {
+					Executor.warn(TAG, message, array);
+				}
+			}else if("error".equals(level)) {
+				if(array.length == 0) {
+					if(t == null) {
+						Executor.error(TAG, message);
+					}else {
+						Executor.error(TAG, message, t);
+					}
+				}else {
+					Executor.error(TAG, message, array);
 				}
 			}else {
-				Executor.debug(TAG, message, array);
+				if(array.length == 0) {
+					if(t == null) {
+						Executor.info(TAG, message);
+					}else {
+						Executor.info(TAG, message, t);
+					}
+				}else {
+					Executor.info(TAG, message, array);
+				}
 			}
-		}else if("trace".equals(level)) {
-			if(array.length == 0) {
-				if(t == null) {
-					Executor.trace(TAG, message);
-				}else {
-					Executor.trace(TAG, message, t);
-				}
-			}else {
-				Executor.trace(TAG, message, array);
-			}
-		}else if("warn".equals(level)) {
-			if(array.length == 0) {
-				if(t == null) {
-					Executor.warn(TAG, message);
-				}else {
-					Executor.warn(TAG, message, t);
-				}
-			}else {
-				Executor.warn(TAG, message, array);
-			}
-		}else if("error".equals(level)) {
-			if(array.length == 0) {
-				if(t == null) {
-					Executor.error(TAG, message);
-				}else {
-					Executor.error(TAG, message, t);
-				}
-			}else {
-				Executor.error(TAG, message, array);
-			}
-		}else {
-			if(array.length == 0) {
-				if(t == null) {
-					Executor.info(TAG, message);
-				}else {
-					Executor.info(TAG, message, t);
-				}
-			}else {
-				Executor.info(TAG, message, array);
+		}finally {
+			if(service != null) {
+				Executor.pop();
 			}
 		}
 	}

@@ -719,7 +719,7 @@ public class XWorkerUtils {
     public static List<ThingGroup> getThingGroups(List<Thing> things){
     	//获取分组并排序
 		List<ThingGroup> groups = new ArrayList<ThingGroup>();
-		for(Thing thing : things){
+		for(Thing thing : things){	
 			String group = thing.getMetadata().getGroup();//thing.getStringBlankAsNull("group");
 			if(group == null){
 				group = "";
@@ -820,30 +820,32 @@ public class XWorkerUtils {
 	/**
 	 * 根据默认首选项返回对应的首选项实例模型。
 	 * 
-	 * @param defaultConfig
+	 * @param configDesc
 	 * @return
 	 */
-	public static Thing getPreference(String defaultConfig) {
-		return getPreference(World.getInstance().getThing(defaultConfig));
+	public static Thing getPreference(String configDesc) {
+		return getPreference(World.getInstance().getThing(configDesc));
 	}
 	
 	/**
 	 * 根据默认首选项返回对应的首选项实例模型。
 	 * 
-	 * @param defaultConfig
+	 * @param configDesc
 	 * @return
 	 */
-	public static Thing getPreference(Thing defaultConfig) {
-		String path = defaultConfig.getRoot().getMetadata().getPath();
-		if(defaultConfig.getRoot() != defaultConfig) {
-			path = path + "." + defaultConfig.getMetadata().getName();
+	public static Thing getPreference(Thing configDesc) {
+		String path = configDesc.getRoot().getMetadata().getPath();
+		if(configDesc.getRoot() != configDesc) {
+			path = path + "." + configDesc.getMetadata().getName();
 		}
 		path = "_local.xworker.preferences." + path.replace('.', '_');
 		Thing config = World.getInstance().getThing(path);
 		if(config == null) {
-			config = defaultConfig.detach();
+			config = new Thing(configDesc.getMetadata().getPath());
+			config.getAttributes().putAll(configDesc.getAttributes());
+			config.set("descriptors", configDesc.getMetadata().getPath());
 			config.set("th_createIndex", false);
-			config.set("th_registThing", null);
+			config.set("th_registThing", null);			
 			config.saveAs("_local", path);
 		}
 

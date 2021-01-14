@@ -8,6 +8,7 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.system.MessageLevel;
 import xworker.util.UtilData;
 
 /**
@@ -44,7 +45,22 @@ public class Message {
 	Thing quickFunction;
 	
 	/** 消息的级别，一般是紧急程度 */
-	String level;
+	String level = MessageLevel.INFO.getName();
+	
+	public Message(String topic) {
+		this.topic = topic;
+	}
+	
+	public Message(String topic, Object content) {
+		this.topic = topic;
+		this.content = content;
+	}
+	
+	public Message(String topic, Object content, ActionContext messageContext) {
+		this.topic = topic;
+		this.content = content;
+		this.messageContext = messageContext;
+	}
 	
 	public Message(Thing thing, ActionContext actionContext) {
 		this.thing = thing;
@@ -59,6 +75,9 @@ public class Message {
 		topic = thing.doAction("getTopic", actionContext);
 		
 		id = thing.doAction("getMessageId", actionContext);
+		if(id == null || "".equals(id)) {
+			id = thing.getMetadata().getPath();
+		}
 		variables = thing.doAction("getVariables", actionContext);
 		quickFunction = thing.doAction("getQuickFunction", actionContext);
 		level = thing.doAction("getLevel", actionContext);
@@ -68,6 +87,13 @@ public class Message {
 		}
 	}
 
+	/**
+	 * 发布消息。
+	 */
+	public void publish() {
+		MessageCenter.publish(this);
+	}
+	
 	/**
 	 * 获取消息的定义。
 	 * 
@@ -113,13 +139,15 @@ public class Message {
 		    actionContext.peek().put("parent", parentContext.get("parent"));
 		    Object browser = thing.doAction("create", actionContext);
 		    
-		    this.thing.doAction("setUrl", actionContext, "browser", browser, "thing", this.thing);
+		    if(this.thing != null) {
+		    	this.thing.doAction("setUrl", actionContext, "browser", browser, "thing", this.thing);
+		    }
 		    return browser;
 		}else{
 			Bindings bindings = actionContext.push();
 			try {
 				bindings.put("parent", parentContext.get("parent"));
-				bindings.put("parentContext", parentContext);	
+				actionContext.put("parentContext", parentContext);	
 			    return quickFunction.doAction("create", actionContext);
 			}finally {
 				actionContext.pop();
@@ -183,4 +211,44 @@ public class Message {
 	public void setLevel(String level) {
 		this.level = level;
 	}	 
+	
+	public MessageLevel getMessageLevel() {
+		if(level != null) {
+			return MessageLevel.valueOf(level.toUpperCase());
+		}
+		
+		return MessageLevel.DEFAULT;
+	}
+
+	public Thing getQuickFunction() {
+		return quickFunction;
+	}
+
+	public void setQuickFunction(Thing quickFunction) {
+		this.quickFunction = quickFunction;
+	}
+
+	public void setThing(Thing thing) {
+		this.thing = thing;
+	}
+
+	public void setMessageContext(ActionContext messageContext) {
+		this.messageContext = messageContext;
+	}
+
+	public void setContent(Object content) {
+		this.content = content;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setTopic(String topic) {
+		this.topic = topic;
+	}
+
+	public void setVariables(Map<String, Object> variables) {
+		this.variables = variables;
+	}
 }

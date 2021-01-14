@@ -2,6 +2,10 @@
 
 <thing name="ChannelInboundHandler" descriptors="xworker.lang.MetaDescriptor3">
     <description><![CDATA[<p>ChannelHandler&nbsp;which adds callbacks for state changes. This allows the user to hook in to state changes easily.</p>
+
+<p><strong>注意：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在NettyClient中使用是，不建议在<strong>channelRegistered()</strong>方法中发送注册之类的消息到服务器，经测试在某些情况下这些消息会丢失，可以使用NettyClient的startSuccess事件中发送注册消息等。</p>
 ]]></description>
     <actions>
         <JavaAction name="create" outerClassName="xworker.io.netty.handlers.ThingChannelInboundHandler"

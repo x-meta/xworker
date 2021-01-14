@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -26,19 +25,19 @@ public class CachedVaribleProvider implements VariableProvider{
 	public static CachedVaribleProvider instance = new CachedVaribleProvider();
 	
 	private CachedVaribleProvider() {	
-		defaultCaches.add(VariableDesc.create("SWT", org.eclipse.swt.SWT.class));
-		defaultCaches.add(VariableDesc.create("UtilData", xworker.util.UtilData.class));
-		defaultCaches.add(VariableDesc.create("System", java.lang.System.class));
-		defaultCaches.add(VariableDesc.create("XWorkerUtils", XWorkerUtils.class));
-		defaultCaches.add(VariableDesc.create("UtilTemplate", UtilTemplate.class));
-		defaultCaches.add(VariableDesc.create("World", World.class));
-		defaultCaches.add(VariableDesc.create("StringUtils", StringUtils.class));
+		defaultCaches.add(VariableDesc.create("SWT", org.eclipse.swt.SWT.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("UtilData", xworker.util.UtilData.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("System", java.lang.System.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("XWorkerUtils", XWorkerUtils.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("UtilTemplate", UtilTemplate.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("World", World.class).setStaticClass(true));
+		defaultCaches.add(VariableDesc.create("StringUtils", StringUtils.class).setStaticClass(true));
 		defaultCaches.add(VariableDesc.create("world", World.class));
-		defaultCaches.add(VariableDesc.create("log", Logger.class));
-		defaultCaches.add(VariableDesc.create("CodeAssistor", CodeAssistor.class));
+		//defaultCaches.add(VariableDesc.create("log", Logger.class));
+		defaultCaches.add(VariableDesc.create("CodeAssistor", CodeAssistor.class).setStaticClass(true));
 		defaultCaches.add(VariableDesc.create("self", Thing.class));
 		defaultCaches.add(VariableDesc.create("actionContext", ActionContext.class));
-		defaultCaches.add(VariableDesc.create("DataObjectUtil", DataObjectUtil.class));
+		defaultCaches.add(VariableDesc.create("DataObjectUtil", DataObjectUtil.class).setStaticClass(true));		
 	}
 	
 	@Override

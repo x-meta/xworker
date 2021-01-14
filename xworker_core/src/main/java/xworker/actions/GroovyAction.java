@@ -23,8 +23,6 @@ import java.util.Properties;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -38,7 +36,7 @@ import groovy.lang.Binding;
 import groovy.lang.Script;
 
 public class GroovyAction {
-	private static Logger log = LoggerFactory.getLogger(GroovyAction.class);
+	//private static Logger log = LoggerFactory.getLogger(GroovyAction.class);
 	//没发现哪里使用它了，暂时屏蔽
 	//private static List<String> codeAssistorCachesList = new ArrayList<String>();
 	
@@ -54,43 +52,24 @@ public class GroovyAction {
 		if(!codeAssistorCachesList.contains(path)){
 			codeAssistorCachesList.add(path);
 		}*/
-	}
+	}	
 	
-	
-	public static Object run(ActionContext context) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{				
-		//脚本的上下文		
-		Bindings bindings = context.getScope(context.getScopesSize() - 2);		
-		
-		World world = bindings.world;
-		Action action = null;
-		if(bindings.getCaller() instanceof Thing){
-			Thing actionThing = (Thing) bindings.getCaller();
-			action = actionThing.getAction();
-			action.checkChanged();
-		}else{
-			action = (Action) bindings.getCaller();			
-		}
-		
-		//if(action == null){
-		//	log.error("er");
-		//}
-		//log.info("run groovy action : " + action.thing.getMetadata().getPath());
-		
-		if(action.actionClass == null || action.changed){
+	public static Object run(Action action, ActionContext context) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
+		if(action.getActionClass() == null || action.isChanged()){
 			//查看代码是否需要重新编译			
 			boolean recompile = false;
-			if(action.changed){
+			if(action.isChanged() || action.isNeedRecompile()){
 				recompile = true;
 			}
-			if(action.actionClass == null){
-				File classFile = new File(action.classFileName);
+			if(action.getActionClass() == null){
+				File classFile = new File(action.getClassFileName());
 				if(!classFile.exists()){
 					classFile.getParentFile().mkdirs();
 					recompile = true;
 				}
 			}
 			
-			if(recompile && world.getMode() == World.MODE_PROGRAMING){
+			if(recompile && World.getInstance().getMode() == World.MODE_PROGRAMING){
 				//重新编译并装载脚本
 				Thing actionThing = action.getThing();
 				if(actionThing.getStringBlankAsNull("outterClassName") == null){
@@ -115,7 +94,7 @@ public class GroovyAction {
 						codeFile = new File(manager.getFilePath(), className.replace('.', '/') + ".groovy");
 					}else{
 						//更新代码
-						codeFile = new File(action.fileName + ".groovy");
+						codeFile = new File(action.getFileName() + ".groovy");
 						if(!codeFile.exists()){
 							codeFile.getParentFile().mkdirs();
 						}
@@ -123,10 +102,12 @@ public class GroovyAction {
 						FileOutputStream fout = new FileOutputStream(codeFile);
 						try{					
 							fout.write(("/*path:" + action.getThing().getMetadata().getPath() + "*/\n").getBytes());
-							if(action.packageName != null && !"".equals(action.packageName)){
-								fout.write(("package " + action.packageName + ";\n\n").getBytes());
+							String packageName = action.getPackageName();
+							if(packageName != null && !"".equals(packageName)){
+								fout.write(("package " + packageName + ";\n\n").getBytes());
 							}
-							fout.write(action.code.getBytes("utf-8"));
+							
+							fout.write(action.getCode().getBytes("utf-8"));
 							
 						}finally{
 							fout.close();
@@ -141,34 +122,34 @@ public class GroovyAction {
 						//log.info("compile groovy " + action.getThing().getMetadata().getPath());
 						action.updateCompileTime();					
 					}catch(MultipleCompilationErrorsException me){
-						log.error("compile groovy code : " + action.getThing().getMetadata().getPath());
+						//log.error("compile groovy code : " + action.getThing().getMetadata().getPath() + ", " + me.getMessage());
 						throw me;
 					}
 				}
 			}
-			action.changed = false;
+			action.setChanged(false);
 		}
 		
-		if(action.actionClass == null){
+		if(action.getActionClass() == null){
 			Thing actionThing = action.getThing();
 			String className = actionThing.getStringBlankAsNull("outterClassName");
 			if(className != null){
-				action.actionClass = action.classLoader.loadClass(className);
+				action.setActionClass(action.getClassLoader().loadClass(className));
 			}else{			
 				className = actionThing.getStringBlankAsNull("innerClassName");
 				if(className != null){
-					action.actionClass = action.classLoader.loadClass(className);
+					action.setActionClass(action.getClassLoader().loadClass(className));
 				}else{
-					action.actionClass = action.classLoader.loadClass(action.className);	
+					action.setActionClass(action.getClassLoader().loadClass(action.getClassName()));	
 				}
 			}
 			
 			//java.lang.Compiler.compileClass(action.actionClass);
 		}
 				
-		if(action.actionClass  != null){		
-			Script script = (Script) action.actionClass.getConstructor(new Class<?>[0]) .newInstance();//(Script) action.getData("script");
-			
+		if(action.getActionClass()  != null){		
+			Script script = (Script) action.getActionClass().getConstructor(new Class<?>[0]) .newInstance();//(Script) action.getData("script");
+
 			Bindings bindings1 = context.push(null);			
 			bindings1.put("actionContext", context);
 			
@@ -192,7 +173,7 @@ public class GroovyAction {
 				
 				//代码辅助
 				Binding binding = new Binding(context);
-				script.setBinding(binding);								
+				script.setBinding(binding);				
 				Object result = script.run();			
 				return result;
 			}finally{
@@ -208,9 +189,29 @@ public class GroovyAction {
 				context.pop();								
 			}
 		}else{
-			log.warn("groovy action " + action.getThing().getMetadata().getPath() + " class is null");
+			throw new ActionException("groovy action " + action.getThing().getMetadata().getPath() + " class is null");
+		}		
+	}
+	
+	public static Object run(ActionContext context) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{				
+		//脚本的上下文		
+		Bindings bindings = context.getScope(context.getScopesSize() - 2);		
+		
+		//World world = bindings.world;
+		Action action = null;
+		if(bindings.getCaller() instanceof Thing){
+			Thing actionThing = (Thing) bindings.getCaller();
+			action = actionThing.getAction();
+			action.checkChanged();
+		}else{
+			action = (Action) bindings.getCaller();			
 		}
 		
-		return null;
+		//if(action == null){
+		//	log.error("er");
+		//}
+		//log.info("run groovy action : " + action.thing.getMetadata().getPath());
+		
+		return run(action, context);
 	}
 }

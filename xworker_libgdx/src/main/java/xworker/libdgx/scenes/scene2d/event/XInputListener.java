@@ -116,7 +116,6 @@ public class XInputListener extends InputListener{
 		}
 	}
 
-	@Override
 	public boolean scrolled(InputEvent event, float x, float y, int amount) {
 		Map<String, Object> params = UtilMap.toMap("event", event, "x", x, "y", y, "amount", amount);
 		try{

@@ -1,5 +1,6 @@
 package xworker.swt.xwidgets.dataitems;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -38,8 +39,9 @@ public class ThingRegistorItems extends DataItem{
 					groupFilter = Pattern.compile(groupRegexStr);
 				}
 				
+				Collections.sort(groups);
 				for(ThingGroup group : groups) {
-					if(groupFilter != null && group.getGroup() != null && !"".equals(group) 
+					if(groupFilter != null && group.getGroup() != null && !"".equals(group.getGroup()) 
 							&& !groupFilter.matcher(group.getGroup()).matches()) {
 						//不符合group的过滤条件
 						continue;

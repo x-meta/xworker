@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Component name="MessageViewer" descriptors="xworker.swt.component.Component" label="消息"
+     en_label="Messages" th_createIndex="true" th_registThing="child|xworker.swt.component.ComponentIndexs,child|xworker.swt.app.Views"
+     group="xworker">
+    <description><![CDATA[<p>浏览XWorker系统消息的工具。</p>
+]]></description>
+    <Composite name="mainComposite" _xmeta_id_="Composite" descriptors="xworker.swt.component.Component/@Composite,xworker.swt.Widgets/@Composite"
+         label="消息" en_label="Message">
+        <FillLayout name="FillLayout"></FillLayout>
+        <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+            <Console name="console"></Console>
+            <Menu name="menu" descriptors="xworker.swt.Widgets/@Menu" style="POP_UP">
+                <MenuItem name="clearMenuItem" text="lang:d=清空&amp;en=Clear">
+                    <listeners>
+                        <Listener name="clearMenuSelection">
+                            <GroovyAction name="GroovyAction" code="logText.setText(&quot;&quot;);"></GroovyAction>
+                        </Listener>
+                    </listeners>
+                </MenuItem>
+            </Menu>
+        </StyledText>
+        <ActionContainer name="actions">
+            <GroovyAction name="handleMessage">
+                <code><![CDATA[import java.text.SimpleDateFormat;
+
+def sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+console.append(sf.format(new Date()) + ": " + message.getTopic());
+
+//println "xxxxx:" + message.getTopic();]]></code>
+            </GroovyAction>
+        </ActionContainer>
+        <Code name="init">
+            <code><![CDATA[import xworker.lang.system.message.MessageConsumer;
+
+//订阅消息
+def consumer = new MessageConsumer(actions, "handleMessage");
+actionContext.g().put("consumer", consumer);
+consumer.subscribe("#");]]></code>
+        </Code>
+        <Event name="onDispose">
+            <GroovyAction name="GroovyAction" code="consumer.unsubscribeAll();"></GroovyAction>
+        </Event>
+        <InteractiveUI name="InteractiveUI" label="消息" registThing="xworker.lang.system.message.Message"
+             registType="notes" en_label="Messages"></InteractiveUI>
+    </Composite>
+    <ActionContainer>
+        <GetVariable name="getControl" varName="mainComposite"></GetVariable>
+    </ActionContainer>
+    <Toolbar>
+        <ToolItem name="comboToolitem" type="SEPARATOR" width="150">
+            <CCombo name="topicsCombo" toolTipText="lang:d=订阅的消息主题列表。&amp;en=The topics subscribed."></CCombo>
+        </ToolItem>
+        <ToolItem name="addTopicItem" image="icons/add.png" toolTiptext="lang:d=订阅主题&amp;en=Subscribe topic.">
+            <listeners _xmeta_id_="41825">
+                <Listener name="addTopicItemonSelection" _xmeta_id_="onSelection">
+                    <GroovyAction name="GroovyAction" _xmeta_id_="41827" descriptors="xworker.lang.actions.GroovyAction">
+                        <code><![CDATA[def topic = topicsCombo.getText().trim();
+if(topic == ""){
+    return;
+}
+
+for(t in consumer.getTopics()){
+    if(t == topic){
+        return;
+    }
+}
+
+consumer.subscribe(topic);
+topicsCombo.add(topic);]]></code>
+                    </GroovyAction>
+                </Listener>
+            </listeners>
+        </ToolItem>
+        <ToolItem name="removeItem" _xmeta_id_="remove" image="icons/debug/rem_co.gif"
+             toolTiptext="lang:d=移除&amp;en=Remove">
+            <listeners>
+                <Listener name="terminateItemSelection">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[def topic = topicsCombo.getText();
+consumer.unsubscribe(topic);
+topicsCombo.remove(topic);]]></code>
+                    </GroovyAction>
+                </Listener>
+            </listeners>
+        </ToolItem>
+        <ToolItem name="removeAllItem" image="icons/debug/rem_all_co.gif" toolTiptext="lang:d=移除所有&amp;en=Remove All">
+            <listeners>
+                <Listener name="terminateItemSelection">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[topicsCombo.removeAll();
+consumer.unsubscribeAll();]]></code>
+                    </GroovyAction>
+                </Listener>
+            </listeners>
+        </ToolItem>
+        <Code name="init">
+            <code><![CDATA[for(topic in consumer.getTopics()){
+    topicsCombo.add(topic);
+}
+
+comboToolitem.setWidth(200);]]></code>
+        </Code>
+    </Toolbar>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="consumer" varName="consumer" className="xworker.lang.system.message.MessageConsumer"></Variable>
+    </VariablesDescs>
+</Component>

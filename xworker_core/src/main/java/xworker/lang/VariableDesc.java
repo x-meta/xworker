@@ -17,10 +17,17 @@ import org.xmeta.util.ActionContainer;
 public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	private static Logger logger = LoggerFactory.getLogger(VariableDesc.class);
 	
+	/** 模型 */
 	public static final String THING = "thing";
+	/** Java对象 */
 	public static final String OBJECT = "object";
+	/** 动作容器 */
 	public static final String ACTIONCONTAINER = "actionContainer";
+	/** 动作 */
 	public static final String ACTION = "action";
+	/** 单词 */
+	public static final String WORD = "word";
+	
 	/** 作用范围，全局 */
 	public static final byte SCOPE_GLOBAL = 0;
 	/** 作用范围，只对当前节点生效 */
@@ -40,6 +47,14 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	
 	byte scope = SCOPE_GLOBAL;
 	
+	boolean staticClass = false;
+	
+	String document;
+	
+	public VariableDesc(String name, String type) {
+		this(name, type, null, null, SCOPE_GLOBAL);
+	}
+	
 	public VariableDesc(String name, String type, String className, Thing thing) {
 		this(name, type, className, thing, SCOPE_GLOBAL);
 	}
@@ -56,36 +71,49 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		this.scope = scope;
 	}
 		
+	public boolean isStaticClass() {
+		return staticClass;
+	}
+	
+	public VariableDesc setStaticClass(boolean staticClass) {
+		this.staticClass = staticClass;
+		return this;
+	}
+
 	public byte getScope() {
 		return scope;
 	}
 
-	public void setScope(byte scope) {
+	public VariableDesc setScope(byte scope) {
 		this.scope = scope;
+		return this;
 	}
 
 	public boolean isPassive() {
 		return passive;
 	}
 
-	public void setPassive(boolean passive) {
+	public VariableDesc setPassive(boolean passive) {
 		this.passive = passive;
+		return this;
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	public void setName(String name) {
+	public VariableDesc setName(String name) {
 		this.name = name;
+		return this;
 	}
 
 	public String getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public VariableDesc setType(String type) {
 		this.type = type;
+		return this;
 	}
 
 	public String getClassName() {
@@ -98,16 +126,58 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		return className;
 	}
 
-	public void setClassName(String className) {
+	public VariableDesc setClassName(String className) {
 		this.className = className;
+		return this;
 	}
 
 	public Thing getThing() {
 		return thing;
 	}
+	
+	/**
+	 * 文档如果以url:开头，表明是一个网页。
+	 * 
+	 * @return
+	 */
+	public String getDocument() {
+		return document;
+	}
 
-	public void setThing(Thing thing) {
+	/**
+	 * 设置文档，可以加url:前缀。
+	 * 
+	 * @param document
+	 * @return
+	 */
+	public VariableDesc setDocument(String document) {
+		this.document = document;
+		return this;
+	}
+
+	public VariableDesc setThing(Thing thing) {
 		this.thing = thing;
+		return this;
+	}
+	
+	public boolean equals(VariableDesc o) {
+		if(!this.name.equals(o.name)) {
+			return false;
+		}
+		
+		if(this.type != null && !type.equals(o.type)) {
+			return false;
+		}
+		
+		if(this.className != null && !className.equals(o.className)) {
+			return false;
+		}
+		
+		if(this.thing != null && thing != o.thing) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -324,9 +394,10 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 		return new VariableDesc(name, VariableDesc.OBJECT, cls.getName(), null);		
 	}
 	
-	public static List<VariableDesc> getActionInputParams(Thing action){
+	public static List<VariableDesc> getActionInputParams(Thing action, ActionContext actionContext){
 		List<VariableDesc> list = new ArrayList<VariableDesc>();
 		
+		//输入参数定义的变量
 		Thing ins = action.getThing("ins@0");
 		if(ins != null){
 			for(Thing p : ins.getChilds()){
@@ -340,6 +411,14 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 			}
 		}
 		
+		//上下文定义的变量
+		Thing context = action.getThing("contexts@0");
+		if(context != null) {
+			for(Thing c : context.getChilds()) {
+				List<VariableDesc> vars = getVariableDescs(c, actionContext);
+				list.addAll(vars);
+			}
+		}
 		return list;
 	}
 	

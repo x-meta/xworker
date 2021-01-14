@@ -1,4 +1,4 @@
-%1528275962087
+%1609310335748
 @
 sname=shell
 stext=lang:d=选择动作容器&en=ActionContainer Selector
@@ -448,25 +448,8 @@ shell.dispose();
         sdisableGlobalContext=false
         Scode=
 #$@text#$@
-//获取选中的动作容器
-def ac = null;
-def actionName = null;
-def index = actionContainerList.getSelectionIndex();
-def actionContainerName = null;
-if(index >= 0){
-    ac = actionContainers.get(index);
-    actionContainerName = ac.getThing().getMetadata().getName();
-}
-
-//获取选中的动作
-if(actionList.getSelectionIndex() >= 0){
-    actionName  = actionList.getSelection()[0];
-}
-
 if(actionContext.get("dialogThing") != null){
-    def r = dialogThing.doAction("cancel", parentContext, "actionContainer", ac,
-               "actionContainerName", thing.getMetadata().getName(), 
-               "actionName", actionName);
+    def r = dialogThing.doAction("cancel", parentContext);
     if(r == false){
         return;
     }
@@ -477,6 +460,7 @@ shell.dispose();
         sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdebugLog=false
         sdescriptors=xworker.lang.actions.GroovyAction
         sinheritDescription=false

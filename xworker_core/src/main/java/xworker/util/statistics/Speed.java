@@ -45,7 +45,7 @@ public class Speed {
 	}
 	
 	/**
-	 * 指定秒数内的平均速度，0 < seconds <= 60。
+	 * 指定秒数内的平均速度，0 &lt; seconds &lt;= 60。
 	 * 
 	 * @param seconds
 	 * @return

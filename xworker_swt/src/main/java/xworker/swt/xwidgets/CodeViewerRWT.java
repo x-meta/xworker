@@ -32,7 +32,7 @@ public class CodeViewerRWT {
 		}else{
 			Map<String, Object> context = new HashMap<String, Object>();
 			context.put("str", code);
-			code = UtilTemplate.process(context, "xworker/ide/worldExplorer/swt/dialogs/StringToHtml.ftl", "freemarker");
+			code = UtilTemplate.process(context, "xworker/ide/worldexplorer/swt/dialogs/StringToHtml.ftl", "freemarker");
 		}
 				
 		//Pattern CRLF = Pattern.compile("(\r\n|\r|\n|\n\r)");

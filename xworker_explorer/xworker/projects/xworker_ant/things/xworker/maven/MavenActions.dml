@@ -1,4 +1,4 @@
-%1560998415856
+%1607515552612
 @
 sname=MavenActions
 slabel=MavenActions
@@ -8,10 +8,7 @@ seditCols=2
 sinitialization=false
 smodifier=public
 sinheritDescription=false
-Sdescription=
-#$@text#$@
-<p>MAVEN相关的动作。</p>
-#$@text#$@
+sdescription=<p>MAVEN相关的动作。</p>
 snotXmlAttribute=false
 sjson_isArray=false
 sth_createIndex=true
@@ -30,10 +27,7 @@ sth_mark=false
   sgroup=tools.maven
   smodifier=public
   sinheritDescription=false
-  Sdescription=
-#$@text#$@
-<p>拷贝相关的dependencies到一个目录。</p>
-#$@text#$@
+  sdescription=<p>拷贝相关的dependencies到一个目录。</p>
   snotXmlAttribute=false
   sjson_isArray=false
   sth_createIndex=false
@@ -85,13 +79,20 @@ toPom(actionContext, "dependencies", dependencies, "thing", self,
      "libOutout", outputDir.getAbsolutePath());
      
 //执行pom
-def mvnPath = self.doAction("getMvnPath", actionContext);
-def cmd = mvnPath + "\npackage \n-f \n" + pomOutFile.getAbsolutePath();
+//def mvnPath = self.doAction("getMvnPath", actionContext);
+//def cmd = mvnPath + "\npackage \n-f \n" + pomOutFile.getAbsolutePath();
+
+def cmd = self.doAction("getMvnPath", actionContext) + 
+                  "\ndependency:copy-dependencies\n-f\n" +
+               pomOutFile.getAbsolutePath() + 
+               "\n-DoutputDirectory=" + 
+               outputDir.getAbsolutePath();
 exec(actionContext, "cmd", cmd);
 #$@text#$@
       sinterpretationType=Action
       screateLocalVarScope=false
       ssaveReturn=false
+      sswitchResult=false
       sdebugLog=false
       sdescriptors=xworker.lang.actions.Actions/@GroovyAction
       sinheritDescription=false
@@ -194,7 +195,6 @@ exec(actionContext, "cmd", cmd);
           schildsAttributeTemplate=false
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
           sdisableGlobalContext=false
@@ -216,7 +216,6 @@ exec(actionContext, "cmd", cmd);
           svarScope=Local
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
           sdisableGlobalContext=false
@@ -231,9 +230,10 @@ exec(actionContext, "cmd", cmd);
           sid=shortenPath
           @/@CopyDependenciesToDir/@actions/@run/@ActionDefined/@exec
           sname=exec
-          ssync=false
+          ssync=true
           stimeout=10000
           scmdarray=var:cmd
+          sprocessManager=false
           smaxContentLength=524288
           sinterpretationType=Self
           sattributeTemplate=false
@@ -241,9 +241,9 @@ exec(actionContext, "cmd", cmd);
           svarScope=Local
           sisSynchronized=false
           sthrowException=true
-          suseOtherAction=false
           screateLocalVarScope=false
           ssaveReturn=false
+          sswitchResult=false
           sdisableGlobalContext=false
           sdebugLog=false
           sdescriptors=xworker.java.lang.RuntimeActions/@Exec
@@ -264,7 +264,6 @@ exec(actionContext, "cmd", cmd);
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -287,7 +286,6 @@ exec(actionContext, "cmd", cmd);
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -310,7 +308,6 @@ exec(actionContext, "cmd", cmd);
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false
@@ -333,7 +330,6 @@ exec(actionContext, "cmd", cmd);
       svarScope=Local
       sisSynchronized=false
       sthrowException=true
-      suseOtherAction=false
       screateLocalVarScope=false
       ssaveReturn=false
       sdisableGlobalContext=false

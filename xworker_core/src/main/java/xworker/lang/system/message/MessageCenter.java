@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 消息中心，用来存放消息的。
@@ -18,17 +18,79 @@ import org.xmeta.Thing;
  *
  */
 public class MessageCenter {
-	private static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
+	//private static Logger logger = LoggerFactory.getLogger(MessageCenter.class);
+	private static final String TAG = MessageCenter.class.getName();
 	
 	/**
-	 * 使用消息主题为key的消息消费者的缓存列表。
+	 * 消息订阅者树。
 	 */
-	private static Map<String, List<MessageConsumer>> consumers = new HashMap<String, List<MessageConsumer>>();
+	private static ConsumerTree consumerTree = new ConsumerTree();
 	
 	/**
 	 * 使用消费者事物的路径为key的消费者的缓存。
 	 */
 	private static Map<String, MessageConsumer> consumerCache = new HashMap<String, MessageConsumer>();
+	
+	private static List<Message> messages = new CopyOnWriteArrayList<Message>();
+	private static Object lockObj = new Object();
+	
+	static {
+		new Thread(new Runnable() {
+			public void run() {
+				while(true) {
+					try {
+						int ignoreCount = 0;
+						while(messages.size() > 0) {
+							Message message = messages.remove(0);
+							if(message == null) {
+								continue; 
+							}
+							if(messages.size() > 10000) {
+								ignoreCount ++;
+								continue;
+							}
+							if(ignoreCount > 0) {
+								Message mesg = new Message("/system/message/ingore", ignoreCount, null);
+								handleMessage(mesg);
+								ignoreCount = 0;
+							}
+							
+							handleMessage(message);
+							//System.out.println(message.getTopic());
+							
+						}
+					}catch(Exception e) {	
+						Executor.error(TAG, "Handle system message error", e);
+					}
+					
+					if(messages.size() == 0) {
+						synchronized(lockObj) {
+							try {
+								lockObj.wait();
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		}, "xworker message handle thread").start();
+	}
+	
+	private static void handleMessage(Message message) {
+		String topic = message.getTopic();
+		List<MessageConsumer> cs = consumerTree.getConsumers(topic);
+		if(cs != null) {
+			for(MessageConsumer mc : cs) {
+				try {
+					mc.handleMessage(message);
+				}catch(Exception e) {
+					Executor.error(TAG, "Handle system message error, handler=" + mc 
+							+ ",topic=" + topic, e);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * 注册或更新一个消息消费者。
@@ -89,23 +151,32 @@ public class MessageCenter {
 		
 		consumerCache.put(thing.getMetadata().getPath(), mc);
 		for(String topic : removedTopics) {
-			List<MessageConsumer> cs = consumers.get(topic);
-			if(cs != null) {
-				cs.remove(mc);
-			}
+			consumerTree.unsubscribe(mc, topic);
 		}
 		
 		for(String topic : addedTopics) {
-			List<MessageConsumer> cs = consumers.get(topic);
-			if(cs == null) {
-				cs = new CopyOnWriteArrayList<MessageConsumer>();
-				consumers.put(topic, cs);
-			}
-			
-			if(!cs.contains(mc)) {
-				cs.add(mc);
-			}
+			consumerTree.subscribe(mc, topic);
 		}
+	}
+	
+	/**
+	 * 消费者订阅一个主题。
+	 * 
+	 * @param consumer
+	 * @param topic
+	 */
+	public static void subscribe(MessageConsumer consumer, String topic) {
+		consumerTree.subscribe(consumer, topic);
+	}
+	
+	/**
+	 * 消费者取消订阅一个主题。
+	 * 
+	 * @param consumer
+	 * @param topic
+	 */
+	public static void unsubscribe(MessageConsumer consumer, String topic) {
+		consumerTree.unsubscribe(consumer, topic);
 	}
 	
 	public static void updateConsumer(Thing thing, ActionContext actionContext) {
@@ -117,32 +188,47 @@ public class MessageCenter {
 			return;
 		}
 		
-		MessageConsumer mc = consumerCache.get(thing.getMetadata().getPath());
+		unregistConsumer(thing.getMetadata().getPath());
+	}
+	
+	public static void unregistConsumer(String thingPath) {
+		if(thingPath == null) {
+			return;
+		}
+		
+		MessageConsumer mc = consumerCache.get(thingPath);
 		if(mc != null) {	
 			for(String topic : mc.topics) {
-				List<MessageConsumer> cs = consumers.get(topic);
-				if(cs != null) {
-					cs.remove(mc);
-				}
+				consumerTree.unsubscribe(mc, topic);
 			}
 		}
 	}
 	
 	public static List<MessageConsumer> getConsumers(String topic){
-		return consumers.get(topic);
+		return consumerTree.getConsumers(topic);
+	}
+		
+	/**
+	 * 快速发布一个消息。
+	 * 
+	 * @param topic
+	 * @param content
+	 * @param actionContext
+	 */
+	public static void publish(String topic, Object content, ActionContext actionContext) {
+		Message message = new Message(topic, content, actionContext);
+		publish(message);
 	}
 	
-	public static void sendMessage(Message message) {
-		String topic = message.getTopic();
-		List<MessageConsumer> cs = consumers.get(topic);
-		if(cs != null) {
-			for(MessageConsumer mc : cs) {
-				try {
-					mc.handleMessage(message);
-				}catch(Exception e) {
-					logger.error("Handle system message error, handler=" + mc.thing.getMetadata().getPath(), e);
-				}
-			}
+	/**
+	 * 发布消息，消息是异步处理的。
+	 * 
+	 * @param message
+	 */
+	public static void publish(Message message) {
+		messages.add(message);
+		synchronized(lockObj) {
+			lockObj.notifyAll();
 		}
 	}
 }

@@ -109,7 +109,7 @@ public class CommandDomain {
 	public void setParams(Map<String, Object> params) {
 		if(params != null) {
 			this.params.putAll(params);
-			params.put("commandDomain", this);
+			this.params.put("commandDomain", this);
 		}
 	}
 	

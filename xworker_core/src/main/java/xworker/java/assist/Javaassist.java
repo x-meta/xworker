@@ -9,12 +9,14 @@ import org.xmeta.World;
 
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.LocalVariableAttribute;
+import xworker.lang.executor.Executor;
 
 public class Javaassist {
 	public static Thing createParameterValue(String name) {
@@ -402,18 +404,11 @@ public class Javaassist {
 		return methods;
 	}
 
-	/**
-	 * 获取方法的参数信息。
-	 * 
-	 * @param ctMethod
-	 * @return
-	 */
-	public static List<ParameterInfo> getParameterInfo(CtMethod ctMethod) {
+	public static  List<ParameterInfo> getParameterInfo(int methodModifiers, javassist.bytecode.MethodInfo methodInfo, CtClass[] parameterTypes) {
 		List<ParameterInfo> params = new ArrayList<ParameterInfo>();
 
 		try {
 			// 使用javaassist的反射方法获取方法的参数名
-			javassist.bytecode.MethodInfo methodInfo = ctMethod.getMethodInfo();
 			CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
 			LocalVariableAttribute attr = null;
 			if (codeAttribute != null) {
@@ -422,14 +417,14 @@ public class Javaassist {
 			}
 			if (attr == null) {
 				int index = 0;
-				for (CtClass paramCls : ctMethod.getParameterTypes()) {
+				for (CtClass paramCls : parameterTypes) {
 					params.add(new ParameterInfo(paramCls.getName(), "param"
 							+ (index + 1)));
 					index++;
 				}
 			} else {
-				String[] paramNames = new String[ctMethod.getParameterTypes().length];
-				int pos = Modifier.isStatic(ctMethod.getModifiers()) ? 0 : 1;
+				String[] paramNames = new String[parameterTypes.length];
+				int pos = Modifier.isStatic(methodModifiers) ? 0 : 1;
 				for (int i = 0; i < paramNames.length; i++) {
 					try {
 						paramNames[i] = attr.variableName(i + pos);
@@ -440,7 +435,7 @@ public class Javaassist {
 				// paramNames即参数名
 				for (int i = 0; i < paramNames.length; i++) {
 					params.add(new ParameterInfo(
-							ctMethod.getParameterTypes()[i].getName(),
+							parameterTypes[i].getName(),
 							paramNames[i]));
 				}
 			}
@@ -449,5 +444,35 @@ public class Javaassist {
 		}
 
 		return params;
+	}
+	
+	/**
+	 * 获取方法的参数信息。
+	 * 
+	 * @param ctMethod
+	 * @return
+	 */
+	public static List<ParameterInfo> getParameterInfo(CtMethod ctMethod) {
+		try {
+			return getParameterInfo(ctMethod.getModifiers(), ctMethod.getMethodInfo(), ctMethod.getParameterTypes());
+		}catch(Exception e) {
+			Executor.warn(Javaassist.class.getName(), "get method-" + ctMethod.getName() + " parameter type exception", e);
+			return Collections.emptyList();
+		}
+	}
+	
+	/**
+	 * 获取构造函数的参数信息。
+	 * 
+	 * @param ctConstructor
+	 * @return
+	 */
+	public static List<ParameterInfo> getParameterInfo(CtConstructor ctConstructor) {
+		try {
+			return getParameterInfo(ctConstructor.getModifiers(), ctConstructor.getMethodInfo(), ctConstructor.getParameterTypes());
+		}catch(Exception e) {
+			Executor.warn(Javaassist.class.getName(), "get constructor parameter type exception", e);
+			return Collections.emptyList();
+		}
 	}
 }

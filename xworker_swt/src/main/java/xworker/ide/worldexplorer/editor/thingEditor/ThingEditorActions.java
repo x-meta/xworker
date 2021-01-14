@@ -68,6 +68,7 @@ import xworker.ide.worldexplorer.editor.OutlineTreeMoveListener;
 import xworker.ide.xmleditor.ThingXmlDocument;
 import xworker.ide.xmleditor.ThingXmlEditorActions;
 import xworker.ide.xmleditor.XmlThingLocation;
+import xworker.lang.system.message.MessageCenter;
 import xworker.listeners.SwtMenuListener;
 import xworker.swt.editor.EditorModifyListener;
 import xworker.swt.editor.LabelToolTipListener;
@@ -162,7 +163,7 @@ public class ThingEditorActions {
 	World world = World.getInstance();
 	
 	public Object checkThing(ActionContext actionContext) {		
-
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/check", null, actionContext);
 		/*
 		暂时删除检测，有bug存在，2013-04-01
 		if(thing.metadata.isRemoved()){
@@ -249,6 +250,8 @@ public class ThingEditorActions {
 			}
 		    return;
 		}
+		
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/open", treeThing, actionContext);
 		//log.info("open thing " + treeThing);
 		treeItem.setData(treeThing);
 		Thing currentThing = actionContext.getObject("currentThing");
@@ -415,6 +418,8 @@ public class ThingEditorActions {
 		    return null;
 		}
 
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/set", thing, actionContext);
+		
 		//保存thingEntry，用于判断是否在外部修改了
 		ThingEntry thingEntry = new ThingEntry(thing);
 		//log.info("lastmodified=" + thing.getMetadata().getLastModified());
@@ -484,6 +489,7 @@ public class ThingEditorActions {
 		}
 		
 		Object thing = actionContext.get("thing");
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/select", thing, actionContext);
 		//println "select thing=" + thing;
 		if(thing == null) return null;
 
@@ -574,6 +580,7 @@ public class ThingEditorActions {
 		    return null;
 		}
 
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/save", null, actionContext);
 		Composite xmlComposite = actionContext.getObject("xmlComposite");
 		Control xmlText = actionContext.getObject("xmlText");
 		Thing xmlRootThing = actionContext.getObject("xmlRootThing");
@@ -694,6 +701,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object clearCache(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/cache/clear", null, actionContext);
+		
 		if(actionContext.get("dataCache") != null){
 		    dataCache.remove(thing.getMetadata().getPath());
 		    
@@ -705,6 +714,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public Object saveEditCache(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/cache/save", null, actionContext);
+		
 		//保存当前事物的编辑缓存
 		if(actionContext.get("dataCache") == null){
 		    Map<String, Map<String, Object>> dataCache = new HashMap<String, Map<String, Object>>();    
@@ -762,6 +773,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public Object modify(ActionContext actionContext) throws OgnlException {
+		MessageCenter.publish("/xworker/ide/thingeditor/thing/modify", null, actionContext);
+		
 		CTabItem contentTab = actionContext.getObject("contentTab");
 		
 		if(actionContext.get("setModified") != null && UtilData.isTrue(actionContext.get("setModified")) == false){
@@ -824,6 +837,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object refreshOutline(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/refresh", null, actionContext);
+		
 		//强制刷新事物的时间，避免稍候被判断是外部改动重新刷新
 		thingEntry.getThing();
 
@@ -860,6 +875,8 @@ public class ThingEditorActions {
 		Thing currentThing = actionContext.getObject("currentThing");
 		String name = actionContext.getObject("name");
 		
+		MessageCenter.publish("/xworker/ide/thingeditor/getcurrentattribute", name, actionContext);
+		
 		if(currentThing == thing){
 		    Map<String, Object> editedData = currentModel.doAction("getValue", currentModelContext);
 		    if(editedData.containsKey(name)){
@@ -889,6 +906,8 @@ public class ThingEditorActions {
 		    return null;
 		}
 
+		MessageCenter.publish("/xworker/ide/thingeditor/inneroutline/item/init", thing, actionContext);
+		
 		TreeItem treeItem = actionContext.getObject("treeItem");
 		XWorkerTreeUtil.initItem(treeItem, thing, actionContext);
 		//initItemColor(treeItem, thing);
@@ -898,6 +917,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object initQuickEditTable(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/quickedittable/init", null, actionContext);
+		
 		Thing currentThing = actionContext.getObject("currentThing");
 		Table quickTable = actionContext.getObject("quickTable");
 		Button quickEditbutton = actionContext.getObject("quickEditbutton");
@@ -972,6 +993,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object initOutlineBrowser(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/browser/init", null, actionContext);
+		
 		//println("actions:initOutlineBrowser");
 		//初始化outlineBrowser和相关内容
 		Browser outlineBrowser = actionContext.getObject("outlineBrowser");
@@ -1031,6 +1054,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object initOutlineThingActions(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/thingations/init", null, actionContext);
+		
 		//动作文档
 		Thing thing = actionContext.getObject("thing");
 		List<Thing> actionThings = thing.getActionsThings();
@@ -1071,6 +1096,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object initOutlineAttributes(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/attributes/init", null, actionContext);
+		
 		//动作文档
 		//if(thing.getThingName() == "Shell"){
 //		    actionContext.printStackTrace();
@@ -1134,6 +1161,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public Object initToobarMenu(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/toolbar/menu/init", null, actionContext);
+		
 		//初始化描述者
 		if(menuBarComposite != null && !menuBarComposite.isDisposed()){
 		    descriptorsCombo.removeAll();
@@ -1304,6 +1333,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object showAddChild(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/addchild/show", null, actionContext);
+		
 		if(UtilData.isTrue(actionContext.get("doInitChildTree")) == false){
 		    //如果子节点树没有初始化，那么初始化
 		    actionContext.getScope(0).put("doInitChildTree", true);
@@ -1318,6 +1349,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object setAddChildDescriptor(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/addchild/descriptor/set", null, actionContext);
+		
 		//先清空原有的添加面板
 		Composite childContentComposite = actionContext.getObject("childContentComposite");
 		
@@ -1394,6 +1427,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object setAddChildValues(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/addchild/values/set", null, actionContext);
+		
 		Button addChildButton = actionContext.getObject("addChildButton");
 		Thing currentAddModel = (Thing) addChildButton.getData("currentAddModel");
 		ActionContext currentAddModelContext = (ActionContext) addChildButton.getData("currentAddModelContext");
@@ -1428,6 +1463,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object setValues(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/setvalues", null, actionContext);
+		
 		Thing currentModel = actionContext.getObject("currentModel");
 		ActionContext currentModelContext = actionContext.getObject("currentModelContext");
 		Map<String, Object> values = actionContext.getObject("values");
@@ -1439,12 +1476,16 @@ public class ThingEditorActions {
 	}
 	
 	public Object showEditor(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/showeditor", null, actionContext);
+		
 		editPartCompositeStackLayout.topControl = contentEditComposite;
 		editPartComposite.layout();
 		return null;
 	}
 	
 	public Object selectChildTreeNode(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/selectchildtreenode", null, actionContext);
+		
 		Tree childTree = actionContext.getObject("childTree");
 		String thingPath = actionContext.getObject("thingPath");
 		Listener childTreeSelection = actionContext.getObject("childTreeSelection");
@@ -1462,7 +1503,9 @@ public class ThingEditorActions {
 		if(descriptor == null) {
 			throw new ActionException("Cat not set descriptor, please set descriptor paramter!");
 		}
-				
+
+		MessageCenter.publish("/xworker/ide/thingeditor/descriptor/select", descriptor, actionContext);
+		
 		Combo descriptorsCombo = actionContext.getObject("descriptorsCombo");
 		descriptorsCombo.getDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -1558,6 +1601,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object nodeMoveUp(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/node/moveup", null, actionContext);
+		
 		Thing currentThing = actionContext.getObject("currentThing");
 		Thing parent = currentThing.getParent();
 		if(parent != null){
@@ -1605,6 +1650,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object nodeMoveDown(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/node/movedown", null, actionContext);
+		
 		Thing currentThing = actionContext.getObject("currentThing");
 		Thing parent = currentThing.getParent();
 
@@ -1705,6 +1752,8 @@ public class ThingEditorActions {
 		    return null;
 		}
 
+		MessageCenter.publish("/xworker/ide/thingeditor/xml/setcurrentthing", null, actionContext);
+		
 		//把当前事物转化为XML
 		Thing currentThing = actionContext.getObject("currentThing");
 		actionContext.g().put("xmlCurrentThing", currentThing);
@@ -1742,6 +1791,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object xmlEditorSetXmlThing(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/xml/editor/setxmlthing", null, actionContext);
+		
 		//设置xml并重新定位光标到原来的位置
 		String xml = XmlCoder.encodeToString(thing);
 		Control xmlText = actionContext.getObject("xmlText");
@@ -1827,6 +1878,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object editorMainTabFocusouted(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/editormaintab/focusouted", null, actionContext);
+		
 		//在XWorker的事物管理器中，编辑区的tab选中的了其它的事物编辑器
 		ActionContext xmlAddChildActionContext = actionContext.getObject("xmlAddChildActionContext");
 		if(xmlAddChildActionContext != null){
@@ -1852,6 +1905,7 @@ public class ThingEditorActions {
 	public Object setCacheData(ActionContext actionContext) {
 		//保存事物节点的属性缓存
 		Thing thing = actionContext.getObject("thing");
+		MessageCenter.publish("/xworker/ide/thingeditor/cache/setcachedata", thing, actionContext);
 		
 		Map<String, Object> cache = dataCache.get(thing.getMetadata().getPath());
 		if(cache == null){
@@ -1869,6 +1923,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object refreshRoot(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/refreshroot", null, actionContext);
+		
 		//选择根节点
 		innerOutline.select(innerOutline.getItems()[0]);
 
@@ -1877,11 +1933,13 @@ public class ThingEditorActions {
 		return null;
 	}
 	
-	public Object showXmlEditor(ActionContext actionContext) {
+	public Object showXmlEditor(ActionContext actionContext) {		
 		if(editPartCompositeStackLayout.topControl == actionContext.getObject("xmlComposite")) {
 			//已经是XML界面了
 			return null;
 		}
+		MessageCenter.publish("/xworker/ide/thingeditor/xml/showxmleditor", null, actionContext);
+		
 		
 		//显示XML编辑器
 		Listener editModelItemSelection = actionContext.getObject("editModelItemSelection");
@@ -1894,6 +1952,8 @@ public class ThingEditorActions {
 			//已经是Form界面了
 			return null;
 		}
+		MessageCenter.publish("/xworker/ide/thingeditor/form/showformeditor", null, actionContext);
+		
 		
 		Composite xmlComposite = actionContext.getObject("xmlComposite");
 		if(editPartCompositeStackLayout.topControl == xmlComposite) {
@@ -1911,6 +1971,8 @@ public class ThingEditorActions {
 			//已经是向导界面了
 			return null;
 		}
+		MessageCenter.publish("/xworker/ide/thingeditor/guide/showguideeditor", null, actionContext);
+		
 		
 		//先保存
 		actions.doAction("save");
@@ -1993,7 +2055,10 @@ public class ThingEditorActions {
 		return null;
 	}
 	
-	public Object editDescItemSelection(ActionContext actionContext) {		
+	public Object editDescItemSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/editdescitemselection", null, actionContext);
+		
+		
 		CoolBar coolBar = actionContext.getObject("coolBar");
 		Thing currentThing = actionContext.getObject("currentThing");
 		
@@ -2012,7 +2077,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings({ "unchecked", "unused" })
 	public Object descriptComboSelection(ActionContext actionContext) {
-
+		MessageCenter.publish("/xworker/ide/thingeditor/descriptor/comboselection", null, actionContext);
+		
 		//long start = System.currentTimeMillis();
 		//取当前选择的描述
 		Thing currentThing = actionContext.getObject("currentThing");
@@ -2232,6 +2298,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object addDesSelection(final ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/descriptor/adddesselection", null, actionContext);
+				
 		Composite contentComposite = actionContext.getObject("contentComposite");
 		Shell shell = contentComposite.getShell();
 		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
@@ -2311,6 +2379,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object addExtendSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/extends/addextendselection", null, actionContext);
+				
 		Composite contentComposite = actionContext.getObject("contentComposite");
 		Shell shell = contentComposite.getShell();
 		Thing dialogObject = world.getThing("xworker.ide.worldexplorer.swt.tools.ThingSelector/@shell");
@@ -2349,6 +2419,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public Object removeExtendSelectionOk(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/extends/removeextendselectionok", null, actionContext);
+				
 		Thing currentThing = actionContext.getObject("currentThing");
 		if(currentThing != null){
 		    int dindex = extendsCombo.getSelectionIndex();
@@ -2370,6 +2442,8 @@ public class ThingEditorActions {
 	}
 	
 	public void runButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/run/runbuttonselection", null, actionContext);
+				
 		ActionContext ac = new ActionContext();
 		Thing currentThing = actionContext.getObject("currentThing");
 		ac.put("parentContext", actionContext);
@@ -2386,6 +2460,8 @@ public class ThingEditorActions {
 	}
 	
 	public void runBackButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/run/runbackbuttonselection", null, actionContext);
+		
 		if(!methodsCombo.getText().trim().equals("")){
 		    final ActionContext acContext = actionContext;
 		    final String method = methodsCombo.getText();
@@ -2407,6 +2483,8 @@ public class ThingEditorActions {
 	}
 	
 	public void runTraceButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/run/runtracebuttonselection", null, actionContext);
+		
 		ActionContext ac = new ActionContext();
 		Thing currentThing = actionContext.getObject("currentThing");
 		ac.put("parentContext", actionContext);
@@ -2424,6 +2502,8 @@ public class ThingEditorActions {
 	}
 	
 	public void executeTraceBackgroundMenuItem(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/run/executetracebackgroundmenuitem", null, actionContext);
+		
 		if(!methodsCombo.getText().trim().equals("")){
 		    final ActionContext acContext = actionContext;
 		    final String method = methodsCombo.getText();
@@ -2446,6 +2526,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object methodsComboSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/run/methodscomboselection", null, actionContext);
+		
 		Event event = actionContext.getObject("event");
 		System.out.println(((Combo) event.widget).getText());
 		return null;
@@ -2496,6 +2578,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object copyPathSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/copypathselection", null, actionContext);
+		
 		Action copyRWT = actionContext.getObject("copyRWT");
 		Action copyNormal = actionContext.getObject("copyNormal");
 		if(SwtUtils.isRWT()){
@@ -2519,6 +2603,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object cutMenuListener(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/cutmenulistener", null, actionContext);
+		
 		Listener copyMenuSelection = actionContext.getObject("copyMenuSelection");
 		Listener deleteMenuSelection = actionContext.getObject("deleteMenuSelection");
 		
@@ -2528,6 +2614,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object copyMenuSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/copymenuselection", null, actionContext);
+		
 		TreeItem treeItem = innerOutline.getSelection()[0];
 		Thing thing = (Thing) treeItem.getData();
 		if(thing != null){
@@ -2538,6 +2626,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object pasteMenuSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/pastemenuselection", null, actionContext);
+		
 		TreeItem treeItem = innerOutline.getSelection()[0];
 		Thing thing = (Thing) treeItem.getData();
 		thing = world.getThing(thing.getMetadata().getPath());
@@ -2556,6 +2646,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object pasteAsChildSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/pasteaschildselection", null, actionContext);
+		
 		TreeItem treeItem = innerOutline.getSelection()[0];
 		Thing thing = (Thing) treeItem.getData();
 		thing = world.getThing(thing.getMetadata().getPath());
@@ -2602,6 +2694,8 @@ public class ThingEditorActions {
 	
 	@SuppressWarnings("unchecked")
 	public Object refreshMenuSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/refreshmenuselection", null, actionContext);
+		
 		TreeItem treeItem = innerOutline.getSelection()[0];
 		Thing thing = (Thing) treeItem.getData();
 		thing = world.getThing(thing.getMetadata().getPath());
@@ -2636,6 +2730,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object dragStrat(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/dragstart", null, actionContext);
+		
 		//根节点不能移动
 		Event event = actionContext.getObject("event");
 		Tree tree = (Tree) ((DragSource) event.widget).getControl();
@@ -2646,6 +2742,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object dragSetData(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/dragsetdata", null, actionContext);
+		
 		//根节点不能移动
 		Event event = actionContext.getObject("event");
 		Tree tree = (Tree) ((DragSource) event.widget).getControl();
@@ -2654,6 +2752,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object dragTargetDrop(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/dragtargetdrop", null, actionContext);
+		
 		Event event = actionContext.getObject("event");
 		Thing thing = world.getThing((String) event.data);
 		if(thing == null){
@@ -2696,6 +2796,8 @@ public class ThingEditorActions {
 	}
 	
 	public void dropAccept(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/outline/dropaccept", null, actionContext);
+		
 		Event event = actionContext.getObject("event");
 		Thing thing = world.getThing((String) event.data);
 		if(thing == null){
@@ -2716,12 +2818,16 @@ public class ThingEditorActions {
 	}
 	
 	public Object onMenuDetect(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/menu/onmenudetect", null, actionContext);
+		
 		Menu popMenu = actionContext.getObject("popMenu"); 
 		innerOutline.setMenu(popMenu);
 		return null;
 	}
 	
 	public Object showAddChildSelectionListener(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/addchild/showaddchild", null, actionContext);
+		
 		Listener descriptsComboSelection = actionContext.getObject("descriptsComboSelection");
 		if(UtilData.isTrue(actionContext.get("doInitChildTree")) == false){
 		    //如果子节点树没有初始化，那么初始化
@@ -2743,6 +2849,8 @@ public class ThingEditorActions {
 	}
 	
 	public Object viewmarkButtonSelection(final ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/tools/viewmarkbuttonselection", null, actionContext);
+		
 		//创建弹出窗口
 		Thing dialogThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkTreeDialog");
 		ActionContext ac = new ActionContext();
@@ -2795,6 +2903,8 @@ public class ThingEditorActions {
 	    }
 	}
 	public Object markButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/tools/markbuttonselection", null, actionContext);
+		
 		Thing dialogThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.MarkDialog");
 		ActionContext ac = new ActionContext();
 		Button markButton = actionContext.getObject("markButton");
@@ -2812,18 +2922,24 @@ public class ThingEditorActions {
 	}
 	
 	public Object commandButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/tools/commandbuttonselection", null, actionContext);
+		
 		Thing editorCommandDomain = world.getThing("xworker.ide.worldexplorer.swt.command.ThingEditorCommandDomain");
 		Assistor.runCommandDomain(editorCommandDomain, actionContext);
 		return null;
 	}
 	
 	public Object editByXmlButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/tools/editbyxmlbuttonselection", null, actionContext);
+		
 		Listener editModelItemSelection = actionContext.getObject("editModelItemSelection");
 		editModelItemSelection.handleEvent(null);
 		return null;
 	}
 	
 	public Object guideButtonSelection(ActionContext actionContext) {
+		MessageCenter.publish("/xworker/ide/thingeditor/tools/guidebuttonselection", null, actionContext);
+		
 		//先保存
 		actions.doAction("save");
 

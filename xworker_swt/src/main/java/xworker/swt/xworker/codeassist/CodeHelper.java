@@ -15,6 +15,7 @@ import xworker.swt.xworker.codeassist.objectassists.ActionAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ActionContainerAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ClassAssistor;
 import xworker.swt.xworker.codeassist.objectassists.DataObjectAssistor;
+import xworker.swt.xworker.codeassist.objectassists.SqlAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ThingAssistor;
 import xworker.swt.xworker.codeassist.textassists.CachedVariableTextAssistor;
 import xworker.swt.xworker.codeassist.textassists.VariableDescTextAssistor;
@@ -39,6 +40,7 @@ public class CodeHelper {
 		textAssists.add(new VariableDescTextAssistor());
 		textAssists.add(new CachedVariableTextAssistor());
 		textAssists.add(new WordSpliter());
+		textAssists.add(new SqlAssistor());
 		
 		//对象辅助类
 		objectAssists.put("object", new ClassAssistor());
@@ -172,6 +174,20 @@ public class CodeHelper {
 			List<VariableDesc> ds = provider.getVariables(null, 0, Collections.emptyList(), thing, actionContext);
 			if(ds != null) {
 				descs.addAll(ds);
+			}
+		}
+		
+		//去重
+		Map<String, VariableDesc> context = new HashMap<String, VariableDesc>();
+		for(int i=0; i<descs.size(); i++) {
+			VariableDesc desc = descs.get(i);
+			VariableDesc ctx = context.get(desc.getName());
+			if(ctx == null) {
+				context.put(desc.getName(), desc);
+			}else if(desc.equals(ctx)) {
+				//重复，去掉后者
+				descs.remove(i);
+				i--;
 			}
 		}
 		

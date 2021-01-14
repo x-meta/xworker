@@ -343,6 +343,6 @@ public class ExtJsCreator {
     	
         Action action = World.getInstance().getAction("xworker.html.extjs.ExtJs/@actions/@commonScriptLib");
         action.run(actionContext);
-        return action.actionClass;
+        return action.getActionClass();
     }
 }

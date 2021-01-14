@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.cache.ThingEntry;
 
-import xworker.util.HttpUtils;
+import xworker.lang.executor.Executor;
 
 public class WebTextSecurityHandler implements SecurityHandler{
-	private static Logger logger = LoggerFactory.getLogger(WebTextSecurityHandler.class);
+	private static final String TAG = WebTextSecurityHandler.class.getName();
+	//private static Logger logger = LoggerFactory.getLogger(WebTextSecurityHandler.class);
 	
 	ThingEntry thingEntry;
 	List<Checker> checkers = new ArrayList<Checker>();
@@ -32,7 +29,7 @@ public class WebTextSecurityHandler implements SecurityHandler{
 		
 		Thing thing = thingEntry.getThing();
 		if(thing == null) {
-			logger.warn("Thing is null, path=" + thingEntry.getPath());
+			Executor.warn(TAG, "Thing is null, path=" + thingEntry.getPath());
 			return;
 		}
 		

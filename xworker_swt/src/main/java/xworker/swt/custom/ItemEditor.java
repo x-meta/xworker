@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -179,7 +181,7 @@ public abstract class ItemEditor {
 	
 	public void setDataStore(Thing dataStore) {
 		if(dataStore == null) {
-			System.out.println("ItemEditor: dataStore is null");
+			//System.out.println("ItemEditor: dataStore is null");
 		}
 		this.dataStore = dataStore;
 	}
@@ -211,8 +213,8 @@ public abstract class ItemEditor {
 	 * @param column
 	 * @return
 	 */
-	protected Thing getColumnEditor(int column) {
-		return ItemEditorUtils.getColumnEditor(thing, column);
+	protected Thing getColumnEditor(Item item, int column) {
+		return ItemEditorUtils.getColumnEditor(thing, item, column, actionContext);
 	}
 	
 	/**
@@ -271,7 +273,7 @@ public abstract class ItemEditor {
 	@SuppressWarnings("unchecked")
 	public Object getValue(){
 		Item item = getItem();
-		int column = getColumn();
+		int column = getColumn();		
 		
 		if("store".equals(thing.getString("dataType"))){
 		    Map<String, Object> record =  (Map<String, Object>) item.getData();
@@ -283,7 +285,14 @@ public abstract class ItemEditor {
 	    		return "";
 	    	}
 		}else{
-			return item.getText();   
+			return getItemValue(item, column);
+			/*
+			if(item instanceof TableItem) {
+				return ((TableItem) item).getText(column);
+			}else if(item instanceof TreeItem) {
+				return ((TreeItem) item).getText(column);
+			}
+			return item.getText();*/   
 		}       
 	}
 	
@@ -353,7 +362,18 @@ public abstract class ItemEditor {
 	        columnEditor.setData("column", currentColumn);
 	        columnEditor.setData("editorContext", currentItemContext);
 	        columnEditor.setData("editorThing", editorImplThing);
-	        
+	        /*
+	        columnEditor.addListener(SWT.KeyDown, new Listener(){
+				@Override
+				public void handleEvent(Event event) {
+					System.out.println("sddsfs");
+					if(event.keyCode == (int) SWT.ESC) {
+						
+						event.doit = false;
+					}
+				}
+	        	
+	        });*/
 	        editor.setEditor(columnEditor);
 	        onSetEditor();
 	        
@@ -410,7 +430,7 @@ public abstract class ItemEditor {
 			currentColumn = column;
 			
 			//寻找适合的ColumnEditor
-			Thing editorThing = getColumnEditor(getColumn());
+			Thing editorThing = getColumnEditor(item, getColumn());
 			
 			//System.out.println("TableCursorEditorCreator editorThing=" + editorThing);
 			if(editorThing != null){

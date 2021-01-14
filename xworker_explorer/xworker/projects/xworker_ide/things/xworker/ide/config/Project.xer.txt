@@ -1,4 +1,4 @@
-^1606019012871
+^1606019012872
 @
 sname
 Config
@@ -66,6 +66,7 @@ import org.xmeta.Thing;
 import org.xmeta.util.ThingRegistor;
 import xworker.listeners.SwtMenuListener;
 import xworker.swt.design.Designer;
+import xworker.lang.executor.Executor;
 
 //设计模式，界面可以双击鼠标中键弹出设计菜单
 Designer.setEnabled(true);
@@ -128,7 +129,7 @@ try{
         }
     }   
 }catch(Exception e){
-    log.error("init projectMenuSwt error", e);
+    Executor.error("ProjectInit", "init projectMenuSwt error", e);
 }
 #$@text#$@
     sinterpretationType
@@ -381,6 +382,7 @@ import java.io.File;
 
 import org.xmeta.Thing;
 import xworker.listeners.SwtMenuListener;
+import xworker.lang.executor.Executor;
 
 //菜单监听，监听事物的变更
 SwtMenuListener swtMenuListener = SwtMenuListener.getInstance();
@@ -405,9 +407,9 @@ try{
                     	try{
                     		p.doAction("init", actionContext);
                     	}catch(Exception e){
-                    		log.error("初始化项目" + projectPath + ".config.Project" + "失败", e);
+                    		Executor.error("Project", "初始化项目" + projectPath + ".config.Project" + "失败", e);
                     	}catch(Error ee){
-                    		log.error("初始化项目" + projectPath + ".config.Project" + "失败", ee);
+                    		Executor.error("Project", "初始化项目" + projectPath + ".config.Project" + "失败", ee);
                     	}
                     }
                 }
@@ -415,7 +417,7 @@ try{
         }
     }
 }catch(Exception e){
-    log.error("init new project config error", e);
+    Executor.error("Project", "init new project config error", e);
 }
 
 try{
@@ -434,9 +436,9 @@ try{
             	try{
             		p.doAction("init", actionContext);
             	}catch(Exception e){
-            		log.error("初始化项目" + project.getName() + "失败", e);
+            		Executor.error("Project", "初始化项目" + project.getName() + "失败", e);
             	}catch(Error ee){
-            		log.error("初始化项目" + project.getName() + "失败", ee);
+            		Executor.error("Project", "初始化项目" + project.getName() + "失败", ee);
             	}
             }
         }

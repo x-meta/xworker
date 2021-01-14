@@ -6,14 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilThing;
 
 import xworker.lang.Configuration;
+import xworker.lang.executor.Executor;
 
 /**
  * 安全管理器。
@@ -25,7 +24,8 @@ import xworker.lang.Configuration;
  *
  */
 public class SecurityManager {
-	private static Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+	//private static Logger logger = LoggerFactory.getLogger(SecurityManager.class);
+	private static final String TAG = SecurityManager.class.getName();
 	
 	/** 环境校验器缓存 */
 	private static Map<String, EnviromentChecker> envCheckers = new HashMap<String, EnviromentChecker>();
@@ -56,7 +56,7 @@ public class SecurityManager {
 				defaultSecurityManager.doAction("run");
 			}
 		}catch(Exception e) {
-			logger.error("Init defaultSecurityManager error", e);
+			Executor.error(TAG, "Init defaultSecurityManager error", e);
 		}
 	}
 	
@@ -109,13 +109,13 @@ public class SecurityManager {
 	public static boolean doCheck(String env, String permission, String action, String path , ActionContext actionContext){
 		EnviromentChecker envc = envCheckers.get(env);
 		if(envc == null) {
-			logger.info("EnviromentChecker is null, return false, env={}, permission={}, action={}, path={}",
+			Executor.info(TAG, "EnviromentChecker is null, return false, env={}, permission={}, action={}, path={}",
 					env, permission, action, path);
 			return false;
 		}else {
 			boolean result = envc.doCheck(env, permission, action, path, actionContext);
 			if(result == false) {
-				logger.info("Check return false: " + permission + ", " + action + ", " + path);
+				Executor.info(TAG, "Check return false: " + permission + ", " + action + ", " + path);
 			}
 			return result;
 		}

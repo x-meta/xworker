@@ -254,7 +254,7 @@ public class DataObjectMetadata {
 			}
 		}else{
 			//如果是多对一或一对一的事物发生了变化
-			if(definition.getBoolean("many") == false){
+			if(definition.getBoolean("many") == false && value instanceof DataObject){
 				DataObject v = (DataObject) value;
 				Object av = v.get(definition.getString("refAttributeName"));
 				name = definition.getString("localAttributeName");

@@ -40,6 +40,98 @@ public class SwtStoreUtils {
 		display.asyncExec(runnable);
 	}
 	
+	public static String getDisplayText(Object record, Object value, Thing attribute, ActionContext actionContext) {
+		String text = null;
+	    Boolean __tableDataStoreToDisplayString = (Boolean) attribute.getData("__tableDataStoreToDisplayString");
+	    if(__tableDataStoreToDisplayString != null && __tableDataStoreToDisplayString == true){
+	        text = (String) attribute.doAction("toDisplayString", actionContext, UtilMap.toMap(new Object[]{"record", record, "value", value}));
+	    }else if(attribute.getData("__tableDataStoreFormater") != null){ 
+	    	Format formater = (Format) attribute.getData("__tableDataStoreFormater");
+	        if(value != null){
+	            text = formater.format(value);
+	        }
+	    }else{    
+	        //先从显示字段中取
+	        //log.info("sotre=" + column.getAttributes());
+	        String disField = attribute.getStringBlankAsNull("displayField");
+	        if(disField != null){
+	            //log.info("display=" + disField);
+	            String[] diss = disField.split("[.]");
+	            Object v = record;
+	            try{
+	                for(String dis : diss){
+	                	if(v instanceof DataObject){
+	                		v = ((DataObject) v).get(dis);
+	                	}
+	                	
+	                    //log.info("value=" + v);
+	                    if(v == null){
+	                        break;
+	                    }                        
+	                }
+	                if(v != null){
+	                    text = v.toString();
+	                }
+	            }catch(Exception e){
+	                v = null;
+	                log.warn("TableDataStoreListener: get display error," + disField, e);
+	            }
+	        }
+	        
+	        //从关联的数据仓库中取数据
+	        Thing columnDataStore = null;
+	        String relationDataObject = attribute.getStringBlankAsNull("relationDataObject");
+	        String columnStore = attribute.getStringBlankAsNull("store");
+	        if(text == null && columnStore != null){
+	            //log.info("relationDataObject=" + column.relationDataObject + ",store=" + column.store );
+	        	//从引用的数据仓库取
+	            columnDataStore = DataStoreManager.get(columnStore);		            
+	        }
+	        if(columnDataStore == null && relationDataObject != null) {
+	        	//直接通过数据对象创建数据仓库
+	        	columnDataStore = DataStoreManager.getByDataObject(relationDataObject);
+	        }
+	        if(columnDataStore != null){
+                text = DataStoreUtils.getLabelByValue(columnDataStore, value, attribute.getString("relationValueField"), attribute.getString("relationLabelField"));
+            }
+	        
+	        //从value属性中去数据
+	        String inputType = attribute.getString("inputtype");
+	        if(text == null && UtilData.equalsOne(inputType, new String[]{"select","inputSelect","multSelect", "checkBox", "radio"})){
+	        	String svalue = String.valueOf(value);	        	
+	        	if(value != null){
+	        		String[] values = new String[] {svalue};
+	        		if("multSelect".equals(inputType) || "checkBox".equals(inputType)) {
+		        		values = svalue.split("[,]");
+		        	}
+	        		for(String v : values) {
+			        	for(Thing vt : attribute.getAllChilds("value")){ //要使用AllChilds，因为数据会继承其他属性，value有可能是继承来的
+			        		if(v.equals(vt.getString("value"))){
+			        			if(text == null) {
+			        				text = vt.getMetadata().getLabel();
+			        			}else {
+			        				text = text + "," + vt.getMetadata().getLabel();
+			        			}
+			        		}
+			        	}
+	        		}
+	        	}
+	        }
+	            
+	        if(text == null){
+	            text = value == null ? "" : value.toString();
+	        }
+	    }
+	    
+	    if(text == null){
+	        text = "";
+	    }else{
+	        text = String.valueOf(text);
+	    }
+	    
+	    return text;
+	}
+	
 	/**
 	 * 返回一个列（如Table的列）中数据对象的值对应的要显示的值。
 	 * 
@@ -49,6 +141,8 @@ public class SwtStoreUtils {
 	 * @return
 	 */
 	public static String getColumnDisplayText(DataObject record, Thing column, ActionContext actionContext) {
+		return getDisplayText(record, record.get(column.getString("name")), column, actionContext);
+		/*
 		String text = null;
 	    Boolean __tableDataStoreToDisplayString = (Boolean) column.getData("__tableDataStoreToDisplayString");
 	    if(__tableDataStoreToDisplayString != null && __tableDataStoreToDisplayString == true){
@@ -140,5 +234,6 @@ public class SwtStoreUtils {
 	    }
 	    
 	    return text;
+	    */
 	}
 }

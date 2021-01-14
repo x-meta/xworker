@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="Message Logger" label="MessageLogger">
+    <FillLayout name="FillLayout"></FillLayout>
+    <Composite name="mainComposite" label="消息" en_label="Message">
+        <FillLayout name="FillLayout"></FillLayout>
+        <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+            <Console name="console"></Console>
+        </StyledText>
+        <ActionContainer name="actions">
+            <GroovyAction name="handleMessage">
+                <code><![CDATA[import java.text.SimpleDateFormat;
+
+def sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+console.append(sf.format(new Date()) + ": " + message.getTopic());
+
+//println "xxxxx:" + message.getTopic();]]></code>
+            </GroovyAction>
+        </ActionContainer>
+        <Code name="init">
+            <code><![CDATA[import xworker.lang.system.message.MessageConsumer;
+
+//订阅消息
+def consumer = new MessageConsumer(actions, "handleMessage");
+actionContext.g().put("consumer", consumer);
+consumer.subscribe("#");]]></code>
+        </Code>
+        <Event name="onDispose">
+            <GroovyAction name="GroovyAction" code="consumer.unsubscribeAll();"></GroovyAction>
+        </Event>
+        <Menu name="menu" descriptors="xworker.swt.Widgets/@Menu" style="POP_UP">
+            <MenuItem name="clearMenuItem" text="lang:d=清空&amp;en=Clear">
+                <listeners>
+                    <Listener name="clearMenuSelection">
+                        <GroovyAction name="GroovyAction" code="logText.setText(&quot;&quot;);"></GroovyAction>
+                    </Listener>
+                </listeners>
+            </MenuItem>
+        </Menu>
+    </Composite>
+</Shell>

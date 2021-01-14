@@ -39,6 +39,10 @@ public class PageInfo{
 	}
 	
 	public PageInfo(Map<String, Object> data){
+		if(data == null) {
+			data = new HashMap<String, Object>();
+		}
+		
 		this.data = data; 
 	}
 	
@@ -177,7 +181,11 @@ public class PageInfo{
 	 * @return
 	 */
 	public int getLimit() {
-		return getInt(DataObjectConstants.PAGEINFO_LIMIT);
+		int limit = getInt(DataObjectConstants.PAGEINFO_LIMIT);
+		if(limit <= 0) {
+			limit = 100;
+		}
+		return limit;
 	}
 
 

@@ -1504,7 +1504,6 @@ public class SwtUtils {
 	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象，如果控件选中了多个也只会返回第一个。如果未绑定或未选择返回null。
 	 * 
 	 * @param control
-	 * @param index
 	 * 
 	 * @return
 	 */
@@ -1573,7 +1572,6 @@ public class SwtUtils {
 	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象的列表。如果未绑定或未选择返回null。
 	 * 
 	 * @param control
-	 * @param index
 	 * 
 	 * @return
 	 */

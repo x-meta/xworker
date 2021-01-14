@@ -26,7 +26,7 @@
 	文件上传示例。<br />
 	&nbsp;</li>
 	<li><strong>WebSocket</strong><br />
-	WebSocket示例，网页似乎只能IE或Edge下正常。</li>
+	WebSocket示例。有SSL的情况下IE可用，谷歌浏览器报证书错误。在没有SLL的情况下，各浏览器都可以用，需要在WebSocketServerProtocolHandler设置allowExtentions=true。</li>
 </ul>
 
 <p><strong>SimpleControl</strong></p>
@@ -49,7 +49,8 @@
                     <HttpServerCodec name="HttpServerCodec"></HttpServerCodec>
                     <HttpObjectAggregator name="HttpObjectAggregator" maxContentLength="314572800"></HttpObjectAggregator>
                     <WebSocketServerCompressionHandler name="WebSocketServerCompressionHandler"></WebSocketServerCompressionHandler>
-                    <WebSocketServerProtocolHandler name="WebSocketServerProtocolHandler" websocketPath="/socket"></WebSocketServerProtocolHandler>
+                    <WebSocketServerProtocolHandler name="WebSocketServerProtocolHandler" websocketPath="/socket"
+                         allowExtensions="false"></WebSocketServerProtocolHandler>
                     <ChunkedWriteHandler name="ChunkedWriteHandler"></ChunkedWriteHandler>
                     <WebSocketFrameHandler>
                         <actions descriptors="MetaThing/@actions">

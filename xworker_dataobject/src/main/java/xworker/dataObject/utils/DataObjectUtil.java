@@ -501,7 +501,7 @@ public class DataObjectUtil {
 			Date date = UtilData.getDate(value, null, pattern);
 			if(date != null){
 				return new java.sql.Date(date.getTime());
-			}else{
+			}else{				
 				return  null;
 			}
 		}else if("datetime".equals(type)){

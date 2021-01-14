@@ -38,7 +38,7 @@ public class TableCellEditor extends ItemEditor{
 		editor.grabHorizontal = true;
 		editor.grabVertical = true;
 		this.cursor = editor;
-		Thing editorThing = getColumnEditor(getColumn());
+		Thing editorThing = getColumnEditor(item, getColumn());
 		//System.out.println("TableCursorEditorCreator editorThing=" + editorThing);
 		if(editorThing != null){
 			createEditor(editorThing);

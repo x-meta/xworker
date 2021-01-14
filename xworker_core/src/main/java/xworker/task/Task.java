@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.cache.ThingEntry;
+import org.xmeta.util.UtilString;
 
 import xworker.util.UtilAction;
 
@@ -60,6 +62,10 @@ public class Task implements Runnable{
 	/** Thread方式执行时创建的Thread */
 	private Thread thread;
 	private Map<String, Object> data;
+	
+	public Task(Thing thing, ActionContext actionContext, boolean schedule){
+		this(thing, actionContext, true, true, schedule);
+	}
 	
 	public Task(Thing thing, ActionContext actionContext, boolean callback, boolean callbackCancel, boolean schedule){
 		synchronized(Task.class){
@@ -301,18 +307,18 @@ public class Task implements Runnable{
 	public String getStatusLabel(){
 		switch(status){
 		case 0:
-			return "等待";
+			return UtilString.getString("lang:d=等待&en=Waiting", actionContext);
 		case 1:
-			return "运行中";
+			return UtilString.getString("lang:d=运行中&en=Running", actionContext);
 		case 2:
-			return "已取消";
+			return UtilString.getString("lang:d=已取消&en=Canceled", actionContext);
 		case 3:
-			return "已暂停";
+			return UtilString.getString("lang:d=已暂停&en=Paused", actionContext);
 		case 4:
-			return "已结束";
+			return UtilString.getString("lang:d=已结束&en=Stopped", actionContext);
 		}
 		
-		return "未知状态";
+		return UtilString.getString("lang:d=未知状态&en=Unknown", actionContext);
 	}
 	
 	private void end(){
@@ -488,22 +494,22 @@ public class Task implements Runnable{
 		
 		String str = "";
 		if(days > 0){
-			str = days + "天";
+			str = days + UtilString.getString("lang:d=天&en= days", actionContext);
 		}
 		if(hours > 0){
-			str = str + hours + "小时";
+			str = str + hours + UtilString.getString("lang:d=小时&en= hours", actionContext);
 		}
 		if(minute > 0){
-			str = str + minute + "分钟";
+			str = str + minute + UtilString.getString("lang:d=分钟&en= minutes", actionContext);
 		}
 		if(second > 0){
-			str = str + second + "秒";
+			str = str + second + UtilString.getString("lang:d=秒&en= seconds", actionContext);
 		}
 		if(time > 0){
-			str = str + time + "毫秒";
+			str = str + time + UtilString.getString("lang:d=毫秒&en= milliseconds", actionContext);
 		}
 		if(str.equals("")){
-			str = "小于1毫秒";
+			str = UtilString.getString("lang:d=小于1毫秒&en less 1 millisencond", actionContext);
 		}
 		return str;
 	}
@@ -518,5 +524,13 @@ public class Task implements Runnable{
 
 	public void setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
+	}
+	
+	public void putParameter(String key , Object value) {
+		this.parameters.put(key, value);
+	}
+	
+	public void putParameterAll(Map<String, Object> values) {
+		this.parameters.putAll(values);
 	}
 }

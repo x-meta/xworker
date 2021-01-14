@@ -259,13 +259,13 @@ public class MarioTypeGame implements GameEngine2D{
 		TextureRegion frame = null;
 		switch (mario.state) {
 		case Standing:
-			frame = stand.getKeyFrame(mario.stateTime);
+			frame = (TextureRegion) stand.getKeyFrame(mario.stateTime);
 			break;
 		case Walking:
-			frame = walk.getKeyFrame(mario.stateTime);
+			frame = (TextureRegion) walk.getKeyFrame(mario.stateTime);
 			break;
 		case Jumping:
-			frame = jump.getKeyFrame(mario.stateTime);
+			frame = (TextureRegion) jump.getKeyFrame(mario.stateTime);
 			break;
 		}
 

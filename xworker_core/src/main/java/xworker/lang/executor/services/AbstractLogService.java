@@ -5,12 +5,10 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.spi.LocationInfo;
-import org.slf4j.helpers.MessageFormatter;
-
 import xworker.lang.executor.ExecuteRequest;
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
+import xworker.lang.executor.helpers.MessageFormatter;
 
 public abstract class AbstractLogService implements ExecutorService{
 	

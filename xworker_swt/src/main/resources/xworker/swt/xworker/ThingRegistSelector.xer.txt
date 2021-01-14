@@ -1,4 +1,4 @@
-^1574934908407
+^1606469298435
 @
 sname
 ThingRegistSelector
@@ -377,7 +377,16 @@ false
 #$@text#$@
 import xworker.util.ThingUtils;
 
-return ThingUtils.searchRegistThings(thing, type, [], parent, actionContext);
+if(self.getBoolean("disableRegistMyChilds")){
+    ThingUtils.disableRegistMyChilds();
+    try{
+        return ThingUtils.searchRegistThings(thing, type, [], parent, actionContext);
+    }finally{
+        ThingUtils.enableRegistMyChilds();
+    }
+}else{
+    return ThingUtils.searchRegistThings(thing, type, [], parent, actionContext);
+}
 #$@text#$@
     sdescription
     <p>返回事物注册器要显示的事物列表，返回List&lt;Thing&gt;。</p>
@@ -386,6 +395,8 @@ return ThingUtils.searchRegistThings(thing, type, [], parent, actionContext);
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -1777,6 +1788,53 @@ return ThingUtils.searchRegistThings(thing, type, [], parent, actionContext);
   false
   sid
   check
+  @/@disableRegistMyChilds
+  sname
+  disableRegistMyChilds
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  disableRegistMyChilds
   @/@descritporForNewThing
   sname
   descritporForNewThing

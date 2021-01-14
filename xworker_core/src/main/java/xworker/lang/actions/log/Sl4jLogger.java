@@ -20,7 +20,7 @@ public class Sl4jLogger {
 		if(UtilData.isTrue(self.doAction("isAction", actionContext))) {
 			Action action = World.getInstance().getAction(tagName);
 			if(action != null) {
-				tagName = action.className;
+				tagName = action.getClassName();
 			}
 		}
 		
@@ -32,7 +32,7 @@ public class Sl4jLogger {
 		
 		Thing action = self.doAction("getAction", actionContext);
 		if(action != null) {
-			return action.getAction().className;
+			return action.getAction().getClassName();
 		}else {
 			return null;
 		}

@@ -1,16 +1,61 @@
 package xworker.swt.xwidgets;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.ExceptionUtil;
 
 import xworker.swt.util.SwtTextUtils;
+import xworker.task.DelayTask;
 
 public class Console {
 	Control text;
 	boolean autoScroll = true;
 	int maxLength;	
+	List<String> messages = new CopyOnWriteArrayList<String>();
+	DelayTask task = new DelayTask(300) {
+
+		@Override
+		public void run() {
+			if(text.isDisposed()) {
+				return;
+			}
+			
+			text.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					try {
+						StringBuilder sb = new StringBuilder();
+
+						while(messages.size() > 0) {
+							String str = messages.remove(0);
+							if(str == null) {
+								continue;
+							}
+							if(messages.size() > 2000) {
+								//消息过多，直接抛弃一部分
+								continue;
+							}
+							sb.append(str);
+							sb.append( "\n");
+				
+						}
+						
+						SwtTextUtils.append(text, sb.toString());
+						checkMaxLengh();
+						if(autoScroll) {
+							SwtTextUtils.scrollToBottom(text);
+						}
+					}catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
+		
+	};
 
 	public Console(Control text, int maxLength, boolean autoScroll) {
 		this.text = text;
@@ -56,20 +101,9 @@ public class Console {
 	
 	public void append(final String str) {
 		if(str != null && !"".equals(str)) {
-			text.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					try {
-						SwtTextUtils.append(text, str);
-						SwtTextUtils.append(text, "\n");
-						checkMaxLengh();
-						if(autoScroll) {
-							SwtTextUtils.scrollToBottom(text);
-						}
-					}catch(Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
+			messages.add(str);
+			
+			task.doTask();
 		}
 	}
 	public void append(Object object) {

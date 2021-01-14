@@ -1,4 +1,4 @@
-^1605260790313
+^1607078394937
 @
 sname
 shell
@@ -8570,6 +8570,7 @@ if(actionContext.get("categoryTree") != null){
     for(item in categoryTree.getItems()){
         item.dispose();
     }
+    
     XWorkerTreeUtil.showThingsOnTreeByGroup(thing.getMetadata().getPath(), things, thingTree, actionContext);
     
     if(actionContext.get("expandCache") != null){
@@ -8595,6 +8596,8 @@ actions.doAction("openHome");
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -8855,10 +8858,10 @@ if(data instanceof Thing){
     if(actionContext.get("downButton") != null){// && data.getThingName() == "ThingIndex"){
         downButton.setEnabled(true);
     }
-    controlThing.doAction("selected", parentContext, ["thing": data, "item": item]);
+    controlThing.doAction("selected", parentContext, ["thing": data, "item": item, "event": event]);
    
 }else{
-    controlThing.doAction("selected", parentContext, ["thing": null, "item": item]);
+    controlThing.doAction("selected", parentContext, ["thing": null, "item": item, "event": event]);
     if(actionContext.get("descBrowser") != null){
         //descBrowser.setText("");
     }
@@ -9069,7 +9072,10 @@ if(controlThing.getBoolean("cache")){
         ThingUtils.setSearchRegistLocal(extraThings);
     }
     
-    things = ThingUtils.searchRegistThings(thing, type, [], actionContext);
+    def parent = controlThing.getBoolean("parent");
+    things = controlThing.doAction("loadThings", actionContext, 
+                "thing", thing, "type", type, "parent", parent);
+//    things = ThingUtils.searchRegistThings(thing, type, [], actionContext);
     actionContext.getScope(0).put("things", things);
 }
 
@@ -9080,6 +9086,8 @@ actions.doAction("search", actionContext);
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -10744,6 +10752,7 @@ import org.xmeta.Thing;
 def world = world;
 for(item in thingTree.getItems()){
     setChecked(item, things);
+    //println item;
 }
 
 def have(thing, things){
@@ -10780,6 +10789,8 @@ def setChecked(item, things){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -11043,7 +11054,7 @@ if(things == null){
     //设置额外的索引事物
     //println actionContext.get("extraThings") ;
     if(actionContext.get("extraThings") != null){
-        println extraThings;
+        //println extraThings;
         ThingUtils.setSearchRegistLocal(extraThings);
     }
 
@@ -11068,7 +11079,7 @@ if(things == null){
         //过滤关键字
         def add = true;
         for(keyword in keywords){
-            if(keyword != ""){
+            if(keyword != "" && keyword != null){
                 if(!isMatchThing(keyword, des)){
                     add = false;
                 }
@@ -11098,10 +11109,10 @@ if(things == null){
         }
         
         if(add){
-            dess.add(des);
-        }
-        things = dess;
+            dess.add(des);         
+        }        
     }
+    things = dess;
 //}
 if(actionContext.get("thing") == null){
     return;
@@ -11177,6 +11188,8 @@ def isMatch(String key, String value){
         screateLocalVarScope
         false
         ssaveReturn
+        false
+        sswitchResult
         false
         sdebugLog
         false

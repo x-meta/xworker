@@ -26,23 +26,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.World;
-import org.xmeta.XMetaException;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectException;
 import xworker.dataObject.PageInfo;
+import xworker.dataObject.query.Condition;
 import xworker.dataObject.utils.DbUtil;
 import xworker.db.jdbc.DataSouceActionContextActions;
 import xworker.db.jdbc.DataSourceActions;
+import xworker.lang.Configuration;
 import xworker.lang.executor.Executor;
 import xworker.task.UserTask;
 import xworker.task.UserTaskManager;
@@ -1488,5 +1487,132 @@ public class DbDataObject {
 		}
 		
 		return sql;
+	}
+	
+	
+	/**
+	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
+	 * 
+	 * 在本方法中数据源应该按照XWorker的Configuration设置。
+	 * 
+	 * @param dataSourceName 数据源名称
+	 * @param configuration 配置模型
+	 * @param sql
+	 * @param actionContext
+	 * @return
+	 */
+	public static DataObject loadSql(String dataSourceName, Thing configuration, String sql, ActionContext actionContext) {
+		return loadSql(dataSourceName, configuration, sql, null, actionContext);
+	}
+	
+	/**
+	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
+	 * 
+	 * 在本方法中数据源应该按照XWorker的Configuration设置。
+	 * 
+	 * @param dataSourceName 数据源名称
+	 * @param configuration 配置模型
+	 * @param sql
+	 * @param condition
+	 * @param actionContext
+	 * @return
+	 */
+	public static DataObject loadSql(String dataSourceName, Thing configuration, String sql, Condition condition, ActionContext actionContext) {
+		Thing dataSource = Configuration.getConfiguration(dataSourceName, configuration, actionContext);
+		
+		return loadSql(dataSource, sql, condition, actionContext);
+	}
+	
+	/**
+	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
+	 * 
+	 * @param dataSource
+	 * @param sql
+	 * @param condition
+	 * @param actionContext
+	 * @return
+	 */
+	public static DataObject loadSql(Thing dataSource, String sql, Condition condition, ActionContext actionContext) {
+		List<DataObject> datas = querySql(dataSource, sql, condition, actionContext);
+		if(datas != null && datas.size() > 0) {
+			return datas.get(0);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
+	 *  
+	 * @param dataSource
+	 * @param sql
+	 * @param actionContext
+	 * @return
+	 */	
+	public static DataObject loadSql(Thing dataSource, String sql, ActionContext actionContext) {
+		return loadSql(dataSource, sql, actionContext);
+	}
+	
+	/**
+	 * 执行一个sql, 返回数据对象列表。
+	 * 
+	 * @param dataSource
+	 * @param sql
+	 * @param actionContext
+	 * @return
+	 */
+	public static List<DataObject> querySql(Thing dataSource, String sql, ActionContext actionContext){
+		return querySql(dataSource, sql, null, actionContext);
+	}
+	
+	/**
+	 * 执行一个sql, 返回数据对象列表。
+	 * 
+	 * @param dataSource
+	 * @param sql
+	 * @param condition
+	 * @param actionContext
+	 * @return
+	 */
+	public static List<DataObject> querySql(Thing dataSource, String sql, Condition condition, ActionContext actionContext){
+		Thing queryDb = new Thing("xworker.dataObject.db.DbQueryDataObject");
+		queryDb.set("dataSource", dataSource.getMetadata().getPath());
+		queryDb.set("querySql", "var:sql");
+		
+		if(condition == null) {
+			return queryDb.doAction("query", actionContext, "sql", sql);
+		}else {
+			return queryDb.doAction("query", actionContext, "sql", sql, 
+				"conditionData", condition.getConditionValues(), "condition", condition.getConditionThing());
+		}
+	}
+	
+	/**
+	 * 执行一个sql, 返回数据对象列表。在本方法中数据源应该按照XWorker的Configuration设置。
+	 * 
+	 * @param dataSourceName
+	 * @param configuration
+	 * @param sql
+	 * @param condition
+	 * @param actionContext
+	 * @return
+	 */
+	public static List<DataObject> querySql(String dataSourceName, Thing configuration, String sql, Condition condition, ActionContext actionContext){
+		Thing dataSource = Configuration.getConfiguration(dataSourceName, configuration, actionContext);
+		
+		return querySql(dataSource, sql, condition, actionContext);
+	}
+	
+	/**
+	 *  执行一个sql, 返回数据对象列表。在本方法中数据源应该按照XWorker的Configuration设置。
+	 *  
+	 * @param dataSourceName
+	 * @param configuration
+	 * @param sql
+	 * @param actionContext
+	 * @return
+	 */
+	public static List<DataObject> querySql(String dataSourceName, Thing configuration, String sql, ActionContext actionContext){
+		return querySql(dataSourceName, configuration, sql, null, actionContext);
 	}
 }

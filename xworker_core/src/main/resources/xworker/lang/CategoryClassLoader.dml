@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="CategoryClassLoader" descriptors="xworker.lang.MetaDescriptor3" defaultEditor="form">
+    <description><![CDATA[<p>用于设置Category的类加载器。如果为一个Category设置了类加载器，那么该Category以及子Category下的模型讲使用该类加载器。</p>
+
+<p><strong>父类加载器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过重写ClassLoader getParentClassLoader()方法获取父类加载器。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 默认实现是如果noParent=true，那么返回null，否则调用getParentClassLoaderThing()获取类加载器模型，如果存在那么返回类加载器模型定义的类加载器，否则返回当前模型所在的模型管理器的类加载器。</p>
+
+<p><strong>设置类库</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过classPaths设置，也可以通过子节点设置。如要通过Maven设置类库，可以同构Maven相关的子节点。</p>
+
+<p><strong>应用类加载器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过thingsForCategory可以设置到这些模型所在的Category上，通过targetClassLoaders可以应用到目标CategoryClassLoader上，应用是可传递的，即会调用目标的apply()方法。</p>
+
+<p><strong>常用方法：</strong></p>
+
+<ul>
+	<li><strong>void apply()</strong><br />
+	应用类加载器。<br />
+	&nbsp;</li>
+	<li><strong>void applyForce()</strong><br />
+	强制应用。强制应用会重新初始化自身类加载器，使用自身的类加载器。<br />
+	&nbsp;</li>
+	<li><strong>CategoryClassLoader getCategoryClassLoader()</strong><br />
+	返回CategoryClassLoder。<br />
+	&nbsp;</li>
+	<li><strong>ClassLoader getClassLoader()</strong><br />
+	返回ClassLoader。</li>
+</ul>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>ClassLoader getParentClassLoader()</strong><br />
+	返回用于构建类加载器的父类加载器。&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.lang.CategoryClassLoader" methodName="run"></JavaAction>
+        <GetStringList name="getClassPaths" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="classPaths" usage="params"></GetStringList>
+        <JavaAction name="getParentClassLoader" outerClassName="xworker.lang.CategoryClassLoader"
+             methodName="getParentClassLoader" usage="params"></JavaAction>
+        <GetThings name="getThingsForCategory" descriptors="xworker.lang.actions.ActionUtil/@GetThins"
+             attributeName="thingsForCategory" usage="params"></GetThings>
+        <GetThings name="getTargetClassLoaders" _xmeta_id_="getCategoryClassLoaders" descriptors="xworker.lang.actions.ActionUtil/@GetThins"
+             attributeName="targetClassLoaders" usage="params"></GetThings>
+        <JavaAction name="getCategoryClassLoader" outerClassName="xworker.lang.CategoryClassLoader"
+             methodName="getCategoryClassLoader"></JavaAction>
+        <JavaAction name="getClassLoader" outerClassName="xworker.lang.CategoryClassLoader"
+             methodName="getClassLoader"></JavaAction>
+        <JavaAction name="apply" outerClassName="xworker.lang.CategoryClassLoader" methodName="apply"></JavaAction>
+        <GetThing name="getParentClassLoaderThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="parentClassLoader" usage="params"></GetThing>
+        <JavaAction name="applyForce" outerClassName="xworker.lang.CategoryClassLoader" methodName="applyForce"></JavaAction>
+        <JavaAction name="copyToXWorker" outerClassName="xworker.lang.CategoryClassLoader"
+             methodName="copyToXWorker"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="noParent" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>如果为true，表示不使用任何parentClassLoader。</p>
+]]></description>
+    </attribute>
+    <attribute name="parentClassLoader" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="classPaths" inputtype="textarea"></attribute>
+    <attribute name="thingsForCategory" inputtype="textarea"></attribute>
+    <attribute name="targetClassLoaders" inputtype="textarea"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <sswtMenus>
+        <menuDefine>
+            <menu name="CategoryClassLoader"></menu>
+        </menuDefine>
+        <menuSetting menuType="CategoryClassLoader">
+            <menu name="Apply" _xmeta_id_="Update" url="action:apply"></menu>
+            <menu name="applyForce" label="Apply Force" url="action:applyForce"></menu>
+            <menu name="copyToXWorker" label="Copy to XWorker" url="action:copyToXWorker"></menu>
+        </menuSetting>
+    </sswtMenus>
+    <thing name="MavenPomDependencies" _xmeta_id_="MavenDependencies">
+        <description><![CDATA[<p>指定一个pom文件，把pom中的依赖加入到ClassLoader中。</p>
+
+<p><strong>mvn命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过偏好设置设置。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.lang.CategoryClassLoader" methodName="mavenPomDependencies"></JavaAction>
+            <GetString name="getPomFile" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="pomFile" usage="params"></GetString>
+            <CopyPomDependenciesToDir name="copy" descriptors="xworker.org.apache.maven.MavenActions/@CopyDependencies"
+                 pomFile="var:pomFile" outputDirectory="var:output" sync="true"></CopyPomDependenciesToDir>
+            <GetMavenCommand name="getMvnCommand" _xmeta_id_="getMvnCommand1" descriptors="xworker.org.apache.maven.MavenActions/@GetMavenCommand"></GetMavenCommand>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="pomFile" inputtype="file" size="60"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="MavenDependencies" _xmeta_id_="MavenDependencies1">
+        <description><![CDATA[<p>把执行的依赖加入到ClassLoader中，如：</p>
+
+<pre class="brush:xml;">
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+    &lt;artifactId&gt;kafka_2.13&lt;/artifactId&gt;
+    &lt;version&gt;2.7.0&lt;/version&gt;
+&lt;/dependency&gt;</pre>
+
+<p><strong>mvn命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过偏好设置设置。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.lang.CategoryClassLoader" methodName="mavenDependencies"></JavaAction>
+            <GetString name="getDependencies" _xmeta_id_="getPomFile" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="dependencies" usage="params"></GetString>
+            <CopyDependenciesToDir name="copy" descriptors="xworker.maven.MavenActions/@CopyDependenciesToDir"
+                 mvnPath="var:mvnCommand" outputDir="var:output" dependencies="var:dependencies"></CopyDependenciesToDir>
+            <GetMavenCommand name="getMvnCommand" _xmeta_id_="getMvnCommand1" descriptors="xworker.org.apache.maven.MavenActions/@GetMavenCommand"></GetMavenCommand>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="dependencies" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

@@ -1,4 +1,4 @@
-%1603161544889
+%1610006328979
 @
 sname=XWorkerPackageViewer
 slabel=目录浏览
@@ -934,14 +934,54 @@ if(dataTable.getSelectionIndex() == 0 && data.type == "parent"){
               sth_registMyChilds=false
               sth_mark=false
               sid=deleteMenuItemSelection
-                @/@EditorComposite/@packageCompoiste/@packageTable/@dataTableMenu/@deleteMenuItem/@listeners/@deleteMenuItemSelection/@GroovyAction
-                sname=GroovyAction
+                @/@EditorComposite/@packageCompoiste/@packageTable/@dataTableMenu/@deleteMenuItem/@listeners/@deleteMenuItemSelection/@confirm
+                sname=confirm
+                sshell=ognl:titleComposite.getShell()
+                sicon=ICON_QUESTION
+                sbuttons=OK | CANCEL
+                stitle=lang:d=删除&en=Delete
+                smessage=lang:d=确定要删除选中的资源么？&Are you sure to delete the selected resource?
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
                 sisSynchronized=false
                 sthrowException=true
-                suseOtherAction=false
-                svarScope=Local
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sswitchResult=false
                 sdisableGlobalContext=false
-                Scode=
+                sdebugLog=false
+                sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_noThingRegistViewer=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sth_registQueryOnlySelf=false
+                sid=confirm
+                  @/@EditorComposite/@packageCompoiste/@packageTable/@dataTableMenu/@deleteMenuItem/@listeners/@deleteMenuItemSelection/@confirm/@actions
+                  sname=actions
+                  sdescriptors=xworker.swt.actions.MessageBoxActions/@MessageBox/@actions1
+                  sinheritDescription=false
+                  sth_createIndex=false
+                  sth_registMyChilds=false
+                  sth_registDisabled=false
+                  sth_noThingRegistViewer=false
+                  sth_fileMonitor=false
+                  sth_mark=false
+                  sth_registQueryOnlySelf=false
+                  sid=actions
+                    @/@EditorComposite/@packageCompoiste/@packageTable/@dataTableMenu/@deleteMenuItem/@listeners/@deleteMenuItemSelection/@confirm/@actions/@GroovyAction
+                    sname=ok
+                    sisSynchronized=false
+                    sthrowException=true
+                    suseOtherAction=false
+                    svarScope=Local
+                    sdisableGlobalContext=false
+                    Scode=
 #$@text#$@
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
@@ -952,20 +992,13 @@ import xworker.util.XWorkerUtils;
 
 import org.xmeta.ActionContext;
 
-def box = new MessageBox(dataTable.getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
-box.setText("删除");
-box.setMessage("确定要删除选中的事物或文件么？");
-if(SWT.CANCEL == box.open()){
-    return;
-}
-
 def item = dataTable.getSelection()[0];
 def data = item.getData();
 
 if(dataTable.getSelectionIndex() == 0 && data.type == "parent"){
 }else if(data.type == "normalFile"){
     def f = data.file;    
-    explorerActions.doAction("closeTab", explorerActionContext, ["path": "textFile" + f.getAbsolutePath()]);
+    explorerActions.doAction("closeTab", explorerActions.getActionContext(), ["path": "textFile" + f.getAbsolutePath()]);
     f.delete();
 }else if(data.type != "thing"){   
     println("ddata=" + data.getIndexedObject());
@@ -974,7 +1007,7 @@ if(dataTable.getSelectionIndex() == 0 && data.type == "parent"){
     //println data.path;
     def thing = world.getThing(data.path);
     if(thing != null){
-        explorerActions.doAction("closeTab", explorerActionContext, ["path": thing.getMetadata().getPath()]);
+        explorerActions.doAction("closeTab", explorerActions.getActionContext(), ["path": thing.getMetadata().getPath()]);
         thing.remove();
     }
         
@@ -982,15 +1015,17 @@ if(dataTable.getSelectionIndex() == 0 && data.type == "parent"){
 
 actions.doAction("refreshTable", actionContext, ["index": projectTree.getSelection()[0].getData()]);
 #$@text#$@
-                sinterpretationType=Action
-                screateLocalVarScope=false
-                ssaveReturn=false
-                sdescriptors=xworker.lang.actions.Actions/@GroovyAction
-                sinheritDescription=false
-                sth_createIndex=false
-                sth_registMyChilds=false
-                sth_mark=false
-                sid=GroovyAction
+                    sinterpretationType=Action
+                    screateLocalVarScope=false
+                    ssaveReturn=false
+                    sswitchResult=false
+                    sdebugLog=false
+                    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+                    sinheritDescription=false
+                    sth_createIndex=false
+                    sth_registMyChilds=false
+                    sth_mark=false
+                    sid=GroovyAction
       @/@EditorComposite/@packageCompoiste/@initCode
       sname=initCode
       sisSynchronized=false

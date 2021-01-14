@@ -1,35 +1,55 @@
+echo install xmeta engine
+cd ../x-meta/org.xmeta.engine/
+ping -n 5 127.1>nul
+call mvn deploy
+
 echo install core
-cd ./xworker_core/
+cd ../../xworker/xworker_core/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_dataobject/
 echo install dataobject
-cd ../xworker_dataobject/xworker_dataobject/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_web/
 echo install web
-cd ../../xworker_web/xworker_web/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_swt/
 echo install swt
-cd ../../xworker_swt/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_app/
 echo install app
-cd ../xworker_app/xworker_app/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_function/
 echo install function
-cd ../../xworker_function/xworker_function/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_ai/
 echo install ai
-cd ../../xworker_ai/xworker_ai/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_jfreechart/
 echo install jfreechart
-cd ../../xworker_jfreechart/xworker_jfreechart/
+ping -n 5 127.1>nul
 call mvn deploy
 
+cd ../xworker_misc/
 echo install misc
-cd ../../xworker_misc/xworker_misc/
+ping -n 5 127.1>nul
 call mvn deploy
+
+cd ../xworker_bigdata/
+echo install bigdata
+ping -n 5 127.1>nul
+call mvn deploy
+

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="NettyActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <thing name="GetNettySession" extends="xworker.lang.actions.SelfAction" group="io.netty.server">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.NettyActions" methodName="getNettySession"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="var" varName="_thingName_" passive="true" scope="2" className="xworker.io.netty.NettySession"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="GetNettySessionManager" extends="xworker.lang.actions.SelfAction" group="io.netty.server">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.NettyActions" methodName="getNettySessionManager"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="var" varName="_thingName_" passive="true" scope="2" className="xworker.io.netty.NettySessionManager"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="SendMessageToSession" extends="xworker.lang.actions.SelfAction" group="io.netty.server">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.NettyActions" methodName="sendMessageToSession"></JavaAction>
+            <GetString name="getSessionId" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="sessionId" usage="params"></GetString>
+            <GetObject name="getMessage" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="message" usage="params"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="sessionId" size="40"></attribute>
+        <attribute name="message" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="SendMessageToGroup" extends="xworker.lang.actions.SelfAction" group="io.netty.server">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.io.netty.NettyActions" methodName="sendMessageToGroup"></JavaAction>
+            <GetObject name="getMessage" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="message" usage="params"></GetObject>
+            <GetString name="getGroupPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="groupPath" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="groupPath" size="60"></attribute>
+        <attribute name="message" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

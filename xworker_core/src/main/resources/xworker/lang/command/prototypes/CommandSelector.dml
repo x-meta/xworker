@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=命令选择器&amp;en=Command Selector"
+     width="800" height="600" label="CommandSelector">
+    <FillLayout name="FillLayout"></FillLayout>
+    <SashForm name="mainSashForm" style="VERTICAL" weights="60,40">
+        <Code name="changeText">
+            <code><![CDATA[def things = [];
+actionContext.g().put("things", things);
+
+if(actionContext.get("text") != null){
+    actionContext.g().put("inputText", text);
+    
+    def texts = text.getText();
+    setThings(things, texts);
+}
+
+if(actionContext.get("currentThing") != null){
+    def texts = currentThing.getStringBlankAsNull("commands");
+    if(texts != null){
+        setThings(things, texts);
+    }
+}
+
+def setThings(things, texts){
+    for(txt in texts.split("[\n]")){
+        txt = txt.trim();
+        if(txt == ""){
+            continue;
+        }
+        
+        for(t in txt.split("[,]")){
+            t = t.trim();
+            if(t == ""){
+                continue;
+            }
+            
+            if(things.contains(t) == false){
+                things.add(t);
+            }
+        }
+    }
+}]]></code>
+        </Code>
+        <CTabFolder name="mainTabFolder" BORDER="true">
+            <CTabItem name="currentThingItem" text="lang:d=当前模型&amp;en=Current Model">
+                <Tree name="currentThingTree" CHECK="true" FULL_SELECTION="false" HIDE_SELECTION="false"
+                     lineVisible="false" multipleColumns="false" headerVisible="false"
+                     sortIndicator="false" moveableColumns="false">
+                    <Event name="onSelection" ref="actions:treeSelection"></Event>
+                </Tree>
+            </CTabItem>
+            <CTabItem name="domainIndex" text="Domain Index">
+                <SashForm name="domainSashForm" weights="50,50">
+                    <ThingRegistor name="domainRegistor" thing="xworker.lang.command.CommandDomainIndex"
+                         registType="child" contentDisplayType="Composite" contentDefaultOpenMethod="thingDescBrowser">
+                        <actions>
+                            <GroovyAction name="selected">
+                                <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+if(thing != null){
+    actions.doAction("initTree", actionContext, "tree", domainTree, "thing", thing);
+}]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingRegistor>
+                    <Tree name="domainTree" CHECK="true" FULL_SELECTION="false" HIDE_SELECTION="false"
+                         lineVisible="false" multipleColumns="false" headerVisible="false"
+                         sortIndicator="false" moveableColumns="false">
+                        <Event name="onSelection" ref="actions:treeSelection"></Event>
+                    </Tree>
+                </SashForm>
+            </CTabItem>
+            <CTabItem name="commandIndexItem" text="Command Index">
+                <SashForm name="commandIndexSashForm" _xmeta_id_="domainSashForm" weights="50,50">
+                    <ThingRegistor name="domainRegistor" thing="xworker.lang.command.CommandIndex"
+                         registType="child" showContent="true" contentDisplayType="Composite"
+                         contentDefaultOpenMethod="thingDescBrowser" autoLoad="true"
+                         check="true">
+                        <actions>
+                            <GroovyAction name="selected">
+                                <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+if(thing != null){
+    actions.doAction("treeSelection", actionContext);
+}]]></code>
+                            </GroovyAction>
+                            <GroovyAction name="loaded">
+                                <code><![CDATA[def ths = [];
+for(path in actionContext.g().get("things")){
+    ths.add(world.getThing(path));
+}
+
+domainRegistor.doAction("setChecked", actionContext, "things", ths);]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingRegistor>
+                </SashForm>
+            </CTabItem>
+            <CTabItem name="commandInsItem" text="Command Instances">
+                <SashForm name="commandIndexSashForm" _xmeta_id_="domainSashForm" weights="50,50">
+                    <ThingRegistor name="commandInsRegistor" _xmeta_id_="domainRegistor" thing="xworker.lang.command.CommandInstancesIndex"
+                         registType="child" showContent="true" contentDisplayType="Composite"
+                         contentDefaultOpenMethod="thingDescBrowser" autoLoad="true"
+                         check="true">
+                        <actions>
+                            <GroovyAction name="selected">
+                                <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.swt.util.XWorkerTreeUtil;
+
+if(thing != null){
+    actions.doAction("treeSelection", actionContext);
+}]]></code>
+                            </GroovyAction>
+                            <GroovyAction name="loaded">
+                                <code><![CDATA[def ths = [];
+for(path in actionContext.g().get("things")){
+    ths.add(world.getThing(path));
+}
+
+commandInsRegistor.doAction("setChecked", actionContext, "things", ths);]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingRegistor>
+                </SashForm>
+            </CTabItem>
+        </CTabFolder>
+        <Composite name="bottomComposite" BORDER="true">
+            <StyledText name="text" style="MULTI">
+                <GridData name="GridData" style="FILL_BOTH"></GridData>
+            </StyledText>
+            <Composite name="buttonComposite" _xmeta_id_="12214">
+                <GridData name="buttonCompositeGridData" _xmeta_id_="12215" style="FILL_HORIZONTAL"
+                     horizontalAlignment="END"></GridData>
+                <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="12216"></RowLayout>
+                <Button name="okButton" _xmeta_id_="12217" text="确定">
+                    <RowData name="RowData" _xmeta_id_="12218" width="80"></RowData>
+                    <Listeners _xmeta_id_="12219">
+                        <Listener name="okButtonSelection" _xmeta_id_="12220">
+                            <GroovyAction name="GroovyAction">
+                                <code><![CDATA[actionContext.getScope(0).put("result", text.getText());
+
+if(actionContext.get("currentThing") != null){
+    currentModel.doAction("setPartialValues", currentModelContext, "values", ["commands": text.getText()]);
+}
+shell.dispose();]]></code>
+                            </GroovyAction>
+                        </Listener>
+                    </Listeners>
+                </Button>
+                <Button name="cancelButton" _xmeta_id_="12221" text="取消">
+                    <RowData name="RowData" _xmeta_id_="12222" width="80"></RowData>
+                    <Listeners _xmeta_id_="12223">
+                        <Listener name="cancelButtonSelection" _xmeta_id_="12224">
+                            <ShellNormalActions name="ShellNormalActions" descriptors="xworker.swt.actions.ShellActions/@ShellNormalActions1"
+                                 shellName="shell" throwException=""></ShellNormalActions>
+                        </Listener>
+                    </Listeners>
+                </Button>
+            </Composite>
+            <GridLayout name="GridLayout"></GridLayout>
+        </Composite>
+        <ActionContainer name="actions">
+            <GroovyAction name="initTree" _xmeta_id_="initTreeSelection">
+                <code><![CDATA[import xworker.swt.util.XWorkerTreeUtil;
+
+tree.removeAll();
+XWorkerTreeUtil.showThingOnTree(tree, thing, actionContext);
+    
+for(item in tree.getItems()){
+    check(item, things);
+}
+
+def check(item, things){
+    def thing = item.getData();
+    if(thing.isThingByName("Command")){
+        for(childItem in item.getItems()){
+            childItem.dispose();
+        }
+    }
+    def path = item.getData().getMetadata().getPath();
+    for(th in things){
+        if(path == th){
+            item.setChecked(true);
+        }
+    }
+    
+    for(childItem in item.getItems()){
+        check(childItem, things);
+    }
+    
+    item.setExpanded(true);
+}]]></code>
+                <ins>
+                    <param name="tree" type="org.eclipse.swt.widgets.TreeItem"></param>
+                    <param name="thing" type="org.xmeta.Thing"></param>
+                </ins>
+            </GroovyAction>
+            <GroovyAction name="treeSelection">
+                <code><![CDATA[def thing = event.item.getData();
+def thingPath = thing.getMetadata().getPath();
+if(event.item.getChecked()){    
+    if(thing.isThingByName("Command")){        
+        if(things.contains(thingPath) == false){
+            things.add(thingPath);
+        }
+    }
+}else{
+    things.remove(thingPath);
+}
+
+def paths = null;
+for(path in things){
+    if(paths == null){
+        paths = path;
+    }else{
+        paths = paths + ",\n" + path;
+    }
+}
+
+if(paths == null){
+    paths = "";
+}
+text.setText(paths);]]></code>
+            </GroovyAction>
+        </ActionContainer>
+        <Code name="init">
+            <code><![CDATA[//是否是通过模型的菜单进入的
+if(actionContext.get("currentThing") != null){
+    actions.doAction("initTree", actionContext, "tree", currentThingTree, "thing", currentThing.getRoot());
+}else if(actionContext.get("thing") != null){
+    //是否是通过模型的属性编辑器进入的
+    actions.doAction("initTree", actionContext, "tree", currentThingTree, "thing", thing.getRoot());
+}else{
+    currentThingItem.dispose();
+}]]></code>
+        </Code>
+    </SashForm>
+</Shell>

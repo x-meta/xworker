@@ -36,7 +36,9 @@ import org.xmeta.Category;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.util.ThingGroup;
 import xworker.util.UtilData;
+import xworker.util.XWorkerUtils;
 
 public class XWorkerTreeUtil {
 	private static Logger logger = LoggerFactory.getLogger(XWorkerTreeUtil.class);
@@ -609,10 +611,14 @@ public class XWorkerTreeUtil {
 	
 	public static void showGroupsOnTree(String cachePath, List<xworker.util.ThingGroup> groups, Object treeOrTreeItem, ActionContext actionContext){
 		Collections.sort(groups);
+		/*
 		Map<String, ThingGroup> folderGroupCache = new HashMap<String, ThingGroup>();
 		ThingGroup rootGroup = new ThingGroup(null, null);
 		folderGroupCache.put("", rootGroup);
 		for(xworker.util.ThingGroup group : groups){
+			if(group.getThing() != null && "xworker.example.action.ActionExamples/@IteratorFileLine".equals(group.getThing().getMetadata().getPath())) {
+				System.out.println("have ");
+			}
 			if("".equals(group.getGroup())){
 				rootGroup.getChilds().add(group);
 				continue;
@@ -653,8 +659,9 @@ public class XWorkerTreeUtil {
 		}
 		
 		rootGroup.sort();
+		*/
 		//Collections.sort(rootGroup.getChilds());
-		for( xworker.util.ThingGroup group : rootGroup.getChilds()){
+		for( xworker.util.ThingGroup group : groups){
 			showThingGroupOnTreeOrItem(cachePath, group, treeOrTreeItem, "", actionContext);
 		}
 	}
@@ -670,6 +677,8 @@ public class XWorkerTreeUtil {
 	 */
 	public static void showThingsOnTreeByGroup(String cachePath, List<Thing> things, Object treeOrTreeItem, ActionContext actionContext){
 		//获取分组并排序
+		List<ThingGroup> groups = XWorkerUtils.getThingGroups(things);
+		/*
 		List<xworker.util.ThingGroup> groups = new ArrayList<xworker.util.ThingGroup>();
 		for(Thing thing : things){
 			String group = thing.getMetadata().getGroup();//thing.getStringBlankAsNull("group");
@@ -677,12 +686,18 @@ public class XWorkerTreeUtil {
 				group = "";
 			}
 			
+			if("xworker.example.action.ActionExamples/@IteratorFileLine".equals(thing.getMetadata().getPath())) {
+				System.out.println("have ");
+			}
+			
 			//一个分组字符串可以是多个分组，使用,号隔开
 			for(String g : group.split("[,]")){
 				groups.add(new ThingGroup(thing, g));
 			}
+			
+			
 		}		
-	
+		*/
 		showGroupsOnTree(cachePath, groups, treeOrTreeItem, actionContext);
 	}
 	

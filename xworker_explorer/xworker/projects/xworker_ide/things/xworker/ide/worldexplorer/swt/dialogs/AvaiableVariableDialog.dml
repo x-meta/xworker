@@ -24,6 +24,15 @@ if(code != null){
                         <TextTemplate name="template" _xmeta_id_="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
                             <templateCode><![CDATA[########################################################
 <#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+import ${var.className};
+</#if>
+</#list>
+
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
 <#if var.className?exists && var.className != "">
     ${var.className} ${var.name} = actionContext.getObject("${var.name}");
 <#else>
@@ -35,6 +44,11 @@ if(code != null){
 import org.xmeta.ActionContext;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionField;
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+import ${var.className};
+</#if>
+</#list>
  
 @ActionClass(creator="createInstance")
 public class MyClass {
@@ -50,6 +64,9 @@ public class MyClass {
         return obj;
     }    
     <#list vars as var>
+    <#if var.className?exists && var.isStaticClass()>
+    <#continue>
+    </#if>
     <#if var.className?exists && var.className != "">
         
     @ActionField

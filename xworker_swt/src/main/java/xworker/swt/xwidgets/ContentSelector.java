@@ -124,9 +124,12 @@ public class ContentSelector{
 			}
 			
 			if(contents.size() > 0){
-				table.setSelection(0);				
+				table.setSelection(0);
+				Object value = contents.get(0).value;
+				Object content = contents.get(0);
+			    thing.doAction("onSelection", actionContext, UtilMap.toMap("value", value, "content", content));
 			}			
-			
+						
 			if(contents.size() == 1 && thing.getBoolean("autoSelected")){
 				//自动触发选择事件
 				Object value = contents.get(0).value;

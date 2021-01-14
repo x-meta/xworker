@@ -262,6 +262,38 @@ public class TaskManager {
 	}
 	
 	/**
+	 * 设置一个定时任务，任务有用户自行创建。
+	 * 注意一个模型应该只创建一个定时任务，否则在管理时会替换前一个任务。
+	 * 
+	 * @param task
+	 * @param delay
+	 * @param period
+	 * @param timeUnit
+	 */
+	public static Future<?> scheduleAtFixedRate(Task task, long delay, long period, TimeUnit timeUnit) {
+		Future<?> future = scheduledExecutorService.scheduleAtFixedRate(task, delay, period, timeUnit);
+		task.setFuture(future);
+		putScheduleTask(task);
+		return future;
+	}
+	
+	/**
+	 * 设置一个定时任务，任务有用户自行创建。
+	 * 注意一个模型应该只创建一个定时任务，否则在管理时会替换前一个任务。
+	 * 
+	 * @param task
+	 * @param delay
+	 * @param period
+	 * @param timeUnit
+	 */
+	public static Future<?> scheduleWithFixedDelay(Task task, long delay, long period, TimeUnit timeUnit) {
+		Future<?> future = scheduledExecutorService.scheduleWithFixedDelay(task, delay, period, timeUnit);
+		task.setFuture(future);
+		putScheduleTask(task);
+		return future;
+	}
+	
+	/**
 	 * 启动一个普通的任务。
 	 * 
 	 * @param taskThing

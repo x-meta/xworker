@@ -60,11 +60,8 @@ public class ConsumerRegistor {
 		}
 		
 		for(String path : removed) {
-			ThingEntry thingEntry = consumers.remove(path);
-			Thing thing = thingEntry.getThing();
-			if(thing != null) {
-				MessageCenter.unregistConsumer(thing);
-			}
+			consumers.remove(path);
+			MessageCenter.unregistConsumer(path);			
 		}
 	}
 	

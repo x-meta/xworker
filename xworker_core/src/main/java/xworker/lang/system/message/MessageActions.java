@@ -13,7 +13,7 @@ public class MessageActions {
 		}
 
 		Message message = new Message(messageThing, actionContext);
-		MessageCenter.sendMessage(message);
+		MessageCenter.publish(message);
 		
 	}
 	
@@ -39,6 +39,26 @@ public class MessageActions {
 		
 		return null;
 		
+	}
+	
+	/**
+	 * 消费者模型自行注册。
+	 * 
+	 * @param actionContext
+	 */
+	public static void regist(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		MessageCenter.registConsumer(self, new ActionContext());
+	}
+	
+	/**
+	 * 消费者自行取消注册。
+	 * 
+	 * @param actionContext
+	 */
+	public static void unregist(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		MessageCenter.unregistConsumer(self);
 	}
 	
 	public static String getLabel(ActionContext actionContext) {

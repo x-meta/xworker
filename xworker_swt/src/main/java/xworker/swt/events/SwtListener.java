@@ -126,6 +126,7 @@ public class SwtListener implements Listener{
 	}
 	
 	protected void handleEvent(Event event, Thing thing, boolean runChild, Map<String, String> params){
+		//System.out.println("swt handler event, thing=" + thing.getMetadata().getPath() + ", event=" + event);
 		Bindings bindings = actionContext.push(null);
 		bindings.put("event", event);
 		try{

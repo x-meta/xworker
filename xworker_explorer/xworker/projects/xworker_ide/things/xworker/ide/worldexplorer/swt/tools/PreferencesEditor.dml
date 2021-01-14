@@ -63,20 +63,20 @@ action.run(actionContext);]]></code>
 
 <h2>如何定义配置模型？</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 编写一个模型配置模型，把该模型以child方式注册到xworker.lang.util.PreferencesIndex下。系统会把该模型克隆一份，保存为模型管理器_local下的_local.xworker.preferences.xxx模型，其中xxx是该模型路径的修改。用户最终的配置是_local.xworker.preferences.xxx模型。</p>
+<p>&nbsp;&nbsp;&nbsp; 编写一个模型配置模型，把该模型以child方式注册到xworker.lang.util.PreferencesIndex下。系统会把该模型作为描述者创建一个模型，保存为模型管理器_local下的_local.xworker.preferences.xxx模型，其中xxx是该模型路径的修改。用户最终的配置是_local.xworker.preferences.xxx模型。</p>
 
 <h2>如何获取配置</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 可以通过Java类xworker.util.XWorkerUtils的静态方法getPreference()获取。</p>
 
 <ul>
-	<li><strong>Thing XWorkerUtils.getPreference(Thing defaultConfig)</strong><br />
-	defualtConfig是默认配置模型，不能为null。</li>
+	<li><strong>Thing XWorkerUtils.getPreference(Thing configDesc)</strong><br />
+	configDesc是默认配置模型的描述者，不能为null。</li>
 </ul>
 
 <h2>注意事项</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 用户是根据默认配置模型描述者来确定唯一性的，因此一个配置模型的描述者只能对应一个配置模型，不要用同一个描述者编写两个及以上的默认配置模型。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 用户是根据默认配置模型描述者来确定唯一性的，因此一个配置模型的描述者只能对应一个配置模型。</p>
 
 <p>&nbsp;</p>
 ]]></description>
@@ -96,6 +96,7 @@ def things = XWorkerUtils.searchRegistThings(registorThing, "child", null, actio
 //转化为用户的配置实例
 def configs = [];
 for(thing in things){
+    println thing.getMetadata().getPath();
     configs.add(XWorkerUtils.getPreference(thing));
 }
 

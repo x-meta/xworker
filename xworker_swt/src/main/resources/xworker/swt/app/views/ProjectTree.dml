@@ -1,4 +1,4 @@
-%1605925102226
+%1609320620224
 @
 sname=shell
 stext=ProjectTree
@@ -153,8 +153,8 @@ sth_mark=false
         Scode=
 #$@text#$@
 import xworker.ide.assistor.Assistor;
-
 import xworker.ide.worldexplorer.actions.ProjectTreeActions;
+import xworker.lang.system.message.MessageCenter;
 
 ProjectTreeActions.setSelectedIndex(projectTree.getSelection()[0].getData());
 
@@ -164,15 +164,17 @@ actions.doAction("expandProjectTreeItem");
 //Assistor.projectTreeSelected(projectTree.getSelection()[0], projectTree.getSelection()[0].getData());
 
 def item = projectTree.getSelection()[0];
-openEditor(actionContext, "params",  
-    ["index": item.getData(), 
+def params = ["index": item.getData(), 
      "treeItem": item,
      "projectTree": item.getParent(), 
-     "projectTreeSelection":projectTreeSelection]);
+     "projectTreeSelection":projectTreeSelection];
+openEditor(actionContext, "params", params);
+MessageCenter.publish("/xworker/ide/projecttree/selection", params, actionContext) ;
 #$@text#$@
         sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdebugLog=false
         sdescriptors=xworker.lang.actions.Actions/@GroovyAction
         sinheritDescription=false
@@ -232,6 +234,7 @@ openEditor(actionContext, "params",
 import org.xmeta.Thing;
 import org.xmeta.ActionContext;
 import xworker.util.XWorkerUtils;
+import xworker.lang.system.message.MessageCenter;
 
 for(item in projectTreeMenu.getItems()){
     item.dispose();
@@ -282,6 +285,7 @@ if(menuObj != null){
 }
 
 projectTreeMenu.setData("menuContext", newContext);
+MessageCenter.publish("/xworker/ide/projecttree/menudetect", newContext, actionContext);
 return newContext;
 #$@text#$@
         sinterpretationType=Action

@@ -68,7 +68,7 @@ public class JdkScript {
 			if(codeFilePath == null){
 				//保存code到文件
 				String fileExt = (String) self.doAction("getFileExt", actionContext);
-				File codeFile = new File(action.fileName.replaceFirst("actionSources", "scripts") + "." + fileExt);
+				File codeFile = new File(action.getFileName().replaceFirst("actionSources", "scripts") + "." + fileExt);
 				codeFilePath = codeFile.getAbsolutePath();
 				if(!codeFile.exists()){
 					codeFile.getParentFile().mkdirs();

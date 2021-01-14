@@ -47,7 +47,9 @@ public class TreeActions {
 			throw new ActionException("Tree.Node: Actor is null, path=" + self.getMetadata().getPath());
 		}	
 		
-		Tree.Node node= new Tree.Node(actor);
+		Tree.Node node= new Tree.Node(actor) {
+			
+		};
 		if(self.getStringBlankAsNull("expanded") != null){
 			node.setExpanded(self.getBoolean("expanded"));
 		}
@@ -62,7 +64,8 @@ public class TreeActions {
 		if(self.getStringBlankAsNull("object") != null){
 			Object object = (Object) actionContext.get("object");
 			if(object != null){
-				node.setObject(object);
+				node.setValue(object);
+				//node.setObject(object);
 			}
 		}
 		

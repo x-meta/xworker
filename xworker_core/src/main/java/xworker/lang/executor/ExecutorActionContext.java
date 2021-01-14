@@ -1,9 +1,8 @@
 package xworker.lang.executor;
 
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
-
-import xworker.lang.context.ContextUtil;
 
 public class ExecutorActionContext {
 	private static final String KEY = "__ExecutorContext_BACKUP_LEVEL__";
@@ -19,13 +18,23 @@ public class ExecutorActionContext {
 		
 		String executorServiceName = self.getStringBlankAsNull("executorService");
 		if(executorServiceName != null) {
-			ExecutorService es = ContextUtil.getActionContext(actionContext).getObject(executorServiceName);
+			ExecutorService es = getActionContext(actionContext).getObject(executorServiceName);
 			if(es != null) {
 				actionContext.put("executorService", es);
 				
 				Executor.push(es);
 			}
 		}
+	}
+	
+	/**
+	 * 当前变量上下文是上下文的变量上下文，获取主变量上下文。
+	 * 
+	 * @param actionContext
+	 * @return
+	 */
+	public static ActionContext getActionContext(ActionContext actionContext){
+		return (ActionContext) actionContext.get(Action.str_acContext);
 	}
 	
 

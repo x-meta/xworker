@@ -1,6 +1,7 @@
 package xworker.swt.custom;
 
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
@@ -10,8 +11,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.annotation.ActionParams;
+import org.xmeta.util.UtilMap;
 
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
@@ -80,17 +85,20 @@ public class TreeCursorEditor extends ItemEditor{
 
 	@Override
 	protected void setItemValue(Item item, int column, Object value) {
+		thing.doAction("setValue", actionContext, "item", item, "column", column, "value", value);
+		/*
 		String text = "";
 		if(value != null) {
 			text = String.valueOf(value);
 		}
 		
-		((TreeItem) item).setText(column, text);
+		((TreeItem) item).setText(column, text);*/
 	}
 
 	@Override
 	protected Object getItemValue(Item item, int column) {
-		return ((TreeItem) item).getText(column);
+		return thing.doAction("getValue", actionContext, "item", item, "column", column);
+		//return ((TreeItem) item).getText(column);
 	}
 
 	@Override
@@ -110,6 +118,85 @@ public class TreeCursorEditor extends ItemEditor{
     	TreeCursorEditor editor = new TreeCursorEditor(table, self, actionContext);
     	actionContext.g().put(self.getMetadata().getName(), editor);
     }
+    
+    @SuppressWarnings("unchecked")
+   	@ActionParams(names="self,item, column")
+	public static Thing getEditorThing(Thing self, TreeItem item, int column, ActionContext actionContext) {
+		Thing defaultEditorThing = null;
+		Thing editorThing = null;
+
+		for (Thing child : (List<Thing>) self.get("ColumnEditor@")) {
+			String childColumn = child.getString("column");
+			if (childColumn == null || childColumn == "") {
+				defaultEditorThing = child;
+			} else if (childColumn.equals(String.valueOf(column))) {
+				editorThing = child;
+				break;
+			}
+		}
+
+		if (editorThing == null && defaultEditorThing != null) {
+			editorThing = defaultEditorThing;
+		}
+
+		if (editorThing.getChilds().size() > 0) {
+			return editorThing.getChilds().get(0);
+		} else {
+			return null;
+		}
+	}
+    
+    @SuppressWarnings("unchecked")
+	public static void setValue(ActionContext actionContext){
+    	Object value = actionContext.get("value");
+		
+		TreeItem item = (TreeItem) actionContext.get("item");
+		if(item == null){
+		    return;
+		}
+		//item.setText(column, String.valueOf(value));
+		    
+		Thing self = (Thing) actionContext.get("self");
+		if("store".equals(self.getString("dataType"))){
+		    //store的有关数据
+		    Map<String, Object> record = (Map<String, Object>) item.getData("_store_record");
+		    List<Thing> columns = (List<Thing>) item.getParent().getData("_columns");
+		    Thing store = (Thing) item.getParent().getData("_store");
+		    int column = (Integer) actionContext.get("column");
+		    Thing columnAttr = columns.get(column);
+		    Object oldValue = null;
+		    if(record != null){
+		    	oldValue = record.get(columnAttr.getString("name"));
+		    	record.put(columnAttr.getString("name"), value);
+		    	
+		    	if(oldValue != record.get(columnAttr.getString("name"))){
+				    //如果数据变动了，把联动的数据清空
+				    clearRelationData(columnAttr, record, columns, new ActionContext());
+				}
+		    }else{
+		    	oldValue = item.getText(column);
+		    }
+		    
+		    //先显示一下数据，否则会在编辑光标上显示空
+		    Action action = World.getInstance().getAction("xworker.app.view.swt.data.events.TableDataStoreListener/@actions/@getColumnDisplayValue");
+		    String displayText = value == null ? "" : value.toString();
+		    if(record != null){
+		    	displayText = (String) action.run(actionContext, UtilMap.toParams(new Object[]{"column", columnAttr, "record", record}));
+		    }
+		    if(displayText != null){
+		        item.setText(column, displayText);
+		    }
+		    
+		    if(record != null){
+		    	store.doAction("update", actionContext, UtilMap.toParams(new Object[]{"record", record}));
+		    }
+		}else{
+		    int column = (Integer) actionContext.get("column");
+		    String displayText = value == null ? "" : value.toString();
+		    item.setText(column, displayText);
+		}		     
+	}
+    
     /*
 	public static Object create(ActionContext actionContext){
     	World world = World.getInstance();
@@ -262,85 +349,9 @@ public class TreeCursorEditor extends ItemEditor{
 		}       
 	}
     
-    @SuppressWarnings("unchecked")
-	@ActionParams(names="cursorThing,cursor,item")
-    public static Thing getEditorThing(Thing cursorThing, TreeCursor cursor, TreeItem item, ActionContext actionContext) {
-    	Thing defaultEditorThing = null;
-		Thing editorThing = null;
-		int column = cursor.getColumn();
-		
-		for(Thing child : (List<Thing>) cursorThing.get("ColumnEditor@")){
-			String childColumn = child.getString("column");
-		    if(childColumn == null || childColumn == ""){
-		        defaultEditorThing = child;
-		    }else if(childColumn.equals(String.valueOf(column))){
-		        editorThing = child;
-		        break;
-		    }
-		}
-		
-		if(editorThing  == null && defaultEditorThing != null){
-		    editorThing = defaultEditorThing;
-		}
-		
-		if(editorThing.getChilds().size() > 0) {
-			return editorThing.getChilds().get(0);
-		}else {
-			return null;
-		}
-    }
+   
 
-    @SuppressWarnings("unchecked")
-	public static void setValue(ActionContext actionContext){
-    	Object value = actionContext.get("value");
-		
-		TreeItem item = (TreeItem) actionContext.get("item");
-		if(item == null){
-		    return;
-		}
-		//item.setText(column, String.valueOf(value));
-		    
-		Thing self = (Thing) actionContext.get("self");
-		if("store".equals(self.getString("dataType"))){
-		    //store的有关数据
-		    Map<String, Object> record = (Map<String, Object>) item.getData("_store_record");
-		    List<Thing> columns = (List<Thing>) item.getParent().getData("_columns");
-		    Thing store = (Thing) item.getParent().getData("_store");
-		    int column = (Integer) actionContext.get("column");
-		    Thing columnAttr = columns.get(column);
-		    Object oldValue = null;
-		    if(record != null){
-		    	oldValue = record.get(columnAttr.getString("name"));
-		    	record.put(columnAttr.getString("name"), value);
-		    	
-		    	if(oldValue != record.get(columnAttr.getString("name"))){
-				    //如果数据变动了，把联动的数据清空
-				    clearRelationData(columnAttr, record, columns, new ActionContext());
-				}
-		    }else{
-		    	oldValue = item.getText(column);
-		    }
-		    
-		    //先显示一下数据，否则会在编辑光标上显示空
-		    Action action = World.getInstance().getAction("xworker.app.view.swt.data.events.TableDataStoreListener/@actions/@getColumnDisplayValue");
-		    String displayText = value == null ? "" : value.toString();
-		    if(record != null){
-		    	displayText = (String) action.run(actionContext, UtilMap.toParams(new Object[]{"column", columnAttr, "record", record}));
-		    }
-		    if(displayText != null){
-		        item.setText(column, displayText);
-		    }
-		    
-		    if(record != null){
-		    	store.doAction("update", actionContext, UtilMap.toParams(new Object[]{"record", record}));
-		    }
-		}else{
-		    int column = (Integer) actionContext.get("column");
-		    String displayText = value == null ? "" : value.toString();
-		    item.setText(column, displayText);
-		}
-		     
-	}
+    
 
     public static void clearRelationData(Thing column, Map<String, Object> record, List<Thing> columns, ActionContext context){
 	    if(context.get(column.getString("name")) != null){

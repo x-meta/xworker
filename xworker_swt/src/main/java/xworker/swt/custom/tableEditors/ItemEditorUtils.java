@@ -149,7 +149,9 @@ public class ItemEditorUtils {
 		actionContext.g().put(DISPOSE_KEY, dispose);
 	}
 	
-	public static  Thing getColumnEditor(Thing itemEditor, int column) {
+	public static  Thing getColumnEditor(Thing itemEditor, Item item, int column, ActionContext actionContext) {
+		return itemEditor.doAction("getEditorThing", actionContext, "item", item, "column", column);
+		/*
 		Thing defaultEditorThing = null;
 		Thing editorThing = null;
 		
@@ -171,6 +173,6 @@ public class ItemEditorUtils {
 			return editorThing.getChilds().get(0);
 		}else {
 			return null;
-		}
+		}*/
 	}
 }

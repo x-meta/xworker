@@ -89,21 +89,21 @@ public class ScalaAction {
 			action.checkChanged();
 		}
 		
-		if(action.actionClass == null || action.changed){
+		if(action.getActionClass() == null || action.isChanged()){
 			//查看代码是否需要重新编译			
 			boolean recompile = false;
-			if(action.changed){
+			if(action.isChanged() || action.isNeedRecompile()){
 				recompile = true;
 			}
-			if(action.actionClass == null){
-				File classFile = new File(action.classFileName);
+			if(action.getActionClass() == null){
+				File classFile = new File(action.getClassFileName());
 				if(!classFile.exists()){
 					recompile = true;
 				}
 			}
 			
 			if(recompile){
-				action.method = null;
+				action.setMethod(null);
 				//重新编译并装载脚本
 				Thing actionThing = action.getThing();
 				
@@ -118,28 +118,28 @@ public class ScalaAction {
 					codeFile = new File(manager.getFilePath(), className.replace('.', '/') + ".scala");
 				}else{
 					//更新代码
-					codeFile = new File(action.fileName + ".scala");
+					codeFile = new File(action.getFileName() + ".scala");
 					if(!codeFile.exists()){
 						codeFile.getParentFile().mkdirs();
 					}
 					
 					FileOutputStream fout = new FileOutputStream(codeFile);
 					try{						
-						String code = action.code;
+						String code = action.getCode();
 						if(actionThing.getBoolean("isScript")){
 							Map<String, Object> contexts = new HashMap<String, Object>();
-							String className_ = action.className;
+							String className_ = action.getClassName();
 							int index = className_.lastIndexOf(".");
 							if(index != -1){
 								className_ = className_.substring(index + 1, className_.length());
 							}
 							contexts.put("className", className_);
-							contexts.put("code", action.code);
+							contexts.put("code", action.getCode());
 							
 							code = UtilTemplate.processString(contexts, codeTemplate);
 						}
 						fout.write(("/*path:" + action.getThing().getMetadata().getPath() + "*/\n").getBytes());
-						fout.write(("package " + action.packageName + ";\n\n").getBytes());
+						fout.write(("package " + action.getPackageName() + ";\n\n").getBytes());
 						fout.write(code.getBytes("utf-8"));
 						
 					}finally{
@@ -164,34 +164,34 @@ public class ScalaAction {
 					throw me;
 				}
 			}
-			action.changed = false;
+			action.setChanged(false);
 		}
 		
-		if(action.actionClass == null){
+		if(action.getActionClass() == null){
 			Thing actionThing = action.getThing();
 			if(actionThing.getBoolean("useInnerScala")){
 				String className = actionThing.getStringBlankAsNull("outerClassName");
 				if(className != null){
-					action.actionClass = action.classLoader.loadClass(className);
+					action.setActionClass(action.getClassLoader().loadClass(className));
 				}
 			}else{
-				action.actionClass = action.classLoader.loadClass(action.className);	
+				action.setActionClass(action.getClassLoader().loadClass(action.getClassName()));	
 			}			
 			
-			java.lang.Compiler.compileClass(action.actionClass);
+			java.lang.Compiler.compileClass(action.getActionClass());
 		}
 				
-		if(action.actionClass  != null){			
-			if(action.method == null){
+		if(action.getActionClass()  != null){			
+			if(action.getMethod() == null){
 				String methodName = action.getThing().getStringBlankAsNull("methodName");
 				if(methodName == null){
 					methodName = "run";
 				}
-				action.method = action.actionClass.getDeclaredMethod(methodName, new Class[]{ActionContext.class});				
+				action.setMethod(action.getActionClass().getDeclaredMethod(methodName, new Class[]{ActionContext.class}));				
 			}
 			
-			if(action.method != null){
-				return action.method.invoke(null, new Object[]{context});
+			if(action.getMethod() != null){
+				return action.getMethod().invoke(null, new Object[]{context});
 			}else{
 				log.warn("Scala action " + action.getThing().getMetadata().getPath() + " method is null");
 			}

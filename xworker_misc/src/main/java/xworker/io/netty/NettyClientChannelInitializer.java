@@ -2,12 +2,12 @@ package xworker.io.netty;
 
 import org.xmeta.Thing;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.socket.SocketChannel;
 
-public class NettyClientChannelInitializer  extends ChannelInitializer<SocketChannel> {
+public class NettyClientChannelInitializer  extends ChannelInitializer<Channel> {
 	NettyClient client;
 
 	public NettyClientChannelInitializer(NettyClient client) {
@@ -15,7 +15,7 @@ public class NettyClientChannelInitializer  extends ChannelInitializer<SocketCha
 	}
 
 	@Override
-	public void initChannel(SocketChannel ch) throws Exception {
+	public void initChannel(Channel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
 		
 		for(Thing handlers : client.getThing().getChilds("Handlers")) {								

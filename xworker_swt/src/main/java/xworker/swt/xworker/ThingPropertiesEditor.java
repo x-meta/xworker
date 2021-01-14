@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeCursor;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.xmeta.ActionContext;
@@ -16,9 +18,14 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionParams;
+import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilString;
 
+import xworker.app.view.swt.data.events.SwtStoreUtils;
+import xworker.swt.custom.TreeCursorEditor;
 import xworker.swt.form.ThingDescriptorForm;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.util.ThingCompositeCreator;
 
 @ActionClass(creator="getInstance")
 public class ThingPropertiesEditor {
@@ -31,14 +38,30 @@ public class ThingPropertiesEditor {
 	Thing editThing;
 	Thing descriptor;
 	Thing attributeEditor = new Thing("xworker.swt.custom.tableEditors.AttributeEditor");
+	TreeCursor cursor;
+	boolean showDescriptor = false;
 	
-	public ThingPropertiesEditor(Thing self, Tree tree, ActionContext actionContext) {
+	public ThingPropertiesEditor(Thing self, Tree tree, TreeCursor cursor, ActionContext actionContext) {
 		this.self = self;
 		this.tree = tree;
 		this.actionContext = actionContext;
+		this.cursor = cursor;
 		
 		editThing = self.doAction("getThing", actionContext);
-		setEditThing(editThing);
+		showDescriptor = UtilData.isTrue(self.doAction("isShowDescriptor", actionContext));
+		if(editThing != null) {
+			setEditThing(editThing);
+		}
+		
+		Thing descriptor = self.doAction("getDescriptor", actionContext);		
+		if(descriptor != null) {
+			if(editThing == null) {
+				editThing = new Thing(descriptor.getMetadata().getPath());
+				setEditThing(editThing);
+			}else {
+				setDescriptor(descriptor);
+			}
+		}
 	}
 	
 	public void setEditThing(Thing editThing) {
@@ -47,9 +70,12 @@ public class ThingPropertiesEditor {
 		tree.removeAll();
 		
 		//第一个节点是描述者选择节点
-		TreeItem item = new TreeItem(tree, SWT.NONE);
-		item.setText(UtilString.getString("lang:d=描述者&en=Descriptors", actionContext));
-		item.setBackground(0, tree.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		TreeItem item = null;
+		if(showDescriptor) {
+			item = new TreeItem(tree, SWT.NONE);
+			item.setText(UtilString.getString("lang:d=描述者&en=Descriptors", actionContext));
+			item.setBackground(0, tree.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));			
+		}
 		
 		//描述者的编辑属性事物
 		Thing descAttr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
@@ -60,7 +86,9 @@ public class ThingPropertiesEditor {
 			value.set("value", desc.getMetadata().getPath());
 			descAttr.addChild(value);
 		}
-		item.setData(descAttr);
+		if(item != null) {
+			item.setData(descAttr);
+		}
 		
 		setDescriptor(editThing.getDescriptor());
 	}
@@ -68,7 +96,9 @@ public class ThingPropertiesEditor {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setDescriptor(Thing descriptor) {
 		this.descriptor = descriptor;
-		tree.getItem(0).setText(1, descriptor.getMetadata().getLabel());
+		if(showDescriptor) {
+			tree.getItem(0).setText(1, descriptor.getMetadata().getLabel());
+		}
 		
 		//取消属性的Item
 		TreeItem items[] = tree.getItems();
@@ -172,10 +202,21 @@ public class ThingPropertiesEditor {
 				createItems( (List<Thing>) groups.get(i).get("childs"), groupItem);
 				groupItem.setExpanded(true);
 			}			
+			if(tree.getItemCount() > 0) {
+				TreeItem group1Item = tree.getItem(0);
+				if(showDescriptor) {
+					cursor.setSelection(group1Item, 1);
+				}else {
+					cursor.setSelection(group1Item.getItem(0), 1);
+				}
+				tree.showItem(tree.getItem(0));
+			}
 		}else {
 			//没有分组，直接创建到树下面
 			createItems(rootList, tree);
-		}		
+			cursor.setSelection(tree.getItem(0), 1);
+		}						
+		
 	}
 	
 	private void createItems(List<Thing> attributes, Tree parent) {
@@ -193,7 +234,7 @@ public class ThingPropertiesEditor {
 	}
 	
 	private void initItem(Thing attribute, TreeItem item) {
-		item.setBackground(0, tree.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+		//item.setBackground(0, tree.getDisplay().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
 		item.setData(attribute);
 		String name = attribute.getMetadata().getName();
 		String label = attribute.getMetadata().getLabel();
@@ -201,13 +242,13 @@ public class ThingPropertiesEditor {
 		if(value == null) {
 			item.setText(new String[] {label, ""});
 		}else {
-			item.setText(new String[] {label, value});
+			item.setText(new String[] {label, SwtStoreUtils.getDisplayText(editThing, value, attribute, actionContext)});
 		}
 	}
 	
-	@ActionParams(names="cursor,item")
-	public Object getEditorThing(TreeCursor cursor,TreeItem item, ActionContext actionContext) {
-		if(cursor.getColumn() == 1) {
+	@ActionParams(names="item, column")
+	public Object getEditorThing(TreeItem item, int column, ActionContext actionContext) {
+		if(column == 1) {
 			Thing attribute = (Thing) item.getData();
 			if(attribute != null) {
 				attributeEditor.set("attributeThing", attribute.getMetadata().getPath());
@@ -220,7 +261,7 @@ public class ThingPropertiesEditor {
 	
 	@ActionParams(names="item,column,value")
 	public void setValue(TreeItem item, int column, Object value) {
-		if(item == tree.getItem(0)) {
+		if(showDescriptor && item == tree.getItem(0)) {
 			//根节点是描述者的节点，设置新的描述者
 			Thing desc = World.getInstance().getThing(String.valueOf(value));
 			if(desc != null) {
@@ -233,11 +274,11 @@ public class ThingPropertiesEditor {
 			if(attribute != null) {
 				String name = attribute.getMetadata().getName();
 				editThing.set(name, value);
-				String v = editThing.getStringBlankAsNull(name);
+				Object v = editThing.get(name);
 				if(v == null) {
 					item.setText(1, "");
 				}else {
-					item.setText(1, v);
+					item.setText(1, SwtStoreUtils.getDisplayText(attribute, v, attribute, actionContext));
 				}
 				
 				self.doAction("valueChanged", actionContext);
@@ -296,19 +337,38 @@ public class ThingPropertiesEditor {
 	public static Object create(ActionContext actionContext) {
 		World world = World.getInstance();
 		Thing self = actionContext.getObject("self");
-		
+
+		ThingCompositeCreator cc = SwtUtils.createCompositeCreator(self, actionContext);
+		cc.setCompositeThing(world.getThing("xworker.swt.xworker.prototype.ThingPropertyEditorShell/@tree"));
+		Tree tree = cc.create();
+		/*
 		//创建控件
-		Thing treeThing = world.getThing("xworker.swt.xworker.prototype.ThingPropertyEditorShell/@tree");
+		Thing treeThing = ;
 		Tree tree = treeThing.doAction("create", actionContext);
 		
 		//创建子节点
 		actionContext.peek().put("parent", tree);
 		for(Thing child : self.getChilds()) {
 			child.doAction("create", actionContext);
-		}
+		}*/
 		
-		ThingPropertiesEditor editor = new ThingPropertiesEditor(self, tree, actionContext);
+		TreeCursorEditor cursorEditor = cc.getNewActionContext().getObject("treeCursorEditor");
+		TreeCursor cursor = (TreeCursor) cursorEditor.getCursor();
+		cursor.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+				TreeCursor cursor = (TreeCursor) event.widget;
+				if(cursor.getColumn() == 0) {
+					cursor.setSelection(cursor.getRow(), 1);
+				}
+				//System.out.println("tree curosr selection " + event.widget);
+			}			
+		});
+		
+		ThingPropertiesEditor editor = new ThingPropertiesEditor(self, tree, cursor, actionContext);
 		tree.setData(EDITOR, editor);
+		editor.cursor = cursor;
 		actionContext.g().put(self.getMetadata().getName(), editor);
 		
 		return tree;

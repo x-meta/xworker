@@ -2,137 +2,108 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.xworker</groupId>
   <artifactId>xworker_misc</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${xworker.misc.version}</version>
   <packaging>jar</packaging>
 
   <name>xworker_misc</name>
-  <url>http://maven.apache.org</url>
-  <developers>
-    <developer>
-      <name>magic_seek</name>
-      <email>zhangyuxiang@tom.com</email>
-      <organization>xworker</organization>
-      <organizationUrl>http://www.xworker.org</organizationUrl>
-    </developer>
-  </developers>
+  <url>https://www.xworker.org</url>
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/java</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-      <resource>
-        <directory>src/main/resources</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </resource>
-    </resources>
-    <testResources>
-      <testResource>
-        <directory>src/test/java</directory>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-    </testResources>
-    <plugins>
-	    <plugin>
-	      <groupId>org.sonatype.plugins</groupId>
-	      <artifactId>nexus-staging-maven-plugin</artifactId>
-	      <version>1.6.3</version>
-	      <extensions>true</extensions>
-	      <configuration>
-	        <serverId>ossrh</serverId>
-	        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-	        <autoReleaseAfterClose>true</autoReleaseAfterClose>
-	      </configuration>
-	    </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>UTF-8</encoding>
-          <compilerArguments>
-               <extdirs>lib</extdirs>
-          </compilerArguments>
-        </configuration>
-      </plugin>
-      <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-source-plugin</artifactId>
-      <version>2.2.1</version>
-      <executions>
-        <execution>
-          <id>attach-sources</id>
-          <goals>
-            <goal>jar-no-fork</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>  
-          <encoding>UTF-8</encoding>
-      </configuration>  
-    </plugin>
-    <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-javadoc-plugin</artifactId>
-      <version>3.2.0</version>
-      <executions>
-        <execution>
-          <id>attach-javadocs</id>
-          <goals>
-            <goal>jar</goal>
-          </goals>
-        </execution>
-      </executions>
-      <configuration>  
-            <encoding>UTF-8</encoding>
-            <doclint>none</doclint>
-            <additionalJOption> -source 1.8</additionalJOption>
-            <includeSystemScope>true</includeSystemScope>
-            <includeProvidedScope>true</includeProvidedScope>
-            <additionalparam>-Xdoclint:none</additionalparam>
-            <failOnError>false</failOnError>
-      </configuration> 
-    </plugin>
-     <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-gpg-plugin</artifactId>
-      <version>1.5</version>
-      <executions>
-        <execution>
-          <id>sign-artifacts</id>
-          <phase>verify</phase>
-          <goals>
-            <goal>sign</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-    </plugins>
-  </build>
-    <distributionManagement>
-  <snapshotRepository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  </snapshotRepository>
-  <repository>
-    <id>ossrh</id>
-    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-  </repository>
-</distributionManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.5.2</version>
+				<executions>
+					<execution>
+						<id>install-external1</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/lib/org.eclipse.draw2d_3.6.1.v20100913-2020.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.eclipse</groupId>
+							<artifactId>draw2d</artifactId>
+							<version>3.6.1</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install-external2</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/lib/org.eclipse.zest.core_1.2.0.v20100525-1225.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.eclipse</groupId>
+							<artifactId>zest-core</artifactId>
+							<version>3.6.1</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install-external3</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/lib/org.eclipse.zest.layouts_1.1.0.v20100616-1515.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.eclipse</groupId>
+							<artifactId>zest-layouts</artifactId>
+							<version>3.6.1</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install-external4</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/lib/org.akrogen.tkui.css.core-1.0.0_080822.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.akrogen</groupId>
+							<artifactId>tkui-css-core</artifactId>
+							<version>1.0.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>install-external5</id>
+						<phase>clean</phase>
+						<configuration>
+							<file>${basedir}/lib/org.akrogen.tkui.css.swt-1.0.0_080822.jar</file>
+							<repositoryLayout>default</repositoryLayout>
+							<groupId>org.akrogen</groupId>
+							<artifactId>tkui-css-swt</artifactId>
+							<version>1.0.0</version>
+							<packaging>jar</packaging>
+							<generatePom>true</generatePom>
+						</configuration>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+					</execution>	
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
     <dependencies>
     	<dependency>
     		<groupId>org.xworker</groupId>
     		<artifactId>xworker_swt</artifactId>
-    		<version>1.4.3-SNAPSHOT</version>
+    		<version>${xworker.swt.version}</version>
     		<scope>provided</scope>
     	</dependency>	      	
     	<dependency>
@@ -224,67 +195,54 @@
 		    <artifactId>protobuf-java-format</artifactId>
 		    <version>1.4</version>
 		    <scope>provided</scope>
-		</dependency><dependency>
-	  		<groupId>com.google.protobuf</groupId>
-	  		<artifactId>protobuf-java</artifactId>
-	  		<version>3.11.4</version>
-	  		<scope>provided</scope>
-	  	</dependency>
+		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.8.3</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>swt</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>4.7</version>
-            <systemPath>${basedir}/lib/swt.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>draw2d</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>3.6.1</version>
-            <systemPath>${basedir}/lib/org.eclipse.draw2d_3.6.1.v20100913-2020.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>zest-core</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>3.6.1</version>
-            <systemPath>${basedir}/lib/org.eclipse.zest.core_1.2.0.v20100525-1225.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.eclipse</groupId>
             <artifactId>zest-layouts</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>3.6.1</version>
-            <systemPath>${basedir}/lib/org.eclipse.zest.layouts_1.1.0.v20100616-1515.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.akrogen</groupId>
             <artifactId>tkui-css-core</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>1.0.0</version>
-            <systemPath>${basedir}/lib/org.akrogen.tkui.css.core-1.0.0_080822.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.akrogen</groupId>
             <artifactId>tkui-css-swt</artifactId>
-            <scope>system</scope>
+            <scope>provided</scope>
             <version>1.0.0</version>
-            <systemPath>${basedir}/lib/org.akrogen.tkui.css.swt-1.0.0_080822.jar</systemPath>
         </dependency>
     </dependencies>
-    <organization>
-    	<name>xworker</name>
-    	<url>http://www.xworker.org</url>
-    </organization>
-    <properties>
-	  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	  	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	  	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-	  	<argLine>-Dfile.encoding=UTF-8</argLine>
-	  </properties>
-    <scm>
-    	<url>http://www.xworker.org</url>
-    	<developerConnection>zhangyuxiang</developerConnection>
-    </scm>
+
+    <parent>
+		<groupId>org.xworker</groupId>
+		<artifactId>xworker_parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>  
 </project>

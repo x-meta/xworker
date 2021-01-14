@@ -5,6 +5,7 @@ import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 
 import xworker.swt.util.DelayExecutor;
+import xworker.swt.util.SwtUtils;
 
 public class TextLogViewer extends DelayExecutor implements LogViewer{
 	Text text;
@@ -61,7 +62,9 @@ public class TextLogViewer extends DelayExecutor implements LogViewer{
 		if(TextLogViewer.this.autoScroll) {
 			//滚动到末尾
 			text.setSelection(text.getCharCount(), text.getCharCount());
-			text.showSelection();
+			if(!SwtUtils.isRWT()) {
+				text.showSelection();
+			}
 		}
 	}
 	

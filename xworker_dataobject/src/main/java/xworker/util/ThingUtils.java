@@ -70,6 +70,27 @@ public class ThingUtils {
 	private static ThreadLocal<List<String>> searchRegistLocal = new ThreadLocal<List<String>>();
 	
 
+	private static ThreadLocal<Boolean> disableRegistMyChilds = new ThreadLocal<Boolean>();
+	
+	/**
+	 * try{disableRegistMyChilds()} finally {enableRegistMyChilds()};
+	 */
+	public static void disableRegistMyChilds() {
+		disableRegistMyChilds.set(true);
+	}
+	
+	public static void enableRegistMyChilds() {
+		disableRegistMyChilds.remove();
+	}
+	
+	public static boolean isDisableRegistMyChilds() {
+		Boolean b = disableRegistMyChilds.get();
+		if(b != null) {
+			return b;
+		}else {
+			return false;
+		}
+	}
 	
 	/**
 	 * 移除一个事物的actions子节点。
@@ -278,7 +299,7 @@ public class ThingUtils {
 					thingContext.put(thpath, th);
 				}
 				
-				if(th.getBoolean("th_registMyChilds")){
+				if(!isDisableRegistMyChilds() && th.getBoolean("th_registMyChilds")){
 					addThingsToRegistList(th.getChilds(), thingContext, thingList);					
 				}else{
 					thingList.add(th);
@@ -447,7 +468,7 @@ public class ThingUtils {
 				}
 				
 				//是否注册是子事物，即把自己注册到某一个事物，其实是要注册自己的所有子事物到被注册的事物下
-				if(thing.getBoolean("th_registMyChilds")){
+				if(!isDisableRegistMyChilds() && thing.getBoolean("th_registMyChilds")){
 					addThingsToRegistList(thing.getChilds(), context, thingList);					
 				}else{
 					String th_registActionChilds = thing.getStringBlankAsNull("th_registActionChilds");

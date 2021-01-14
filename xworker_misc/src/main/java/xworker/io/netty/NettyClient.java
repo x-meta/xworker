@@ -1,6 +1,7 @@
 package xworker.io.netty;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -13,6 +14,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import xworker.lang.executor.Executor;
+import xworker.task.Task;
+import xworker.task.TaskManager;
 
 public class NettyClient {
 	private static final String TAG = NettyClient.class.getName();
@@ -22,10 +25,13 @@ public class NettyClient {
 	private ChannelFuture channelFuture;
 	String host;
 	int port;
+	int waitReconnectTime = 10;
+	Task task = null;
 
 	public NettyClient(Thing thing, ActionContext parentContext) {
 		this.thing = thing;
 		actionContext = new ActionContext();
+		actionContext.put("nettyClient", this);
 		Map<String, Object> variables = thing.doAction("getVariables", parentContext);
 		if(variables != null) {
 			actionContext.putAll(variables);
@@ -34,9 +40,9 @@ public class NettyClient {
 		actionContext.put("parentContext", parentContext);
 		
 		host = thing.doAction("getHost", actionContext);
-		port = thing.doAction("getPort", actionContext);				
+		port = thing.doAction("getPort", actionContext);
 	}
-
+	
 	public void connect() {
 		if (isConnected()) {
 			return;
@@ -96,6 +102,18 @@ public class NettyClient {
 			
 			thing.doAction("startFailure", actionContext, "nettyClient", NettyClient.this, "cause", e);
 		}
+		
+		if(UtilData.isTrue(thing.doAction("isAutoReconnect", actionContext.getObject("parentContext")))) {
+			if(task == null) {
+				Thing taskThing = new Thing();
+				taskThing.putAll(thing.getAttributes());
+				taskThing.set("extends", thing.getMetadata().getPath());
+				taskThing.set("inheritDescription", "true");
+				taskThing.set("group", "io.netty");
+				task = new Task(taskThing,  actionContext, true);
+				TaskManager.scheduleWithFixedDelay(task, 5, 1, TimeUnit.SECONDS);
+			}
+		}
 	}
 
 	public boolean isConnected() {
@@ -142,6 +160,11 @@ public class NettyClient {
 		if (!isClosed()) {
 			channelFuture.channel().close();
 		}
+		
+		if(task != null) {
+			task.cancel(true);
+			task = null;
+		}
 	}
 	
 	public void sendMessage(Object message, boolean flush){
@@ -162,23 +185,39 @@ public class NettyClient {
 			channelFuture.channel().flush();
 		}
 	}
+	
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public int getWaitReconnectTime() {
+		return waitReconnectTime;
+	}
 
 	public static void startSuccess(ActionContext actionContext) {
 		NettyClient client = actionContext.getObject("nettyClient");
-		Executor.info(TAG, "Netty client({}) started at {}.", client.getThing().getMetadata().getPath(),
-				client.getPort());
+		Executor.info(TAG, "Netty client({}) has connected to  {} : {}.", client.getThing().getMetadata().getPath(),				
+				client.host, client.getPort());
 	}
 
 	public static void startFailure(ActionContext actionContext) {
 		NettyClient client = actionContext.getObject("nettyClient");
 		Throwable cause = actionContext.getObject("cause");
-		Executor.warn(TAG, "Netty client(" + client.getThing().getMetadata().getPath() + ") started failure", cause);
+		Executor.warn(TAG, "Netty client(" + client.getThing().getMetadata().getPath() + ") connect failure", cause);
 
 	}
 
 	public static void startCancelled(ActionContext actionContext) {
 		NettyClient client = actionContext.getObject("nettyClient");
-		Executor.info(TAG, "Netty client({}) start cancelled.", client.getThing().getMetadata().getPath());
+		Executor.info(TAG, "Netty client({}) connect cancelled.", client.getThing().getMetadata().getPath());
 	}
 
 	public static void closed(ActionContext actionContext) {
@@ -186,6 +225,11 @@ public class NettyClient {
 		Executor.info(TAG, "Netty client({}) is closed.", client.getThing().getMetadata().getPath());
 	}
 
+	public static void onReconnect(ActionContext actionContext) {
+		NettyClient client = actionContext.getObject("nettyClient");
+		Executor.info(TAG, "Netty client({}) is reconnect, waitReconnectTime=" + client.getWaitReconnectTime(), client.getThing().getMetadata().getPath());
+	}
+	
 	public static NettyClient create(ActionContext actionContext) {
 		String key = "nettyClient";
 		Thing self = actionContext.getObject("self");
@@ -239,4 +283,25 @@ public class NettyClient {
 		return client;
 	}
 
+	public static void doTask(ActionContext actionContext) {
+		NettyClient client = actionContext.getObject("nettyClient");
+		try {		
+			if(client.isClosed()) {
+				if(client.waitReconnectTime <= 0){
+					client.waitReconnectTime = 10;
+					client.connect();
+				}
+				
+				if(client.waitReconnectTime > 0) {
+					client.waitReconnectTime --;
+				}
+				
+				if(client.isClosed() == true) {
+					client.getThing().doAction("onReconnect", actionContext);
+				}
+			}
+		}catch(Exception e) {
+			Executor.warn(TAG, "Reconnect netty client error, path=" + client.getThing().getMetadata().getPath(), e);
+		}
+	}
 }

@@ -1,4 +1,4 @@
-^1582186283182
+^1606371862210
 @
 sname
 ThingEditorCommandDomain
@@ -574,10 +574,14 @@ return contents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
 import org.xmeta.Thing;
+import xworker.lang.executor.Executor;
+
+def TAG = "xworker.ide.worldexplorer.swt.command.ThingEditorCommandDomain.p_1923577763.run";
 
 //检查事物是否已经变更
 def checkedThing = actions.doAction("checkThing", ["thing":currentThing]);
 if(checkedThing == null || checkedThing instanceof String){
+    Executor.info(TAG, "CheckThing failure");
     return;
 }
 currentThing = checkedThing;
@@ -586,6 +590,7 @@ currentThing = checkedThing;
 //def selectIndex = childList.getSelectionIndex();
 def childStructure = descriptor;
 if(childStructure == null){
+    Executor.info(TAG, "descriptor is null");
     return;
 }
 
@@ -599,6 +604,7 @@ childObj.set("descriptors", childStructure.metadata.path);
 def treeItem = innerOutline.getSelection()[0];
 currentThing.addChild(childObj);
 currentThing.save();
+//actions.doAction("save", actionContext);
 actionContext.getScope(0).put("rootLastModified", currentThing.getRoot().getMetadata().getLastModified());
 currentThing = world.getThing(currentThing.metadata.path);
 childObj = currentThing.childs.get(currentThing.childs.size() - 1);
@@ -607,6 +613,10 @@ TreeItem newItem = new TreeItem(treeItem, SWT.NONE);
 actions.doAction("initOutlineTreeItem", actionContext, ["treeItem": newItem, "thing": childObj]);
 //currentAddModel.doAction("setValue", currentAddModelContext);
 
+def thingEntry = actionContext.get("thingEntry");
+if(thingEntry != null){
+    thingEntry.getThing();
+}
 treeItem.setExpanded(true);
 #$@text#$@
       sinterpretationType
@@ -614,6 +624,8 @@ treeItem.setExpanded(true);
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false

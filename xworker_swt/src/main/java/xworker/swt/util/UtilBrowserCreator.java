@@ -34,6 +34,7 @@ import org.xmeta.util.UtilMap;
 import ognl.OgnlException;
 import xworker.lang.actions.ActionContainer;
 import xworker.swt.design.Designer;
+import xworker.util.XWorkerUtils;
 
 public class UtilBrowserCreator {
 	private static Logger log = LoggerFactory.getLogger(UtilBrowserCreator.class);
@@ -177,7 +178,9 @@ public class UtilBrowserCreator {
 	}
 
     public static void webControl(ActionContext actionContext){
+    	/*
     	World world = World.getInstance();
+    	
     	
 		Thing globalCfg = world.getThing("_local.xworker.config.GlobalConfig");
 		String httpServer = null;
@@ -187,8 +190,8 @@ public class UtilBrowserCreator {
 		
 		if(httpServer == null || httpServer.equals("")){
 		   httpServer = "http://localhost:9001/";
-		}
-		String url = httpServer + "do?sc=" + actionContext.get("path");
+		}*/
+		String url = XWorkerUtils.getWebUrl() + "do?sc=" + actionContext.get("path");
 		
 		//log.info("dfdfdfd");
 		ActionContainer explorerActions = Designer.getExplorerActions();

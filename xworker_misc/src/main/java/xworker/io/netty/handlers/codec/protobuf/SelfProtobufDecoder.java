@@ -72,7 +72,7 @@ public class SelfProtobufDecoder extends MessageToMessageDecoder<ByteBuf> {
     
     public static SelfProtobufDecoder create(ActionContext actionContext) throws NoSuchMethodException, SecurityException {
     	Thing self = actionContext.getObject("self");
-    	Class<?>[] classes = self.doAction("getMessageClasses", actionContext);
+    	//Class<?>[] classes = self.doAction("getMessageClasses", actionContext);
     	
     	SelfProtobufDecoder decoder = new SelfProtobufDecoder(self, actionContext);
     

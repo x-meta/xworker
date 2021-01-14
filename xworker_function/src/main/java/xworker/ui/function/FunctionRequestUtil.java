@@ -235,7 +235,8 @@ public class FunctionRequestUtil {
 	 * 使用新的函数实例替代当前正在实行的函数，采用调用函数实例的方法。
 	 * 
 	 * @param functionRequest
-	 * @param newFunctionThing
+	 * @param functionInstance
+	 * @param actionContext
 	 */
 	public static void replaceFunctionRequestWithIntance(FunctionRequest functionRequest, Thing functionInstance, ActionContext actionContext){
 		Thing valueThing = new Thing("xworker.ui.function.common.CallFunction");            
@@ -252,7 +253,8 @@ public class FunctionRequestUtil {
 	 * 使用新的函数原型替代当前正在实行的函数。
 	 * 
 	 * @param functionRequest
-	 * @param newFunctionThing
+	 * @param functionPrototype
+	 * @param actionContext
 	 */
 	public static void replaceFunctionRequestWithPrototype(FunctionRequest functionRequest, Thing functionPrototype, ActionContext actionContext){
 		Thing valueThing = new Thing(functionPrototype.getMetadata().getPath());

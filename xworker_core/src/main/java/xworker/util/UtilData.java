@@ -40,8 +40,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -53,6 +51,7 @@ import org.xmeta.util.UtilMap;
 import freemarker.template.TemplateException;
 import ognl.OgnlException;
 import xworker.lang.Configuration;
+import xworker.lang.executor.Executor;
 
 /**
  * 和数据相关的一些类。
@@ -61,7 +60,8 @@ import xworker.lang.Configuration;
  *
  */
 public class UtilData {
-	private static Logger log = LoggerFactory.getLogger(UtilData.class);	
+	//private static Logger log = LoggerFactory.getLogger(UtilData.class);
+	private static final String TAG = UtilData.class.getName();
 	
 	/** 一般作为范围查询的数据类型 */
 	public static String[] scopeTypes = new String[]{"integer", "long", "short", "float", "double", "byte", "date", "time", "timestamp"};
@@ -256,7 +256,7 @@ public class UtilData {
 					value = OgnlUtil.getValue(name, actionContext);
 				}
 			}catch(Exception e){
-				log.warn("get params value error", e);
+				Executor.warn(TAG, "get params value error", e);
 			}
 			params.put(target, value);
 		}
@@ -371,7 +371,7 @@ public class UtilData {
 			
 			return null;
 		}catch(Exception e){
-			log.warn("convert value", e);
+			Executor.warn(TAG, "convert value", e);
 			//e.printStackTrace();
 			return null;
 		}

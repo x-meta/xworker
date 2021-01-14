@@ -310,8 +310,6 @@ public class DataObject extends HashMap<String, Object> {
 	
 	/**
 	 * 一般为可以展示并可以选择数据对象列表的界面使用。
-	 * 
-	 * @return
 	 */
 	public void setChecked(boolean checked) {
 		this.set(DataObject.CHECKED_ATTRIBUTE_NAME, checked);
@@ -634,6 +632,7 @@ public class DataObject extends HashMap<String, Object> {
 		try {
 			Bindings bindings = actionContext.push(null);
 			//查询条件的变量
+			bindings.put("theData", this);
 			bindings.put("condition", condition);
 			bindings.put("conditionConfig", condition);
 			//查询条件对应的值

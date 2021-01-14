@@ -15,6 +15,9 @@
 ******************************************************************************/
 package xworker.lang.actions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
@@ -38,21 +41,28 @@ public class ActionMenuCreator {
         ActionContext explorerContext = (ActionContext) actionContext.get("explorerContext");
         Thing currentThing = (Thing) actionContext.get("currentThing");
         
-        Thing shellThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.TextDialog/@shell");
+        Thing shellThing = world.getThing("xworker.ide.worldexplorer.swt.dialogs.ActionInfoDialog");
         ActionContext ac = new ActionContext();
         Action action = world.getAction(currentThing);
         ac.put("parent", explorerContext.get("shell"));
-        ac.put("title", "动作代码和类路径");
-        ac.put("text", "代码路径：" + action.fileName + "\n类路径：" + action.classFileName + "\n类：" + action.className);
+        //ac.put("title", "动作代码和类路径");
+        ac.put("text", "代码路径：" + action.getFileName() + "\n类路径：" + action.getClassFileName() + "\n类：" + action.getClassName());
         
         shellThing.doAction("run", ac);
+        Map<String, Object> values = new HashMap<String, Object>();
+        values.put("codePath", action.getFileName());
+        values.put("classPath", action.getClassFileName());
+        values.put("className", action.getClassName());
+        
+        Thing thingForm = ac.getObject("thingForm");
+        thingForm.doAction("setValues", actionContext, "values", values);
     }
 
     public static void setActionChanged(ActionContext actionContext){
         Thing currentThing = (Thing) actionContext.get("currentThing");
         
         Action action = currentThing.getAction();
-        action.changed = true;
+        action.setChanged(true);
         
         log.info("action " + currentThing.getMetadata().getPath() + " has seted to changed");
     }
