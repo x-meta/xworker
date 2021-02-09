@@ -10,14 +10,13 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
@@ -28,6 +27,7 @@ import org.xmeta.ActionContext;
 
 import xworker.swt.design.Designer;
 import xworker.swt.util.ResourceManager;
+import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
 
 /**
@@ -51,6 +51,11 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 	ActionContext ac = new ActionContext();
 	long lastTime = 0;
 	boolean exited = false;
+	Region region = null;
+	//把字符串分行
+	List<String> lines = new ArrayList<String>();
+	int shellWidth = 0;
+	int shellHeight = 0;
 	
 	public Subtitle(String texts, String fontStr, String colorStr, int lineSpacing, boolean refresh){
 		for(String t : texts.split("[\n]")){
@@ -94,7 +99,9 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 	public void initShell(){
 		if(shell != null && shell.isDisposed() == false){
 			//shell.dispose();
-			canvas.dispose();
+			//if(canvas != null ) {
+			//	canvas.dispose();
+			//}
 			//shell.setAlpha(0);
 			/*
 			Point size = canvas.getSize();
@@ -108,13 +115,13 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 			cgc.dispose();
 			newImage.dispose();
 			*/
-			shell.setVisible(false);
+			//shell.setVisible(false);
 			
-			shell.update();
+			//shell.update();
 			
 		}else{
 		
-			shell = new Shell((Shell) XWorkerUtils.getIDEShell(), SWT.NO_BACKGROUND | SWT.NO_TRIM 
+			shell = new Shell((Shell) XWorkerUtils.getIDEShell(), SWT.NO_TRIM 
 					| SWT.NO_FOCUS | SWT.TOP | SWT.TOOL);
 			shell.setLayout(new FillLayout());
 			shell.addDisposeListener(this);
@@ -127,17 +134,108 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 				color = ResourceManager.createColor(shell, colorStr, ac);
 			}
 			
-			
+			canvas = new Canvas(shell, SWT.NO_BACKGROUND);
+			canvas.addPaintListener(this);
 		}
 				
-		canvas = new Canvas(shell, SWT.NO_BACKGROUND);
-		canvas.addPaintListener(this);
-		shell.setAlpha(255);
-		shell.layout();
+		shell.setVisible(false);
+		//shell.setAlpha(255);
+		//shell.layout();
 		//canvas.redraw();
 		
-		shell.setVisible(true);
+		//shell.setVisible(true);
 		//XWorkerUtils.getIDEShell().setFocus();
+		
+		//long start = System.currentTimeMillis();
+		String text = null;
+		if(index < texts.size()){
+			text = texts.get(index).text;
+		}
+		if(text == null){
+			return;
+		}
+		
+		
+		if(color != null){
+			shell.setBackground(color);
+		}
+
+		GC gc = new GC(shell.getDisplay());
+		if(font != null) {
+			gc.setFont(font);
+		}
+		//把字符串分行
+		lines.clear();
+		shellWidth = 0;
+		shellHeight = 0;		
+		String t = text.replaceAll("\\\\n", "\n");
+		for(String l : t.split("[\\n]")){
+			l = l.trim();
+			if(l.equals("")){
+				continue;
+			}else{		
+				
+				while(true){
+					int index = l.length();
+					while(gc.textExtent(l.substring(0, index)).x > 800){
+						index--;
+					}
+					if(l.lastIndexOf(" ", index) > 0 && index < l.length()){
+						index = l.lastIndexOf(" ", index);
+					}
+	
+					String ltr = l.substring(0, index);
+					Point textSize = gc.textExtent(ltr);
+					lines.add(ltr);
+					if(shellWidth < textSize.x){
+						shellWidth = textSize.x;
+					}
+					shellHeight = shellHeight + textSize.y + lineSpacing;
+					if(index == l.length()){
+						break;
+					}else{
+						l = l.substring(index, l.length());
+					}
+				}
+			}
+		}
+		
+		shell.setSize(shellWidth + 50, shellHeight + 50);
+		shell.setRegion(null);
+		if(region != null) {
+			region.dispose();			
+		}
+		region = new Region();
+		Shell explorerShell = (Shell) XWorkerUtils.getIDEShell();
+		Rectangle explorerRec = explorerShell.getClientArea();
+		Point explorerLoc = explorerShell.getLocation();
+		int shellLocX = explorerLoc.x  + (explorerRec.width - shellWidth) / 2;
+		int shellLocY = explorerLoc.y + (explorerRec.height - shellHeight) / 2;
+		shell.setLocation(shellLocX, shellLocY + (int) (explorerRec.height * 0.45));
+		
+		
+		int top = 0;
+		for(String l : lines){
+			Point textSize = gc.textExtent(l);
+			int left = (shellWidth - textSize.x) / 2;
+			Path path = new Path(gc.getDevice());
+			path.addString(l, left, top, gc.getFont());
+
+	        SwtUtils.addPathToRegion(region, path);
+	        //gc.setForeground(black);
+	        //
+	        //gc.setForeground(color);
+            path.dispose();  
+			//gc.drawText(l, left, top, true);
+			
+			top = top + lineSpacing + textSize.y;
+		}
+		shell.setRegion(region);
+		gc.dispose();
+		
+		canvas.redraw();				
+		shell.setVisible(true);
+		//System.out.println("Total time : " + (System.currentTimeMillis() - start));
 	}
 	
 	public void exit(){
@@ -149,6 +247,9 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 				if(!shell.isDisposed()){
 					shell.setVisible(false);
 					shell.dispose();
+					if(region != null) {
+						region.dispose();
+					}
 				}
 			}
 		});
@@ -184,15 +285,6 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 	
 	@Override
 	public void paintControl(PaintEvent e) {
-		String text = null;
-		if(index < texts.size()){
-			text = texts.get(index).text;
-		}
-		if(text == null){
-			return;
-		}
-		
-		
 		GC gc = e.gc;
 		if(font != null){
 			gc.setFont(font);
@@ -202,64 +294,7 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 			gc.setForeground(color);
 		}
 
-		//把字符串分行
-		List<String> lines = new ArrayList<String>();
-		int shellWidth = 0;
-		int shellHeight = 0;		
-		String t = text.replaceAll("\\\\n", "\n");
-		for(String l : t.split("[\\n]")){
-			l = l.trim();
-			if(l.equals("")){
-				continue;
-			}else{		
-				
-				while(true){
-					int index = l.length();
-					while(gc.textExtent(l.substring(0, index)).x > 800){
-						index--;
-					}
-					if(l.lastIndexOf(" ", index) > 0 && index < l.length()){
-						index = l.lastIndexOf(" ", index);
-					}
-	
-					String ltr = l.substring(0, index);
-					Point textSize = gc.textExtent(ltr);
-					lines.add(ltr);
-					if(shellWidth < textSize.x){
-						shellWidth = textSize.x;
-					}
-					shellHeight = shellHeight + textSize.y + lineSpacing;
-					if(index == l.length()){
-						break;
-					}else{
-						l = l.substring(index, l.length());
-					}
-				}
-			}
-		}
-		
-		shell.setSize(shellWidth + 50, shellHeight + 50);
-		Shell explorerShell = (Shell) XWorkerUtils.getIDEShell();
-		Rectangle explorerRec = explorerShell.getClientArea();
-		Point explorerLoc = explorerShell.getLocation();
-		int shellLocX = explorerLoc.x  + (explorerRec.width - shellWidth) / 2;
-		int shellLocY = explorerLoc.y + (explorerRec.height - shellHeight) / 2;
-		shell.setLocation(shellLocX, shellLocY + (int) (explorerRec.height * 0.45));
-		
-		Rectangle rec = canvas.getClientArea();
-		if(transparentBackgroundImage != null){
-			transparentBackgroundImage.dispose();
-		}
-		
-		Color white = display.getSystemColor(SWT.COLOR_WHITE);
-	    Color black = display.getSystemColor(SWT.COLOR_BLACK);
-	    PaletteData palette = new PaletteData(new RGB[] { white.getRGB(), black.getRGB() });
-	    final ImageData sourceData = new ImageData(rec.width, rec.height, 1, palette);
-	    sourceData.transparentPixel = 0;
-	    transparentBackgroundImage = new Image(shell.getDisplay(), sourceData);
-	    gc.drawImage(transparentBackgroundImage, 0, 0);
-	    
-	    gc.setAlpha(255);
+		//gc.setAlpha(255);
 		int top = 0;
 		Color borderColor = display.getSystemColor(SWT.COLOR_DARK_GREEN);
 		for(String l : lines){

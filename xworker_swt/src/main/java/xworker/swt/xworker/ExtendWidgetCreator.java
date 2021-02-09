@@ -25,7 +25,7 @@ import xworker.swt.design.Designer;
 
 public class ExtendWidgetCreator {
     public static Object create(ActionContext actionContext){
-    	World world = World.getInstance();
+    	//World world = World.getInstance();
     	Thing self = (Thing) actionContext.get("self");
     	
 		Thing widgetThing = self.doAction("getExtendWidget", actionContext);

@@ -15,6 +15,9 @@
 ******************************************************************************/
 package xworker.swt.custom;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Composite;
@@ -25,6 +28,8 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
+import xworker.swt.data.InputDataManager;
+import xworker.swt.data.inputdatamanagers.ThingValueCComboIDM;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
@@ -40,9 +45,21 @@ public class CComboCreator {
 		
 		Composite parent = (Composite) actionContext.get("parent");
 		CCombo combo  = new CCombo(parent, style);
-		for(Thing v : self.getChilds("value")){
-		    combo.add(UtilString.getString(v.getString("value"), actionContext));
+		List<Thing> values = self.getChilds("value"); 
+		List<Object> vs = new ArrayList<Object>();
+		for(Thing v : values){
+		    combo.add(UtilString.getString(v.getMetadata().getLabel(), actionContext));
+		    vs.add(v.getObject("value"));
 		}
+		if(values.size() > 0) {
+			InputDataManager.setInputDataManager(combo, new ThingValueCComboIDM(combo, values, actionContext));
+		}
+		
+		String text = self.getStringBlankAsNull("text");
+		if(text != null) {
+			combo.setText(text);
+		}
+		combo.setData(vs);
 		
 		//父类的初始化方法
 		Bindings bindings = actionContext.push(null);

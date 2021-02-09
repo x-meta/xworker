@@ -72,7 +72,7 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 	//TextStyle paramTextStyle = new TextStyle();
 	Thing thing;
 	Map<String, VariableDesc> varCache = new HashMap<String, VariableDesc>();
-	
+	String textAssistor;
 	
 	public static void initCaches(String path, ActionContext actionContext){
 		CachedVaribleProvider.instance.initCaches(path, actionContext);
@@ -148,7 +148,7 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 	public List<CodeAssitContent> getHelpContents(Control text, ActionContext actionContext){	
 		String str = SwtTextUtils.getText(text);
 		int offset = SwtTextUtils.getCaretOffset(text);
-		return CodeHelper.getHelpContents(str, offset, thing, actionContext);
+		return CodeHelper.getHelpContents(textAssistor, str, offset, thing, actionContext);
 	}
 	
 	public void putCache(Control text, String name, Class<?> cls, boolean addDesc){
@@ -571,9 +571,21 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 			shell.dispose();
 		}
 	}
-	
-	
-	
+		
+	public String getTextAssistor() {
+		return textAssistor;
+	}
+
+	/**
+	 * 指定文本辅助器的名称，如sql、databind、reactors等。文本辅助器的名字是由TextAssistor对象自定义的，具体参看CodeHelper。
+	 * 
+	 * @see CodeHelper
+	 * @param textAssistor
+	 */
+	public void setTextAssistor(String textAssistor) {
+		this.textAssistor = textAssistor;
+	}
+
 	public static CtClass getClass(Control text, List<String> sentens, Map<String, Class<?>> cache, CodeAssistor assistor) throws NotFoundException{
 		if(cache == null){
 			return null;

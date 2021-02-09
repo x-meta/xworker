@@ -32,6 +32,7 @@ import org.xmeta.util.UtilMap;
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
 import xworker.swt.form.FormModifyListener;
+import xworker.swt.form.SetableModifyListener;
 
 public class CheckBoxDataStoreListener {
 	private static Logger log = LoggerFactory.getLogger(CheckBoxDataStoreListener.class);
@@ -80,7 +81,7 @@ public class CheckBoxDataStoreListener {
 		final Thing self = (Thing) actionContext.get("self");
 		final Composite composite = (Composite) self.get("composite");
 		final Thing store = (Thing) actionContext.get("store");
-		final FormModifyListener modifyListener = (FormModifyListener) actionContext.get("modifyListener");
+		final SetableModifyListener modifyListener = (SetableModifyListener) actionContext.get("modifyListener");
 		//final World world = World.getInstance();
 		
 		SwtStoreUtils.runAsync(store, composite.getDisplay(), new Runnable(){
@@ -143,7 +144,7 @@ public class CheckBoxDataStoreListener {
 		});
 	}
 	
-	private static Button createButton(String labelField, boolean isRadio, FormModifyListener modifyListener, Composite composite, DataObject record, ActionContext actionContext) {
+	private static Button createButton(String labelField, boolean isRadio, SetableModifyListener modifyListener, Composite composite, DataObject record, ActionContext actionContext) {
 		 String text = "no label feild";
          if(labelField != null ){
              Object value = record.get(labelField);
@@ -155,12 +156,13 @@ public class CheckBoxDataStoreListener {
          
          //value
          radioButton1.setData("record", record);
+         radioButton1.setData(record);
          Object[][] keys = record.getKeyAndDatas();
          if(keys != null && keys.length > 0){
              radioButton1.setData(keys[0][1]);
          }
          
-         if(actionContext.get("modifyListener") !=null){
+         if(actionContext.get("modifyListener") !=null && modifyListener.getSelectionListener() != null){
              radioButton1.addSelectionListener(modifyListener.getSelectionListener());
          }
          

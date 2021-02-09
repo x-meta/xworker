@@ -97,11 +97,21 @@ public abstract class AttributeEditor {
 	    return colspan * 2 - 1;
 	}
 	
-	protected static void initCodeAssistor(Object text, ActionContext context ){
+	protected void initCodeAssistor(Object text, ActionContext context ){
 		//查找变量上下文
 		ActionContext varAc = XWorkerUtils.getParentVar(context, "variablesActionContext");
 		Thing thing = (Thing) context.get("thing");
-		CodeAssistor.attach(thing, (Control) text, varAc);
+		CodeAssistor assistor = CodeAssistor.attach(thing, (Control) text, varAc);
+		if(attribute != null) {
+			String inputattr = attribute.getStringBlankAsNull("inputattrs");
+			if(inputattr != null) {
+				Map<String, String> params = UtilString.getParams(inputattr, " ");
+				//System.out.println(params);
+				if(params != null) {
+					assistor.setTextAssistor(params.get("textAssistor"));
+				}
+			}
+		}
 		/*
 		if(thing != null && SwtUtils.isRWT() == false) {
 			StyledTextProxy.initCodeAssistor(text, thing, varAc);

@@ -14,7 +14,7 @@ import xworker.swt.xworker.codeassist.variableproviders.CachedVaribleProvider;
 public class CachedVariableTextAssistor implements TextAssistor	{
 
 	@Override
-	public List<CodeAssitContent> getContents(String code, int cursorIndex, Thing thing, ActionContext actionContext) {
+	public List<CodeAssitContent> getContents(String codeType, String code, int cursorIndex, Thing thing, ActionContext actionContext) {
 		List<VariableDesc> vars = CachedVaribleProvider.instance.getVariables(code, cursorIndex, null, thing, actionContext);
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
 		if(vars != null) {

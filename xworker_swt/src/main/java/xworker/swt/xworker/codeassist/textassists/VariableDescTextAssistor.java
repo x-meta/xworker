@@ -17,7 +17,7 @@ public class VariableDescTextAssistor implements TextAssistor{
 	private static final String CACHE = "__VariableDescTextAssistor__";
 	
 	@Override
-	public List<CodeAssitContent> getContents(String code, int cursorIndex, Thing thing, ActionContext actionContext) {
+	public List<CodeAssitContent> getContents(String codeType, String code, int cursorIndex, Thing thing, ActionContext actionContext) {
 		String key = VariableDescTextAssistor.CACHE + thing.getMetadata().getPath();
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
 		Map<String, String> context = new HashMap<String, String>();

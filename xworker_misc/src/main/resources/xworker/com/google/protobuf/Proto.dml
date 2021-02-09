@@ -458,8 +458,7 @@ Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished")
             <ActionDefined>
                 <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
                      title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
-                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
-                     defaultConfig="xworker.com.google.protobuf.ProtoConfigDefault"></GetPreference>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"></GetPreference>
                 <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
                      action="var:thing"></GetActionClassName>
                 <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
@@ -503,7 +502,10 @@ Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished")
                 </param>
             </ins>
         </JavaAction>
-        <Begin name="generateJava" _xmeta_id_="generateJava1" changeSelf="true" selfVarName="data">
+        <Begin name="menu_generateJava" _xmeta_id_="generateJava1" changeSelf="true"
+             selfVarName="data">
+            <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成Java到该目录下。</p>
+]]></description>
             <actions>
                 <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
                      text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
@@ -513,7 +515,92 @@ Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished")
 import org.xmeta.ActionException;
 import xworker.lang.executor.Executor;
 
-def self = data;
+if(fileName == null){    
+    return;
+}
+data.doAction("generateJava", actionContext);]]></code>
+                        </GroovyAction>
+                    </actions>
+                </DirectoryDialog>
+            </actions>
+        </Begin>
+        <Begin name="menu_generateJs" _xmeta_id_="generateJava11" changeSelf="true"
+             selfVarName="data">
+            <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成JS到该目录下。</p>
+]]></description>
+            <actions>
+                <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
+                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
+                    <actions>
+                        <GroovyAction name="open">
+                            <code><![CDATA[if(fileName == null){    
+    return;
+}
+data.doAction("generateJs", actionContext);]]></code>
+                        </GroovyAction>
+                    </actions>
+                </DirectoryDialog>
+            </actions>
+        </Begin>
+        <GroovyAction name="generateJs">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
+def TAG = self.getMetadata().getPath();
+if(fileName == null){    
+    return;
+}
+
+//获取配置
+def config = getConfig(actionContext);
+
+//proto文件的路径，写入proto文件
+def clsName = getActionClassName(actionContext, "thing", self);
+def protoPath = world.getPath() + "/work/google/protobuf/" + clsName.replace('.', '/') + ".proto";
+Executor.info(TAG, "Generate proto file to " + protoPath);
+def file = new File(protoPath);
+if(file.exists() == false){
+   file.getParentFile().mkdirs();
+}
+write(actionContext, "file", file, "content", self.doAction("toProto", actionContext));
+
+Executor.info(TAG, "Generate javascript code use protoc(" + config.getString("protoc") + ")");
+//调用protoc生成class
+def javaDir = fileName;
+
+def cmdArray = [
+    config.getString("protoc"),
+    "--js_out=import_style=commonjs,binary:" + javaDir,
+    "--proto_path=" + file.getParentFile().getAbsolutePath(),
+    file.getName()
+] as String[];
+
+def process = startProcess(actionContext, "cmdArray", cmdArray);
+process.waitFor();
+
+Executor.info(TAG, "Javascript code has generated to " + javaDir);]]></code>
+            <ActionDefined>
+                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
+                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
+                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
+                     action="var:thing"></GetActionClassName>
+                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                     file="var:file" data="var:content"></WriteStringToFile>
+                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
+                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
+            </ActionDefined>
+            <ins>
+                <param name="fileName" type="java.lang.String"></param>
+            </ins>
+        </GroovyAction>
+        <GroovyAction name="generateJava">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
 def TAG = self.getMetadata().getPath();
 if(fileName == null){    
     return;
@@ -558,23 +645,22 @@ def process = startProcess(actionContext, "cmdArray", cmdArray);
 process.waitFor();
 
 Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>
-                            <ActionDefined>
-                                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
-                                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
-                                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
-                                     defaultConfig="xworker.com.google.protobuf.ProtoConfigDefault"></GetPreference>
-                                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
-                                     action="var:thing"></GetActionClassName>
-                                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
-                                     file="var:file" data="var:content"></WriteStringToFile>
-                                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
-                                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
-                            </ActionDefined>
-                        </GroovyAction>
-                    </actions>
-                </DirectoryDialog>
-            </actions>
-        </Begin>
+            <ActionDefined>
+                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
+                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
+                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
+                     action="var:thing"></GetActionClassName>
+                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                     file="var:file" data="var:content"></WriteStringToFile>
+                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
+                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
+            </ActionDefined>
+            <ins>
+                <param name="fileName" type="java.lang.String"></param>
+            </ins>
+        </GroovyAction>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -631,7 +717,9 @@ Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>
                     </FileDialog>
                 </actions>
             </menu>
-            <menu name="GenreateJava" label="Generate Java Code to..." url="action:generateJava"></menu>
+            <menu name="GenreateJava" label="Generate Java Code to..." url="action:menu_generateJava"></menu>
+            <menu name="GenreateJs" _xmeta_id_="GenreateJava1" label="Generate JavaScript to..."
+                 url="action:menu_generateJs"></menu>
             <menu name="split2" isSplit="true"></menu>
             <menu name="compile" label="Compile To Class" url="action:compile"></menu>
             <menu name="ClearMessageFactory" url="action:clearMessageFactory"></menu>

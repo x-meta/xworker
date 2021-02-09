@@ -15,6 +15,7 @@
 ******************************************************************************/
 package xworker.swt.widgets;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -25,6 +26,8 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
+import xworker.swt.data.InputDataManager;
+import xworker.swt.data.inputdatamanagers.ThingValueComboIDM;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
@@ -47,15 +50,20 @@ public class ComboCreator {
 		Composite parent = (Composite) actionContext.get("parent");
 		Combo combo  = new Combo(parent, style);
 		List<Thing> values = self.getChilds("value"); 
+		List<Object> vs = new ArrayList<Object>();
 		for(Thing v : values){
 		    combo.add(UtilString.getString(v.getMetadata().getLabel(), actionContext));
+		    vs.add(v.getObject("value"));
+		}
+		if(values.size() > 0) {
+			InputDataManager.setInputDataManager(combo, new ThingValueComboIDM(combo, values, actionContext));
 		}
 		
 		String text = self.getStringBlankAsNull("text");
 		if(text != null) {
 			combo.setText(text);
 		}
-		combo.setData(values);
+		combo.setData(vs);
 		
 		Bindings bindings = actionContext.push(null);
 		bindings.put("control", combo);

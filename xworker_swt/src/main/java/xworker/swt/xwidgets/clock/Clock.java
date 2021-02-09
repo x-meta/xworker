@@ -17,11 +17,13 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ServerPushSession;
 
 public class Clock implements PaintListener, Runnable{
-	private static Logger logger = LoggerFactory.getLogger(Clock.class);
+	//private static Logger logger = LoggerFactory.getLogger(Clock.class);
+	private static final String TAG = Clock.class.getName();
 	
 	Thing thing;
 	ActionContext actionContext;
@@ -40,7 +42,11 @@ public class Clock implements PaintListener, Runnable{
 		this.canvas.addPaintListener(this);
 		
 		//时间
-		this.date = thing.doAction("getDate", actionContext);
+		try {
+			this.date = thing.doAction("getDate", actionContext);
+		}catch(Exception e) {
+			Executor.warn(TAG, "Get date error, path=" + thing.getMetadata().getPath(), e);
+		}
 		if(this.date == null) {
 			this.date = new Date();
 		}	
@@ -148,7 +154,7 @@ public class Clock implements PaintListener, Runnable{
 		try {			
 			task.run(this);
 		}catch(Exception e) {
-			logger.error("Run Clock Task Error, path=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "Run Clock Task Error, path=" + thing.getMetadata().getPath(), e);
 		}
 	}
 	@Override
@@ -178,7 +184,7 @@ public class Clock implements PaintListener, Runnable{
 				//logger.info("wake thread ");
 				Thread.sleep(task.getInterval(this));
 			}catch(Exception e) {
-				logger.error("Run Clock Task Error, path=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "Run Clock Task Error, path=" + thing.getMetadata().getPath(), e);
 			}			
 		}
 	}

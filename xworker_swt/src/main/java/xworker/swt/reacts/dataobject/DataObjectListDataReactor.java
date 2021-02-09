@@ -168,4 +168,8 @@ public class DataObjectListDataReactor extends DataReactor implements DataObject
 			dataObjectList.finish();
 		}
 	}
+
+	@Override
+	public void onReconfig(DataObjectList list) {
+	}
 }

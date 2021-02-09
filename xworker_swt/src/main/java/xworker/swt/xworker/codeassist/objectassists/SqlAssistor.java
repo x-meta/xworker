@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -101,7 +102,14 @@ public class SqlAssistor implements TextAssistor{
         keyWords.add(new CodeAssitContent("where", "where", CodeAssitContent.IMAGE_NORMAL).setDocument("筛选结果集以仅包含满足指定条件的记录"));
 	}
 	@Override
-	public List<CodeAssitContent> getContents(String code, int cursorIndex, Thing thing, ActionContext actionContext){
+	public List<CodeAssitContent> getContents(String codeType, String code, int cursorIndex, Thing thing, ActionContext actionContext){
+		if(codeType == null || "".equals(codeType)) {
+			return Collections.emptyList();
+		}
+		if(!"sql".equals(codeType.toLowerCase())) {
+			return Collections.emptyList();
+		}
+		
 		List<CodeAssitContent> vars = new ArrayList<CodeAssitContent>();
 		vars.addAll(keyWords);
 		

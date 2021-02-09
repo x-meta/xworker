@@ -158,7 +158,10 @@ public class XWorkerUtilsActions {
 	public static Thing getPreference(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
-		Thing defaultConfig = self.doAction("getDefaultConfig", actionContext);
+		Thing defaultConfig = self.doAction("getConfig", actionContext);
+		if(defaultConfig == null) {
+			throw new ActionException("Can not get preference, config is null, path=" + self.getMetadata().getPath());
+		}
 		return XWorkerUtils.getPreference(defaultConfig);
 	}
 	

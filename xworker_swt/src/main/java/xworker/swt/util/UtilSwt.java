@@ -183,7 +183,7 @@ public class UtilSwt {
 			if(c != null && c instanceof Color){
 				return (Color) c;
 			}else{
-				return null;
+				return SwtUtils.getColor(color);
 			}
 		}
 				

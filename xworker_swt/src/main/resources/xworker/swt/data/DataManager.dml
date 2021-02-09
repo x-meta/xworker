@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataManager" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.swt.Models">
+    <description><![CDATA[<p>数据相关的综合性模型。<strong>应该最后执行，应该放在控件列表的末尾。</strong></p>
+
+<p><strong>子节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 子节点可以用来创建数据模型和响应器等。</p>
+
+<p><strong>控件的数据绑定和响应器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以和控件的dataBinds和reactorRules属性配合一起使用，可以用来绑定数据对象的属性到控件的属性上，或定义相关的响应器。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 执行create()方法时会<strong>递归遍历parent及其子控件</strong>，如果控件getData(&quot;dataBingds&quot;)不为null，那么解析它并做绑定操作，如果getData(&quot;reactorRules&quot;)不为null，那么解析它做响应器的初始化。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.swt.data.DataManager" methodName="create"></JavaAction>
+        <GetStringList name="getFireLoadReactors" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="fireLoadReactors"></GetStringList>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="fireLoadReactors" _xmeta_id_="fireLoadReatctors" size="60" th_registDisabled="true"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataReactors" extends="xworker.swt.reactors.DataReactors" inheritDescription="true"></thing>
+</thing>

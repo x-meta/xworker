@@ -26,6 +26,7 @@ import xworker.dataObject.swt.bind.reflect.GrayedItem;
 import xworker.dataObject.swt.bind.reflect.ImageItem;
 import xworker.dataObject.swt.bind.reflect.IncrementItem;
 import xworker.dataObject.swt.bind.reflect.MaximumItem;
+import xworker.dataObject.swt.bind.reflect.MessageItem;
 import xworker.dataObject.swt.bind.reflect.MinimumItem;
 import xworker.dataObject.swt.bind.reflect.OrientationItem;
 import xworker.dataObject.swt.bind.reflect.PageIncrementItem;
@@ -69,6 +70,7 @@ public class BindItemFactory {
 		regist("text", "xworker.dataObject.swt.bind.reflect.Text", TextItem.class);
 		regist("thumb", "xworker.dataObject.swt.bind.reflect.Thumb", ThumbItem.class);
 		regist("topIndex", "xworker.dataObject.swt.bind.reflect.TopIndex", TopIndexItem.class);
+		regist("topIndex", "xworker.dataObject.swt.bind.reflect.Message", MessageItem.class);
 	}
 	
 	protected static Map<String, ItemInfo> getItemInfos(){
@@ -105,6 +107,18 @@ public class BindItemFactory {
 		}
 	}
 		
+	public static BinderItem create(String name, String valuePath, Widget widget, ActionContext actionContext) {
+		ItemInfo itemInfo = items.get(name);
+		if(itemInfo != null) {
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("valuePath", valuePath);
+			return itemInfo.create(params, widget, actionContext);
+		}else {
+			Executor.warn(TAG, "BindItem type=" + name + " not registed!");
+			return null;
+		}
+	}
+	
 	static class ItemInfo{
 		String thingPath;
 		Class<?> className;

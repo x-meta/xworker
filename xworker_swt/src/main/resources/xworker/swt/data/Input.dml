@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Input" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.swt.Models">
+    <description><![CDATA[<p>SWT数据模型，用于把Map或对象数据填充到SWT控件上，也用于从SWT控件上读取数据。</p>
+
+<p><strong>常用方法</strong></p>
+
+<ul>
+	<li><strong>void init()</strong><br />
+	初始化，为控件增加相应的监听等等初始化操作。<br />
+	&nbsp;</li>
+	<li><strong>void setValue()</strong><br />
+	设置值，注意值是从数据源属性指定的数据源获取的，数据源是从变量上下文中获取的。<br />
+	&nbsp;</li>
+	<li><strong>Object getValue()</strong><br />
+	从SWT空间上获取值。<br />
+	&nbsp;</li>
+	<li><strong>boolean validate()</strong><br />
+	校验，成功返回true，检验失败返回false。</li>
+</ul>]]></description>
+    <actions>
+        <JavaAction name="create" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.data.InputCreator"
+             methodName="create" description="&lt;p&gt;Model的创建动作。&lt;/p&gt;" interpretationType=""
+             varScope=""></JavaAction>
+        <JavaAction name="doValidate" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.data.AbstractInput"
+             methodName="doValidate">
+            <ins>
+                <param name="input" _xmeta_id_="message" type="xworker.swt.data.AbstractInput"></param>
+            </ins>
+        </JavaAction>
+        <JavaAction name="init" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.data.InputCreator"
+             methodName="init" interpretationType="" varScope=""></JavaAction>
+        <JavaAction name="initSelf" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.data.InputCreator"
+             methodName="initSelf" interpretationType="" varScope=""></JavaAction>
+        <JavaAction name="getValuesForSelect" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.swt.data.InputCreator" methodName="getValuesForSelect"
+             interpretationType="" varScope="">
+            <description><![CDATA[<p>当本Model对应的SWT控件是下拉选择、列表、多项选择、单项选择等时，如果编辑控件没有设置供选择的值，那么该方法提供选择的值。</p>
+<p>返回List&lt;Thing&gt;，Thing的定义参看属性的value子事物。</p>]]></description>
+        </JavaAction>
+        <JavaAction name="getValueForValidate" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.swt.data.InputCreator" methodName="getValueForValidate"
+             interpretationType="" varScope=""></JavaAction>
+        <JavaAction name="setPartialValues" outerClassName="xworker.swt.data.InputCreator"
+             methodName="setPartialValues">
+            <ins>
+                <param name="values" type="Map&lt;String, Object&gt;"></param>
+            </ins>
+        </JavaAction>
+    </actions>
+    <attribute name="name" label="名称" showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<p>Model的名称。</p>
+<p>可以通过此名称在变量上下文actionContext取得本Model。</p>]]></description>
+    </attribute>
+    <attribute name="swtControl" label="SWT控件" default="parent" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false">
+        <description><![CDATA[<p>Model所对应的SWT控件，用于对此控件取值、赋值等操作。</p>
+<p>可以是Thing，此时会调用Thing的setValue、getValue和valudate方法赋值、取值和校验等。</p>]]></description>
+    </attribute>
+    <attribute name="propertyName" label="属性名称" showLabel="" labelAlign="" labelVAlign="" modifier=""
+         description="&lt;p&gt;如果指定了数据属性，那么是使用Ognl以数据属性为路径从数据源上取值和赋值的。&lt;/p&gt;" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="dataType" label="数据类型" inputtype="select" labelAlign="" labelVAlign=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<p>数据类型，默认是String类型。</p>
+
+<p><strong>Map和对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当类型是Map或对象（Object)时，可以从Map或者对象中取值赋值到多个子节点，也可以从多个子节点中取值赋值到Map或对象。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 当类型是对象时，从数据源取对象，如果不存在，那么从控件获取值是返回值是Map。</p>
+
+<p><strong>数据类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当从控件取值时会转化为指定的数据类型，从数据源取值时不做类型校验。</p>]]></description>
+        <value name="bigDecimal" label="BigDecimal" value="BigDecimal"></value>
+        <value name="BigInteger" value="BigInteger"></value>
+        <value name="boolean" label="Boolean" value="Boolean"></value>
+        <value name="Char" value="Char"></value>
+        <value name="Date" value="Date"></value>
+        <value name="DateTime" value="DateTime"></value>
+        <value name="Double" value="Double"></value>
+        <value name="flaot" label="Float" value="Float"></value>
+        <value name="int" label="Integer" value="Integer"></value>
+        <value name="list" label="List" value="List"></value>
+        <value name="long" label="Long" value="Long"></value>
+        <value name="map" label="Map" value="Map"></value>
+        <value name="object" label="Object" value="Object"></value>
+        <value name="string" label="String" value="String"></value>
+        <value name="Time" value="Time"></value>
+    </attribute>
+    <attribute name="defaultValue" label="默认值" showLabel="" labelAlign="" labelVAlign="" modifier=""
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<p>如果从数据源取不到值，那么使用默认值。</p>
+<p>如果默认值以&quot;号包围那么表示是常量，否则认为是以默认值为名称从变量上下文actionContext中取值。</p>]]></description>
+    </attribute>
+    <attribute name="viewPattern" label="查看样式" showLabel="" labelAlign="" labelVAlign="" modifier=""
+         description="&lt;p&gt;数据查看显示的样式。&lt;/p&gt;" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false"></attribute>
+    <attribute name="editPattern" label="编辑样式" showLabel="" labelAlign="" labelVAlign="" modifier=""
+         description="&lt;p&gt;当Swt控件获得焦点时，数据显示的样式，如果没有设置编辑样式编辑时保持查看样式。&lt;/p&gt;" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="foreground" label="前景色" inputtype="colorpicker" showLabel="" labelAlign=""
+         labelVAlign="" modifier="" description="&lt;p&gt;控件的前景色。&lt;/p&gt;" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="background" label="背景色" inputtype="colorpicker" showLabel="" labelAlign=""
+         labelVAlign="" modifier="" description="&lt;p&gt;控件色背景色。&lt;/p&gt;" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="validate" label="是否校验" inputtype="truefalse" showLabel="" labelAlign=""
+         labelVAlign="" modifier="" default="true" description="&lt;p&gt;如果选择false那么不校验此数据。&lt;/p&gt;"
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="focus" label="获取焦点" inputtype="truefalse" showLabel="" labelAlign="" labelVAlign=""
+         modifier="" validateAllowBlank="" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false">
+        <description><![CDATA[<p>在初始化是SWT控件是否取得焦点。</p>
+<p>可以用于设置一个输入表单的默认取得焦点的控件。</p>]]></description>
+    </attribute>
+    <attribute name="focusColor" label="焦点背景色" inputtype="colorpicker" default="#E8FAFF" description="&lt;p&gt;当控件获得焦点时的背景色。&lt;/p&gt;"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="inValidBackground" label="输入校验失败背景色" default="#FF8080"></attribute>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions">
+        <attribute name="name"></attribute>
+    </thing>
+    <attribute name="validateAllowBlank" label="允许为空" inputtype="truefalse" group="校验" showLabel=""
+         labelAlign="" labelVAlign="" modifier="" default="true" description="&lt;p&gt;是否允许为空。&lt;/p&gt;"
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="blankText" _xmeta_id_="24889" label="为空的提示" type="string" size="60" colspan="2"
+         group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<p>The error text to display if the <b><tt><a ext:cls="Ext.form.TextField" ext:member="allowBlank" href="output/Ext.form.TextField.html#Ext.form.TextField-allowBlank">allowBlank</a></tt></b> validation fails (defaults to <tt>'This field is required'</tt>)</p>
+<p>可以使用Freemarker模板。</p>]]></description>
+    </attribute>
+    <attribute name="invalidText" _xmeta_id_="24799" label="错误提示" type="string" size="60"
+         colspan="2" group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<div class="short">The error text to use when marking a field invalid and no message is provided
+(defaults to 'The value in this field i...]]></description>
+    </attribute>
+    <attribute name="validateOnBlur" _xmeta_id_="24807" label="失去焦点时校验" type="boolean" inputtype="truefalse"
+         group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" default="true"
+         description="Whether the field should validate when it loses focus (defaults to true)."
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="validationDelay" _xmeta_id_="24808" label="校验延迟" type="number" group="校验"
+         default="250" validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<p>暂时未用。</p>
+
+<p>The length of time in milliseconds after user input begins until validation is initiated (defaults to 250)</p>
+]]></description>
+    </attribute>
+    <attribute name="maxLength" _xmeta_id_="24898" label="最大长度" type="number" group="校验" showLabel=""
+         labelAlign="" labelVAlign="" modifier="" validateAllowBlank="" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<div class="short">Maximum input field length allowed by validation (defaults to Number.MAX_VALUE).
+This behavior is intended to provide...]]></description>
+    </attribute>
+    <attribute name="minLength" _xmeta_id_="24900" label="最小长度" type="number" group="校验" showLabel=""
+         labelAlign="" labelVAlign="" modifier="" description="Minimum input field length required (defaults to &lt;tt&gt;0&lt;/tt&gt;)"
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="regex" _xmeta_id_="24902" label="正则表达式" type="regexp" size="40" colspan="2"
+         group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<div class="short">A JavaScript RegExp object to be tested against the field value during validation
+(defaults to null). If the test fai...]]></description>
+    </attribute>
+    <attribute name="regexText" label="正则表达式提示" size="60" colspan="2" group="校验" showLabel=""
+         labelAlign="" labelVAlign="" modifier="" validateAllowBlank="" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="allowDecimals" _xmeta_id_="24858" label="允许小数" type="boolean" inputtype="truefalse"
+         group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" default="true"
+         description="False to disallow decimal values (defaults to true)" validateAllowBlank=""
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="allowNegative" _xmeta_id_="24859" label="允许负数" type="boolean" inputtype="truefalse"
+         group="校验" showLabel="" labelAlign="" labelVAlign="" modifier="" default="true"
+         description="False to prevent entering a negative sign (defaults to true)"
+         validateAllowBlank="" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="maxValue" _xmeta_id_="24916" label="最大值" type="date/string" group="校验"
+         showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank="" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<div class="short">The maximum allowed time. Can be either a Javascript date object with a valid time value or a string
+time in a valid ...]]></description>
+    </attribute>
+    <attribute name="minValue" _xmeta_id_="24918" label="最小值" type="date/string" group="校验"
+         showLabel="" labelAlign="" labelVAlign="" modifier="" validateAllowBlank="" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false">
+        <description><![CDATA[<div class="short">The minimum allowed time. Can be either a Javascript date object with a valid time value or a string
+time in a valid ...]]></description>
+    </attribute>
+</thing>

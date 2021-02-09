@@ -25,6 +25,7 @@ public class ProcessExecThread extends Thread{
 	StringBuffer buffer = new StringBuffer();
 	Bindings reservedVars = null;
 	ExecutorService executorService;
+	boolean log = false;
 	
 	public ProcessExecThread(Process process, Thing thing, ActionContext actionContext){
 		super(thing.getMetadata().getLabel());
@@ -92,6 +93,18 @@ public class ProcessExecThread extends Thread{
 
 	public boolean isExited() {
 		return exited;
+	}
+	
+	public void setExecutorService(ExecutorService executorService) {
+		this.executorService = executorService;
+	}
+	
+	public boolean isLog() {
+		return log;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 	public void run(){
@@ -165,13 +178,17 @@ public class ProcessExecThread extends Thread{
 					}
 					
 					//写入到返回值
-					pt.buffer.append(new String(bytes, 0, length));
+					String txt = new String(bytes, 0, length);
+					pt.buffer.append(txt);
 					while(pt.buffer.length() > pt.maxContentLength) {
 						pt.buffer.delete(0, 100);
 					}
 					
 					//触发事件
 					try {
+						if(pt.log) {
+							Executor.info("", txt);
+						}
 						pt.actionContext.push(pt.reservedVars);
 						if(isOut) {
 							pt.thing.doAction("onOut", pt.actionContext, "bytes", bytes, "length", length, "pt", pt);

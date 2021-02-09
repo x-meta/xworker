@@ -65,7 +65,7 @@ public class Panel {
 			Font titleFont = SwtUtils.createFont(viewForm, self.getStringBlankAsNull("titleFont"), actionContext);
 			if(titleFont != null) {
 				((Label) ac.get("titleTextLabel")).setFont(titleFont);
-			}
+			}			
 			
 			//Toolbar
 			actionContext.peek().put("parent", viewForm);
@@ -105,6 +105,7 @@ public class Panel {
 				((Composite) ac.get("bottomComposite")).dispose();
 			}
 			
+			viewForm.layout();
 			return viewForm;
 		}finally {
 			SwtUtils.popInitStyle();

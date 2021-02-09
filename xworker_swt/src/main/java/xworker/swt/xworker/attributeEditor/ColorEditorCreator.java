@@ -29,6 +29,7 @@ import org.xmeta.World;
 
 import xworker.swt.ActionContainer;
 import xworker.swt.util.PoolableControlFactory;
+import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilSwt;
 import xworker.swt.xworker.AttributeEditor;
 
@@ -49,7 +50,11 @@ public class ColorEditorCreator {
 		xworker.swt.form.GridData gridData = (xworker.swt.form.GridData) actionContext.get("gridData");
 		Object attribute = gridData.source;
 		Combo text = (Combo) context.get("colorText");
-		
+		for(String key : SwtUtils.getSWTKeys()) {
+			if(key.startsWith("COLOR")) {
+				text.add(key);
+			}
+		}
 		//创建子节点
 		if(actionContext.get("isThingEditor") == null){
 		    //在一般的swt界面中被调用

@@ -121,7 +121,8 @@ public class OpenWindowsCreator {
     	actionContext.getScope(0).put("result", 
     	      "codeName=" + values.get("codeName") + " codeType=" + values.get("codeType") + 
     	      " wrap=" +  values.get("wrap") + " fillBoth=" + values.get("fillBoth") + 
-    	      " cols=" + values.get("cols") + " rows=" + values.get("rows"));
+    	      " cols=" + values.get("cols") + " rows=" + values.get("rows") + 
+    	      " textAssistor=" + values.get("textAssistor"));
     	((Shell) actionContext.get("codeEditor")).dispose();
     }
     

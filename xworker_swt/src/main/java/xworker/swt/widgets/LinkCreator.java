@@ -35,6 +35,8 @@ public class LinkCreator {
 		    
 		Composite parent = (Composite) actionContext.get("parent");
 		Link link = new Link(parent, style);
+		SwtUtils.initControl(self, link, actionContext);
+		
 		link.setText(UtilString.getString(self.getString("text"), actionContext));
 		
 		//保存变量和创建子事物

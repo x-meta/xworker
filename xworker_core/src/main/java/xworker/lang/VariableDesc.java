@@ -121,6 +121,10 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 			return "org.xmeta.Thing";
 		}else if(ACTIONCONTAINER.equals(type)) {
 			return "org.xmeta.util.ActionContainer";
+		}else if("dataObject".equals(type)) {
+			return "xworker.dataObject.DataObject";
+		}else if("dataObjectList".equals(type)) {
+			return "xworker.dataObject.DataObjectList";
 		}
 		
 		return className;
@@ -187,7 +191,7 @@ public class VariableDesc implements java.lang.Comparable<VariableDesc>{
 	 * @return
 	 */
 	public VariableDesc getFiledVariableDesc(String name) {
-		if(VariableDesc.OBJECT.equals(type)) {
+		if(VariableDesc.OBJECT.equals(type) || "dataObjectList".equals(type)) {
 			if(className != null && !"".equals(className)) {
 				try {
 					Class<?> cls = World.getInstance().getClassLoader().loadClass(className);

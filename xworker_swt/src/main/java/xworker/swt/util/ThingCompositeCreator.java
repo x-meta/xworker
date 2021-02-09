@@ -127,7 +127,11 @@ public class ThingCompositeCreator {
 	}
 	
 	/**
-	 * 创建子节点前执行的方法，在创建的控件之后
+	 * 创建原形空间后，在创建子节点前执行的方法。
+	 * 
+	 * @param parent 通过原形创建的根Composite
+	 * @param actionContext
+	 * @param newActionContext
 	 */
 	public void beforeCreateChilds(Object parent, ActionContext actionContext, ActionContext newActionContext) {		
 	}

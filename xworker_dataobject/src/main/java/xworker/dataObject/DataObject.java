@@ -332,30 +332,54 @@ public class DataObject extends HashMap<String, Object> {
 		try {
 			DataObjectCache.begin();	
 			try {				
-				if(wrappedObject != null) {
-					OgnlUtil.setValue(key, wrappedObject, value);
-					return value;
-				}else {
-					if (fireEvent && metadata != null) {
-						metadata.beforeFieldChanged(key, value);
-					}
-					
-					if(metadata != null){
-						Thing definition = metadata.getDefinition(key);
-						if (definition != null && "attribute".equals(definition.getThingName())) {
-							return super.put(key, DataObjectUtil.getValue(value, definition));
-						} else {
-							return super.put(key, value);
-						}
-					}else{
-						return super.put(key, value);
-					}
+				if (fireEvent && metadata != null) {
+					metadata.beforeFieldChanged(key, value);
 				}
+				
+				if(metadata != null){
+					Thing definition = metadata.getDefinition(key);
+					if (definition != null && "attribute".equals(definition.getThingName())) {
+						value = DataObjectUtil.getValue(value, definition);
+						value = super.put(key, value);
+						setWrappedObjectValue(definition, key, value);
+						return value;
+						
+					} else {
+						value = super.put(key, value);
+						setWrappedObjectValue(definition, key, value);
+						return value;
+					}
+				}else{
+					value = super.put(key, value);
+					setWrappedObjectValue(null, key, value);
+					return value;
+				}				
 			}finally {
 				DataObjectCache.finish();
 			}
 		}finally {
 			finish();
+		}
+	}
+	
+	private void setWrappedObjectValue(Thing attributeDefinition, String key, Object value) {
+		if(wrappedObject != null) {
+			if(attributeDefinition != null && (attributeDefinition.getBoolean("readOnly") 
+					|| attributeDefinition.getBoolean("propertyReadOnly"))) {
+				//只读不写入到对象中
+				return;
+			}
+			
+			String path = key;
+			if(attributeDefinition != null) {
+				path = attributeDefinition.getStringBlankAsNull("propertyPath");
+				if(path == null) {
+					path = key;
+				}
+			}
+			if(key != null && !"".equals(key)) {
+				OgnlUtil.setValue(path, wrappedObject, value);
+			}
 		}
 	}
 	
@@ -493,7 +517,19 @@ public class DataObject extends HashMap<String, Object> {
 	@Override
 	public Object get(Object key) {
 		if(this.wrappedObject != null) {
-			return OgnlUtil.getValue(key, wrappedObject);
+			if(metadata != null){
+				Thing definition = metadata.getDefinition(key.toString());
+				if(definition != null) {
+					String propertyPath = definition.getStringBlankAsNull("propertyPath");
+					if(propertyPath == null) {
+						propertyPath = key.toString();
+					}
+					
+					return OgnlUtil.getValue(propertyPath, wrappedObject);
+				}
+			}
+			
+			return OgnlUtil.getValue(key, wrappedObject);			
 		}
 		
 		if (!isInited()) {
@@ -1152,6 +1188,12 @@ public class DataObject extends HashMap<String, Object> {
 		dataObject.putAll(this);
 	}
 
+	/**
+	 * 设置了包装的对象后，数据对象取值和获取值将通过包装的对象获取。从对象上获取和设置值通过Ognl实现，key是数据对象属性的名字，
+	 * 如果设置了相应的数据对象属性定义，那么试图通过propertyPath属性来获取属性的ognl表达式。
+	 * 
+	 * @param wrappedObject
+	 */
 	public void setWrappedObject(Object wrappedObject) {
 		this.wrappedObject = wrappedObject;
 	}

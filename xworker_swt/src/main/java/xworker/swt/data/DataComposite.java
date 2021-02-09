@@ -16,7 +16,7 @@ import xworker.swt.util.SwtUtils;
 import xworker.swt.util.ThingCompositeCreator;
 
 /**
- * 给定数据和操作方式，就能生成相关界面。
+ * 给定数据和操作方式，就能生成相关界面。应该还未实现，可能会废弃。
  * 
  * @author zhangyuxiang
  *

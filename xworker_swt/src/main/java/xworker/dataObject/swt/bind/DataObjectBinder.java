@@ -21,6 +21,7 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectListener;
 import xworker.dataObject.swt.bind.BindItemFactory.ItemInfo;
 import xworker.lang.VariableDesc;
+import xworker.lang.executor.Executor;
 import xworker.task.TaskManager;
 
 public class DataObjectBinder implements DataObjectListener{
@@ -234,6 +235,10 @@ public class DataObjectBinder implements DataObjectListener{
 		DataObjectBinder binder = self.doAction("getBinderInstance", actionContext);
 		if(binder == null) {
 			Control control = self.doAction("getControlForDisplay", actionContext);
+			if(control == null || control.isDisposed()) {
+				Executor.warn(DataObjectBinder.class.getName(), "Can not create DataObjectBinder, control for display is null");
+				return null;
+			}
 			binder = new DataObjectBinder(self, control.getDisplay(), actionContext);
 			actionContext.g().put(self.getMetadata().getName(), binder);
 		}
@@ -301,6 +306,8 @@ public class DataObjectBinder implements DataObjectListener{
 				}				
 			}
 		}
+		
+		binder.update();
 		return binder;
 	}
 	

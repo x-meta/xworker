@@ -13,6 +13,93 @@ import xworker.lang.executor.Executor;
 
 public class DataReactors {
 	private static final String TAG = DataReactors.class.getName();
+	
+	private static void createRules_(String rules, ActionContext actionContext) {
+		//解析规则
+		if(rules != null) {
+			for(String line : rules.split("[\n]")) {
+				line = line.trim();
+				if("".equals(line) || line.startsWith("#")) {
+					//过滤空行和注解
+					continue;
+				}
+				
+				//目前只接收a,b,c,d或a>b,c,d这样的两种格式
+				int index = line.indexOf(">");
+				if(index == -1) {
+					//只是响应器的定义
+					getOrCreateDataReactors(line, actionContext);
+				} else {
+					String[] reactors = line.split("[>]");
+					
+					List<DataReactor> lastReactors = null;
+					for(int i=0; i<reactors.length; i++) {
+						if(i == 0) {
+							lastReactors = getOrCreateDataReactors(reactors[i], actionContext);
+						} else {
+							List<DataReactor> nextReactors = getOrCreateDataReactors(reactors[i], actionContext);
+							for(DataReactor f : lastReactors) {
+								for(DataReactor s : nextReactors) {
+									f.addNextReator(s);
+								}
+							}
+							
+							lastReactors = nextReactors;
+						}
+					}
+				}				
+			}
+		}
+	}
+	
+	public static void createRules(String rules, ActionContext actionContext) {
+		List<DataReactor> loadList = new ArrayList<DataReactor>();
+		DataReactorFactory.setAutoLoadLocal(loadList);
+		try {
+			createRules_(rules, actionContext);
+		}finally {
+			DataReactorFactory.setAutoLoadLocal(null);
+		}
+	}
+	
+	public static void fireLoadReactors(List<String> fireLoadReactors, ActionContext actionContext) {
+		List<DataReactor> loadList = new ArrayList<DataReactor>();
+		DataReactorFactory.setAutoLoadLocal(loadList);
+		try {
+			fireLoadReactors_(fireLoadReactors, loadList, actionContext);
+		}finally {
+			DataReactorFactory.setAutoLoadLocal(null);
+		}
+	}
+	
+	private static void fireLoadReactors_(List<String> fireLoadReactors, List<DataReactor> loadList, ActionContext actionContext) {
+		if(fireLoadReactors != null) {
+			for(String name : fireLoadReactors) {
+				if(name == null) {
+					continue;
+				}
+				name = name.trim();
+				
+				Object reactor = actionContext.get(name);
+				if(reactor instanceof DataReactor) {
+					((DataReactor) reactor).fireLoaded(null);
+				}else {
+					reactor = actionContext.get(name + "DataReactor");
+					if(reactor instanceof DataReactor) {
+						((DataReactor) reactor).fireLoaded(null);
+					}else {
+						Executor.info(TAG, "Can not load data reactor, data reactor '" 
+									+ name + "' or '" + name + "DataReactor' not found.");
+					}
+				}
+			}
+		}
+		
+		for(DataReactor dataReactor : loadList) {
+			dataReactor.fireLoaded(null);
+		}
+	}
+	
 	public static void create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
@@ -27,65 +114,11 @@ public class DataReactors {
 			
 			//解析规则
 			String rules = self.doAction("getRules", actionContext);
-			if(rules != null) {
-				for(String line : rules.split("[\n]")) {
-					line = line.trim();
-					if("".equals(line) || line.startsWith("#")) {
-						//过滤空行和注解
-						continue;
-					}
-					
-					//目前只接收a,b,c,d或a>b,c,d这样的两种格式
-					int index = line.indexOf(">");
-					if(index == -1) {
-						//只是响应器的定义
-						getOrCreateDataReactors(line, actionContext);
-					} else {
-						String[] reactors = line.split("[>]");
-						
-						List<DataReactor> lastReactors = null;
-						for(int i=0; i<reactors.length; i++) {
-							if(i == 0) {
-								lastReactors = getOrCreateDataReactors(reactors[i], actionContext);
-							} else {
-								List<DataReactor> nextReactors = getOrCreateDataReactors(reactors[i], actionContext);
-								for(DataReactor f : lastReactors) {
-									for(DataReactor s : nextReactors) {
-										f.addNextReator(s);
-									}
-								}
-								
-								lastReactors = nextReactors;
-							}
-						}
-					}				
-				}
-			}
+			createRules_(rules, actionContext);
 			
 			//加载指定的
 			List<String> fireLoadReactors = self.doAction("getFireLoadReactors", actionContext);
-			if(fireLoadReactors != null) {
-				for(String name : fireLoadReactors) {
-					if(name == null) {
-						continue;
-					}
-					name = name.trim();
-					
-					Object reactor = actionContext.get(name);
-					if(reactor instanceof DataReactor) {
-						((DataReactor) reactor).fireLoaded(null);
-					}else {
-						reactor = actionContext.get(name + "DataReactor");
-						if(reactor instanceof DataReactor) {
-							((DataReactor) reactor).fireLoaded(null);
-						}
-					}
-				}
-			}
-			
-			for(DataReactor dataReactor : loadList) {
-				dataReactor.fireLoaded(null);
-			}
+			fireLoadReactors_(fireLoadReactors, loadList, actionContext);
 		}finally {
 			DataReactorFactory.setAutoLoadLocal(null);
 		}

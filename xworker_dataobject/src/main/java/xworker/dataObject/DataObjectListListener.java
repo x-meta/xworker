@@ -4,6 +4,13 @@ import java.util.Collection;
 
 public interface DataObjectListListener {
 	/**
+	 * 设置了新的数据对象的事件。
+	 * 
+	 * @param list
+	 */
+	public void onReconfig(DataObjectList list);
+	
+	/**
 	 * 数据加载的事件。
 	 */
 	public void onLoaded(DataObjectList list);

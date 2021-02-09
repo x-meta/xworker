@@ -14,8 +14,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -40,11 +38,21 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 	Image image = null;
 	//是否是自己创建的
 	boolean imageSelfCreated = false;
+	boolean autoFit = true;
+	boolean disableResize = false;
 	
 	public ImageCanvas(Canvas canvas, Thing thing, ActionContext actionContext) {
 		this.canvas = canvas;
 		this.thing = thing;
 		this.actionContext = actionContext;
+		Boolean autoFit = thing.doAction("isAutoFit", actionContext);
+		Boolean disableResize = thing.doAction("isDisableResize", actionContext);
+		if(autoFit != null) {
+			this.autoFit = autoFit;
+		}
+		if(disableResize != null) {
+			this.disableResize = disableResize;
+		}
 		
 		this.canvas.addMouseListener(this);
 		if(!SwtUtils.isRWT()) {
@@ -60,6 +68,10 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 
 	@Override
 	public void mouseDown(MouseEvent event) {
+		if(disableResize) {
+			return;
+		}
+		
 		if(event.button == 1){
 			this.drag = true;
 			this.lastX = event.x;
@@ -75,6 +87,7 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 	@Override
 	public void mouseMove(MouseEvent event) {
 		if(drag) {
+			autoFit = false;
 			x = x + lastX - event.x;
 			y = y + lastY - event.y;
 			lastX = event.x;
@@ -90,12 +103,17 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 		}
 	}
 	
-	public void mouseScrolled(MouseEvent event) {				
+	public void mouseScrolled(MouseEvent event) {
+		if(disableResize) {
+			return;
+		}
+		
 		if(image != null && !image.isDisposed()){
+			autoFit = false;
 			scale = scale + 0.5f / event.count;
 								
-			Rectangle rt = image.getBounds();
-			Rectangle ct = canvas.getClientArea();
+			//Rectangle rt = image.getBounds();
+			//Rectangle ct = canvas.getClientArea();
 								
 			float minScale = 0.1f;
 			/*if(rt.width > ct.width || rt.height > ct.height){
@@ -122,6 +140,10 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 	@Override
 	public void paintControl(PaintEvent event) {
 		try{
+			if(autoFit) {
+				fitImage();
+			}
+			
 			//清空屏幕
 			GC gc = event.gc;
 			Color oldColor = gc.getBackground();
@@ -186,10 +208,47 @@ public class ImageCanvas implements MouseListener, MouseMoveListener, MouseWheel
 		y=0;
 		scale = 1f;
 		canvas.getDisplay().asyncExec(new Runnable(){
-			public void run() {
+			public void run() {				
 				canvas.redraw();
 			}
 		});
+	}
+	
+	public boolean isAutoFit() {
+		return autoFit;
+	}
+
+	public void setAutoFit(boolean autoFit) {
+		this.autoFit = autoFit;
+	}
+
+	public boolean isDisableResize() {
+		return disableResize;
+	}
+
+	public void setDisableResize(boolean disableResize) {
+		this.disableResize = disableResize;
+	}
+
+	private void fitImage() {
+		if(this.image != null && this.image.isDisposed() == false) {
+			x = 0;
+			y = 0;
+			Rectangle canvasSize = canvas.getClientArea();
+			int width = image.getImageData().width;
+			int height = image.getImageData().height;
+			float wscale = 1f * canvasSize.width / width;
+			float hscale = 1f * canvasSize.height / height;
+			scale = Math.min(wscale, hscale);
+			
+			if(scale == wscale) {
+				height = (int) (height * scale);
+				y = (height - canvasSize.height ) / 2;
+			}else {
+				width = (int) (width * scale);
+				x = (width - canvasSize.width) / 2;				
+			}
+		}
 	}
 	
 	public void setImage(String imagePath) {

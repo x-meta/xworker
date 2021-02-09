@@ -18,6 +18,8 @@ import xworker.swt.xworker.codeassist.objectassists.DataObjectAssistor;
 import xworker.swt.xworker.codeassist.objectassists.SqlAssistor;
 import xworker.swt.xworker.codeassist.objectassists.ThingAssistor;
 import xworker.swt.xworker.codeassist.textassists.CachedVariableTextAssistor;
+import xworker.swt.xworker.codeassist.textassists.DataBinderTextAssistor;
+import xworker.swt.xworker.codeassist.textassists.DataReactorTextAssistor;
 import xworker.swt.xworker.codeassist.textassists.VariableDescTextAssistor;
 import xworker.swt.xworker.codeassist.textassists.WordSpliter;
 import xworker.swt.xworker.codeassist.variableproviders.ActionVariableProvider;
@@ -41,6 +43,8 @@ public class CodeHelper {
 		textAssists.add(new CachedVariableTextAssistor());
 		textAssists.add(new WordSpliter());
 		textAssists.add(new SqlAssistor());
+		textAssists.add(new DataBinderTextAssistor());
+		textAssists.add(new DataReactorTextAssistor());
 		
 		//对象辅助类
 		objectAssists.put("object", new ClassAssistor());
@@ -59,17 +63,18 @@ public class CodeHelper {
 	/**
 	 * 获取文本的通用帮助内容。如可以输入的词等。
 	 * 
+	 * @param textAssistor 代码服务器的名称
 	 * @param text
 	 * @param offset
 	 * @param thing
 	 * @param actionContext
 	 * @return
 	 */
-	public static List<CodeAssitContent> getHelpContents(String text, int offset, Thing thing, ActionContext actionContext){
+	public static List<CodeAssitContent> getHelpContents(String textAssistor, String text, int offset, Thing thing, ActionContext actionContext){
 		Map<String, String> context = new HashMap<String, String>();
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
 		for(TextAssistor ta : textAssists) {
-			List<CodeAssitContent> contents = ta.getContents(text, offset, thing, actionContext);
+			List<CodeAssitContent> contents = ta.getContents(textAssistor, text, offset, thing, actionContext);
 			
 			if(contents != null) {
 				for(CodeAssitContent content : contents) {

@@ -124,6 +124,10 @@ public class ShellCreator {
 				shell = new Shell((Shell) parent, style);
 			}else{
 				Display display = Display.getCurrent();
+				if(display == null) {
+					display = Display.getDefault();
+				}
+			
 				if(display != null){
 					shell = new Shell(display, style);
 				}else{

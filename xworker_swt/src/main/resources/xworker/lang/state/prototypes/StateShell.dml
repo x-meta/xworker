@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="State" label="StateShell">
+    <FillLayout name="FillLayout"></FillLayout>
+    <Composite name="mainComposite">
+        <FillLayout name="FillLayout"></FillLayout>
+        <SashForm name="sashForm" style="VERTICAL" weights="70,30">
+            <Composite name="contentMainComposite" _xmeta_id_="contentComposite" BORDER="true">
+                <GridLayout name="GridLayout"></GridLayout>
+                <Composite name="contentComposite">
+                    <FillLayout name="FillLayout"></FillLayout>
+                    <GridData name="GridData" style="FILL_BOTH"></GridData>
+                </Composite>
+                <Composite name="buttonComposite" _xmeta_id_="8587">
+                    <GridData name="buttonCompositeGridData" _xmeta_id_="8588" style="FILL_HORIZONTAL"
+                         horizontalAlignment="END"></GridData>
+                    <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="8589"></RowLayout>
+                    <Button name="okButton" _xmeta_id_="8590" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+                        <RowData name="RowData" _xmeta_id_="8591" width="80"></RowData>
+                        <Listeners _xmeta_id_="8592">
+                            <Listener name="okButtonSelection" _xmeta_id_="8593">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+Executor.push(executorService);
+try{
+    if(UtilData.isTrue(compositeThing.doAction("ok", stateComposite.getContentContext())) == false){
+        state.setPause(false);
+     
+        actions.doAction("showLog", actionContext);
+    }
+}finally{
+    Executor.pop();
+}]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                    <Button name="cancelButton" _xmeta_id_="8594" text="lang:d=取消(&amp;amp;C)&amp;en=Cancel(&amp;amp;C)">
+                        <RowData name="RowData" _xmeta_id_="8595" width="80"></RowData>
+                        <Listeners _xmeta_id_="8596">
+                            <Listener name="cancelButtonSelection" _xmeta_id_="8597">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+Executor.push(executorService);
+try{
+    if(UtilData.isTrue(compositeThing.doAction("cancel", stateComposite.getContentContext())) == false){
+        state.setPause(false);
+        actions.doAction("showLog", actionContext);
+    }
+}finally{
+    Executor.pop();
+}]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                    <Button name="resumeButton" _xmeta_id_="8598" text="lang:d=继续(&amp;amp;R)&amp;en=Resume(&amp;amp;R)">
+                        <RowData name="RowData" _xmeta_id_="8599" width="80"></RowData>
+                        <Listeners _xmeta_id_="8600">
+                            <Listener name="resumeButtonSelection" _xmeta_id_="8601">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+Executor.push(executorService);
+try{
+    if(UtilData.isTrue(compositeThing.doAction("resume", stateComposite.getContentContext())) == false){
+        state.setPause(false);
+    }
+}finally{
+    Executor.pop();
+}]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                    <Button name="exitButton" _xmeta_id_="8602" text="lang:d=退出(&amp;amp;X)&amp;en=Exit(&amp;amp;X)">
+                        <RowData name="RowData" _xmeta_id_="8603" width="80"></RowData>
+                        <Listeners _xmeta_id_="8604">
+                            <Listener name="exitButtonSelection" _xmeta_id_="8605">
+                                <GroovyAction name="GroovyAction">
+                                    <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+Executor.push(executorService);
+try{
+    if(UtilData.isTrue(compositeThing.doAction("exit", stateComposite.getContentContext())) == false){
+        state.exit();
+    
+        actions.doAction("showLog", actionContext);
+    }
+}finally{
+    Executor.pop();
+}]]></code>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                </Composite>
+            </Composite>
+            <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true"
+                 BORDER="true"></StyledText>
+        </SashForm>
+        <TextExecutorService name="executorService" descriptors="xworker.lang.executor.swt.TextExecutorService"
+             text="var:logText"></TextExecutorService>
+        <ActionContainer name="actions">
+            <GroovyAction name="showLog">
+                <code><![CDATA[//只显示logText
+def weights = sashForm.getWeights();
+if(weights[0] != 0){
+    sashForm.setData("oldWeights", weights);
+    sashForm.setWeights([0,100] as int[]);
+}]]></code>
+            </GroovyAction>
+            <GroovyAction name="restore">
+                <code><![CDATA[//显示logText和面板，恢复到之前
+def weights = sashForm.getData("oldWeights");
+if(weights != null){
+    sashForm.setWeights(weights);
+}]]></code>
+            </GroovyAction>
+        </ActionContainer>
+    </Composite>
+</Shell>

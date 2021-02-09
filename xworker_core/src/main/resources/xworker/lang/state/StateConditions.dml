@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingIndex name="StateConditions" descriptors="xworker.lang.util.ThingIndex" group="xworker.lang.state"
+     th_createIndex="true" th_registThing="child|xworker.lang.util.ThingIndex">
+    <thing name="AbstractCondition" descriptors="xworker.lang.MetaDescriptor3/@thing"
+         extends="xworker.lang.state.SateCondition" group="conditions">
+        <description><![CDATA[<p>抽象的条件。</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>boolean validate()</strong><br />
+	检验条件是否匹配。</li>
+</ul>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execAbstractCondition"></JavaAction>
+            <NOOP name="validate"></NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+            <actions>
+                <NOOP name="exec"></NOOP>
+            </actions>
+        </thing>
+    </thing>
+    <thing name="OgnlCondition" descriptors="xworker.lang.MetaDescriptor3/@thing" extends="xworker.lang.actions.Ongl,xworker.lang.state.SateCondition"
+         group="conditions" inheritDescription="true">
+        <description><![CDATA[<p>使用Ognl表达式的条件。</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execActionCondition"></JavaAction>
+        </actions>
+    </thing>
+    <thing name="GroovyConditoin" descriptors="xworker.lang.MetaDescriptor3/@thing"
+         extends="xworker.lang.actions.GroovyAction,xworker.lang.state.SateCondition"
+         group="conditions" inheritDescription="true">
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execActionCondition"></JavaAction>
+        </actions>
+    </thing>
+    <thing name="JavaCondition" descriptors="xworker.lang.MetaDescriptor3/@thing" extends="xworker.lang.actions.JavaAction,xworker.lang.state.SateCondition"
+         group="conditions">
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execActionCondition"></JavaAction>
+        </actions>
+    </thing>
+    <thing name="RandomCondition" _xmeta_id_="Random" extends="xworker.lang.state.SateCondition"
+         group="conditions">
+        <description><![CDATA[<p>随机生成0到（n-1)之间的的一个数，如果这个数是0，那么条件成立。</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execRandom"></JavaAction>
+            <GetInt name="getN" _xmeta_id_="12954" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+                 attributeName="n" usage="params"></GetInt>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="n" default="2"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Is" extends="xworker.lang.state.SateCondition" group="conditions">
+        <description><![CDATA[<p>给一个key列表，判断各个key在State中存储的值是否是真。</p>
+
+<p><strong>判断一个key的值为真的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果值是Boolean那么返回该值。下面情况返回true，如果值是String变小写后判断是否是true或1，如果是数字1，或值不为null。其它情况返回false。</p>
+
+<p><strong>属性exists</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 如果exists=true，那么当一个值判断为true时就返回true，否则需要全部都是true时才返回true。</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execIs"></JavaAction>
+            <GetStringList name="getKeys" _xmeta_id_="17712" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="keys" usage="params"></GetStringList>
+            <GetBoolean name="isExists" _xmeta_id_="17713" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="exists" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="keys" _xmeta_id_="n" size="60"></attribute>
+        <attribute name="exists" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Not" extends="xworker.lang.state.SateCondition" group="conditions">
+        <description><![CDATA[<p>!is()的操作。</p>
+
+<p>参看<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.state.StateConditions/@Is?nosecurity=true">Is</a>的文档。</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execNot"></JavaAction>
+            <GetStringList name="getKeys" _xmeta_id_="17712" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="keys" usage="params"></GetStringList>
+            <GetBoolean name="isExists" _xmeta_id_="17713" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="exists" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="keys" _xmeta_id_="n" size="60"></attribute>
+        <attribute name="exists" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Exists" extends="xworker.lang.state.SateCondition" group="conditions">
+        <description><![CDATA[<p>给一个key列表，判断各个key在State中是否存在，包含父State。</p>
+
+<p><strong>判断一个key是否存在的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用Map.containsKey(key）方法。</p>
+
+<p><strong>属性exists</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 如果exists=true，那么当一个判断为true时就返回true，否则需要全部都是true时才返回true。</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execExists"></JavaAction>
+            <GetStringList name="getKeys" _xmeta_id_="17712" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="keys" usage="params"></GetStringList>
+            <GetBoolean name="isExists" _xmeta_id_="17713" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="exists" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="keys" _xmeta_id_="n" size="60"></attribute>
+        <attribute name="exists" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="NotExists" extends="xworker.lang.state.SateCondition" group="conditions">
+        <description><![CDATA[<p>！Exists()。</p>
+
+<p>参看<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.state.StateConditions/@Exists">Exists</a>的文档。</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.ConditionActions" methodName="execNotExists"></JavaAction>
+            <GetStringList name="getKeys" _xmeta_id_="17712" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+                 attributeName="keys" usage="params"></GetStringList>
+            <GetBoolean name="isExists" _xmeta_id_="17713" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="exists" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="keys" _xmeta_id_="n" size="60"></attribute>
+        <attribute name="exists" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</ThingIndex>

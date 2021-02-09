@@ -72,13 +72,7 @@ public class LabelCreator {
 		Label label = new Label(parent, style);
 		
 		//父类的初始化方法
-		Bindings bindings = actionContext.push(null);
-		bindings.put("control", label);
-		try{
-		    self.doAction("super.init", actionContext);
-		}finally{
-		    actionContext.pop();
-		}
+		SwtUtils.initControl(self, label, actionContext);
 				
 		//Object image = actionContext.get(self.getString("image"));
 		Image image = (Image) StyleSetStyleCreator.createResource(self.getString("image"), 

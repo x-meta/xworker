@@ -21,8 +21,9 @@ import org.eclipse.swt.widgets.List;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
-import org.xmeta.util.UtilString;
 
+import xworker.swt.data.InputDataManager;
+import xworker.swt.data.inputdatamanagers.ThingValueListIDM;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
@@ -59,8 +60,12 @@ public class ListCreator {
 		    actionContext.pop();
 		}
 		
-		for(Thing v : self.getChilds("value")){
-		    list.add(UtilString.getString(v.getString("value"), actionContext));
+		java.util.List<Thing> values = self.getChilds("value"); 
+		for(Thing v : values){
+		    list.add(v.getMetadata().getLabel());
+		}
+		if(values.size() > 0) {
+			InputDataManager.setInputDataManager(list, new ThingValueListIDM(list, values, actionContext));
 		}
 		
 		//保存变量和创建子事物

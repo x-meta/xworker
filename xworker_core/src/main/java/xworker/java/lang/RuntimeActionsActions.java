@@ -118,6 +118,9 @@ public class RuntimeActionsActions {
     	}
     	
     	ProcessExecThread pt = new ProcessExecThread(process, self, actionContext);
+    	if(UtilData.isTrue(self.doAction("isLog", actionContext))) {
+    		pt.setLog(true);
+    	}
     	pt.start();
     	if((Boolean) self.doAction("isSync", actionContext)){
 			pt.join();

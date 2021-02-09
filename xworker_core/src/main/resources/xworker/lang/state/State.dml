@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="State" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.state.StateConditions,xworker.lang.state.StateActions"
+     icon="icons/lorry_go.png">
+    <description><![CDATA[<p>State是一各综合了规则引擎和状态机的编程方法。</p>
+
+<p><strong>运行State</strong></p>
+
+<p><strong>&nbsp;&nbsp;&nbsp; </strong>State默认使用Task的方式执行， 即作为一个定时任务来执行。State执行后会<strong>循环执行子节点的exec(State state)方法</strong>，如果未设置终止的方法，那么State会一直执行。</p>
+
+<p>&nbsp;&nbsp;&nbsp; State不是单实例的，State每次执行后都会创建一个新的实例。</p>
+
+<p><strong>终止State的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以调用State.exit()方法终止，也可以使用相应的动作来终止。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 对于已经执行的State且还未设置终止方法的，可以修改模型添加一个Exit节点来终止。</p>
+
+<p><strong>变量管理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; State将创建自己的变量上下文，执行State时的变量上下文放到parentContext中。State的get和set方法是变量上下文的全局变量栈中的变量。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 另外<strong>每一个条件、动作和子State执行后的结果会以模型名为键、返回值为值设置变量</strong>。</p>
+
+<p><strong>State常用方法</strong></p>
+
+<ul>
+	<li><strong>set(Stringkey, Object value)</strong><br />
+	设置变量。<br />
+	&nbsp;</li>
+	<li><strong>Object get(String key)</strong><br />
+	获取变量。<br />
+	&nbsp;</li>
+	<li><strong>boolean is(String key)</strong><br />
+	返回一个变量是否为true，如果不能转化为Boolean，那么非null返回true，null返回false。<br />
+	&nbsp;</li>
+	<li><strong>boolean not(String key)</strong><br />
+	返回！is(key)。&nbsp;&nbsp;</li>
+</ul>
+
+<p><strong>事件：</strong></p>
+
+<ul>
+	<li><strong>void onInit()</strong><br />
+	初始化时执行。<br />
+	&nbsp;</li>
+	<li><strong>void onExit()</strong><br />
+	退出时执行。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.lang.state.State" methodName="run"></JavaAction>
+        <JavaAction name="exec" outerClassName="xworker.lang.state.State" methodName="exec"></JavaAction>
+        <GetLong name="getInterval" _xmeta_id_="918" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="interval" usage="params"></GetLong>
+        <GetString name="getEnterType" _xmeta_id_="919" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="enterType" usage="params"></GetString>
+        <GetJsonObject name="getVariables" _xmeta_id_="31607" descriptors="xworker.lang.actions.ActionUtil/@GetJsonObject"
+             attributeName="variables" usage="params"></GetJsonObject>
+        <NOOP name="onInit">
+            <ins>
+                <param name="state" type="xworker.lang.state.State"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="onExit">
+            <ins>
+                <param name="state" type="xworker.lang.state.State"></param>
+            </ins>
+        </NOOP>
+        <GetThing name="getRef" _xmeta_id_="3758" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="ref" usage="params"></GetThing>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="interval" default="200">
+        <description><![CDATA[<p>循环时的休眠间隔。</p>
+]]></description>
+    </attribute>
+    <attribute name="enterType" inputtype="select" default="push">
+        <value name="replace" _xmeta_id_="enter" value="replace"></value>
+        <value name="push" value="push"></value>
+    </attribute>
+    <attribute name="ref" inputtype="openWindow" size="60" inputattrs="xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,viewType=default,thing=xworker.lang.state.States,seperator=%2C,returnType=path,append=false">
+        <description><![CDATA[<p>如果存在表示引用其它State模型。如果引用的模型存在，那么使用引用的模型而忽略当前的模型。</p>
+]]></description>
+    </attribute>
+    <attribute name="variables" inputtype="textarea">
+        <description><![CDATA[<p>初始化变量，将放到State中。根节点应该是Map。</p>
+]]></description>
+    </attribute>
+    <attribute name="descritpion" inputtype="html"></attribute>
+    <thing name="State" extends="xworker.lang.state.State" icon="icons/lorry_go.png"></thing>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作" inheritDescription="true">
+        <attribute name="name"></attribute>
+        <actions>
+            <NOOP name="exec"></NOOP>
+        </actions>
+    </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="state" varName="state" scope="2" className="xworker.lang.state.State"></Variable>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="stateComposite" varName="stateComposite" className="xworker.lang.state.StateComposite"></Variable>
+        </VariablesDescs>
+    </VariablesDescs>
+    <sswtMenus>
+        <menuDefine>
+            <menu name="State"></menu>
+        </menuDefine>
+        <menuSetting menuType="State">
+            <menu name="Run" url="action:run"></menu>
+        </menuSetting>
+    </sswtMenus>
+    <thing name="VariablesDescs" _xmeta_id_="VariablesDesc" extends="xworker.lang.MetaThing/@VariablesDesc"
+         inheritDescription="true" icon="icons/text_list_bullets.png">
+        <actions>
+            <NOOP name="exec"></NOOP>
+        </actions>
+    </thing>
+</thing>

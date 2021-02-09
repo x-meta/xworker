@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="InputDataManager" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>InputDataManager的作用是从控件上取值或赋值。一般情况下有默认的实现，当默认实现不能达到效果时可以用该模型重新实现。</p>
+
+<p><strong>保存和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 无。InputDataManager是以固定的key保存到控件中的data中的，如果parent变量不是Widget，那么本模型不会生效。</p>
+
+<p><strong>parent变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 默认取的是创建时的变了上下文中的parent的变量。</p>
+
+<p><strong>需要重写的方法</strong>：</p>
+
+<ul>
+	<li><strong>Object getValue(Object parent)</strong><br />
+	从控件上取值。<br />
+	&nbsp;</li>
+	<li><strong>void setValue(Object&nbsp;parent, Object value)</strong><br />
+	对控件赋值。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.swt.data.inputdatamanagers.ThingInputDataManager"
+             methodName="create"></JavaAction>
+        <NOOP name="setValue">
+            <ins>
+                <param name="parent" type="org.eclipse.swt.widgets.Widget"></param>
+                <param name="value"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="getValue">
+            <ins>
+                <param name="parent" type="org.eclipse.swt.widgets.Widget"></param>
+            </ins>
+        </NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作" inheritDescription="true">
+        <attribute name="name"></attribute>
+    </thing>
+</thing>

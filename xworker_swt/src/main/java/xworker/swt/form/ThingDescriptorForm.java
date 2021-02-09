@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -38,6 +39,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -482,6 +484,7 @@ public class ThingDescriptorForm {
 		return createForm(context, -1);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static List<Map<String, Object>> createAttributeGroups(List<Thing> rootList, List<Thing> fs){		
 		List<Map<String, Object>> groups = new ArrayList<Map<String, Object>>();
 		for(Thing f : fs){
@@ -1081,14 +1084,36 @@ public class ThingDescriptorForm {
 	}
 	
 	public static class ColorListener implements SelectionListener{
-		Text text;
+		Control text;
 		ActionContext actioContext = new ActionContext();
 		
-		public ColorListener(Text text){
+		public ColorListener(Control text){
 			this.text = text;
 		}
 
 		public void widgetDefaultSelected(SelectionEvent arg0) {			
+		}
+		
+		private String getText() {
+			if(text instanceof Text) {
+				return ((Text) text).getText();
+			}else if(text instanceof Combo) {
+				return ((Combo) text).getText();
+			}else if(text instanceof CCombo) {
+				return ((CCombo) text).getText();
+			}else {
+				return "";
+			}
+		}
+		
+		private void setText(String str) {
+			if(text instanceof Text) {
+				((Text) text).setText(str);
+			}else if(text instanceof Combo) {
+				((Combo) text).setText(str);
+			}else if(text instanceof CCombo) {
+				((CCombo) text).setText(str);
+			}
 		}
 
 		public void widgetSelected(SelectionEvent event) {
@@ -1099,7 +1124,7 @@ public class ThingDescriptorForm {
 			ActionContainer ac = (ActionContainer) shell.getData("actions");			
 			final ColorDialog dialog = (ColorDialog) ac.doAction("getColorDialog");
 			//dialog.setl
-			int[] rgb = UtilSwt.parseRGB(text.getText());
+			int[] rgb = UtilSwt.parseRGB(getText());
 			if(rgb != null){
 				dialog.setRGB(new RGB(rgb[0], rgb[1], rgb[2]));
 			}
@@ -1111,7 +1136,7 @@ public class ThingDescriptorForm {
 						RGB colorRgb = dialog.getRGB();
 						if(colorRgb != null){
 							String rgbStr = UtilSwt.RGBToString(colorRgb);
-							text.setText(rgbStr);
+							setText(rgbStr);
 							//UtilSwt.setBackground(text, text.getText(), null);
 						}
 						
@@ -1123,7 +1148,7 @@ public class ThingDescriptorForm {
 				RGB colorRgb = dialog.open();
 				if(colorRgb != null){
 					String rgbStr = UtilSwt.RGBToString(colorRgb);
-					text.setText(rgbStr);
+					setText(rgbStr);
 					//UtilSwt.setBackground(text, text.getText(), null);
 				}
 				

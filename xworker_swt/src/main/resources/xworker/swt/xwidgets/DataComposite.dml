@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataComposite" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>数据面板，主要用来展示和编辑Java对象，通过把Java对象映射成数据对象来实现的。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create"></JavaAction>
+        <GetObject name="getData" _xmeta_id_="8514" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="data" usage="params"></GetObject>
+        <GetString name="getView" _xmeta_id_="8515" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="view" usage="params"></GetString>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="data"></attribute>
+    <attribute name="view" default="form">
+        <value name="form" value="form"></value>
+        <value name="table" value="table"></value>
+        <value name="editor" value="editor"></value>
+        <value name="tree" value="tree"></value>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataObject" extends="xworker.dataObject.java.ListDataObject">
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="className" inputtype="openWindow" size="60" inputattrs="xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|"></attribute>
+    </thing>
+    <thing name="Composite" extends="xworker.swt.widgets.Composite">
+        <description><![CDATA[<p>如果设置了，替换默认的根Composite的样式。</p>
+]]></description>
+    </thing>
+    <thing name="DataObjectForm" extends="xworker.app.view.swt.Items/@DataObjectForm"
+         inheritDescription="true"></thing>
+</thing>

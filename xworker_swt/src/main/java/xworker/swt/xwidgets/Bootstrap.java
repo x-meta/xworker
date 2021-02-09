@@ -66,6 +66,11 @@ public class Bootstrap {
 				gridData.heightHint = height;
 			}
 			gridData.horizontalSpan = self.getInt("span");
+			int vspan = self.getInt("vspan");
+			if(vspan > 0) {
+				gridData.verticalSpan = vspan;
+			}
+			gridData.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;			
 			composite.setLayoutData(gridData);
 			
 			actionContext.peek().put("parent", composite);
@@ -96,6 +101,10 @@ public class Bootstrap {
 			gridData.heightHint = height;
 		}
 		gridData.horizontalSpan = self.getInt("span");
+		int vspan = self.getInt("vspan");
+		if(vspan > 0) {
+			gridData.verticalSpan = vspan;
+		}
 		composite.setLayoutData(gridData);
 		
 	

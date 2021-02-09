@@ -29,6 +29,11 @@ public class TextDataReactor extends WidgetDataReactor implements Listener{
 		if(self.getBoolean("defaultSelection")) {
 			text.addListener(SWT.DefaultSelection, this);
 		}
+		
+		String textStr = text.getText().trim();
+		if(!"".equals(textStr)) {
+			datas.add(textStr);
+		}		
 	}
 
 	@Override

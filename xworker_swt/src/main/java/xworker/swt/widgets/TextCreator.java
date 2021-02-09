@@ -60,18 +60,7 @@ public class TextCreator {
 		Composite parent = (Composite) actionContext.get("parent");
 		Text text = new Text(parent, style);
 		 
-		//父类的初始化方法
-		Bindings bindings = actionContext.push(null);
-		bindings.put("control", text);
-		try{
-			if(SwtUtils.isRWT()) {
-				ControlCreator.init(actionContext);
-			}else {
-				self.doAction("super.init", actionContext);
-			}
-		}finally{
-		    actionContext.pop();
-		}
+		SwtUtils.initControl(self, text, actionContext);
 		
 		String stext = self.getString("text");
 		if(stext != null && !"".equals(stext))

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="StateCompositeActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.state.StateActions" th_registMyChilds="true">
+    <thing name="Composite" group="swt" icon="icons/application.png" defaultEditor="form">
+        <description><![CDATA[<p>在StateComposite显示一个界面，如果SWT父界面不存在或已经销毁，那么尝试创建一个新的窗口。</p>
+
+<p><strong>可以监听以下方法：</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 运行一下方法的变量上下文是SWT界面的变量上下文，包含state: State变量。</p>
+
+<ul>
+	<li><strong>boolean ok()</strong><br />
+	点击了确定按钮之后的事件，如果返回true不继续执行，如果继续执行则state.setPause(false)并只显示日志界面。<br />
+	&nbsp;</li>
+	<li><strong>boolean cancel()</strong><br />
+	点击了取消按钮之后的事件，如果返回true不继续执行，如果继续执行则state.setPause(false)并只显示日志界面。<br />
+	&nbsp;</li>
+	<li><strong>boolean resume()</strong><br />
+	点击了继续按钮之后的事件，如果返回true不继续执行，如果继续执行则state.setPause(false)。<br />
+	&nbsp;</li>
+	<li><strong>boolean exit()</strong><br />
+	点击了退出按钮按钮之后的事件，如果返回true不继续执行，如果继续执行则state.exit()并只显示日志界面。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.StateCompositeActions"
+                 methodName="execComposite"></JavaAction>
+            <GetThing name="getComposite" _xmeta_id_="16852" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="composite" childThingName="Composite" usage="params"></GetThing>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="composite" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Composite" extends="xworker.swt.widgets.Composite" inheritDescription="true"></thing>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="DisplayExec" extends="xworker.lang.actions.Actions" group="swt" icon="icons/application_go.png">
+        <description><![CDATA[<p>通过Display执行，子节点是动作列表。</p>
+]]></description>
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.StateCompositeActions"
+                 methodName="execDisplayExec"></JavaAction>
+            <GetObject name="getWidgetForDisplay" _xmeta_id_="13137" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="widgetForDisplay" usage="params"></GetObject>
+            <GetBoolean name="isAysnc" _xmeta_id_="13138" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="aysnc" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="widgetForDisplay" size="40">
+            <description><![CDATA[<p>如果没有设置，那么首先判断是否存在StateComposite，其实使用XWorkerUtils.getIDEShell()。</p>
+]]></description>
+        </attribute>
+        <attribute name="aysnc" inputtype="truefalse" default="false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="QuickComponent" extends="xworker.swt.xwidgets.QuickContent" group="swt"
+         inheritDescription="true" icon="icons/application_double.png">
+        <actions>
+            <JavaAction name="exec" outerClassName="xworker.lang.state.StateCompositeActions"
+                 methodName="execQuickComponent"></JavaAction>
+        </actions>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+</thing>

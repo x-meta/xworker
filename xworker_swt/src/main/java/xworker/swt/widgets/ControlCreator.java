@@ -46,6 +46,10 @@ public class ControlCreator {
 			control.setData("style", self.getString("cssStyle"));
 			control.setData("class", self.getString("cls"));
 		}
+		
+		//数据绑定相关
+		control.setData("dataBinds", self.getStringBlankAsNull("dataBinds"));		
+		control.setData("reactorRules", self.getStringBlankAsNull("reactorRules"));
 	}
 
 }

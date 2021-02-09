@@ -154,7 +154,7 @@ public class ModelCreator {
     public static Object getValue(ActionContext actionContext) throws OgnlException{
     	Thing self = (Thing) actionContext.get("self");
     	
-    	String dataType = self.getString("dataType");
+     	String dataType = self.getString("dataType");
     	if("Object".equals(dataType)) {
     		String dataSource = self.getString("dataSource");
     		if(dataSource == null || dataSource == ""){

@@ -55,9 +55,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.PathData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -87,6 +90,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
@@ -99,11 +103,13 @@ import xworker.swt.ActionContainer;
 import xworker.swt.actions.MenuActions;
 import xworker.swt.browser.BrowserCallback;
 import xworker.swt.custom.StyledTextProxy;
+import xworker.swt.data.InputDataManager;
 import xworker.swt.design.Designer;
 import xworker.swt.model.Model;
 import xworker.swt.model.ModelManager;
 import xworker.swt.style.StyleSetStyleCreator;
 import xworker.swt.widgets.ControlActions;
+import xworker.swt.widgets.ControlCreator;
 import xworker.util.StringUtils;
 import xworker.util.XWorkerUtils;
 
@@ -874,6 +880,14 @@ public class SwtUtils {
 			return;
 		}
 		
+		if(control instanceof Widget) {
+			InputDataManager idm = InputDataManager.getInputDataManager(((Widget) control));
+			if(idm != null) {
+				idm.setValue(value);
+				return;
+			}
+		}
+		
 		Model model = ModelManager.getModel(control.getClass());
 		if(model != null) {
 			model.setValue(control, value, pattern, pattern);
@@ -1015,6 +1029,12 @@ public class SwtUtils {
 			return null;
 		}
 		
+		if(control instanceof Widget) {
+			InputDataManager idm = InputDataManager.getInputDataManager(((Widget) control));
+			if(idm != null) {
+				return idm.getValue();
+			}
+		}
 		
 		if(type == null){
 			type = "string";
@@ -1108,10 +1128,10 @@ public class SwtUtils {
     			}
 	    	}else if(control instanceof Combo){
 	    		Combo combo = (Combo) control;	    		
-	    		if((combo.getStyle() & SWT.READ_ONLY) == 0){
+	    		//if((combo.getStyle() & SWT.READ_ONLY) == 0){
 	    			//如果是可以修改内容的，那么返回的应该是字符串
-	    			return combo.getText();
-	    		}else{
+	    		//	return combo.getText();
+	    		//}else{
 	    			int index = combo.getSelectionIndex();
 	    			if(index != -1){
 	    				Object data = combo.getData();
@@ -1128,7 +1148,7 @@ public class SwtUtils {
 	    			}else{
 	    				return combo.getText();
 	    			}
-	    		}
+	    		//}
 	    	}
 	    }else if(control instanceof Composite){
 	    	//如果控件是Composite，那么可能是单项选择或者多项选择，此时composite下都应该是Button
@@ -1262,6 +1282,61 @@ public class SwtUtils {
 		}
 	}
 	
+	/**
+	 * 把一个Path添加到Region中。
+	 * 
+	 * @param region
+	 * @param path
+	 */
+	public static void addPathToRegion(Region region, Path path) {
+		PathData pathData = path.getPathData();
+		float[] points = pathData.points;
+		byte[] types = pathData.types;
+		
+		int start = 0, end = 0;
+		for (byte type : types) {
+			switch (type) {
+				case SWT.PATH_MOVE_TO: {
+					if (start != end) {
+						int n = 0;
+						int[] temp = new int[end - start];
+						for (int k = start; k < end; k++) {
+							temp[n++] = Math.round(points[k]);
+						}
+						region.add(temp);
+					}
+					start = end;
+					end += 2;
+					break;
+				}
+				case SWT.PATH_LINE_TO: {
+					end += 2;
+					break;
+				}
+				case SWT.PATH_CLOSE: {
+					if (start != end) {
+						int n = 0;
+						int[] temp = new int[end - start];
+						for (int k = start; k < end; k++) {
+							temp[n++] = Math.round(points[k]);
+						}
+						region.add(temp);
+					}
+					start = end;
+					break;
+				}
+				case SWT.PATH_CUBIC_TO:{
+					end += 6;
+					break;
+				}
+				case SWT.PATH_QUAD_TO:{
+					end += 6;
+					break;
+				}
+			}
+		}
+	}
+	
 	private static boolean validateText(String text, String type, String pattern, boolean required){	
 		if(text == null || "".equals(text.trim())){
 			if(required){
@@ -1329,6 +1404,28 @@ public class SwtUtils {
 	 */
 	public static void setThingDesc(String path, Browser browser) {
 		setThingDesc(World.getInstance().getThing(path), browser);
+	}
+	
+	/**
+	 * 初始化Control的公共属性。
+	 * 
+	 * @param thing
+	 * @param control
+	 * @param actionContext
+	 */
+	public static void initControl(Thing thing, Control control, ActionContext actionContext) {
+		//父类的初始化方法
+		Bindings bindings = actionContext.push(null);
+		bindings.put("control", control);
+		try{
+			if(SwtUtils.isRWT()) {
+				ControlCreator.init(actionContext);
+			}else {
+				thing.doAction("super.init", actionContext);
+			}
+		}finally{
+		    actionContext.pop();
+		}
 	}
 	
 	/**

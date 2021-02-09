@@ -1542,8 +1542,7 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 
 	@Override
 	public void onSeted(DataObjectList list, int index, DataObject newDataObject, DataObject oldDataObject) {
-		// TODO Auto-generated method stub
-		
+	
 	}
 
 	@Override
@@ -1632,6 +1631,11 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 				dataStore.datas.set(index_, newDataObject);
 			}
 		}
+
+		@Override
+		public void onReconfig(DataObjectList list) {
+			dataStore.setDataObject(list.getDescriptor());
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1644,5 +1648,10 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 			//把选择数据对象作为查询条件
 			this.load(dataObjects.get(0));
 		}
+	}
+
+	@Override
+	public void onReconfig(DataObjectList list) {
+		this.setDataObject(list.getDescriptor());
 	}
 }

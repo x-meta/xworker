@@ -82,4 +82,9 @@ public class EditorModifyListener implements ModifyListener, SetableModifyListen
 	public SelectionListener getModifySelectionListener(){
 		return selectionListener;
 	}
+
+	@Override
+	public SelectionListener getSelectionListener() {
+		return null;
+	}
 }

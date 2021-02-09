@@ -833,7 +833,7 @@ public class XWorkerUtils {
 	 * @param configDesc
 	 * @return
 	 */
-	public static Thing getPreference(Thing configDesc) {
+	public static Thing getPreference(Thing configDesc) {		
 		String path = configDesc.getRoot().getMetadata().getPath();
 		if(configDesc.getRoot() != configDesc) {
 			path = path + "." + configDesc.getMetadata().getName();

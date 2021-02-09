@@ -46,6 +46,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer implement
 	public CTabFolderEditorContainer(CTabFolder tabFolder, ActionContext actionContext) {
 		super(actionContext);
 				
+		containerContext.put("cTabFolder", tabFolder);
 		Thing containerThing = World.getInstance().getThing("xworker.swt.app.prototypes.CTabFolderEditorContainer/@cTabFolder");
 		containerContext.peek().put("parent", tabFolder);
 		for(Thing child : containerThing.getChilds()) {

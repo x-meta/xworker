@@ -15,7 +15,7 @@ import xworker.util.StringUtils;
 public class WordSpliter implements TextAssistor{
 
 	@Override
-	public List<CodeAssitContent> getContents(String code, int cursorIndex, Thing thing, ActionContext actionContext) {
+	public List<CodeAssitContent> getContents(String codeType, String code, int cursorIndex, Thing thing, ActionContext actionContext) {
 		Map<String, String> context = new HashMap<String, String>();
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
 		if(code != null) {

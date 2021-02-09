@@ -217,6 +217,17 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	public Thing getDescriptor() {
 		return descriptor;
 	}
+	
+	public void setDescriptor(Thing descriptor) {
+		this.descriptor = descriptor;
+		
+		if(listeners != null && fireEvent) {
+			for(int i=0; i<listeners.size(); i++) {
+				DataObjectListListener listener = listeners.get(i);
+				listener.onReconfig(this);
+			}
+		}
+	}
 
 	public DataObject getParent() {
 		return parent;

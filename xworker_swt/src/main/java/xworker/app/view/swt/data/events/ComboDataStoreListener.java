@@ -197,7 +197,8 @@ public class ComboDataStoreListener {
 			                    rs.add(record);
 			                }
 			                
-			                ccombo.setData(DataStore.STORE_RECORDS, rs);                
+			                ccombo.setData(DataStore.STORE_RECORDS, rs);
+			                ccombo.setData(rs);
 			            }
 			        }finally{
 			            if(modifyListener != null && modifyListener instanceof SetableModifyListener){

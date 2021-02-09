@@ -4,16 +4,17 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.swt.design.Designer;
 import xworker.swt.form.FormModifyListener;
 import xworker.swt.form.ThingDescriptorForm.ColorListener;
+import xworker.swt.util.SwtUtils;
 import xworker.swt.xworker.attributeEditor.AttributeEditor;
 
 public class ColorpickerAttributeEditor extends AttributeEditor{
@@ -40,7 +41,19 @@ public class ColorpickerAttributeEditor extends AttributeEditor{
 
         int dataSelectTextStyle = SWT.SINGLE | SWT.LEFT;
         dataSelectTextStyle |= SWT.BORDER;
-        Text dataSelectText = new Text(dataSelectComposite, dataSelectTextStyle);
+        Combo dataSelectText = new Combo(dataSelectComposite, dataSelectTextStyle);
+        for(Thing value : attribute.getAllChilds("value")) {
+        	String v = value.getStringBlankAsNull("value");
+        	if(v == null) {
+        		v = value.getMetadata().getName();
+        	}
+        	dataSelectText.add(v);
+        }
+        for(String key : SwtUtils.getSWTKeys()) {
+			if(key.startsWith("COLOR")) {
+				dataSelectText.add(key);
+			}
+		}
         Designer.attach(dataSelectText, path, context, true);
         //dataSelectText.setFont(Resources.getFont("default"));			        
 
