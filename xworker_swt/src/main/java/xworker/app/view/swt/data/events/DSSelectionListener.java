@@ -3,7 +3,6 @@ package xworker.app.view.swt.data.events;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.nebula.widgets.grid.Grid;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Button;
@@ -13,7 +12,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.Widget;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -44,7 +42,7 @@ public class DSSelectionListener  implements Listener{
 			handleTable(event);
 		}else if(event.widget instanceof Tree) {
 			handleTree(event);
-		}else if(event.widget instanceof Grid) {
+		}else if("Grid".equals(event.widget.getClass().getSimpleName())) {
 			handleTree(event);
 		}else if(event.widget instanceof org.eclipse.swt.widgets.List){
 			handleList(event);

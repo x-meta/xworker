@@ -23,20 +23,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
-
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import xworker.actions.GroovyAction;
 
 /**
  * 与动作相关的工具类。
@@ -45,6 +43,21 @@ import xworker.actions.GroovyAction;
  *
  */
 public class UtilAction {
+	static Method runGroovy;
+	static Method runGroovyAction;
+	
+	private static void initGroovyUtils() {
+		if(runGroovy != null) {
+			return;
+		}
+		
+		try {
+			Class<?> cls = World.getInstance().getClassLoader().loadClass("xworker.groovy.GroovyUtils");
+			runGroovy = cls.getDeclaredMethod("runGroovy", new Class<?>[] {String.class, ActionContext.class});
+			runGroovyAction = cls.getDeclaredMethod("runGroovyAction", new Class<?>[] {Action.class, ActionContext.class});
+		}catch(Exception e) {			
+		}
+	}
 	/**
 	 * 返回异常的最初的异常，平常里异常可能会被包装了多次，比如脚本、XWorker的动作异常、Hibernate异常等，
 	 * 此方法返回最初的异常。
@@ -71,6 +84,8 @@ public class UtilAction {
 	}
 	
 	public static Object runAsGroovy(Thing thing, String codeName, ActionContext actionContext, String varScope){
+		checkGroovy();
+		
 		String cacheName = "_action_as_groovy_" + codeName;
 		//thing.setData(cacheName, null);
 		Thing actionThing = (Thing) thing.getData(cacheName);
@@ -132,28 +147,34 @@ public class UtilAction {
 	 * @throws IOException
 	 */
 	public static Object runGroovyAction(Thing thing, ActionContext actionContext) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException {
-		try {
-			Bindings bindings = actionContext.push();
-			for(Thing vars : thing.getChilds("Variables")){
-	        	for(Thing var : vars.getChilds()){
-	        		String key = var.getMetadata().getName();
-	        		Object value = var.getAction().run(actionContext, null, true);
-	        		bindings.put(key, value);
-	        	}
-	        }
-			
-			for(Thing acs : thing.getChilds("ActionDefined")) {
-				for(Thing ac : acs.getChilds()) {
-					bindings.put(ac.getMetadata().getName(), ac.getAction());
+		checkGroovy();
+		
+		initGroovyUtils();
+		if(runGroovyAction != null) {
+			try {
+				Bindings bindings = actionContext.push();
+				for(Thing vars : thing.getChilds("Variables")){
+		        	for(Thing var : vars.getChilds()){
+		        		String key = var.getMetadata().getName();
+		        		Object value = var.getAction().run(actionContext, null, true);
+		        		bindings.put(key, value);
+		        	}
+		        }
+				
+				for(Thing acs : thing.getChilds("ActionDefined")) {
+					for(Thing ac : acs.getChilds()) {
+						bindings.put(ac.getMetadata().getName(), ac.getAction());
+					}
 				}
+				
+				Action action = thing.getAction();
+				action.checkChanged();
+				return runGroovyAction.invoke(null, new Object[] {action, actionContext});
+			}finally {				
+				actionContext.pop();
 			}
-			
-			Action action = thing.getAction();
-			action.checkChanged();
-			return GroovyAction.run(action, actionContext);
-		}finally {
-			
-			actionContext.pop();
+		}else {
+			return null;
 		}
 	}
 	
@@ -165,9 +186,18 @@ public class UtilAction {
 	 * @return
 	 */
 	public static Object runGroovy(String code, ActionContext actionContext) {
-		Binding binding = new Binding(actionContext);
-		GroovyShell shell = new GroovyShell(binding);
-		return shell.evaluate(code);
+		checkGroovy();
+		
+		initGroovyUtils();
+		if(runGroovy != null) {
+			try {
+				return runGroovy.invoke(null, new Object[] {code, actionContext});
+			} catch (Exception e) {
+				throw new ActionException("Run groovy error", e);
+			}
+		}else {
+			return null;
+		}
 	}
 	
 	/**
@@ -182,6 +212,15 @@ public class UtilAction {
 			return runChildActions(actionThings, actionContext, true);
 		}finally {
 			actionContext.setStatus(ActionContext.RUNNING);
+		}
+	}
+	
+	/**
+	 * 检测是否引用了xworker_groovy，如果没有抛出异常。
+	 */
+	public static void checkGroovy() {
+		if(World.getInstance().getThing("xworker.lang.actions.GroovyAction") == null) {
+			throw new ActionException("GroovyAction not exists, please import xworker_groovy!");
 		}
 	}
 	
@@ -420,5 +459,11 @@ public class UtilAction {
 		
 		name = name.replace('-', '_');
 		return name;
+	}
+	
+	public static interface IGroovyUtils{
+		public Object runGroovyAction(Thing thing, ActionContext actionContext) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException;
+		
+		public Object runGroovy(String code, ActionContext actionContext);
 	}
 }

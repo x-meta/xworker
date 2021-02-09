@@ -7,12 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.nebula.widgets.cdatetime.CDateTime;
-import org.eclipse.nebula.widgets.opal.calculator.Calculator;
-import org.eclipse.nebula.widgets.opal.calculator.CalculatorCombo;
-import org.eclipse.nebula.widgets.opal.titledseparator.TitledSeparator;
-import org.eclipse.nebula.widgets.pgroup.PGroup;
-import org.eclipse.nebula.widgets.pshelf.PShelf;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CBanner;
@@ -52,8 +46,6 @@ import xworker.swt.design.tools.CompositeDesignTools;
 import xworker.swt.design.tools.CoolBarDesignTools;
 import xworker.swt.design.tools.ExpandBarDesignTools;
 import xworker.swt.design.tools.GroupDesignTool;
-import xworker.swt.design.tools.PGroupTools;
-import xworker.swt.design.tools.PShelfTools;
 import xworker.swt.design.tools.SashFormDesignTools;
 import xworker.swt.design.tools.ShellDesignTools;
 import xworker.swt.design.tools.TabFolderDesignTools;
@@ -70,7 +62,6 @@ import xworker.util.UtilData;
  * @author zyx
  *
  */
-@SuppressWarnings("deprecation")
 public class DesignTools {
 	public static final int ABOVE = 1;
 	public static final int BELOW = 2;
@@ -94,8 +85,6 @@ public class DesignTools {
 		tools.put(SashForm.class, new SashFormDesignTools());
 		tools.put(ExpandBar.class, new ExpandBarDesignTools());
 		tools.put(Shell.class, new ShellDesignTools());
-		tools.put(PGroup.class, new PGroupTools());
-		tools.put(PShelf.class, new PShelfTools());
 		
 		unInsertables.put(Canvas.class, Canvas.class);
 		unInsertables.put(Decorations.class, Decorations.class);
@@ -110,11 +99,6 @@ public class DesignTools {
 		unInsertables.put(Tree.class, Tree.class);
 		unInsertables.put(ViewForm.class, ViewForm.class);
 		
-		//nebula
-		unInsertables.put(Calculator.class, Calculator.class);
-		unInsertables.put(CalculatorCombo.class, CalculatorCombo.class);
-		unInsertables.put(CDateTime.class, CDateTime.class);
-		unInsertables.put(TitledSeparator.class, TitledSeparator.class);
 		try{
 			Class<?> cls = Class.forName("org.eclipse.swt.ole.win32.OleClientSite");
 			unInsertables.put(cls, cls);
@@ -142,6 +126,10 @@ public class DesignTools {
 			unInsertables.put(cls, cls);
 		}catch(Exception e) {			
 		}
+	}
+	
+	public static void registUnInsertable(Class<?> cls) {
+		unInsertables.put(cls, cls);
 	}
 	
 	/**

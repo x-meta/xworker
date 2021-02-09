@@ -25,20 +25,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
-import org.xmeta.Bindings;
 import org.xmeta.Thing;
 
-import xworker.actions.GroovyAction;
 import xworker.ui.function.FunctionCallback;
 import xworker.ui.function.FunctionParameter;
 import xworker.ui.function.FunctionRequest;
+import xworker.util.UtilAction;
 
 public class ValuesAction {
-	private static Logger logger = LoggerFactory.getLogger(ValuesAction.class);
+	//private static Logger logger = LoggerFactory.getLogger(ValuesAction.class);
 	
 	public static int IntValue(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -134,6 +131,12 @@ public class ValuesAction {
 	public static Object GroovyValue(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 	
+		try {
+			return UtilAction.runGroovyAction(self, actionContext);
+		}catch(Exception e) {
+			throw new ActionException(e);
+		}
+		/*
 		try{
 			Bindings bindings = actionContext.push();
 			bindings.put("self", self);
@@ -148,7 +151,7 @@ public class ValuesAction {
 		}finally{
 			actionContext.pop();
 			actionContext.pop();
-		}
+		}*/
 	}
 	
 	public static Object NullValue(ActionContext actionContext){
