@@ -1,0 +1,1327 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Proto" descriptors="xworker.lang.MetaDescriptor3" icon="icons/comments.png">
+    <description><![CDATA[<p>Protobuf的消息定义。</p>
+]]></description>
+    <actions>
+        <GroovyAction name="httpDo">
+            <code><![CDATA[import org.xmeta.Thing;
+import org.xmeta.cache.ThingEntry;
+
+if(requestBean.action == "proto"){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println(self.doAction("toString", actionContext));
+    return;
+}
+
+def key = "__docThing__";
+def keyEntry = "__docEntry__";
+def lastTime = self.getData(keyEntry);
+if(lastTime != null && lastTime == self.getMetadata().getLastModified()){
+    //使用缓存
+    def doc = self.getData(key);
+    doc.doAction("httpDo", actionContext);
+    return;
+}
+
+//把当前模型转化为OrgDocument，通过OrgDocument输出文档
+//生成OrgDocument
+def doc = new Thing("xworker.app.web.docorg.OrgDocument");
+doc.putAll(self.getAttributes());
+doc.set("title", self.getMetadata().getLabel());
+doc.set("editable", "false");
+
+//enum
+
+def enumMenu = addMenu(doc, "enums");
+for(enumGroup in self.getChilds("enums")){
+    addGroupItems(enumMenu, enumGroup, enumGroup.getChilds("enum"));
+}
+
+//messages
+def msgMenu = addMenu(doc, "Messages");
+for(msgGroup in self.getChilds("messages")){
+    def docThing = msgGroup.doAction("toDocThing", actionContext);
+    //println docThing;
+    if(docThing != null){
+        msgMenu.addChild(docThing);
+    }
+}
+
+//proto协议代码的
+def protoMenu = addMenu(doc, "Proto");
+def protoCat = addCategory(protoMenu, "Proto");
+def protoContent = addContentThing(protoCat, self);
+
+def refresh = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+refresh.set("href", "do?sc=" + self.getMetadata().getPath());
+refresh.set("label", "Refresh");
+doc.addChild(refresh);
+
+//设置到缓存中
+self.setData(keyEntry, self.getMetadata().getLastModified());
+self.setData(key, doc);
+doc.doAction("httpDo", actionContext);
+
+def addMenu(doc, name){
+    def menu = new Thing("xworker.app.web.docorg.OrgDocument/@Category");
+    menu.set("name", name);
+    doc.addChild(menu);
+    
+    return menu;
+}
+
+def addCategory(menu, name){
+    def cat = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    cat.set("name", name);
+    menu.addChild(cat);
+    
+    return cat;
+}
+
+def addContentThing(cat, contentThing){
+    def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+    content.set("contentThing", contentThing.getMetadata().getPath());
+    content.set("label", contentThing.getMetadata().getLabel());
+    cat.addChild(content);
+}
+
+def addItems(menu, name, things){
+    def cat = addCategory(menu, name);
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}
+
+def addGroupItems(menu, group, things){
+    def cat = addCategory(menu, group.getMetadata().getLabel());
+    if(things == null || things.size() == 0){
+        return;
+    }else{
+        for(thing in things){
+            addContentThing(cat, thing);
+        }
+    }
+}]]></code>
+        </GroovyAction>
+        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="proto">
+            <description><![CDATA[<p>用于生成proto文件的html。</p>
+]]></description>
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                <templateCode><![CDATA[<a onClick="window.clipboardData.setData('text',$('#protoContent').html());alert('已拷贝到剪贴板。')"  href="javascript:void(0)">copy</a>
+<pre id="protoContent">
+syntax="${proto.syntax?default("proto2")}";
+<#if proto.import?exists && proto.import != "">
+import ${proto.import};
+</#if>
+<#if proto.package?exists && proto.package != "">
+package ${proto.package};
+</#if>
+<#if proto.java_package?exists && proto.java_package != "">
+option java_package="${proto.java_package}";
+</#if>
+<#if proto.java_outer_classname?exists && proto.java_outer_classname != "">
+option java_outer_classname="${proto.java_outer_classname}";
+</#if>
+${proto.properties?if_exists}
+
+<#list proto.doAction("getEnums", actionContext) as enu>
+${enu.doAction("toProto", actionContext)}
+
+</#list>
+<#list proto.doAction("getMessages", actionContext) as msg>
+${msg.doAction("toProto", actionContext)}
+
+</#list>
+</pre>]]></templateCode>
+            </TextTemplate>
+        </Begin>
+        <GroovyAction name="getMessages">
+            <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
+def msgs = self.getChilds("message");
+
+//获取各种子节点下定义的
+for(child in self.getChilds()){
+    def ms = child.doAction("getMessages", actionContext);
+    if(ms != null){
+        msgs.addAll(ms);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <GroovyAction name="getEnums">
+            <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
+def msgs = self.getChilds("enum");
+
+//获取各种子节点下定义的
+for(child in self.getChilds()){
+    def ms = child.doAction("getEnums", actionContext);
+    if(ms != null){
+        msgs.addAll(ms);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <Begin name="toClientTestCode" _xmeta_id_="toString1" changeSelf="true" selfVarName="data">
+            <description><![CDATA[<p>用于生成proto文件的html。</p>
+]]></description>
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                <templateCode><![CDATA[import java.util.HashMap;
+import java.util.Map;
+
+import com.google.protobuf.MessageLite;
+import com.wingtech.network.Session;
+import com.wingtech.network.handler.Handler;
+import com.wingtech.network.handler.HandlerManager;
+import com.wingtech.network.netty.NettyClient;
+
+/**
+ * 测试协议的工具。
+ * 
+ */
+public class TestProtocolTools {
+	static NettyClient client;
+	static Map<Class<?>, TestMessageEntry> messages = new HashMap<Class<?>, TestMessageEntry>();
+	
+	public static void start(String host, int port) {
+		//改成自己的类
+		HandlerManager.regist(TestProtocolTools.class);
+		
+		client = new NettyClient(host, port);
+		client.start();
+		
+		//发送线程
+		new Thread(new Runnable() {
+			public void run() {
+				for(Class<?> key : messages.keySet()) {
+					TestMessageEntry messageEntry = messages.get(key);
+					if(messageEntry.getReq() != null && messageEntry.getStatus() == TestMessageEntry.INIT) {
+						client.sendMessage(messageEntry.getReq());
+						messageEntry.setStatus(TestMessageEntry.WAITRESPONSE);
+						
+						try {
+							Thread.sleep(5);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						};
+					}
+				}
+			}
+		}).start();
+		
+		//打印状态的线程
+		new Thread(new Runnable() {
+			public void run() {
+				while(true) {
+					printStatus();
+					
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}).start();	
+		
+	}
+	
+	public static void printStatus() {
+		System.out.println("测试消息数：" + messages.size());
+		int successCount = 0;
+		int initCount = 0;
+		int failureCount = 0;
+		int waitresponseCount = 0;
+		
+		for(Class<?> key : messages.keySet()) {
+			TestMessageEntry entry = messages.get(key);
+			if(entry.getStatus() == TestMessageEntry.INIT) {
+				initCount++;
+			}else if(entry.getStatus() == TestMessageEntry.SUCCESS) {
+				successCount ++;
+			}else if(entry.getStatus() == TestMessageEntry.FAILURE) {
+				failureCount ++;
+				
+				System.out.println("消息测失败: " + entry.getInfo());
+			}else if(entry.getStatus() == TestMessageEntry.WAITRESPONSE) {
+				waitresponseCount ++;
+			}
+		}
+		
+		System.out.println("还在初始化的消息数：" + initCount);
+		System.out.println("等待回复的消息数：" + waitresponseCount);
+		System.out.println("成功消息数：" + successCount);
+		System.out.println("失败消息数：" + failureCount);
+	}
+	
+	public static void addMessages() {
+		//添加各种协议
+		<#list data.doAction("getToServerMessages", actionContext) as message>
+		<#assign name = message.getMetadata().getName()/>
+		//${message.getMetadata().getLabel()}
+		${name}.Builder ${name?uncap_first} = ${name}.newBuilder();
+		<#if message.getStringBlankAsNull("responseMessage")?exists>
+		messages.put(${message.responseMessage}.class , new TestMessageEntry(${name?uncap_first}.build()));
+		</#if>		
+		
+		</#list>
+	}
+	
+	<#list data.doAction("getToServerMessages", actionContext) as message>
+    <#if message.getStringBlankAsNull("responseMessage")?exists>
+	@Handler(reqType = ${message.responseMessage}.class)
+	public static void handle${message.responseMessage}(${message.responseMessage} resp, Session session) {
+		TestMessageEntry entry = messages.get(${message.responseMessage}.class);
+		if(entry != null) {
+			entry.setStatus(TestMessageEntry.SUCCESS);
+			
+			//如果失败
+			//entry.setStatus(TestMessageEntry.FAILURE);
+			//entry.setInfo("错误的信息...");
+		}
+	}
+	
+	</#if>
+	</#list>
+	
+	static class TestMessageEntry {
+		public static final byte INIT = 0;
+		public static final byte SUCCESS = 1;
+		public static final byte FAILURE = 2;
+		public static final byte WAITRESPONSE = 3;
+		
+		/** 请求消息  */
+		Message req;
+		
+		/** 回复的消息 */
+		Message resp;
+		
+		/** 状态 */
+		byte status = 0;
+		
+		/** 信息 */
+		String info;
+		
+		public TestMessageEntry() {		
+		}
+		
+		public TestMessageEntry(Message req) {
+			this.req = req;
+		}
+
+		public Message getReq() {
+			return req;
+		}
+
+		public void setReq(Message req) {
+			this.req = req;
+		}
+
+		public MessageLite getResp() {
+			return resp;
+		}
+
+		public void setResp(Message resp) {
+			this.resp = resp;
+		}
+
+		public byte getStatus() {
+			return status;
+		}
+
+		public void setStatus(byte status) {
+			this.status = status;
+		}
+
+		public String getInfo() {
+			return info;
+		}
+
+		public void setInfo(String info) {
+			this.info = info;
+		}
+	}	
+}]]></templateCode>
+            </TextTemplate>
+        </Begin>
+        <GroovyAction name="getToServerMessages">
+            <code><![CDATA[//获取所有消息
+def messages = self.doAction("getMessages", actionContext);
+
+def msgs = [];
+for(msg in messages){
+    if(msg.receiver == "server" || msg.receiver == "all"){
+        msgs.add(msg);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <GroovyAction name="getToClientMessages">
+            <code><![CDATA[//获取所有消息
+def messages = self.doAction("getMessages", actionContext);
+
+def msgs = [];
+for(msg in messages){
+    if(msg.receiver == "client" || msg.receiver == "all"){
+        msgs.add(msg);
+    }
+}
+
+return msgs;]]></code>
+        </GroovyAction>
+        <GroovyAction name="clearCache">
+            <code><![CDATA[self.setData("__docThing__", null);
+self.setData("__docEntry__", null);]]></code>
+        </GroovyAction>
+        <Begin name="toProto" _xmeta_id_="toString2" changeSelf="true" selfVarName="proto">
+            <description><![CDATA[<p>用于生成proto代码。</p>
+]]></description>
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                <templateCode><![CDATA[syntax="${proto.syntax?default("proto2")}";
+<#if proto.import?exists && proto.import != "">
+import ${proto.import};
+</#if>
+<#if proto.package?exists && proto.package != "">
+package ${proto.package};
+</#if>
+<#if proto.java_package?exists && proto.java_package != "">
+option java_package="${proto.java_package}";
+</#if>
+<#if proto.java_outer_classname?exists && proto.java_outer_classname != "">
+option java_outer_classname="${proto.java_outer_classname}";
+</#if>
+${proto.properties?if_exists}
+
+<#list proto.doAction("getEnums", actionContext) as enu>
+${enu.doAction("toProto", actionContext)}
+
+</#list>
+<#list proto.doAction("getMessages", actionContext) as msg>
+${msg.doAction("toProto", actionContext)}
+
+</#list>]]></templateCode>
+            </TextTemplate>
+        </Begin>
+        <GroovyAction name="compile">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
+//获取配置
+def config = getConfig(actionContext);
+
+//proto文件的路径，写入proto文件
+def clsName = getActionClassName(actionContext, "thing", self);
+def protoPath = world.getPath() + "/work/google/protobuf/" + clsName.replace('.', '/') + ".proto";
+def file = new File(protoPath);
+if(file.exists() == false){
+   file.getParentFile().mkdirs();
+}
+write(actionContext, "file", file, "content", self.doAction("toProto", actionContext));
+
+//调用protoc生成class
+def javaDir = world.getPath() + "/work/actionSources/" + self.getMetadata().getThingManager().getName() + "/";
+def javaPackage = self.getStringBlankAsNull("java_package");
+def javaClassName = self.getStringBlankAsNull("java_outer_classname");
+if(javaClassName == null){
+    throw new ActionException("Please set attribute java_outer_classname, path=" + self.getMetadata().getPath());
+}
+def javaFile = javaDir;
+//println "javaPackage=" + javaPackage;
+if(javaPackage != null){
+    javaFile = javaFile + javaPackage.replace('.', '/') + "/";
+}
+javaFile = javaFile + javaClassName + ".java";
+
+def cmdArray = [
+    config.getString("protoc"),
+    "--java_out=" + javaDir,
+    "--proto_path=" + file.getParentFile().getAbsolutePath(),
+    file.getName()
+] as String[];
+
+def process = startProcess(actionContext, "cmdArray", cmdArray);
+process.waitFor();
+
+//编译Java文件
+compileJava(actionContext, "target", world.getPath() + "/work/actionClasses/" + self.getMetadata().getThingManager().getName() + "/",
+    "javaFile", javaFile);
+    
+Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished");]]></code>
+            <ActionDefined>
+                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
+                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"></GetPreference>
+                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
+                     action="var:thing"></GetActionClassName>
+                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                     file="var:file" data="var:content"></WriteStringToFile>
+                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
+                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
+            </ActionDefined>
+        </GroovyAction>
+        <JavaAction name="getMessageFactory" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="getMessageFactory"></JavaAction>
+        <JavaAction name="clearMessageFactory" outerClassName="xworker.com.google.proto.ProtobufMessages"
+             methodName="clearMessageFactory"></JavaAction>
+        <JavaAction name="decodeBytes" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="decodeBytes">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+                <param name="message" type="byte[]"></param>
+                <param name="offset" type="java.lang.Integer"></param>
+                <param name="length" type="java.lang.Integer"></param>
+            </ins>
+        </JavaAction>
+        <JavaAction name="decodeJson" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="decodeJson">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+                <param name="message" type="java.lang.String"></param>
+            </ins>
+        </JavaAction>
+        <JavaAction name="newBuilder" outerClassName="xworker.com.google.proto.ProtoActions"
+             methodName="newBuilder">
+            <ins>
+                <param name="name" type="java.lang.String">
+                    <description><![CDATA[<p>类的全名或简单名。</p>
+]]></description>
+                </param>
+            </ins>
+        </JavaAction>
+        <Begin name="menu_generateJava" _xmeta_id_="generateJava1" changeSelf="true"
+             selfVarName="data">
+            <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成Java到该目录下。</p>
+]]></description>
+            <actions>
+                <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
+                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
+                    <actions>
+                        <GroovyAction name="open">
+                            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
+if(fileName == null){    
+    return;
+}
+data.doAction("generateJava", actionContext);]]></code>
+                        </GroovyAction>
+                    </actions>
+                </DirectoryDialog>
+            </actions>
+        </Begin>
+        <Begin name="menu_generateJs" _xmeta_id_="generateJava11" changeSelf="true"
+             selfVarName="data">
+            <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成JS到该目录下。</p>
+]]></description>
+            <actions>
+                <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
+                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
+                    <actions>
+                        <GroovyAction name="open">
+                            <code><![CDATA[if(fileName == null){    
+    return;
+}
+data.doAction("generateJs", actionContext);]]></code>
+                        </GroovyAction>
+                    </actions>
+                </DirectoryDialog>
+            </actions>
+        </Begin>
+        <GroovyAction name="generateJs">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
+def TAG = self.getMetadata().getPath();
+if(fileName == null){    
+    return;
+}
+
+//获取配置
+def config = getConfig(actionContext);
+
+//proto文件的路径，写入proto文件
+def clsName = getActionClassName(actionContext, "thing", self);
+def protoPath = world.getPath() + "/work/google/protobuf/" + clsName.replace('.', '/') + ".proto";
+Executor.info(TAG, "Generate proto file to " + protoPath);
+def file = new File(protoPath);
+if(file.exists() == false){
+   file.getParentFile().mkdirs();
+}
+write(actionContext, "file", file, "content", self.doAction("toProto", actionContext));
+
+Executor.info(TAG, "Generate javascript code use protoc(" + config.getString("protoc") + ")");
+//调用protoc生成class
+def javaDir = fileName;
+
+def cmdArray = [
+    config.getString("protoc"),
+    "--js_out=import_style=commonjs,binary:" + javaDir,
+    "--proto_path=" + file.getParentFile().getAbsolutePath(),
+    file.getName()
+] as String[];
+
+def process = startProcess(actionContext, "cmdArray", cmdArray);
+process.waitFor();
+
+Executor.info(TAG, "Javascript code has generated to " + javaDir);]]></code>
+            <ActionDefined>
+                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
+                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
+                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
+                     action="var:thing"></GetActionClassName>
+                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                     file="var:file" data="var:content"></WriteStringToFile>
+                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
+                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
+            </ActionDefined>
+            <ins>
+                <param name="fileName" type="java.lang.String"></param>
+            </ins>
+        </GroovyAction>
+        <GroovyAction name="generateJava">
+            <code><![CDATA[import xworker.util.XWorkerUtils;
+import org.xmeta.ActionException;
+import xworker.lang.executor.Executor;
+
+def TAG = self.getMetadata().getPath();
+if(fileName == null){    
+    return;
+}
+
+//获取配置
+def config = getConfig(actionContext);
+
+//proto文件的路径，写入proto文件
+def clsName = getActionClassName(actionContext, "thing", self);
+def protoPath = world.getPath() + "/work/google/protobuf/" + clsName.replace('.', '/') + ".proto";
+Executor.info(TAG, "Generate proto file to " + protoPath);
+def file = new File(protoPath);
+if(file.exists() == false){
+   file.getParentFile().mkdirs();
+}
+write(actionContext, "file", file, "content", self.doAction("toProto", actionContext));
+
+Executor.info(TAG, "Generate java code use protoc(" + config.getString("protoc") + ")");
+//调用protoc生成class
+def javaDir = fileName;
+def javaPackage = self.getStringBlankAsNull("java_package");
+def javaClassName = self.getStringBlankAsNull("java_outer_classname");
+if(javaClassName == null){
+    throw new ActionException("Please set attribute java_outer_classname, path=" + self.getMetadata().getPath());
+}
+def javaFile = javaDir;
+//println "javaPackage=" + javaPackage;
+if(javaPackage != null){
+    javaFile = javaFile + javaPackage.replace('.', '/') + "/";
+}
+javaFile = javaFile + javaClassName + ".java";
+
+def cmdArray = [
+    config.getString("protoc"),
+    "--java_out=" + javaDir,
+    "--proto_path=" + file.getParentFile().getAbsolutePath(),
+    file.getName()
+] as String[];
+
+def process = startProcess(actionContext, "cmdArray", cmdArray);
+process.waitFor();
+
+Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>
+            <ActionDefined>
+                <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
+                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
+                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
+                     action="var:thing"></GetActionClassName>
+                <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                     file="var:file" data="var:content"></WriteStringToFile>
+                <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
+                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
+            </ActionDefined>
+            <ins>
+                <param name="fileName" type="java.lang.String"></param>
+            </ins>
+        </GroovyAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="syntax" inputtype="inputSelect" default="proto2">
+        <value name="proto2" value="proto2"></value>
+        <value name="proto3" value="proto3"></value>
+    </attribute>
+    <attribute name="import" size="60"></attribute>
+    <attribute name="package" size="50"></attribute>
+    <attribute name="java_package" size="60"></attribute>
+    <attribute name="java_outer_classname" size="60"></attribute>
+    <attribute name="receiver" inputtype="select" default="server">
+        <description><![CDATA[<p>用于生成Java，是生成服务器端还是客户端的代码。</p>
+]]></description>
+        <value name="server" value="server"></value>
+        <value name="client" value="client"></value>
+    </attribute>
+    <attribute name="handlerDir" _xmeta_id_="handlerClassName" size="60">
+        <description><![CDATA[<p>生成Java代码时，要生成的handler要生成到那个目录下。</p>
+]]></description>
+    </attribute>
+    <attribute name="properties" inputtype="textarea">
+        <description><![CDATA[<p>可用于编写额外的属性。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <sswtMenus extends="xworker.http.ControlSet/@swtMenus1">
+        <menuDefine>
+            <menu name="Proto"></menu>
+        </menuDefine>
+        <menuSetting name="proto" menuType="Proto">
+            <menu name="runWebAction" label="在浏览器中打开文档" url="xworker.http.ControlSet/@actions/@httpExecute"
+                 en_label="Run Web Action"></menu>
+            <menu name="split1" isSplit="true"></menu>
+            <menu name="generateClientTestCode" label="生成客户端测试代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toClientTestCode"></menu>
+            <menu name="generateProtoCode" label="生成Proto代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=proto&amp;actionName=toProto"></menu>
+            <menu name="saveAs" label="Proto另存为..." en_label="Save proto as ...">
+                <actions>
+                    <FileDialog descriptors="xworker.swt.actions.DialogActions/@FileDialog"
+                         style="SAVE" fileName="Message.proto">
+                        <actions>
+                            <GroovyAction name="getFileName" code="return currentThing.getMetadata().getName() + &quot;.proto&quot;;"></GroovyAction>
+                            <GroovyAction name="onSelected">
+                                <code><![CDATA[if(fileName != null){    
+    def data = currentThing.doAction("toProto", actionContext);
+    write(actionContext, "file", new File(fileName), "data", data);
+}]]></code>
+                                <ActionDefined>
+                                    <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
+                                         file="var:file" data="var:data"></WriteStringToFile>
+                                </ActionDefined>
+                            </GroovyAction>
+                        </actions>
+                    </FileDialog>
+                </actions>
+            </menu>
+            <menu name="GenreateJava" label="Generate Java Code to..." url="action:menu_generateJava"></menu>
+            <menu name="GenreateJs" _xmeta_id_="GenreateJava1" label="Generate JavaScript to..."
+                 url="action:menu_generateJs"></menu>
+            <menu name="split2" isSplit="true"></menu>
+            <menu name="compile" label="Compile To Class" url="action:compile"></menu>
+            <menu name="ClearMessageFactory" url="action:clearMessageFactory"></menu>
+        </menuSetting>
+    </sswtMenus>
+    <thing name="enums" icon="icons/folder_feed.png">
+        <actions>
+            <NOOP name="getMessages"></NOOP>
+            <RefAction name="getEnums" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getEnums"></RefAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="enum" icon="icons/contrast.png">
+            <actions>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-enum</h2>
+<p/>
+${data.getMetadata().getDescription()?if_exists}
+<p/>
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>名称</th>
+      <th>标签</th>
+      <th>值</th>
+      <th>描述</th>
+    </tr>
+  </thead>  
+  <tbody>
+    <#list data.getChilds("Value") as field>
+    <tr>
+      <td>${field.getMetadata().getName()}</td>
+      <td>${field.getMetadata().getLabel()}</td>
+      <td>${field.value?if_exists}</td>
+      <td>${field.getMetadata().getDescription()?if_exists}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</div>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <Begin name="toProto" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[//${data.getMetadata().getLabel()}
+enum ${data.getMetadata().getName()}{
+    <#list data.getChilds("Value") as v>
+    ${v.getMetadata().getName()} = ${v.value?if_exists};    //${v.getMetadata().getLabel()}
+    </#list>
+}]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <NOOP name="getMessages"></NOOP>
+                <NOOP name="getEnums"></NOOP>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="Value">
+                <attribute name="name"></attribute>
+                <attribute name="label"></attribute>
+                <attribute name="value"></attribute>
+                <attribute name="description" inputtype="html"></attribute>
+            </thing>
+        </thing>
+    </thing>
+    <thing name="messages" icon="icons/folder_page.png">
+        <actions>
+            <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
+            <NOOP name="getEnums"></NOOP>
+            <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+                <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+for(child in self.getChilds()){
+    def childContent = child.doAction("toDocThing", actionContext);
+    if(childContent != null){
+        content.addChild(childContent);
+    }
+}
+
+return content;]]></code>
+            </GroovyAction>
+            <Begin name="toJavaCode" _xmeta_id_="toHtml11" changeSelf="true" selfVarName="data">
+                <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                    <templateCode><![CDATA[/**
+ * <h2>服务器端代码</h2>
+ */
+public class ${data.handlerClassName?if_exists} {
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+
+</#if>
+</#list>
+<#list data.getChilds("RequestResponse") as reqresp>
+<#list reqresp.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</#list>
+}
+
+
+//<h2>客户端端代码</h2>
+${data.getMetadata().getDescription()?if_exists}
+public class ${data.handlerClassName?if_exists} {
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+
+</#if>
+</#list>
+<#list data.getChilds("RequestResponse") as reqresp>
+<#list reqresp.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /** 
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</#list>]]></templateCode>
+                </TextTemplate>
+            </Begin>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="handlerClassName" size="60">
+            <description><![CDATA[<p>生产Java代码时的Handler的类的名称。</p>
+
+<p>子节点下的所有message的handler代码，都会生成到这下面。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="message" icon="icons/email.png">
+            <description><![CDATA[<p>double:&nbsp;浮点数</p>
+
+<p>float:&nbsp;单精度浮点</p>
+
+<p>int32:&nbsp;int类型，使用可变长编码，编码负数不够高效,如果有负数那么使用sint32</p>
+
+<p>sint32:&nbsp;int类型，使用可变长编码,&nbsp;有符号的整形,比通常的int32高效;</p>
+
+<p>uint32:&nbsp;无符号整数使用可变长编码方式;</p>
+
+<p>int64 long&nbsp;long&nbsp;,&nbsp;使用可变长编码方式。编码负数时不够高效&mdash;&mdash;如果有负数，可以使用sint64;</p>
+
+<p>sint64 long&nbsp;long&nbsp;&nbsp;使用可变长编码方式。有符号的整型值。编码时比通常的int64高效;</p>
+
+<p>uint64:&nbsp;无符号整数使用可变长编码方式;</p>
+
+<p>fixed32 : 总是4个字节。如果数值总是比总是比2^28大的话，这个类型会比uint32高效。</p>
+
+<p>fixed64: 总是8个字节。如果数值总是比总是比2^56大的话，这个类型会比uint64高效。</p>
+
+<p>sfixed32: 总是4个字节。</p>
+
+<p>sfixed64: 总是8个字节。</p>
+
+<p>bool:bool值</p>
+
+<p>string: 一个字符串必须是UTF-8编码或者7-bit ASCII编码的文本。</p>
+
+<p>bytes:&nbsp;可能包含任意顺序的字节数据。类似java的ByteString以及&nbsp;c++ string;</p>
+]]></description>
+            <actions>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-message</h2>
+<p/>
+${data.getMetadata().getDescription()?if_exists}
+<p/>
+<#list data.getChilds("enum") as enu>
+${enu.doAction("toHtml", actionContext)?if_exists}
+</#list>
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover">
+  <thead>
+    <tr>
+      <th>标签</th>
+      <th>名称</th>
+      <th>修饰符</th>
+      <th>类型</th>      
+      <th>序号</th>
+      <th>描述</th>
+    </tr>
+  </thead>  
+  <tbody>
+    <#list data.getChilds("Field") as field>
+    <tr>
+      <td style="white-space: nowrap">${field.getMetadata().getLabel()}</td>
+      <td>${field.getMetadata().getName()}</td>
+      <td>${field.modifier?if_exists}</td>
+      <td>${field.type?if_exists}</td>      
+      <td>${field.index?if_exists}</td>
+      <td>${field.getMetadata().getDescription()?if_exists}</td>
+    </tr>
+    </#list>
+  </tbody>
+</table>
+</div>
+<#list data.getChilds("message") as msg>
+${msg.doAction("toHtml", actionContext)?if_exists}
+</#list>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <Begin name="toProto" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[//${data.getMetadata().getLabel()}<#if data.getMetadata().getDescription()?exists><#list data.getMetadata().getDescription()?split("\n") as line><#assign line = line?trim/><#if line != "">
+//${line}</#if></#list></#if>
+//接收方：${data.receiver?if_exists}
+message ${data.getMetadata().getName()}{
+    <#list data.getChilds("Field") as f>
+    <#if (proto.syntax?exists && proto.syntax == "proto2") || f.modifier == "repeated">${f.modifier?if_exists} </#if>${f.type?if_exists} ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
+    </#list>    
+    <#list data.getChilds("enum") as enu>
+    
+    <#list enu.doAction("toProto", actionContext)?split("\n") as line>
+    ${line}
+    </#list>
+    </#list>
+    <#list data.getChilds("message") as msg>
+    
+    <#list msg.doAction("toProto", actionContext)?split("\n") as line>
+    ${line}
+    </#list>
+    </#list>
+}]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+                <NOOP name="getMessages"></NOOP>
+                <NOOP name="getEnums"></NOOP>
+                <GroovyAction name="toDocThing">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+return content;]]></code>
+                </GroovyAction>
+                <GroovyAction name="toJsonData">
+                    <code><![CDATA[//类型定义
+def typeD = world.getThing("xworker.com.google.protobuf.Proto/@messages/@message/@Field/@type");
+def types = typeD.getChilds();
+
+def toJsonDataContext = actionContext.get("toJsonDataContext");
+if(toJsonDataContext == null){
+    toJsonDataContext = [:];
+    actionContext.peek().put("toJsonDataContext", toJsonDataContext);
+}
+
+def json = "{\n";
+def fields = self.getChilds("Field");
+for(i=0; i<fields.size(); i++){
+    def field = fields.get(i);
+    if(field.modifier == "repeated"){
+        json = json + "    \"" + field.name + "\":[\n";
+        def proto = getProto(field.type, self, actionContext);
+        if(proto != null && toJsonDataContext.get(proto) == null){
+             toJsonDataContext.put(proto, proto);
+             def childJson = proto.doAction("toJsonData", actionContext);
+             if(childJson != null){
+                 for(cj in childJson.split("[\n]")){
+                     json = json + "    " + cj + "\n";
+                 }
+             }
+        }
+        json = json + "    ]"
+    }else{
+        json = json + "    \"" + field.name + "\":";
+        if(field.type == "string"){
+            json = json + "\"\"";
+        }else if(field.type == "bytes"){
+            json = json + "\"hex:\"";
+        }else if(isBaseType(field.type, types)){
+            json = json + "0";
+        }else{
+            def proto = getProto(field.type, self, actionContext);
+            if(proto != null){
+                 def childJson = proto.doAction("toJsonData", actionContext);
+                 if(childJson != null){
+                     for(cj in childJson.split("[\n]")){
+                         json = json + "    " + cj + "\n";
+                     }
+                 }
+            }
+        }        
+    }
+    if(i < fields.size() - 1){
+        json = json + ",\n";
+    }else{
+        json = json + "\n";
+    }
+}
+
+json = json + "}";
+
+return json;
+
+def getProto(name, self, actionContext){
+    def root = self;
+    while(root.getThingName() != "Proto"){
+        root = root.getParent();
+    }
+    
+    def messages = root.doAction("getMessages", actionContext);
+    for(message in messages){
+        if(message.name == name){
+            return message;
+        }
+    }
+    
+    return null;
+}
+
+def isBaseType(type, types){
+    for(t in types){
+        if(t.name == type){
+            return true;
+        }
+    }
+    
+    return false;
+}]]></code>
+                </GroovyAction>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="receiver" _xmeta_id_="handler" inputtype="select">
+                <description><![CDATA[<p>服务器还是客户端在接收该协议，也可以是相互接收的。</p>
+]]></description>
+                <value name="server" value="server"></value>
+                <value name="client" value="client"></value>
+                <value name="all" value="all"></value>
+            </attribute>
+            <attribute name="responseMessage" size="50"></attribute>
+            <attribute name="description" inputtype="textarea"></attribute>
+            <thing name="Field">
+                <attribute name="name"></attribute>
+                <attribute name="label"></attribute>
+                <attribute name="modifier" inputtype="select" default="required">
+                    <value name="required" value="required"></value>
+                    <value name="optional" value="optional"></value>
+                    <value name="repeated" value="repeated"></value>
+                </attribute>
+                <attribute name="type" inputtype="inputSelect">
+                    <value name="double" value="double"></value>
+                    <value name="float" value="float"></value>
+                    <value name="int32" value="int32"></value>
+                    <value name="sint32" value="sint32"></value>
+                    <value name="uint32" value="uint32"></value>
+                    <value name="int64" value="int64"></value>
+                    <value name="sint64" value="sint64"></value>
+                    <value name="uint64" value="uint64"></value>
+                    <value name="fixed32" value="fixed32"></value>
+                    <value name="fixed64" value="fixed64"></value>
+                    <value name="sfixed32" value="sfixed32"></value>
+                    <value name="sfixed64" value="sfixed64"></value>
+                    <value name="bool" value="bool"></value>
+                    <value name="string" value="string"></value>
+                    <value name="bytes" value="bytes"></value>
+                </attribute>
+                <attribute name="index"></attribute>
+                <attribute name="defaultValue" inputtype="textarea"></attribute>
+                <attribute name="description" inputtype="html"></attribute>
+            </thing>
+            <sswtMenus>
+                <menuDefine>
+                    <menu name="Message"></menu>
+                </menuDefine>
+                <menuSetting menuType="Message">
+                    <menu name="autoSetIndexMenuItem" label="自动设置Index">
+                        <actions>
+                            <GroovyAction name="doAction">
+                                <code><![CDATA[actions.doAction("save", actionContext);
+
+def index = 1;
+for(field in currentThing.getChilds("Field")){
+    field.set("index", "" + index);
+    index++;
+}
+
+actions.doAction("save", actionContext);]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </menu>
+                </menuSetting>
+            </sswtMenus>
+            <thing name="enum" extends="xworker.com.google.protobuf.Proto/@enums/@enum"
+                 inheritDescription="true" icon="icons/contrast.png"></thing>
+            <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
+                 inheritDescription="true" icon="icons/email.png"></thing>
+        </thing>
+        <thing name="messageGroup" _xmeta_id_="RequestResponse" icon="icons/folder_go.png">
+            <description><![CDATA[<p>消息子分组。</p>
+]]></description>
+            <actions>
+                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
+                <NOOP name="getEnums"></NOOP>
+                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+/*
+for(child in self.getChilds("message")){
+    def childContent = child.doAction("toDocThing", actionContext);
+    if(childContent != null){
+        content.addChild(childContent);
+    }
+}*/
+
+return content;]]></code>
+                </GroovyAction>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h1>${data.getMetadata().getLabel()}</h1>
+${data.getMetadata().getDescription()?if_exists}
+<#list data.getChilds("message") as msg>
+${msg.doAction("toHtml", actionContext)?if_exists}
+
+</#list>
+<h2>服务器端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</pre>
+
+<h2>客户端端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</pre>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
+                 inheritDescription="true"></thing>
+        </thing>
+        <sswtMenus>
+            <menuDefine>
+                <menu name="Messages"></menu>
+            </menuDefine>
+            <menuSetting menuType="Messages">
+                <menu name="toJavaCode" label="ToJavaCode" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toJavaCode"></menu>
+            </menuSetting>
+        </sswtMenus>
+        <thing name="RequestResponse" _xmeta_id_="RequestResponse1" icon="icons/folder_go.png">
+            <description><![CDATA[<p>消息子分组。</p>
+]]></description>
+            <actions>
+                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
+                <NOOP name="getEnums"></NOOP>
+                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+                    <code><![CDATA[import org.xmeta.Thing;
+
+//转化为orgDocument的模型
+def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryItem");
+content.set("contentThing", self.getMetadata().getPath());
+content.set("label", self.getMetadata().getLabel());
+
+/*
+for(child in self.getChilds("message")){
+    def childContent = child.doAction("toDocThing", actionContext);
+    if(childContent != null){
+        content.addChild(childContent);
+    }
+}*/
+
+return content;]]></code>
+                </GroovyAction>
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                        <templateCode><![CDATA[<h1>${data.getMetadata().getLabel()}</h1>
+${data.getMetadata().getDescription()?if_exists}
+<#list data.getChilds("message") as msg>
+${msg.doAction("toHtml", actionContext)?if_exists}
+
+</#list>
+<h2>服务器端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "server" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</pre>
+
+<h2>客户端端代码</h2>
+<pre class="brush:java;">
+<#list data.getChilds("message") as msg>
+<#if msg.getStringBlankAsNull("receiver")?exists && (msg.receiver == "client" || msg.receiver == "all")>
+    /**
+     * ${msg.getMetadata().getDescription()?if_exists}
+     */
+    @Handler(reqType = ${msg.getMetadata().getName()}.class)
+    public static void handle${msg.getMetadata().getName()}(${msg.getMetadata().getName()} req, Session session) throws IOException {
+        <#if msg.getStringBlankAsNull("responseMessage")?exists>
+        ${msg.responseMessage}.Builder resp = ${msg.responseMessage}.newBuilder();
+        session.sendMessage(resp.build());
+        </#if>
+    }
+    
+</#if>
+</#list>
+</pre>]]></templateCode>
+                    </TextTemplate>
+                </Begin>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+            <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
+                 inheritDescription="true"></thing>
+        </thing>
+    </thing>
+</thing>

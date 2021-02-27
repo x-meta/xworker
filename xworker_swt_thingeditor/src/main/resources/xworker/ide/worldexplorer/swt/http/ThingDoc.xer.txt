@@ -1,0 +1,1136 @@
+^1600243562376
+@
+sname
+ThingDoc
+slabel
+ThingDoc
+sdescriptors
+xworker.http.ControlSet
+  @/@view
+  sname
+  view
+  sdescription
+  <p>类似Java Doc的方式显示事物（以描述者的方式）。</p>
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sid
+  view
+    @/@view/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@view/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+import xworker.doc.thing.ThingDoc;
+
+utilDoc = UtilThingDoc.getInstance();
+thing = world.getThing(requestBean.thing);
+thingDoc = new ThingDoc(null, thing);
+
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      doAction
+    @/@view/@success
+    sname
+    success
+    stype
+    freemarker
+    scontentType
+    text/html;
+    svalue
+    /xworker/ide/worldExplorer/swt/http/thingDoc.ftl
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sid
+    success
+  @/@desc
+  sname
+  desc
+  sdescription
+  <p>只显示事物的描述说明。</p>
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl,xworker.http.controls.SimpleControl/@actions
+  sid
+  desc
+    @/@desc/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@desc/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+import xworker.security.SecurityManager;
+
+//是否能够编辑
+canEdit = SecurityManager.doCheck("WEB", "XWorker_Thing_Manager", null, null, actionContext);
+
+utilDoc = UtilThingDoc.getInstance();
+thing = world.getThing(requestBean.thing);
+
+if(thing == null){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println("Thing is null");
+    return "nothing";
+}
+
+label = thing.getMetadata().getLabel(actionContext);
+description = thing.getMetadata().getDescription(actionContext);
+if(request.getParameter("nohead") == "true"){
+    nohead = true;
+}else{
+    nohead = false;
+}
+nohead = true;
+
+//显示类型
+def type = request.getParameter("type");
+if(type == null){
+    type = "default";
+}
+
+//放入事物的行为
+actionContext.g().put("actions", thing.getActionsThings());
+
+//返回真正的有文档的事物
+def realThing = thing;
+while(true){
+    description = thing.getMetadata().getDescription(actionContext);
+    if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
+    	//是否是继承描述
+    	def extendsThing = realThing.getExtends();
+    	if(extendsThing.size() > 0){
+    		realThing = extendsThing.get(0);
+    	}else{
+    	    break;
+    	}
+	}else{
+	    break;
+	}
+}
+
+actionContext.put("description", description);
+//println("realthing===========");
+actionContext.g().put("realThing", realThing);		
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      doAction
+    @/@desc/@forms
+    sname
+    forms
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    stitle
+    ${(thing.metadata.label)?default("无标题")}
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!--<LINK REL ="stylesheet" TYPE="text/css" HREF="css/orgweb.css" TITLE="Style"/>-->
+<script type="text/javascript" src="${request.contextPath}/js/xworker/InnerBrowserUtil.js"></script>
+<script language="javascript">
+    function setStatus(status){
+        window.status = status;
+        window.status = "";
+    }
+    
+    function toDoc(url){
+        document.location = "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@view&thing=" + url;
+    }
+</script>
+<link rel="stylesheet" type="text/css" media="all" href="js/syntaxhighlighter/styles/shCoreEclipse.css" />
+<link rel="stylesheet" type="text/css" media="all" href="js/syntaxhighlighter/styles/shThemeEclipse.css" />
+<script type="text/javascript" src="js/syntaxhighlighter/scripts/shCore.js"></script>
+<script type="text/javascript" src="js/syntaxhighlighter/scripts/shAutoloader.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sid
+    forms
+      @/@desc/@forms/@JQuery
+      sversion
+      jquery-1.4.2.min.js
+      sname
+      JQuery
+      sdescriptors
+      xworker.html.jquery.JQuery
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      JQuery
+      @/@desc/@forms/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<#if  requestBean.marquee?exists>
+<marquee  direction="up" behavior="slide">
+</#if>
+<div id="content" <#if requestBean.fade?exists && requestBean.fade == "true">style="display:none;"</#if>>
+<#if thing?exists>
+<#if nohead == false>
+<b><u>${label?if_exists}(${thing.metadata.name})</u></b>
+<img src="images/file/open.gif" align="top" alt="点击打开事物" onClick="invoke('openThing:${requestBean.thing?if_exists}')"/>
+<img src="images/file/javaDoc.gif" align="top" alt="点击浏览文档" onClick="toDoc('${requestBean.thing?if_exists}')"/>
+<br/><br/>
+</#if>
+${description?if_exists}
+<#else>
+Thing not found : ${requestBean.thing?if_exists}
+</#if>
+</div>
+<#if requestBean.marquee?exists>
+</marquee>
+</#if>
+<#if canEdit>
+<p style="text-align: right;">
+<span style="font-size: xx-small;align=right"><b>
+<a onClick="window.clipboardData.setData('text','${requestBean.thing?if_exists}');alert('已拷贝到剪贴板。')"  href="javascript:void(0)">copy</a>
+<a href="do?sc=xworker.ide.worldexplorer.swt.tools.EditDesc&thingPath=${realThing.getMetadata().getPath()}">edit</a>
+<a onClick="invoke('openThing:${requestBean.thing?if_exists}')" href="javascript:void(0)">open</a>
+<a onClick="invoke('openThing:${realThing.getMetadata().getPath()}')" href="javascript:void(0)">openr</a>
+</b></span></span>
+</p>
+</#if>
+<script type="text/javascript">
+$(document).ready(function(){    
+<#if requestBean.fade?exists && requestBean.fade == "true">
+    $("#content").fadeIn("slow");
+</#if>    
+   
+    var xhrefs = $("[xworker_href]");
+    for(i=0; i<xhrefs.length; i++){
+        alert(xhrefs[i]);
+    }
+});    
+
+function path()
+{
+  var args = arguments,
+      result = []
+      ;
+        
+  for(var i = 0; i < args.length; i++)
+      result.push(args[i].replace('@', 'js/syntaxhighlighter/scripts/'));
+        
+  return result
+};
+  
+SyntaxHighlighter.autoloader.apply(null, path(
+  'applescript            @shBrushAppleScript.js',
+  'actionscript3 as3      @shBrushAS3.js',
+  'bash shell             @shBrushBash.js',
+  'coldfusion cf          @shBrushColdFusion.js',
+  'cpp c                  @shBrushCpp.js',
+  'c# c-sharp csharp      @shBrushCSharp.js',
+  'css                    @shBrushCss.js',
+  'delphi pascal          @shBrushDelphi.js',
+  'diff patch pas         @shBrushDiff.js',
+  'erl erlang             @shBrushErlang.js',
+  'groovy                 @shBrushGroovy.js',
+  'java                   @shBrushJava.js',
+  'jfx javafx             @shBrushJavaFX.js',
+  'js jscript javascript  @shBrushJScript.js',
+  'perl pl                @shBrushPerl.js',
+  'php                    @shBrushPhp.js',
+  'text plain             @shBrushPlain.js',
+  'py python              @shBrushPython.js',
+  'ruby rails ror rb      @shBrushRuby.js',
+  'sass scss              @shBrushSass.js',
+  'scala                  @shBrushScala.js',
+  'sql                    @shBrushSql.js',
+  'vb vbnet               @shBrushVb.js',
+  'xml xhtml xslt html    @shBrushXml.js'
+));
+SyntaxHighlighter.all();
+</script>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sid
+      code
+    @/@desc/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@desc/@forms
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sid
+    success
+  @/@showThingDoc
+  sname
+  showThingDoc
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  showThingDoc
+    @/@showThingDoc/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@showThingDoc/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+
+utilDoc = UtilThingDoc.getInstance();
+thing = world.getThing(requestBean.thing);
+
+if(thing == null){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println("Thing is null");
+    return "nothing";
+}
+
+if(request.getParameter("nohead") == "true"){
+    nohead = true;
+}else{
+    nohead = false;
+}
+nohead = true;
+
+//显示类型
+def type = request.getParameter("type");
+if(type == null){
+    type = "default";
+}
+
+//放入事物的行为
+actionContext.g().put("actions", thing.getActionsThings());
+
+//返回真正的有文档的事物
+def realThing = thing;
+while(true){
+    def description = realThing.getStringBlankAsNull("description");
+    if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
+    	//是否是继承描述
+    	def extendsThing = realThing.getExtends();
+    	if(extendsThing.size() > 0){
+    		realThing = extendsThing.get(0);
+    	}else{
+    	    break;
+    	}
+	}else{
+	    break;
+	}
+}
+//println("realthing===========");
+actionContext.g().put("realThing", realThing);		
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      doAction
+    @/@showThingDoc/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    view
+      @/@showThingDoc/@view/@code
+      sname
+      code
+      scode
+      ${realThing.getMetadata().getDescription()}
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      code
+    @/@showThingDoc/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;charset=UTF-8
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@showThingDoc/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    success
+  @/@showThingActions
+  sname
+  showThingActions
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  showThingActions
+    @/@showThingActions/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@showThingActions/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+import xworker.util.XWorkerUtils;
+
+utilDoc = UtilThingDoc.getInstance();
+thing = world.getThing(requestBean.thing);
+
+if(thing == null){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println("Thing is null");
+    return "nothing";
+}
+
+if(request.getParameter("nohead") == "true"){
+    nohead = true;
+}else{
+    nohead = false;
+}
+nohead = true;
+
+//显示类型
+def type = request.getParameter("type");
+if(type == null){
+    type = "default";
+}
+
+//放入事物的行为
+actionContext.g().put("actions", thing.getActionsThings());
+
+//返回真正的有文档的事物
+def realThing = thing;
+while(true){
+    def description = realThing.getStringBlankAsNull("description");
+    if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
+    	//是否是继承描述
+    	def extendsThing = realThing.getExtends();
+    	if(extendsThing.size() > 0){
+    		realThing = extendsThing.get(0);
+    	}else{
+    	    break;
+    	}
+	}else{
+	    break;
+	}
+}
+//println("realthing===========");
+actionContext.g().put("realThing", realThing);		
+def actions = realThing.getActionThings();
+XWorkerUtils.sortThings(actions, "name");
+_g.put("actions", actions);
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      doAction
+    @/@showThingActions/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    view
+      @/@showThingActions/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<p><strong>${realThing.metadata.label}的方法列表：</strong></p>
+
+<table border="1" cellpadding="0" cellspacing="0" >
+	<tbody>
+		<tr>
+			<td style="text-align: center; background-color: rgb(238, 238, 238);">方法名</td>
+			<td style="text-align: center; background-color: rgb(238, 238, 238);">文档</td>
+		</tr>
+<#list actions as ac>
+		<tr>
+			<td >${ac.metadata.name}</td>
+			<td >${ac.metadata.description?if_exists}</td>
+		</tr>
+</#list>	
+	</tbody>
+</table>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      code
+    @/@showThingActions/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;charset=UTF-8
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@showThingActions/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    success
+  @/@showActions
+  sname
+  showChilds
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  showActions
+    @/@showActions/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sid
+    actions
+      @/@showActions/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.ui.editor.UtilThingDoc;
+
+utilDoc = UtilThingDoc.getInstance();
+thing = world.getThing(requestBean.thing);
+
+if(thing == null){
+    response.setContentType("text/plain; charset=utf-8");
+    response.writer.println("Thing is null");
+    return "nothing";
+}
+
+if(request.getParameter("nohead") == "true"){
+    nohead = true;
+}else{
+    nohead = false;
+}
+nohead = true;
+
+//显示类型
+def type = request.getParameter("type");
+if(type == null){
+    type = "default";
+}
+
+//放入事物的行为
+actionContext.g().put("actions", thing.getActionsThings());
+
+//返回真正的有文档的事物
+def realThing = thing;
+while(true){
+    def description = realThing.getStringBlankAsNull("description");
+    if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
+    	//是否是继承描述
+    	def extendsThing = realThing.getExtends();
+    	if(extendsThing.size() > 0){
+    		realThing = extendsThing.get(0);
+    	}else{
+    	    break;
+    	}
+	}else{
+	    break;
+	}
+}
+//println("realthing===========");
+actionContext.g().put("realThing", realThing);		
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      doAction
+    @/@showActions/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    view
+      @/@showActions/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<p><strong>${realThing.metadata.label}的子事物列表：</strong></p>
+
+<table border="1" cellpadding="0" cellspacing="0" >
+	<tbody>
+		<tr>
+			<td style="text-align: center; background-color: rgb(238, 238, 238);">方法名</td>
+			<td style="text-align: center; background-color: rgb(238, 238, 238);">文档</td>
+		</tr>
+<#list realThing.getChilds() as ac>
+		<tr>
+			<td >${ac.metadata.name}</td>
+			<td >${ac.metadata.description?if_exists}</td>
+		</tr>
+</#list>	
+	</tbody>
+</table>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      code
+    @/@showActions/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;charset=UTF-8
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@showActions/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    success
+  @/@showThingAction
+  sname
+  showThingAction
+  sdescription
+  <p>显示一个模型的某个行为的文档。</p>
+  scheckPermission
+  false
+  scheckLogin
+  false
+  sdescriptors
+  xworker.http.ControlSet/@SimpleControl
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  showThingAction
+    @/@showThingAction/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.http.controls.SimpleControl/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    actions
+      @/@showThingAction/@actions/@doAction
+      sname
+      doAction
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.util.ActionDesc;
+
+//参数
+def thing = world.getThing(requestBean.thing);
+def action = requestBean.action;
+
+//结果
+def actions = [];
+if(thing != null && action != null){
+    def acs = thing.getActionThings(action);
+    for(ac in acs){
+        actions.add(new ActionDesc(ac));
+    }
+}
+
+_g.put("actions", actions);
+return "success";
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      doAction
+    @/@showThingAction/@view
+    sname
+    view
+    sbelongToHtml
+    true
+    sdoctype
+    <!doctype html>
+    sstyle
+    default
+    shasHead
+    false
+    shasBottom
+    false
+    snoCache
+    false
+    SotherHeads
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+    sdescriptors
+    xworker.http.controls.SimpleControl/@view
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    view
+      @/@showThingAction/@view/@code
+      sname
+      code
+      Scode
+#$@text#$@
+<p><b>${requestBean.action?if_exists}</b></p>
+
+<#list actions as action>
+<p>
+<b>定义在：</b><a href="javascript:invoke('thing:${action.thing.metadata.path}')">${action.thing.getParent().getParent().metadata.label}</a><br/>
+${action.description?if_exists}
+<b>用途：</b>${action.thing.usage?if_exists}<br/>
+<b>返回值：</b>${action.returnType}<br/>
+<b>参数列表：</b><br/>
+<#list action.params as param>
+<b>&nbsp;&nbsp;${param.name} </b>: ${param.type}<br/>
+${param.description?if_exists}
+</#list>
+</p>
+</#list>
+#$@text#$@
+      sdescriptors
+      xworker.html.base.container.childs/@code
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      code
+    @/@showThingAction/@success
+    sname
+    success
+    stype
+    form
+    scontentType
+    text/html;charset=UTF-8
+    svalue
+    xworker.ide.worldexplorer.swt.http.ThingDoc/@showThingAction/@view
+    sdescriptors
+    xworker.http.controls.SimpleControl/@result
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    success

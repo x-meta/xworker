@@ -1,0 +1,424 @@
+%1614135228717
+@
+sname=Configuration
+slabel=Configuration
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sformNoLabel=false
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<p><strong>配置管理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 为了统一配置而创建的模型，这是XWorker的配置规范。注意：配置的模型的名字固定为<strong>Configuration</strong>。</p>
+
+<p><strong>注册配置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 各种配置模型可以注册到<strong>xworker.lang.Configurations</strong>，注册方式是<strong>child</strong>。</p>
+
+<p><strong>在模型中使用配置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 一般由模型定义如何设置配置参数的方法，默认的约定是<strong>_c_.&lt;name&gt;</strong>。比如在JDBC的上下文里，要引用配置的数据源TestDataSource，可以写<strong>_c_.TestDataSource</strong>。</p>
+
+<p><strong>在代码中获取配置</strong></p>
+
+<ul>
+	<li><strong>Thing xworker.lang.Configuration.getConfiguration(String name,&nbsp; String descriptor, String appCategory)</strong><br />
+	获取一个指定的配置，配置的描述者是descriptor，配置的名字是name。<br />
+	<strong>appCategory用于查找配置，配置的模型名字是固定的Configuration，比如appCategory是xx1.xx2.xx3，那么先找xx1.xx2.xx3.Configuration，没找到再找xx1.xx2.Configuration，再找xx1.Configuration，最后找Configuration。</strong></li>
+</ul>
+
+<p><strong>不同环境的配置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过Profile实现，可以在不同的Profile下配置不同的配置。Profile通过名字区分。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>Profile的设置优先级</strong>：</p>
+
+<ul>
+	<li><strong>xworker.lang.Configuration.setProfile(&quot;xxx&quot;)</strong><br />
+	可以调用setProfile(String)方法设置全局的Profile。<br />
+	&nbsp;</li>
+	<li>-<strong>Dxworker.profile=&quot;xxx&quot;</strong><br />
+	如果启动jvm设置了xworker.profile，那么在Configuration初始化时会使用。<br />
+	&nbsp;</li>
+	<li><strong>Configuration模型的String　getProfile()</strong><br />
+	如果以上都没有设置Profile，那么使用Configuration模型的设置。<br />
+	&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p><strong>初始化配置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可以通过如下方法初始化配置。</p>
+
+<ul>
+	<li><strong>-Dxworker.configuration=&quot;xxx&quot;</strong><br />
+	其中xxx是配置模型的路径，如果存在则执行它的init方法。<br />
+	&nbsp;</li>
+	<li><strong>WEB</strong><br />
+	可以在web.xml配置Configuration，设置HttpServletDo的初始化参数configuration。<br />
+	&nbsp;</li>
+	<li><strong>SWT和其它</strong><br />
+	可以在调用Configuration模型的init或run方法。&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_noThingRegistViewer=false
+sth_fileMonitor=false
+sth_mark=false
+sth_registQueryOnlySelf=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=actions
+    @/@actions/@run
+    sname=init
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.Configuration
+    smethodName=init
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=run
+    @/@actions/@run1
+    sname=run
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.lang.Configuration
+    smethodName=init
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=run1
+    @/@actions/@doInit
+    sname=doInit
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=doInit
+    @/@actions/@getProfile
+    sname=getProfile
+    sattributeName=profile
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=getProfile
+  @/@name
+  sname=name
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=name
+  @/@label
+  sname=label
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=label
+  @/@nameReplacement
+  sname=profile
+  sinputtype=inputSelect
+  ssize=40
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=nameReplacement
+    @/@nameReplacement/@actions
+    sname=actions
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=actions
+      @/@nameReplacement/@actions/@getValues
+      sname=getValues
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      suseOuterJava=true
+      souterClassName=xworker.lang.Configuration
+      smethodName=getValues
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def thing = self.getParent();
+
+def list = [];
+def values = thing.getChilds("Profile");
+for(value in values){
+    def v = new Thing();
+    v.put("label", value.getMetadata().getLabel());
+    v.put("value", value.getMetadata().getName());
+    list.add(v);
+}
+
+return list;
+#$@text#$@
+      sinterpretationType=Action
+      svarScope=Local
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.JavaAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=getValues
+  @/@description
+  sname=description
+  sinputtype=html
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=description
+  @/@Profile
+  sname=Profile
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.Configurations
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=Profile
+    @/@Profile/@name
+    sname=name
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=name
+    @/@Profile/@label
+    sname=label
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=label
+    @/@Profile/@description
+    sname=description
+    sinputtype=html
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=description

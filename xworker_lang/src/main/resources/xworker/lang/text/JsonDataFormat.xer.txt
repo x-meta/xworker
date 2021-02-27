@@ -1,0 +1,1181 @@
+^1614139228588
+@
+sname
+JsonDataFormat
+slabel
+JsonDataFormat
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sformNoLabel
+false
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+snotXmlAttribute
+false
+sjson_isArray
+false
+sid
+JsonDataFormat
+  @/@actions
+  sname
+  actions
+  slabel
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sid
+  actions
+    @/@actions/@format
+    sname
+    format
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.lang.text.JsonDataFormatActions
+    smethodName
+    format
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>格式化数据到Json格式。</p>
+    Scode
+#$@text#$@
+import java.text.SimpleDateFormat;
+
+import org.xmeta.Thing;
+import xworker.dataObject.DataObject;
+
+if(actionContext.get("data") == null){
+    return null;
+}else if(data instanceof Thing){
+    return processThing(data, "");
+}else if(data instanceof DataObject){
+    return processDataObject(data, "");
+}else if(data instanceof List || data instanceof Thing[] || data instanceof DataObject[]){
+    def str = "[";
+    for(childThing in data){
+        if(str != "["){
+            str = str + ",";
+        }
+        if(childThing instanceof DataObject){
+            str = str + "\n" + processDataObject(childThing, "    ");
+        }else{
+            str = str + "\n" + processThing(childThing, "    ");
+        }
+    }
+    str = str + "\n" + "]";
+    return str;
+}else{
+    return null;
+}
+
+//转化一个数据对象到json数据格式的字符串
+def processDataObject(dataObject, ident){
+    def str = ident + "{";
+    def descriptor = dataObject.getMetadata().getDescriptor();
+    def context = [:];
+    //属性
+    /*
+    if(dataObject.extJsDataId == null || dataObject.extJsDataId == ""){
+        def keys = dataObject.doAction("getKeyAttributes", actionContext);
+        if(keys != null && keys.size() > 0){
+            dataObject.extJsDataId = dataObject.get(keys.get(0).name);
+        }
+    }
+    */
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(dataObject, attribute);
+        if(value != null){
+            value = "" + value;
+            if(str != (ident + "{")){
+                str = str + ",\n    " + ident + "\"" + attribute.name + "\":" + value;
+            }else{
+                str = str + "\n    " + ident + "\"" + attribute.name + "\":" + value;
+            }
+        }
+    }
+    //旧标识
+    /*
+    if(dataObject.extJsDataId != null && dataObject.extJsDataId != ""){
+        if(str != (ident + "{")){
+            str = str + ",\n    " + ident + "\"extJsDataId\":\"" + dataObject.extJsDataId + "\"";
+        }else{
+            str = str + "\n    " + ident + "\"extJsDataId\":\"" + dataObject.extJsDataId + "\"";
+        }
+    }
+    */
+    
+    //子事物
+    for(child in descriptor.get("thing@")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(!child.getBoolean("cascadeFormat")){
+            continue;
+        }
+        
+        if(child.getBoolean("many")){
+            def childs = dataObject.get(child.name);
+            if(childs == null || (!childs instanceof List && !childs instanceof Thing[] && !childs instanceof DataObject[])){
+                continue;
+            }
+            
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    if(childThing instanceof DataObject){
+                        childStr = childStr + "\n" + processDataObject(childThing, ident + "    ");
+                    }else{
+                        childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                    }
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + child.name + ":" + childStr;
+            }
+        }else{
+            def childThing = dataObject.get(child.name);
+            if(childThing != null){
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                if(childThing instanceof DataObject){
+                    str = str + "\n    " + child.name + ":" + processDataObject(childThing, "    " + ident);
+                }else{
+                    str = str + "\n    " + child.name + ":" + processThing(childThing, "    " + ident);
+                }
+            }
+        }
+    }
+    return str + "\n" + ident + "}";
+}
+
+//转化一个事物到json数据格式的字符串
+def processThing(thing, ident){
+    def str = ident + "{";
+    def descriptor = thing.getDescriptor();
+    def context = [:];
+    //属性
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(thing, attribute);
+        if(value != null){
+            if(str != (ident + "{")){
+                str = str + ",\n    " + ident + attribute.name + ":" + value;
+            }else{
+                str = str + "\n    " + ident + attribute.name + ":" + value;
+            }
+        }
+    }
+    
+    //子事物
+    for(child in descriptor.getAllChilds("thing")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(child.getBoolean("many")){
+            def childs = thing.get(child.name + "@");
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + child.name + ":" + childStr;
+            }
+        }else{
+            def childThing = thing.get(child.name + "@0");
+            if(childThing != null){
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = "\n    " + child.name + ":" + processThing(childThing, "    " + ident);
+            }
+        }
+    }
+    return str + "\n" + ident + "}";
+}
+
+//为给定一个字符串的每一行前加入缩进
+def addIdent(str, ident){
+    if(str == null){
+        return null;
+    }
+    
+    def s = "";
+    for(line in str.split("[\n]")){
+        if(s != ""){
+            s = s + "\n";
+        }
+        s = ident + line;
+    }
+    return s;
+}
+
+//获取jason中要表示的属性值
+def getAttributeValue(data, descriptor){
+    def value = data.get(descriptor.name);
+    if(value == null || "" == value){
+        //值为空
+        return null;
+    }
+    
+    if(descriptor.get("default") == "" + value){
+        //等于默认值
+        return null;
+    }
+        
+    switch(descriptor.type){
+        case "byte":
+        case "short":
+        case "int":
+        case "long":
+        case "float":
+        case "double":
+        case "boolean":
+            return "" + value;
+        case "date":
+            if(value instanceof Date){
+                def pattern = descriptor.editPattern;
+                if(pattern == null || "" == pattern){
+                    pattern = "yyyy-MM-dd";
+                }
+                def sf = new SimpleDateFormat(pattern);
+                return "\"" + sf.format(value) + "\"";
+            }else{
+                return "\"" + value + "\"";
+            }
+        case "datetime":
+            if(value instanceof Date){
+                def pattern = descriptor.viewPattern;
+                if(pattern == null || "" == pattern){
+                    pattern = "yyyy-MM-dd HH:mm:ss";
+                }
+                def sf = new SimpleDateFormat(pattern);
+                return "\"" + sf.format(value) + "\"";
+            }else{
+                return "\"" + value + "\"";
+            }
+        case "time":
+            if(value instanceof Date){
+                def pattern = descriptor.editPattern;
+                if(pattern == null || "" == pattern){
+                    pattern = "HH:mm:ss";
+                }
+                def sf = new SimpleDateFormat(pattern);
+                return "\"" + sf.format(value) + "\"";
+            }else{
+                return "\"" + value + "\"";
+            }
+        default:
+            value = value.replaceAll("[\\\\]", "\\\\\\\\");
+            value = value.replaceAll("[\"]", "\\\\\"");
+            value = value.replaceAll("[']", "\\\\'");
+            value = value.replaceAll("[\r\n]", "\\\\n");
+            value = value.replaceAll("[\r]", "\\\\n");
+            value = value.replaceAll("[\n]", "\\\\n");
+            //log.info("value=" + value);
+            return "\"" + value + "\"";
+        
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    format
+      @/@actions/@format/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@format/@ins/@data
+        sname
+        data
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescription
+        <p>只有Thing或DataOject才可以格式化成Jason文本。</p>
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        data
+    @/@actions/@parse
+    sname
+    parse
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.lang.text.JsonDataFormatActions
+    smethodName
+    parse
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>把数据解析成Map或List，数据使用Map保存。</p>
+    Scode
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+import java.text.StringCharacterIterator;
+
+import ognl.Ognl;
+
+//数据对象实例
+def iter = new StringCharacterIterator(jsonText);
+if(jsonText.startsWith("{")){
+    def theData = [:];
+    parseData(iter, theData, actionContext);
+    return theData;
+}else if(jsonText.startsWith("[")){
+    def objList = [];
+    parseDataList(iter, objList, actionContext);
+    return objList;
+}else{
+    return null;;
+}
+
+def parseData(iter, dataObject, actionContext){
+    while(true){
+        def c = iter.next();
+        if(c == StringCharacterIterator.DONE || c == "}"){
+            break;
+        }
+        if(c == '{'){
+            continue;
+        }
+        if(c == '"'){
+            def name = parseString(iter, ['"']);  
+            if(name != null){
+                name = name.trim();
+            }                         
+            parseValue(iter, name, dataObject, [',', '}'], actionContext);
+            if(iter.current() == '}'){
+                iter.next();
+                break;
+            }else{
+                //c = iter.next();
+                continue;
+            }            
+        }else if(c == '\''){
+            def name = parseString(iter, ['\'']);   
+            if(name != null){
+                name = name.trim();
+            }
+            iter.next();
+            parseValue(iter, name, dataObject, [',', '}'], actionContext);
+            if(iter.current() == '}'){
+                break;
+            }else{
+                iter.next();
+                continue;
+            }  
+        }else if(c == ','){
+            continue;
+        }else if(c == ' '){
+            continue;
+        }else{
+            def name = "" + c + parseString(iter, [':']);
+            if(name != null){
+                name = name.trim();
+            }
+            parseValue(iter, name, dataObject, [',', '}'], actionContext);
+            if(iter.previous() == '}'){
+                iter.next();
+                break;
+            }else{
+                iter.next();
+                continue;
+            }  
+        }        
+    }
+}
+
+//分析值
+def parseValue(StringCharacterIterator iter, name, dataObject, endChars, actionContext){
+    while(true){
+        def c = iter.next();
+        if(c == StringCharacterIterator.DONE){
+            return ;
+        }
+        if(c == '{'){
+            //子事物
+            def child = [:];
+            parseData(iter, child, actionContext);
+            dataObject.put(name, child);
+            return;
+        }else if(c == '"'){
+            //普通属性
+            def value = parseString(iter, ['"']);
+            dataObject.put(name, value);
+            return;
+        }else if(c == '\''){
+            //普通属性
+            def value = parseString(iter, ['\'']);
+            dataObject.put(name, value);
+            return;
+        }else if(c == '['){
+            //子事物列表
+            def child = [];
+            parseDataList(iter, child, actionContext);
+            dataObject.put(name, child);
+            return c;
+        }else if(c == ' '){
+            continue;
+        }else if(c == ':'){
+            continue;
+        }else{
+            def value = "" + c + parseString(iter, endChars);
+            if(value != null && value != ""){                
+                try{
+                    dataObject.put(name, Ognl.getValue(value, actionContext));
+                }catch(Exception e){
+                    log.info("JsonDataFormat get value error, value=" + value, e);
+                    //Ognl.setValue(name, actionContext, dataObject, value);
+                }
+            }
+            /*
+           
+            def v = actionContext.get(value);
+            if(v != null){
+                dataObject.put(name, value);
+            }else{
+                if(value != null && value.trim().toLowerCase() == "true"){
+                    dataObject.put(name, true);
+                }else if(value != null && value.trim().toLowerCase() == "false"){
+                    dataObject.put(name, false);
+                }else{
+                    try{
+                        dataObject.put(name, Double.parseDouble(value));
+                    }catch(Exception e){
+                        //dataObject.put(name, value);
+                    }
+                }
+            }*/             
+            return;
+        }
+    }
+}
+
+def parseDataList(iter, dataObjectList, actionContext){
+    while(true){
+        def c = iter.next();
+        if(c == StringCharacterIterator.DONE){
+            break;
+        }    
+        if(c == '{'){
+            //log.info("list parse obj");
+            def child = [:];
+            parseData(iter, child, actionContext);
+            dataObjectList.add(child);
+            continue;
+        }else if(c == '['){
+            //log.info("list parse list");
+            def child = [];
+            parseDataList(iter, child, actionContext);
+            dataObjectList.add(child);
+            continue;
+        }else if(c == '"'){
+            //log.info("list parse \" value");
+            dataObjectList.add(parseString(iter, ['"']));
+            continue;
+        }else if(c == '\''){
+            //log.info("list parse ' value");
+            dataObjectList.add(parseString(iter, ['\'']));
+            continue;
+        }else if(c == ']'){
+            break;
+        }else if(c == ','){        
+            continue;
+        }else if(c == ' '){
+            continue;
+        }else{          
+            if(iter.previous() == ']'){
+                iter.next();
+                break;
+            }else{
+                iter.next();
+                continue;
+            }
+        }
+    }
+}
+
+//分析参数名
+def parseName(StringCharacterIterator iter){
+    return parseString(iter, ['"']);
+}
+
+def parseString(StringCharacterIterator iter, endChars){
+    def isMeta = false;
+    def str = new StringBuilder();
+    //println "parse string endchars=" + endChars;
+    while(true){
+        def c = iter.next();
+        if(c == StringCharacterIterator.DONE){
+            return str.toString();
+        }
+        
+        //println "parse string char=" + c;
+        if(isMeta == false && isEndChar(c, endChars)){
+            //println "parse stirng return";
+            return str.toString();
+        }else if(c == '\\' && isMeta == false){
+            def nextc = iter.next();
+            if(nextc == '"'){
+                str.append("\"");
+            }else if(nextc == '\''){
+                str.append("'");
+            }else if(nextc == 'n'){
+                str.append("\n");
+            }else if(nextc == 'r'){
+                str.append("\r");
+            }else if(nextc == 't'){
+                str.append("\t");
+            }else{
+                str.append("\\");
+                iter.previous();
+            }
+        }else if(isMeta && isEndChar(c, endChars)){
+            isMeta = false;
+            str.append(c);
+        }else if(isMeta){
+            str.append('\\');    
+            str.append(c);     
+            isMeta = false; 
+        }else{
+            str.append(c);
+        }
+    }
+}
+
+def isEndChar(ch, endChars){
+    for(c in endChars){
+        if(c == ch){
+            return true;
+        }
+    }
+    
+    return false;
+}
+#$@text#$@
+    svarScope
+    Global
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    parse
+      @/@actions/@parse/@ins
+      sisValidate
+      false
+      sname
+      ins
+      slabel
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sid
+      ins
+        @/@actions/@parse/@ins/@jasonText
+        sname
+        jasonText
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sid
+        jasonText
+    @/@actions/@parseDataObject
+    sname
+    parseDataObject
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.lang.text.JsonDataFormatActions
+    smethodName
+    parseDataObject
+    sdisableGlobalContext
+    false
+    sdescription
+    <p>从Json数据分析成数据对象。</p>
+    svarScope
+    Global
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    parseDataObject
+    @/@actions/@getData
+    sname
+    getData
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.lang.text.JsonDataFormatActions
+    smethodName
+    getData
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import java.text.SimpleDateFormat;
+
+import org.xmeta.Thing;
+import xworker.dataObject.DataObject;
+
+if(actionContext.get("data") == null){
+    return null;
+}else if(data instanceof Thing){
+    return processThing(data, "");
+}else if(data instanceof DataObject){
+    return processDataObject(data, "");
+}else if(data instanceof List || data instanceof Thing[] || data instanceof DataObject[]){
+    def str = "[";
+    for(childThing in data){
+        if(str != "["){
+            str = str + ",";
+        }
+
+        if(childThing instanceof DataObject){
+            str = str + "\n" + processDataObject(childThing, "    ");
+        }else if(childThing != null){
+            str = str + "\n" + processThing(childThing, "    ");
+        }
+    }
+    str = str + "\n" + "]";
+    return str;
+}else{
+    return null;
+}
+
+//转化一个数据对象到json数据格式的字符串
+def processDataObject(dataObject, ident){
+    def str = ident + "{";
+    def descriptor = dataObject.getMetadata().getDescriptor();
+    def context = [:];
+    //属性
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(dataObject, attribute);
+        if(value != null){
+            if(str != (ident + "{")){
+                str = str + ",\n    " + ident + attribute.name + ":" + value;
+            }else{
+                str = str + "\n    " + ident + attribute.name + ":" + value;
+            }
+        }
+    }
+    
+    def __dataId = dataObject.get("__dataId");
+    if(__dataId != null && __dataId != ""){
+        if(str != (ident + "{")){
+            str = str + ",\n    " + ident + "__dataId: '" + __dataId + "'";
+        }else{
+            str = str + "\n    " + ident + "__dataId: '" + __dataId + "'";
+        }
+    }
+    //子事物
+    for(child in descriptor.getAllChilds("thing")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(child.getBoolean("many")){
+            def childs = dataObject.get(child.name);
+            if(childs == null || (!childs instanceof List && !childs instanceof Thing[] && !childs instanceof DataObject[])){
+                continue;
+            }
+            
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    if(childThing instanceof DataObject){
+                        childStr = childStr + "\n" + processDataObject(childThing, ident + "    ");
+                    }else{
+                        childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                    }
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + child.name + ":" + childStr;
+            }
+        }else{
+            def childThing = dataObject.get(child.name);
+            if(childThing != null){
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                if(childThing instanceof DataObject){
+                    str = str + "\n    " + child.name + ":" + processDataObject(childThing, "    " + ident);
+                }else{
+                    str = str + "\n    " + child.name + ":" + processThing(childThing, "    " + ident);
+                }
+            }
+        }
+    }
+    return str + "\n" + ident + "}";
+}
+
+//转化一个事物到json数据格式的字符串
+def processThing(thing, ident){
+    def str = ident + "{";
+    def descriptor = thing.getDescriptor();
+    def context = [:];
+    //属性
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(thing, attribute);
+        if(value != null){
+            if(str != (ident + "{")){
+                str = str + ",\n    " + ident + attribute.name + ":" + value;
+            }else{
+                str = str + "\n    " + ident + attribute.name + ":" + value;
+            }
+        }
+    }
+    
+    //子事物
+    for(child in descriptor.getAllChilds("thing")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(child.getBoolean("many")){
+            def childs = thing.get(child.name + "@");
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + child.name + ":" + childStr;
+            }
+        }else{
+            def childThing = thing.get(child.name + "@0");
+            if(childThing != null){
+                if(str != (ident + "{")){
+                    str = str + ",";
+                }
+                str = "\n    " + child.name + ":" + processThing(childThing, "    " + ident);
+            }
+        }
+    }
+    return str + "\n" + ident + "}";
+}
+
+//为给定一个字符串的每一行前加入缩进
+def addIdent(str, ident){
+    if(str == null){
+        return null;
+    }
+    
+    def s = "";
+    for(line in str.split("[\n]")){
+        if(s != ""){
+            s = s + "\n";
+        }
+        s = ident + line;
+    }
+    return s;
+}
+
+//获取jason中要表示的属性值
+def getAttributeValue(data, descriptor){
+    def value = data.get(descriptor.name);
+    if(value == null || "" == value){
+        //值为空
+        return null;
+    }
+    
+    if(descriptor.get("default") == "" + value){
+        //等于默认值
+        return null;
+    }
+    
+    switch(descriptor.type){
+        case "byte":
+        case "short":
+        case "int":
+        case "long":
+        case "float":
+        case "double":
+        case "boolean":
+            return "" + value;
+        case "date":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("yyyy-MM-dd");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        case "datetime":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        case "time":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("HH:mm:ss");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        default:
+            return "'" + value + "'";
+        
+    }
+}
+#$@text#$@
+    svarScope
+    Global
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getData
+    @/@actions/@getArrayData
+    sname
+    getArrayData
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.lang.text.JsonDataFormatActions
+    smethodName
+    getArrayData
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import java.text.SimpleDateFormat;
+
+import org.xmeta.Thing;
+import xworker.dataObject.DataObject;
+
+if(actionContext.get("data") == null){
+    return null;
+}else if(data instanceof Thing){
+    return processThing(data, "");
+}else if(data instanceof DataObject){
+    return processDataObject(data, "");
+}else if(data instanceof List || data instanceof Thing[] || data instanceof DataObject[]){
+    def str = "[";
+    for(childThing in data){
+        if(str != "["){
+            str = str + ",";
+        }
+        if(childThing instanceof DataObject){
+            str = str + "\n" + processDataObject(childThing, "    ");
+        }else{
+            str = str + "\n" + processThing(childThing, "    ");
+        }
+    }
+    str = str + "\n" + "]";
+    return str;
+}else{
+    return null;
+}
+
+//转化一个数据对象到json数据格式的字符串
+def processDataObject(dataObject, ident){
+    def str = ident + "[";
+    def descriptor = dataObject.getMetadata().getDescriptor();
+    def context = [:];
+    //属性
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(dataObject, attribute);
+        if(value != null){
+            if(str != (ident + "[")){
+                str = str + ",\n    " + ident + value;
+            }else{
+                str = str + "\n    " + ident + value;
+            }
+        }
+    }
+    
+    //子事物
+    for(child in descriptor.getAllChilds("thing")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(child.getBoolean("many")){
+            def childs = dataObject.get(child.name);
+            if(childs == null || (!childs instanceof List && !childs instanceof Thing[] && !childs instanceof DataObject[])){
+                continue;
+            }
+            
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    if(childThing instanceof DataObject){
+                        childStr = childStr + "\n" + processDataObject(childThing, ident + "    ");
+                    }else{
+                        childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                    }
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "[")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + child.name + ":" + childStr;
+            }
+        }else{
+            def childThing = thing.get(child.name);
+            if(childThing != null){
+                if(str != (ident + "[")){
+                    str = str + ",";
+                }
+                if(childThing instanceof DataObject){
+                    str = "\n    " + processDataObject(childThing, "    " + ident);
+                }else{
+                    str = "\n    " + processThing(childThing, "    " + ident);
+                }
+            }
+        }
+    }
+    return str + "\n" + ident + "]";
+}
+
+//转化一个事物到json数据格式的字符串
+def processThing(thing, ident){
+    def str = ident + "[";
+    def descriptor = thing.getDescriptor();
+    def context = [:];
+    //属性
+    for(attribute in descriptor.getAllChilds("attribute")){
+        if(context.get(attribute.name) != null){
+            //取所有的子事物可能有重名的，比如多继承时
+            continue;
+        }
+        context.put(attribute.name, attribute);
+        def value = getAttributeValue(thing, attribute);
+        if(value != null){
+            if(str != (ident + "[")){
+                str = str + ",\n    " + ident + value;
+            }else{
+                str = str + "\n    " + ident + value;
+            }
+        }
+    }
+    
+    //子事物
+    for(child in descriptor.getAllChilds("thing")){
+        if(context.get(child.name) != null){
+            continue;
+        }
+        context.put(child.name, child);
+        
+        if(child.getBoolean("many")){
+            def childs = thing.get(child.name + "@");
+            if(childs.size() > 0){
+                def childStr = "[";
+                for(childThing in childs){
+                    if(childStr != "["){
+                        childStr = childStr + ",";
+                    }
+                    childStr = childStr + "\n" + processThing(childThing, ident + "    ");
+                }
+                childStr = childStr + "\n    " + ident + "]";
+                if(str != (ident + "[")){
+                    str = str + ",";
+                }
+                str = str + "\n    " + ident + childStr;
+            }
+        }else{
+            def childThing = thing.get(child.name + "@0");
+            if(childThing != null){
+                if(str != (ident + "[")){
+                    str = str + ",";
+                }
+                str = "\n    " + processThing(childThing, "    " + ident);
+            }
+        }
+    }
+    return str + "\n" + ident + "]";
+}
+
+//为给定一个字符串的每一行前加入缩进
+def addIdent(str, ident){
+    if(str == null){
+        return null;
+    }
+    
+    def s = "";
+    for(line in str.split("[\n]")){
+        if(s != ""){
+            s = s + "\n";
+        }
+        s = ident + line;
+    }
+    return s;
+}
+
+//获取jason中要表示的属性值
+def getAttributeValue(data, descriptor){
+    def value = data.get(descriptor.name);
+    if(value == null || "" == value){
+        //值为空
+        return null;
+    }
+    
+    if(descriptor.get("default") == "" + value){
+        //等于默认值
+        return null;
+    }
+    
+    switch(descriptor.type){
+        case "byte":
+        case "short":
+        case "int":
+        case "long":
+        case "float":
+        case "double":
+        case "boolean":
+            return "" + value;
+        case "date":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("yyyy-MM-dd");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        case "datetime":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        case "time":
+            if(value instanceof Date){
+                def sf = new SimpleDateFormat("HH:mm:ss");
+                return "'" + sf.format(value) + "'";
+            }else{
+                return "'" + value + "'";
+            }
+        default:
+            return "'" + value + "'";
+        
+    }
+}
+#$@text#$@
+    svarScope
+    Global
+    sdescriptors
+    xworker.lang.actions.JavaAction
+    sid
+    getArrayData

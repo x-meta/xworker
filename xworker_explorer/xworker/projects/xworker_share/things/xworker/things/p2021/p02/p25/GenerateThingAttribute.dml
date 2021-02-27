@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="GenerateThingAttribute" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="code" group="javafx.code" icon="icons/application.png" codeType="groovy" styledTextForInsert="groovyCodeText"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.GroovyCodeIndex">
+    <code><![CDATA[import org.apache.commons.lang3.StringUtils;
+
+def str = """ObjectProperty<Background>	background
+The background of the Region, which is made up of zero or more BackgroundFills, and zero or more BackgroundImages.
+ObjectProperty<Border>	border
+The border of the Region, which is made up of zero or more BorderStrokes, and zero or more BorderImages.
+BooleanProperty	cacheShape
+Defines a hint to the system indicating that the Shape used to define the region's background is stable and would benefit from caching.
+BooleanProperty	centerShape
+Defines whether the shape is centered within the Region's width or height.
+ReadOnlyDoubleProperty	height
+The height of this resizable node.
+ReadOnlyObjectProperty<Insets>	insets
+The insets of the Region define the distance from the edge of the region (its layout bounds, or (0, 0, width, height)) to the edge of the content area.
+DoubleProperty	maxHeight
+Property for overriding the region's computed maximum height.
+DoubleProperty	maxWidth
+Property for overriding the region's computed maximum width.
+DoubleProperty	minHeight
+Property for overriding the region's computed minimum height.
+DoubleProperty	minWidth
+Property for overriding the region's computed minimum width.
+ObjectProperty<Insets>	opaqueInsets
+Defines the area of the region within which completely opaque pixels are drawn.
+ObjectProperty<Insets>	padding
+The top, right, bottom, and left padding around the region's content.
+DoubleProperty	prefHeight
+Property for overriding the region's computed preferred height.
+DoubleProperty	prefWidth
+Property for overriding the region's computed preferred width.
+BooleanProperty	scaleShape
+Specifies whether the shape, if defined, is scaled to match the size of the Region.
+ObjectProperty<Shape>	shape
+When specified, the shape will cause the region to be rendered as the specified shape rather than as a rounded rectangle.
+BooleanProperty	snapToPixel
+Defines whether this region adjusts position, spacing, and size values of its children to pixel boundaries.
+ReadOnlyDoubleProperty	width
+The width of this resizable node.""";
+
+def group = "Region";
+def lines = str.split("[\n]");
+for(i =0; i<lines.length - 1; i++){
+    def line = lines[i].trim();
+    if(line.indexOf("ReadOnly") != -1){
+        i++;
+        continue;
+    }
+    
+    int index = line.lastIndexOf("	");
+    if(index == -1){
+        index = line.lastIndexOf(" ");
+    }
+    
+    def name = line.substring(index, line.length()).trim();
+    def desc = lines[i+1].trim();
+    i++;
+    
+    //println name + ":" + desc;
+    println """<attribute name="${name}" descriptors="xworker.lang.MetaDescriptor3/@attribute" inputtype=""
+     group="${group}">
+    <description><![CDATA[<p>${desc}</p>
+_xmeta_cdata_tag_</description>
+</attribute>"""
+}]]></code>
+</QuickFunction>

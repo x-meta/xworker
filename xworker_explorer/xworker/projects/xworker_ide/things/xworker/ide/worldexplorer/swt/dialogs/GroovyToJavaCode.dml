@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="GroovyToJavaCode" label="GroovyToJavaCode">
+    <FillLayout name="FillLayout"></FillLayout>
+    <StyledText name="codeText" style="MULTI" H_SCROLL="true" V_SCROLL="true">
+        <Colorer name="Colorer" codeName="java" codeType="java"></Colorer>
+        <TextEditor name="TextEditor"></TextEditor>
+    </StyledText>
+    <GroovyAction name="init">
+        <code><![CDATA[def context = [:];
+def codes = [];
+init(currentThing, codes, context);
+def code = toJavaCode(actionContext, "codes", codes);
+codeText.setText(code);
+
+def init(thing, codes, context){
+    if(thing.getThingName() == "GroovyAction"){
+        def name = thing.getMetadata().getName();
+        if(context.get(name) != null){
+            def key = name + "__index";
+            def index = context.get(key);
+            if(index == null){
+                index = 1;
+            }else{
+                index++;
+            }
+            name = name + index;
+            context.put(key, index);
+        }
+        context.put(name, name);
+        
+        codes.add(["name": name, "code": thing.getString("code"), 
+              "path":thing.getMetadata().getPath()]);
+    }
+    
+    for(child in thing.getChilds()){
+        init(child, codes, context);
+    }
+}]]></code>
+        <ActionDefined _xmeta_id_="ActionDefined1">
+            <Freemarker name="toJavaCode" descriptors="xworker.lang.text.Freemarker">
+                <code><![CDATA[@ActionClass(creator="createInstance")
+public class MyClass {
+    <#list codes as code>
+    public Object ${code.name}(){
+        //${code.path}
+        <#if code.code?exists>
+        <#list code.code?split("\n") as line>
+        ${line}
+        </#list>
+        </#if>        
+    }
+    
+    </#list>
+
+    public static MyClass createInstance(ActionContext actionContext){
+        //return new MyClass();    
+        String key = MyClass.class.getName();
+        MyClass obj = actionContext.getObject(key);
+        if(obj == null){
+            obj = new MyClass();
+            actionContext.g().put(key, obj);
+        }
+        
+        return obj;
+    }    
+        
+    @ActionField
+    public ActionContext actionContext;
+    
+    public World world = World.getInstance();
+}]]></code>
+            </Freemarker>
+        </ActionDefined>
+    </GroovyAction>
+</Shell>

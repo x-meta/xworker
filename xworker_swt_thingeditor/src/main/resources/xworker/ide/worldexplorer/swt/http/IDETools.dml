@@ -1,0 +1,95 @@
+^1465834462075
+@
+sname
+IDETools
+slabel
+IDETools
+scheckPermission
+true
+spermission
+xworker_explorer_web_tools
+scheckLogin
+false
+sdescriptors
+xworker.http.controls.SimpleControl
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+@/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+actions
+@/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import xworker.util.XWorkerUtils;
+
+def ac = requestBean.ac;
+response.setContentType("text/plain; charset=utf-8");
+if(ac == "isIdeOpened"){    
+    if(XWorkerUtils.getIDEShell() != null){
+        response.writer.println("true");
+        return;
+    }
+    
+    response.writer.println("false");
+}else if(ac == "oepenThing"){
+    def path = requestBean.path;
+    def file = new File(path);
+    XWorkerUtils.ideOpenFile(file);
+}
+#$@text#$@
+sinterpretationType
+Action
+screateLocalVarScope
+false
+ssaveReturn
+false
+sdebugLog
+false
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+sid
+doAction

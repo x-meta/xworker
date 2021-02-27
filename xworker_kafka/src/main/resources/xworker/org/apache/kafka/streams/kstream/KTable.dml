@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="KTable" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>KTable is an abstraction of a changelog stream from a primary-keyed table. Each record in this changelog stream is an update on the primary-keyed table with the record key as the primary key.<br />
+A KTable is either defined from a single Kafka topic that is consumed message by message or the result of a KTable transformation. An aggregation of a KStream also yields a KTable.</p>
+
+<p>A KTable can be transformed record by record, joined with another KTable or KStream, or can be re-partitioned and aggregated into a new KTable.</p>
+
+<p>Some KTables have an internal state (a ReadOnlyKeyValueStore) and are therefore queryable via the interactive queries API. For example:</p>
+
+<p><br />
+&nbsp;&nbsp;&nbsp;&nbsp; final KTable table = ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp; final KafkaStreams streams = ...;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; streams.start()<br />
+&nbsp;&nbsp;&nbsp;&nbsp; ...<br />
+&nbsp;&nbsp;&nbsp;&nbsp; final String queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable<br />
+&nbsp;&nbsp;&nbsp;&nbsp; ReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.timestampedKeyValueStore());<br />
+&nbsp;&nbsp;&nbsp;&nbsp; view.get(key);<br />
+Records from the source topic that have null keys are dropped.</p>
+]]></description>
+    <actions>
+        <JavaAction name="build" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+             methodName="build"></JavaAction>
+        <NOOP name="create"></NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Filter" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.Predicates">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Create a new KTable that consists of all records of this KTable.</p>
+
+<p>&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filter(Predicate&lt;? super K,? super V&gt; predicate)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filter(Predicate&lt;? super K,? super V&gt; predicate, Materialized&lt;K,V,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filter(Predicate&lt;? super K,? super V&gt; predicate, Named named)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filter(Predicate&lt;? super K,? super V&gt; predicate, Named named, Materialized&lt;K,V,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildFilter"></JavaAction>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="FilterNot" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.Predicates">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Create a new KTable that consists all records of this KTable which do not satisfy the given predicate.</p>
+
+<p>&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filterNot(Predicate&lt;? super K,? super V&gt; predicate)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filterNot(Predicate&lt;? super K,? super V&gt; predicate, Materialized&lt;K,V,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filterNot(Predicate&lt;? super K,? super V&gt; predicate, Named named)<br />
+&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;filterNot(Predicate&lt;? super K,? super V&gt; predicate, Named named, Materialized&lt;K,V,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildFilterNot"></JavaAction>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="GroupBy" extends="xworker.org.apache.kafka.streams.kstream.KGroupedTable,xworker.org.apache.kafka.streams.kstream.KeyValueMappers">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Re-groups the records of this KTable using the provided KeyValueMapper.</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;KR,VR&gt; KGroupedTable&lt;KR,VR&gt;&nbsp;groupBy(KeyValueMapper&lt;? super K,? super V,KeyValue&lt;KR,VR&gt;&gt; selector)<br />
+&nbsp;&nbsp;&nbsp; &lt;KR,VR&gt; KGroupedTable&lt;KR,VR&gt;&nbsp;groupBy(KeyValueMapper&lt;? super K,? super V,KeyValue&lt;KR,VR&gt;&gt; selector, Grouped&lt;KR,VR&gt; grouped)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果KGroupedTable创功创建，那么会遍历子节点执行void build(KGroupedTablek, kgtable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildGroupBy"></JavaAction>
+        </actions>
+        <thing name="Grouped" extends="xworker.org.apache.kafka.streams.kstream.Grouped"
+             group="params"></thing>
+    </thing>
+    <thing name="Join" _xmeta_id_="JoinKTable" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueJoiners,xworker.java.util.Functions">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Join records of this KTable with another KTable using non-windowed inner join.</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildJoin"></JavaAction>
+            <GetObject name="getTable" _xmeta_id_="68737" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="tabe" usage="params"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="table" size="40"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="LeftJoin" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueJoiners,xworker.java.util.Functions">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Join records of this KTable with another</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;leftJoin(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildLeftJoin"></JavaAction>
+            <GetObject name="getTable" _xmeta_id_="68737" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="tabe" usage="params"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="table" size="40"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="MapValues" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueMappers">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Create a new KTable by transforming the value of each record in this KTable into a new value (with possibly a new type) in the new KTable.</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapper&lt;? super V,? extends VR&gt; mapper)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapper&lt;? super V,? extends VR&gt; mapper, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapper&lt;? super V,? extends VR&gt; mapper, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapper&lt;? super V,? extends VR&gt; mapper, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+                 methodName="buildMapValues"></JavaAction>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="MapValuesWithKey" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueMapperWithKeys">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Create a new KTable by transforming the value of each record in this KTable into a new value (with possibly a new type) in the new KTable.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapperWithKey&lt;? super K,? super V,? extends VR&gt; mapper)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapperWithKey&lt;? super K,? super V,? extends VR&gt; mapper, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapperWithKey&lt;? super K,? super V,? extends VR&gt; mapper, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;mapValues(ValueMapperWithKey&lt;? super K,? super V,? extends VR&gt; mapper, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+                 methodName="buildMapValuesWithKey"></JavaAction>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="OuterJoin" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueJoiners">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Join records of this KTable with another KTable using non-windowed inner join.</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR,KO,VO&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;KO,VO&gt; other, Function&lt;V,KO&gt; foreignKeyExtractor, ValueJoiner&lt;V,VO,VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named)<br />
+&nbsp;&nbsp;&nbsp; &lt;VO,VR&gt; KTable&lt;K,VR&gt;&nbsp;join(KTable&lt;K,VO&gt; other, ValueJoiner&lt;? super V,? super VO,? extends VR&gt; joiner, Named named, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KTableActions"
+                 methodName="buildOuterJoin"></JavaAction>
+            <GetObject name="getTable" _xmeta_id_="68737" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="tabe" usage="params"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="table" size="40"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="Suppress" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.Suppresseds">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Suppress some updates from this changelog stream, determined by the supplied Suppressed configuration.</p>
+
+<p>&nbsp;&nbsp;&nbsp; KTable&lt;K,V&gt;&nbsp;suppress(Suppressed&lt;? super K&gt; suppressed)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+                 methodName="buildSuppress"></JavaAction>
+        </actions>
+    </thing>
+    <thing name="ToStream" _xmeta_id_="TtoStream" extends="xworker.org.apache.kafka.streams.kstream.KStream,xworker.org.apache.kafka.streams.kstream.KeyValueMappers">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Convert this changelog stream to a KStream.</p>
+
+<p>&nbsp;&nbsp;&nbsp; KStream&lt;K,V&gt;&nbsp;toStream()<br />
+&nbsp;&nbsp;&nbsp; &lt;KR&gt; KStream&lt;KR,V&gt;&nbsp;toStream(KeyValueMapper&lt;? super K,? super V,? extends KR&gt; mapper)<br />
+&nbsp;&nbsp;&nbsp; &lt;KR&gt; KStream&lt;KR,V&gt;&nbsp;toStream(KeyValueMapper&lt;? super K,? super V,? extends KR&gt; mapper, Named named)<br />
+&nbsp;&nbsp;&nbsp; KStream&lt;K,V&gt;&nbsp;toStream(Named named)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KStream成功创建，那么会遍历子节点执行void build(KStream kstream)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+                 methodName="buildToStream"></JavaAction>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+    </thing>
+    <thing name="TransformValues" extends="xworker.org.apache.kafka.streams.kstream.KTable,xworker.org.apache.kafka.streams.kstream.ValueTransformerWithKeySuppliers">
+        <description><![CDATA[<p><strong>封装以下方法</strong></p>
+
+<p>Create a new KTable by transforming the value of each record in this KTable into a new value (with possibly a new type).</p>
+
+<p>&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;transformValues(ValueTransformerWithKeySupplier&lt;? super K,? super V,? extends VR&gt; transformerSupplier, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized, Named named, String... stateStoreNames)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;transformValues(ValueTransformerWithKeySupplier&lt;? super K,? super V,? extends VR&gt; transformerSupplier, Materialized&lt;K,VR,KeyValueStore&lt;org.apache.kafka.common.utils.Bytes,byte[]&gt;&gt; materialized, String... stateStoreNames)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;transformValues(ValueTransformerWithKeySupplier&lt;? super K,? super V,? extends VR&gt; transformerSupplier, Named named, String... stateStoreNames)<br />
+&nbsp;&nbsp;&nbsp; &lt;VR&gt; KTable&lt;K,VR&gt;&nbsp;transformValues(ValueTransformerWithKeySupplier&lt;? super K,? super V,? extends VR&gt; transformerSupplier, String... stateStoreNames)</p>
+
+<p>其中参数由子节点的create方法创建，根据参数选择合适的方法执行。</p>
+
+<p><strong>执行子节点的build方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; &nbsp;如果KTable成功创建，那么会遍历子节点执行void build(KTable ktable)方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="build" _xmeta_id_="create" outerClassName="xworker.org.apache.kafka.streams.kstream.KStreamActions"
+                 methodName="buildTransformValues"></JavaAction>
+            <GetStringArray name="getStateStoreNames" _xmeta_id_="49296" descriptors="xworker.lang.actions.ActionUtil/@getStringArray"
+                 attributeName="stateStoreNames" usage="params"></GetStringArray>
+        </actions>
+        <thing name="Named" extends="xworker.org.apache.kafka.streams.kstream.Named"
+             group="params" inheritDescription="true"></thing>
+        <thing name="Materialized" extends="xworker.org.apache.kafka.streams.kstream.Materialized"
+             group="params" inheritDescription="true"></thing>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="stateStoreNames" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

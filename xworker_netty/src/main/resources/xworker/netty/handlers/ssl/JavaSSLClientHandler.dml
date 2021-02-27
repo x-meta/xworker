@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="JavaSSLClientHandler" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javax.net.ssl.SSL">
+    <description><![CDATA[<p>使用Java的keystore。生成和导入证书的方法参看Java的工具keytool，可以通过菜单Security-&gt;KeyTool打开keytool工具。</p>
+
+<p><strong>服务器证书</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 客户端需要导入服务器端证书。从服务器端获取证书并导入到客户端的KeyStore中。</p>
+
+<p><strong>双向验证</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 单项验证是服务器发布证书，客户端导入证书。双向验证是服务器和客户端同时发布各自的证书，双方导入对方的证书。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 当属性<strong>needClientAuth=true</strong>时开启双向验证。</p>
+
+<p><strong>SSLContext缓存</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; SSLContext创建后保存到当前模型中，当模型修改后重新创建新的SSLContext。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.io.netty.handlers.ssl.JavaSSLHandler"
+             methodName="createClientHandler"></JavaAction>
+        <GetString name="getKeyStoreType" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="keyStoreType" usage="params"></GetString>
+        <GetFile name="getKeyStore" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+             attributeName="keyStore" usage="params"></GetFile>
+        <GetString name="getKeyStorePassword" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="keyStorePassword" usage="params"></GetString>
+        <GetBoolean name="isNeedClientAuth" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="needClientAuth"></GetBoolean>
+        <GetString name="getProtocol" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="protocol" usage="params"></GetString>
+        <GetString name="getKeyManagerAlgorithm" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="keyManagerAlgorithm"></GetString>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="keyStoreType" inputtype="inputSelect" default="jks">
+        <value name="jceks" value="jceks"></value>
+        <value name="jks" value="jks"></value>
+        <value name="pkcs12" value="pkcs12"></value>
+    </attribute>
+    <attribute name="keyStore" inputtype="file" size="60"></attribute>
+    <attribute name="keyStorePassword" inputtype="file"></attribute>
+    <attribute name="keyManagerAlgorithm" default="SunX509"></attribute>
+    <attribute name="needClientAuth" inputtype="truefalse">
+        <description><![CDATA[<p>如果是双向认证那么打开。</p>
+]]></description>
+    </attribute>
+    <attribute name="protocol" inputtype="inputSelect" default="SSL">
+        <value name="SSL" value="SSL"></value>
+        <value name="TLS" value="TLS"></value>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

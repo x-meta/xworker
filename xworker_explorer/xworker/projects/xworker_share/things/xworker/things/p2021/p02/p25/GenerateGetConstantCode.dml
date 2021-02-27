@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="GenerateGetConstantCode" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="code" group="java" icon="icons/application.png" codeType="groovy" styledTextForInsert="groovyCodeText"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.GroovyCodeIndex">
+    <code><![CDATA[import org.apache.commons.lang3.StringUtils;
+
+def objName = "Cursor";
+def thing = world.getThing("xworker.javafx.scene.Node/@cursor");
+for(attr in thing.getChilds("value")){
+    def name = attr.getString("value");    
+    println "        if(\"${name}\".equals(name)){";
+    println "            return ${objName}.${name};";
+    println "        }";    
+}]]></code>
+</QuickFunction>

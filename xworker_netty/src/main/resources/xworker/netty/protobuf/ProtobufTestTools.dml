@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="ProtobufTestTools"
+     label="ProtobufTestTools">
+    <FillLayout name="FillLayout"></FillLayout>
+    <SashForm name="mainSashForm" weights="60,40">
+        <CTabFolder name="mainTabFolder" BORDER="true">
+            <CTabItem name="messgaeTabItem" text="lang:d=消息&amp;en=Message">
+                <Composite name="messageComposite">
+                    <GridLayout name="GridLayout"></GridLayout>
+                    <ThingEditor name="thingEditor" saveActionContainer="true">
+                        <GridData name="GridData" style="FILL_BOTH"></GridData>
+                    </ThingEditor>
+                    <Composite name="buttonComposite" _xmeta_id_="24629">
+                        <GridData name="buttonCompositeGridData" _xmeta_id_="24630" style="FILL_HORIZONTAL"
+                             horizontalAlignment="END"></GridData>
+                        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="24631"></RowLayout>
+                        <Button name="sendMessageButton" _xmeta_id_="24632" text="lang:d=发送&amp;en=Send"
+                             enabled="false">
+                            <RowData name="RowData" _xmeta_id_="24633" width="80"></RowData>
+                            <Listeners _xmeta_id_="24634">
+                                <Listener name="sendMessageButtonSelection" _xmeta_id_="24635">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+
+//发送前总是先保存
+if(thingEditor.doAction("isModified", actionContext)){
+    thingEditor.doAction("save", actionContext);
+}
+
+//获取消息
+def thing = thingEditor.doAction("getCurrentThing", actionContext);
+def msg = thing.doAction("createMessage", actionContext);
+if(msg != null && client.isConnected()){
+    client.sendMessage(msg);
+    
+    def sf = new SimpleDateFormat("HH:mm:ss");
+    def records = dataStore.doAction("getRecords", actionContext);
+    def data = new DataObject("xworker.netty.protobuf.ProtobufTestTools/@mainSashForm/@messageSashForm/@messageTable/@dataStore/@dataObjects/@AbstractDataObject");
+    data.put("type", "send");
+    data.put("message", msg.getClass().getSimpleName());
+    data.put("date", sf.format(new Date()));
+    data.put("msg", msg);
+    records.add(0, data);
+}]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                    </Composite>
+                </Composite>
+            </CTabItem>
+            <CTabItem name="clientTabItem" text="lang:d=Netty连接&amp;en=Netty Connection">
+                <Composite name="connectionComposite">
+                    <GridLayout name="GridLayout"></GridLayout>
+                    <ThingForm name="thingForm" column="1">
+                        <Thing>
+                            <attribute name="description" inputtype="htmlDesc" showLabel="false"
+                                 default="xworker.netty.protobuf.ProtobufTestTools/@mainSashForm/@mainTabFolder/@clientTabItem/@connectionComposite/@thingForm/@Thing/@description">
+                                <description><![CDATA[<p>Netty客户端的模型模型需要遵循以下约定。</p>
+
+<p><strong>closed、startCancelled、startFailure和startSuccess事件需要添加以下代码</strong></p>
+
+<pre class="brush:groovy;">
+def actions = parentContext.get(&quot;actions&quot;);
+if(actions != null){
+    actions.doAction(&quot;checkConnection&quot;, parentContext);
+}</pre>
+
+<p><strong>收到Message的处理器需要增加下面的代码</strong></p>
+
+<pre class="brush:groovy;">
+def actions = parentContext.get(&quot;actions&quot;);
+if(actions != null){
+    actions.doAction(&quot;onMessage&quot;, parentContext, &quot;ctx&quot;, ctx, &quot;message&quot;, message);
+}</pre>
+
+<p>&nbsp;</p>
+]]></description>
+                            </attribute>
+                            <attribute name="nettyClient" _xmeta_id_="host" inputtype="dataSelector"
+                                 size="60"></attribute>
+                            <attribute name="host" _xmeta_id_="host1"></attribute>
+                            <attribute name="port"></attribute>
+                        </Thing>
+                        <GridData name="GridData" style="FILL_BOTH"></GridData>
+                    </ThingForm>
+                    <Composite name="buttonComposite" _xmeta_id_="27155">
+                        <GridData name="buttonCompositeGridData" _xmeta_id_="27156" style="FILL_HORIZONTAL"
+                             horizontalAlignment="END"></GridData>
+                        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="27157"></RowLayout>
+                        <Button name="connectButton" _xmeta_id_="27158" text="lang:d=连接&amp;en=Connect">
+                            <RowData name="RowData" _xmeta_id_="27159" width="80"></RowData>
+                            <Listeners _xmeta_id_="27160">
+                                <Listener name="connectButtonSelection" _xmeta_id_="27161">
+                                    <GroovyAction>
+                                        <code><![CDATA[import xworker.io.netty.NettyClient;
+//获取
+def values = thingForm.doAction("getValues", actionContext);
+
+def thing = world.getThing(values.nettyClient);
+if(thing == null){
+    msg(actionContext, "message", "NettyClient模型不存在，请重新设置。");
+    return;
+}
+def client = actionContext.get("client");
+if(client == null || client.isClosed()){
+    thing.set("host", values.host);
+    thing.set("port", values.port);
+    client = thing.doAction("create", actionContext);
+    actionContext.g().put("client", client);
+    client.connect();
+}else{
+    client.close();
+}
+
+actions.doAction("checkConnection", actionContext);]]></code>
+                                        <ActionDefined>
+                                            <MessageBox name="msg" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                                 shell="ognl:mainSashForm.getShell()"
+                                                 icon="ICON_WARNING" buttons="OK" title="lang:d=Netty连接&amp;en=Netty Connection"
+                                                 message="var:message"></MessageBox>
+                                        </ActionDefined>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                    </Composite>
+                </Composite>
+            </CTabItem>
+        </CTabFolder>
+        <SashForm name="messageSashForm" style="VERTICAL" weights="55,45" BORDER="true">
+            <Table name="messageTable">
+                <DataStore name="dataStore">
+                    <dataObjects>
+                        <AbstractDataObject>
+                            <attribute name="type"></attribute>
+                            <attribute name="message" gridWidth="200"></attribute>
+                            <attribute name="date"></attribute>
+                        </AbstractDataObject>
+                    </dataObjects>
+                </DataStore>
+                <Listeners>
+                    <Listener>
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[def data = event.item.getData();
+def msg = data.msg;
+if(msg != null){
+    contentText.setText("" + msg.getClass().getName() + "\n" + msg);
+}]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Table>
+            <StyledText name="contentText" style="MULTI" H_SCROLL="true" V_SCROLL="true"></StyledText>
+        </SashForm>
+        <ActionContainer name="actions">
+            <GroovyAction name="checkConnection">
+                <code><![CDATA[import org.xmeta.util.UtilString;
+import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+
+def actionContext = actionContext;
+def connectButton = connectButton;
+def sendMessageButton = sendMessageButton;
+def sf = new SimpleDateFormat("HH:mm:ss");
+
+mainSashForm.getDisplay().asyncExec({
+    def records = dataStore.doAction("getRecords", actionContext);
+    
+    def data = new DataObject("xworker.netty.protobuf.ProtobufTestTools/@mainSashForm/@messageSashForm/@messageTable/@dataStore/@dataObjects/@AbstractDataObject");
+    data.put("type", "log");    
+    data.put("date", sf.format(new Date()));
+    
+    if(actionContext.get("client") == null || client.isConnected() == false){
+        connectButton.setText(UtilString.getString("lang:d=连接&en=Connect", actionContext));
+        sendMessageButton.setEnabled(false);
+        data.put("message", "Connection disconnected!");
+    }else{
+        connectButton.setText(UtilString.getString("lang:d=断开&en=Diconnect", actionContext));
+        sendMessageButton.setEnabled(true);
+        data.put("message", "Connection connected!");
+    }
+    records.add(0, data);
+});]]></code>
+            </GroovyAction>
+            <GroovyAction name="onMessage">
+                <code><![CDATA[import xworker.dataObject.DataObject;
+import java.text.SimpleDateFormat;
+
+def name = message.getClass().getSimpleName();
+if(name == "HeartBeat"){
+    //不处理HeartBeat
+    return;
+}
+
+def sf = new SimpleDateFormat("HH:mm:ss");
+def records = dataStore.doAction("getRecords", actionContext);
+def data = new DataObject("xworker.netty.protobuf.ProtobufTestTools/@mainSashForm/@messageSashForm/@messageTable/@dataStore/@dataObjects/@AbstractDataObject");
+data.put("type", "receive");
+data.put("message", message.getClass().getSimpleName());
+data.put("date", sf.format(new Date()));
+data.put("msg", message);
+records.add(0, data);]]></code>
+            </GroovyAction>
+        </ActionContainer>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="client" varName="client" className="xworker.io.netty.NettyClient"></Variable>
+            <Variable name="ctx" varName="ctx" className="io.netty.channel.ChannelHandlerContext"></Variable>
+        </VariablesDescs>
+        <Code name="init">
+            <code><![CDATA[if(actionContext.get("currentThing") != null){
+    thingEditor.doAction("setThing", actionContext, "thing", currentThing);
+    
+    def nettyClient = world.getThing(currentThing.nettyClient);
+    thingForm.doAction("setPartialValues", actionContext, "values", 
+          ["nettyClient":currentThing.nettyClient,
+           "host":nettyClient != null ? nettyClient.host : "",
+           "port":nettyClient != null ? nettyClient.port : "0"]);           
+}]]></code>
+        </Code>
+    </SashForm>
+</Shell>

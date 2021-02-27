@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=保存模型&amp;en=Save Model"
+     width="400" height="500" label="SaveThingDialog">
+    <GridLayout name="GridLayout" numColumns="2"></GridLayout>
+    <Label name="messageLabel" style="WRAP" alignment="" text="var:message" background="#FFFFFF"
+         foreground="#000000">
+        <GridData name="GridData" style="FILL_HORIZONTAL" horizontalSpan="2"></GridData>
+    </Label>
+    <Label name="modelNameLabel" text="lang:d=模型名：&amp;en=Model Name:"></Label>
+    <Text name="nameText" BORDER="true">
+        <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+        <Event name="onModify">
+            <JavaAction name="nameTextModify" outerClassName="xworker.ide.worldexplorer.dialogs.SaveThingDialog"
+                 methodName="nameTextModify"></JavaAction>
+        </Event>
+    </Text>
+    <Label name="pathLabel" text="lang:d=路径:&amp;en=Path:"></Label>
+    <Text name="pathText" READ_ONLY="true" BORDER="true">
+        <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+    </Text>
+    <Tree name="projectTree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
+         multipleColumns="false" headerVisible="false" sortIndicator="false" moveableColumns="false">
+        <GridData name="GridData" style="FILL_BOTH" horizontalSpan="2"></GridData>
+        <TreeModels>
+            <XWorkerModel name="XWorkerModel"></XWorkerModel>
+        </TreeModels>
+        <Event name="onSelection">
+            <JavaAction name="projectTreeSelection" outerClassName="xworker.ide.worldexplorer.dialogs.SaveThingDialog"
+                 methodName="projectTreeSelection"></JavaAction>
+        </Event>
+    </Tree>
+    <Composite name="buttonComposite" _xmeta_id_="3828">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="3829" style="FILL_HORIZONTAL"
+             horizontalAlignment="END" horizontalSpan="2"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="3830"></RowLayout>
+        <Button name="okButton" _xmeta_id_="3831" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)"
+             enabled="false">
+            <RowData name="RowData" _xmeta_id_="3832" width="80"></RowData>
+            <Listeners _xmeta_id_="3833">
+                <Listener name="okButtonSelection" _xmeta_id_="3834">
+                    <JavaAction name="okButtonSelection" outerClassName="xworker.ide.worldexplorer.dialogs.SaveThingDialog"
+                         methodName="okButtonSelection">
+                        <ActionDefined>
+                            <MessageBox name="noName" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 shell="ognl:okButton.getShell()" icon="ICON_WARNING"
+                                 buttons="OK" title="lang:d=保存模型&amp;en=Save Model" message="lang:d=模型的名字不能为空!&amp;en=Model name cannot be empty!"></MessageBox>
+                            <MessageBox name="noPath" _xmeta_id_="noName1" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 shell="ognl:okButton.getShell()" icon="ICON_WARNING"
+                                 buttons="OK" title="lang:d=保存模型&amp;en=Save Model" message="lang:d=请选择一个路径!&amp;en=Please select a path!"></MessageBox>
+                            <MessageBox name="exists" _xmeta_id_="noName11" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 shell="ognl:okButton.getShell()" icon="ICON_WARNING"
+                                 buttons="OK" title="lang:d=保存模型&amp;en=Save Model" message="lang:d=模型已经存在，请选择其它路径!&amp;en=The model already exists, please choose another path!"></MessageBox>
+                        </ActionDefined>
+                    </JavaAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="cancelButton" _xmeta_id_="3835" text="lang:d=取消(&amp;amp;C)&amp;en=Cancel(&amp;amp;C)">
+            <RowData name="RowData" _xmeta_id_="3836" width="80"></RowData>
+            <Listeners _xmeta_id_="3837">
+                <Listener name="cancelButtonSelection" _xmeta_id_="3838">
+                    <JavaAction name="cancelButtonSelection" _xmeta_id_="nameTextModify"
+                         outerClassName="xworker.ide.worldexplorer.dialogs.SaveThingDialog"
+                         methodName="cancelButtonSelection"></JavaAction>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+</Shell>

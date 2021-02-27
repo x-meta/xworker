@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="NettyDemo" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.swt.layout.LayoutDatas"
+     group="io.netty" th_createIndex="true" th_registThing="child|xworker.swt.Widgets">
+    <description><![CDATA[<p>一个用于演示Netty的界面。需要指定DemoNettyServer和DemoNettyClient，可以通过子节点设置。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.io.netty.demo.NettyDemo" methodName="create"></JavaAction>
+        <GetThing name="getNettyServer" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="nettyServer" childThingName="DemoNettyServer" usage="params"></GetThing>
+        <GetThing name="getNettyClient" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="nettyClient" childThingName="DemoNettyClient" usage="params"></GetThing>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="nettyServer" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="nettyClient" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DemoNettyServer" extends="xworker.netty.demo.DemoNettyServer" inheritDescription="true"></thing>
+    <thing name="DemoNettyClient" extends="xworker.netty.demo.DemoNettyClient" inheritDescription="true"></thing>
+</thing>

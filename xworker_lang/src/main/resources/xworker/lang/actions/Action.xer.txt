@@ -1,0 +1,1107 @@
+^1609921709857
+@
+sname
+Action
+slabel
+动作
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.Inout
+smany
+true
+seditCols
+2
+sformNoLabel
+false
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sicon
+icons/bullet_green.png
+Sdescription
+#$@text#$@
+<p>动作是程序，是用<a href="http.//localhost.9001/do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.Thing">事物</a>定义的程序。</p>
+<p>XWorker元系统只支持对JavaAction，能够编译和执行JavaAction中的代码或者执行JavaAction中指定的静态方法。</p>
+<p>XWorker子系统中的其他的动作，比如GroovyAction、JdkScriptAction、Do、For、Break、Continue、Switch、Return、Try等脚本动则是由JavaAction定义的。</p>
+<p>每一个动作都可以有零到多个上下文，上下文是具有init、inherit、success和exception四个方法，分别在动作执行前和执行后执行。</p>
+#$@text#$@
+snotXmlAttribute
+false
+sjson_isArray
+false
+sen_label
+Action
+sen_description
+<p>Action.</p>
+  @/@swtMenus
+  sname
+  swtMenus
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@swtMenus
+  sextends
+  xworker.lang.actions.ActionMenu/@swtMenus
+  sid
+  swtMenus
+  @/@VariablesDescs
+  sname
+  VariablesDescs
+  sdescriptors
+  xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  VariablesDescs
+    @/@VariablesDescs/@self
+    sname
+    self
+    svarName
+    self
+    stype
+    thing
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sid
+    self
+      @/@VariablesDescs/@self/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.lang.MetaThing/@actions
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@VariablesDescs/@self/@actions/@create
+        sname
+        create
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        suseOuterJava
+        true
+        suseInnerJava
+        false
+        souterClassName
+        xworker.lang.actions.ActionActions
+        smethodName
+        createSeflVarDesc
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import xworker.lang.VariableDesc;
+
+if(actionContext.get("thing") == null){
+    return null;
+}
+
+def parent = thing.getParent();
+if(parent == null || parent.getThingName() != "actions"){
+    return new VariableDesc("self", VariableDesc.OBJECT, "org.xmeta.Thing", null);
+}
+
+parent = parent.getParent();
+if(parent == null){
+    return new VariableDesc("self", VariableDesc.OBJECT, "org.xmeta.Thing", null);
+}else{
+    return new VariableDesc("self", VariableDesc.THING, null, parent);
+}
+#$@text#$@
+        sattributeTemplate
+        false
+        sinterpretationType
+        Action
+        svarScope
+        Local
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.JavaAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sid
+        create
+  @/@name1
+  sname
+  name
+  slabel
+  名称
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  sen_label
+  Name
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  name1
+  @/@type
+  sname
+  interpretationType
+  slabel
+  解释方式
+  sinputtype
+  select
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  Action
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>对于不是JavaAction的其他任何类型的动作(Action)都不是可以直接执行的，它们是通过自身的描述者（结构）的run方法来解释执行的，解释方式属性设置了解释执行的方式。</p>
+<p>有两种解释方式：&nbsp;</p>
+<ol>
+    <li>Action，调用描述者的run动作直接执行。<br />
+    这种方式里动作自身事物不在动作上下文的变量中，只有通过动作上下文的栈变量(Binding）才可以获取。<br />
+    &nbsp;</li>
+    <li>Self，调用自身的run方法执行。<br />
+    这种方式里动作上下文的self变量就是动作事物。<br />
+    &nbsp;</li>
+</ol>
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  InterpretationType
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  type
+    @/@type/@action
+    sname
+    action
+    slabel
+    Action
+    svalue
+    Action
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    action
+    @/@type/@selfAction
+    sname
+    self
+    slabel
+    Self
+    svalue
+    Self
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sth_createIndex
+    false
+    sid
+    selfAction
+  @/@isSynchronized1
+  sname
+  isSynchronized
+  slabel
+  是否同步
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>相当于Java的synchronized，如果为真所有线程该方法同步执行。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Synchronized
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sid
+  isSynchronized1
+  @/@throwException1
+  sname
+  throwException
+  slabel
+  抛出异常
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>如果抛出异常，那么动作的任何异常都会被抛出，否则只在日志中打印并返回null。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Throw Exception
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  throwException1
+  @/@useOtherAction1
+  sname
+  useOtherAction
+  slabel
+  引用其他动作
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  private
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为真，执行其他动作，其他动作在引用动作路径中设定。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Reference Other Action
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  useOtherAction1
+  @/@otherActionPath1
+  sname
+  otherActionPath
+  slabel
+  引用动作路径
+  sinputtype
+  dataSelector
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Action
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  private
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Referenced Aciton's Path
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  otherActionPath1
+  @/@varScope
+  sname
+  varScope
+  slabel
+  变量范围
+  sinputtype
+  inputSelect
+  ssize
+  60
+  scolspan
+  2
+  sgroup
+  Return
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  Global
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>变量的输出范围。</p>
+
+<p>脚本中可能含有一些脚本的全局变量，这些脚本的全局变量可以通过varScope参数设定输出到哪一个变量范围里，如果选择Local那么输出到当前的动作变量范围中，如果选择Global那么输出到全局变量范围里（ActionContext的底层变量范围），如果输入是动作路径，那么输出到相应动作的变量范围，如果是数字，那么输入到指定变量范围中，正数表示从0往上数，负数表示从顶部往下数。</p>
+
+<p><strong>本地变量范围</strong></p>
+
+<p>一般情况下执行一个事物的动作时会创建一个变量范围，如thing.doAction(&quot;xxx&quot;, actionContext)，这个动作的任何子动作默认都使用这个变量范围，但是含有循环或条件的动作可能会重新产生一个变量范围，如do、while、switch、if等动作会产生一个新的本地变量范围，这些子动作的本地变量在do、while等执行完毕后会丢弃。</p>
+
+<p>一个子动作是否会生成一个本地范围是由子动作本身决定的，因此需要参看动作的说明，默认情况下是不会产生的，因此会产生本地范围的动作最好在说明文档中注明。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  VarScope
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sen_description
+  <p>Variable scope.</p>
+  sth_mark
+  false
+  sid
+  varScope
+    @/@varScope/@Local
+    sname
+    Local
+    slabel
+    Local
+    svalue
+    Local
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    Local
+    @/@varScope/@Global
+    sname
+    Global
+    slabel
+    Global
+    svalue
+    Global
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sid
+    Global
+  @/@createLocalVarScope
+  sname
+  createLocalVarScope
+  slabel
+  创建本地变量
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为true，那么无论如何执行到本动作时都会创建一个新的本地变量范围，任何这个动作的子动作都会以此为变量范围。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  CreateLocalVarScope
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  createLocalVarScope
+  @/@saveReturn
+  sname
+  saveReturn
+  slabel
+  保存返回值
+  sinputtype
+  truefalse
+  sgroup
+  Return
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  SavaReturnValue
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  saveReturn
+  @/@returnVarName
+  sname
+  returnVarName
+  slabel
+  保存返回值变量名称
+  ssize
+  60
+  sgroup
+  Return
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果保存返回值，那么保存到哪一个变量中。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  ReturnValueName
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  returnVarName
+  @/@switchResult
+  sname
+  switchResult
+  slabel
+  Switch返回值
+  sinputtype
+  truefalse
+  sgroup
+  Return
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为true，那么将会把返回值转变成String，然后匹配动作的子节点，如果动作的子节点的名字和结果相等，那么就执行该节点并返回执行后的结果。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sid
+  switchResult
+  @/@disableGlobalContext
+  sname
+  disableGlobalContext
+  slabel
+  禁止全局上下文
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果一个动作是全局上下文的动作，那么应该禁止，否则会造成递归的无限循环。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sen_label
+  Diable Global Context
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>When the aciton used for global aciton, it must diabled it used for it's self context.</p>
+  sid
+  disableGlobalContext
+  @/@debugLog
+  sname
+  debugLog
+  slabel
+  调试日志
+  sinputtype
+  truefalse
+  sgroup
+  Action
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果为true，那么动作可以打印一些日志。</p>
+
+<p>该选项可选，动作可以根据自身需要而实现，目的是为了调试需要。</p>
+
+<p><strong>获取该值的统一方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过org.xmeta.util.UtilAction.getDebugLog(self, actionContxt)方法获取这个值，其中self动作自己。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 这样做的目的是在以后可能有其他更多的选项和实现等，比如在某处打开一个调试状态，自己为false也返回了true。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  DebugLog
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  debugLog
+  @/@actionClassLoader
+  sname
+  actionClassLoader
+  slabel
+  动作类加载器
+  sinputtype
+  dataSelector
+  ssize
+  60
+  sgroup
+  Action
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>可以指定一个动作，使用该动作的类加载器作为自己的类加载器。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  Action Class Loader
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_deprecated
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  actionClassLoader
+  @/@usage
+  sname
+  usage
+  slabel
+  用途
+  sinputtype
+  inputSelect
+  sgroup
+  Action
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>一个参考用的信息，用于表示该动作的用途。</p>
+
+<ul>
+	<li><strong>params</strong><br />
+	参数。该动作用于设置参数。<br />
+	&nbsp;</li>
+	<li><strong>event</strong><br />
+	事件和回调。该动作会在其它动作里被调用。</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  usage
+    @/@usage/@params
+    sname
+    params
+    svalue
+    params
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    params
+    @/@usage/@event
+    sname
+    event
+    svalue
+    event
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    event
+  @/@ResultSwitch
+  sname
+  ResultSwitch
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sdescription
+  <p>用于编写结果的Switch。</p>
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  ResultSwitch
+    @/@ResultSwitch/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    name
+    @/@ResultSwitch/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    label
+    @/@ResultSwitch/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    description

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="ReplaceGroovyToJava"
+     pack="true" label="ReplaceGroovyToJava">
+    <GridLayout name="GridLayout" numColumns="2"></GridLayout>
+    <Label name="javaClassLabel" text="Java Class:"></Label>
+    <Text name="clsText" BORDER="true">
+        <GridData name="GridData" width="300"></GridData>
+    </Text>
+    <Composite name="buttonComposite" _xmeta_id_="32844">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="32845" style="FILL_HORIZONTAL"
+             horizontalAlignment="END" horizontalSpan="2"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="32846"></RowLayout>
+        <Button name="okButton" _xmeta_id_="32847" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)">
+            <RowData name="RowData" _xmeta_id_="32848" width="80"></RowData>
+            <Listeners _xmeta_id_="32849">
+                <Listener name="okButtonSelection" _xmeta_id_="32850">
+                    <GroovyAction descriptors="xworker.lang.actions.GroovyAction">
+                        <code><![CDATA[def context = [:];
+
+def className = clsText.getText().trim();
+if(className == ""){
+    noClass(actionContext);
+    return;
+}else{
+    editorActions.doAction("save", actionContext);
+    replace(currentThing, className, context);
+    editorActions.doAction("refreshOutline", actionContext);
+    editorActions.doAction("save", actionContext);
+    shell.dispose();
+}
+
+def replace(thing,className, context){
+    if(thing.getThingName() == "GroovyAction"){
+        def name = thing.getMetadata().getName();
+        if(context.get(name) != null){
+            def key = name + "__index";
+            def index = context.get(key);
+            if(index == null){
+                index = 1;
+            }else{
+                index++;
+            }
+            name = name + index;
+            context.put(key, index);
+        }
+        context.put(name, name);
+        
+        thing.set("descriptors", "xworker.lang.actions.JavaAction");
+        thing.set("outerClassName", className);
+        thing.set("useOuterJava", "true");
+        thing.set("methodName", name);
+    }
+    
+    for(child in thing.getChilds()){
+        replace(child, className, context);
+    }
+}]]></code>
+                        <ActionDefined>
+                            <MessageBox name="noClass" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 icon="ICON_WARNING" buttons="OK" title="lang:d=没有类&amp;en=No Class"
+                                 message="lang:d=请设置类名!&amp;en=Please set class name!"></MessageBox>
+                        </ActionDefined>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="cancelButton" _xmeta_id_="32851" text="lang:d=取消(&amp;amp;C)&amp;en=Cancel(&amp;amp;C)">
+            <RowData name="RowData" _xmeta_id_="32852" width="80"></RowData>
+            <Listeners _xmeta_id_="32853">
+                <Listener name="cancelButtonSelection" _xmeta_id_="32854">
+                    <Dispose name="Dispose" descriptors="xworker.swt.actions.ControlActions/@Dispose"
+                         controlList="shell"></Dispose>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+</Shell>

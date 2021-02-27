@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="NettySSLServerHandler" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javax.net.ssl.SSL">
+    <description><![CDATA[<p>使用io.netty.handler.ssl.SslContextBuilder创建的SslContext，然后再创建SslHandler。</p>
+
+<p><strong>证书和私钥</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 初始化SslContext需要<strong>证书(keyCertChainFile)</strong>和<strong>私钥(keyFile)</strong>。如果私钥是加密的，那么还需要<strong>keyPassword</strong>。没有加密不要输入keyPassword，否则会有异常。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 私钥必须是PKCS8 的格式，如果不是可以使用openssl转换格式。</p>
+
+<p>&nbsp;&nbsp;&nbsp; openssl pkcs8 -topk8 -nocrypt -in pkcs1_key_file -out pkcs8_key.pem</p>
+
+<p><strong>获取证书和私钥的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用第三方发布的证书和私钥，也可以使用keytool工具生成证书的私钥。keytool的打开方式是通过菜单Security-&gt;KeyTool。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用keytool生成证书和私钥的方法。</p>
+
+<ol>
+	<li>生成密钥对。</li>
+	<li>导出证书，以 RFC 样式输出，证书是<strong>keyCertChainFile</strong>文件。</li>
+	<li>打印公钥和私钥，把私钥拷贝保存为<strong>keyFile</strong>文件。</li>
+</ol>
+
+<p><strong>协议 </strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 需要设置<strong>协议（protocols）</strong>。如：TLSv1.2,TLSv1.1,TLSv1。</p>
+
+<p><strong>双向验证</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果属性clientAuth=true，那么开启双向验证，此时需要设置客户端的证书，通过<strong>trustCertCollectionFile</strong>设置。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>void init(SslContextBuilder builder, Channel channel)&nbsp;&nbsp;&nbsp;&nbsp;</strong><br />
+	初始化。&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.io.netty.handlers.ssl.NettySSLHandler"
+             methodName="createServerHandler"></JavaAction>
+        <GetFile name="getKeyCertChainFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+             attributeName="keyCertChainFile" usage="params"></GetFile>
+        <GetFile name="getKeyFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+             attributeName="keyFile" usage="params"></GetFile>
+        <GetString name="getKeyPassword" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="keyPassword" usage="params"></GetString>
+        <GetStringArray name="getProtocols" descriptors="xworker.lang.actions.ActionUtil/@getStringArray"
+             attributeName="protocols" usage="params"></GetStringArray>
+        <GetStringList name="getCiphers" _xmeta_id_="getCphers" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="ciphers" usage="params"></GetStringList>
+        <GetString name="getClientAuth" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="clientAuth" usage="params"></GetString>
+        <GetBoolean name="isEnableOcsp" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="enableOcsp" Boolean="true" usage="params"></GetBoolean>
+        <GetLong name="getSessionCacheSize" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="sessionCacheSize" usage="params"></GetLong>
+        <GetLong name="getSessionTimeout" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="sessionTimeout" usage="params"></GetLong>
+        <GetString name="getSslProvider" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="sslProvider" usage="params"></GetString>
+        <NOOP name="init" usage="event">
+            <ins>
+                <param name="builder" type="io.netty.handler.ssl.SslContextBuilder"></param>
+                <param name="channel" type="io.netty.channel.Channel"></param>
+            </ins>
+        </NOOP>
+        <GetFile name="getTrustCertCollectionFile" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+             attributeName="trustCertCollectionFile" usage="params"></GetFile>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="keyCertChainFile" inputtype="file" size="60"></attribute>
+    <attribute name="keyFile" inputtype="file" size="60"></attribute>
+    <attribute name="keyPassword"></attribute>
+    <attribute name="protocols" size="60"></attribute>
+    <attribute name="ciphers" size="60"></attribute>
+    <attribute name="clientAuth" inputtype="select">
+        <description><![CDATA[<p>Indicates the state of the {@link javax.net.ssl.SSLEngine} with respect to client authentication. This configuration item really only applies when building the server-side {@link SslContext}.</p>
+]]></description>
+        <value name="NONE" value="NONE"></value>
+        <value name="OPTIONAL" value="OPTIONAL"></value>
+        <value name="REQUIRE" value="REQUIRE"></value>
+    </attribute>
+    <attribute name="enableOcsp" inputtype="truefalseselect"></attribute>
+    <attribute name="sessionCacheSize"></attribute>
+    <attribute name="sessionTimeout"></attribute>
+    <attribute name="sslProvider" inputtype="select">
+        <value name="JDK" value="JDK"></value>
+        <value name="OPENSSL" value="OPENSSL"></value>
+        <value name="OPENSSL_REFCNT" value="OPENSSL_REFCNT"></value>
+    </attribute>
+    <attribute name="trustCertCollectionFile" inputtype="file" size="60"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

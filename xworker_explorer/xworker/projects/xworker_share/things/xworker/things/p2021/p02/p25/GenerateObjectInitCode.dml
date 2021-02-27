@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="GenerateObjectInitCode" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="code" group="java" icon="icons/application.png" codeType="groovy" styledTextForInsert="groovyCodeText"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.GroovyCodeIndex">
+    <code><![CDATA[import org.apache.commons.lang3.StringUtils;
+
+def objName = "node";
+def thing = world.getThing("xworker.javafx.scene.Node");
+for(attr in thing.getChilds("attribute")){
+    def name = attr.getString("name");
+    println "        if(thing.valueExists(\"${name}\")){";
+    println "            ${objName}.set" + StringUtils.capitalize(name) + "(thing.get(\"${name}\"));";
+    println "        }";    
+}]]></code>
+</QuickFunction>

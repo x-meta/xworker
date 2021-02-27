@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="TableColumn" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javafx.control.TableColumnBase">
+    <description><![CDATA[<p>A TableView is made up of a number of TableColumn instances. Each TableColumn in a table is responsible for displaying (and editing) the contents of that column. As well as being responsible for displaying and editing data for a single column, a TableColumn also contains the necessary properties to:</p>
+
+<ul>
+	<li>Be resized (using minWidth/prefWidth/maxWidth and width properties)</li>
+	<li>Have its visibility toggled Display header text</li>
+	<li>Display any nested columns it may contain</li>
+	<li>Have a context menu when the user right-clicks the column header area</li>
+	<li>Have the contents of the table be sorted (using comparator, sortable and sortType)</li>
+</ul>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.javafx.control.TableColumnActions"
+             methodName="create"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="cellFactory">
+        <description><![CDATA[<p>The cell factory for all cells in this column.</p>
+]]></description>
+    </attribute>
+    <attribute name="cellValueFactory">
+        <description><![CDATA[<p>The cell value factory needs to be set to specify how to populate all cells within a single TableColumn.</p>
+]]></description>
+    </attribute>
+    <attribute name="sortType" inputtype="select">
+        <description><![CDATA[<p>Used to state whether this column, if it is part of a sort order (see&nbsp;TableView.getSortOrder()&nbsp;for more details), should be sorted in ascending or descending order.</p>
+]]></description>
+        <value name="ASCENDING" value="ASCENDING"></value>
+        <value name="DESCENDING" value="DESCENDING"></value>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="TableColumnEventHandler" _xmeta_id_="EventHandler" descriptors="xworker.lang.MetaDescriptor3"
+         extends="xworker.lang.actions.Actions" group="events">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.event.ThingEventHandler"
+                 methodName="create"></JavaAction>
+        </actions>
+        <attribute name="name" _xmeta_id_="name1"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="type" _xmeta_id_="name" inputtype="select">
+            <value name="onEditCancel" value="onEditCancel"></value>
+            <value name="onEditCommit" value="onEditCommit"></value>
+            <value name="onEditStart" value="onEditStart"></value>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="event" _xmeta_id_="var" varName="event" className="javafx.event.Event"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="MapValueFactory" extends="xworker.javafx.control.cell.MapValueFactory"
+         inheritDescription="true"></thing>
+    <thing name="PropertyValueFactory" extends="xworker.javafx.control.cell.PropertyValueFactory"
+         inheritDescription="true"></thing>
+</thing>

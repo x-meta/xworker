@@ -1,0 +1,111 @@
+@xworker.ide.worldexplorer.swt.http.ThingElements
+sname
+ThingElements
+slabel
+ThingElements
+sdescriptors
+xworker.http.ControlSet
+@xworker.ide.worldexplorer.swt.http.ThingElements/@showElements
+sname
+showElements
+Sdescription
+#$@text#$@
+<p>显示一个或多个事物的元素列表。</p>
+<p>事物是通过things参数传递，多个之间用,号隔开。</p>
+#$@text#$@
+sdescriptors
+xworker.http.ControlSet/@SimpleControl
+@xworker.ide.worldexplorer.swt.http.ThingElements/@showElements/@actions
+sname
+actions
+sdescriptors
+xworker.http.controls.SimpleControl/@actions
+@xworker.ide.worldexplorer.swt.http.ThingElements/@showElements/@actions/@doAction
+sname
+doAction
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Global
+Scode
+#$@text#$@
+//取事物列表
+def thingPaths = requestBean.things;
+things = [];
+if(thingPaths != null){
+    def paths = thingPaths.split("[,]");
+    for(path in paths){
+        def thing = world.getThing(path);
+        if(thing != null){
+            things.add(thing);
+        }
+    }
+}
+
+//获取事物元素列表
+elements = [];
+context = [:];
+for(thing in things){
+    getElements(thing, elements, context);
+}
+
+return "success";
+
+def getElements(thing, elements, context){
+    if(context.get(thing) != null){
+        return;
+    }else{
+        context.put(thing, thing);
+    }
+    
+    boolean have = false;
+    int i=0;
+    def thingName = thing.metadata.name;
+    for(element in elements){            
+        if(element.name > thingName){
+            elements.add(["name":thingName, "thing":thing]);
+            have = true;
+            break;
+        }
+        
+        if(element.name = thingName){
+            element.name = thingName;
+            element.thing = thing;
+        }
+    }
+    
+    if(!have){
+        elements.add(["name":thingName, "thing":thing]);
+    }
+    
+    for(child in thing.getAllChilds()){
+        getElements(child, elements, context);
+    }
+}
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+@xworker.ide.worldexplorer.swt.http.ThingElements/@showElements/@forms
+sname
+forms
+sbelongToHtml
+true
+sstyle
+default
+sdescriptors
+xworker.http.controls.SimpleControl/@view
+@xworker.ide.worldexplorer.swt.http.ThingElements/@showElements/@success
+sname
+success
+stype
+form
+scontentType
+text/html;
+svalue
+xworker.ide.worldexplorer.swt.http.ThingElements/@showElements/@forms
+sdescriptors
+xworker.http.controls.SimpleControl/@result

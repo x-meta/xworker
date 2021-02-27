@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DemoNettyClient" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.netty.NettyClient">
+    <actions descriptors="xworker.netty.NettyClient/@actions1">
+        <GroovyAction name="closed">
+            <code><![CDATA[if(clientConsole != null){
+    clientConsole.append("Connection closed");
+    
+    parentContext.actions.doAction("setButtonStatus", parentContext);
+}]]></code>
+            <Variables>
+                <GetParentContextValue name="clientConsole" varName="clientConsole"></GetParentContextValue>
+            </Variables>
+        </GroovyAction>
+        <GroovyAction name="startFailure">
+            <code><![CDATA[if(clientConsole != null){
+    clientConsole.append("Connect to server failed");
+    clientConsole.append(cause);
+    
+    parentContext.actions.doAction("setButtonStatus", parentContext);
+}]]></code>
+            <Variables>
+                <GetParentContextValue name="clientConsole" varName="clientConsole"></GetParentContextValue>
+            </Variables>
+        </GroovyAction>
+        <GroovyAction name="startSuccess">
+            <code><![CDATA[if(clientConsole != null){
+    clientConsole.append("Successfully connected");
+    
+    parentContext.actions.doAction("setButtonStatus", parentContext);
+}]]></code>
+            <Variables>
+                <GetParentContextValue name="clientConsole" varName="clientConsole"></GetParentContextValue>
+            </Variables>
+        </GroovyAction>
+    </actions>
+</thing>

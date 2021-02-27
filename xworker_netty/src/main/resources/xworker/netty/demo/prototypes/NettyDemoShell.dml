@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="NettyDemoShell" descriptors="xworker.swt.widgets.Shell">
+    <FillLayout name="FillLayout"></FillLayout>
+    <CTabFolder name="mainTabFolder">
+        <CTabItem name="demoTabItem" text="lang:d=演示&amp;en=Demo">
+            <Composite name="demoComposite">
+                <FillLayout name="FillLayout"></FillLayout>
+                <SashForm name="mainSashForm" style="VERTICAL" weights="50,50">
+                    <Group name="serverComposite" descriptors="xworker.swt.widgets.Group"
+                         text="lang:d=服务器&amp;en=Server">
+                        <GridLayout name="GridLayout"></GridLayout>
+                        <ThingForm name="serverForm" column="1">
+                            <Thing>
+                                <attribute name="port" label="Port" default="9020" en_label="Port"></attribute>
+                            </Thing>
+                            <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+                        </ThingForm>
+                        <SashForm name="serverSashForm" weights="80,20">
+                            <StyledText name="serverStyledText" style="MULTI" H_SCROLL="true"
+                                 V_SCROLL="true">
+                                <Console name="serverConsole"></Console>
+                            </StyledText>
+                            <List name="sessionList"></List>
+                            <GridData name="GridData" descriptors="xworker.swt.Commons/@GridData"
+                                 style="FILL_BOTH"></GridData>
+                        </SashForm>
+                        <Composite name="buttonComposite" _xmeta_id_="39280">
+                            <GridData name="buttonCompositeGridData" _xmeta_id_="39281"
+                                 style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+                            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="39282"></RowLayout>
+                            <Button name="serverButton" _xmeta_id_="39283" text="lang:d=启动&amp;en=Start">
+                                <RowData name="RowData" _xmeta_id_="39284" width="80"></RowData>
+                                <Listeners _xmeta_id_="39285">
+                                    <Listener name="serverButtonSelection" _xmeta_id_="39286">
+                                        <GroovyAction name="GroovyAction">
+                                            <code><![CDATA[def server = actions.doAction("getServer", actionContext);
+
+if(server.isStarted() == false){
+    def values = serverForm.doAction("getValues", actionContext);
+    server.getThing().set("port", values.port);
+    
+    server.start();
+}else{
+    server.close();
+}
+
+actions.doAction("setButtonStatus", actionContext);]]></code>
+                                        </GroovyAction>
+                                    </Listener>
+                                </Listeners>
+                            </Button>
+                        </Composite>
+                    </Group>
+                    <Group name="clientComposite" descriptors="xworker.swt.widgets.Group"
+                         text="lang:d=客户端&amp;en=Client">
+                        <GridLayout name="GridLayout"></GridLayout>
+                        <ThingForm name="clientForm" column="2">
+                            <Thing>
+                                <attribute name="host" label="Host" default="localhost"></attribute>
+                                <attribute name="port" label="Port" default="9020"></attribute>
+                            </Thing>
+                            <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+                        </ThingForm>
+                        <StyledText name="clientStyledText" style="MULTI" H_SCROLL="true" V_SCROLL="true">
+                            <GridData name="GridData" style="FILL_BOTH"></GridData>
+                            <Console name="clientConsole"></Console>
+                        </StyledText>
+                        <Composite name="buttonComposite" _xmeta_id_="39553">
+                            <GridData name="buttonCompositeGridData" _xmeta_id_="39554"
+                                 style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+                            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="39555"></RowLayout>
+                            <Button name="clientButton" _xmeta_id_="39556" text="lang:d=连接&amp;en=Connect">
+                                <RowData name="RowData" _xmeta_id_="39557" width="80"></RowData>
+                                <Listeners _xmeta_id_="39558">
+                                    <Listener name="connectButtonSelection" _xmeta_id_="39559">
+                                        <GroovyAction name="GroovyAction">
+                                            <code><![CDATA[def client = actions.doAction("getClient", actionContext);
+if(client.isConnected() == false){
+    def values = clientForm.doAction("getValues", actionContext);
+    client.getThing().set("host", values.host);
+    client.getThing().set("port", values.port);
+    
+    client.connect();
+}else{
+    client.close();
+}
+
+actions.doAction("setButtonStatus", actionContext);]]></code>
+                                        </GroovyAction>
+                                    </Listener>
+                                </Listeners>
+                            </Button>
+                            <Button name="sendMessageButton" _xmeta_id_="39560" text="发送消息">
+                                <RowData name="RowData" _xmeta_id_="39561" width="80"></RowData>
+                                <Listeners _xmeta_id_="39562">
+                                    <Listener name="sendMessageButtonSelection" _xmeta_id_="39563">
+                                        <Prompt name="prompt" descriptors="xworker.swt.actions.MessageBoxActions/@Prompt"
+                                             title="lang:d=消息&amp;en=Message" message="lang:d=请输入消息。&amp;en=Please input a message."
+                                             text="Hi.">
+                                            <actions>
+                                                <GroovyAction name="ok">
+                                                    <code><![CDATA[def client = actions.doAction("getClient", actionContext);
+client.sendMessage(text);]]></code>
+                                                </GroovyAction>
+                                            </actions>
+                                        </Prompt>
+                                    </Listener>
+                                </Listeners>
+                            </Button>
+                        </Composite>
+                    </Group>
+                </SashForm>
+            </Composite>
+        </CTabItem>
+        <CTabItem name="serverTabItem" text="NettyServer">
+            <ThingEditor name="serverEditor" thingPath="var:nettyServerThing"></ThingEditor>
+        </CTabItem>
+        <CTabItem name="clientTabItem" text="NettyClient">
+            <ThingEditor name="clientEditor" thingPath="var:nettyClientThing"></ThingEditor>
+        </CTabItem>
+        <ActionContainer name="actions">
+            <GroovyAction name="getServer" code="return nettyServerThing.doAction(&quot;getNettyServer&quot;, actionContext);"></GroovyAction>
+            <GroovyAction name="getClient" code="return nettyClientThing.doAction(&quot;getNettyClient&quot;, actionContext);"></GroovyAction>
+            <DisplayExec name="setButtonStatus" _xmeta_id_="setButtonStatus1" descriptors="xworker.swt.actions.DisplayActions/@DisplayExec"
+                 widgetForDisplay="ognl:mainTabFolder.getShell()">
+                <actions>
+                    <GroovyAction name="doAction" _xmeta_id_="setButtonStatus">
+                        <code><![CDATA[import org.xmeta.util.UtilString;
+
+def server = actions.doAction("getServer", actionContext);
+if(server.isStarted()){
+    serverButton.setText(UtilString.getString("lang:d=停止&en=Stop", actionContext));
+}else{
+    serverButton.setText(UtilString.getString("lang:d=启动&en=Start", actionContext));
+}
+
+def client = actions.doAction("getClient", actionContext);
+if(!client.isConnected()){
+    clientButton.setText(UtilString.getString("lang:d=连接&en=Connect", actionContext));
+    sendMessageButton.setEnabled(false);
+}else{
+    clientButton.setText(UtilString.getString("lang:d=断开&en=Disconnect", actionContext));
+    sendMessageButton.setEnabled(true);
+}]]></code>
+                    </GroovyAction>
+                </actions>
+            </DisplayExec>
+        </ActionContainer>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="server" varName="server" className="xworker.io.netty.NettyServer"></Variable>
+            <Variable name="client" varName="client" className="xworker.io.netty.NettyClient"></Variable>
+        </VariablesDescs>
+        <Code name="init">
+            <code><![CDATA[//重新设置parentContext，因为client和server是缓存到模型中的
+def client = actions.doAction("getClient", actionContext);
+client.getActionContext().g().put("parentContext"	, actionContext);
+
+def server = actions.doAction("getServer", actionContext);
+server.getActionContext().g().put("parentContext"	, actionContext);
+
+serverForm.doAction("setValues", actionContext, "values", server.getThing().getAttributes());
+clientForm.doAction("setValues", actionContext, "values", client.getThing().getAttributes());
+
+//根据client和server的状态设置按钮的状态
+actions.doAction("setButtonStatus", actionContext);]]></code>
+        </Code>
+    </CTabFolder>
+</Shell>

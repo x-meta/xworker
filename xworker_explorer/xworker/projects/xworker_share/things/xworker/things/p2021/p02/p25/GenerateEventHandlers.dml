@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="GenerateEventHandlers" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="code" group="javafx.code" icon="icons/application.png" codeType="groovy" styledTextForInsert="groovyCodeText"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.GroovyCodeIndex">
+    <code><![CDATA[import org.apache.commons.lang3.StringUtils;
+
+def str = """void	setOnContextMenuRequested(EventHandler<? super ContextMenuEvent> value)
+Sets the value of the property onContextMenuRequested.
+void	setOnDragDetected(EventHandler<? super MouseEvent> value)
+Sets the value of the property onDragDetected.
+void	setOnDragDone(EventHandler<? super DragEvent> value)
+Sets the value of the property onDragDone.
+void	setOnDragDropped(EventHandler<? super DragEvent> value)
+Sets the value of the property onDragDropped.
+void	setOnDragEntered(EventHandler<? super DragEvent> value)
+Sets the value of the property onDragEntered.
+void	setOnDragExited(EventHandler<? super DragEvent> value)
+Sets the value of the property onDragExited.
+void	setOnDragOver(EventHandler<? super DragEvent> value)
+Sets the value of the property onDragOver.
+void	setOnInputMethodTextChanged(EventHandler<? super InputMethodEvent> value)
+Sets the value of the property onInputMethodTextChanged.
+void	setOnKeyPressed(EventHandler<? super KeyEvent> value)
+Sets the value of the property onKeyPressed.
+void	setOnKeyReleased(EventHandler<? super KeyEvent> value)
+Sets the value of the property onKeyReleased.
+void	setOnKeyTyped(EventHandler<? super KeyEvent> value)
+Sets the value of the property onKeyTyped.
+void	setOnMouseClicked(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseClicked.
+void	setOnMouseDragEntered(EventHandler<? super MouseDragEvent> value)
+Sets the value of the property onMouseDragEntered.
+void	setOnMouseDragExited(EventHandler<? super MouseDragEvent> value)
+Sets the value of the property onMouseDragExited.
+void	setOnMouseDragged(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseDragged.
+void	setOnMouseDragOver(EventHandler<? super MouseDragEvent> value)
+Sets the value of the property onMouseDragOver.
+void	setOnMouseDragReleased(EventHandler<? super MouseDragEvent> value)
+Sets the value of the property onMouseDragReleased.
+void	setOnMouseEntered(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseEntered.
+void	setOnMouseExited(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseExited.
+void	setOnMouseMoved(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseMoved.
+void	setOnMousePressed(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMousePressed.
+void	setOnMouseReleased(EventHandler<? super MouseEvent> value)
+Sets the value of the property onMouseReleased.
+void	setOnRotate(EventHandler<? super RotateEvent> value)
+Sets the value of the property onRotate.
+void	setOnRotationFinished(EventHandler<? super RotateEvent> value)
+Sets the value of the property onRotationFinished.
+void	setOnRotationStarted(EventHandler<? super RotateEvent> value)
+Sets the value of the property onRotationStarted.
+void	setOnScroll(EventHandler<? super ScrollEvent> value)
+Sets the value of the property onScroll.
+void	setOnScrollFinished(EventHandler<? super ScrollEvent> value)
+Sets the value of the property onScrollFinished.
+void	setOnScrollStarted(EventHandler<? super ScrollEvent> value)
+Sets the value of the property onScrollStarted.
+void	setOnSwipeDown(EventHandler<? super SwipeEvent> value)
+Sets the value of the property onSwipeDown.
+void	setOnSwipeLeft(EventHandler<? super SwipeEvent> value)
+Sets the value of the property onSwipeLeft.
+void	setOnSwipeRight(EventHandler<? super SwipeEvent> value)
+Sets the value of the property onSwipeRight.
+void	setOnSwipeUp(EventHandler<? super SwipeEvent> value)
+Sets the value of the property onSwipeUp.
+void	setOnTouchMoved(EventHandler<? super TouchEvent> value)
+Sets the value of the property onTouchMoved.
+void	setOnTouchPressed(EventHandler<? super TouchEvent> value)
+Sets the value of the property onTouchPressed.
+void	setOnTouchReleased(EventHandler<? super TouchEvent> value)
+Sets the value of the property onTouchReleased.
+void	setOnTouchStationary(EventHandler<? super TouchEvent> value)
+Sets the value of the property onTouchStationary.
+void	setOnZoom(EventHandler<? super ZoomEvent> value)
+Sets the value of the property onZoom.
+void	setOnZoomFinished(EventHandler<? super ZoomEvent> value)
+Sets the value of the property onZoomFinished.
+void	setOnZoomStarted(EventHandler<? super ZoomEvent> value)""";
+
+//模型的value
+for(line in str.split("[\n]")){
+    int index = line.indexOf("setOn");
+    if(index != -1){
+        int index2 = line.indexOf("(EventHandler");
+        def name = line.substring(index + 5, index2);
+        
+        println "    <value name=\"on${name}\" value=\"on${name}\"></value>";
+    }
+}
+
+println "        java code      ";
+//Java代码
+for(line in str.split("[\n]")){
+    int index = line.indexOf("setOn");
+    if(index != -1){
+        int index2 = line.indexOf("(EventHandler");
+        def name = line.substring(index + 5, index2);
+        
+        println "            }else if(\"on${name}\".equals(eventName)) {"
+        println "                obj.setOn${name}(eventHandler);";
+    }
+}]]></code>
+</QuickFunction>

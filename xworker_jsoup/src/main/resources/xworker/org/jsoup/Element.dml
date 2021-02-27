@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Element" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.org.jsoup.Commons"
+     defaultEditor="form">
+    <description><![CDATA[<p>A HTML element consists of a tag name, attributes, and child nodes (including text nodes and other elements). From an Element, you can extract data, traverse the node graph, and manipulate the HTML.</p>
+
+<p><strong>变量：</strong></p>
+
+<ul>
+	<li><strong>element</strong>: org.jsoup.nodes.Element</li>
+</ul>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="run"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作" inheritDescription="true">
+        <attribute name="name"></attribute>
+    </thing>
+    <thing name="AllElements" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find all elements under this element (including self, and children of children).</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="allElements"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementById" extends="xworker.org.jsoup.Element">
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementById"></JavaAction>
+            <GetString name="getId" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="id"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="id" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttribute" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have a named attribute set.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttribute"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeStarting" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have an attribute name starting with the supplied prefix.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeStarting"></JavaAction>
+            <GetString name="getKeyPrefix" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 label="keyPrefix"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="keyPrefix" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValue" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have an attribute with the specific value.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValue"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getValue" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key"></attribute>
+        <attribute name="value"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValueContaining" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have attributes whose value contains the match string.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValueContaining"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getMatch" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="match"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="match" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValueEnding" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have attributes that end with the value suffix.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValueEnding"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getValueSuffix" _xmeta_id_="getMatch" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="valueSuffix"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="valueSuffix" _xmeta_id_="match" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValueMatching" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have attributes whose values match the supplied regular expression.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValueMatching"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getRegex" _xmeta_id_="getMatch" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="regex"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="regex" _xmeta_id_="match" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValueNot" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that either do not have this attribute, or have it with a different value.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValueNot"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getValue" _xmeta_id_="getMatch" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="value"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="value" _xmeta_id_="match" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByAttributeValueStarting" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have attributes whose value contains the match string.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByAttributeValueStarting"></JavaAction>
+            <GetString name="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="key"></GetString>
+            <GetString name="getValuePrefix" _xmeta_id_="getMatch" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="valuePrefix"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="key" size="50"></attribute>
+        <attribute name="valuePrefix" _xmeta_id_="match" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByClass" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that have this class, including or under this element.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByClass"></JavaAction>
+            <GetString name="getClassName" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="className"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="className" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByIndexEquals" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements whose sibling index is equal to the supplied index.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByIndexEquals"></JavaAction>
+            <GetInt name="getIndex" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+                 attributeName="index"></GetInt>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="index" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByIndexGreaterThan" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements whose sibling index is greater than the supplied index.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByIndexGreaterThan"></JavaAction>
+            <GetInt name="getIndex" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+                 attributeName="index"></GetInt>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="index" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByIndexLessThan" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements whose sibling index is less than the supplied index.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsByIndexLessThan"></JavaAction>
+            <GetInt name="getIndex" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+                 attributeName="index"></GetInt>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="index" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsByTag" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Finds elements, including and recursively under this element, with the specified tag name.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="ElementsByTag"></JavaAction>
+            <GetString name="getTagName" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="tagName"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="tagName" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsContainingOwnText" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that directly contain the specified string.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsContainingOwnText"></JavaAction>
+            <GetString name="getSearchText" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="searchText"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="searchText" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsContainingText" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that contain the specified string.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsContainingText"></JavaAction>
+            <GetString name="getSearchText" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="searchText"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="searchText" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsMatchingOwnText" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements whose text matches the supplied regular expression.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsMatchingOwnText"></JavaAction>
+            <GetString name="getRegex" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="regex"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="regex" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ElementsMatchingText" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements whose text matches the supplied regular expression.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="elementsMatchingText"></JavaAction>
+            <GetString name="getRegex" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="regex"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="regex" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="LastElementSibling" extends="xworker.org.jsoup.Element">
+        <description><![CDATA[<p>&nbsp;Gets the last element sibling of this element</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="lastElementSibling"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="NextElementSibling" extends="xworker.org.jsoup.Element">
+        <description><![CDATA[<p>Gets the next sibling element of this element.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="nextElementSibling"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Parent" extends="xworker.org.jsoup.Element">
+        <description><![CDATA[<p>Gets this node&#39;s parent node.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="parent"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Parents" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Get this element&#39;s parent and ancestors, up to the document root.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="parents"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="Select" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Find elements that match the&nbsp;<a href="https://jsoup.org/apidocs/org/jsoup/select/Selector.html">Selector&nbsp;</a>CSS query, with this element as the starting context.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="select"></JavaAction>
+            <GetString name="getCssQuery" _xmeta_id_="getKey" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="cssQuery"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="cssQuery" _xmeta_id_="key" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="SiblingElements" extends="xworker.org.jsoup.Elements">
+        <description><![CDATA[<p>Get sibling elements. If the element has no sibling elements, returns an empty list. An element is not a sibling of itself, so will not be included in the returned list.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="siblingElements"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="TextNodes" extends="xworker.org.jsoup.TextNodes">
+        <description><![CDATA[<p>Get this element&#39;s child text nodes.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="textNodes"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="element" varName="element" scope="2" className="org.jsoup.nodes.Element"></Variable>
+    </VariablesDescs>
+    <thing name="Children" extends="xworker.org.jsoup.Elements" defaultEditor="form">
+        <description><![CDATA[<p>Get this element&#39;s child elements.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="children"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="DataNodes" extends="xworker.org.jsoup.TextNodes">
+        <description><![CDATA[<p>Get this element&#39;s child data nodes.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="dataNodes"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="FirstElementSibling" extends="xworker.org.jsoup.Element">
+        <description><![CDATA[<p>Gets the first element sibling of this element.</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.org.jsoup.ElementActions" methodName="firstElementSibling"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>
