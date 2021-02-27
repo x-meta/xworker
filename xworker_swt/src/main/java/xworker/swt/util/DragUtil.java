@@ -2,14 +2,14 @@ package xworker.swt.util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
+
 public class DragUtil {
-	private static Logger logger = LoggerFactory.getLogger(DragUtil.class);
+	private static final String TAG = DragUtil.class.getName();
 	
 	private int startX;
 	private int startY;
@@ -48,7 +48,7 @@ public class DragUtil {
 				try{
 					thing.doAction("dragStart", actionContext, UtilMap.toMap("drag", this, "event", event));
 				}catch(Exception e){
-					logger.error("dragStart error, path=" + thing.getMetadata().getPath(), e);
+					Executor.error(TAG, "dragStart error, path=" + thing.getMetadata().getPath(), e);
 				}
 			}
 			
@@ -61,7 +61,7 @@ public class DragUtil {
 				try{
 					thing.doAction("dragMove", actionContext, UtilMap.toMap("drag", this, "event", event));
 				}catch(Exception e){
-					logger.error("dragMove error, path=" + thing.getMetadata().getPath(), e);
+					Executor.error(TAG, "dragMove error, path=" + thing.getMetadata().getPath(), e);
 				}
 			}
 			break;
@@ -69,7 +69,7 @@ public class DragUtil {
 			try{
 				thing.doAction("dragEnd", actionContext, UtilMap.toMap("drag", this, "event", event));
 			}catch(Exception e){
-				logger.error("dragEnd error, path=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "dragEnd error, path=" + thing.getMetadata().getPath(), e);
 			}
 			dragging = false;
 			break;

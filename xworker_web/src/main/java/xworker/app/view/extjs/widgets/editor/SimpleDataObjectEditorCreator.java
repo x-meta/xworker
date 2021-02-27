@@ -15,14 +15,14 @@
 ******************************************************************************/
 package xworker.app.view.extjs.widgets.editor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class SimpleDataObjectEditorCreator {
-	private static Logger log = LoggerFactory.getLogger(SimpleDataObjectEditorCreator.class);
+	private static final String TAG = SimpleDataObjectEditorCreator.class.getName();
 	
     public static Object toJavaScriptCode(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -37,7 +37,7 @@ public class SimpleDataObjectEditorCreator {
             }
         }
         if(dataObject == null){
-            log.warn("SimpleDataObjectEditor: dataObject is null - " + self.getString("dataObject"));
+            Executor.warn(TAG, "SimpleDataObjectEditor: dataObject is null - " + self.getString("dataObject"));
             return null;
         }
         

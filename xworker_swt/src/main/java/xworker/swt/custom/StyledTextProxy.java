@@ -7,8 +7,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -50,6 +48,8 @@ public class StyledTextProxy {
 	private static Class<?> codeAssistorCls = null;
 	private static Method codeAssistorAttachStyledText= null;
 	private static Method codeAssistorAttachText= null;
+	private static Method chooseFileType = null;
+	private static Method attachTextEditor = null;
 	
 	public static boolean isStyledText(Object obj) {
 		return obj.getClass().getName().equals(NAME);
@@ -70,6 +70,45 @@ public class StyledTextProxy {
 			}			
 		}
 	}	
+	
+	public static void attachTextEditor(Object obj) {
+		try {
+			if(attachTextEditor == null) {
+				Class<?> textEditor = Class.forName("xworker.swt.form.TextEditor");
+				Class<?> styledText = Class.forName("org.eclipse.swt.custom.StyledText");
+				
+				attachTextEditor = textEditor.getMethod("attach", new Class[] {styledText});
+			}
+			
+			attachTextEditor.invoke(null, new Object[] {obj});
+		} catch (Throwable t) {
+			if(t instanceof RuntimeException) {
+				throw (RuntimeException) t;
+			}else {
+				throw new ActionException("Invoke TextEditor method attach error", t);
+			}	
+		}
+	}
+	
+	public static void chooseFileType(Object colorer, String fileType) {
+		if(colorer == null) {
+			return;
+		}
+				
+		try {
+			if(chooseFileType == null) {
+				chooseFileType = colorer.getClass().getMethod("chooseFileType", new Class[] {String.class});
+			}
+			
+			chooseFileType.invoke(colorer, new Object[] {fileType});
+		} catch (Throwable t) {
+			if(t instanceof RuntimeException) {
+				throw (RuntimeException) t;
+			}else {
+				throw new ActionException("Invoke Colorer method chooseFileType error", t);
+			}	
+		}
+	}
 	
 	public static boolean getWordWrap(Object obj) {
 		if(getWordWrap == null) {

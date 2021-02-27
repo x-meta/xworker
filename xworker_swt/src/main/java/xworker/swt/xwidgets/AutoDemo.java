@@ -12,13 +12,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtTextUtils;
@@ -27,7 +26,7 @@ import xworker.util.GlobalConfig;
 import xworker.util.XWorkerUtils;
 
 public class AutoDemo implements Runnable{
-	private static Logger logger = LoggerFactory.getLogger(AutoDemo.class);
+	private static final String TAG = AutoDemo.class.getName();
 	
 	public static void menu_run(ActionContext actionContext){
 		Thing thing = (Thing) actionContext.get("currentThing");
@@ -536,7 +535,7 @@ public class AutoDemo implements Runnable{
 			}
 			child.doAction("run", actionContext, UtilMap.toMap("demo", this));
 		}catch(Exception e){
-			logger.error("Excuete demo child error, path=" + child.getMetadata().getPath(), e);
+			Executor.error(TAG, "Excuete demo child error, path=" + child.getMetadata().getPath(), e);
 		}
 	}
 

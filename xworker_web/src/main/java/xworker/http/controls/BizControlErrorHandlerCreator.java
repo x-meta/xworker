@@ -15,15 +15,15 @@
 ******************************************************************************/
 package xworker.http.controls;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 
+import xworker.lang.executor.Executor;
+
 public class BizControlErrorHandlerCreator {
-	private static Logger log = LoggerFactory.getLogger(BizControlErrorHandlerCreator.class);
+	private static final String TAG = BizControlErrorHandlerCreator.class.getName();
 	
     public static void GroovyAction(ActionContext actionContext){
-        log.error("BizControl error is happend!", (Throwable) actionContext.get("exception"));
+        Executor.error(TAG, "BizControl error is happend!", (Throwable) actionContext.get("exception"));
     }
 
 }

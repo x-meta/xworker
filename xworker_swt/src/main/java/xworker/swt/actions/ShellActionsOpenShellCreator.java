@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -33,9 +31,10 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilString;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class ShellActionsOpenShellCreator {
-	private static Logger log = LoggerFactory.getLogger(ShellActionsOpenShellCreator.class);
+	private static final String TAG = ShellActionsOpenShellCreator.class.getName();
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void openShell(ActionContext actionContext ) throws OgnlException{
@@ -70,7 +69,7 @@ public class ShellActionsOpenShellCreator {
                 box.open();
                 return;
             }else{
-                log.info("OpenShell: shell thing not exists, shellPath=" + self.getString("shellPath"));
+                Executor.info(TAG, "OpenShell: shell thing not exists, shellPath=" + self.getString("shellPath"));
                 return;
             }
         }else{
@@ -165,7 +164,7 @@ public class ShellActionsOpenShellCreator {
                 box.open();
                 return;
             }else{
-                log.info("OpenShell: shell thing not exists, shellPath=" + self.getString("shellPath"));
+                Executor.info(TAG, "OpenShell: shell thing not exists, shellPath=" + self.getString("shellPath"));
                 return;
             }
         }else{

@@ -5,14 +5,13 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.Types;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.XMetaException;
 
 import xworker.dataObject.utils.DbUtil;
+import xworker.lang.executor.Executor;
 
 /**
  * 逆向工程，给定连接池，把所有的表都转化成数据对象。
@@ -21,7 +20,7 @@ import xworker.dataObject.utils.DbUtil;
  *
  */
 public class Reverse {
-	private static Logger logger = LoggerFactory.getLogger(Reverse.class);
+	private static final String TAG = Reverse.class.getName();
 	
 	public static Thing createDataObject(Thing dataSource, String tableName,  ActionContext actionContext){
 		Connection con = (Connection) dataSource.doAction("getConnection", actionContext);
@@ -111,7 +110,7 @@ public class Reverse {
 					String thingPath = categroy + "." + tableName;					
 					Thing thing = World.getInstance().getThing(thingPath);
 					if(thing != null){
-						logger.info("DataObject not created, already exists : " + thingPath);
+						Executor.info(TAG, "DataObject not created, already exists : " + thingPath);
 						continue;						
 					}
 
@@ -162,7 +161,7 @@ public class Reverse {
 					
 					//保存事物
 					thing.saveAs(thingManagerName, thingPath);
-					logger.info("DataObject saved : " + thingPath);
+					Executor.info(TAG, "DataObject saved : " + thingPath);
 				}				
 				/*
 				System.out.println("TABLE_CAT=" + rs.getString("TABLE_CAT"));

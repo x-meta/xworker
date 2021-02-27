@@ -227,10 +227,5 @@ public class JavaActions {
 		FieldUtils.writeField(object, fieldName, value, forceAccess);
 	}
 	
-	public static void sleep(ActionContext actionContext) throws InterruptedException{
-		Thing self = actionContext.getObject("self");
-		
-		long millis = (Long) self.doAction("getMillis", actionContext);
-		Thread.sleep(millis);
-	}
+	
 }

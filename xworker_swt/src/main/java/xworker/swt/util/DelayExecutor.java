@@ -3,9 +3,8 @@ package xworker.swt.util;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import xworker.lang.executor.Executor;
 import xworker.task.TaskManager;
 
 /**
@@ -15,7 +14,7 @@ import xworker.task.TaskManager;
  *
  */
 public abstract class DelayExecutor{
-	private static Logger logger = LoggerFactory.getLogger(DelayExecutor.class);
+	private static final String TAG = DelayExecutor.class.getName();
 	
 	Display display;
 	int interval = 500;
@@ -42,7 +41,7 @@ public abstract class DelayExecutor{
 				try {
 					DelayExecutor.this.doTask();
 				}catch(Exception e) {
-					logger.warn("doTask exception", e);
+					Executor.warn(TAG, "doTask exception", e);
 				}
 			}
 		});
@@ -76,7 +75,7 @@ public abstract class DelayExecutor{
 			try{
 				executor.doRun();
 			}catch(Exception e){
-				logger.error("execute delay action error", e);
+				Executor.error(TAG, "execute delay action error", e);
 			}finally{
 				finished = true;							
 			}

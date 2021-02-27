@@ -15,14 +15,14 @@
 ******************************************************************************/
 package xworker.app.view.extjs.data;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
+
 public class DataObjectJsonStoreCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectJsonStoreCreator.class);
+	private static final String TAG = DataObjectJsonStoreCreator.class.getName();
 	
     public static Object toJavaScriptCode(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -31,7 +31,7 @@ public class DataObjectJsonStoreCreator {
         //数据对象
         Object dataObject = self.doAction("getDataObject", actionContext);
         if(dataObject == null){
-            log.warn("DataObjectGridPanel: dataObject is null - " + self.getString("dataObject"));
+            Executor.warn(TAG, "DataObjectGridPanel: dataObject is null - " + self.getString("dataObject"));
             return null;//self.doAction("toJavaScriptCode", actionContext);
         }
         

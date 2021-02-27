@@ -1,15 +1,14 @@
 package xworker.swt.xwidgets.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.events.SwtListener;
 
 public class AppActions {
-	private static Logger logger = LoggerFactory.getLogger(AppActions.class);
+	private static final String TAG = AppActions.class.getName();
 	
 	/**
 	 * xworker.swt.xwidgets.app.AppActions/%SaveEditor动作的实现。
@@ -22,7 +21,7 @@ public class AppActions {
 		//编辑器的变量上下文
 		ActionContext editorContext = self.doAction("getEditorContext", actionContext);
 		if(editorContext == null) {
-			logger.info("Can not execute saveEditor, editorContext is null, path=" + self.getMetadata().getPath());
+			Executor.info(TAG, "Can not execute saveEditor, editorContext is null, path=" + self.getMetadata().getPath());
 			return;
 		}
 		
@@ -56,7 +55,7 @@ public class AppActions {
 		//编辑器的变量上下文
 		ActionContext editorContext = self.doAction("getEditorContext", actionContext);
 		if(editorContext == null) {
-			logger.info("Can not execute initEditor, editorContext is null, path=" + self.getMetadata().getPath());
+			Executor.info(TAG, "Can not execute initEditor, editorContext is null, path=" + self.getMetadata().getPath());
 			return;
 		}
 		

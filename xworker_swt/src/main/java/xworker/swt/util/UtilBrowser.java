@@ -26,14 +26,13 @@ import org.eclipse.swt.browser.StatusTextEvent;
 import org.eclipse.swt.browser.StatusTextListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 
 /**
@@ -50,7 +49,7 @@ import xworker.swt.design.Designer;
  *
  */
 public class UtilBrowser implements StatusTextListener{
-	private static Logger logger = LoggerFactory.getLogger(UtilBrowser.class);
+	private static final String TAG = UtilBrowser.class.getName();
 	
 	ActionContext actionContext;
 	ActionContainer actions;
@@ -179,7 +178,7 @@ public class UtilBrowser implements StatusTextListener{
 				return;
 			}
 			
-			//logger.info(message);
+			//Executor.info(TAG, message);
 			//通过?号后可以附加参数，同url的规则
 			Map<String, Object> params = new HashMap<String, Object>();
 			int index = message.indexOf("?");
@@ -216,7 +215,7 @@ public class UtilBrowser implements StatusTextListener{
 							UtilBrowser.class.getName(), "openThing", thingName, actionContext)) {											
 						runExplorerAction("openThing", params);
 					}else {
-						logger.info("SecurityManager: current session has no 'openThing' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'openThing' permission");
 					}
 				}else if(message.startsWith("createThing:")){
 					//开打新建事物对话框
@@ -227,7 +226,7 @@ public class UtilBrowser implements StatusTextListener{
 						createThing.put("descriptor", thingName);
 						createThing.getAction().run(actionContext);
 					}else {
-						logger.info("SecurityManager: current session has no 'createThing' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'createThing' permission");
 					}
 				}else if(message.startsWith("thing:")){
 					//打开一个事物编辑，同openThing
@@ -238,7 +237,7 @@ public class UtilBrowser implements StatusTextListener{
 						params.put("thing", thing);
 						runExplorerAction("openThing", params);
 					}else {
-						logger.info("SecurityManager: current session has no 'openThing' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'openThing' permission");
 					}
 				}else if(message.startsWith("thingTab:")){
 					//打开一个事物编辑，同openThing
@@ -249,7 +248,7 @@ public class UtilBrowser implements StatusTextListener{
 						params.put("thing", thing);
 						runExplorerAction("thingTab", params);
 					}else {
-						logger.info("SecurityManager: current session has no 'thingTab' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'thingTab' permission");
 					}
 				}else if(message.startsWith("tab:")){
 					//在编辑器中打开一个tab
@@ -263,7 +262,7 @@ public class UtilBrowser implements StatusTextListener{
 						params.put("title", compositeThing.getMetadata().getLabel());
 						runExplorerAction("openTab", params);
 					}else {
-						logger.info("SecurityManager: current session has no 'openTab' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'openTab' permission");
 					}
 				}else if(message.startsWith("url:")){
 					//在编辑器中打开一个url
@@ -274,7 +273,7 @@ public class UtilBrowser implements StatusTextListener{
 						params.put("name", url);
 						runExplorerAction("openUrl", params);
 					}else {
-						logger.info("SecurityManager: current session has no 'openUrl' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'openUrl' permission");
 					}
 				}else if(message.startsWith("action:")){
 					//在编辑器的环境中执行一个指定的动作
@@ -294,13 +293,13 @@ public class UtilBrowser implements StatusTextListener{
 							try{
 								thing.getAction().run(actionContext, params);
 							}catch(Exception e){
-								logger.error("runaction error, action=" + thingName, e);
+								Executor.error(TAG, "runaction error, action=" + thingName, e);
 							}
 						}else{
-							logger.warn("Action not exists, message=" + message);
+							Executor.warn(TAG, "Action not exists, message=" + message);
 						}
 					}else {
-						logger.info("SecurityManager: current session has no 'action' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'action' permission");
 					}
 				}else if(message.startsWith("actions:")){
 					//在编辑器的环境中执行一个指定的动作				
@@ -326,10 +325,10 @@ public class UtilBrowser implements StatusTextListener{
 						if(ac != null){
 							ac.doAction(actionName, actionContext, params);
 						}else{
-							logger.warn("UtilBrowser: actions not exists, message=" + message);
+							Executor.warn(TAG, "UtilBrowser: actions not exists, message=" + message);
 						}
 					}else {
-						logger.info("SecurityManager: current session has no 'action' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'action' permission");
 					}
 				}else if(message.startsWith("run:")){
 					//在UtilBrowser绑定的环境下执行一个指定的动作，和action的差别是执行的环境不同
@@ -349,7 +348,7 @@ public class UtilBrowser implements StatusTextListener{
 							thing.getAction().run(ac, params);
 						}
 					}else {
-						logger.info("SecurityManager: current session has no 'run' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'run' permission");
 					}
 				}else if(message.startsWith("runThing:")){
 					//在UtilBrowser绑定的环境下执行一个指定的动作，和action的差别是执行的环境不同
@@ -370,10 +369,10 @@ public class UtilBrowser implements StatusTextListener{
 							}
 							thing.doAction(method, ac, params);
 						}else{
-							logger.warn("UtilBroser： thing is null, path=" + thingName);
+							Executor.warn(TAG, "UtilBroser： thing is null, path=" + thingName);
 						}
 					}else {
-						logger.info("SecurityManager: current session has no 'runThing' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'runThing' permission");
 					}
 				}else if(message.startsWith("webkit:")){
 					String webkit = message.substring(7, message.length());
@@ -414,12 +413,12 @@ public class UtilBrowser implements StatusTextListener{
 							}
 						}
 					}else {
-						logger.info("SecurityManager: current session has no 'other' permission");
+						Executor.info(TAG, "SecurityManager: current session has no 'other' permission");
 					}
 				}
 			}
 		}catch(Exception e){
-			logger.error("handler utilbrowser error", e);
+			Executor.error(TAG, "handler utilbrowser error", e);
 		}
 	}
 	
@@ -536,7 +535,7 @@ public class UtilBrowser implements StatusTextListener{
 		
 		public void run(){
 			if(actions == null) {
-				logger.warn("Actions is null, action=" + name);
+				Executor.warn(TAG, "Actions is null, action=" + name);
 				return;
 			}
 			

@@ -20,17 +20,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObjectThingUtils;
+import xworker.lang.executor.Executor;
 
 public class DataObjectFormPanelCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectFormPanelCreator.class);
+	private static final String TAG = DataObjectFormPanelCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object toJavaScriptCode(ActionContext actionContext){
@@ -39,7 +38,7 @@ public class DataObjectFormPanelCreator {
         //-----------------获取数据对象的定义------------
         Thing dataObject = (Thing) self.doAction("getDataObject", actionContext);
         if(dataObject == null){
-            log.warn("DataObjectFormPanel: dataObject is null - " + self.getString("dataObject"));
+            Executor.warn(TAG, "DataObjectFormPanel: dataObject is null - " + self.getString("dataObject"));
             return null;//self.doAction("toJavaScriptCode", actionContext);
         }
         
@@ -392,7 +391,7 @@ public class DataObjectFormPanelCreator {
             params = params + paramName;
         }
         if(keys.size() == 0){
-            log.warn("dataObject have no keys, dataObjectPath=" + self.getString("dataObject"));
+            Executor.warn(TAG, "dataObject have no keys, dataObjectPath=" + self.getString("dataObject"));
         }
         loadFunction.put("params", params);
         String loadUrl = self.getString("df_formReadUrl");

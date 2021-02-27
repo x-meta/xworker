@@ -22,8 +22,6 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -31,10 +29,11 @@ import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.util.XWorkerUtils;
 
 public class DemoWebActions {
-	private static Logger logger = LoggerFactory.getLogger(DemoWebActions.class);
+	private static final String TAG = DemoWebActions.class.getName();
 	
     public static void changed(ActionContext actionContext) throws OgnlException{
     	//Thing thing = actionContext.getObject("thing");
@@ -75,7 +74,7 @@ public class DemoWebActions {
         }
         
         if(thing == null){
-            logger.warn("DemoWeb: thing is null");
+            Executor.warn(TAG, "DemoWeb: thing is null");
             return;
         }
         

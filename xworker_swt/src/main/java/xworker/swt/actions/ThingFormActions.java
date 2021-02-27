@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -31,8 +29,6 @@ import org.xmeta.util.UtilMap;
 import ognl.OgnlException;
 
 public class ThingFormActions {
-	private static Logger logger = LoggerFactory.getLogger(ThingFormActions.class);
-	
 	/**
 	 * 设置表单的部分值。
 	 * 

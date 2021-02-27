@@ -9,6 +9,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.swt.app.Application;
+import xworker.swt.app.IEditor;
 import xworker.swt.reacts.DataReactor;
 import xworker.swt.xwidgets.DataItemContainer;
 
@@ -55,5 +56,18 @@ public class MobileSimpleApp {
 		app.bindItemsToWidget(Application.ITEMS_INIT, null, editorDataReactor);
 		//composite.layout();
 		return composite;
+	}
+	
+    public static void  onEditorActive(ActionContext actionContext){
+	    //xworker.swt.app.applications.prototypes.MobileSimplePrototype/@mainComposite/@contentComposite/@editorContainer/@actions/@onEditorStateChanged
+	    IEditor editor = actionContext.getObject("editor");
+	    String title = editor.getSimpleTitle();
+	    if(title != null){
+	    	Label titleLabel = actionContext.getObject("titleLabel");
+	    	Composite headComposite = actionContext.getObject("headComposite");
+	    	
+	        titleLabel.setText(title);
+	        headComposite.layout();
+	    }
 	}
 }

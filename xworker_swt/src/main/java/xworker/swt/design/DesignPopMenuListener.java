@@ -27,17 +27,16 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 
 public class DesignPopMenuListener implements SelectionListener, DisposeListener{
-	private static Logger log = LoggerFactory.getLogger(DesignPopMenuListener.class);
+	private static final String TAG = DesignPopMenuListener.class.getName();
 	private static World world = World.getInstance();
 	
 	String thingPath;
@@ -80,10 +79,10 @@ public class DesignPopMenuListener implements SelectionListener, DisposeListener
 						}
 					});
 				}else{
-					log.warn("创建控件的事物为空！");
+					Executor.warn(TAG, "创建控件的事物为空！");
 				}
 			}else{
-				log.warn("没有指定打开事物的浏览器！");
+				Executor.warn(TAG, "没有指定打开事物的浏览器！");
 			}
 		}else if("refresh".equals(type)){
 			Composite composite = control.getParent();
@@ -109,7 +108,7 @@ public class DesignPopMenuListener implements SelectionListener, DisposeListener
 			ActionContext parentActionContext = (ActionContext) composite.getData("_designer_actionContext");
 			
 			if(parentThingPath == null){
-				log.info("父控件没有创建者事物的路径！");
+				Executor.info(TAG, "父控件没有创建者事物的路径！");
 				return;
 			}
 			

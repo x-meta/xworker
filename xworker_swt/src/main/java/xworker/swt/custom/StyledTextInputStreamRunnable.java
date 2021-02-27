@@ -18,10 +18,9 @@ package xworker.swt.custom;
 import java.io.InputStream;
 
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.util.ExceptionUtil;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.functions.AutoScroll;
 import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
@@ -33,7 +32,7 @@ import xworker.swt.util.SwtUtils;
  *
  */
 public class StyledTextInputStreamRunnable implements Runnable, AutoScroll{
-	private static Logger logger = LoggerFactory.getLogger(StyledTextInputStreamRunnable.class);
+	private static final String TAG = StyledTextInputStreamRunnable.class.getName();
 	
 	Widget text;
 	InputStream inputStream;
@@ -77,7 +76,7 @@ public class StyledTextInputStreamRunnable implements Runnable, AutoScroll{
 				});			
 			}
 		}catch(final Exception e){
-			logger.info("get data form inputStream error", e);
+			Executor.info(TAG, "get data form inputStream error", e);
 			
 			if(text != null && text.isDisposed() == false) {
 				//是InputStream结束了

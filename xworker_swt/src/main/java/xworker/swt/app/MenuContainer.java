@@ -2,19 +2,18 @@ package xworker.swt.app;
 
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionParams;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
 
 @ActionClass(creator="getMenuContainer")
 public class MenuContainer {
-	private static Logger logger = LoggerFactory.getLogger(MenuContainer.class);
+	private static final String TAG = MenuContainer.class.getName();
 	private static final String ID = "__MenuContainer_id__";
 	
 	Thing self;
@@ -139,7 +138,7 @@ public class MenuContainer {
 		Thing self = actionContext.getObject("self");
 		Menu menu = self.doAction("getMenu", actionContext);
 		if(menu == null) {
-			logger.warn("MenuContainer: does not create menu is null, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "MenuContainer: does not create menu is null, path=" + self.getMetadata().getPath());
 			return;
 		}else {
 			MenuContainer menuContainer = new MenuContainer(menu, actionContext);

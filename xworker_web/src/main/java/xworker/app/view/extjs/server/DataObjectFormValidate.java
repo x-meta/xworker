@@ -21,8 +21,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -32,9 +30,10 @@ import org.xmeta.util.UtilMap;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.ValidateResult;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 
 public class DataObjectFormValidate {
-	private static Logger log = LoggerFactory.getLogger(DataObjectFormValidate.class);
+	private static final String TAG = DataObjectFormValidate.class.getName();
 	
     public static void validate(ActionContext actionContext) throws IOException{
         World world = World.getInstance();
@@ -61,7 +60,7 @@ public class DataObjectFormValidate {
                 	}
                 }
             }catch(Exception e){
-                log.error("校验数据失败", e);
+                Executor.error(TAG, "校验数据失败", e);
                 result.put("success", "false");
                 result.put("msg", JsonFormator.formatString(ExceptionUtil.getRootMessage(e)));
             }

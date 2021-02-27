@@ -14,6 +14,10 @@ import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 
 public class Log4jService implements ExecutorService{
+	static {
+		Executor.setDefaultExecutorService(new Log4jService());
+	}
+	
 	byte level = Executor.INFO;
 	static final String FQCN = Executor.class.getName();
 	

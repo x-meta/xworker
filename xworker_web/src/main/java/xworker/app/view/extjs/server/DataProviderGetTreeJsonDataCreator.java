@@ -22,8 +22,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -31,11 +29,12 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataProviderGetTreeJsonDataCreator {
-	private static Logger log = LoggerFactory.getLogger(DataProviderGetTreeJsonDataCreator.class);
+	private static final String TAG = DataProviderGetTreeJsonDataCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static void doAction(ActionContext actionContext) throws IOException{
@@ -56,7 +55,7 @@ public class DataProviderGetTreeJsonDataCreator {
         	List<Object> data = null;
             //直接是事物数据
             if(thing == null){
-                log.info("DataProvider.getTreeJsonData: thing path data is null, path=" + request.getParameter("path"));
+                Executor.info(TAG, "DataProvider.getTreeJsonData: thing path data is null, path=" + request.getParameter("path"));
                 data = new ArrayList<Object>();
             }
             if(!(thing instanceof List)){
@@ -113,11 +112,11 @@ public class DataProviderGetTreeJsonDataCreator {
 	public static void  convertToTreeNode(Object data, Thing node, Thing descriptor){
         for(Thing attr : (List<Thing>) descriptor.get("attribute@")){
             try{
-                //log.info("data=" + data);
+                //Executor.info(TAG, "data=" + data);
             	String name = attr.getString("name");
                 node.put(name, OgnlUtil.getValue(name, data));
             }catch(Exception e){
-                //log.info("DataProvider.getTreeJsonData: conver to TreeNode attribute", e);
+                //Executor.info(TAG, "DataProvider.getTreeJsonData: conver to TreeNode attribute", e);
             }
         }
         
@@ -131,7 +130,7 @@ public class DataProviderGetTreeJsonDataCreator {
                 }
             }
         }catch(Exception e){
-            //log.info("DataProvider.getTreeJsonData: conver to TreeNode childs", e);
+            //Executor.info(TAG, "DataProvider.getTreeJsonData: conver to TreeNode childs", e);
         }
     }
 }

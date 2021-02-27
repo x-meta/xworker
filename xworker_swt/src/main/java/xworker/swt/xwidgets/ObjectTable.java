@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -13,9 +11,10 @@ import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class ObjectTable {
-private static Logger logger = LoggerFactory.getLogger(ObjectTable.class);
+private static final String TAG = ObjectTable.class.getName();
 	
 	public static Object create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -87,7 +86,7 @@ private static Logger logger = LoggerFactory.getLogger(ObjectTable.class);
 		}
 		
 		if(dataObject == null){
-			logger.info("Can not find Mapping by type='" + type + "', and DefaultMapping not setted, do nothing, path=" + formThing.getMetadata().getPath());
+			Executor.info(TAG, "Can not find Mapping by type='" + type + "', and DefaultMapping not setted, do nothing, path=" + formThing.getMetadata().getPath());
 			return;
 		}
 		

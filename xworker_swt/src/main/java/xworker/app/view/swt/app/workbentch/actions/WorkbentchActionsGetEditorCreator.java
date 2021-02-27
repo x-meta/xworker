@@ -15,8 +15,6 @@
 ******************************************************************************/
 package xworker.app.view.swt.app.workbentch.actions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -24,17 +22,18 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 public class WorkbentchActionsGetEditorCreator {
-	private static Logger log = LoggerFactory.getLogger(WorkbentchActionsGetEditorCreator.class);
+	private static final String TAG = WorkbentchActionsGetEditorCreator.class.getName();
 	
     public static Object run(ActionContext actionContext) throws OgnlException{
     	Thing self = (Thing) actionContext.get("self");
         
         ActionContainer workbentchActions = (ActionContainer) OgnlUtil.getValue(self.getString("workbentchActions"), actionContext);
         if(workbentchActions == null){
-            log.info("workbentchActions is null, name=" + self.getString("workbentchActions"));
+            Executor.info(TAG, "workbentchActions is null, name=" + self.getString("workbentchActions"));
             return null;
         }
         

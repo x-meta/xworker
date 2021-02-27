@@ -6,13 +6,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class WidgetDataReactor extends DataReactor{
-	private static Logger logger = LoggerFactory.getLogger(WidgetDataReactor.class);
+	private static final String TAG = WidgetDataReactor.class.getName();
 	
 	Widget widget;
 	ThreadLocal<DataReactorContext> contextLocal = new ThreadLocal<DataReactorContext>();
@@ -44,7 +44,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnSelected(datas, context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnSelected error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnSelected error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}
@@ -85,7 +85,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnUnselected(context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnUnselected error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnUnselected error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}
@@ -110,7 +110,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnAdded(index, datas, context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnAdded error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnAdded error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}
@@ -133,7 +133,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnRemoved(datas, context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnRemoved error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnRemoved error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}
@@ -156,7 +156,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnUpdated(datas, context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnUpdated error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnUpdated error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}
@@ -178,7 +178,7 @@ public class WidgetDataReactor extends DataReactor{
 						contextLocal.set(context);
 						widgetDoOnLoaded(datas, context);
 					}catch(Exception e) {
-						logger.warn("Execute doOnLoaded error, thing=" + getSelf().getMetadata().getPath(), e);
+						Executor.warn(TAG, "Execute doOnLoaded error, thing=" + getSelf().getMetadata().getPath(), e);
 					}finally {
 						contextLocal.set(null);
 					}

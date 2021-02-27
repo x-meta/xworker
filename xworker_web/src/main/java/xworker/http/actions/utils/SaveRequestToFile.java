@@ -9,13 +9,13 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class SaveRequestToFile {
-	private static Logger logger = LoggerFactory.getLogger(SaveRequestToFile.class);
+	private static final String TAG = SaveRequestToFile.class.getName();
 	
 	public static void run(ActionContext actionContext) throws IOException{
 		Thing self = (Thing) actionContext.get("self");
@@ -27,7 +27,7 @@ public class SaveRequestToFile {
 		}else if(fileObj instanceof String){
 			file = new File((String) fileObj);
 		}else{
-			logger.warn("SaveRequestToFile: File not exists, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "SaveRequestToFile: File not exists, thing=" + self.getMetadata().getPath());
 			return;
 		}
 		

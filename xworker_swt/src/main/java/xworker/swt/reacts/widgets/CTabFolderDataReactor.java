@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.custom.CTabFolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.app.DataEditorProvider;
 import xworker.swt.app.IEditor;
 import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
@@ -16,7 +15,7 @@ import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class CTabFolderDataReactor extends WidgetDataReactor{
-	private static Logger logger = LoggerFactory.getLogger(CTabFolderDataReactor.class);
+	private static final String TAG = CTabFolderDataReactor.class.getName();
 	
 	CTabFolder cTabFolder;
 	CTabFolderEditorContainer editorContainer;
@@ -57,7 +56,7 @@ public class CTabFolderDataReactor extends WidgetDataReactor{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("CTabFolder is null, can not create CTabFolderDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "CTabFolder is null, can not create CTabFolderDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

@@ -24,8 +24,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
@@ -35,6 +33,7 @@ import org.xmeta.XMetaException;
 import org.xmeta.util.UtilData;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 /**
  * 数据库工具类。
@@ -43,7 +42,7 @@ import xworker.dataObject.DataObject;
  *
  */
 public class DbUtil {
-	private static Logger logger = LoggerFactory.getLogger(DbUtil.class);
+	private static final String TAG = DbUtil.class.getName();			
 	
 	public static void close(PreparedStatement pst){
 		if(pst != null){
@@ -117,9 +116,9 @@ public class DbUtil {
 		try{
 			object = getValue(rs, name, type);
 		}catch(Exception e){
-			logger.warn("get value error, name=" + name + ", type=" + type + ", path=" + descriptor.getMetadata().getPath(), e);
-			
+			Executor.warn(TAG, "get value error, name=" + name + ", type=" + type + ", path=" + descriptor.getMetadata().getPath(), e);			
 		}
+		
 		if("attribute".equals(descriptor.getThingName())){
 			//基本字段
 			return object;

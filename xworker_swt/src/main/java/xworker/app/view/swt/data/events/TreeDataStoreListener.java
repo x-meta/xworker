@@ -15,8 +15,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -27,11 +25,12 @@ import org.xmeta.util.UtilMap;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.DataObjectUtil;
+import xworker.lang.executor.Executor;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtUtils;
 
 public class TreeDataStoreListener {
-	private static Logger log = LoggerFactory.getLogger(TreeDataStoreListener.class);
+	private static final String TAG = TreeDataStoreListener.class.getName();
 	
 	/**
 	 * 列转要显示的字符串。
@@ -59,7 +58,7 @@ public class TreeDataStoreListener {
 		    //先从显示字段中取
 		    String disField = column.getStringBlankAsNull("displayField");
 		    if(disField != null){
-		        //log.info("display=" + disField);
+		        //Executor.info(TAG, "display=" + disField);
 		        String[] diss = disField.split("[.]");
 		        Object v = record;
 		        try{
@@ -70,7 +69,7 @@ public class TreeDataStoreListener {
 		            		v = null;
 		            	}
 		                
-		                //log.info("value=" + v);
+		                //Executor.info(TAG, "value=" + v);
 		                if(v == null){
 		                    break;
 		                }                        
@@ -80,7 +79,7 @@ public class TreeDataStoreListener {
 		            }
 		        }catch(Exception e){
 		            v = null;
-		            log.warn("TableDataStoreListener: get display error," + disField, e);
+		            Executor.warn(TAG, "TableDataStoreListener: get display error," + disField, e);
 		        }
 		    }
 		        
@@ -113,7 +112,7 @@ public class TreeDataStoreListener {
 		Thing at = (Thing) column.get("EditConfig@0");
 
 		String attributePath = attribute.getMetadata().getPath(); //保存原有的事物路径，方便Desinger能够正确打开原先的属性
-		//log.info("attributePath=" + attributePath);
+		//Executor.info(TAG, "attributePath=" + attributePath);
 		if(at != null){
 		    //由于config中只定义了样式，没有属性的基本数据等，所以复制
 		    Thing attemp = at.detach();
@@ -283,7 +282,7 @@ public class TreeDataStoreListener {
 			            }
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onRemove error", t);
+			        Executor.error(TAG, "TableDataStoreListener onRemove error", t);
 			    }
 			}
 		});
@@ -341,7 +340,7 @@ public class TreeDataStoreListener {
 			            	if(theItem != null){
 				                DataObject itemRecord = (DataObject) theItem.getData("_store_record");
 				                if(record == itemRecord){
-				                    //log.info("DataStore: update table item");
+				                    //Executor.info(TAG, "DataStore: update table item");
 				                    String[] texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));
 				                    
 				                    theItem.setText(texts);
@@ -352,7 +351,7 @@ public class TreeDataStoreListener {
 			            }
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onUpdate error", t);
+			        Executor.error(TAG, "TableDataStoreListener onUpdate error", t);
 			    }
 			}
 		});
@@ -417,7 +416,7 @@ public class TreeDataStoreListener {
 			            treeItem.setData("_store_record", record);
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onInsert error", t);
+			        Executor.error(TAG, "TableDataStoreListener onInsert error", t);
 			    }
 			}
 		});
@@ -473,7 +472,7 @@ public class TreeDataStoreListener {
 			        TreeItem item = new TreeItem(tree, SWT.NONE);
 			        item.setText("loading...");
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener beforeLoad error", t);
+			        Executor.error(TAG, "TableDataStoreListener beforeLoad error", t);
 			    }
 			}
 		});
@@ -502,7 +501,7 @@ public class TreeDataStoreListener {
 			    	
 			        List<DataObject> records = (List<DataObject>) store.get("records");
 			        if(records != null){
-			            //log.info("records=" + store.records);
+			            //Executor.info(TAG, "records=" + store.records);
 			        	String idName = store.getStringBlankAsNull("idName");
 			            String parentIdName = store.getStringBlankAsNull("parentIdName");
 			            Map<String, String> idMap = new HashMap<String, String>();
@@ -510,7 +509,7 @@ public class TreeDataStoreListener {
 			            	idMap.put(record.getString(idName), record.getString(idName));
 			            }
 			            for(DataObject record : records){
-			                //log.info("record=" + record);
+			                //Executor.info(TAG, "record=" + record);
 			            	//如果存在父节点，那么不在根目录里显示
 			            	String parentId = record.getString(parentIdName);
 			            	if(idMap.get(parentId) != null){
@@ -519,7 +518,7 @@ public class TreeDataStoreListener {
 			            	
 			                String[] texts = null;
 			                texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));
-			                //log.info("texts=" + texts);
+			                //Executor.info(TAG, "texts=" + texts);
 			                TreeItem treeItem = new TreeItem(tree, SWT.NONE);
 			                treeItem.setText(texts);
 			                treeItem.setData(record);
@@ -550,12 +549,12 @@ public class TreeDataStoreListener {
 			    	        		initChildItems(item, dataObjectPath, idName, parentIdName, actionContext);
 			    	        	}
 			    	        }else{
-			    	        	log.warn("TreeDataStore idName or parnetIdName is null,not init child items, store=" + store.getMetadata().getPath());
+			    	        	Executor.warn(TAG, "TreeDataStore idName or parnetIdName is null,not init child items, store=" + store.getMetadata().getPath());
 			    	        }			    	        
 			            }
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onLoaded error", t);
+			        Executor.error(TAG, "TableDataStoreListener onLoaded error", t);
 			    }
 			}
 		};
@@ -622,7 +621,7 @@ public class TreeDataStoreListener {
 			        //重新组建表格的列
 			        Thing dataObject = (Thing) store.get("dataObject");
 			        if(dataObject == null){
-			            log.info("TableDataStoreListener store dataObject is null");
+			            Executor.info(TAG, "TableDataStoreListener store dataObject is null");
 			            return;
 			        }
 			        
@@ -656,7 +655,7 @@ public class TreeDataStoreListener {
 			                //是否可排序
 			                Thing sortListener = world.getThing("xworker.app.view.swt.data.events.TableColumnSortListener");
 			                SwtListener columnListener = new SwtListener(sortListener, actionContext, true);
-			                //log.info(attr.getString("name") + "=" + attr.getBoolean("gridSortable"));
+			                //Executor.info(TAG, attr.getString("name") + "=" + attr.getBoolean("gridSortable"));
 			                if(attr.getBoolean("gridSortable")){
 			                    column.addListener(SWT.Selection, columnListener);
 			                }
@@ -723,7 +722,7 @@ public class TreeDataStoreListener {
 			            self.doAction("onLoaded", actionContext, UtilMap.toMap(new Object[]{"store", store}));
 			        }
 			    }catch(Throwable t){
-			        log.error("TableDataStoreListener onReconfig error", t);
+			        Executor.error(TAG, "TableDataStoreListener onReconfig error", t);
 			    }    	
 			}
 		});
@@ -773,7 +772,7 @@ public class TreeDataStoreListener {
 	        	//actionContext.peek().put("self", self);
         		initChildItems(item, dataObjectPath, idName, parentIdName, actionContext);
 	        }else{
-	        	log.warn("TreeDataStore idName or parnetIdName is null,not init child items, store=" + store.getMetadata().getPath());
+	        	Executor.warn(TAG, "TreeDataStore idName or parnetIdName is null,not init child items, store=" + store.getMetadata().getPath());
 	        }
 	        
 	        item.setData(initKey, true);

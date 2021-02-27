@@ -12,8 +12,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -30,13 +28,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.DataObjectUtil;
+import xworker.lang.executor.Executor;
 import xworker.libdgx.tools.textureAtlasEditor.Page;
 import xworker.libdgx.tools.textureAtlasEditor.Region;
 import xworker.libdgx.tools.textureAtlasEditor.TextureAtlasInfo;
 import xworker.swt.ActionContainer;
 
 public class FileTypeActions {
-	private static Logger logger = LoggerFactory.getLogger(FileTypeActions.class);
+	private static final String TAG = FileTypeActions.class.getName();
 	
 	/**
 	 * 更新资源。
@@ -184,7 +183,7 @@ public class FileTypeActions {
 			Image image = new Image(parentComposite.getDisplay(), path);
 			imageViewer.doAction("setImage", actionContext, UtilMap.toMap("image", image));
 		}catch(Exception e){
-			logger.error("preview iamge error", e);
+			Executor.error(TAG, "preview iamge error", e);
 		}
 		if(oldImage != null){
 			oldImage.dispose();
@@ -232,7 +231,7 @@ public class FileTypeActions {
 			File file = new File(path);
 			viewer.doAction("setFile", actionContext, UtilMap.toMap("file", file, "resource", resource));
 		}catch(Exception e){
-			logger.error("preview text error", e);
+			Executor.error(TAG, "preview text error", e);
 		}
 	}
 	
@@ -271,7 +270,7 @@ public class FileTypeActions {
 			File file = new File(path);
 			viewer.doAction("setFile", actionContext, UtilMap.toMap("file", file));
 		}catch(Exception e){
-			logger.error("preview text error", e);
+			Executor.error(TAG, "preview text error", e);
 		}
 	}
 	

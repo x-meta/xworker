@@ -23,11 +23,11 @@ import java.util.Map;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 可以缓存的控件工厂。
@@ -43,7 +43,7 @@ import org.xmeta.World;
  *
  */
 public class PoolableControlFactory {
-	private static Logger log = LoggerFactory.getLogger(PoolableControlFactory.class);
+	private static final String TAG = PoolableControlFactory.class.getName();
 	
 	private static Map<Control, HashMap<String, ArrayList<ControlEntry>>> caches = new HashMap<Control, HashMap<String, ArrayList<ControlEntry>>>();
 	
@@ -116,7 +116,7 @@ public class PoolableControlFactory {
 								controls.add(entry);
 							}
 						}catch(Exception e){
-							log.error("create control : " + thingPath, e);
+							Executor.error(TAG, "create control : " + thingPath, e);
 						}
 					}
 				}				

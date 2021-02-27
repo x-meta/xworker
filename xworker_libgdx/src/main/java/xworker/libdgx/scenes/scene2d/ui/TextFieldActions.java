@@ -1,7 +1,5 @@
 package xworker.libdgx.scenes.scene2d.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -14,10 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.libdgx.utils.AlignActions;
 
 public class TextFieldActions {
-	private static Logger logger = LoggerFactory.getLogger(TextFieldActions.class);
+	private static final String TAG = TextFieldActions.class.getName();
 	
 	public static TextField create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -127,7 +126,7 @@ public class TextFieldActions {
 			try{
 				thing.doAction("keyTyped", actionContext, UtilMap.toMap("textField", textField, "c", c));
 			}catch(Exception e){
-				logger.error("Handle keyTyped event eror, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "Handle keyTyped event eror, thing=" + thing.getMetadata().getPath(), e);
 			}
 		}
 		
@@ -152,7 +151,7 @@ public class TextFieldActions {
 					return true;
 				}
 			}catch(Exception e){
-				logger.error("Handle acceptChar event eror, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "Handle acceptChar event eror, thing=" + thing.getMetadata().getPath(), e);
 				return false;
 			}
 		}

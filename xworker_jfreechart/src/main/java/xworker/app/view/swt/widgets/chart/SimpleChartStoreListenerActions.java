@@ -25,17 +25,16 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.experimental.chart.swt.ChartComposite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class SimpleChartStoreListenerActions {
-	private static Logger logger = LoggerFactory.getLogger(SimpleChartStoreListenerActions.class);
+	private static final String TAG = SimpleChartStoreListenerActions.class.getName();
 	
     public static Object onReconfig(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
@@ -46,7 +45,7 @@ public class SimpleChartStoreListenerActions {
     public static void onLoaded(ActionContext actionContext) throws OgnlException{
         Thing self = actionContext.getObject("self");
         
-        logger.info("init datas.");
+        Executor.info(TAG, "init datas.");
         Thing chartThing = (Thing) self.get("chartThing");
         ChartComposite chartComposite = (ChartComposite) self.get("chart");
         Thing store = (Thing) self.get("store");
@@ -63,7 +62,7 @@ public class SimpleChartStoreListenerActions {
         String domainField = chartThing.getString("domainField");
         String valueTitle = "";
         String domainTitle = "";
-        logger.info("valueField=" + valueField + ", categoryField=" + categoryField + ",domainField=" + domainField);
+        Executor.info(TAG, "valueField=" + valueField + ", categoryField=" + categoryField + ",domainField=" + domainField);
         boolean ok = false;
         for(Thing attr : dataObject.getChilds("attribute")){
             if(attr.getMetadata().getName().equals(valueField)){
@@ -90,7 +89,7 @@ public class SimpleChartStoreListenerActions {
                 break;
             }
         }
-        logger.info("0valueField=" + valueField + ", categoryField=" + categoryField + ",domainField=" + domainField);
+        Executor.info(TAG, "0valueField=" + valueField + ", categoryField=" + categoryField + ",domainField=" + domainField);
         if(!ok){
             for(Thing attr : dataObject.getChilds("attribute")){
                 if(attr.getString("name") != valueField){
@@ -149,12 +148,12 @@ public class SimpleChartStoreListenerActions {
                 category = "";
             }
             if(value != null){
-                //logger.info("add datas, value=" + value + ", category=" + category + ", domain=" + domain);
+                //Executor.info(TAG, "add datas, value=" + value + ", category=" + category + ", domain=" + domain);
                 dataset.addValue((Number) value, category, domain);
             }
         }
         
-        logger.info("domainTitle=" + domainTitle + ",valueTitle=" + valueTitle);
+        Executor.info(TAG, "domainTitle=" + domainTitle + ",valueTitle=" + valueTitle);
         //创建图表
         if("line".equals(type)){
                 JFreeChart chart = ChartFactory.createLineChart(chartThing.getString("title"), 
@@ -170,7 +169,7 @@ public class SimpleChartStoreListenerActions {
         		//chart.getLegend().setItemFont(new Font("黑体", Font.PLAIN, 12));
         		//CategoryPlot plot = chart.getCategoryPlot();
         		
-        		logger.info("set chart property");
+        		Executor.info(TAG, "set chart property");
         		//	   customise the range axis...    
         		//用于处理图表的两个轴：纵轴和横轴
         		//NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();

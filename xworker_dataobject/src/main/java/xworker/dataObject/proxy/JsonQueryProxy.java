@@ -14,7 +14,7 @@ import org.xmeta.util.ExceptionUtil;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectConstants;
 import xworker.dataObject.PageInfo;
-import xworker.dataObject.utils.JacksonFormator;
+import xworker.util.JacksonFormator;
 
 /**
  * 把查询和结果封装为JSON的代理。增加其它方法。

@@ -2,8 +2,6 @@ package xworker.dataObject.query;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -14,9 +12,10 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class DataObjectQueryActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectQueryActions.class);
+	private static final String TAG = DataObjectQueryActions.class.getName();
 	
 	/**
 	 * 获取数据对象。
@@ -82,10 +81,10 @@ public class DataObjectQueryActions {
 		Object pageInfo = actionContext.get("pageInfo");
 		
 		if(debug){
-			logger.info("DataObject query: dataObjectPath=" + dataObject.getMetadata().getPath());
-			logger.info("    condition=" + conditionConfig);
-			logger.info("    conditionData=" + conditionData);
-			logger.info("    pageInfo=" + pageInfo);
+			Executor.info(TAG, "DataObject query: dataObjectPath=" + dataObject.getMetadata().getPath());
+			Executor.info(TAG, "    condition=" + conditionConfig);
+			Executor.info(TAG, "    conditionData=" + conditionData);
+			Executor.info(TAG, "    pageInfo=" + pageInfo);
 		}
 		
 		List<DataObject> datas = (List<DataObject>) dataObject.doAction("query", actionContext, UtilMap.toMap(
@@ -95,7 +94,7 @@ public class DataObjectQueryActions {
 		}
 		
 		if(debug){
-			logger.info("    dataSize=" + datas.size());
+			Executor.info(TAG, "    dataSize=" + datas.size());
 		}
 		
 		return datas;

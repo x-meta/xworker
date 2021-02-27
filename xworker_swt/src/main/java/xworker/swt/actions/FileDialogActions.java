@@ -4,8 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -18,8 +16,6 @@ import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
 
 public class FileDialogActions {
-	private static Logger logger = LoggerFactory.getLogger(FileDialogActions.class);
-	
 	public static Object run(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		

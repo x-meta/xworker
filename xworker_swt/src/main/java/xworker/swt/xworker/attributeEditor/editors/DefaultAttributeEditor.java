@@ -9,13 +9,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.custom.StyledTextProxy;
 import xworker.swt.design.Designer;
 import xworker.swt.form.FormModifyListener;
@@ -23,7 +22,7 @@ import xworker.swt.xworker.EditorConfig;
 import xworker.swt.xworker.attributeEditor.AttributeEditor;
 
 public class DefaultAttributeEditor extends AttributeEditor{
-	private static Logger log = LoggerFactory.getLogger(DefaultAttributeEditor.class);
+	private static final String TAG = DefaultAttributeEditor.class.getName();
 
 	public DefaultAttributeEditor(Thing formThing, Thing attribute, xworker.swt.form.GridData gridData, ActionContext actionContext) {
 		super(formThing, attribute, gridData, actionContext);
@@ -77,7 +76,7 @@ public class DefaultAttributeEditor extends AttributeEditor{
 	    		
 	    		Control control = swtEditor.doAction("create", context);
 	    		if(control == null){
-	    			log.warn("Created self defined attribute editor control is null, path=" + swtEditor.getMetadata().getPath());
+	    			Executor.warn(TAG, "Created self defined attribute editor control is null, path=" + swtEditor.getMetadata().getPath());
 	    		}else {
 	    			if(control.getLayoutData() == null) {
 	    				control.setLayoutData(gridData);

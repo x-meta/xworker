@@ -21,16 +21,15 @@ package xworker.html.bootstrap.xworker;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilThing;
 
 import xworker.dataObject.DataObjectThingUtils;
+import xworker.lang.executor.Executor;
 
 public class XWorkerFormActions {
-	private static Logger logger = LoggerFactory.getLogger(XWorkerFormActions.class);
+	private static final String TAG = XWorkerFormActions.class.getName();
 	
     public static Object toHtml(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
@@ -38,7 +37,7 @@ public class XWorkerFormActions {
         //获取数据对象
         Thing dataObject =  UtilThing.getThingFromAttributeOrChilds(self, "dataObject", "dataObjects@0");
         if(dataObject == null){
-            logger.warn("XWroekrForm: dataObject is null, path=" + self.getMetadata().getPath());
+            Executor.warn(TAG, "XWroekrForm: dataObject is null, path=" + self.getMetadata().getPath());
             return null;
         }
         

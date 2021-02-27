@@ -24,17 +24,16 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.util.XWorkerUtils;
 
 public class DemoThingActions {
-	private static Logger logger = LoggerFactory.getLogger(DemoThingActions.class);
+	private static final String TAG = DemoThingActions.class.getName();
 	
     public static void Listener(ActionContext actionContext){
         //Thing self = actionContext.getObject("self");
@@ -104,7 +103,7 @@ public class DemoThingActions {
         }
         
         if(thing == null){
-            logger.warn("DemoThing: thing is null");
+            Executor.warn(TAG, "DemoThing: thing is null");
             return;
         }
         

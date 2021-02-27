@@ -27,18 +27,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.ActionContainer;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
 import ognl.OgnlException;
-import xworker.swt.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.form.HiddenInput;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilModel;
@@ -46,7 +45,7 @@ import xworker.swt.util.UtilModel.ModelFocusListener;
 import xworker.swt.util.UtilSwt;
 
 public class ModelCreator {
-	private static Logger log = LoggerFactory.getLogger(ModelCreator.class);
+	private static final String TAG = ModelCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -206,13 +205,13 @@ public class ModelCreator {
 		        return SwtUtils.getValue(control, self.getString("dataType"), self.getString("pattern"));
 		    }catch(Exception e){        
 		        //e.printStackTrace();
-		        log.error("get value from control", e);
+		        Executor.error(TAG, "get value from control", e);
 		    }
 		}else if(control instanceof Thing){
 		    try{
 		        return ((Thing) control).doAction("getValue", actionContext);
 		    }catch(Exception e){
-		        log.error("get value from thing control", e);
+		        Executor.error(TAG, "get value from thing control", e);
 		    }
 		}else if(control instanceof ActionContainer){
 		   
@@ -221,7 +220,7 @@ public class ModelCreator {
 		        //log.info("swtControl=" + self.swtControl + ",control=" + control + ",value=" + value);
 		        return value;
 		    }catch(Exception e){
-		        log.error("get value from actionContainer control", e);
+		        Executor.error(TAG, "get value from actionContainer control", e);
 		    }
 		}else if(control instanceof HiddenInput){
 		    return ((HiddenInput) control).getValue();
@@ -254,7 +253,7 @@ public class ModelCreator {
 		}else{
 		    Object control = actionContext.get(swtControl);
 		    if(control == null){
-		        log.warn("control not exists : " + swtControl);
+		        Executor.warn(TAG, "control not exists : " + swtControl);
 		    }
 		
 		    Map<String, Object> validateMessage = new HashMap<String, Object>();
@@ -330,7 +329,7 @@ public class ModelCreator {
 		                
 		            }
 		        }else{
-		            log.warn("control is null, can not show validate error message, name=" + self.getString("name") + ",control=" + actionContext.get(self.getString("swtControl")));
+		            Executor.warn(TAG, "control is null, can not show validate error message, name=" + self.getString("name") + ",control=" + actionContext.get(self.getString("swtControl")));
 		        }
 		                     
 		        return false;
@@ -368,7 +367,7 @@ public class ModelCreator {
 		try{
 		    value = self.doAction("getValueForValidate", actionContext);
 		}catch(Exception e){
-		    log.error("get value for validae error", e);		    
+		    Executor.error(TAG, "get value for validae error", e);		    
 		    message.put("type", "error");
 		    message.put("message", self.getString("invalidText"));
 		    message.put("control", self.getString("control"));

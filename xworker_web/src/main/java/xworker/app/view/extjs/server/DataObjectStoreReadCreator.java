@@ -24,8 +24,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -36,12 +34,13 @@ import org.xmeta.util.UtilMap;
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 import xworker.util.UtilAction;
 
 public class DataObjectStoreReadCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectStoreReadCreator.class);
+	private static final String TAG = DataObjectStoreReadCreator.class.getName();
 	
 	public static int getInt(String value, int defaultValue){
         try{
@@ -171,7 +170,7 @@ public class DataObjectStoreReadCreator {
 	        response.getWriter().println(result);
         }catch(Exception e){
         	Throwable t = UtilAction.getCause(e);
-        	log.error("DataObjectStore read error， dataObjectPath=" + dataObjectPath, t);
+        	Executor.error(TAG, "DataObjectStore read error， dataObjectPath=" + dataObjectPath, t);
         	t.printStackTrace();
         	
         	response.setContentType("text/plain; charset=utf-8");

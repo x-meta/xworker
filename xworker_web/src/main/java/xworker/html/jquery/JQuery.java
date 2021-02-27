@@ -15,16 +15,15 @@
 ******************************************************************************/
 package xworker.html.jquery;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.html.HtmlConstants;
 import xworker.html.HtmlUtil;
+import xworker.lang.executor.Executor;
 
 public class JQuery {
-	private static Logger logger = LoggerFactory.getLogger(JQuery.class);
+	private static final String TAG = JQuery.class.getName();
 	
 	public static void toHtml(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -79,7 +78,7 @@ public class JQuery {
 				}
 			}		
 		}else{
-			logger.warn("scriptThing is null , action=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "scriptThing is null , action=" + self.getMetadata().getPath());
 		}
 	}
 	

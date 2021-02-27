@@ -10,14 +10,14 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class SimpleGame implements PaintListener, Runnable, DisposeListener{
-	private static Logger logger = LoggerFactory.getLogger(SimpleGame.class);
+	private static final String TAG = SimpleGame.class.getName();
 	
 	public Thing thing;
 	public ActionContext actionContext;
@@ -107,7 +107,7 @@ public class SimpleGame implements PaintListener, Runnable, DisposeListener{
 					});
 				}				
 			}catch(Exception e){
-				logger.error("simple game run error", e);
+				Executor.error(TAG, "simple game run error", e);
 				break;
 			}
 		}
@@ -122,7 +122,7 @@ public class SimpleGame implements PaintListener, Runnable, DisposeListener{
 				actor.run(this, event, actionContext);
 			}
 		}catch(Exception e){
-			logger.error("simple game redraw error", e);
+			Executor.error(TAG, "simple game redraw error", e);
 		}
 	}
 

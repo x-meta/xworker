@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
@@ -32,9 +30,11 @@ import org.xmeta.util.OgnlUtil;
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
+import xworker.lang.executor.Executor;
+import xworker.util.JacksonFormator;
 
 public class JsonFormator {
-	private static Logger log = LoggerFactory.getLogger(JsonFormator.class);
+	private static final String TAG = JsonFormator.class.getName();
 	
 	@SuppressWarnings("unchecked")
 	public static String format(Object data) throws OgnlException{
@@ -124,7 +124,7 @@ public class JsonFormator {
     }
     
     //转化一个数据对象到json数据格式的字符串
-    @SuppressWarnings({ "unchecked"})
+    @SuppressWarnings({ "unchecked", "rawtypes"})
 	public static String  format(DataObject dataObject, String ident) throws OgnlException{
         String str = ident + "{";
         Thing descriptor = dataObject.getMetadata().getDescriptor();
@@ -527,7 +527,7 @@ public class JsonFormator {
 	                    try{
 	                        dataObject.put(name, OgnlUtil.getValue(value, actionContext));
 	                    }catch(Exception e){
-	                        log.info("JsonDataFormat get value error, value=" + value, e);
+	                        Executor.info(TAG, "JsonDataFormat get value error, value=" + value, e);
 	                        //OgnlUtil.setValue(name, actionContext, dataObject, value);
 	                    }
                 	}

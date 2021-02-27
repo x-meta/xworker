@@ -36,8 +36,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -45,15 +43,16 @@ import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.ResourceManager;
 
 public class WorkbentchPrototypeMainCompositeCreator {
-	private static Logger log = LoggerFactory.getLogger(WorkbentchPrototypeMainCompositeCreator.class);
+	private static final String TAG = WorkbentchPrototypeMainCompositeCreator.class.getName();
 	
     public static void tabItemSelected(ActionContext actionContext){
-        log.info("table selection");
+        Executor.info(TAG, "table selection");
     }
 
     public static void tabFolderMouseDoubleClicked(ActionContext actionContext){
@@ -288,13 +287,13 @@ public class WorkbentchPrototypeMainCompositeCreator {
         //mainCoolbar.pack();
         
         for (CoolItem coolItem : mainCoolbar.getItems()) {
-            //log.info("init coolitem, item=" + coolItem);
+            //Executor.info(TAG, "init coolitem, item=" + coolItem);
             Control control = coolItem.getControl();
-            //log.info("coolitem control=" + control);
+            //Executor.info(TAG, "coolitem control=" + control);
             if(control == null) continue;
             Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point coolSize = coolItem.computeSize(size.x, size.y);
-            //log.info("size=" + coolSize + ",min=" + size);
+            //Executor.info(TAG, "size=" + coolSize + ",min=" + size);
             coolItem.setMinimumSize(size);
             coolItem.setPreferredSize(coolSize);
             coolItem.setSize(coolSize);
@@ -329,7 +328,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
     public static void  createToolbar(CoolBar parent, Thing  workbentchToolbars, Map<String, Object> editorToolbars, ActionContext actionContext, ActionContext editorActionContext){
         Map<String, Object> handledEditorToolbars = new HashMap<String, Object>();
         for(Thing workbentchToolbar : workbentchToolbars.getChilds()){
-            //log.info("workbentch toolbar, name=" + workbentchToolbar.name);
+            //Executor.info(TAG, "workbentch toolbar, name=" + workbentchToolbar.name);
             Thing editorToolbar = (Thing) editorToolbars.get(workbentchToolbar.getString("name"));
             if(editorToolbar != null && "BEFORE".equals(editorToolbar.getString("insertType"))){
                  //插入创建编辑器的工具栏
@@ -353,7 +352,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
                  handledEditorToolbars.put(editorToolbar.getString("name"), editorToolbar);
             }
             for(Thing workbentchToolItem : workbentchToolbar.getChilds()){
-                //log.info("workbentch Tool Item ,name =" + workbentchToolItem.name);
+                //Executor.info(TAG, "workbentch Tool Item ,name =" + workbentchToolItem.name);
                 createToolbartem(toolbar, workbentchToolItem, actionContext);
             }
             
@@ -408,7 +407,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
    
         //工具栏条目
         ToolItem toolItem = new ToolItem(parent, style);
-        //log.info("create tool item, name=" + toolbarItem.name + ",text=" + toolbarItem.text);
+        //Executor.info(TAG, "create tool item, name=" + toolbarItem.name + ",text=" + toolbarItem.text);
         if(toolbarItem.getString("text") != null){
             toolItem.setText(toolbarItem.getString("text"));
         }
@@ -447,7 +446,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
             }
         }
         actionContext.getScope(0).put(toolbarItem.getString("name"), toolItem);   
-        //log.info("toolitem created");
+        //Executor.info(TAG, "toolitem created");
     }
 
     @SuppressWarnings("unchecked")
@@ -474,7 +473,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
         ActionContext editorActionContext = null;
         Thing workbentchToolbars = (Thing) workbentchThing.get("statusbars@0");
         Map<String, Object> currentEditor = (Map<String, Object>) actionContext.get("currentEditor");
-        //log.info("currentEditor=" + currentEditor);
+        //Executor.info(TAG, "currentEditor=" + currentEditor);
         if(currentEditor != null){
             editorActionContext = (ActionContext) currentEditor.get("actionContext");
             Thing editorThing = (Thing) currentEditor.get("editorThing");
@@ -492,13 +491,13 @@ public class WorkbentchPrototypeMainCompositeCreator {
         //mainCoolbar.pack();
         
         for (CoolItem coolItem : mainStatusBar.getItems()) {
-            //log.info("init coolitem, item=" + coolItem);
+            //Executor.info(TAG, "init coolitem, item=" + coolItem);
             Control control = coolItem.getControl();
-            //log.info("coolitem control=" + control);
+            //Executor.info(TAG, "coolitem control=" + control);
             if(control == null) continue;
             Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
             Point coolSize = coolItem.computeSize(size.x, size.y);
-            //log.info("size=" + coolSize + ",min=" + size);
+            //Executor.info(TAG, "size=" + coolSize + ",min=" + size);
             coolItem.setMinimumSize(size);
             coolItem.setPreferredSize(coolSize);
             coolItem.setSize(coolSize);
@@ -524,7 +523,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
         def createToolbar(parent, workbentchToolbars, editorToolbars, actionContext, editorActionContext){
             def handledEditorToolbars = [:];
             for(workbentchToolbar in workbentchToolbars.childs){
-                //log.info("workbentch toolbar, name=" + workbentchToolbar.name);
+                //Executor.info(TAG, "workbentch toolbar, name=" + workbentchToolbar.name);
                 def editorToolbar = editorToolbars.get(workbentchToolbar.name);
                 if(editorToolbar != null && editorToolbar.insertType == "BEFORE"){
                      //插入创建编辑器的工具栏
@@ -548,7 +547,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
                      handledEditorToolbars.put(editorToolbar.name, editorToolbar);
                 }
                 for(workbentchToolItem in workbentchToolbar.childs){
-                    //log.info("workbentch Tool Item ,name =" + workbentchToolItem.name);
+                    //Executor.info(TAG, "workbentch Tool Item ,name =" + workbentchToolItem.name);
                     createToolbartem(toolbar, workbentchToolItem, actionContext);
                 }
                 
@@ -607,7 +606,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
             }    
             //工具栏条目
             ToolItem toolItem = new ToolItem(parent, style);
-            //log.info("create tool item, name=" + toolbarItem.name + ",text=" + toolbarItem.text);
+            //Executor.info(TAG, "create tool item, name=" + toolbarItem.name + ",text=" + toolbarItem.text);
             if(toolbarItem.text != null){
                 toolItem.setText(toolbarItem.text);
             }
@@ -624,7 +623,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
                 }
             }
             actionContext.getScope(0).put(toolbarItem.name + "ToolItem", toolItem);   
-            //log.info("toolitem created");
+            //Executor.info(TAG, "toolitem created");
         }*/
     }
 
@@ -652,7 +651,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
         }else if("BOTTOM".equals(site)){
             tabFolder = (CTabFolder) actionContext.get("bottomTabFolder");
         }else{
-            log.warn("error site,site=" + site + "，view not init, view=" + view.getMetadata().getPath());
+            Executor.warn(TAG, "error site,site=" + site + "，view not init, view=" + view.getMetadata().getPath());
         }
         
         int style = SWT.NONE;
@@ -686,7 +685,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
         try{
             Map<String, Object> editor = (Map<String, Object>) editors.get(name);
             if(editor == null){
-                log.info("editor not exists, name=" + name);
+                Executor.info(TAG, "editor not exists, name=" + name);
                 return;
             }
             
@@ -768,7 +767,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
             
             ((Shell) actionContext.get("shell")).layout();
         }catch(Exception e){
-            log.info("Open editor error", e);
+            Executor.info(TAG, "Open editor error", e);
             
             CTabFolder contentTabFolder = (CTabFolder) actionContext.get("contentTabFolder");
             MessageBox box = new MessageBox(contentTabFolder.getShell(), SWT.ICON_WARNING | SWT.OK);
@@ -786,7 +785,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
         workbentchActions.doAction("initToolbar");
         workbentchActions.doAction("initStatusbar");
         
-        //log.info("init menu & toolbar after close");
+        //Executor.info(TAG, "init menu & toolbar after close");
     }
 
     @SuppressWarnings("unchecked")
@@ -807,7 +806,7 @@ public class WorkbentchPrototypeMainCompositeCreator {
     	
         Map<String, Object> editor = (Map<String, Object>) editors.get(editorName);
         if(editor == null){
-            log.info("editor not exists, name=" + editorName + ",instanceId=" + instanceId);
+            Executor.info(TAG, "editor not exists, name=" + editorName + ",instanceId=" + instanceId);
             return null;
         }else{
             return ((Map<String, Object>) editor.get("instances")).get(instanceId);

@@ -29,19 +29,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Category;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.util.ThingGroup;
 import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class XWorkerTreeUtil {
-	private static Logger logger = LoggerFactory.getLogger(XWorkerTreeUtil.class);
+	private static final String TAG = XWorkerTreeUtil.class.getName();
 	private static Map<String, Map<String, Boolean>> expandCache = new HashMap<String, Map<String, Boolean>>();
 	
 	/**
@@ -337,7 +336,7 @@ public class XWorkerTreeUtil {
 	        Image img = (Image) ResourceManager.createIamge("/icons/folder.png", actionContext);
 	        return img;
     	}catch(Exception e){
-    		logger.error("Create image error", e);
+    		Executor.error(TAG, "Create image error", e);
     	}finally{
     		actionContext.pop();
     	}
@@ -389,7 +388,7 @@ public class XWorkerTreeUtil {
 		        Image img = (Image) ResourceManager.createIamge(icon, actionContext);
 		        return img;
 	    	}catch(Exception e){
-	    		logger.error("Create image error", e);
+	    		Executor.error(TAG, "Create image error", e);
 	    	}finally{
 	    		actionContext.pop();
 	    	}
@@ -600,7 +599,7 @@ public class XWorkerTreeUtil {
 		            treeItem.setImage(img);
 		        }
 	    	}catch(Exception e){
-	    		logger.error("Create image error", e);
+	    		Executor.error(TAG, "Create image error", e);
 	    	}finally{
 	    		actionContext.pop();
 	    	}

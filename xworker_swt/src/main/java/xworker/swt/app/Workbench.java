@@ -133,6 +133,7 @@ public class Workbench implements IEditorListener{
 	 * @param view   视图事物。
 	 * @param type     打开的位置，left、right或bottom。
 	 * @param closeable 是否可以关闭
+	 * @param params 参数
 	 */
 	public View openView(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
 		if(view == null) {
@@ -598,6 +599,4 @@ public class Workbench implements IEditorListener{
 			setTitle();
 		}
 	}
-
-	
 }

@@ -19,18 +19,17 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.custom.StyledTextInputStreamRunnable;
 import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
 
 public class StyledTextActions {
-	private static Logger logger = LoggerFactory.getLogger(StyledTextActions.class);
+	private static final String TAG = StyledTextActions.class.getName();
 	
 	/**
 	 * 绑定InputStream到StyledText。
@@ -118,12 +117,12 @@ public class StyledTextActions {
 		String text = (String) self.doAction("getText", actionContext);
 
 		if(styledText == null){
-		    logger.info("SetText: styleText is null, path=" + self.getMetadata().getPath());
+		    Executor.info(TAG, "SetText: styleText is null, path=" + self.getMetadata().getPath());
 		    return;
 		}
 
 		if(text == null){
-			logger.info("SetText: text is null, path=" + self.getMetadata().getPath());
+			Executor.info(TAG, "SetText: text is null, path=" + self.getMetadata().getPath());
 		    return;
 		}
 

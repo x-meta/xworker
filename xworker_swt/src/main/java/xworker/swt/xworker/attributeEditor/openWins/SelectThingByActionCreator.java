@@ -19,16 +19,16 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
+
 public class SelectThingByActionCreator {
-	private static Logger log = LoggerFactory.getLogger(SelectThingByActionCreator.class);
+	private static final String TAG = SelectThingByActionCreator.class.getName();
 	
 	public static void okButtonSelection(ActionContext actionContext){
 		Table dataTable = (Table) actionContext.get("dataTable");
@@ -45,7 +45,7 @@ public class SelectThingByActionCreator {
 		Map<String, String> params = UtilString.getParams(param, ",");
 		Action action = world.getAction(params.get("actionPath"));
 		if(action == null){
-		    log.warn("Action thing is null, actionPath=" + params.get("actionPath"));
+		    Executor.warn(TAG, "Action thing is null, actionPath=" + params.get("actionPath"));
 		    return;
 		}
 		actionContext.getScope(0).put("returnType", params.get("returnType"));

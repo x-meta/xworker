@@ -18,8 +18,6 @@ package xworker.swt.browser;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,8 +26,6 @@ import org.xmeta.util.UtilString;
 import xworker.swt.design.Designer;
 
 public class BrowserCreator {
-	private static Logger logger = LoggerFactory.getLogger(BrowserCreator.class);
-	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
     	

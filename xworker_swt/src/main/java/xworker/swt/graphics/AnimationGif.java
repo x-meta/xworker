@@ -20,18 +20,17 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ThingRegistor;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
 
 public class AnimationGif {
 	private static Timer timer =new Timer("SWT Animation Timer");
-	private static Logger logger = LoggerFactory.getLogger(AnimationGif.class);
+	private static final String TAG = AnimationGif.class.getName();
 	
 	public static void create(ActionContext actionContext){
 		Control parent = (Control) actionContext.get("parent");
@@ -57,7 +56,7 @@ public class AnimationGif {
 		    		con.connect();
 	    			return create(control, con.getInputStream());
 	    		}catch(Exception ee){
-	    			logger.warn("Create AnimationGif from http error", ee);
+	    			Executor.warn(TAG, "Create AnimationGif from http error", ee);
 	    		}
 	    	}
 	    }catch(Exception e){		    			    	

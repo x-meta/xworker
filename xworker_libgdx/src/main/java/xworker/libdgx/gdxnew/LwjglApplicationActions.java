@@ -7,8 +7,6 @@ import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -17,10 +15,11 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
+import xworker.lang.executor.Executor;
 import xworker.libdgx.GameDefault;
 
 public class LwjglApplicationActions {
-	private static Logger logger = LoggerFactory.getLogger(LwjglApplicationActions.class);
+	private static final String TAG = LwjglApplicationActions.class.getName();
 	
 	/**
 	 * 创建LwjglApplication。
@@ -122,7 +121,7 @@ public class LwjglApplicationActions {
 				//lwjgl1.getApplicationListener().dispose();
 				lwjgl1.exit();
 			}catch(Exception e){
-				logger.error("Application dispose error", e);
+				Executor.error(TAG, "Application dispose error", e);
 			}
 		}
     	 

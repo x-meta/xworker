@@ -18,8 +18,6 @@ package xworker.app.view.swt.data.events;
 import java.text.Format;
 
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -28,9 +26,10 @@ import org.xmeta.util.UtilMap;
 import xworker.app.view.swt.data.DataStoreManager;
 import xworker.app.view.swt.data.DataStoreUtils;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class SwtStoreUtils {
-	private static Logger log = LoggerFactory.getLogger(SwtStoreUtils.class);
+	private static final String TAG = SwtStoreUtils.class.getName();
 	
 	public static void runSync(Thing store, Display display, Runnable runnable){
 		display.syncExec(runnable);
@@ -74,7 +73,7 @@ public class SwtStoreUtils {
 	                }
 	            }catch(Exception e){
 	                v = null;
-	                log.warn("TableDataStoreListener: get display error," + disField, e);
+	                Executor.warn(TAG, "TableDataStoreListener: get display error," + disField, e);
 	            }
 	        }
 	        
@@ -177,7 +176,7 @@ public class SwtStoreUtils {
 	                }
 	            }catch(Exception e){
 	                v = null;
-	                log.warn("TableDataStoreListener: get display error," + disField, e);
+	                Executor.warn(TAG, "TableDataStoreListener: get display error," + disField, e);
 	            }
 	        }
 	        

@@ -20,17 +20,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class FormValueGraberCreator {
-	private static Logger log = LoggerFactory.getLogger(FormValueGraberCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(FormValueGraberCreator.class);
+	private static final String TAG = FormValueGraberCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object run(ActionContext actionContext) throws OgnlException, ParseException{
@@ -61,7 +61,7 @@ public class FormValueGraberCreator {
         }
         
         if(sourceData == null){
-            log.info("FormValueGraber: source is null, source=" + sourceName);
+            Executor.info(TAG, "FormValueGraber: source is null, source=" + sourceName);
             return null;
         }
         

@@ -21,19 +21,18 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataObjectStoreUpdateCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectStoreUpdateCreator.class);
+	private static final String TAG = DataObjectStoreUpdateCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static void doAction(ActionContext actionContext) throws IOException{
@@ -78,7 +77,7 @@ public class DataObjectStoreUpdateCreator {
                  }catch(Exception e){
                      result.put("success", "false");
                      result.put("msg", "更新数据失败, " + e);
-                     log.error("Read and update dataobject error", e);
+                     Executor.error(TAG, "Read and update dataobject error", e);
                  }
              }else{
                  result.put("msg", "没有数据需要更新");

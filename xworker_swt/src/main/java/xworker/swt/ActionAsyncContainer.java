@@ -18,12 +18,12 @@ package xworker.swt;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 和ActionContainer相同，只是这里的任何动作都会使用Display.asyncExec方法调用，
@@ -33,7 +33,7 @@ import org.xmeta.World;
  *
  */
 public class ActionAsyncContainer {
-	private static Logger log = LoggerFactory.getLogger(ActionAsyncContainer.class);
+	private static final String TAG = ActionAsyncContainer.class.getName();
 	static World world = World.getInstance();
 	
 	private Thing actions;
@@ -64,7 +64,7 @@ public class ActionAsyncContainer {
 						action.run(actionContext);
 					}
 				}catch(Throwable e){
-					log.error("Container do action " + name, e);
+					Executor.error(TAG, "Container do action " + name, e);
 				}
 			}
 		});
@@ -81,7 +81,7 @@ public class ActionAsyncContainer {
 						action.run(context);
 					}
 				}catch(Throwable e){
-					log.error("Container do action " + name, e);
+					Executor.error(TAG, "Container do action " + name, e);
 				}
 			}
 		});
@@ -101,7 +101,7 @@ public class ActionAsyncContainer {
 				action.run(actionContext, parameters);
 			}
 		}catch(Throwable e){
-			log.error("Container do action " + name, e);
+			Executor.error(TAG, "Container do action " + name, e);
 		}
 	}
 	
@@ -118,7 +118,7 @@ public class ActionAsyncContainer {
 				action.run(context, parameters);
 			}
 		}catch(Throwable e){
-			log.error("Container do action " + name, e);
+			Executor.error(TAG, "Container do action " + name, e);
 		}
 	}
 	
@@ -134,7 +134,7 @@ public class ActionAsyncContainer {
 			}
 		}
 		
-		log.warn("action is not found : " + actions.getMetadata().getPath() + "/@" + name);
+		Executor.warn(TAG, "action is not found : " + actions.getMetadata().getPath() + "/@" + name);
 		return null;
 	}
 	

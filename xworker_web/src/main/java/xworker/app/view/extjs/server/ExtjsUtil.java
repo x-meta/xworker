@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.xmeta.ActionContext;
 
-import xworker.dataObject.utils.JacksonFormator;
+import xworker.util.JacksonFormator;
 
 public class ExtjsUtil {
 	/**

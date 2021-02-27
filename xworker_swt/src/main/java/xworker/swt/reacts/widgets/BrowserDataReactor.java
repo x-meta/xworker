@@ -3,17 +3,15 @@ package xworker.swt.reacts.widgets;
 import java.util.List;
 
 import org.eclipse.swt.browser.Browser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class BrowserDataReactor extends WidgetDataReactor{
-	private static Logger logger = LoggerFactory.getLogger(BrowserDataReactor.class);
-	
+	private static final String TAG = BrowserDataReactor.class.getName();
 	Browser browser;
 	
 	public BrowserDataReactor(Browser browser, Thing self, ActionContext actionContext) {
@@ -48,7 +46,7 @@ public class BrowserDataReactor extends WidgetDataReactor{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Browser is null, can not create BrowserDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Browser is null, can not create BrowserDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

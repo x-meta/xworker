@@ -21,8 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -31,10 +29,11 @@ import xworker.html.HtmlConstants;
 import xworker.html.module.ModuleProvider;
 import xworker.html.module.ModuleRequire;
 import xworker.http.ResultView;
+import xworker.lang.executor.Executor;
 import xworker.util.ThingRegistUtils;
 
 public class viewCreator {
-	private static Logger logger = LoggerFactory.getLogger(viewCreator.class);
+	private static final String TAG = viewCreator.class.getName();
 	
     public static Object toHtml(ActionContext actionContext){
         //HTML分为head、body和bottom三个部分
@@ -295,12 +294,12 @@ public class viewCreator {
     			}
     		}else if(acceptProvider != null) {
     			//资源不存在，警告
-    			logger.warn("Html module resource not exists, provider=" + acceptProvider.getThing().getMetadata().getPath());
+    			Executor.warn(TAG, "Html module resource not exists, provider=" + acceptProvider.getThing().getMetadata().getPath());
     			if(!properProviders.contains(acceptProvider)) {
     				properProviders.add(acceptProvider);
     			}
     		}else {
-    			logger.warn("Can not find html module provider, " + mr);
+    			Executor.warn(TAG, "Can not find html module provider, " + mr);
     		}
     	}
 		

@@ -20,16 +20,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TrayItem;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.ResourceManager;
 
 public class TrayItemCreator {
-	private static Logger logger = LoggerFactory.getLogger(TrayItemCreator.class);
+	private static final String TAG = TrayItemCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -69,7 +68,7 @@ public class TrayItemCreator {
     				actionContext.push().put("parent", trayItem);
     				image = (Image) ResourceManager.createIamge(imageStr,  actionContext);
     			}catch(Exception e){    		
-    				logger.error("create image failed, imageStr=" + imageStr + ",path=" + self.getMetadata().getPath());
+    				Executor.error(TAG, "create image failed, imageStr=" + imageStr + ",path=" + self.getMetadata().getPath());
     			}finally{
     				actionContext.pop();
     			}

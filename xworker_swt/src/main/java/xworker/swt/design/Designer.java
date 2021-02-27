@@ -39,8 +39,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -49,6 +47,7 @@ import org.xmeta.util.UtilData;
 
 import xworker.command.interactive.InteractiveListener;
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.ResizeUtil;
 import xworker.swt.util.SwtUtils;
 import xworker.util.IIde;
@@ -64,7 +63,7 @@ import xworker.util.XWorkerUtils;
  *
  */
 public class Designer {
-	private static Logger log = LoggerFactory.getLogger(Designer.class);
+	private static final String TAG = Designer.class.getName();
 	/** SWT控件对应的模型 */
 	public static final String DATA_THING = "_designer_thingPath";
 	public static final String DATA_THING_ENTRY = "_designer_thing_entry__";
@@ -248,7 +247,7 @@ public class Designer {
 					}
 					Thread.sleep(1000);
 				}catch(Throwable t){
-					log.error("Mark control thread error", t);
+					Executor.error(TAG, "Mark control thread error", t);
 				}
 	
 			}
@@ -446,7 +445,7 @@ public class Designer {
 		
 		try{
 			if(control == null || thingPath == null){
-				log.warn("Deisgner can not attach to null control or null thingPath");
+				Executor.warn(TAG, "Deisgner can not attach to null control or null thingPath");
 				return;
 			}
 			
@@ -508,7 +507,7 @@ public class Designer {
 				Thread.sleep(designer.attachSleepTime);
 			}
 		}catch(Throwable t){
-			log.error("attach " + thingPath, t);
+			Executor.error(TAG, "attach " + thingPath, t);
 		}
 	}
 	

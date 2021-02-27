@@ -25,8 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -41,9 +39,10 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectConstants;
 import xworker.dataObject.DataObjectList;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class ListDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(ListDataObjectActions.class);
+	private static final String TAG = ListDataObjectActions.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object doLoad(ActionContext actionContext) throws OgnlException{
@@ -57,14 +56,14 @@ public class ListDataObjectActions {
         //主键的定义和主键的值
         Object[][] keyDatas = theData.getKeyAndDatas();
         if(keyDatas == null || keyDatas.length == 0){
-            logger.warn("no keys data cannot load, listDataObjectPath=" + descriptor.getMetadata().getPath());
+            Executor.warn(TAG, "no keys data cannot load, listDataObjectPath=" + descriptor.getMetadata().getPath());
             throw new ActionException("No keys, data cannot laod");
         }
         
         //获取要管理的List数据
         List<Object> datas = (List<Object>) self.doAction("getListData", actionContext);        
         if(datas == null){
-            logger.warn("no thing datas setted, listDataObjectPath=" + descriptor.getMetadata().getPath());
+            Executor.warn(TAG, "no thing datas setted, listDataObjectPath=" + descriptor.getMetadata().getPath());
             throw new ActionException("No thing datas setted");
         }
         
@@ -256,7 +255,7 @@ public class ListDataObjectActions {
         //查找同主键的对象是否已经存在
         List<Object> dataObjects = (List<Object>) self.doAction("getListData", actionContext);
         if(dataObjects == null){
-            logger.warn("ListDataObject: list data not exists, name=" + self.get("listData"));
+            Executor.warn(TAG, "ListDataObject: list data not exists, name=" + self.get("listData"));
             return null;
         }
         
@@ -339,7 +338,7 @@ public class ListDataObjectActions {
         
         //需要有数据对象的实例theData
         if(actionContext.get("theData") == null){
-            logger.warn("data object instance 'theData' not exists.");
+            Executor.warn(TAG, "data object instance 'theData' not exists.");
             return null;
         }
         
@@ -515,7 +514,7 @@ public class ListDataObjectActions {
         try{
             return OgnlUtil.getValue(self, "listData", actionContext);
         }catch(Exception e){
-            logger.error("get list data error, path=" + self.getMetadata().getPath(), e);
+            Executor.error(TAG, "get list data error, path=" + self.getMetadata().getPath(), e);
             return Collections.EMPTY_LIST;
         }
     }

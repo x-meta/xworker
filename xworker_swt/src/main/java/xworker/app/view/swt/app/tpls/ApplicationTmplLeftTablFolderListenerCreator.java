@@ -15,15 +15,15 @@
 ******************************************************************************/
 package xworker.app.view.swt.app.tpls;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 
+import xworker.lang.executor.Executor;
+
 public class ApplicationTmplLeftTablFolderListenerCreator {
-	private static Logger log = LoggerFactory.getLogger(ApplicationTmplLeftTablFolderListenerCreator.class);
+	private static final String TAG = ApplicationTmplLeftTablFolderListenerCreator.class.getName();
 	
     public static void close(ActionContext actionContext){
-        log.info("tabItem closed");
+        Executor.info(TAG, "tabItem closed");
     }
 
 }

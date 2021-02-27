@@ -22,8 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -36,9 +34,10 @@ import xworker.dataObject.http.DataObjectHttpUtils;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.JsonFormator;
 import xworker.dataObject.utils.UtilDate;
+import xworker.lang.executor.Executor;
 
 public class DataObjectCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectCreator.class);
+	private static final String TAG = DataObjectCreator.class.getName();
 	private static long seq = 0;
 	
     public static Object load(ActionContext actionContext){
@@ -127,7 +126,7 @@ public class DataObjectCreator {
     }
 
     public static void updateBatch(ActionContext actionContext){
-    	log.info("DataObject should implement updateBatch mehtod");
+    	Executor.info(TAG, "DataObject should implement updateBatch mehtod");
     }
 
     public static Boolean delete(ActionContext actionContext){
@@ -146,7 +145,7 @@ public class DataObjectCreator {
     }
 
     public static void deleteBatch(ActionContext actionContext){
-        log.info("DataObject should implement deleteBatch mehtod");
+        Executor.info(TAG, "DataObject should implement deleteBatch mehtod");
     }
 
     @SuppressWarnings("unchecked")
@@ -241,7 +240,7 @@ public class DataObjectCreator {
             }else{
             	String refDescriporPath = refThing.getString("dataObjectPath");
             	if(World.getInstance().getThing(refDescriporPath) == null){
-            		log.warn("Ref thing is nul, path=" + refThing.getMetadata().getPath());
+            		Executor.warn(TAG, "Ref thing is nul, path=" + refThing.getMetadata().getPath());
             	}else{
 	            	DataObject dchild = new DataObject(refThing.getString("dataObjectPath"));
 	                dchild.put(refThing.getString("refAttributeName"), dataObj.get(refThing.getString("localAttributeName")));

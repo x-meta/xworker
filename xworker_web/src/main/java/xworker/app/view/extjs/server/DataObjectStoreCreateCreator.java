@@ -22,8 +22,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -32,11 +30,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataObjectStoreCreateCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectStoreCreateCreator.class);
+	private static final String TAG = DataObjectStoreCreateCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static void doAction(ActionContext actionContext) throws IOException{
@@ -59,7 +58,7 @@ public class DataObjectStoreCreateCreator {
              result.put("msg",  "数据对象定义不存在，dataObject=" + request.getParameter("dataObjectPath"));
          }else{
         	 String value = request.getParameter("rows");
-             //log.info(value);
+             //Executor.info(TAG, value);
              if(value != "" && value != null){        
                  try{        
                 	 String key = null;
@@ -68,7 +67,7 @@ public class DataObjectStoreCreateCreator {
                          key = keys.get(0).getString("name");
                      }
                      Object dataObject = (Object) dataObjectCfg.doAction("parseJsonData", actionContext, UtilMap.toMap(new Object[]{"jsonText", value}));
-                     log.info("" + dataObject);
+                     Executor.info(TAG, "" + dataObject);
                      if(dataObject instanceof DataObject){
                     	 DataObject dobj = (DataObject) dataObject;
                          if(key != null){
@@ -91,7 +90,7 @@ public class DataObjectStoreCreateCreator {
                  }catch(Exception e){
                      result.put("success", "false");
                      result.put("msg", ExceptionUtil.getRootMessage(e));
-                     log.error("Read and update dataobject error", e);
+                     Executor.error(TAG, "Read and update dataobject error", e);
                  }
              }else{
                  result.put("msg", "没有数据需要更新");

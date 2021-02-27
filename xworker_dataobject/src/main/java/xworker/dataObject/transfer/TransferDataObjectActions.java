@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -30,9 +28,10 @@ import org.xmeta.util.UtilAction;
 import org.xmeta.util.UtilData;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class TransferDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(TransferDataObjectActions.class);
+	private static final String TAG = TransferDataObjectActions.class.getName();
 	
 	/**
 	 * 把源数据对象转换为目标数据对象。
@@ -50,7 +49,7 @@ public class TransferDataObjectActions {
 		//源数据对象
 		DataObject sourceObj = (DataObject) actionContext.get(self.getString("sourceVarName"));
 		if(sourceObj == null){
-			logger.info("source dataobject is null, thing=" + self);
+			Executor.info(TAG, "source dataobject is null, thing=" + self);
 			return null;
 		}
 		
@@ -58,7 +57,7 @@ public class TransferDataObjectActions {
 		DataObject targetObj = new DataObject(st.target);
 		Thing transfers = self.getThing("AttributeTransfers@0");
 		if(transfers == null){
-			logger.info("AttributeTransfers is null, thing=" + self);
+			Executor.info(TAG, "AttributeTransfers is null, thing=" + self);
 		}
 				
 		try{
@@ -93,7 +92,7 @@ public class TransferDataObjectActions {
 		//源数据对象
 		List<DataObject> sourceObjList = (List<DataObject>) actionContext.get(self.getString("sourceVarName"));
 		if(sourceObjList == null){
-			logger.info("source dataobject is null, thing=" + self);
+			Executor.info(TAG, "source dataobject is null, thing=" + self);
 			return Collections.emptyList();
 		}
 		
@@ -101,7 +100,7 @@ public class TransferDataObjectActions {
 		List<DataObject> targetObjList = new ArrayList<DataObject>();
 		Thing transfers = self.getThing("AttributeTransfers@0");
 		if(transfers == null){
-			logger.info("AttributeTransfers is null, thing=" + self);
+			Executor.info(TAG, "AttributeTransfers is null, thing=" + self);
 		}
 				
 		try{

@@ -26,8 +26,6 @@ import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -35,10 +33,11 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.events.SwtListener;
 
 public class TreeModelTreeListenerCreator {
-	private static Logger log = LoggerFactory.getLogger(TreeModelTreeListenerCreator.class);
+	private static final String TAG = TreeModelTreeListenerCreator.class.getName();
 	
 	private static Map<String, Map<String, Boolean>> expandStatusCache = new HashMap<String, Map<String, Boolean>>();
 	
@@ -206,7 +205,7 @@ public class TreeModelTreeListenerCreator {
         final Iterable<Object> treeNodeList = (Iterable<Object>) actionContext.get("treeNodes");
         //log.info("init item treeNode=" + treeNode);
         if(treeNode == null && treeNodeList == null ){
-            log.info("TreeModelTreeListener initItems: treeNode is null, treeItem not inited");
+            Executor.info(TAG, "TreeModelTreeListener initItems: treeNode is null, treeItem not inited");
         }else{
         	Thing treeModel = (Thing) actionContext.get("treeModel");
             if(treeModel.getBoolean("loadBackground")){

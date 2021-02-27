@@ -22,16 +22,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class DataObjectQueryConfigActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectQueryConfigActions.class);
+	private static final String TAG = DataObjectQueryConfigActions.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object query(ActionContext actionContext){
@@ -41,7 +40,7 @@ public class DataObjectQueryConfigActions {
         //数据对象
         Thing dataObject = world.getThing(self.getString("dataObject"));
         if(dataObject == null){
-            logger.info("DataObjectQueryConfig: dataObject is null, thing=" + self.getMetadata().getPath());
+            Executor.info(TAG, "DataObjectQueryConfig: dataObject is null, thing=" + self.getMetadata().getPath());
             return null;
         }
         

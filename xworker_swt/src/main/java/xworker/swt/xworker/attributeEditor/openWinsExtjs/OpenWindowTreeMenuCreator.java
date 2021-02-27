@@ -22,15 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
+
 public class OpenWindowTreeMenuCreator {
-	private static Logger log = LoggerFactory.getLogger(OpenWindowTreeMenuCreator.class);
+	private static final String TAG = OpenWindowTreeMenuCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object getChilds(ActionContext actionContext){
@@ -53,7 +53,7 @@ public class OpenWindowTreeMenuCreator {
                 }
             }
         }catch(Exception e){
-            log.info("add regist child error", e);
+            Executor.info(TAG, "add regist child error", e);
         }
         
         Thing currentThing = (Thing) actionContext.get("currentThing");
@@ -64,7 +64,7 @@ public class OpenWindowTreeMenuCreator {
                     continue;
                 }
             }
-            log.info(des.getMetadata().getPath());
+            Executor.info(TAG, des.getMetadata().getPath());
             dess.add(des);
         }
         
@@ -98,11 +98,11 @@ public class OpenWindowTreeMenuCreator {
         Map<String, Object> treeNodes = new HashMap<String, Object>();
         createTree(treeNodes, root);
         
-        log.info("treeNodes=" + treeNodes.get("childs"));
+        Executor.info(TAG, "treeNodes=" + treeNodes.get("childs"));
         return treeNodes.get("childs");
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void createTree(Map<String, Object> node, Map<String, Object> aroot){
         List<Map<String, Object>> groups = new ArrayList<Map<String, Object>>();
         for(String key : aroot.keySet()){

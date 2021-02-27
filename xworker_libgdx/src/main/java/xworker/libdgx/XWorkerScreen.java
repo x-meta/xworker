@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -17,11 +15,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
+import xworker.lang.executor.Executor;
 import xworker.libdgx.engine.collision.CollisionManager;
 import xworker.libdgx.engine.world2d.GameWorld;
 
 public class XWorkerScreen extends ScreenAdapter {
-	private static Logger logger = LoggerFactory.getLogger(XWorkerScreen.class);
+	private static final String TAG = XWorkerScreen.class.getName();
 	
 	/** 保存Screen中的变量。 */
 	ActionContext actionContext;
@@ -60,7 +59,7 @@ public class XWorkerScreen extends ScreenAdapter {
 				}
 			}
 		}catch(Exception e){
-			logger.error("init screen menu error" ,e );
+			Executor.error(TAG, "init screen menu error" ,e );
 		}finally{
 			actionContext.pop();
 		}
@@ -175,7 +174,7 @@ public class XWorkerScreen extends ScreenAdapter {
 						
 			thing.doAction("render", actionContext);
 		}catch(Exception e){
-			logger.error("render errot,  thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "render errot,  thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -189,7 +188,7 @@ public class XWorkerScreen extends ScreenAdapter {
 				try{
 					stage.dispose();
 				}catch(Exception ee){			
-					logger.error("stage dispose error, thing=" + thing.getMetadata().getPath(), ee);
+					Executor.error(TAG, "stage dispose error, thing=" + thing.getMetadata().getPath(), ee);
 				}
 			}	
 			
@@ -198,13 +197,13 @@ public class XWorkerScreen extends ScreenAdapter {
 				try{
 					res.dispose();
 				}catch(Exception ee){
-					logger.error("resource dispose error, thing=" + thing.getMetadata().getPath(), ee);
+					Executor.error(TAG, "resource dispose error, thing=" + thing.getMetadata().getPath(), ee);
 				}
 			}
 			
 			thing.doAction("dispose", actionContext);
 		}catch(Exception e){
-			logger.warn("dispose error", e);
+			Executor.warn(TAG, "dispose error", e);
 		}
 	}
 	

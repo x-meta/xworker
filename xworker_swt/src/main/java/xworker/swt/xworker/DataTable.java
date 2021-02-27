@@ -287,6 +287,10 @@ public class DataTable extends Table{
 		this.columnNames = columnNames;
 	}
 	
+	public String[] getColumnNames() {
+		return columnNames;
+	}
+	
 	public void setThingPath(String path){
 		this.tableThingPath = path;
 		

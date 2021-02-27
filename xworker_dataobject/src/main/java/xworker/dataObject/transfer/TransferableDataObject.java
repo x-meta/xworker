@@ -17,8 +17,6 @@ package xworker.dataObject.transfer;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.XMetaException;
@@ -27,9 +25,10 @@ import org.xmeta.util.UtilThing;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class TransferableDataObject {
-	private static Logger logger = LoggerFactory.getLogger(TransferableDataObject.class);
+	private static final String TAG = TransferableDataObject.class.getName();
 	
 	/**
 	 * 返回源和目标数据对象。
@@ -59,7 +58,7 @@ public class TransferableDataObject {
 		
 
 		if(st.source == null || st.target == null){
-			logger.info("TransferableDataObject, source or target is null, path=" + self.getMetadata().getPath() + ", source=" + st.source + ",target=" + st.target);
+			Executor.info(TAG, "TransferableDataObject, source or target is null, path=" + self.getMetadata().getPath() + ", source=" + st.source + ",target=" + st.target);
 			return null;
 		}else{
 			return st;

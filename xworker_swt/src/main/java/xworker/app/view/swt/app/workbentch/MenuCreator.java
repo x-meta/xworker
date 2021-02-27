@@ -21,13 +21,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class MenuCreator {
-	private static Logger log = LoggerFactory.getLogger(MenuCreator.class);
+	private static final String TAG = MenuCreator.class.getName();
     public static Object selectActions(ActionContext actionContext){
     	Thing thing = (Thing) actionContext.get("thing");
         Thing root = thing;
@@ -43,14 +43,14 @@ public class MenuCreator {
             root = root.getParent();
         }
         if(root == null){
-            log.warn("Can not find workbentch or editor");
+            Executor.warn(TAG, "Can not find workbentch or editor");
             return Collections.emptyList();
         }else{
         
-            log.info("root=" + root);
+            Executor.info(TAG, "root=" + root);
             Thing actions = root.getThing("actions@0");
             if(actions == null){
-                log.warn("actions is null");
+                Executor.warn(TAG, "actions is null");
                 return Collections.emptyList();
             }
             List<Map<String, Object>> things = new ArrayList<Map<String, Object>>();

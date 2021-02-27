@@ -17,8 +17,6 @@ package xworker.lang.actions.data;
 
 import java.text.ParseException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -26,9 +24,11 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class AttributeTransferCreator {
-	private static Logger log = LoggerFactory.getLogger(AttributeTransferCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(AttributeTransferCreator.class);
+	private static final String TAG = AttributeTransferCreator.class.getName();
 
 	public static Object run(ActionContext actionContext) throws OgnlException, ParseException {
 		Thing self = (Thing) actionContext.get("self");
@@ -36,7 +36,7 @@ public class AttributeTransferCreator {
 		// 源数据
 		String sourceName = self.getString("sourceName");
 		if (sourceName == null || "".equals(sourceName)) {
-			log.info("AttributeTransfer: source is null, name="
+			Executor.info(TAG, "AttributeTransfer: source is null, name="
 					+ self.getMetadata().getName() + ",sourceVarName="
 					+ self.getString("sourceVarName"));
 			return null;

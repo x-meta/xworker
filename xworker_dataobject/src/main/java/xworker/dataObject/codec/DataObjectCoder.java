@@ -28,14 +28,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Thing;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class DataObjectCoder {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectCoder.class);	
+	private static final String TAG = 	DataObjectCoder.class.getName();
 	public static final byte TYPE_END = 0;
 	/**
 	 * 字符串，使用int4个字节表示长度。
@@ -318,7 +317,7 @@ public class DataObjectCoder {
 			return in.readObject();			
 		}
 		
-		logger.warn("unknown data type " + type);
+		Executor.warn(TAG, "unknown data type " + type);
 		return null;
 
 	}

@@ -2,7 +2,6 @@ package xworker.swt.html.chart;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +10,6 @@ import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -22,6 +19,7 @@ import org.xmeta.util.ActionContainer;
 import xworker.app.view.swt.data.DataStoreListener;
 import xworker.app.view.swt.data.ThingDataStoreListener;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactor;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.ThingCompositeCreator;
@@ -29,7 +27,7 @@ import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class ECharts implements DataStoreListener{
-	private static Logger logger = LoggerFactory.getLogger(ECharts.class);
+	private static final String TAG = ECharts.class.getName();
 	
 	public Thing thing;
 	public ActionContext actionContext;
@@ -143,7 +141,7 @@ public class ECharts implements DataStoreListener{
 			//option = option.replace('"', '\'');
 			//evaluate.run(actionContext, "code", "setChartOption(\"" + option + "\")");
 		}else {
-			logger.info("script is null, thing=" + thing.getMetadata().getPath());
+			Executor.info(TAG, "script is null, thing=" + thing.getMetadata().getPath());
 			return "";
 		}
 	}

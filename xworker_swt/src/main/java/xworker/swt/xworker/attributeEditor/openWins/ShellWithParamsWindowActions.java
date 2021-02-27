@@ -19,8 +19,6 @@
 package xworker.swt.xworker.attributeEditor.openWins;
 
 import org.eclipse.swt.browser.Browser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -28,9 +26,6 @@ import org.xmeta.util.UtilMap;
 import xworker.util.XWorkerUtils;
 
 public class ShellWithParamsWindowActions {
-	private static Logger logger = LoggerFactory.getLogger(ShellWithParamsWindowActions.class);
-
-    @SuppressWarnings("unchecked")
 	public static void treeSelection(ActionContext actionContext){
         //Thing self = actionContext.getObject("self");
         Thing thing = actionContext.getObject("thing");

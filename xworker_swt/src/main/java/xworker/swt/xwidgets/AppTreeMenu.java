@@ -11,17 +11,16 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilThing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
 
 public class AppTreeMenu implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(AppTreeMenu.class);
+	private static final String TAG = AppTreeMenu.class.getName();
 	public final static String key_thing = "__AppTreeMenu_item_key_thing__";
 	public final static String key_actioncontext = "__AppTreeMenu_item_key_actioncontext__";
 	
@@ -173,7 +172,7 @@ public class AppTreeMenu implements Listener{
 		try {
 			return (Composite) thing.getObject("targetControl", actionContext);
 		} catch (Exception e) {
-			logger.error("get control error, path=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "get control error, path=" + thing.getMetadata().getPath(), e);
 			return null;
 		}
 	}

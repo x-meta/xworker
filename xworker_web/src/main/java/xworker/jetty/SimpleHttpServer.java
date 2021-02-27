@@ -6,15 +6,15 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class SimpleHttpServer {
-	private static Logger logger = LoggerFactory.getLogger(SimpleHttpServer.class);
+	private static final String TAG = SimpleHttpServer.class.getName();
 	
 	public static void run(ActionContext actionContext){
 		try{
@@ -84,7 +84,7 @@ public class SimpleHttpServer {
 	    File targetFile = new File(root, path);
 	    if(!targetFile.exists()){
 	        File srcFile = new File(World.getInstance().getPath() + "/webroot/" + path);
-	        logger.info("Copping " + targetFile.getPath());
+	        Executor.info(TAG, "Copping " + targetFile.getPath());
 	        if(srcFile.isFile()){
 	            FileUtils.copyFile(srcFile, targetFile);
 	        }else{

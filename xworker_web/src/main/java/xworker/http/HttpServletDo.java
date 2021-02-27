@@ -28,8 +28,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.ThingManager;
@@ -38,6 +36,7 @@ import org.xmeta.ui.session.SessionManager;
 import org.xmeta.util.ThingRegistor;
 
 import xworker.lang.Configuration;
+import xworker.lang.executor.Executor;
 
 /**
  * 执行事物的Servlet。
@@ -47,7 +46,7 @@ import xworker.lang.Configuration;
  */
 public class HttpServletDo extends HttpServlet{
 	private static final long serialVersionUID = -7340146943865363473L;
-	private static Logger log = LoggerFactory.getLogger(HttpServletDo.class);
+	private static final String TAG = HttpServletDo.class.getName();
 
 	public static final String GET = "GET";
 	public static final String POST = "POST";
@@ -79,7 +78,7 @@ public class HttpServletDo extends HttpServlet{
 		//初始化World			
 		if(!world.isInited()) {
 			String xworkerPath = config.getInitParameter("xworkerPath");	
-			log.info("XWorker path param=" + xworkerPath);
+			Executor.info(TAG, "XWorker path param=" + xworkerPath);
 			if(xworkerPath != null  && !"".equals(xworkerPath) && !world.isInited()){
 				if("{contextPath}".equals(xworkerPath)) {
 					xworkerPath = "./xworkers" + config.getServletContext().getContextPath();
@@ -110,12 +109,12 @@ public class HttpServletDo extends HttpServlet{
 			Class<?> cls = world.getClassLoader().loadClass("xworker.util.GlobalConfig");
 			Method setWebUrl = cls.getDeclaredMethod("setWebUrl", String.class, boolean.class);
 			setWebUrl.invoke(null, contextPath, true);
-			log.info("GlobalConfig url setted: url=" + contextPath);
+			Executor.info(TAG, "GlobalConfig url setted: url=" + contextPath);
 		}catch(Exception e) {
-			log.info("GlobalConfig url set exception", e);
+			Executor.info(TAG, "GlobalConfig url set exception", e);
 		}
 		Enumeration<String> names = config.getInitParameterNames();
-		log.info("init parameter names = " + names);
+		Executor.info(TAG, "init parameter names = " + names);
 		while(names.hasMoreElements()){
 			String name = names.nextElement();
 			String prefix = "thingManager-";
@@ -125,15 +124,15 @@ public class HttpServletDo extends HttpServlet{
 				if(file.exists()){
 					ThingManager thingManager = world.initThingManager(file);
 					if(thingManager != null){
-						log.info("Thing manager inited: name=" + name + ", path=" + filePath);
+						Executor.info(TAG, "Thing manager inited: name=" + name + ", path=" + filePath);
 					}else{
-						log.info("Thing manager init failed: name=" + name + ", path=" + filePath);
+						Executor.info(TAG, "Thing manager init failed: name=" + name + ", path=" + filePath);
 					}
 				}else{
-					log.info("file not exists, path=" + filePath);
+					Executor.info(TAG, "file not exists, path=" + filePath);
 				}
 			}else{
-				log.info("param name not started with thingManager-, name=" + name);
+				Executor.info(TAG, "param name not started with thingManager-, name=" + name);
 			}
 		}
 		
@@ -154,19 +153,19 @@ public class HttpServletDo extends HttpServlet{
 		if(file.exists()){
 			try{
 				World.getInstance().addFileThingManager(World.WEBROOT_TEMP_THINGMANAGER, file, false, false);
-				log.info("webroot added to thingmanager");
+				Executor.info(TAG, "webroot added to thingmanager");
 			}catch(Exception e){
-				log.warn("add webroot to thingmanager error", e);
+				Executor.warn(TAG, "add webroot to thingmanager error", e);
 			}
 		}else{
-			log.info("webroot is not a file directory, not add to thingmanager, path=" + path);
+			Executor.info(TAG, "webroot is not a file directory, not add to thingmanager, path=" + path);
 		}
 				
 		if("true".equals(config.getInitParameter("allowUnderLine"))){
-			log.info("allowUnderLine=true");
+			Executor.info(TAG, "allowUnderLine=true");
 			allowUnderLine = true;
 		}else{
-			log.info("allowUnderLine=false");
+			Executor.info(TAG, "allowUnderLine=false");
 		}
 		
 		//默认的profile
@@ -296,7 +295,7 @@ public class HttpServletDo extends HttpServlet{
 			if(webControl == null){		
 				response.setContentType("text/plain; charset=utf-8");
 				response.getWriter().print("webControl不存在：" + webControlName);
-				log.warn("webControl不存在：" + webControlName);
+				Executor.warn(TAG, "webControl不存在：" + webControlName);
 				//throw new ServletException();
 			}else{
 				//加入事物管理器的判断
@@ -332,8 +331,8 @@ public class HttpServletDo extends HttpServlet{
 					}
 				}
 			}
-			if(debug && log.isInfoEnabled()){
-				log.info("web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
+			if(debug){
+				Executor.info(TAG, "web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
 			}
 		}finally {
 			SessionManager.setLocalSessionManager(null);

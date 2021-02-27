@@ -21,15 +21,15 @@ import java.util.List;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
+
 public class TaskMonitor implements Runnable{
-	private static Logger logger = LoggerFactory.getLogger(TaskMonitor.class);
+	private static final String TAG = TaskMonitor.class.getName();
 	private static final String monitor_name = "___monitor___";
 	
 	/** 进度条，显示进度 */
@@ -199,7 +199,7 @@ public class TaskMonitor implements Runnable{
 					//执行任务
 					task.doAction("run", actionContext);									
 				}catch(Throwable t){
-					logger.error("Runn tasks error, task=" + task, t);
+					Executor.error(TAG, "Runn tasks error, task=" + task, t);
 				}finally{
 					if(label != null && !label.isDisposed()){
 						String text = (String) task.doAction("getLabel", actionContext);

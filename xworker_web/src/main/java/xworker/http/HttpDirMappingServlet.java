@@ -23,11 +23,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 映射目录对应事物的Servlet。
@@ -37,7 +37,7 @@ import org.xmeta.World;
  */
 public class HttpDirMappingServlet extends HttpServlet{
 	private static final long serialVersionUID = -7340146943865363473L;
-	private static Logger log = LoggerFactory.getLogger(HttpServletDo.class);
+	private static final String TAG = HttpDirMappingServlet.class.getName();
 
 	private World world = World.getInstance();
 	public static boolean debug = true;
@@ -83,7 +83,7 @@ public class HttpDirMappingServlet extends HttpServlet{
 			if(webControl == null){		
 				response.setContentType("text/plain; charset=utf-8");
 				response.getWriter().print("webControl不存在：" + uri);
-				log.warn("webControl不存在：" + uri);
+				Executor.warn(TAG, "webControl不存在：" + uri);
 				return;
 			}
 			
@@ -110,8 +110,8 @@ public class HttpDirMappingServlet extends HttpServlet{
 				}
 			}
 		}finally{
-			if(debug && log.isInfoEnabled()){
-				log.info("web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + uri);
+			if(debug){
+				Executor.info(TAG, "web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + uri);
 			}
 		}
 	}

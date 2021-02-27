@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -11,8 +9,10 @@ import org.xmeta.util.UtilMap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import xworker.lang.executor.Executor;
+
 public class XClickListener extends ClickListener{
-	private static Logger logger = LoggerFactory.getLogger(XClickListener.class);
+	private static final String TAG = XClickListener.class.getName();
 	Thing thing;
 	ActionContext actionContext;
 	
@@ -27,7 +27,7 @@ public class XClickListener extends ClickListener{
 		try{	
 			thing.doAction("clicked", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=clicked, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=clicked, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 

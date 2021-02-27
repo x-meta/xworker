@@ -16,18 +16,17 @@
 package xworker.app.view.swt.app.workbentch.actions;
 
 import org.eclipse.swt.widgets.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 public class SwtNavigationTreeActionTypeActionCreator {
-	private static Logger log = LoggerFactory.getLogger(SwtNavigationTreeActionTypeActionCreator.class);
+	private static final String TAG = SwtNavigationTreeActionTypeActionCreator.class.getName();
 	
     public static void run(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -42,7 +41,7 @@ public class SwtNavigationTreeActionTypeActionCreator {
             if(action != null){
                 action.run(actionContext, UtilMap.toMap(new Object[]{"data", data}));
             }else{
-                log.info("NavigationTreeAction-TypeAciton: action not exits, action=" + self.get("value"));
+                Executor.info(TAG, "NavigationTreeAction-TypeAciton: action not exits, action=" + self.get("value"));
             }
         }
     }

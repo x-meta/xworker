@@ -31,8 +31,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -46,11 +44,12 @@ import com.csvreader.CsvWriter;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.query.UtilCondition;
+import xworker.lang.executor.Executor;
 import xworker.task.UserTask;
 import xworker.task.UserTaskManager;
 
 public class DataObjectUtil {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectUtil.class);
+	private static final String TAG = DataObjectUtil.class.getName();
 	
 	/** 分页类型范围，从起始到截至，start = pageInfo.getStart() + 1， end = start + pageInfo.getLimit() - 1 */
 	public static final byte PAGE_BETWEEN = 1;
@@ -687,7 +686,7 @@ public class DataObjectUtil {
 					try{
                         data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
                     }catch(SQLException e){
-                        logger.error("get result value error: " + e.getMessage() + ": " + attributes.get(i));
+                        Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
                         throw e;
                     }
 				}
@@ -819,7 +818,7 @@ public class DataObjectUtil {
             //查询总数
         	if(countSql != null && !"".equals(countSql)){
         		if(self.getBoolean("showSql")){
-                    logger.info(countSql);
+                    Executor.info(TAG, countSql);
                 }
         		
         		UserTaskManager.setUserTaskLabelDetail(userTask, "Query total count", countSql);
@@ -836,7 +835,7 @@ public class DataObjectUtil {
 	            pst.close();
         	}else{
         		if(self.getBoolean("showSql")){
-                    logger.info("No count sql, use page count totalCount");
+                    Executor.info(TAG, "No count sql, use page count totalCount");
                 }
         		
         		//不知道总数的情况下，设置比当前总数大一
@@ -846,7 +845,7 @@ public class DataObjectUtil {
             //分页查询
         	String sql = querySql;            
             if(self.getBoolean("showSql")){
-                logger.info(sql);
+                Executor.info(TAG, sql);
             }
             pst = con.prepareStatement(sql);
             self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);

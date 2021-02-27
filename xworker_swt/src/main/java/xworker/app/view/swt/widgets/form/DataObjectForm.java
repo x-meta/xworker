@@ -15,8 +15,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,6 +26,7 @@ import org.xmeta.util.UtilMap;
 import xworker.app.view.swt.data.DataStoreSelectionListener;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectListener;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.editor.EditorModifyListener;
 import xworker.swt.events.SwtListener;
@@ -37,7 +36,7 @@ import xworker.swt.util.SwtUtils;
 import xworker.util.TheadWaitTask;
 
 public class DataObjectForm implements DataObjectListener, DisposeListener, DataStoreSelectionListener{
-	private static Logger logger = LoggerFactory.getLogger(DataObjectForm.class);
+	private static final String TAG = DataObjectForm.class.getName();
 	public static final String KEY_DATAOBJECTFORM = "dataObjectForm";
 	/** 为了避免数据对象回填数据修改表单的值 */
 	private static ThreadLocal<ThingFormModifyListener> updater = new ThreadLocal<ThingFormModifyListener>();
@@ -157,7 +156,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 					//System.out.println(event);
 					self.doAction("defaultSelection", actionContext, "event", event);
 				}catch(Exception e) {
-					logger.warn("DefaultSelection exception, form=" + self.getMetadata().getPath(), e);
+					Executor.warn(TAG, "DefaultSelection exception, form=" + self.getMetadata().getPath(), e);
 				}
 			}
 			
@@ -382,7 +381,7 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 			                }
 			            }
 			        }catch(Exception e){
-			            logger.warn("set input editable, editor=" + attr.getString("name") + "Input, exception=" + e.getMessage());
+			            Executor.warn(TAG, "set input editable, editor=" + attr.getString("name") + "Input, exception=" + e.getMessage());
 			        }
 			    }
 			    
@@ -500,11 +499,11 @@ public class DataObjectForm implements DataObjectListener, DisposeListener, Data
 	                		  if(refstore != null){
 	                			  store = refstore.getMetadata().getPath();
 	                		  }else{
-	                			  logger.info("get ref data store return null, ognl=" + store + ", attribute=" + attr.getMetadata().getPath());
+	                			  Executor.info(TAG, "get ref data store return null, ognl=" + store + ", attribute=" + attr.getMetadata().getPath());
 	                			  store = null;
 	                		  }
 	                	  }catch(Exception e){
-	                		  logger.warn("get ref data store error, ognl=" + store + ", attribute=" + attr.getMetadata().getPath() + ", exception=" + e.getMessage());
+	                		  Executor.warn(TAG, "get ref data store error, ognl=" + store + ", attribute=" + attr.getMetadata().getPath() + ", exception=" + e.getMessage());
 	                		  store = null;
 	                	  }
 	                  }

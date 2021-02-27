@@ -22,11 +22,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.actions.KeyTravel;
 import xworker.swt.util.ResizeUtil;
 
@@ -37,7 +36,7 @@ import xworker.swt.util.ResizeUtil;
  *
  */
 public class SimpleDraw2d implements Listener, PaintListener{
-	private static final Logger logger = LoggerFactory.getLogger(SimpleDraw2d.class);
+	private static final String TAG = SimpleDraw2d.class.getName();
 	
 	public static final int DRAG_MOVE = 1;	
 	public static final int DRAG_RESIZE_LEFT = 2;
@@ -131,7 +130,7 @@ public class SimpleDraw2d implements Listener, PaintListener{
 					SimpleShape shape = new SimpleShape(this, sthing, actionContext);
 					shapes.add(shape);
 				}catch(Exception e) {
-					logger.warn("Init SimpleDraw2d shape exception, path=" + sthing.getMetadata().getPath(), e);
+					Executor.warn(TAG, "Init SimpleDraw2d shape exception, path=" + sthing.getMetadata().getPath(), e);
 				}
 			}
 		}
@@ -186,7 +185,7 @@ public class SimpleDraw2d implements Listener, PaintListener{
 			try {
 				shape.draw(canvas, gc);
 			}catch(Exception e) {
-				logger.warn("Draw SimpleDraw2d shape exception, path=" + shape.getThing().getMetadata().getPath(), e);
+				Executor.warn(TAG, "Draw SimpleDraw2d shape exception, path=" + shape.getThing().getMetadata().getPath(), e);
 			}
 		}
 	}

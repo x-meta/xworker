@@ -9,15 +9,14 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 public class ThingForm implements Listener, ModifyListener{
-	private static Logger logger = LoggerFactory.getLogger(ThingForm.class);
+	private static final String TAG = ThingForm.class.getName();
 	private static final String KEY = "__ThingForm__KEY__";
 	
 	/** 表单事物 */
@@ -124,7 +123,7 @@ public class ThingForm implements Listener, ModifyListener{
 			
 			self.doAction("defaultSelection", this.getParentContext(), "event", event, "thingForm", this);
 		}catch(Exception e) {
-			logger.warn("DefaultSelection exception, form=" + self.getMetadata().getPath(), e);
+			Executor.warn(TAG, "DefaultSelection exception, form=" + self.getMetadata().getPath(), e);
 		}
 	}
 	

@@ -6,16 +6,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class PageToolbarDataStoreListener {
-	private static Logger logger = LoggerFactory.getLogger(PageToolbarDataStoreListener.class);
+	private static final String TAG = PageToolbarDataStoreListener.class.getName();
 	
 	public static void onReconfig(final ActionContext actionContext){
 		final Thing self = (Thing) actionContext.get("self");
@@ -36,7 +35,7 @@ public class PageToolbarDataStoreListener {
 			        //初始化数据，如果存在
 			        self.doAction("onLoaded", actionContext);
 			    }catch(Throwable t){
-			        logger.error("PageToolbarDataStoreListener onReconfig error, store=" + store.getMetadata().getPath(), t);
+			        Executor.error(TAG, "PageToolbarDataStoreListener onReconfig error, store=" + store.getMetadata().getPath(), t);
 			    }  
 			}
 		});
@@ -205,7 +204,7 @@ public class PageToolbarDataStoreListener {
 			            */
 			        //}			        
 			    }catch(Throwable t){
-			        logger.error("PageToolbarDataStoreListener onLoaded error, store=" + store.getMetadata().getPath(), t);
+			        Executor.error(TAG, "PageToolbarDataStoreListener onLoaded error, store=" + store.getMetadata().getPath(), t);
 			    }    
 			}
 		});

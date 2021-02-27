@@ -9,12 +9,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.app.DataEditorProvider;
 import xworker.swt.app.IEditor;
 import xworker.swt.app.IEditorContainer;
@@ -23,7 +22,7 @@ import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class CompositeDataReactor extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(CompositeDataReactor.class);
+	private static final String TAG = CompositeDataReactor.class.getName();
 	public static final String TYPE_EDITOR = "editor";
 	public static final String TYPE_CHECK = "check";
 	public static final String TYPE_RADIO = "radio";
@@ -164,7 +163,7 @@ public class CompositeDataReactor extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Composite is null, can not create CompositeDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Composite is null, can not create CompositeDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

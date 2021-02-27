@@ -22,12 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 业务Web Control。
@@ -36,7 +36,7 @@ import org.xmeta.World;
  *
  */
 public class BizControl {
-	private static Logger log = LoggerFactory.getLogger(BizControl.class);
+	private static final String TAG = BizControl.class.getName();
 	private static World world = World.getInstance();
 	
 	/**
@@ -85,7 +85,7 @@ public class BizControl {
 					return "success"; 
 				}else{
 					//什么也不做
-					log.error("需要登录，但系统没有设定登录页面！");
+					Executor.error(TAG, "需要登录，但系统没有设定登录页面！");
 					return "success";
 				}
 			}
@@ -118,7 +118,7 @@ public class BizControl {
 							messageThing.doAction("httpDo", actionContext);
 							return "success"; 
 						}else{
-							log.error("没有权限，但系统没有设定提示页面！");
+							Executor.error(TAG, "没有权限，但系统没有设定提示页面！");
 							return "success";
 						}
 					}

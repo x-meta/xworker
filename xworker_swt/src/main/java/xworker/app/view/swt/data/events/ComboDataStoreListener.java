@@ -7,8 +7,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -17,10 +15,11 @@ import org.xmeta.util.UtilMap;
 import xworker.app.view.swt.data.DataStore;
 import xworker.app.view.swt.data.DataStoreUtils;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.form.SetableModifyListener;
 
 public class ComboDataStoreListener {
-	private static Logger logger = LoggerFactory.getLogger(ComboDataStoreListener.class);
+	private static final String TAG = ComboDataStoreListener.class.getName();
 	
 	public static void onReconfig(final ActionContext actionContext){
 		final Thing self = (Thing) actionContext.get("self");
@@ -60,7 +59,7 @@ public class ComboDataStoreListener {
 			        }
 			    }catch(Throwable t){
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener onReconfig error, store=" + store.getMetadata().getPath(), t);
+			    		Executor.error(TAG, "CombotoreListener onReconfig error, store=" + store.getMetadata().getPath(), t);
 			    	}
 			    }finally{
 		            if(modifyListener != null && modifyListener instanceof SetableModifyListener){
@@ -209,7 +208,7 @@ public class ComboDataStoreListener {
 			        self.doAction("setSelection", actionContext);
 			    }catch(Throwable t) {
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener onLoaded error, store=" + store.getMetadata().getPath(), t);
+			    		Executor.error(TAG, "CombotoreListener onLoaded error, store=" + store.getMetadata().getPath(), t);
 			    	}
 			    }    
 			}
@@ -237,7 +236,7 @@ public class ComboDataStoreListener {
 			        add(ccombo, "loading...");
 			    }catch(Throwable t){
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener beforeLoad error", t);
+			    		Executor.error(TAG, "CombotoreListener beforeLoad error", t);
 			    	}
 			    }finally{
 		            if(modifyListener != null && modifyListener instanceof SetableModifyListener){
@@ -379,7 +378,7 @@ public class ComboDataStoreListener {
 			        }
 			    }catch(Throwable t){
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener onInsert error， store=" + store.getMetadata().getPath(), t);
+			    		Executor.error(TAG, "CombotoreListener onInsert error， store=" + store.getMetadata().getPath(), t);
 			    	}
 			    }    
 			}
@@ -426,7 +425,7 @@ public class ComboDataStoreListener {
 			        }
 			    }catch(Throwable t){
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener onUpdate error, store=" + store.getMetadata().getPath(), t);
+			    		Executor.error(TAG, "CombotoreListener onUpdate error, store=" + store.getMetadata().getPath(), t);
 			    	}
 			    }    
 			}
@@ -460,7 +459,7 @@ public class ComboDataStoreListener {
 			        }
 			    }catch(Throwable t){
 			    	if(!ccombo.isDisposed()) {
-			    		logger.error("CombotoreListener onRemove error, store=" + store.getMetadata().getPath(), t);
+			    		Executor.error(TAG, "CombotoreListener onRemove error, store=" + store.getMetadata().getPath(), t);
 			    	}
 			    }    
 			}

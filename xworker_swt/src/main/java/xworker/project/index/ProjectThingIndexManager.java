@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Category;
 import org.xmeta.Thing;
 import org.xmeta.cache.ThingEntry;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 这个功能应该已经取消了，由ThingUtils自动刷新缓存代替了。
@@ -20,7 +20,7 @@ import org.xmeta.cache.ThingEntry;
  *
  */
 public class ProjectThingIndexManager {
-	private static Logger logger = LoggerFactory.getLogger(ProjectThingIndexManager.class);
+	private static final String TAG = ProjectThingIndexManager.class.getName();
 	
 	/**
 	 * 项目索引管理者的缓存。
@@ -197,7 +197,7 @@ public class ProjectThingIndexManager {
 				addtionalThings.put(thing.getMetadata().getPath(), addThings);
 			}
 		}catch(Exception e){
-			logger.warn("getIDEAdditionalThings error, should return List<Thing>", e);
+			Executor.warn(TAG, 	"getIDEAdditionalThings error, should return List<Thing>", e);
 		}
 		
 		//子事物

@@ -16,13 +16,12 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
@@ -30,7 +29,7 @@ import xworker.swt.util.QuickWidgetUtils;
 import xworker.swt.util.ResourceManager;
 
 public class QuickToolbar {
-	private static Logger logger = LoggerFactory.getLogger(QuickToolbar.class);
+	private static final String TAG = QuickToolbar.class.getName();
 	private static SelectionListener listener = new SelectionListener(){
 
 		@Override
@@ -99,7 +98,7 @@ public class QuickToolbar {
 				
 				
 			}catch(Exception e){
-				logger.warn("QuickMenu selection error， path=" + thing.getMetadata().getPath(), e);
+				Executor.warn(TAG, "QuickMenu selection error， path=" + thing.getMetadata().getPath(), e);
 			}
 		}		
 	};

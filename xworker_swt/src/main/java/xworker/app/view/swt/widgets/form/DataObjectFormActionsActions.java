@@ -18,8 +18,6 @@
  */
 package xworker.app.view.swt.widgets.form;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,9 +26,10 @@ import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 
 public class DataObjectFormActionsActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectFormActionsActions.class);
+	private static final String TAG = DataObjectFormActionsActions.class.getName();
 	
     public static void run(ActionContext actionContext) throws OgnlException{
         Thing self = actionContext.getObject("self");
@@ -39,14 +38,14 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return;
         }
         
         //数据对象
         Object dataObject = null;
         if(self.getStringBlankAsNull("dataObject") == null){
-            logger.warn("DataObjectForm: need specify dataobject");
+            Executor.warn(TAG, "DataObjectForm: need specify dataobject");
             return;
         }else{    
             try{
@@ -58,7 +57,7 @@ public class DataObjectFormActionsActions {
             }
             
             if(dataObject == null){
-                logger.warn("DataObjectForm: dataObject not exists, dataObject=" + self.getStringBlankAsNull("dataObject"));
+                Executor.warn(TAG, "DataObjectForm: dataObject not exists, dataObject=" + self.getStringBlankAsNull("dataObject"));
                 return;
             }
         }
@@ -73,7 +72,7 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return "failure";
         }
         
@@ -97,7 +96,7 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return;
         }
          
@@ -108,13 +107,13 @@ public class DataObjectFormActionsActions {
             try{
                 values = OgnlUtil.getValue(valueVariable, actionContext);
             }catch(Exception e){
-                logger.warn("DataObjectForm: get values error", e);
+                Executor.warn(TAG, "DataObjectForm: get values error", e);
             }
         }
         
         //设置值
         if(values == null){
-            logger.warn("DataObjectForm: value not exists, can not set values");
+            Executor.warn(TAG, "DataObjectForm: value not exists, can not set values");
             return;
         }else{
             if(self.getBoolean("partialValue")){
@@ -131,7 +130,7 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return null;
         }
         
@@ -150,7 +149,7 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return;
         }
         
@@ -175,7 +174,7 @@ public class DataObjectFormActionsActions {
         //表单对象
         Thing form = (Thing) OgnlUtil.getValue(self.getString("formName"), actionContext);
         if(form == null){
-            logger.warn("DataObjectForm: form not exists, name=" + self.getString("formName"));
+            Executor.warn(TAG, "DataObjectForm: form not exists, name=" + self.getString("formName"));
             return;
         }
         

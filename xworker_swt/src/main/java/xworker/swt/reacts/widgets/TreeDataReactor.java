@@ -8,17 +8,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class TreeDataReactor extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(TableDataReactor.class);
-		
+	private static final String TAG = TreeDataReactor.class.getName();
+	
 	Tree tree;
 	
 	public TreeDataReactor(Tree tree, Thing self, ActionContext actionContext) {
@@ -96,7 +95,7 @@ public class TreeDataReactor extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Tree is null, can not create TreeDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Tree is null, can not create TreeDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

@@ -13,8 +13,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -22,6 +20,7 @@ import org.xmeta.ThingMetadata;
 import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.editor.LabelToolTipListener;
 import xworker.swt.form.FormModifyListener;
@@ -36,7 +35,7 @@ import xworker.util.XWorkerUtils;
  *
  */
 public abstract class AttributeEditor {
-	private static Logger log = LoggerFactory.getLogger(AttributeEditor.class);
+	private static final String TAG = AttributeEditor.class.getName();
 	
 	/** 事物模型 */
 	public Thing formThing;
@@ -300,11 +299,11 @@ public abstract class AttributeEditor {
 		    			schild.doAction("create", context);
 		    		}
 		    	}catch(Exception eee){
-		    		log.error("create field extend swt obj", eee);
+		    		Executor.error(TAG, "create field extend swt obj", eee);
 		    	}
 		    }
 	    }catch(Exception eee){
-	    	log.error("craete field extend set obj", eee);			    	
+	    	Executor.error(TAG, "craete field extend set obj", eee);			    	
 	    }finally{
 	    	context.pop();
 	    }	    

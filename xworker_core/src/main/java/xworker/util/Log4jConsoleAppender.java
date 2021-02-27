@@ -21,7 +21,14 @@ import java.io.Writer;
 import org.apache.log4j.Layout;
 import org.apache.log4j.WriterAppender;
 
+import xworker.io.SystemIoRedirector;
+
 public class Log4jConsoleAppender extends WriterAppender {
+	static {
+		if(SystemIoRedirector.psout != null) {
+			Log4jConsoleAppender.setStaticOutputStream(SystemIoRedirector.psout);
+		}
+	}
 	public static Log4jConsoleAppender instance;
 	private static OutputStream out = System.out;
 	

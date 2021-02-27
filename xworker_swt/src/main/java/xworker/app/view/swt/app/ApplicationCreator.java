@@ -25,20 +25,19 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.UtilBrowser;
 
 public class ApplicationCreator {
-	private static Logger log = LoggerFactory.getLogger(ApplicationCreator.class);
+	private static final String TAG = ApplicationCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -194,7 +193,7 @@ public class ApplicationCreator {
         for(Thing child : viewSet.getAllChilds()){
             TabItem tabItem = (TabItem) ((Map<String, Object>) actionContext.get("views")).get(child.getString("id"));
             if(tabItem != null){
-                log.info("tabItem already exists, id is same , id=" + child.get("id"));
+                Executor.info(TAG, "tabItem already exists, id is same , id=" + child.get("id"));
             }else{        
                 tabItem = (TabItem) child.doAction("createView", acContext);
                 tabItem.setData("viewThing", child);
@@ -203,7 +202,7 @@ public class ApplicationCreator {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unlikely-arg-type" })
 	public static Object getActionContext(ActionContext actionContext){
         Thing workSet = (Thing) actionContext.get("workSetThing");
         

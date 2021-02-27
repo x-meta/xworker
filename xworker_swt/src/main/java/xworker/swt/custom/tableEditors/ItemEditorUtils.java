@@ -6,17 +6,16 @@ import org.eclipse.swt.custom.TreeCursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.custom.ItemCursor;
 import xworker.swt.custom.ItemEditor;
 
 public class ItemEditorUtils {
-	private static Logger logger = LoggerFactory.getLogger(ItemEditorUtils.class);
+	private static final String TAG = ItemEditorUtils.class.getName();
 	private static final String DISPOSE_KEY = "___ItemEditorUtils__dispose_onsavevaue__";
 	
 	/**
@@ -49,7 +48,7 @@ public class ItemEditorUtils {
 			try {
 				editor = tcls.newInstance();
 			} catch (Exception e) {
-				logger.error("Create tableeditor instance error", e);
+				Executor.error(TAG, "Create tableeditor instance error", e);
 			}
 			actionContext.g().put(key, editor);
 		}

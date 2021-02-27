@@ -7,13 +7,13 @@ import java.io.IOException;
 
 import org.eclipse.swt.dnd.ByteArrayTransfer;
 import org.eclipse.swt.dnd.TransferData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Thing;
 import org.xmeta.codes.XmlCoder;
 
+import xworker.lang.executor.Executor;
+
 public class ThingTransfer extends ByteArrayTransfer {
-	private static Logger logger = LoggerFactory.getLogger(ThingTransfer.class);
+	private static final String TAG = ThingTransfer.class.getName();
 	
 	private static String TYPENAME = "Thing";
 	private static int TYPEID = registerType(TYPENAME);
@@ -47,7 +47,7 @@ public class ThingTransfer extends ByteArrayTransfer {
 
 				super.javaToNative(buffer, transferData);
 			} catch (IOException e) {
-				logger.error("javaToNative error", e);
+				Executor.error(TAG, "javaToNative error", e);
 			}
 		}
 	}
@@ -66,7 +66,7 @@ public class ThingTransfer extends ByteArrayTransfer {
 				
 				return thing;
 			} catch (Exception ex) {
-				logger.error("nativeToJava error", ex);
+				Executor.error(TAG, "nativeToJava error", ex);
 				return null;
 			}
 		}

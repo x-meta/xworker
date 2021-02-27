@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -34,9 +32,10 @@ import org.xmeta.util.OgnlUtil;
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class StatisticsQueryDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(StatisticsQueryDataObjectActions.class);
+	private static final String TAG = StatisticsQueryDataObjectActions.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object query(ActionContext actionContext) throws OgnlException{
@@ -45,7 +44,7 @@ public class StatisticsQueryDataObjectActions {
         //数据对象
         Thing dataObject = World.getInstance().getThing(self.getString("dataObject"));
         if(dataObject == null){
-            logger.info("QueryDataObject: dataObject is null, thing=" + self.getMetadata().getPath());
+            Executor.info(TAG, "QueryDataObject: dataObject is null, thing=" + self.getMetadata().getPath());
             return null;
         }
         
@@ -114,7 +113,7 @@ public class StatisticsQueryDataObjectActions {
                             if(agg != null){
                                 ((Map<String, Object>) data).putAll(agg);
                             }else{
-                                logger.warn("Aggregate returns null");
+                                Executor.warn(TAG, "Aggregate returns null");
                             }
                         }
                     }else{

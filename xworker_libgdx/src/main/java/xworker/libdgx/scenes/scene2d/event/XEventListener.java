@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -11,8 +9,10 @@ import org.xmeta.util.UtilMap;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 
+import xworker.lang.executor.Executor;
+
 public class XEventListener implements EventListener{
-	private static Logger logger = LoggerFactory.getLogger(XEventListener.class);
+	private static final String TAG = XEventListener.class.getName();
 	ActionContext actionContext;
 	Thing thing;
 	
@@ -32,7 +32,7 @@ public class XEventListener implements EventListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=handle, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=handle, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}

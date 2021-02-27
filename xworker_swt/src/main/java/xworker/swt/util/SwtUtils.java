@@ -86,8 +86,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Bindings;
@@ -99,6 +97,7 @@ import org.xmeta.util.UtilData;
 import ognl.OgnlException;
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.actions.MenuActions;
 import xworker.swt.browser.BrowserCallback;
@@ -114,7 +113,7 @@ import xworker.util.StringUtils;
 import xworker.util.XWorkerUtils;
 
 public class SwtUtils {	
-	private static Logger log = LoggerFactory.getLogger(SwtUtils.class);
+	private static final String TAG = SwtUtils.class.getName();
 	private static Map<String ,Integer> swtKeys = new HashMap<String, Integer>();
 	private static List<String> listenerNames = new ArrayList<String>(); //事件的名字列表
 	public static final int ABOVE = 1;
@@ -597,7 +596,7 @@ public class SwtUtils {
 	public static void addDisposeViewer(Widget parent, final String name){
 		parent.addDisposeListener(new DisposeListener(){
 			public void widgetDisposed(DisposeEvent event) {
-				log.info(name + ":" + event.widget + " is disposed!");
+				Executor.info(TAG, name + ":" + event.widget + " is disposed!");
 			}
 			
 		});
@@ -2170,7 +2169,7 @@ public class SwtUtils {
 					isRWT = false;
 				}
 			}catch(Throwable t) {
-				//log.error("Check isRWT error", t);
+				//Executor.error(TAG, "Check isRWT error", t);
 				isRWT = false;
 			}
 		}
@@ -2217,7 +2216,7 @@ public class SwtUtils {
 				return browser.evaluate(script);
 			}
 		}catch(Exception e) {
-			log.error("Executor browser script error", e);
+			Executor.error(TAG, "Executor browser script error", e);
 			return null;
 		}
 	}

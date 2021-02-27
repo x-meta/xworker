@@ -7,16 +7,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class TextDataReactor extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(TextDataReactor.class);
+	private static final String TAG = TextDataReactor.class.getName();
+	
 	Text text;	
 	
 	public TextDataReactor(Text text, Thing self, ActionContext actionContext) {
@@ -118,7 +118,7 @@ public class TextDataReactor extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Text is null, can not create TextDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Text is null, can not create TextDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

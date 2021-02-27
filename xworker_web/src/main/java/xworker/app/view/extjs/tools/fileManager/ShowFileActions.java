@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -41,9 +39,10 @@ import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilMap;
 
 import xworker.app.view.extjs.server.ExtjsUtil;
+import xworker.lang.executor.Executor;
 
 public class ShowFileActions {
-	private static Logger logger = LoggerFactory.getLogger(ShowFileActions.class);
+	private static final String TAG = ShowFileActions.class.getName();
 	
     public static Object doAction(ActionContext actionContext) throws Exception{
         Thing self = actionContext.getObject("self");
@@ -54,7 +53,7 @@ public class ShowFileActions {
         
         //权限检查
         Thing checker = world.getThing(request.getParameter("checker"));
-        logger.info("checker=" + checker);
+        Executor.info(TAG, "checker=" + checker);
         if(checker == null || UtilData.isTrue(checker.doAction("check", actionContext)) != true){
             ExtjsUtil.writeFormResponse(false, "没有权限！",null, actionContext);
             return null;
@@ -81,7 +80,7 @@ public class ShowFileActions {
         if(file.isFile()){
         	ServletContext context = servlet.getServletContext();
         	String contentType = context.getMimeType(file.getPath());
-            logger.info(contentType);
+            Executor.info(TAG, contentType);
             if(contentType.startsWith("text") ){
                 writeFile(file, contentType, response);
                 return null;

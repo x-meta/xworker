@@ -16,16 +16,15 @@
 package xworker.swt.actions;
 
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class ShellActionsShellNormalActionsCreator {
-	private static Logger log = LoggerFactory.getLogger(ShellActionsShellNormalActionsCreator.class);
+	private static final String TAG = ShellActionsShellNormalActionsCreator.class.getName();
 	
     public static void run(ActionContext actionContext) throws OgnlException{
         Thing self = (Thing) actionContext.get("self");
@@ -37,7 +36,7 @@ public class ShellActionsShellNormalActionsCreator {
         
         Shell shell = (Shell) OgnlUtil.getValue(shellName, actionContext);
         if(shell == null){
-            log.warn("ShellNormalActions: shell is not exists, name=" + self.getString("name"));
+            Executor.warn(TAG, "ShellNormalActions: shell is not exists, name=" + self.getString("name"));
             return;
         }
         

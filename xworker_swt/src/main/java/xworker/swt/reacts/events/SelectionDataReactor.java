@@ -6,19 +6,18 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class SelectionDataReactor extends WidgetDataReactor implements Listener{	
-	private static Logger logger = LoggerFactory.getLogger(SelectionDataReactor.class);
+	private static final String TAG = SelectionDataReactor.class.getName();
 	String action = null;
 		
 	public SelectionDataReactor(Widget widget, Thing self, ActionContext actionContext) {
@@ -91,7 +90,7 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 			
 			
 		}catch(Exception e) {
-			logger.warn("Execute doAction error, path=" + self.getMetadata().getPath(), e);
+			Executor.warn(TAG, "Execute doAction error, path=" + self.getMetadata().getPath(), e);
 		}
 	}
 	
@@ -131,7 +130,7 @@ public class SelectionDataReactor extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Widget is null, can not create SelectionDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Widget is null, can not create SelectionDataReactor, thing=" + self.getMetadata().getPath());
 			return null;
 		}		
 	}

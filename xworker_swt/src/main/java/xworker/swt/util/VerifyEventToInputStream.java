@@ -8,14 +8,14 @@ import java.io.PipedOutputStream;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class VerifyEventToInputStream implements VerifyKeyListener, IAction{
-	private static Logger logger = LoggerFactory.getLogger(VerifyEventToInputStream.class);
+	private static final String TAG = VerifyEventToInputStream.class.getName();
 	
 	StyledText text;
 	PipedInputStream in = null;
@@ -60,7 +60,7 @@ public class VerifyEventToInputStream implements VerifyKeyListener, IAction{
 			out.flush();
 			event.doit = doit;
 		} catch (IOException e) {
-			logger.warn("Remove VerifyKeyListener, exception: " + e.getMessage());
+			Executor.warn(TAG, "Remove VerifyKeyListener, exception: " + e.getMessage());
 			text.removeVerifyKeyListener(this);
 		}
 	}

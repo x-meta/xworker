@@ -8,17 +8,16 @@ import org.mortbay.jetty.nio.BlockingChannelConnector;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 
-import xworker.cache.object.ThingObject;
 import xworker.cache.object.ObjectManager;
+import xworker.cache.object.ThingObject;
+import xworker.lang.executor.Executor;
 
 public class JettyActions {
-	private static Logger logger = LoggerFactory.getLogger(JettyActions.class);
+	private static final String TAG = JettyActions.class.getName();
 		
 	public static void stop(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -28,7 +27,7 @@ public class JettyActions {
 			try {
 				server.stop();
 			} catch (Exception e) {
-				logger.info("Stop jetty error, path=" + self.getMetadata().getPath(), e);
+				Executor.info(TAG, "Stop jetty error, path=" + self.getMetadata().getPath(), e);
 			}
 		}
 		
@@ -74,7 +73,7 @@ public class JettyActions {
 						aserver.start();
 						aserver.join();
 					} catch (Exception e) {
-						logger.error("Start jetty server error", e);
+						Executor.error(TAG, "Start jetty server error", e);
 					}
 					
 				}
@@ -82,7 +81,7 @@ public class JettyActions {
 			
 			putServer(self, server, actionContext);
 		}else{
-			logger.info("jetty server is already exists and running, path=" + self.getMetadata().getPath());
+			Executor.info(TAG, "jetty server is already exists and running, path=" + self.getMetadata().getPath());
 		}
 		
 		return server;

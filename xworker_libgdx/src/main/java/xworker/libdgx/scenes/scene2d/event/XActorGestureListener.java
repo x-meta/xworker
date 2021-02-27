@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -13,8 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ActorGestureListener;
 
+import xworker.lang.executor.Executor;
+
 public class XActorGestureListener extends ActorGestureListener{
-	private static Logger logger = LoggerFactory.getLogger(XActorGestureListener.class);
+	private static final String TAG = XActorGestureListener.class.getName();
 	
 	Thing thing;
 	ActionContext actionContext;
@@ -31,7 +31,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{			
 			thing.doAction("fling", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=fling, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=fling, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -46,7 +46,7 @@ public class XActorGestureListener extends ActorGestureListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=longPress, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=longPress, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -58,7 +58,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("pan", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=pan, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=pan, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -70,7 +70,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("pinch", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=pinch, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=pinch, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -80,7 +80,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("tap", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=tap, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=tap, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("touchDown", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=touchDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=touchDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("touchUp", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=touchUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=touchUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -112,7 +112,7 @@ public class XActorGestureListener extends ActorGestureListener{
 		try{	
 			thing.doAction("zoom", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=zoom, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=zoom, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 

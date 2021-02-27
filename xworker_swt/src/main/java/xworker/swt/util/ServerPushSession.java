@@ -3,11 +3,11 @@ package xworker.swt.util;
 import java.lang.reflect.Method;
 
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 兼容RWT的ServerPaushSession;
@@ -16,7 +16,7 @@ import org.xmeta.World;
  *
  */
 public class ServerPushSession {
-	private static Logger logger = LoggerFactory.getLogger(ServerPushSession.class);
+	private static final String TAG = ServerPushSession.class.getName();
 	
 	private static Class<?> cls;
 	private static Method start;
@@ -29,7 +29,7 @@ public class ServerPushSession {
 				start = cls.getDeclaredMethod("start", new Class<?>[] {});
 				stop = cls.getDeclaredMethod("stop", new Class<?>[] {});
 			}catch(Exception e) {
-				logger.error("Init ServerPushSession  exception", e);
+				Executor.error(TAG, "Init ServerPushSession  exception", e);
 			}
 		}
 	}
@@ -40,7 +40,7 @@ public class ServerPushSession {
 			try {
 				instance = cls.getConstructor(new Class<?>[0]).newInstance(new Object[0]);
 			} catch (Exception e) {
-				logger.error("Init ServerPushSession  exception", e);
+				Executor.error(TAG, "Init ServerPushSession  exception", e);
 			} 
 		}
 	}
@@ -50,7 +50,7 @@ public class ServerPushSession {
 			try {
 				start.invoke(instance, new Object[] {});
 			} catch (Exception e) {
-				logger.error("Execute ServerPushSession start exception", e);
+				Executor.error(TAG, "Execute ServerPushSession start exception", e);
 			} 
 		}
 	}
@@ -60,7 +60,7 @@ public class ServerPushSession {
 			try {
 				stop.invoke(instance, new Object[] {});
 			} catch (Exception e) {
-				logger.error("Execute ServerPushSession stop exception", e);
+				Executor.error(TAG, "Execute ServerPushSession stop exception", e);
 			} 
 		}
 	}
@@ -104,7 +104,7 @@ public class ServerPushSession {
 			control.getDisplay().asyncExec(new SessionRunable(thing, session));
 			control.getDisplay().wake();
 		}catch(Exception e) {
-			logger.error("ServerPushSession task error, thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "ServerPushSession task error, thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 	
@@ -123,7 +123,7 @@ public class ServerPushSession {
 				session.start();
 				//System.out.println("Server Push Session run");
 			}catch(Exception e) {
-				logger.error("ServerPushSession task error, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "ServerPushSession task error, thing=" + thing.getMetadata().getPath(), e);
 			}
 		}
 	}

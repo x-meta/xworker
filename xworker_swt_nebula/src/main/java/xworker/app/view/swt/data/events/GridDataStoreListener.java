@@ -17,8 +17,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,11 +26,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtUtils;
 
 public class GridDataStoreListener {
-	private static Logger log = LoggerFactory.getLogger(GridDataStoreListener.class);
+	private static final String TAG = GridDataStoreListener.class.getName();
 	
 	/**
 	 * 列转要显示的字符串。
@@ -60,7 +59,7 @@ public class GridDataStoreListener {
 		    //先从显示字段中取
 		    String disField = column.getStringBlankAsNull("displayField");
 		    if(disField != null){
-		        //log.info("display=" + disField);
+		        //Executor.info(TAG, "display=" + disField);
 		        String[] diss = disField.split("[.]");
 		        Object v = record;
 		        try{
@@ -71,7 +70,7 @@ public class GridDataStoreListener {
 		            		v = null;
 		            	}
 		                
-		                //log.info("value=" + v);
+		                //Executor.info(TAG, "value=" + v);
 		                if(v == null){
 		                    break;
 		                }                        
@@ -81,7 +80,7 @@ public class GridDataStoreListener {
 		            }
 		        }catch(Exception e){
 		            v = null;
-		            log.warn("GridDataStoreListener: get display error," + disField, e);
+		            Executor.warn(TAG, "GridDataStoreListener: get display error," + disField, e);
 		        }
 		    }
 		        
@@ -114,7 +113,7 @@ public class GridDataStoreListener {
 		Thing at = (Thing) column.get("EditConfig@0");
 
 		String attributePath = attribute.getMetadata().getPath(); //保存原有的事物路径，方便Desinger能够正确打开原先的属性
-		//log.info("attributePath=" + attributePath);
+		//Executor.info(TAG, "attributePath=" + attributePath);
 		if(at != null){
 		    //由于config中只定义了样式，没有属性的基本数据等，所以复制
 		    Thing attemp = at.detach();
@@ -288,7 +287,7 @@ public class GridDataStoreListener {
 			            }
 			        }
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener onRemove error", t);
+			        Executor.error(TAG, "GridDataStoreListener onRemove error", t);
 			    }
 			}
 		});
@@ -316,7 +315,7 @@ public class GridDataStoreListener {
 			            for(GridItem item : grid.getItems()){
 			                DataObject itemRecord = (DataObject) item.getData("_store_record");
 			                if(record == itemRecord){
-			                    //log.info("DataStore: update table item");
+			                    //Executor.info(TAG, "DataStore: update table item");
 			                    String[] texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));
 			                    for(int i=0; i<texts.length; i++) {
 			                    	item.setText(i, texts[i]);
@@ -335,7 +334,7 @@ public class GridDataStoreListener {
 			        }
 			        grid.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener onUpdate error", t);
+			        Executor.error(TAG, "GridDataStoreListener onUpdate error", t);
 			    }
 			}
 		});
@@ -381,7 +380,7 @@ public class GridDataStoreListener {
 			            gridItem.setData("_store_record", record);
 			        }
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener onInsert error", t);
+			        Executor.error(TAG, "GridDataStoreListener onInsert error", t);
 			    }
 			}
 		});
@@ -409,7 +408,7 @@ public class GridDataStoreListener {
 			        GridItem item = new GridItem(grid, SWT.NONE);
 			        item.setText("loading...");
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener beforeLoad error", t);
+			        Executor.error(TAG, "GridDataStoreListener beforeLoad error", t);
 			    }
 			}
 		});
@@ -439,12 +438,12 @@ public class GridDataStoreListener {
 			        
 			        List<DataObject> records = (List<DataObject>) store.get("records");
 			        if(records != null){
-			            //log.info("records=" + store.records);
+			            //Executor.info(TAG, "records=" + store.records);
 			            for(DataObject record : records){
-			                //log.info("record=" + record);
+			                //Executor.info(TAG, "record=" + record);
 			                String[] texts = null;
 			                texts = (String[]) self.doAction("recordToRowTexts", actionContext, UtilMap.toMap(new Object[]{"record", record}));
-			                //log.info("texts=" + texts);
+			                //Executor.info(TAG, "texts=" + texts);
 			                GridItem gridItem = new GridItem(grid, SWT.NONE);
 			                for(int i=0; i<texts.length; i++) {
 		                    	gridItem.setText(i, texts[i]);
@@ -475,7 +474,7 @@ public class GridDataStoreListener {
 			        }
 			        
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener onLoaded error", t);
+			        Executor.error(TAG, "GridDataStoreListener onLoaded error", t);
 			    }
 			}
 		};
@@ -534,7 +533,7 @@ public class GridDataStoreListener {
 			        //重新组建表格的列
 			        Thing dataObject = (Thing) store.get("dataObject");
 			        if(dataObject == null){
-			            log.info("GridDataStoreListener store dataObject is null");
+			            Executor.info(TAG, "GridDataStoreListener store dataObject is null");
 			            return;
 			        }
 			        
@@ -585,7 +584,7 @@ public class GridDataStoreListener {
 			                //是否可排序
 			                Thing sortListener = world.getThing("xworker.app.view.swt.data.events.GridColumnSortListener");
 			                SwtListener columnListener = new SwtListener(sortListener, actionContext, true);
-			                //log.info(attr.getString("name") + "=" + attr.getBoolean("gridSortable"));
+			                //Executor.info(TAG, attr.getString("name") + "=" + attr.getBoolean("gridSortable"));
 			                if(attr.getBoolean("gridSortable")){
 			                    column.addListener(SWT.Selection, columnListener);
 			                }
@@ -654,7 +653,7 @@ public class GridDataStoreListener {
 				        item.setText("loading...");
 			        }
 			    }catch(Throwable t){
-			        log.error("GridDataStoreListener onReconfig error", t);
+			        Executor.error(TAG, "GridDataStoreListener onReconfig error", t);
 			    }    	
 			}
 		});

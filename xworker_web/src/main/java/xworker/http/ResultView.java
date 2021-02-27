@@ -23,8 +23,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -32,6 +30,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
 import freemarker.template.TemplateException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilTemplate;
 
 /**
@@ -41,7 +40,7 @@ import xworker.util.UtilTemplate;
  *
  */
 public class ResultView {
-	private static Logger log = LoggerFactory.getLogger(ResultView.class);
+	private static final String TAG = ResultView.class.getName();
 	
 	public static void doResult(ActionContext actionContext) throws IOException, TemplateException{		
 		//long start = System.currentTimeMillis();
@@ -85,7 +84,7 @@ public class ResultView {
 			path = UtilTemplate.processString(actionContext, resultObject.getMetadata().getPath() + "value", path);
         }
 		if(path == null || "".equals(path)){
-			log.warn("Freemarker template not found:" + path);
+			Executor.warn(TAG, "Freemarker template not found:" + path);
 			return;
 		}
 		
@@ -157,7 +156,7 @@ public class ResultView {
 			model.setData("_form_LastModified_" + type, null);
 			model.setData("_form_TemplateName_" + type, null);
 			
-			log.error("template error : " + templateName);
+			Executor.error(TAG, "template error : " + templateName);
 			
 			throw t;
 		}
@@ -183,7 +182,7 @@ public class ResultView {
 			formObject = World.getInstance().getThing(path);
 		}		
 		if(formObject == null){
-			log.warn("form thing is not found : " + resultObject.getString("value"));
+			Executor.warn(TAG, "form thing is not found : " + resultObject.getString("value"));
 			return;
 		}
 		

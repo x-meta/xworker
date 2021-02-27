@@ -17,8 +17,6 @@ package xworker.app.view.swt.app.workbentch.actions;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -27,10 +25,11 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 public class SwtNavigationTreeActionCreator {
-	private static Logger logger = LoggerFactory.getLogger(SwtNavigationTreeActionCreator.class);
+	private static final String TAG = SwtNavigationTreeActionCreator.class.getName();
 	
     public static void run(ActionContext actionContext) throws OgnlException{
     	Thing self = (Thing) actionContext.get("self");
@@ -68,7 +67,7 @@ public class SwtNavigationTreeActionCreator {
 	                if(action != null){
 	                    action.run(actionContext, UtilMap.toMap(new Object[]{"data", data}));
 	                }else{
-	                    logger.info("NavigationTreeAction-TypeAciton: action not exits, action=" + self.get("value"));
+	                    Executor.info(TAG, "NavigationTreeAction-TypeAciton: action not exits, action=" + self.get("value"));
 	                }
             	}
             }
@@ -86,7 +85,7 @@ public class SwtNavigationTreeActionCreator {
         			if(action != null){
         				action.run(workbentchActions.getActionContext());
         			}else{
-        				logger.warn("SWTNavigaitonTreeAction: action is null, url= " + url);
+        				Executor.warn(TAG, "SWTNavigaitonTreeAction: action is null, url= " + url);
         			}
         		}
         	}

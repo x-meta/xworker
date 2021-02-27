@@ -7,8 +7,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -19,6 +17,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
+import xworker.lang.executor.Executor;
+
 /**
  * 由于LwjglApplication似乎只能在一个VM中启动一个，因此创建一个默认的一直执行的默认应用
  * 
@@ -26,7 +26,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
  *
  */
 public class ScreenManager {
-	private static Logger logger = LoggerFactory.getLogger(ScreenManager.class);
+	private static final String TAG = ScreenManager.class.getName();
 	
 	private static LwjglApplication app;
 	private static Shell shell;
@@ -66,7 +66,7 @@ public class ScreenManager {
 					        if (!display.readAndDispatch ()) display.sleep ();
 					    }
 					}catch(Exception e){
-						logger.error("start libgdx error");
+						Executor.error(TAG, "start libgdx error");
 					}
 				    display.dispose ();
 				}
@@ -110,7 +110,7 @@ public class ScreenManager {
 					
 					ScreenManager.setScreen(path, screen);
 				}catch(Exception e){
-					logger.error("set screen error, thing=" + screenThing.getMetadata().getPath(), e);
+					Executor.error(TAG, "set screen error, thing=" + screenThing.getMetadata().getPath(), e);
 				}
 			}
 		};

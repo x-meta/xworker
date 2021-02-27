@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Category;
 import org.xmeta.Index;
@@ -20,13 +18,14 @@ import org.xmeta.util.ExceptionUtil;
 import org.xmeta.util.UtilMap;
 
 import xworker.app.model.tree.impl.ThingTreeModelActions;
-import xworker.dataObject.utils.JacksonFormator;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
+import xworker.util.JacksonFormator;
 
 public class ThingForm {
-	private static Logger log = LoggerFactory.getLogger(ThingForm.class);
+	private static final String TAG = ThingForm.class.getName();
 
 	@SuppressWarnings("deprecation")
 	public static void read(ActionContext actionContext) throws IOException {
@@ -66,7 +65,7 @@ public class ThingForm {
 					result.put("msg", "数据读取成功");
 				}
 			} catch (Exception e) {
-				log.error("数据读取失败", e);
+				Executor.error(TAG, "数据读取失败", e);
 				result.put("success", "false");
 				result.put("msg", JsonFormator.formatString(ExceptionUtil
 						.getRootMessage(e)));
@@ -118,7 +117,7 @@ public class ThingForm {
 				record = "{thingPath: '" + thingPath + "'}";
 				result.put("msg", "事物已经删除！");
 			} catch (Exception e) {
-				log.error("数据读取失败", e);
+				Executor.error(TAG, "数据读取失败", e);
 				result.put("success", "false");
 				result.put("msg", JsonFormator.formatString(ExceptionUtil
 						.getRootMessage(e)));
@@ -168,14 +167,14 @@ public class ThingForm {
 					String name = attr.getMetadata().getName();
 					thing.put(name, request.getParameter(name));
 					if ("closeAction".equals(name)) {
-						log.info(name + "=" + request.getParameter(name));
+						Executor.info(TAG, name + "=" + request.getParameter(name));
 					}
 				}
 				thing.save();
 				record = "{}";
 				result.put("msg", "保存成功！");
 			} catch (Exception e) {
-				log.error("数据读取失败", e);
+				Executor.error(TAG, "数据读取失败", e);
 				result.put("success", "false");
 				result.put("msg", JsonFormator.formatString(ExceptionUtil
 						.getRootMessage(e)));
@@ -278,7 +277,7 @@ public class ThingForm {
 				record = "{}";
 				result.put("msg", "保存成功！");
 			} catch (Exception e) {
-				log.error("数据读取失败", e);
+				Executor.error(TAG, "数据读取失败", e);
 				result.put("success", "false");
 				result.put("msg", JsonFormator.formatString(ExceptionUtil
 						.getRootMessage(e)));
@@ -329,7 +328,7 @@ public class ThingForm {
 				record = "{path:'" + child.getMetadata().getPath() + "', name:'" + child.getMetadata().getName() + "', icon:'" + icon + "'}";
 				result.put("msg", "保存成功！");
 			} catch (Exception e) {
-				log.error("数据读取失败", e);
+				Executor.error(TAG, "数据读取失败", e);
 				result.put("success", "false");
 				result.put("msg", JsonFormator.formatString(ExceptionUtil
 						.getRootMessage(e)));

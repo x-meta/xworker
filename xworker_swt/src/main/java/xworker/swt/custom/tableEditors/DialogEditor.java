@@ -7,8 +7,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -16,12 +14,13 @@ import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionParams;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtDialogCallback;
 
 @ActionClass(creator="createInstance")
 public class DialogEditor extends AbstractTableEditor{
-	private static Logger logger = LoggerFactory.getLogger(DialogEditor.class);
+	private static final String TAG = DialogEditor.class.getName();
 	
 	Thing shellThing;
 	Shell shell;
@@ -49,7 +48,7 @@ public class DialogEditor extends AbstractTableEditor{
 			public void handleEvent(Event event) {
 				try {
 					if(shellThing == null) {
-						logger.warn("shell thing is null, path=" + self.getMetadata().getPath());
+						Executor.warn(TAG, "shell thing is null, path=" + self.getMetadata().getPath());
 						return;
 					}
 					
@@ -77,7 +76,7 @@ public class DialogEditor extends AbstractTableEditor{
 						}						
 					});
 				}catch(Exception e) {
-					logger.error("Open dialog error, path=" + self.getMetadata().getPath(), e);
+					Executor.error(TAG, "Open dialog error, path=" + self.getMetadata().getPath(), e);
 				}
 			}			
 		};

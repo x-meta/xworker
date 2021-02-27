@@ -3,18 +3,13 @@ package xworker.swt.xwidgets;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
-import xworker.swt.actions.EditorActions;
 
 public class Editor {
-	private static Logger logger = LoggerFactory.getLogger(EditorActions.class);
-	
 	Thing thing;
 	Composite parent;
 	ActionContext actionContext;

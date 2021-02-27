@@ -1,11 +1,11 @@
 package xworker.swt.xworker;
 
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import xworker.lang.executor.Executor;
 
 public class DelayAction implements Runnable{
-	private static Logger logger = LoggerFactory.getLogger(DelayAction.class);
+	private static final String TAG = DelayAction.class.getName();
 	
 	private boolean cancel = false;
 	private long delay = 2000;
@@ -36,7 +36,7 @@ public class DelayAction implements Runnable{
 				}
 			}
 		}catch(Exception e){
-			logger.error("DelayAction error", e);
+			Executor.error(TAG, "DelayAction error", e);
 		}
 	}
 	

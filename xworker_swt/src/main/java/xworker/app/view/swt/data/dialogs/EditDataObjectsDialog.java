@@ -11,8 +11,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -20,11 +18,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.editor.EditorModifyListener;
 
 public class EditDataObjectsDialog {
-	private static Logger logger = LoggerFactory.getLogger(EditDataObjectsDialog.class);
+	private static final String TAG = EditDataObjectsDialog.class.getName();
 	
 	@SuppressWarnings("unchecked")
 	public static void saveAll(ActionContext actionContext){
@@ -71,7 +70,7 @@ public class EditDataObjectsDialog {
 		    }
 		    box.open();
 		}catch(Exception e){
-			logger.error("save all error", e);
+			Executor.error(TAG, "save all error", e);
 		    MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 		    box.setText(shell.getText());
 		    if(count > 0){
@@ -132,7 +131,7 @@ public class EditDataObjectsDialog {
 		    
 		    shell.dispose();   
 		}catch(Exception e){
-		    logger.error("ok button error", e);
+		    Executor.error(TAG, "ok button error", e);
 		    MessageBox box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 		    box.setText(shell.getText());
 		    if(count > 0){
@@ -159,7 +158,7 @@ public class EditDataObjectsDialog {
 		
 		modifyLabel.setText("***");
 		statusArray.set(currentIndex, true);
-		logger.info("modify currentIndex=" + currentIndex + "=" + statusArray.get(currentIndex));
+		Executor.info(TAG, "modify currentIndex=" + currentIndex + "=" + statusArray.get(currentIndex));
 	}
 	
 	public static void init(ActionContext actionContext){
@@ -269,7 +268,7 @@ public class EditDataObjectsDialog {
 		Button autoSaveButton = actionContext.getObject("autoSaveButton");
 		
 		if(currentIndex != pageInfo.getStart()){
-		    logger.info("status=" + currentIndex + "=" + statusArray.get(currentIndex));
+		    Executor.info(TAG, "status=" + currentIndex + "=" + statusArray.get(currentIndex));
 		    if(statusArray.get(currentIndex)){
 		        DataObject values = (DataObject) form.doAction("getValues", actionContext);
 		        modifyedDataObjects.put(currentIndex, values);
@@ -283,9 +282,9 @@ public class EditDataObjectsDialog {
 		                dataObjects.set(currentIndex,  dataObject);
 		                statusArray.set(currentIndex, false);
 		                unsavedDataObjects.remove(currentIndex);
-		                logger.info("updated");
+		                Executor.info(TAG, "updated");
 		            }catch(Exception e){
-		                logger.error("update data error", e);
+		                Executor.error(TAG, "update data error", e);
 		                MessageBox box = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 		                box.setText(shell.getText());
 		                box.setMessage("" + e.getMessage());

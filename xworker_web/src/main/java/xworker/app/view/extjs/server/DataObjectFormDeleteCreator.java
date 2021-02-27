@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -32,11 +30,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataObjectFormDeleteCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectFormDeleteCreator.class);
+	private static final String TAG = DataObjectFormDeleteCreator.class.getName();
 	
     @SuppressWarnings("deprecation")
 	public static void doAction(ActionContext actionContext) throws IOException{
@@ -73,7 +72,7 @@ public class DataObjectFormDeleteCreator {
                     result.put("msg", "数据删除成功");
                 }
             }catch(Exception e){
-                log.error("删除数据失败", e);
+                Executor.error(TAG, "删除数据失败", e);
                 result.put("success", "false");
                 result.put("msg", JsonFormator.formatString(ExceptionUtil.getRootMessage(e)));
             }

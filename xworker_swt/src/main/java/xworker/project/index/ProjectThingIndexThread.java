@@ -3,10 +3,10 @@ package xworker.project.index;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Category;
 import org.xmeta.Thing;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 索引可能会消耗一定的时间，所以放在后台运行。
@@ -16,7 +16,7 @@ import org.xmeta.Thing;
  *
  */
 public class ProjectThingIndexThread {
-	private static Logger logger = LoggerFactory.getLogger(ProjectThingIndexThread.class);
+	private static final String TAG = ProjectThingIndexThread.class.getName();
 	
 	/** 用于锁定的对象 */
 	private static Object lockObj = new Object();
@@ -40,7 +40,7 @@ public class ProjectThingIndexThread {
 						}
 					}
 				}catch(Exception e){
-					logger.error("Index porject thing error", e);
+					Executor.error(TAG, "Index porject thing error", e);
 				}
 			}
 		}

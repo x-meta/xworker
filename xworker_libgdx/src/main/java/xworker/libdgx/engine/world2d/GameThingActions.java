@@ -1,7 +1,5 @@
 package xworker.libdgx.engine.world2d;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -13,10 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilMath;
 
 public class GameThingActions {
-	private static Logger logger = LoggerFactory.getLogger(GameThingActions.class);
+	private static final String TAG = GameThingActions.class.getName();
 	
 	public static void setActorAction(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -28,7 +27,7 @@ public class GameThingActions {
 		if(gameThing != null && actor != null){
 			gameThing.startAction(action, actor);
 		}else{
-			logger.warn("GameThing or Actor is null, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "GameThing or Actor is null, thing=" + self.getMetadata().getPath());
 		}
 	}
 	
@@ -58,7 +57,7 @@ public class GameThingActions {
 				}
 			}
 		}else{
-			logger.warn("GameThing or Actor is null, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "GameThing or Actor is null, thing=" + self.getMetadata().getPath());
 		}
 	}
 }

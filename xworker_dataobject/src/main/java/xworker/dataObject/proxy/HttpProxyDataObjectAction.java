@@ -38,7 +38,7 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectConstants;
 import xworker.dataObject.DataObjectException;
 import xworker.dataObject.PageInfo;
-import xworker.dataObject.utils.JacksonFormator;
+import xworker.util.JacksonFormator;
 
 public class HttpProxyDataObjectAction { 
 	/**

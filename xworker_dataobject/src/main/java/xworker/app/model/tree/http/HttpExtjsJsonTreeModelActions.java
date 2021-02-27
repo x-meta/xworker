@@ -28,17 +28,16 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 
 public class HttpExtjsJsonTreeModelActions {
-	private static Logger logger = LoggerFactory.getLogger(HttpExtjsJsonTreeModelActions.class);
+	private static final String TAG = HttpExtjsJsonTreeModelActions.class.getName();
 	
 	/**
 	 * 向服务器抓取数据。
@@ -76,7 +75,7 @@ public class HttpExtjsJsonTreeModelActions {
 				 
 				 return datas;
 			}catch(Exception e){
-				logger.error("Get tree content error", e);
+				Executor.error(TAG, "Get tree content error", e);
 			}finally{
 				if(entity != null){
 					EntityUtils.consume(entity);
@@ -116,7 +115,7 @@ public class HttpExtjsJsonTreeModelActions {
 				client = (HttpClient) httpClientThing.doAction("getHttpClient", actionContext);
 			}
 			if(client == null){
-				logger.info("Cann't get httpclient, path=" + httpClientPath + ",thing=" + self);
+				Executor.info(TAG, "Cann't get httpclient, path=" + httpClientPath + ",thing=" + self);
 			}
 		}else{
 			Thing httpClientThing = self.getThing("HttpClient@0");

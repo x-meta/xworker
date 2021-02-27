@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -32,11 +30,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataObjectFormReadCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectFormReadCreator.class);
+	private static final String TAG = DataObjectFormReadCreator.class.getName();
 	
     @SuppressWarnings("deprecation")
 	public static void doAction(ActionContext actionContext) throws IOException{
@@ -72,7 +71,7 @@ public class DataObjectFormReadCreator {
                     result.put("msg", "数据读取成功");
                 }
             }catch(Exception e){
-                log.error("数据读取失败", e);
+                Executor.error(TAG, "数据读取失败", e);
                 result.put("success", "false");
                 result.put("msg", JsonFormator.formatString(ExceptionUtil.getRootMessage(e)));
             }

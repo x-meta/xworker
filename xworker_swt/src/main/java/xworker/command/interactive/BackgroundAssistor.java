@@ -4,8 +4,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import xworker.lang.executor.Executor;
 
 /**
  * 基于InteractiveUI的后台辅助程序。
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BackgroundAssistor implements Runnable, Listener{
-	private static Logger logger = LoggerFactory.getLogger(BackgroundAssistor.class);
+	private static final String TAG = BackgroundAssistor.class.getName();
 	
 	/** 主要监听鼠标和键盘事件，用来判断用户的状态 */
 	private static int[] eventTypes = {
@@ -51,7 +51,7 @@ public class BackgroundAssistor implements Runnable, Listener{
 	}
 	
 	public void run(){
-		logger.info("BackgroundAssistor started");
+		Executor.info(TAG, "BackgroundAssistor started");
 		while(true){
 			if(stoped){
 				break;
@@ -70,7 +70,7 @@ public class BackgroundAssistor implements Runnable, Listener{
 			}
 		}
 		
-		logger.info("BackgroundAssistor stoped");
+		Executor.info(TAG, "BackgroundAssistor stoped");
 	}
 
 	@Override

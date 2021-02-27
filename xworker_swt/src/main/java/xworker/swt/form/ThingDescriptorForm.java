@@ -49,8 +49,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -59,6 +57,7 @@ import org.xmeta.util.ThingRegistor;
 import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.DialogCallback;
@@ -74,7 +73,7 @@ import xworker.swt.xworker.attributeEditor.AttributeEditorFactory;
  *
  */
 public class ThingDescriptorForm {
-	private static Logger log = LoggerFactory.getLogger(ThingDescriptorForm.class);
+	private static final String TAG = ThingDescriptorForm.class.getName();
 	
 	/**
 	 * 指定要编辑的事物和表单包含于的Composite创建一个事物编辑表单。
@@ -409,7 +408,7 @@ public class ThingDescriptorForm {
 		    	try{
 		    		swt.doAction("create", editorActionContext);
 		    	}catch(Exception eee){
-		    		log.error("create structure extend swt obj", eee);
+		    		Executor.error(TAG, "create structure extend swt obj", eee);
 		    	}
 		    }
 		}finally{
@@ -544,9 +543,7 @@ public class ThingDescriptorForm {
 		
 		Thing self = (Thing) context.get("self");		
 		if(self == null) {
-			if(log.isInfoEnabled()){
-				log.info("必须以事物的行为方式运行");
-			}
+			Executor.info(TAG, "必须以事物的行为方式运行");
 			return null;
 		}		
 		
@@ -556,18 +553,14 @@ public class ThingDescriptorForm {
 			structObject = self.getThing("descriptorThing@0");
 		}
 		if(structObject == null) {
-			if(log.isInfoEnabled()){
-				log.info("没有设定事物描述或指定的事物描述路径不存在");
-			}
+			Executor.info(TAG, "没有设定事物描述或指定的事物描述路径不存在");
 			return null;
 		}
 				
 		Composite parent = null;
 		Object parentObj = context.get("parent");
 		if(parentObj == null || !(parentObj instanceof Composite)){
-			if(log.isInfoEnabled()){
-				log.info("没有指定父SWT对象");
-			}
+			Executor.info(TAG, "没有指定父SWT对象");
 		}else{
 			parent = (Composite) parentObj;
 		}
@@ -836,7 +829,7 @@ public class ThingDescriptorForm {
 		    	try{
 		    		swt.doAction("create", editorActionContext);
 		    	}catch(Exception eee){
-		    		log.error("create structure extend swt obj", eee);
+		    		Executor.error(TAG, "create structure extend swt obj", eee);
 		    	}
 		    }
 		}finally{
@@ -1049,7 +1042,7 @@ public class ThingDescriptorForm {
                 dataStoreThing.put("queryConfig", queryConfig);
                 if(queryConfig == null){
                     Thing qcfg = attribute.getThing("SelectCondition@0");
-                    //log.info("select condition =" + qcfg);
+                    //Executor.info(TAG, "select condition =" + qcfg);
                     if(qcfg != null){
                     	dataStoreThing.put("queryConfig", qcfg.getMetadata().getPath());
                     }

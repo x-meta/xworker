@@ -24,8 +24,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -36,9 +34,10 @@ import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class MapDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(MapDataObjectActions.class);
+	private static final String TAG = MapDataObjectActions.class.getName();
 	
 	@SuppressWarnings("unchecked")
 	private static Map<String, Object> getMapData(Thing self, ActionContext actionContext) throws OgnlException{
@@ -160,7 +159,7 @@ public class MapDataObjectActions {
         Map<String, Object> mapData = ( Map<String, Object>) OgnlUtil.getValue(mapVarName, actionContext);
         List<Object> instance = new ArrayList<Object>();
         if(mapData == null){
-            logger.info("map data is null,mapVarName=" + mapVarName);
+            Executor.info(TAG, "map data is null,mapVarName=" + mapVarName);
             return Collections.EMPTY_LIST;
         }
         for(String key : mapData.keySet()){

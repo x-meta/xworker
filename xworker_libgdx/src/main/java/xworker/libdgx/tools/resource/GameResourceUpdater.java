@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -23,11 +21,12 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.DataObjectUtil;
+import xworker.lang.executor.Executor;
 import xworker.task.UserTask;
 import xworker.task.UserTaskManager;
 
 public class GameResourceUpdater {
-	private static Logger logger = LoggerFactory.getLogger(GameResourceUpdater.class);
+	private static final String TAG = GameResourceUpdater.class.getName(); 
 	
 	/** 文件类型 */
 	private static Map<String, Thing> fileTypes = new HashMap<String, Thing>();
@@ -206,7 +205,7 @@ public class GameResourceUpdater {
 				
 				log.put(path, file.lastModified());
 			}catch(Exception e){
-				logger.error("Game resource update file error: file=" + file, e);
+				Executor.error(TAG, "Game resource update file error: file=" + file, e);
 			}finally{
 				task.completeJobs(1);
 			}

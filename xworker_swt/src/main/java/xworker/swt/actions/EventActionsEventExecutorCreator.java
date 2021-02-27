@@ -21,13 +21,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class EventActionsEventExecutorCreator {
-	private static Logger log = LoggerFactory.getLogger(EventActionsEventExecutorCreator.class);
+	private static final String TAG = EventActionsEventExecutorCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static void run(ActionContext actionContext){
@@ -63,7 +63,7 @@ public class EventActionsEventExecutorCreator {
                 }
             }
         }catch(Exception e){
-            log.error("EventActions exception", e);
+            Executor.error(TAG, "EventActions exception", e);
             String exceptionMessage = self.getString("exceptionMessage");
             if(exceptionMessage != null && !"".equals(exceptionMessage)){
                 String swtIcon = self.getString("successIcon");

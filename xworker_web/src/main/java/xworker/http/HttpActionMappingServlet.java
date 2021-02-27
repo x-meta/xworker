@@ -24,17 +24,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Category;
 import org.xmeta.Thing;
 import org.xmeta.ThingManager;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class HttpActionMappingServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	private static Logger log = LoggerFactory.getLogger(HttpServletDo.class);
+	private static final String TAG = HttpActionMappingServlet.class.getName();
 	public static Map<String, String> mappings = null;
 	
 	private static World world = World.getInstance();
@@ -120,7 +120,7 @@ public class HttpActionMappingServlet extends HttpServlet{
 		if(webControl == null){		
 			response.setContentType("text/plain; charset=utf-8");
 			response.getWriter().print("webControl不存在：" + webControlName);
-			log.warn("webControl不存在：" + webControlName);
+			Executor.warn(TAG, "webControl不存在：" + webControlName);
 			//throw new ServletException();
 		}else{
 			try{
@@ -133,8 +133,8 @@ public class HttpActionMappingServlet extends HttpServlet{
 				}
 			}
 		}
-		if(HttpServletDo.debug && log.isInfoEnabled()){
-			log.info("web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
+		if(HttpServletDo.debug){
+			Executor.info(TAG, "web control time: " + (System.currentTimeMillis() - start) + ":" + (System.nanoTime() - startN) + "  " + webControlName);
 		}
 	}
 	

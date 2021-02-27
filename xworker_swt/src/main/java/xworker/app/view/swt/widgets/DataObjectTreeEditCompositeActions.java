@@ -28,8 +28,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -38,12 +36,13 @@ import org.xmeta.World;
 import xworker.app.view.swt.data.events.TreeDataStoreListener;
 import xworker.dataObject.DataObject;
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtDialogCallback;
 import xworker.util.XWorkerUtils;
 
 public class DataObjectTreeEditCompositeActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectTreeEditCompositeActions.class);
+	private static final String TAG = DataObjectTreeEditCompositeActions.class.getName();
 	
     public static Object create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
@@ -58,7 +57,7 @@ public class DataObjectTreeEditCompositeActions {
             }
         }
         if(dataObject == null){
-            logger.warn("QueryTalbeComposite: dataObject is null, dataObject=" + self.getString("dataObject"));
+            Executor.warn(TAG, "QueryTalbeComposite: dataObject is null, dataObject=" + self.getString("dataObject"));
             return null;
         }
         
@@ -259,7 +258,7 @@ public class DataObjectTreeEditCompositeActions {
             });
             
         }catch(Exception e){
-            logger.error("add child error", e);
+            Executor.error(TAG, "add child error", e);
         }finally{
             actionContext.pop();
         }
@@ -320,7 +319,7 @@ public class DataObjectTreeEditCompositeActions {
                 treeItem.setData("_store_record", dataObject);
             }
         }catch(Exception e){
-            logger.error("add child error", e);
+            Executor.error(TAG, "add child error", e);
         }
     }
 

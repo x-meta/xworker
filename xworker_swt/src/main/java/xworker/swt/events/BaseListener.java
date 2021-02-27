@@ -19,15 +19,15 @@ import java.lang.reflect.Method;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 public class BaseListener {
-	private static Logger log = LoggerFactory.getLogger(BaseListener.class);
+	private static final String TAG = BaseListener.class.getName();
 	static World world = World.getInstance();
 	
 	ActionContext actionContext;
@@ -93,7 +93,7 @@ public class BaseListener {
 					method.invoke(parent, new Object[]{this});
 				}
 			}catch(Exception e){
-				log.warn("add listener error, methodName=" + methodName + ",class=" + aclass, e);
+				Executor.warn(TAG, "add listener error, methodName=" + methodName + ",class=" + aclass, e);
 			}
 		}
 	}

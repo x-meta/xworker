@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -33,11 +31,12 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.util.XWorkerUtils;
 
 public class UtilBrowserCreator {
-	private static Logger log = LoggerFactory.getLogger(UtilBrowserCreator.class);
+	private static final String TAG = UtilBrowserCreator.class.getName();
 	
     public static void create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -198,7 +197,7 @@ public class UtilBrowserCreator {
 		if(explorerActions != null){
 		    explorerActions.doAction("openUrl", UtilMap.toParams(new Object[]{"url", url, "name", actionContext.get("path")}));
 		}else{
-		    log.warn("UtilBrowser: can not find explorerActions from Designer");
+		    Executor.warn(TAG, "UtilBrowser: can not find explorerActions from Designer");
 		}       
 	}
 

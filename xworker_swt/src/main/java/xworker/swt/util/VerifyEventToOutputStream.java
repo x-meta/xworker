@@ -12,13 +12,13 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
+
 public class VerifyEventToOutputStream implements VerifyKeyListener, IAction{
-	private static Logger logger = LoggerFactory.getLogger(VerifyEventToOutputStream.class);
+	private static final String TAG = VerifyEventToOutputStream.class.getName();
 	
 	StyledText text;
 	OutputStream out = null;
@@ -94,7 +94,7 @@ public class VerifyEventToOutputStream implements VerifyKeyListener, IAction{
 				
 				event.doit = doit;
 			} catch (IOException e) {
-				logger.warn("Remove VerifyKeyListener, exception: " + e.getMessage());
+				Executor.warn(TAG, "Remove VerifyKeyListener, exception: " + e.getMessage());
 				text.removeVerifyKeyListener(this);
 			}
 		}

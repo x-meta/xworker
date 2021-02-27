@@ -23,17 +23,16 @@ import org.krysalis.barcode4j.BarcodeUtil;
 import org.krysalis.barcode4j.output.bitmap.BitmapCanvasProvider;
 import org.krysalis.barcode4j.output.eps.EPSCanvasProvider;
 import org.krysalis.barcode4j.output.svg.SVGCanvasProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xml.sax.SAXException;
 
+import xworker.lang.executor.Executor;
 import xworker.xml.XmlUtils;
 
 public class Barcode4jActions {
-	private static Logger logger = LoggerFactory.getLogger(Barcode4jActions.class);
+	private static final String TAG = Barcode4jActions.class.getName();
 	
 	public static Object run(ActionContext actionContext) throws ConfigurationException, SAXException, IOException, BarcodeException, TransformerException{
 		Thing self = (Thing) actionContext.get("self");
@@ -47,7 +46,7 @@ public class Barcode4jActions {
 		//获取要生生成的消息
 		String message = (String) self.doAction("getMessage", actionContext);
 		if(message == null || "".equals(message)){
-			logger.warn("message is null, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "message is null, thing=" + self.getMetadata().getPath());
 			return null;
 		}
 		

@@ -3,11 +3,10 @@ package xworker.swt.app.reactors;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.app.DataEditorProvider;
 import xworker.swt.app.IEditor;
 import xworker.swt.app.IEditorContainer;
@@ -15,7 +14,7 @@ import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class EditorContainerDataReactor extends WidgetDataReactor{
-	private static Logger logger = LoggerFactory.getLogger(EditorContainerDataReactor.class);
+	private static final String TAG = EditorContainerDataReactor.class.getName();
 	
 	IEditorContainer editorContainer;
 	
@@ -51,7 +50,7 @@ public class EditorContainerDataReactor extends WidgetDataReactor{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("EditorContainer is null, can not create EditorContainerDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "EditorContainer is null, can not create EditorContainerDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

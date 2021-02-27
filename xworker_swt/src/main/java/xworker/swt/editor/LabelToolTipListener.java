@@ -16,9 +16,7 @@
 package xworker.swt.editor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -31,13 +29,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
-import org.xmeta.Thing;
 import org.xmeta.World;
 
-import xworker.swt.ActionContainer;
 import xworker.swt.util.PoolableControlFactory;
 import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
@@ -51,8 +45,6 @@ import xworker.util.XWorkerUtils;
  *
  */
 public class LabelToolTipListener implements MouseTrackListener, MouseListener{
-	private static Logger logger = LoggerFactory.getLogger(LabelToolTipListener.class);
-	
 	static List<LabelToolTipListener> listeners = new ArrayList<LabelToolTipListener>();
 	static long lastCheckTime = 0;
  

@@ -5,18 +5,17 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.task.Task;
 
 public class DisplayActions {
-	private static Logger logger = LoggerFactory.getLogger(DisplayActions.class);
+	private static final String TAG = DisplayActions.class.getName();
 	
 	public static void exec(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -51,7 +50,7 @@ public class DisplayActions {
 						return;
 					}					
 				}catch(Exception e){
-					logger.warn("DisplayExex end task error, path=" + self.getMetadata().getPath(), e);
+					Executor.warn(TAG, "DisplayExex end task error, path=" + self.getMetadata().getPath(), e);
 				}
 			}
 			self.doAction("onDisplayError", actionContext);
@@ -82,7 +81,7 @@ public class DisplayActions {
 	public static void onDisplayError(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
 		
-		logger.warn("Display is null or disposed!, action=" + self.getMetadata().getPath());
+		Executor.warn(TAG, "Display is null or disposed!, action=" + self.getMetadata().getPath());
 	}
 	
 	static class Exec implements Runnable{
@@ -99,7 +98,7 @@ public class DisplayActions {
 					thing.doAction("doAction", actionContext);
 				}
 			}catch(Exception e){
-				logger.error("DisplayExec: execute error happened, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "DisplayExec: execute error happened, thing=" + thing.getMetadata().getPath(), e);
 			}
 		}
 		

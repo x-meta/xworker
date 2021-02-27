@@ -11,8 +11,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -25,7 +23,7 @@ import xworker.lang.executor.Executor;
 import xworker.task.TaskManager;
 
 public class DataObjectBinder implements DataObjectListener{
-	private static Logger logger = LoggerFactory.getLogger(DataObjectBinder.class);
+	private static final String TAG = DataObjectBinder.class.getName();
 	
 	Thing thing;
 	ActionContext actionContext;
@@ -220,7 +218,7 @@ public class DataObjectBinder implements DataObjectListener{
 							}
 						}
 					}catch(Exception e) {
-						logger.error("Execute dataobject do update error, path=" + thing.getMetadata().getPath(), e);			
+						Executor.error(TAG, "Execute dataobject do update error, path=" + thing.getMetadata().getPath(), e);			
 					}finally {
 						waittingUpdate = false;
 						lastUpdateTime = System.currentTimeMillis();
@@ -251,7 +249,7 @@ public class DataObjectBinder implements DataObjectListener{
 				//	binder.items.add(function);
 				//}
 			}catch(Exception e) {
-				logger.warn("Create BinderItem error, path=" + child.getMetadata().getPath(), e);				
+				Executor.warn(TAG, "Create BinderItem error, path=" + child.getMetadata().getPath(), e);				
 			}
 		}
 		

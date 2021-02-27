@@ -23,8 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -32,9 +30,10 @@ import org.xmeta.World;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.lang.executor.Executor;
 
 public class ThingDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(ThingDataObjectActions.class);
+	private static final String TAG = ThingDataObjectActions.class.getName();
 	
     public static Object doLoad(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
@@ -43,13 +42,13 @@ public class ThingDataObjectActions {
         Thing descriptor = theData.getMetadata().getDescriptor();
         Object[][] keyDatas = theData.getKeyAndDatas();
         if(keyDatas == null || keyDatas.length == 0){
-            logger.warn("no keys data cannot load, dataObjectPath=" + descriptor.getMetadata().getPath());
+            Executor.warn(TAG, "no keys data cannot load, dataObjectPath=" + descriptor.getMetadata().getPath());
             throw new ActionException("No keys, data cannot laod");
         }
         
         Thing datas = (Thing) self.doAction("getInstances", actionContext);
         if(datas == null){
-            logger.warn("no thing datas setted, dataObjectPath=" + descriptor.getMetadata().getPath());
+            Executor.warn(TAG, "no thing datas setted, dataObjectPath=" + descriptor.getMetadata().getPath());
             throw new ActionException("No thing datas setted");
         }
         

@@ -7,6 +7,36 @@ import org.eclipse.swt.widgets.Text;
 import xworker.swt.custom.StyledTextProxy;
 
 public class SwtTextUtils {
+	public static void attachTextEditor(Object obj) {
+		if(obj instanceof Text){
+			
+		}else {
+			StyledTextProxy.attachTextEditor(obj);
+		}
+	}
+	
+	public static void chooseFileType(Object obj, Object colorer, String fileType) {
+		if(obj instanceof Text){
+			
+		}else {
+			StyledTextProxy.chooseFileType(colorer, fileType);
+		}
+	}
+	
+	public static Point getCaretRowColOffset(Object obj) {
+		if(obj instanceof Text){
+            int offset = ((Text) obj).getCaretPosition();    
+            int line = SwtTextUtils.getLineAtOffset(obj, offset);
+            int lineOffset = SwtTextUtils.getLineAtOffset(obj, offset);
+            return new Point(line, offset - lineOffset + 1);            
+        }else{
+            int line = getLineAtOffset(obj, getCaretOffset(obj));
+            int carOffset =  getCaretOffset(obj);
+            int lineOffset = getOffsetAtLine(obj, line);
+            return new Point(line + 1, carOffset - lineOffset + 1);
+        }
+	}
+	
 	public static Point getCaretLocation(Object obj) {
 		if(obj instanceof Text) {
 			if(SwtUtils.isRWT() == false) {
@@ -30,7 +60,7 @@ public class SwtTextUtils {
 		}else {
 			return false;
 		}
-	}
+	}	
 	
 	public static String getText(Object obj) {
 		if(obj instanceof Text) {

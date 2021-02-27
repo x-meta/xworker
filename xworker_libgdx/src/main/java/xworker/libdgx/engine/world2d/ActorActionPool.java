@@ -3,8 +3,6 @@ package xworker.libdgx.engine.world2d;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -12,10 +10,11 @@ import org.xmeta.util.UtilData;
 import com.badlogic.gdx.utils.Pool;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.libdgx.scenes.scene2d.ActionPool;
 
 public class ActorActionPool extends Pool<ActorAction>{
-	private static Logger logger = LoggerFactory.getLogger(ActorActionPool.class);
+	private static final String TAG = ActorActionPool.class.getName();
 	
 	GameThing gameThing;
 	ActionPool actionPool;
@@ -52,7 +51,7 @@ public class ActorActionPool extends Pool<ActorAction>{
 		try {
 			return new ActorAction(this);
 		} catch (Exception e) {
-			logger.error("new object error", e);
+			Executor.error(TAG, "new object error", e);
 			return null;
 		}
 	}

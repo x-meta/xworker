@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
@@ -40,6 +38,7 @@ import org.xmeta.util.UtilFile;
 import org.xmeta.util.UtilString;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.design.sync.SwtSyncer;
 import xworker.swt.style.StyleSetStyleCreator;
@@ -53,7 +52,7 @@ import xworker.util.UtilAction;
 import xworker.util.XWorkerUtils;
 
 public class ShellCreator {
-	private static Logger logger = LoggerFactory.getLogger(ShellCreator.class);
+	private static final String TAG = ShellCreator.class.getName();
 	private static Thread systemExitChecker = null;
 	
     public static Object create(ActionContext actionContext){
@@ -149,7 +148,7 @@ public class ShellCreator {
 					SwtAppIde ide = new SwtAppIde(self, shell, actionContext);
 					XWorkerUtils.setIde(ide);
 				}
-				//logger.info("IDe setted");
+				//Executor.info(TAG, "IDe setted");
 			}
 			
 		}catch(Exception e){
@@ -219,7 +218,7 @@ public class ShellCreator {
 				
 			}
 		}catch(Exception e){
-			logger.error("Create Shell error, path=" + self.getMetadata().getPath(), e);
+			Executor.error(TAG, "Create Shell error, path=" + self.getMetadata().getPath(), e);
 			
 			//此时Shell已经创建，避免出现异常后Shell弹不出来，不能最终释放资源
 			MessageBox box = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
@@ -535,10 +534,10 @@ public class ShellCreator {
 				}
 				
 				if(hasMore == false){
-					logger.info("System exit");
+					Executor.info(TAG, "System exit");
 					System.exit(0);
 				}else{							
-					//logger.info("Has other shell, system not exit, current=" + self + ", otherShell=" + other);
+					//Executor.info(TAG, "Has other shell, system not exit, current=" + self + ", otherShell=" + other);
 				}
 				
 				try {

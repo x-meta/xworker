@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -22,6 +20,7 @@ import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.DbUtil;
+import xworker.lang.executor.Executor;
 
 /**
  * 数据库的统计查询。
@@ -30,7 +29,7 @@ import xworker.dataObject.utils.DbUtil;
  *
  */
 public class DbQuery {
-	private static Logger log = LoggerFactory.getLogger(DbQuery.class);
+	private static final String TAG = DbQuery.class.getName();
 	
 	public static void iterator(ActionContext actionContext) throws SQLException, OgnlException{		
 		Object ac = actionContext.get("action");
@@ -252,7 +251,7 @@ public class DbQuery {
 			}
 				
 		    if(self.getBoolean("showSql")){
-		        log.info("sql=" + sql);
+		        Executor.info(TAG, "sql=" + sql);
 		    }
 		    //动态数据对象，用于调用者动态生成界面等
 		    if(actionContext.get("pageInfo") != null){

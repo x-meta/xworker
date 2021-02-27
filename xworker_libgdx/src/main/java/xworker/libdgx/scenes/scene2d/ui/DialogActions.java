@@ -1,7 +1,5 @@
 package xworker.libdgx.scenes.scene2d.ui;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -17,9 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class DialogActions {
-	private static Logger logger = LoggerFactory.getLogger(DialogActions.class);
+	private static final String TAG = DialogActions.class.getName();
 	
 	public static Dialog create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -135,7 +134,7 @@ public class DialogActions {
 			try{
 				thing.doAction("result", actionContext, UtilMap.toMap("object", object));
 			}catch(Exception e){
-				logger.error("Dialog handler result error, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "Dialog handler result error, thing=" + thing.getMetadata().getPath(), e);
 			}
 		}
 		

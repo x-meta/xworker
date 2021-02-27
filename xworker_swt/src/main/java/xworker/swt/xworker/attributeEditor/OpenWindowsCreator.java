@@ -31,20 +31,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.util.UtilBrowser;
 
 public class OpenWindowsCreator {
-	private static Logger log = LoggerFactory.getLogger(OpenWindowsCreator.class);
-	
+	private static final String TAG = OpenWindowsCreator.class.getName();
     @SuppressWarnings("unchecked")
 	public static Object create(ActionContext actionContext){
     	World world = World.getInstance();
@@ -90,7 +88,7 @@ public class OpenWindowsCreator {
                 }
             }
         }catch(Exception e){
-            log.info("add regist child error", e);
+            Executor.info(TAG, "add regist child error", e);
         }
         
         Thing winThing = null;
@@ -149,13 +147,13 @@ public class OpenWindowsCreator {
     	}else {
     		dataObject = World.getInstance().getThing("xworker.swt.xworker.attributeEditor.openWins.NoParamsEditor");
     	}
-    	//log.info("descBrowser=" + descBrowserAction);
+    	//Executor.info(TAG, "descBrowser=" + descBrowserAction);
     	ActionContainer descBrowserAction = (ActionContainer) actionContext.get("descBrowserAction");
     	descBrowserAction.doAction("setThing", UtilMap.toParams(new Object[]{"thing",objStruct}));
 
-    	//log.info("get cahche path=" + objStruct.metadata.path);
+    	//Executor.info(TAG, "get cahche path=" + objStruct.metadata.path);
     	Object values = valueCache.get(objStruct.getMetadata().getPath());
-    	//log.info("cached values=" + values);
+    	//Executor.info(TAG, "cached values=" + values);
     	dataObjectForm.doAction("setDataObject", actionContext, UtilMap.toParams(new Object[]{"dataObject", dataObject}));
     	if(values != null){
     	    dataObjectForm.doAction("setValues", actionContext, UtilMap.toParams(new Object[]{"values", values}));
@@ -232,7 +230,7 @@ public class OpenWindowsCreator {
     	        }
     	    }
     	}catch(Exception e){
-    	    log.info("add regist child error", e);
+    	    Executor.info(TAG, "add regist child error", e);
     	}
 
     	List<Thing> dess = new ArrayList<Thing>();
@@ -243,7 +241,7 @@ public class OpenWindowsCreator {
     	            continue;
     	        }
     	    }
-    	    //log.info(des.getMetadata().getPath());
+    	    //Executor.info(TAG, des.getMetadata().getPath());
     	    dess.add(des);
     	}
 
@@ -408,12 +406,12 @@ public class OpenWindowsCreator {
 	        
 	    Tree childTree = actions.getActionContext().getObject("thingTree");
 	    TreeItem treeItem = (TreeItem) getTreeItem((Object) actions.getActionContext().getObject("thingTree"), winPath);
-	    //log.info("params=" + params + ",treeItem=" + treeItem);
+	    //Executor.info(TAG, "params=" + params + ",treeItem=" + treeItem);
 	    if(treeItem != null){
 	        Object obj = treeItem.getData();
 	        
 	        valueCache.put(((Thing) obj).getMetadata().getPath(), params);
-	        //log.info("cache=" + obj.metadata.path);
+	        //Executor.info(TAG, "cache=" + obj.metadata.path);
 	        childTree.select(treeItem);
 	        actionContext.peek().put("thing", obj);
 	        childTreeSelection(actionContext);

@@ -8,16 +8,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class TableDataReactor extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(TableDataReactor.class);
+	private static final String TAG = TableDataReactor.class.getName();
 	
 	Table table;
 	
@@ -170,7 +169,7 @@ public class TableDataReactor extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("Table is null, can not create TableDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Table is null, can not create TableDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

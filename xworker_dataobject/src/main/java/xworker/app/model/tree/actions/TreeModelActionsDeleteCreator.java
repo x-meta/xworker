@@ -18,16 +18,16 @@ package xworker.app.model.tree.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class TreeModelActionsDeleteCreator {
-	private static Logger log = LoggerFactory.getLogger(TreeModelActionsDeleteCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(TreeModelActionsDeleteCreator.class);
+	private static final String TAG = TreeModelActionsDeleteCreator.class.getName();
 	
     public static void run(ActionContext actionContext) throws OgnlException{
     	Thing self = (Thing) actionContext.get("self");
@@ -44,7 +44,7 @@ public class TreeModelActionsDeleteCreator {
         
             treeModel.doAction("removeNode", actionContext, params);
         }else{
-            log.info("TreeModelActions: treeModel is null, name=" + self.getString("treeModelName"));
+            Executor.info(TAG, "TreeModelActions: treeModel is null, name=" + self.getString("treeModelName"));
         }
     }
 

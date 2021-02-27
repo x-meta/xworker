@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -31,6 +29,7 @@ import org.xmeta.World;
 import org.xmeta.cache.ThingEntry;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 /**
@@ -44,7 +43,7 @@ import xworker.swt.ActionContainer;
  */
 public class SwtListener implements Listener{
 	/** 日志 */
-	private static Logger log = LoggerFactory.getLogger(SwtListener.class);
+	private static final String TAG = SwtListener.class.getName();
 	
 	private static World world = World.getInstance();
 	
@@ -74,8 +73,8 @@ public class SwtListener implements Listener{
 		Thing swtListenerThing = entry.getThing();
 		
 		if(swtListenerThing == null){
-			if(log.isInfoEnabled()){
-				log.info("action is null : " + entry.getPath());
+			if(Executor.isLogLevelEnabled(TAG, Executor.INFO)){
+				Executor.info(TAG, "action is null : " + entry.getPath());
 			}
 			return;
 		}else{			
@@ -111,7 +110,7 @@ public class SwtListener implements Listener{
 					}else if(refObj instanceof Thing){
 						handleEvent(event, (Thing) refObj, false, params);
 					}else{
-						log.warn("swt listener " + ref + " is not valid");
+						Executor.warn(TAG, "swt listener " + ref + " is not valid");
 					}
 				}
 			}
@@ -143,12 +142,12 @@ public class SwtListener implements Listener{
 					if(action != null){
 						action.run(actionContext);
 					}else{
-						log.warn("action is null : " + child.getMetadata().getPath());
+						Executor.warn(TAG, "action is null : " + child.getMetadata().getPath());
 					}
 				}
 			}
 		}catch(Throwable e){
-			log.error("Swt listener :" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "Swt listener :" + thing.getMetadata().getPath(), e);
 		}finally{
 			actionContext.pop();
 		}

@@ -51,14 +51,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.command.interactive.InteractiveListener;
 import xworker.command.interactive.InteractiveUI;
+import xworker.lang.executor.Executor;
 import xworker.util.XWorkerUtils;
 
 /**
@@ -68,7 +67,7 @@ import xworker.util.XWorkerUtils;
  *
  */
 public class DesignListener implements PaintListener, MouseListener, MouseTrackListener, DisposeListener, KeyListener, DragSourceListener, DropTargetListener{
-	private static Logger log = LoggerFactory.getLogger(Designer.class);
+	private static final String TAG = DesignListener.class.getName();
 	
 	Control control;
 	DesignDialog designDialog = new DesignDialog();
@@ -241,7 +240,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 				}							
 			}
 		}catch(Throwable t){
-			log.error("design control mouse dbClick", t);
+			Executor.error(TAG, "design control mouse dbClick", t);
 		}
 	}
 	
@@ -443,7 +442,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 				}
 			}
 		}catch(Throwable t){
-			log.error("design control mouse click", t);
+			Executor.error(TAG, "design control mouse click", t);
 		}
 	}
 
@@ -613,7 +612,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 				});
 				
 			}catch(Exception e){
-				log.error("Designer icon thread error", e);
+				Executor.error(TAG, "Designer icon thread error", e);
 			}
 		}
 		

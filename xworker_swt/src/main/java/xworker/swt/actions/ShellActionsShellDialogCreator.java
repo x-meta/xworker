@@ -19,18 +19,17 @@ import java.util.Map;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtDialogCallback;
 
 public class ShellActionsShellDialogCreator {
-	private static Logger log = LoggerFactory.getLogger(ShellActionsShellDialogCreator.class);
+	private static final String TAG = ShellActionsShellDialogCreator.class.getName();
 	
     public static Object run(final ActionContext actionContext) throws OgnlException{
         final Thing self = (Thing) actionContext.get("self");
@@ -40,7 +39,7 @@ public class ShellActionsShellDialogCreator {
         	shell = self.doAction("createShell", actionContext);        			
         }
         if(shell == null) {
-        	log.info("Shell is null, can not open. action=" + self.getMetadata().getPath());
+        	Executor.info(TAG, "Shell is null, can not open. action=" + self.getMetadata().getPath());
         	return null;
         }
         
@@ -85,7 +84,7 @@ public class ShellActionsShellDialogCreator {
         
         Thing shellThing = self.doAction("getShellThing", actionContext);
         if(shellThing == null){
-            log.info("ShellThing is null, ation=" + self.getMetadata().getPath());
+            Executor.info(TAG, "ShellThing is null, ation=" + self.getMetadata().getPath());
             return null;
         }
         

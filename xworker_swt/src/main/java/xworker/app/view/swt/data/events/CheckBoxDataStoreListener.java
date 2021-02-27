@@ -23,19 +23,18 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.form.FormModifyListener;
 import xworker.swt.form.SetableModifyListener;
 
 public class CheckBoxDataStoreListener {
-	private static Logger log = LoggerFactory.getLogger(CheckBoxDataStoreListener.class);
+	private static final String TAG = CheckBoxDataStoreListener.class.getName(); 
 	
 	public static void onReconfig(final ActionContext actionContext){
 		final Thing self = (Thing) actionContext.get("self");
@@ -67,7 +66,7 @@ public class CheckBoxDataStoreListener {
 			        composite.layout();
 			        composite.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener onReconfig error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener onReconfig error", t);
 			    }
 			}
 		});
@@ -138,7 +137,7 @@ public class CheckBoxDataStoreListener {
 			        }
 			        
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener onLoaded error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener onLoaded error", t);
 			    }
 			}
 		});
@@ -193,7 +192,7 @@ public class CheckBoxDataStoreListener {
 			        composite.layout();
 			        composite.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener beforeLoad error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener beforeLoad error", t);
 			    }
 			}
 		});
@@ -333,7 +332,7 @@ public class CheckBoxDataStoreListener {
 			        	composite.getParent().layout();
 			        }
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener onInsert error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener onInsert error", t);
 			    }
 			}
 		});
@@ -379,7 +378,7 @@ public class CheckBoxDataStoreListener {
 			        composite.layout();
 			        composite.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener onUpdate error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener onUpdate error", t);
 			    }
 			}
 		});
@@ -410,7 +409,7 @@ public class CheckBoxDataStoreListener {
 			        composite.layout();
 			        composite.getParent().layout();
 			    }catch(Throwable t){
-			        log.error("CheckBoxDataStoreListener onRemove error", t);
+			        Executor.error(TAG, "CheckBoxDataStoreListener onRemove error", t);
 			    }    
 			}
 		});

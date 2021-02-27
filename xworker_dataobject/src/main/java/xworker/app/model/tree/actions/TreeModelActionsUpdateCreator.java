@@ -18,16 +18,15 @@ package xworker.app.model.tree.actions;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class TreeModelActionsUpdateCreator {
-	private static Logger log = LoggerFactory.getLogger(TreeModelActionsUpdateCreator.class);
+	private static final String TAG = TreeModelActionsUpdateCreator.class.getName();
 	
     public static void run(ActionContext actionContext) throws OgnlException{
     	Thing self = (Thing) actionContext.get("self");
@@ -45,7 +44,7 @@ public class TreeModelActionsUpdateCreator {
             params.put("updateChilds", self.getBoolean("updateChilds"));
             treeModel.doAction("updateNode", actionContext, params);    
         }else{
-            log.info("TreeModelActions: treeModel is null, name=" + self.getString("treeModelName"));
+            Executor.info(TAG, "TreeModelActions: treeModel is null, name=" + self.getString("treeModelName"));
         }
     }
 

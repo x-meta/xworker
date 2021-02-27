@@ -38,8 +38,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -66,11 +64,12 @@ import jxl.write.WritableWorkbook;
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.JsonFormator;
+import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
 import xworker.security.SecurityManager;
 
 public class DataObjectStoreExportCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectStoreExportCreator.class);
+	private static final String TAG = DataObjectStoreExportCreator.class.getName();
 	
 	public static int getInt(String value, int defaultValue){
         try{
@@ -150,7 +149,7 @@ public class DataObjectStoreExportCreator {
 	            pageInfo.put("limit", pageInfo.get("totalCount"));
 	        }
 	        
-	        //log.info(code);
+	        //Executor.info(TAG, code);
 	        //输出到httpResponse
 	        if(code.startsWith("{")){
 	            code = "[" + code + "]";
@@ -198,7 +197,7 @@ public class DataObjectStoreExportCreator {
 	        response.getWriter().println(result);*/
 	        transferFile(filePath, exportName, response);
         }catch(Exception e){
-        	log.error("DataObjectStore export error", e);
+        	Executor.error(TAG, "DataObjectStore export error", e);
         	
         	response.setContentType("text/plain; charset=utf-8");
 	        String result = "{\n" +
@@ -348,21 +347,21 @@ public class DataObjectStoreExportCreator {
             }
  
         } catch (FileNotFoundException e) {
-        	log.error("要发送的文件不存在");
+        	Executor.error(TAG, "要发送的文件不存在");
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-        	log.error("编码格式不支持");
+        	Executor.error(TAG, "编码格式不支持");
             e.printStackTrace();
         } catch (IOException e) {
-        	log.debug("文件流异常");
+        	Executor.debug(TAG, "文件流异常");
             e.printStackTrace();
         }finally{
             if(null != inStream){
                 try {
                     inStream.close();
-                    log.debug("inStream close ok");
+                    Executor.debug(TAG, "inStream close ok");
                 } catch (IOException e) {
-                	log.error("文件关闭异常");
+                	Executor.error(TAG, "文件关闭异常");
                     e.printStackTrace();
                 }
             }
@@ -389,13 +388,13 @@ public class DataObjectStoreExportCreator {
             if(in != null){
                 try {
                     in.close();
-                    log.debug("close when read finished");
+                    Executor.debug(TAG, "close when read finished");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }if(out != null){
                 try {
-                	log.debug("close when write to out finished");
+                	Executor.debug(TAG, "close when write to out finished");
                     out.close();
                 } catch (IOException e) {
                     e.printStackTrace();

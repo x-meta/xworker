@@ -1,7 +1,5 @@
 package xworker.libdgx.input;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilAction;
@@ -9,8 +7,10 @@ import org.xmeta.util.UtilAction;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 
+import xworker.lang.executor.Executor;
+
 public class InputActions {
-	private static Logger logger = LoggerFactory.getLogger(InputActions.class);
+	private static final String TAG = InputActions.class.getName(); 
 	
 	public static void keySwitch(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -20,7 +20,7 @@ public class InputActions {
 			InputEvent e = (InputEvent) event;
 			String keyName = Input.Keys.toString(e.getKeyCode());
 			if(UtilAction.getDebugLog(self, actionContext)){
-				logger.info("KeyCode=" + e.getKeyCode() + ": KeyName=" + keyName);
+				Executor.info(TAG, "KeyCode=" + e.getKeyCode() + ": KeyName=" + keyName);
 			}
 			
 			if(keyName != null){
@@ -33,7 +33,7 @@ public class InputActions {
 				}
 			}
 		}else{
-			logger.warn("Event is not InputEvent, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "Event is not InputEvent, path=" + self.getMetadata().getPath());
 		}
 	}
 }

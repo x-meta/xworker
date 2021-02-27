@@ -18,17 +18,16 @@ package xworker.app.model.tree;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class TreeModelCreator {
-	private static Logger logger = LoggerFactory.getLogger(TreeModelCreator.class);
+	private static final String TAG = TreeModelCreator.class.getName();
 	
     public static Object getRoot(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -129,7 +128,7 @@ public class TreeModelCreator {
     		try{
     			return (Iterable<Object>) OgnlUtil.getValue("childs", node);
     		}catch(Exception e){
-    			logger.warn("TreeModel get childs node error", e);
+    			Executor.warn(TAG, "TreeModel get childs node error", e);
     			return null;
     		}
     	}

@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -11,8 +9,10 @@ import org.xmeta.util.UtilMap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 
+import xworker.lang.executor.Executor;
+
 public class XDragListener extends DragListener{
-	private static Logger logger = LoggerFactory.getLogger(XDragListener.class);
+	private static final String TAG = XDragListener.class.getName(); 
 	Thing thing;
 	ActionContext actionContext;
 	
@@ -27,7 +27,7 @@ public class XDragListener extends DragListener{
 		try{		
 			thing.doAction("drag", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=drag, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=drag, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -37,7 +37,7 @@ public class XDragListener extends DragListener{
 		try{		
 			thing.doAction("dragStart", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=dragStart, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=dragStart, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -47,7 +47,7 @@ public class XDragListener extends DragListener{
 		try{		
 			thing.doAction("dragStop", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=dragStop, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=dragStop, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 

@@ -21,17 +21,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
 import freemarker.template.TemplateException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilTemplate;
 
 public class CodeGeneratorActions {
-	private static Logger log = LoggerFactory.getLogger(CodeGeneratorActions.class);
+	private static final String TAG = CodeGeneratorActions.class.getName();
+	//private static Logger log = LoggerFactory.getLogger(CodeGeneratorActions.class);
 	
 	/**
 	 * 获取文件路径。
@@ -69,13 +69,13 @@ public class CodeGeneratorActions {
 		String filePath = (String) self.doAction("getFilePath", actionContext);
 		
 		if(dolog){
-			log.info("CodeGenerator: before generate file path=" + filePath);
+			Executor.info(TAG, "CodeGenerator: before generate file path=" + filePath);
 		}
 		
 		//内容列表
 		Thing contents = self.getThing("Contents@0");
 		if(contents == null || contents.getChilds().size() == 0){
-			log.warn("CodeGenerator: Contents not setted, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "CodeGenerator: Contents not setted, path=" + self.getMetadata().getPath());
 			return;
 		}
 		
@@ -89,7 +89,7 @@ public class CodeGeneratorActions {
 		if("once".equals(type)){
 			if(file.exists()){
 				if(dolog){
-					log.info("CodeGenerator: file already exists , do not generate again, filePath=" + filePath);
+					Executor.info(TAG, "CodeGenerator: file already exists , do not generate again, filePath=" + filePath);
 				}
 				return;
 			}else{
@@ -104,7 +104,7 @@ public class CodeGeneratorActions {
 		}else if("modify".equals(type)){
 			if(!file.exists()){
 				if(dolog){
-					log.info("CodeGenerator: file not exists ,not modify");
+					Executor.info(TAG, "CodeGenerator: file not exists ,not modify");
 				}
 				
 				return;
@@ -112,12 +112,12 @@ public class CodeGeneratorActions {
 				modifyFile(contents, file, fileEncoding, actionContext);
 			}
 		}else{
-			log.warn("CodeGenerator: unkonwn type '" + type + "', path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "CodeGenerator: unkonwn type '" + type + "', path=" + self.getMetadata().getPath());
 			return;
 		}
 		
 		if(dolog){
-			log.info("CodeGenerator: file generated path=" + filePath);
+			Executor.info(TAG, "CodeGenerator: file generated path=" + filePath);
 		}
 	}
 	
@@ -139,7 +139,7 @@ public class CodeGeneratorActions {
 		for(Thing contentThing : contents.getChilds()){
 			String content = (String) contentThing.doAction("toString", actionContext);
 			if(content == null){
-				log.warn("CodeGenerator: content is null, contentPath=" + contentThing.getMetadata().getPath());
+				Executor.warn(TAG, "CodeGenerator: content is null, contentPath=" + contentThing.getMetadata().getPath());
 				continue;
 			}
 			
@@ -171,7 +171,7 @@ public class CodeGeneratorActions {
 	public static void generateFile(Thing contentThing, File file, String charset, ActionContext actionContext) throws UnsupportedEncodingException, IOException{
 		String content = (String) contentThing.doAction("toString", actionContext);
 		if(content == null){
-			log.warn("CodeGenerator: content is null, contentPath=" + contentThing.getMetadata().getPath());
+			Executor.warn(TAG, "CodeGenerator: content is null, contentPath=" + contentThing.getMetadata().getPath());
 		}
 		
 		FileOutputStream fout = new FileOutputStream(file);

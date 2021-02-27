@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -35,9 +33,10 @@ import org.xmeta.util.UtilString;
 import freemarker.template.TemplateException;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.html.HtmlUtil;
+import xworker.lang.executor.Executor;
 
 public class DataObjectComponentCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectComponentCreator.class);
+	private static final String TAG = DataObjectComponentCreator.class.getName();
 	
     public static Object createExtFieldThing(ActionContext actionContext){
         Thing field = (Thing) actionContext.get("field");
@@ -117,7 +116,7 @@ public class DataObjectComponentCreator {
         store.initDefaultValue();
         
         stores.addChild(store);
-        //log.info("storeId=" + actionContext.get("storeId"));
+        //Executor.info(TAG, "storeId=" + actionContext.get("storeId"));
         String storeId = self.getStringBlankAsNull("storeId");
         String cmpId = (String) actionContext.get("cmpId");
         if(storeId != null){
@@ -292,7 +291,7 @@ public class DataObjectComponentCreator {
         setValue(dataObject, reader, "storeMessageProperty", "messageProperty");
         String idProperty = store.getString("idProperty");
         if(idProperty == null || "".equals(idProperty)){
-            //log.info("dataObject="+ dataObject.metadata.path);
+            //Executor.info(TAG, "dataObject="+ dataObject.metadata.path);
             List<Thing> keys = (List<Thing>) dataObject.doAction("getKeyAttributes", actionContext);
             if(keys.size() > 0){
                 store.put("idProperty", "'" + keys.get(0).getString("name") + "'");
@@ -816,7 +815,7 @@ public class DataObjectComponentCreator {
         input .put("windowNs", "'XWorker_SelectThingWindow'");
         input.put("windowUrl", "'do?sc=xworker.app.view.extjs.xworker.thingEditor.XWorker_SelectThingWindow'");
         input.put("hideMode", "'offsets'");
-        //log.info("create extjs open window");
+        //Executor.info(TAG, "create extjs open window");
         return input;
     }
     
@@ -861,7 +860,7 @@ public class DataObjectComponentCreator {
         //input.put("width", "500");
         //input.put("style", "'width: 450'");
         input.put("hideMode", "'offsets'");
-        //log.info("create extjs open window");
+        //Executor.info(TAG, "create extjs open window");
         return input;
     }
 
@@ -973,7 +972,7 @@ public class DataObjectComponentCreator {
             //参数引用    
             store.put("varref", storeJs);
             combo.put("__isCombo", "true");
-            //log.info("valueField=" + combo.valueField);
+            //Executor.info(TAG, "valueField=" + combo.valueField);
             combo.put("__valueName", combo.getString("valueField"));    
             String storeId = storeJs;
             if(storeId.startsWith("Ext.StoreMgr")){
@@ -1147,7 +1146,7 @@ public class DataObjectComponentCreator {
             //参数引用
             store.put("varref", storeJs);
             combo.put("__isCombo", "true");
-            log.info("valueField=" + combo.getString("valueField"));
+            Executor.info(TAG, "valueField=" + combo.getString("valueField"));
             combo.put("__valueName", combo.getString("valueField"));    
             String storeId = viewConfig.getString("storeJs");
             if(storeId.startsWith("Ext.StoreMgr")){
@@ -1438,7 +1437,7 @@ public class DataObjectComponentCreator {
         }
         
         if(dataObject == null){
-        	log.info("DataObjectComponent does not set a DataObject, path=" + self.getMetadata().getPath());
+        	Executor.info(TAG, "DataObjectComponent does not set a DataObject, path=" + self.getMetadata().getPath());
         }
         
         return dataObject;

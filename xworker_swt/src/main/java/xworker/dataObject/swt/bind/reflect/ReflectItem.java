@@ -6,8 +6,6 @@ import java.sql.Date;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -15,9 +13,10 @@ import org.xmeta.util.UtilData;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.swt.bind.DataObjectBinder;
 import xworker.dataObject.swt.bind.WidgetBinderItem;
+import xworker.lang.executor.Executor;
 
 public class ReflectItem  extends WidgetBinderItem{
-	private static Logger logger = LoggerFactory.getLogger(ReflectItem.class);
+	private static final String TAG = ReflectItem.class.getName();
 	
 	Object defaultValue;
 	Method getMethod;
@@ -71,7 +70,7 @@ public class ReflectItem  extends WidgetBinderItem{
 		try {
 			setMethod.invoke(widget, new Object[] {value});
 		}catch(Exception e) {
-			logger.error("set attribute error, path=" + thing.getMetadata().getPath() + ", method=" + setMethod, e);
+			Executor.error(TAG, "set attribute error, path=" + thing.getMetadata().getPath() + ", method=" + setMethod, e);
 		}
 	}
 
@@ -84,7 +83,7 @@ public class ReflectItem  extends WidgetBinderItem{
 		try {
 			return this.getMethod.invoke(widget, new Object[] {});
 		}catch(Exception e) {
-			logger.error("get value error, path=" + thing.getMetadata().getPath() + ", method=" + setMethod, e);
+			Executor.error(TAG, "get value error, path=" + thing.getMetadata().getPath() + ", method=" + setMethod, e);
 			return null;
 		}
 	}

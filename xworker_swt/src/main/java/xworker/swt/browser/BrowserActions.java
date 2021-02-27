@@ -1,17 +1,16 @@
 package xworker.swt.browser;
 
 import org.eclipse.swt.browser.Browser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
 
 public class BrowserActions {
-	private static Logger logger = LoggerFactory.getLogger(BrowserActions.class);
+	private static final String TAG = BrowserActions.class.getName();
 	
 	public static void openThingDesc(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
@@ -22,7 +21,7 @@ public class BrowserActions {
 		if(browser != null && thingPath != null){
 			browser.setUrl(XWorkerUtils.getThingDescUrl(thingPath));
 		}else{
-			logger.info("browser or thingPath is null, action=" + self.getMetadata().getPath());
+			Executor.info(TAG, "browser or thingPath is null, action=" + self.getMetadata().getPath());
 		}
 	}
 	
@@ -36,7 +35,7 @@ public class BrowserActions {
 		if(browser != null && webControl != null){
 			browser.setUrl(XWorkerUtils.getWebControlUrl(webControl));
 		}else{
-			logger.info("browser or webControl is null, action=" + self.getMetadata().getPath());
+			Executor.info(TAG, "browser or webControl is null, action=" + self.getMetadata().getPath());
 		}
 	}
 	
@@ -49,7 +48,7 @@ public class BrowserActions {
 		if(browser != null && url != null){
 			browser.setUrl(url);
 		}else{
-			logger.info("browser or url is null, action=" + self.getMetadata().getPath());
+			Executor.info(TAG, "browser or url is null, action=" + self.getMetadata().getPath());
 		}
 	}
 	

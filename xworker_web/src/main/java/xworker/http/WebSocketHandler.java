@@ -10,15 +10,15 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketFrame;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.api.extensions.Frame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
+
 @WebSocket
 public class WebSocketHandler {
-	private static Logger logger = LoggerFactory.getLogger(WebSocketHandler.class);
+	private static final String TAG = WebSocketHandler.class.getName();
 	
 	public void doAction(Session session, String actionName, Object ... params) {
 		try {
@@ -30,7 +30,7 @@ public class WebSocketHandler {
 			
 			Thing thing = World.getInstance().getThing(path);
 			if(thing == null) {
-				logger.warn("Thing not exists so ingore websocket event, path=" + path + ", \nshoud set thing path in url, "
+				Executor.warn(TAG, "Thing not exists so ingore websocket event, path=" + path + ", \nshoud set thing path in url, "
 						+ "for example contextPath is /socket/ and thingPath is test.TestWebSocket then url is /socket/test/TestWebSocket");
 			}else {
 				ActionContext actionContext = new ActionContext();
@@ -40,7 +40,7 @@ public class WebSocketHandler {
 				thing.doAction(actionName, actionContext, params);
 			}
 		}catch(Throwable t) {
-			logger.error("Handle event error", t);
+			Executor.error(TAG, "Handle event error", t);
 		}
 	}
 	

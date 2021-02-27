@@ -9,8 +9,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -29,8 +27,6 @@ import xworker.util.IIde;
  *
  */
 public class SwtAppIde implements IIde, Listener{
-	private static Logger logger = LoggerFactory.getLogger(SwtAppIde.class);
-	
 	Thing thing;
 	Shell shell;
 	ActionContext actionContext;	

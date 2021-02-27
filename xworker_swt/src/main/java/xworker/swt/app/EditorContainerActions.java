@@ -2,16 +2,15 @@ package xworker.swt.app;
 
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
 import xworker.swt.app.editorContainers.CompositeEditorContainer;
 
 public class EditorContainerActions {
-	private static Logger logger = LoggerFactory.getLogger(EditorContainerActions.class);
+	private static final String TAG = EditorContainerActions.class.getName();
 	
 	public static void create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
@@ -23,7 +22,7 @@ public class EditorContainerActions {
 			CompositeEditorContainer editorContainer = new CompositeEditorContainer((Composite) parent, actionContext);
 			actionContext.g().put(self.getMetadata().getName(), editorContainer);
 		}else {
-			logger.warn("EditorContainer has not supported parent type, parent=" + parent);
+			Executor.warn(TAG, "EditorContainer has not supported parent type, parent=" + parent);
 		}
 	}
 }

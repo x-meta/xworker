@@ -20,17 +20,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 public class SortCreator {
-	private static Logger log = LoggerFactory.getLogger(SortCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(SortCreator.class);
+	private static final String TAG = SortCreator.class.getName();
 	
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Object run(ActionContext actionContext) throws OgnlException{    	
@@ -69,7 +69,7 @@ public class SortCreator {
 					
 					return r;
 				}catch(Exception e){
-					log.warn("compare data error", e);
+					Executor.warn(TAG, "compare data error", e);
 				}
 				return 0;
 			}
@@ -117,7 +117,7 @@ public class SortCreator {
     	try{
     		return (Comparable) OgnlUtil.getValue(sortField, obj);
     	}catch(Exception e){
-    		log.warn("Sort get value error, action=" + self.getMetadata().getPath(), e);
+    		Executor.warn(TAG, "Sort get value error, action=" + self.getMetadata().getPath(), e);
     		return null;
     	}
     }

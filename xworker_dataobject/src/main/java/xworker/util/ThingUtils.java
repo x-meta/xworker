@@ -31,8 +31,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -53,10 +51,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import xworker.dataObject.DataObject;
 import xworker.db.DbUtil;
+import xworker.lang.executor.Executor;
 import xworker.task.TaskManager;
 
 public class ThingUtils {
-	private static Logger logger = LoggerFactory.getLogger(ThingUtils.class);
+	private static final String TAG = ThingUtils.class.getName();
 	
 	/**
 	 * 目前是对于临时项目下的事物的索引缓存，如用户在XWorker之外创建的项目。
@@ -123,7 +122,7 @@ public class ThingUtils {
 						//logger.info("start refresh regist thing cache");
 						refreshRegistThingCache();
 					}catch(Exception e){
-						logger.error("refreshRegistThingCache error", e);
+						Executor.error(TAG, "refreshRegistThingCache error", e);
 					}
 				}
 			}, 0, 60000, TimeUnit.MILLISECONDS);
@@ -441,7 +440,7 @@ public class ThingUtils {
 					new Object[]{"thing", registorThing, "keywords", keyStr, "registType", registType, 
 							"noDescriptor", noDescriptor, "parent", parent}));
 			}catch(Exception e) {
-				logger.warn("query index form db exception", e);
+				Executor.warn(TAG, "query index form db exception", e);
 				//return thingList;
 				results = Collections.emptyList();
 			}
@@ -479,7 +478,7 @@ public class ThingUtils {
 						List<Thing> childs = thing.doAction(th_registActionChilds, actionContext);
 						addThingsToRegistList(childs, context, thingList);
 						}catch(Exception e) {
-							logger.warn("Add action childs error, thing=" + thing.getMetadata().getPath(), e);
+							Executor.warn(TAG, "Add action childs error, thing=" + thing.getMetadata().getPath(), e);
 						}
 					}
 				}

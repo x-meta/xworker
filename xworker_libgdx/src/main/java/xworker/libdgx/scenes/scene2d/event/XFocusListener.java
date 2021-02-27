@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -11,8 +9,10 @@ import org.xmeta.util.UtilMap;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 
+import xworker.lang.executor.Executor;
+
 public class XFocusListener extends FocusListener{
-	private static Logger logger = LoggerFactory.getLogger(XFocusListener.class);
+	private static final String TAG = XFocusListener.class.getName();
 	Thing thing;
 	ActionContext actionContext;
 	
@@ -29,7 +29,7 @@ public class XFocusListener extends FocusListener{
 		try{	
 			thing.doAction("keyboardFocusChanged", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=keyboardFocusChanged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=keyboardFocusChanged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -41,7 +41,7 @@ public class XFocusListener extends FocusListener{
 		try{	
 			thing.doAction("scrollFocusChanged", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=scrollFocusChanged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=scrollFocusChanged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 

@@ -23,8 +23,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -33,9 +31,10 @@ import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilString;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class SwtDialog extends Dialog{
-	private static Logger logger = LoggerFactory.getLogger(SwtDialog.class);
+	private static final String TAG = SwtDialog.class.getName();
 	
 	Shell myShell;
 	ActionContext actionContext;
@@ -115,7 +114,7 @@ public class SwtDialog extends Dialog{
 							Object result = actionContext.get("result");
 							callback.disposed(result);
 						}catch(Exception e) {
-							logger.error("Do callback error",  e);
+							Executor.error(TAG, "Do callback error",  e);
 						}
 					}
 					
@@ -133,7 +132,7 @@ public class SwtDialog extends Dialog{
 							Object result = actionContext.get("result");
 							callback.disposed(result);
 						}catch(Exception e) {
-							logger.error("Handle swt dialog callback error", e);
+							Executor.error(TAG, "Handle swt dialog callback error", e);
 						}
 					}				
 				});

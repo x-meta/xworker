@@ -6,8 +6,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -15,10 +13,11 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 public class KeyTravel {
-	private static Logger logger = LoggerFactory.getLogger(KeyTravel.class);
+	private static final String TAG = KeyTravel.class.getName();
 	
 	public static final int CR = 13;
 	public static final int DOWN = 16777218;
@@ -42,7 +41,7 @@ public class KeyTravel {
 		}else if(widget instanceof List){
 			handleList(event, (List) widget, self, actionContext);
 		}else{
-			logger.warn("widget is unknown type, widget=" + widget + ", action=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "widget is unknown type, widget=" + widget + ", action=" + self.getMetadata().getPath());
 		}
 	}
 	

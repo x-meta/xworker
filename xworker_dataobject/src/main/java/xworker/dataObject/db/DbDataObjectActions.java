@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -39,10 +37,10 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.DbUtil;
-import xworker.util.DbUtils;
+import xworker.lang.executor.Executor;
 
 public class DbDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(DbDataObjectActions.class);
+	private static final String TAG = DbDataObjectActions.class.getName();
 	
     public static Object doLoad(ActionContext actionContext) throws SQLException{
         Thing self = actionContext.getObject("self");
@@ -51,7 +49,7 @@ public class DbDataObjectActions {
         
         Object[][] keyDatas = theData.getKeyAndDatas();
         if(keyDatas == null || keyDatas.length == 0){
-            logger.warn("no keys data cannot load, dataObjectPath=" + theData.getMetadata().getDescriptor().getMetadata().getPath());
+            Executor.warn(TAG, "no keys data cannot load, dataObjectPath=" + theData.getMetadata().getDescriptor().getMetadata().getPath());
             throw new ActionException("No keys, data cannot load");
         }
         
@@ -94,7 +92,7 @@ public class DbDataObjectActions {
             }
         }
         if(self.getBoolean("showSql")){
-            logger.info(sql);
+        	Executor.info(TAG, sql);
         }
         
         //设置参数值
@@ -212,7 +210,7 @@ public class DbDataObjectActions {
                      }
                 }
             }else{
-                logger.warn("database driver " + driverName + " not supported sequence");
+            	Executor.warn(TAG, "database driver " + driverName + " not supported sequence");
                 //throw new Exception("database driver " + driverName + " not supported sequence");
             }
         }
@@ -357,7 +355,7 @@ public class DbDataObjectActions {
         	if(self.getBoolean("noTotalCount") == false){
 	            String countSql = "select count(*) from (" + sql + ") t";
 	            if(self.getBoolean("showSql")){
-	            	logger.info(countSql);
+	            	Executor.info(TAG, countSql);
 	            }
 	            pst = con.prepareStatement(countSql);
 	            
@@ -376,7 +374,7 @@ public class DbDataObjectActions {
             
             //分页查询
             if(self.getBoolean("showSql")){
-                logger.info(sql);
+            	Executor.info(TAG, sql);
             }
             
             boolean supportScroll = true;
@@ -435,7 +433,7 @@ public class DbDataObjectActions {
                     try{
                         data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
                     }catch(Exception e){
-                        logger.error("get result value error: " + e.getMessage() + ": " + attributes.get(i));
+                    	Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
                         throw e;
                     }
                 }

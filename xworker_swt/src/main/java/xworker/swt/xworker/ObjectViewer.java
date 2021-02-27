@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
@@ -39,11 +37,12 @@ import org.xmeta.World;
 import org.xmeta.util.ExceptionUtil;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 
 public class ObjectViewer {
-	private static Logger logger = LoggerFactory.getLogger(ObjectViewer.class);
+	private static final String TAG = ObjectViewer.class.getName();
 	
 	 public static Object create(ActionContext actionContext){
         World world = World.getInstance();
@@ -358,7 +357,7 @@ public class ObjectViewer {
 		                 //initDataTree(item, child.value, context);
 		             }
 		         }catch(Throwable e){
-		             logger.info("init data item error " + name, e);
+		             Executor.info(TAG, "init data item error " + name, e);
 		         }
 		     }
 		 }catch(Throwable t){

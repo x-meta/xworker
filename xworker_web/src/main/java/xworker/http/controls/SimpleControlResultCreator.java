@@ -19,18 +19,17 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import freemarker.template.TemplateException;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilTemplate;
 
 public class SimpleControlResultCreator {
-	private static Logger log = LoggerFactory.getLogger(SimpleControlResultCreator.class);
+	private static final String TAG = SimpleControlResultCreator.class.getName();
 	
     public static void redirect(ActionContext actionContext) throws IOException, TemplateException{
         Thing self = (Thing) actionContext.get("self");
@@ -91,7 +90,7 @@ public class SimpleControlResultCreator {
         if(controlObject != null){
             controlObject.doAction("httpDo", actionContext);
         }else{
-            log.warn("Webcontrol不存在：" + self.getString("value"));
+            Executor.warn(TAG, "Webcontrol不存在：" + self.getString("value"));
         }
         
         return;
@@ -112,7 +111,7 @@ public class SimpleControlResultCreator {
             //templateObject.setAttribute("output", "____templateWriter");
             templateObject.doAction("process", actionContext);
         }else{
-            log.warn("模板不存在：" + self.getString("value"));
+            Executor.warn(TAG, "模板不存在：" + self.getString("value"));
         }
     }
 

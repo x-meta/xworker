@@ -27,21 +27,20 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.TaskMonitor;
 import xworker.swt.util.UtilSwt;
 
 public class SwtRunnerCreator {
-	private static Logger log = LoggerFactory.getLogger(SwtRunnerCreator.class);
+	private static final String TAG = SwtRunnerCreator.class.getName();
 
 	public static void run(ActionContext context) {
 		Thing shellThing = (Thing) context.get("self");
@@ -91,7 +90,7 @@ public class SwtRunnerCreator {
 							//}
 							self.doAction("onShellOpened", actionContext, UtilMap.toMap("shell", shell));
 						}catch(Exception e){
-							log.warn("onShellOpened error", e);
+							Executor.warn(TAG, "onShellOpened error", e);
 						}
 						if(!SwtUtils.isRWT()) {
 							while (!shell.isDisposed()) {
@@ -226,9 +225,9 @@ public class SwtRunnerCreator {
 				}
 				
 			} catch (Exception e) {
-				log.error("swtRunner exception", e);
+				Executor.error(TAG, "swtRunner exception", e);
 			} catch (Error er){
-				log.error("swtRunner error", er);
+				Executor.error(TAG, "swtRunner error", er);
 			}
 		}
 	}

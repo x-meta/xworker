@@ -24,9 +24,6 @@ import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -39,8 +36,6 @@ import xworker.swt.events.SwtListener;
 import xworker.swt.form.ThingDescriptorForm;
 
 public class ThingFormCreator {
-	private static Logger logger = LoggerFactory.getLogger(ThingFormCreator.class);
-	
     public static Object create(ActionContext actionContext){
         World world = World.getInstance();
         final Thing self = (Thing) actionContext.get("self");

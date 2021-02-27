@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
@@ -30,9 +28,10 @@ import org.xmeta.util.UtilMap;
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelUtil;
+import xworker.lang.executor.Executor;
 
 public class DataTreeModelCreator {
-	private static Logger log = LoggerFactory.getLogger(DataTreeModelCreator.class);
+	private static final String TAG =  DataTreeModelCreator.class.getName();
 	
     public static Object getRoot(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -147,7 +146,7 @@ public class DataTreeModelCreator {
                 return null;
             }
         }catch(Exception e){
-            log.warn("DataTreeModel getRoot: getValueError, name=" + name, e);
+            Executor.warn(TAG, "DataTreeModel getRoot: getValueError, name=" + name, e);
             return null;
         }
     }

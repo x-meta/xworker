@@ -20,15 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
+
 public class DataObjectGridPanelCreator {
-	private static Logger log = LoggerFactory.getLogger(DataObjectGridPanelCreator.class);
+	private static final String TAG = DataObjectGridPanelCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object toJavaScriptCode(ActionContext actionContext){
@@ -38,7 +38,7 @@ public class DataObjectGridPanelCreator {
         //数据对象
         Thing dataObject = (Thing) self.doAction("getDataObject", actionContext);
         if(dataObject == null){
-            log.warn("DataObjectGridPanel: dataObject is null - " + self.getString("dataObject"));
+            Executor.warn(TAG, "DataObjectGridPanel: dataObject is null - " + self.getString("dataObject"));
             return null;//self.doAction("toJavaScriptCode", actionContext);
         }
         

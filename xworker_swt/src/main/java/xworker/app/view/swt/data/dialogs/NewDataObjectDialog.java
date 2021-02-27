@@ -6,17 +6,16 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
 
 public class NewDataObjectDialog {
-	private static Logger logger = LoggerFactory.getLogger(NewDataObjectDialog.class);
+	private static final String TAG = NewDataObjectDialog.class.getName();
 	
 	public static void okButtonAction(ActionContext actionContext){
 		Thing form = actionContext.getObject("form");
@@ -50,7 +49,7 @@ public class NewDataObjectDialog {
 		    try{
 		        dataObject = (DataObject) dataStore.doAction("insert", parentContext, "record", dataObject);
 		    }catch(Exception e){
-		        logger.error("insert dataObject error", e);
+		        Executor.error(TAG, "insert dataObject error", e);
 		        MessageBox box = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK);
 		        box.setText(shell.getText());
 		        box.setMessage("" + e.getMessage());

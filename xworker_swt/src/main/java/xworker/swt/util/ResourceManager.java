@@ -35,13 +35,13 @@ import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ThingRegistor;
+
+import xworker.lang.executor.Executor;
 
 /**
  * <p>资源管理的目标是图片、字体、颜色、光标等资源共享。</p>
@@ -52,7 +52,7 @@ import org.xmeta.util.ThingRegistor;
  *
  */
 public class ResourceManager {
-	private static Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+	private static final String TAG = ResourceManager.class.getName();
 	
 	/**
 	 * 资源在不同的Device之间应该是不能共享的。
@@ -128,7 +128,7 @@ public class ResourceManager {
 			if(parent != null && parent instanceof Widget){
 				registor.addWidget((Widget) parent);
 			}else {
-				logger.warn("Can not create image, parent is null");
+				Executor.warn(TAG, "Can not create image, parent is null");
 				return null;
 			}
 			
@@ -153,7 +153,7 @@ public class ResourceManager {
 		    		con.connect();
 	    			image = new Image(Display.getCurrent(), con.getInputStream());
 	    		}catch(Exception ee){
-	    			logger.warn("Create image from http error", ee);
+	    			Executor.warn(TAG, "Create image from http error", ee);
 	    		}
 	    	}
 	    }catch(Exception e){		    			    	
@@ -337,7 +337,7 @@ public class ResourceManager {
 							try {
 								ResourceRegistor.this.resource.dispose();
 							}catch(Exception e) {
-								logger.warn("release resource exception", e);
+								Executor.warn(TAG, "release resource exception", e);
 							}
 						}
 					});

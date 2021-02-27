@@ -7,16 +7,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 
 public class StyledTextDataReactor  extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(StyledTextDataReactor.class);
+	private static final String TAG = StyledTextDataReactor.class.getName();
+	
 	StyledText text;	
 	
 	public StyledTextDataReactor(StyledText text, Thing self, ActionContext actionContext) {
@@ -118,7 +118,7 @@ public class StyledTextDataReactor  extends WidgetDataReactor implements Listene
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("StyledText is null, can not create StyledTextDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "StyledText is null, can not create StyledTextDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

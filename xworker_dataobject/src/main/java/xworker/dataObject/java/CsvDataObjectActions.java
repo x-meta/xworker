@@ -29,8 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -44,11 +42,15 @@ import com.csvreader.CsvWriter;
 
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
+import xworker.lang.actions.ActionUtils;
+import xworker.lang.executor.Executor;
 
 public class CsvDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(CsvDataObjectActions.class);
+	private static final String TAG = CsvDataObjectActions.class.getName();
 	
 	public static char getDelimiter(String delimiter){
+		return ActionUtils.getDelimiter(delimiter);
+		/*
 		if(delimiter == null || "".equals(delimiter)){
 			return ',';
 		}
@@ -61,7 +63,7 @@ public class CsvDataObjectActions {
 			return '\n';
 		}else{
 			return delimiter.charAt(0);
-		}
+		}*/
 	}
 	
 	public static char getDelimiter(ActionContext actionContext){
@@ -90,7 +92,7 @@ public class CsvDataObjectActions {
 	            		delimiter, charset);
 	        }
         }catch(Exception e){
-            logger.error("CsvDataObject: create CsvReader from file error", e);
+            Executor.error(TAG, "CsvDataObject: create CsvReader from file error", e);
         }
         
         

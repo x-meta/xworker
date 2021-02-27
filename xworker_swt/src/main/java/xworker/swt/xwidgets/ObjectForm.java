@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -16,10 +14,11 @@ import ognl.OgnlException;
 import xworker.app.view.swt.widgets.form.DataObjectForm;
 import xworker.app.view.swt.widgets.form.DataObjectForm.ThingFormModifyListener;
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 
 public class ObjectForm {
-	private static Logger logger = LoggerFactory.getLogger(ObjectForm.class);
+	private static final String TAG = ObjectForm.class.getName();
 	
 	public static Object create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -102,7 +101,7 @@ public class ObjectForm {
 		}
 		
 		if(dataObject == null){
-			logger.info("Can not find Mapping by type='" + type + "', and DefaultMapping not setted, do nothing, path=" + formThing.getMetadata().getPath());
+			Executor.info(TAG, "Can not find Mapping by type='" + type + "', and DefaultMapping not setted, do nothing, path=" + formThing.getMetadata().getPath());
 			return;
 		}
 		

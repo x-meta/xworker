@@ -22,19 +22,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.lang.actions.ActionUtils;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtUtils;
 
 public class MessageBoxActionsMessageBoxCreator {
-	private static Logger logger = LoggerFactory.getLogger(MessageBoxActionsMessageBoxCreator.class);
+	private static final String TAG = MessageBoxActionsMessageBoxCreator.class.getName();
     public static Object run(final ActionContext actionContext){
         final Thing self = (Thing) actionContext.get("self");
         
@@ -128,7 +127,7 @@ public class MessageBoxActionsMessageBoxCreator {
 			            	break;		     
 						}
 					}catch(Exception e) {
-						logger.error("openMessageBoxRWT error, thing=" + self.getMetadata().getPath(), e);
+						Executor.error(TAG, "openMessageBoxRWT error, thing=" + self.getMetadata().getPath(), e);
 					}
 				}
         	});

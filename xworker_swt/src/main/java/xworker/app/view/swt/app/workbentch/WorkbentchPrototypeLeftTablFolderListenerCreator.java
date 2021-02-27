@@ -15,15 +15,15 @@
 ******************************************************************************/
 package xworker.app.view.swt.app.workbentch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 
+import xworker.lang.executor.Executor;
+
 public class WorkbentchPrototypeLeftTablFolderListenerCreator {
-	private static Logger log = LoggerFactory.getLogger(WorkbentchPrototypeLeftTablFolderListenerCreator.class);
+	private static final String TAG = WorkbentchPrototypeLeftTablFolderListenerCreator.class.getName();
 	
     public static void close(ActionContext actionContext){
-        log.info("tabItem closed");
+        Executor.info(TAG, "tabItem closed");
     }
 
 }

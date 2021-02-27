@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.World;
 
 import javassist.ClassPool;
@@ -17,9 +15,10 @@ import javassist.CtMethod;
 import javassist.NotFoundException;
 import xworker.java.assist.Javaassist;
 import xworker.java.assist.ParameterInfo;
+import xworker.lang.executor.Executor;
 
 public class ClassUtils {
-	private static Logger logger = LoggerFactory.getLogger(ClassUtils.class);
+	private static final String TAG = ClassUtils.class.getName();
 	private static ClassPool clsPool = new ClassPool(true);
 
 	static{
@@ -79,7 +78,7 @@ public class ClassUtils {
 				}
 			}
 		} catch (NotFoundException e) {
-			logger.warn("get class contents error", e);
+			Executor.warn(TAG, "get class contents error", e);
 		}				
 	
 		Collections.sort(list);

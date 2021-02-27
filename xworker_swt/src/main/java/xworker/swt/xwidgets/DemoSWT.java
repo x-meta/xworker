@@ -4,20 +4,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
 public class DemoSWT {
-	private static Logger logger = LoggerFactory.getLogger(DemoSWT.class);
+	private static final String TAG = DemoSWT.class.getName();
 	
 	public static Object create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -107,7 +106,7 @@ public class DemoSWT {
 		}
 
 		if(thing == null){
-		    logger.warn("DemoSWT: composite thing is null, path=" + composite);
+		    Executor.warn(TAG, "DemoSWT: composite thing is null, path=" + composite);
 		    return;
 		}
 

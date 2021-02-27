@@ -2,18 +2,17 @@ package xworker.swt.app;
 
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionParams;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
 import xworker.swt.widgets.CoolBarCreator;
 
 public class CoolBarContainer {
-	private static Logger logger = LoggerFactory.getLogger(CoolBarContainer.class);
+	private static final String TAG = CoolBarContainer.class.getName();
 	private static final String ID = "__CoolbarContainer_id__";
 	
 	Thing self;
@@ -98,7 +97,7 @@ public class CoolBarContainer {
 		Thing self = actionContext.getObject("self");
 		CoolBar coolBar = self.doAction("getCoolBar", actionContext);
 		if(coolBar == null) {
-			logger.warn("CoolBarContainer: does not create, coolBar is null, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "CoolBarContainer: does not create, coolBar is null, path=" + self.getMetadata().getPath());
 			return;
 		}else {
 			CoolBarContainer menuContainer = new CoolBarContainer(coolBar, actionContext);

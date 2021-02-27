@@ -3,18 +3,17 @@ package xworker.swt.custom;
 import java.io.InputStream;
 
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.ExceptionUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 import xworker.swt.functions.AutoScroll;
 import xworker.swt.util.SwtUtils;
 
 public class TextInputStreamRunnable implements Runnable, AutoScroll{
-	private static Logger logger = LoggerFactory.getLogger(StyledTextInputStreamRunnable.class);
+	private static final String TAG = TextInputStreamRunnable.class.getName();
 	
 	Text text;
 	InputStream inputStream;
@@ -56,7 +55,7 @@ public class TextInputStreamRunnable implements Runnable, AutoScroll{
 				});			
 			}					
 		}catch(final Exception e){
-			logger.info("get data form inputStream error", e);
+			Executor.info(TAG, "get data form inputStream error", e);
 			
 			if(text != null && text.isDisposed() == false) {
 				//是InputStream结束了

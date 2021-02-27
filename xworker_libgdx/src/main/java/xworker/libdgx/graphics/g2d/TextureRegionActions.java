@@ -1,7 +1,5 @@
 package xworker.libdgx.graphics.g2d;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -10,9 +8,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class TextureRegionActions {
-	private static Logger logger = LoggerFactory.getLogger(TextureRegionActions.class);
+	private static final String TAG = TextureRegionActions.class.getName();
 	
 	public static TextureRegion create(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -69,7 +68,7 @@ public class TextureRegionActions {
 		int tileWidth = self.getInt("tileWidth", 0, actionContext);
 		int tileHeight = self.getInt("tileHeight", 0, actionContext);
 		if(texture == null){
-			logger.warn("TextureRegion.split: texture is null, path=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "TextureRegion.split: texture is null, path=" + self.getMetadata().getPath());
 			
 			return null;
 		}

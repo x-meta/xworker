@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
@@ -43,9 +41,10 @@ import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.java.CsvDataObjectActions.Constants;
+import xworker.lang.executor.Executor;
 
 public class ExcelDataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(ExcelDataObjectActions.class);
+	private static final String TAG = ExcelDataObjectActions.class.getName();
 	
     public static void loadExcelDatas(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
@@ -64,7 +63,7 @@ public class ExcelDataObjectActions {
             try{
                 workbook = Workbook.getWorkbook(new File(filePath));
             }catch(Exception e){
-                logger.error("ExcelDataObject: create workbook from file error, thing=" + self.getMetadata().getPath(), e);        
+                Executor.error(TAG, "ExcelDataObject: create workbook from file error, thing=" + self.getMetadata().getPath(), e);        
             }
         }
         
@@ -86,7 +85,7 @@ public class ExcelDataObjectActions {
                 sheet = workbook.getSheet(0);
             }
             if(sheet == null){
-                logger.warn("ExcelDataObject: sheet is null, sheetName=" + sheetName);
+                Executor.warn(TAG, "ExcelDataObject: sheet is null, sheetName=" + sheetName);
                 self.setData(Constants.HEADERS, new HashMap<String, Object>());
                 self.setData(Constants.DATAS, new ArrayList<DataObject>());
                 self.setData(Constants.COLUMNCOUNT, 0);
@@ -166,7 +165,7 @@ public class ExcelDataObjectActions {
                     workbook = Workbook.createWorkbook(file);
                 }
             }catch(Exception e){
-                logger.error("ExcelDataObject: create workbook from file error", e);
+                Executor.error(TAG, "ExcelDataObject: create workbook from file error", e);
             }
         }
         

@@ -25,21 +25,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilSwt;
 import xworker.util.UtilData;
 
 public class CTabFolderCreator {
-	private static Logger logger = LoggerFactory.getLogger(CTabFolderCreator.class);
+	private static final String TAG = CTabFolderCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -97,7 +96,7 @@ public class CTabFolderCreator {
 					
 					item.setData(key, true);
 				}catch(Exception e) {
-					logger.error("Delay reload item error, path=" + itemThing.getMetadata().getPath(), e);
+					Executor.error(TAG, "Delay reload item error, path=" + itemThing.getMetadata().getPath(), e);
 				}
 			}
 		});

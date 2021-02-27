@@ -33,14 +33,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 import xworker.swt.browser.BrowserCallback;
 import xworker.swt.design.Designer;
@@ -50,7 +49,7 @@ import xworker.swt.util.UtilBrowser;
 import xworker.util.XWorkerUtils;
 
 public class HtmlEditorCreator {
-	private static Logger logger = LoggerFactory.getLogger(HtmlEditorCreator.class);
+	private static final String TAG = HtmlEditorCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	World world = World.getInstance();
@@ -278,7 +277,7 @@ public class HtmlEditorCreator {
     		SwtUtils.evaluateBrowserScript(browser, script, new BrowserCallback() {
 				@Override
 				public void evaluationFailed(Exception exception) {
-					logger.error("ok button exception", exception);
+					Executor.error(TAG, "ok button exception", exception);
 				}
 
 				@Override

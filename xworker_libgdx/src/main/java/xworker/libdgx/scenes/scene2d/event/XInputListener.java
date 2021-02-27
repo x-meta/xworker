@@ -2,8 +2,6 @@ package xworker.libdgx.scenes.scene2d.event;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
@@ -12,8 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 
+import xworker.lang.executor.Executor;
+
 public class XInputListener extends InputListener{
-	private static Logger logger = LoggerFactory.getLogger(XInputListener.class);
+	private static final String TAG = XInputListener.class.getName(); 
 	Thing thing;
 	ActionContext actionContext;
 	
@@ -37,7 +37,7 @@ public class XInputListener extends InputListener{
 		try{
 			thing.doAction("enter", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=enter, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=enter, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -48,7 +48,7 @@ public class XInputListener extends InputListener{
 		try{
 			thing.doAction("exit", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=exit, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=exit, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=keyDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=keyDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -79,7 +79,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=keyTyped, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=keyTyped, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -95,7 +95,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=keyUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=keyUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -111,7 +111,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=mouseMoved, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=mouseMoved, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -126,7 +126,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=scrolled, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=scrolled, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -143,7 +143,7 @@ public class XInputListener extends InputListener{
 				return false;
 			}
 		}catch(Exception e){
-			logger.error("do event error ,eventName=touchDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=touchDown, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 			return false;
 		}
 	}
@@ -154,7 +154,7 @@ public class XInputListener extends InputListener{
 		try{
 			thing.doAction("touchDragged", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=touchDragged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=touchDragged, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 
@@ -165,7 +165,7 @@ public class XInputListener extends InputListener{
 		try{
 			thing.doAction("touchUp", actionContext, params);
 		}catch(Exception e){
-			logger.error("do event error ,eventName=touchUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
+			Executor.error(TAG, "do event error ,eventName=touchUp, params=" + params + ",thing=" + thing.getMetadata().getPath(), e);
 		}
 	}
 	

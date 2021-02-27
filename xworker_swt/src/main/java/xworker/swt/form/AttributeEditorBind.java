@@ -22,12 +22,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 /**
@@ -37,7 +36,7 @@ import xworker.swt.ActionContainer;
  *
  */
 public class AttributeEditorBind {
-	private static Logger logger = LoggerFactory.getLogger(AttributeEditorBind.class);
+	private static final String TAG = AttributeEditorBind.class.getName(); 
 	
 	/** 数据仓库 */
 	Thing dataStore;
@@ -75,7 +74,7 @@ public class AttributeEditorBind {
 						
 						dataStore.doAction("load", ac, params);
 					}catch(Exception e){
-						logger.error("attribute editor store load on bind error", e);
+						Executor.error(TAG, "attribute editor store load on bind error", e);
 					}
 				}				
 			};
@@ -104,7 +103,7 @@ public class AttributeEditorBind {
 			}
 						
 		}catch(Exception e){
-			logger.error("attribute editor bind error", e);
+			Executor.error(TAG, "attribute editor bind error", e);
 		}
 	}
 }

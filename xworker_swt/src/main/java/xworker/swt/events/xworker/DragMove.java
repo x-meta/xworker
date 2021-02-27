@@ -5,12 +5,11 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
 
 /**
@@ -20,7 +19,7 @@ import xworker.swt.util.SwtUtils;
  *
  */
 public class DragMove implements MouseListener, MouseMoveListener{
-	private static Logger logger = LoggerFactory.getLogger(DragMove.class);
+	private static final String TAG = DragMove.class.getName(); 
 	
 	int x;
 	int y;
@@ -109,7 +108,7 @@ public class DragMove implements MouseListener, MouseMoveListener{
 		try{
 			listener.doAction(name, actionContext, UtilMap.toMap(new Object[]{"dragMove", this}));
 		}catch(Exception e){
-			logger.error("DragMove fire event error, event=" + name + ", listener=" + listener.getMetadata().getPath());
+			Executor.error(TAG, "DragMove fire event error, event=" + name + ", listener=" + listener.getMetadata().getPath());
 		}
 	}
 

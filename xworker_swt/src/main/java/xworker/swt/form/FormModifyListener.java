@@ -24,13 +24,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.editor.EditorModifyListener;
 
 /**
@@ -40,7 +39,7 @@ import xworker.swt.editor.EditorModifyListener;
  *
  */
 public class FormModifyListener implements ModifyListener, SetableModifyListener{
-	private static Logger logger = LoggerFactory.getLogger(FormModifyListener.class);
+	private static final String TAG = FormModifyListener.class.getName();
 	
 	/** 原始监听器 */
 	ModifyListener listener;
@@ -128,7 +127,7 @@ public class FormModifyListener implements ModifyListener, SetableModifyListener
 				}
 			}
 		}catch(Exception e){
-			logger.error("Form modify event error, formPath=" + formThing.getMetadata().getPath(), e);
+			Executor.error(TAG, "Form modify event error, formPath=" + formThing.getMetadata().getPath(), e);
 		}finally {
 			this.setEnable(enabled);
 		}

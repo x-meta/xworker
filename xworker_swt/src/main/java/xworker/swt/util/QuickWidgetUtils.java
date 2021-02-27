@@ -1,14 +1,13 @@
 package xworker.swt.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
 public class QuickWidgetUtils {
-	private static Logger logger = LoggerFactory.getLogger(QuickWidgetUtils.class);
+	private static final String TAG = QuickWidgetUtils.class.getName();
 	
 	public static void invokeEvent(Object event, Thing thing, String name, ActionContext actionContext) {
 		try{
@@ -28,7 +27,7 @@ public class QuickWidgetUtils {
 				}
 			}
 		}catch(Exception e){
-			logger.warn("Invoke quick widget event error， path=" + thing.getMetadata().getPath(), e);
+			Executor.warn(TAG, "Invoke quick widget event error， path=" + thing.getMetadata().getPath(), e);
 		}
 	}
 }

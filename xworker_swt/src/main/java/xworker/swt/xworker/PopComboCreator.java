@@ -25,13 +25,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtDialog;
@@ -39,7 +38,7 @@ import xworker.swt.util.SwtDialogCallback;
 import xworker.swt.util.SwtUtils;
 
 public class PopComboCreator {
-	private static Logger logger = LoggerFactory.getLogger(PopComboCreator.class);
+	private static final String TAG = PopComboCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object create(ActionContext actionContext){
@@ -248,7 +247,7 @@ public class PopComboCreator {
 	    				text.forceFocus();
 	    			}
     			}catch(Exception e) {
-    				logger.warn("Text dispose error", e);
+    				Executor.warn(TAG, "Text dispose error", e);
     			}
     		}
     	});

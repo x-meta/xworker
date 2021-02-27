@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,9 +26,11 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class AggregateCreator {
-	private static Logger log = LoggerFactory.getLogger(AggregateCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(AggregateCreator.class);
+	private static final String TAG = AggregateCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object run(ActionContext actionContext) throws OgnlException{
@@ -39,7 +39,7 @@ public class AggregateCreator {
         //数据列表
     	Iterable<Object> listData = (Iterable<Object> ) OgnlUtil.getValue(self.getString("listName"), actionContext);
         if(listData == null){
-            log.info("Aggregate: listData is null, listName=" + self.getString("listName"));
+            Executor.info(TAG, "Aggregate: listData is null, listName=" + self.getString("listName"));
             return null;
         }
         
@@ -75,7 +75,7 @@ public class AggregateCreator {
                 }else{
                     Object value = null;
                     if(aggregateExpression == null || "".equals(aggregateExpression)){
-                        log.warn("Aggregate: aggregateExpression is null");
+                        Executor.warn(TAG, "Aggregate: aggregateExpression is null");
                         value = 0;
                     }else{
                         value = OgnlUtil.getValue(aggregateExpression, data);

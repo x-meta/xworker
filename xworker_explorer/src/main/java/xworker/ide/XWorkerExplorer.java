@@ -24,15 +24,15 @@ import xworker.io.SystemIoRedirector;
 
 public class XWorkerExplorer {
 	public static void main(String[] args){
-		try{		
+		try{
 			//首次从git上拉下来没有databases目录，会报数据库的错误
 			File dbDir = new File("./xworker/databases/");
 			if(dbDir.exists() == false) {
 				dbDir.mkdirs();
 			}
-			
-			//初始化引擎
-			World world = World.getInstance();			
+
+			//初始化引擎，如果代码着色有问题，请设置color的dll的路径
+			World world = World.getInstance();
 			world.init("./xworker/");
 			Thread.currentThread().setContextClassLoader(world.getClassLoader());
 			SystemIoRedirector.init();

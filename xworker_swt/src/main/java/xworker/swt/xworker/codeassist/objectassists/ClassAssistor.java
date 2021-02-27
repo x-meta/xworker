@@ -4,8 +4,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -16,13 +14,13 @@ import javassist.CtMethod;
 import xworker.java.assist.Javaassist;
 import xworker.java.assist.ParameterInfo;
 import xworker.lang.VariableDesc;
+import xworker.lang.executor.Executor;
 import xworker.swt.xworker.ClassUtils;
 import xworker.swt.xworker.CodeAssitContent;
 import xworker.swt.xworker.codeassist.ObjectAssistor;
 
 public class ClassAssistor implements ObjectAssistor{
-	private static Logger logger = LoggerFactory.getLogger(ClassAssistor.class);
-	
+	private static final String TAG = ClassAssistor.class.getName();
 	@Override
 	public List<CodeAssitContent> getContents(VariableDesc var, Thing thing, ActionContext actionContext) {
 		List<CodeAssitContent> list = new ArrayList<CodeAssitContent>();
@@ -103,7 +101,7 @@ public class ClassAssistor implements ObjectAssistor{
 				}
 			}
 		}catch(Exception e) {
-			logger.warn("Get class content error, " + e.getMessage());
+			Executor.warn(TAG, "Get class content error, " + e.getMessage());
 		}
 	}
 }

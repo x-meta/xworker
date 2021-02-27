@@ -22,17 +22,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class GroupCreator {
-	private static Logger log = LoggerFactory.getLogger(GroupCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(GroupCreator.class);
+	private static final String TAG = GroupCreator.class.getName();
 	
     @SuppressWarnings("unchecked")
 	public static Object run(ActionContext actionContext) throws OgnlException{
@@ -42,7 +42,7 @@ public class GroupCreator {
         String listName = self.getString("listName");
         Iterable<Object> listData = (Iterable<Object>) OgnlUtil.getValue(listName, actionContext);
         if(listData == null){
-            log.info("GroupAction: listData  is null, listName=" + listName);
+            Executor.info(TAG, "GroupAction: listData  is null, listName=" + listName);
             return null;
         }
         
@@ -66,7 +66,7 @@ public class GroupCreator {
                 Object value = "";
                 String fieldName = (String) gf.get("fieldName");
                 if(fieldName == null || "".equals(fieldName)){
-                    log.warn("Group: group fieldName is null");
+                    Executor.warn(TAG, "Group: group fieldName is null");
                     value = "fieldName is null";
                 }else{
                     value = OgnlUtil.getValue(fieldName, data);

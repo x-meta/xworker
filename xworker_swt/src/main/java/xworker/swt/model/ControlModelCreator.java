@@ -24,14 +24,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.DialogCallback;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
@@ -39,7 +38,7 @@ import xworker.swt.util.UtilModel;
 import xworker.swt.util.UtilSwt;
 
 public class ControlModelCreator {
-	private static Logger log = LoggerFactory.getLogger(ControlModelCreator.class);
+	private static final String TAG = ControlModelCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
@@ -69,7 +68,7 @@ public class ControlModelCreator {
 		    try{
 		        data = OgnlUtil.getValue("[\"" + propertyName + "\"]", data);
 		    }catch(Exception e){
-		        //log.info("get value " + propertyName, e);
+		        //Executor.info(TAG, "get value " + propertyName, e);
 		    }
 		}
 		
@@ -130,13 +129,13 @@ public class ControlModelCreator {
 		        return SwtUtils.getValue(control, self.getString("dataType"), self.getString("pattern"));
 		    }catch(Exception e){        
 		        //e.printStackTrace();
-		        log.error("get value from control", e);
+		        Executor.error(TAG, "get value from control", e);
 		    }
 		}else if(control instanceof Thing){
 		    try{
 		        return ((Thing) control).doAction("getValue", actionContext);
 		    }catch(Exception e){
-		        log.error("get value from thing control", e);
+		        Executor.error(TAG, "get value from thing control", e);
 		    }
 		}else{
 		    return control;
@@ -161,7 +160,7 @@ public class ControlModelCreator {
 		}else{
 		    Object control = actionContext.get(swtControl);
 		    if(control == null){
-		        log.warn("control not exists : " + swtControl);
+		        Executor.warn(TAG, "control not exists : " + swtControl);
 		    }
 		    
 		    if(!(Boolean) self.doAction("doValidate", actionContext)){
@@ -252,12 +251,12 @@ public class ControlModelCreator {
     	
 		Object control = actionContext.get(self.getString("swtControl"));
 		if(control == null){
-		    //log.warn("control not exists : " + self.swtName);
+		    //Executor.warn(TAG, "control not exists : " + self.swtName);
 		}
 		
 		boolean va = SwtUtils.validate(control, self.getString("type"), self.getString("pattern"), self.getBoolean("required"));
 		if(va == false){
-		    log.info(self.getString("name"));
+		    Executor.info(TAG, self.getString("name"));
 		}
 		return va;       
 	}

@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.XMetaTimerManager;
@@ -15,8 +13,6 @@ import org.xmeta.XMetaTimerManager;
 import xworker.app.model.tree.impl.ThingRegistTreeModelActions.Group;
 
 public class ThingRegistCacheManager {
-	private static Logger logger = LoggerFactory.getLogger(ThingRegistCacheManager.class);
-	
 	static Map<String, ThingRegistCache> caches = new HashMap<String, ThingRegistCache>();
 	
 	private static boolean isReloading = false;

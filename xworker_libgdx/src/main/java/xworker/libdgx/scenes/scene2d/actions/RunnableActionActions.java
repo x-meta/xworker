@@ -1,7 +1,5 @@
 package xworker.libdgx.scenes.scene2d.actions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -9,9 +7,10 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class RunnableActionActions {
-	private static Logger logger = LoggerFactory.getLogger(RunnableActionActions.class);
+	private static final String TAG = RunnableActionActions.class.getName();
 	
 	public static RunnableAction create(ActionContext actionContext) throws OgnlException{
 		Thing self = (Thing) actionContext.get("self");
@@ -43,7 +42,7 @@ public class RunnableActionActions {
 			try{
 				thing.doAction("doAction", actionContext);
 			}catch(Exception e){
-				logger.error("run action error, thing=" + thing.getMetadata().getPath(), e);
+				Executor.error(TAG, "run action error, thing=" + thing.getMetadata().getPath(), e);
 			}
 		}
 	}

@@ -22,16 +22,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
+import xworker.lang.executor.Executor;
+
 public class CComboStoreEditorCreator {
-	private static Logger log = LoggerFactory.getLogger(CComboStoreEditorCreator.class);
+	private static final String TAG = CComboStoreEditorCreator.class.getName();
 	
 	public static Object create(ActionContext actionContext){
     	World world = World.getInstance();
@@ -82,7 +82,7 @@ public class CComboStoreEditorCreator {
 			            return keys[0][1];
 			        }
 		        }catch(Exception e){
-		        	log.warn("CComboStoreEditor get value error", e);
+		        	Executor.warn(TAG, "CComboStoreEditor get value error", e);
 		        }
 		    }
 		    

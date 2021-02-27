@@ -6,15 +6,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.annotation.ActionParams;
 
+import xworker.lang.executor.Executor;
+
 public abstract class AbstractDialogEditor extends AbstractTableEditor{
-	private static Logger logger = LoggerFactory.getLogger(AbstractDialogEditor.class);
+	private static final String TAG = AbstractDialogEditor.class.getName();
 	
 	Text text;
 	Button openDialogButton;
@@ -37,7 +37,7 @@ public abstract class AbstractDialogEditor extends AbstractTableEditor{
 				try {
 					openDialog(event);
 				}catch(Exception e) {
-					logger.error("Open dialog error, path=" + self.getMetadata().getPath(), e);
+					Executor.error(TAG, "Open dialog error, path=" + self.getMetadata().getPath(), e);
 				}
 			}			
 		};

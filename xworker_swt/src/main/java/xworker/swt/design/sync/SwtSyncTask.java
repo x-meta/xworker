@@ -4,16 +4,15 @@ import java.util.concurrent.Future;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Thing;
 import org.xmeta.cache.ThingEntry;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.design.DesignTools;
 import xworker.swt.design.Designer;
 
 public class SwtSyncTask implements Runnable{
-	private static Logger logger = LoggerFactory.getLogger(SwtSyncTask.class);
+	private static final String TAG = SwtSyncTask.class.getName();
 	
 	Control control;
 	
@@ -44,7 +43,7 @@ public class SwtSyncTask implements Runnable{
 					checkControl(control);
 				}catch(Exception e) {
 					if(!control.isDisposed()) {
-						logger.error("Sync swt eror", e);
+						Executor.error(TAG, "Sync swt eror", e);
 					}
 				}
 			}

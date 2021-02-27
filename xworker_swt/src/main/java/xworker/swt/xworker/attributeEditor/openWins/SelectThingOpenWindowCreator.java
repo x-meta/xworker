@@ -25,18 +25,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.util.XWorkerTreeUtil;
 
 public class SelectThingOpenWindowCreator {
-	private static Logger logger = LoggerFactory.getLogger(SelectThingOpenWindowCreator.class);
+	private static final String TAG = SelectThingOpenWindowCreator.class.getName();
 	
 	@SuppressWarnings("unchecked")
 	public static void query(ActionContext actionContext){
@@ -220,7 +219,7 @@ public class SelectThingOpenWindowCreator {
 							}
 						}
 					}catch(Exception e){
-						logger.error("getThingForOpenWindow error", e);
+						Executor.error(TAG, "getThingForOpenWindow error", e);
 					}
 				}
 			}

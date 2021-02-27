@@ -5,15 +5,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.ZestStyles;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 public class Connection {
-	private static Logger logger = LoggerFactory.getLogger(Connection.class);
+	private static final String TAG = Connection.class.getName();
 	
 	public static Object create(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -59,7 +58,7 @@ public class Connection {
 			
 			return con;
 		}else{
-			logger.info("source or destination not exists, connection not created, thing=" + self.getMetadata().getPath());
+			Executor.info(TAG, "source or destination not exists, connection not created, thing=" + self.getMetadata().getPath());
 			
 			return null;
 		}

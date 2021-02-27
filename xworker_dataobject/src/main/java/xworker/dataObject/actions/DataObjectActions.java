@@ -15,8 +15,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -42,9 +40,10 @@ import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.db.DbDataObject;
+import xworker.lang.executor.Executor;
 
 public class DataObjectActions {
-	private static Logger logger = LoggerFactory.getLogger(DataObjectActions.class);
+	private static final String TAG = DataObjectActions.class.getName();
 	
 	public static Thing getDataObject(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
@@ -128,23 +127,23 @@ public class DataObjectActions {
 				
 				if(debug){
 					if(self.getBoolean("isServlet")){	
-						logger.info("create page info from servlet, start=" + start + ",limit=" + limit 
+						Executor.info(TAG, "create page info from servlet, start=" + start + ",limit=" + limit 
 								+ ",page=" + page + ",pageSize=" + pageSize);
 					}else{
-						logger.info("create page info from actionContext, start=" + start + ",limit=" + limit 
+						Executor.info(TAG, "create page info from actionContext, start=" + start + ",limit=" + limit 
 								+ ",page=" + page + ",pageSize=" + pageSize);
 					}
 				}
 				return pageInfo;
 			}else{
 				if(debug){
-					logger.info("no pageInfo defined and no create new PageInfo");
+					Executor.info(TAG, "no pageInfo defined and no create new PageInfo");
 				}
 				return null;
 			}
 		}else{
 			if(debug){
-				logger.info("get PageInfo from actionContext, pageInfo=" + self.getString("pageInfo"));
+				Executor.info(TAG, "get PageInfo from actionContext, pageInfo=" + self.getString("pageInfo"));
 			}
 			return UtilData.getData(self, "pageInfo", actionContext);
 		}
@@ -264,24 +263,24 @@ public class DataObjectActions {
 	    	
 	    	String type = self.getStringBlankAsNull("type");
 	    	if(type == null){
-	    		logger.warn("export type is null, do not export, thing=" + self.getMetadata().getPath());
+	    		Executor.warn(TAG, "export type is null, do not export, thing=" + self.getMetadata().getPath());
 	    		return;
 	    	}
 	    	
 	    	//iter是变量输出的地方
 	    	Action iter = getSelfAction(self, type + "ExportIter");	    	
 	    	if(iter == null){
-	    		logger.warn("must implement " + type + "ExportIter method, thing=" + self.getMetadata().getPath());
+	    		Executor.warn(TAG, "must implement " + type + "ExportIter method, thing=" + self.getMetadata().getPath());
 	    		return;
 	    	}
 	    	
 	    	try{
 	    		if(debug){
-	    			logger.info(type + "ExportInit");
+	    			Executor.info(TAG, type + "ExportInit");
 	    		}
 		    	self.doAction(type + "ExportInit", actionContext);
 		    	if(debug){
-		    		logger.info(type + "iterator");
+		    		Executor.info(TAG, type + "iterator");
 		    	}
 		    	itertor = iterable.iterator();
 		    	while(itertor.hasNext()){
@@ -291,7 +290,7 @@ public class DataObjectActions {
 	    	}finally{
 	    		self.doAction(type + "ExportEnd", actionContext);
 	    		if(debug){
-	    			logger.info(type + "ExportEnd");
+	    			Executor.info(TAG, type + "ExportEnd");
 	    		}
 	    	}
 	    }finally{
@@ -334,31 +333,31 @@ public class DataObjectActions {
 	    		}
 	    	}
 	    	if(output == null) {
-	    		logger.warn("output is null, can not export, thing=" + self.getMetadata().getPath());
+	    		Executor.warn(TAG, "output is null, can not export, thing=" + self.getMetadata().getPath());
 	    		return;
 	    	}
 	    	bindings.put("output", output);
 	    	
 	    	String type = self.getString("type", "csv", actionContext);
 	    	if(type == null){
-	    		logger.warn("export type is null, do not export, thing=" + self.getMetadata().getPath());
+	    		Executor.warn(TAG, "export type is null, do not export, thing=" + self.getMetadata().getPath());
 	    		return;
 	    	}
 	    	
 	    	//iter是变量输出的地方
 	    	Action iter = getSelfAction(self, type + "ExportIter");	    	
 	    	if(iter == null){
-	    		logger.warn("must implement " + type + "ExportIter method, thing=" + self.getMetadata().getPath());
+	    		Executor.warn(TAG, "must implement " + type + "ExportIter method, thing=" + self.getMetadata().getPath());
 	    		return;
 	    	}
 	    	
 	    	try{
 	    		if(debug){
-	    			logger.info(type + "ExportInit");
+	    			Executor.info(TAG, type + "ExportInit");
 	    		}
 		    	self.doAction(type + "ExportInit", actionContext);
 		    	if(debug){
-		    		logger.info(type + "iterator");
+		    		Executor.info(TAG, type + "iterator");
 		    	}
 		        dataObject.doAction("iterator", actionContext, 
 		        		UtilMap.toMap(new Object[]{"conditionData", conditionData, 
@@ -366,7 +365,7 @@ public class DataObjectActions {
 	    	}finally{
 	    		self.doAction(type + "ExportEnd", actionContext);
 	    		if(debug){
-	    			logger.info(type + "ExportEnd");
+	    			Executor.info(TAG, type + "ExportEnd");
 	    		}
 	    	}
 	    }finally{
@@ -514,7 +513,7 @@ public class DataObjectActions {
 		}
 		
 		if(UtilAction.getDebugLog(self, actionContext)){
-			logger.info("start write to csv");
+			Executor.info(TAG, "start write to csv");
 		}
 	}
 	
@@ -554,7 +553,7 @@ public class DataObjectActions {
 			exportContext.put("row", row + 1);	
 			
 			if(self != null && UtilAction.getDebugLog(self, actionContext) && row % 2000 == 0){
-				logger.info("write to csv: rows = " + row);
+				Executor.info(TAG, "write to csv: rows = " + row);
 			}
 		}		
 		
@@ -578,20 +577,20 @@ public class DataObjectActions {
 		
 		Thing self = (Thing) actionContext.get("self");
 		if(UtilAction.getDebugLog(self, actionContext)){
-			logger.info("write to csv finshed, total rows=" + exportContext.get("row"));
+			Executor.info(TAG, "write to csv finshed, total rows=" + exportContext.get("row"));
 		}
 	}
 	
 	public static void sqlExportInit(ActionContext actionContext){
-		logger.warn("Sql export is not implemented");
+		Executor.warn(TAG, "Sql export is not implemented");
 	}
 	
 	public static void sqlExportIter(ActionContext actionContext){
-		logger.warn("Sql export is not implemented");
+		Executor.warn(TAG, "Sql export is not implemented");
 	}
 	
 	public static void sqlExportEnd(ActionContext actionContext){
-		logger.warn("Sql export is not implemented");
+		Executor.warn(TAG, "Sql export is not implemented");
 	}
 	
 	public static void ddl(ActionContext actionContext){
@@ -601,11 +600,11 @@ public class DataObjectActions {
 		Thing dataSource = (Thing) self.doAction("getDataSource", actionContext);
 		
 		if(dataObject == null){
-			logger.warn("DDL: dataObject is null, action=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "DDL: dataObject is null, action=" + self.getMetadata().getPath());
 			return;
 		}
 		if(dataSource == null){
-			logger.warn("DDL: dataSource is null, action=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "DDL: dataSource is null, action=" + self.getMetadata().getPath());
 			return;
 		}
 			

@@ -6,18 +6,17 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.dataObject.DataObject;
+import xworker.lang.executor.Executor;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
 import xworker.swt.util.SwtUtils;
 
 public class ListDataReactor  extends WidgetDataReactor implements Listener{
-	private static Logger logger = LoggerFactory.getLogger(ListDataReactor.class);
+	private static final String TAG = ListDataReactor.class.getName();
 	
 	org.eclipse.swt.widgets.List list;
 
@@ -127,7 +126,7 @@ public class ListDataReactor  extends WidgetDataReactor implements Listener{
 			actionContext.g().put(self.getMetadata().getName(), reactor);
 			return reactor;
 		}else {
-			logger.warn("List is null, can not create ListDataReactor, thing=" + self.getMetadata().getPath());
+			Executor.warn(TAG, "List is null, can not create ListDataReactor, thing=" + self.getMetadata().getPath());
 		}
 		
 		return null;

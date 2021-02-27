@@ -22,8 +22,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -31,10 +29,11 @@ import org.xmeta.util.UtilMap;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.utils.DataObjectUtil;
-import xworker.dataObject.utils.JacksonFormator;
+import xworker.lang.executor.Executor;
+import xworker.util.JacksonFormator;
 
 public class HttpProxyServerActions {
-private static Logger logger = LoggerFactory.getLogger(HttpProxyServerActions.class);
+	private static final String TAG = HttpProxyServerActions.class.getName();
 
 	public static void doAction(ActionContext actionContext){
 		HttpServletRequest request = (HttpServletRequest) actionContext.get("request");
@@ -89,12 +88,12 @@ private static Logger logger = LoggerFactory.getLogger(HttpProxyServerActions.cl
 			String json = JacksonFormator.formatObject(result);
 			response.getWriter().println(json);
 		}catch(Exception e){
-			logger.error("DataObject remote query error", e);
+			Executor.error(TAG, "DataObject remote query error", e);
 			response.setContentType("text/plain; charset=utf-8");
 			try {
 				response.getWriter().println("{\"success\":false, \"msg\":\"" + e.getMessage() + "\"}");
 			} catch (IOException e1) {
-				logger.error("DataObject remote error", e1);
+				Executor.error(TAG, "DataObject remote error", e1);
 			}
 		}
 	}
@@ -135,7 +134,7 @@ private static Logger logger = LoggerFactory.getLogger(HttpProxyServerActions.cl
 			}catch(Exception e){
 				result.put("success", false);
 				result.put("msg", e.getMessage());
-				logger.error("DataObject remote load error", e);
+				Executor.error(TAG, "DataObject remote load error", e);
 			}
 		}
 		
@@ -144,12 +143,12 @@ private static Logger logger = LoggerFactory.getLogger(HttpProxyServerActions.cl
 			String json = JacksonFormator.formatObject(result);
 			response.getWriter().println(json);
 		}catch(Exception e){
-			logger.error("DataObject remote: format json string error", e);
+			Executor.error(TAG, "DataObject remote: format json string error", e);
 			response.setContentType("text/plain; charset=utf-8");
 			try {
 				response.getWriter().println("{\"success\":false, \"msg\":\"format json string error\"}");
 			} catch (IOException e1) {
-				logger.error("DataObject remote: format json string error", e1);
+				Executor.error(TAG, "DataObject remote: format json string error", e1);
 			}
 		}		
 	}

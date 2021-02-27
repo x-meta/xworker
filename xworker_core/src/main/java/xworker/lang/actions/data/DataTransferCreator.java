@@ -18,8 +18,6 @@ package xworker.lang.actions.data;
 import java.text.ParseException;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -28,10 +26,11 @@ import org.xmeta.util.UtilData;
 import org.xmeta.util.UtilString;
 
 import ognl.OgnlException;
+import xworker.lang.executor.Executor;
 
 public class DataTransferCreator {
-	private static Logger log = LoggerFactory
-			.getLogger(DataTransferCreator.class);
+	//private static Logger log = LoggerFactory.getLogger(DataTransferCreator.class);
+	private static final String TAG = DataTransferCreator.class.getName();
 
 	@SuppressWarnings("unchecked")
 	public static Object run(ActionContext actionContext)
@@ -41,14 +40,14 @@ public class DataTransferCreator {
 		String sourceVarName = self.getString("sourceVarName");
 		Object sourceData = OgnlUtil.getValue(sourceVarName, actionContext);
 		if (sourceData == null) {
-			log.info("DataTransfer: source is null, source=" + sourceVarName);
+			Executor.info(TAG, "DataTransfer: source is null, source=" + sourceVarName);
 			return null;
 		}
 
 		Object targetVarName = self.getString("targetVarName");
 		Object targetData = OgnlUtil.getValue(targetVarName, actionContext);
 		if (targetData == null) {
-			log.info("DataTransfer: target is null, target=" + targetVarName);
+			Executor.info(TAG, "DataTransfer: target is null, target=" + targetVarName);
 			return null;
 		}
 

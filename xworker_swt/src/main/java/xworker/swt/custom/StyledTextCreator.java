@@ -19,14 +19,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilString;
 
+import xworker.lang.executor.Executor;
 import xworker.swt.custom.textutils.StyledTextLineNumber;
 import xworker.swt.design.Designer;
 import xworker.swt.form.TextEditor;
@@ -36,7 +35,7 @@ import xworker.swt.xworker.CodeAssistor;
 import xworker.swt.xworker.Colorer;
 
 public class StyledTextCreator {
-	private static Logger logger = LoggerFactory.getLogger(StyledTextCreator.class);
+	private static final String TAG = StyledTextCreator.class.getName();
 	
     public static Object create(ActionContext actionContext){
     	if(SwtUtils.isRWT()) {
@@ -130,7 +129,7 @@ public class StyledTextCreator {
     	try{
     		Colorer.attach(parent, codeName, codeType);
     	}catch(Throwable e){
-    		logger.info("Attach colorer exception, path=" + self.getMetadata().getPath(), e);
+    		Executor.info(TAG, "Attach colorer exception, path=" + self.getMetadata().getPath(), e);
     	}
     }
     
