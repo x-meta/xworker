@@ -1,0 +1,37 @@
+%1547018018181
+@
+sname=AttributeRelationDoc
+slabel=属性联动机制
+stype=thingDesc
+sgroup=事物编辑器.表单.联动
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+Sdescription=
+#$@text#$@
+<h2>属性联动</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;属性联动是指修改了一个属性后，其它属性可选项也会发生变化。比如下拉框之间的联动，一个下拉框的选择改变时，联动的下拉框的可选项跟着变化了。</p>
+
+<h3>联动的机制</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 当在属性编辑器做了修改后如果触发了修改事件，那么会查找当前属性模型是否设置了modifyStoreListener属性，modifyStoreListener属性是其它属性名的列表，如果不为空则调用其它属性的数据仓库的doLoad方法重新加载，从而实现联动。</p>
+
+<h3>数据仓库的命名规则</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据仓库是放在表单的变量上下文中的，变量命名规则是&lt;属性名&gt;Store，如属性名为age，那么数据仓库名是ageStore。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果是在属性中设置的数据仓库，数据仓库的变量会自动存放好。</p>
+
+<h3>查询参数</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据仓库执行load时通常是一个查询，查询参数为当前表单的值，如果表单上下文中存在params: Map&lt;String, Object&gt;变量，则会先把params变量放到参数中，然后再用表单的值覆盖。</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.ide.worldexplorer.swt.dataExplorerParts.ThingCommandIndexRoot
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

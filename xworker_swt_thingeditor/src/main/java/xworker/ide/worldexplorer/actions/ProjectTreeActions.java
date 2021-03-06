@@ -224,6 +224,10 @@ public class ProjectTreeActions {
 		if(object instanceof Thing) {
 			Thing thing = (Thing) object;
 			Index index = findIndex(thing);
+			if(index == null){
+				return;
+			}
+
 			List<Index> indexs = new ArrayList<Index>();
 			while(index.getParent() != null) {
 				indexs.add(0, index);

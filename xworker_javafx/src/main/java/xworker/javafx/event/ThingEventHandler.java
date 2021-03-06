@@ -1,5 +1,7 @@
 package xworker.javafx.event;
 
+import javafx.scene.control.*;
+import javafx.scene.media.MediaView;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -7,11 +9,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ButtonBase;
-import javafx.scene.control.ComboBoxBase;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableView;
 import javafx.stage.Window;
 
 public class ThingEventHandler implements EventHandler<Event> {
@@ -274,6 +271,73 @@ public class ThingEventHandler implements EventHandler<Event> {
 				obj.setOnScrollTo(eventHandler);
 			} else if ("onSort".equals(eventName)) {
 				obj.setOnSort(eventHandler);
+			}
+		}
+
+		if(parent instanceof Tab){
+			Tab obj = (Tab) parent;
+			if("onClosed".equals(eventName)) {
+				obj.setOnClosed(eventHandler);
+			}else if("onCloseRequest".equals(eventName)) {
+				obj.setOnCloseRequest(eventHandler);
+			}else if("onSelectionChanged".equals(eventName)) {
+				obj.setOnSelectionChanged(eventHandler);
+			}
+		}
+
+		if(parent instanceof TextField){
+			TextField obj = (TextField) parent;
+			if("onAction".equals(eventName)) {
+				obj.setOnAction(eventHandler);
+			}
+		}
+
+		if(parent instanceof TreeTableView){
+			TreeTableView obj = (TreeTableView) parent;
+			if("onScrollTo".equals(eventName)) {
+				obj.setOnScrollTo(eventHandler);
+			}else if("onScrollToColumn".equals(eventName)) {
+				obj.setOnScrollToColumn(eventHandler);
+			}else if("onSort".equals(eventName)) {
+				obj.setOnSort(eventHandler);
+			}
+		}
+
+		if(parent instanceof TreeTableColumn){
+			TreeTableColumn obj = (TreeTableColumn) parent;
+			if("onEditCancel".equals(eventName)) {
+				obj.setOnEditCancel(eventHandler);
+			}else if("onEditCommit".equals(eventName)) {
+				obj.setOnEditCommit(eventHandler);
+			}else if("onEditStart".equals(eventName)) {
+				obj.setOnEditStart(eventHandler);
+			}
+		}
+
+		if(parent instanceof  TreeView){
+			TreeView obj = (TreeView) parent;
+			if("onEditCancel".equals(eventName)) {
+				obj.setOnEditCancel(eventHandler);
+			}else if("onEditCommit".equals(eventName)) {
+				obj.setOnEditCommit(eventHandler);
+			}else if("onEditStart".equals(eventName)) {
+				obj.setOnEditStart(eventHandler);
+			}else if("onScrollTo".equals(eventName)) {
+				obj.setOnScrollTo(eventHandler);
+			}
+		}
+
+		if(parent instanceof MediaView){
+			MediaView obj = (MediaView) parent;
+			if("onError".equals(eventName)) {
+				obj.setOnError(eventHandler);
+			}
+		}
+
+		if(parent instanceof ContextMenu){
+			ContextMenu obj = (ContextMenu) parent;
+			if("onAction".equals(eventName)) {
+				obj.setOnAction(eventHandler);
 			}
 		}
 	}

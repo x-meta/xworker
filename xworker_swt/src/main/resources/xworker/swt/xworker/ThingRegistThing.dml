@@ -1,4 +1,4 @@
-%1611297242780
+%1614908048277
 @
 sname=QuickFunction
 slabel=快速功能
@@ -356,6 +356,7 @@ if(self.getBoolean("simpleBrowser")){
     Scode=
 #$@text#$@
 import xworker.util.XWorkerUtils;
+import xworker.swt.util.SwtUtils;
 
 //打开url
 def url = XWorkerUtils.getThingDescUrl(content);
@@ -371,7 +372,8 @@ if(self.getBoolean("simpleBrowser")){
     def browser = thing.doAction("create", actionContext);
     
     //打开url
-    browser.setUrl(url);
+    //browser.setUrl(url);
+    SwtUtils.setThingDesc(content, browser);
     //println(composite);
     return browser;
 }else{
@@ -434,6 +436,7 @@ if(self.getBoolean("simpleBrowser")){
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -3800,11 +3803,14 @@ thingSelf.doAction("dataObjectSelected", actionContext, ["datas": datas]);
 #$@text#$@
 if(actionContext.get("styledTextForInsert") != null){
     styledTextForInsert.insert(codeText.getText());
+    
+    codeText.getShell().dispose();
 }
 #$@text#$@
               sinterpretationType=Action
               screateLocalVarScope=false
               ssaveReturn=false
+              sswitchResult=false
               sdebugLog=false
               sdescriptors=xworker.lang.actions.Actions/@GroovyAction
               sinheritDescription=false

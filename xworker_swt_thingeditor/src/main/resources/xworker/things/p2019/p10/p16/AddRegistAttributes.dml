@@ -1,0 +1,104 @@
+%1587352340235
+@
+sname=AddRegistAttributes
+slabel=AddRegistAttributes
+sautoExecute=false
+Sdescription=
+#$@text#$@
+<p>添加几个注册相关的子节点，用于</p>
+#$@text#$@
+sdescriptors=xworker.lang.util.ThingGuide
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=guide|xworker.lang.MetaDescriptor3
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=thing
+sth_fileMonitor=false
+sth_mark=false
+  @/@ActionNode
+  sname=ActionNode
+  snotRemoveGuideOnFinish=false
+  sdescriptors=xworker.lang.util.ThingGuideNodes/@ActionNode
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=ActionNode
+    @/@ActionNode/@actions
+    sname=actions
+    sdescriptors=xworker.lang.util.ThingGuideNodes/@ActionNode/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=actions
+      @/@ActionNode/@actions/@doAction
+      sname=doAction
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def thing = thingGuide.getEditThing();
+if(!check(thing, "th_createIndex")){
+    def attr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
+    attr.put("name", "th_createIndex");
+    attr.put("inputtype", "truefalse");
+    attr.put("default", "true");
+    attr.put("group", "Regist");
+    attr.put("modifier", "private");
+    thing.addChild(attr);
+}
+
+if(!check(thing, "th_registThing")){
+    def attr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
+    attr.put("name", "th_registThing");
+    attr.put("size", "60");
+    attr.put("group", "Regist");
+    attr.put("modifier", "private");
+    
+    thing.addChild(attr);
+}
+
+if(!check(thing, "th_registMyChilds")){
+    def attr = new Thing("xworker.lang.MetaDescriptor3/@attribute");
+    attr.put("name", "th_registMyChilds");
+    attr.put("group", "Regist");
+    attr.put("default", "true");
+    attr.put("modifier", "private");
+    
+    thing.addChild(attr);
+}
+
+def check(thing, name){
+    for(child in thing.getChilds()){
+        if(child.getThingName() == "attribute" && child.getMetadata().getName() == name){
+             return true;
+        }
+    }
+    
+    return false;
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=doAction

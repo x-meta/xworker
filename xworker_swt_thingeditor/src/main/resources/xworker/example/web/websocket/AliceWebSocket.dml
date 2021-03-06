@@ -1,0 +1,93 @@
+%1606907754739
+@
+sname=AliceWebSocket
+slabel=AliceWebSocket
+sdescriptors=xworker.websocket.jetty.JettyWebSocket
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.websocket.jetty.JettyWebSocket/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@onTextMessage
+    sname=onTextMessage
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import java.text.SimpleDateFormat;
+
+def sf = new SimpleDateFormat("HH:mm:ss");
+def message = text;
+//println text;
+def response = alice(actionContext, "message", message);
+
+//println response;
+if(response != null){
+    session.getRemote().sendString(sf.format(new Date()) + ": Alice: " + response);
+}
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=onTextMessage
+      @/@actions/@onTextMessage/@ActionDefined
+      sname=ActionDefined
+      sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=ActionDefined
+        @/@actions/@onTextMessage/@ActionDefined/@alice
+        sname=alice
+        srootPath=${xworkerRootPath}/config/chatterbean/
+        scontext=Bots/context.xml
+        ssplitters=Bots/splitters.xml
+        ssubstitutions=Bots/substitutions.xml
+        salicePath=Bots/Alice/
+        saimlRegex=.*\.aiml
+        saimlConfig=_local.xworker.config.AimlConfig
+        smessage=var:message
+        shttpContentType=text/plain; charset=utf-8
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.ai.chatterbean.Alice
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=alice

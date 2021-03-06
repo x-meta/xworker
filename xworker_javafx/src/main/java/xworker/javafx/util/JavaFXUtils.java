@@ -1,12 +1,19 @@
 package xworker.javafx.util;
 
+import java.io.InputStream;
 import java.time.chrono.Chronology;
 import java.time.chrono.HijrahChronology;
 import java.time.chrono.IsoChronology;
 import java.time.chrono.JapaneseChronology;
 import java.time.chrono.MinguoChronology;
 import java.time.chrono.ThaiBuddhistChronology;
+import java.util.Locale;
 
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.image.Image;
+import javafx.scene.media.Media;
+import javafx.util.Duration;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -20,12 +27,70 @@ import xworker.lang.executor.Executor;
 
 public class JavaFXUtils {
 	private static final String TAG = JavaFXUtils.class.getName();
+
+	public static Duration getDuration(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof  Duration){
+			return (Duration) obj;
+		}else if(obj instanceof Double){
+			return new Duration((Double) obj);
+		}else if(obj instanceof  String){
+			return new Duration(Double.parseDouble((String) obj));
+		}else{
+			return null;
+		}
+	}
+
+	public static Media getMedia(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof Media){
+			return (Media) obj;
+		}else if(obj instanceof  String){
+			return new Media((String) obj);
+		}else{
+			return null;
+		}
+	}
+
+	public static Image getImage(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof Image){
+			return (Image) obj;
+		}else if(obj instanceof  String){
+			return new Image((String) obj);
+		}else if(obj instanceof InputStream){
+			return new Image((InputStream) obj);
+		}else{
+			return null;
+		}
+	}
 		
 	@SuppressWarnings("unchecked")
 	public static <T> T getObject(Thing thing, String name, ActionContext actionContext) {
 		return (T) UtilData.getData(thing.getString(name), actionContext);
 	}
-	
+
+	public static Insets getInsets(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof Insets){
+			return (Insets) obj;
+ 		}
+		if(!(obj instanceof String)){
+			return null;
+		}
+		String value = (String) obj;
+		if(value == null || "".equals(value.trim())){
+			return null;
+		}
+
+		String[] strs = value.split("[,]");
+		if(strs.length == 1) {
+			return new Insets(Double.parseDouble(strs[0]));
+		}else{
+			return new Insets(Double.parseDouble(strs[0]), Double.parseDouble(strs[1]), Double.parseDouble(strs[2]), Double.parseDouble(strs[3]));
+		}
+	}
+
 	public static Font getFont(String value, ActionContext actionContext) {
 		if(value == null) {
 			return null;
@@ -169,5 +234,22 @@ public class JavaFXUtils {
 	
 	public static KeyCombination getKeyCombination(String name) {
 		return KeyCombination.valueOf(name);
+	}
+
+	public static Rectangle2D getRectangle2D(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof Rectangle2D){
+			return (Rectangle2D) obj;
+		}
+		if(!(obj instanceof String)){
+			return null;
+		}
+		String value = (String) obj;
+		if(value == null || "".equals(value.trim())){
+			return null;
+		}
+
+		String[] strs = value.split("[,]");
+		return new Rectangle2D(Double.parseDouble(strs[0]), Double.parseDouble(strs[1]), Double.parseDouble(strs[2]), Double.parseDouble(strs[3]));
 	}
 }

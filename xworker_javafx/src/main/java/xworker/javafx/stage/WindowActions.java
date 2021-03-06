@@ -7,17 +7,20 @@ import javafx.stage.Window;
 
 public class WindowActions {
 	public static void init(Thing thing, Window window, ActionContext actionContext) {
-		if(thing.getStringBlankAsNull("width") != null) {
+		if(thing.valueExists("width")) {
 			window.setWidth(thing.getDouble("width"));
 		}
-		if(thing.getStringBlankAsNull("height") != null) {
+		if(thing.valueExists("height")) {
 			window.setHeight(thing.getDouble("height"));
 		}
-		if(thing.getStringBlankAsNull("x") != null) {
+		if(thing.valueExists("x")) {
 			window.setX(thing.getDouble("x"));
 		}
-		if(thing.getStringBlankAsNull("y") != null) {
+		if(thing.valueExists("y")) {
 			window.setY(thing.getDouble("y"));
+		}
+		if(thing.valueExists("opacity")){
+			window.setOpacity(thing.getDouble("opacity"));
 		}
 	}
 }

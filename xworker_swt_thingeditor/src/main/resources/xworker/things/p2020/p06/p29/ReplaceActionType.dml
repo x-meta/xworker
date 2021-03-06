@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="ReplaceActionType" descriptors="xworker.lang.util.ThingGuide" label="替换动作类型"
+     en_label="Replace Action Type" th_createIndex="true" th_registThing="guide|xworker.lang.actions.Action"
+     group="action">
+    <Composite label="替换动作类型" en_label="Replace Action Type">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <ThingRegistor name="thingRegistor" thing="xworker.lang.actions.Actions" registType="child"
+                 showContent="true" contentDisplayType="Composite"></ThingRegistor>
+        </Composite>
+        <actions>
+            <GroovyAction name="doFinish">
+                <code><![CDATA[def ac = thingRegistor.doAction("getThing", actionContext);
+if(ac != null){
+    def thing = thingGuide.getEditThing();
+    thing.set("descriptors", ac.getMetadata().getPath());    
+}]]></code>
+            </GroovyAction>
+        </actions>
+    </Composite>
+</ThingGuide>

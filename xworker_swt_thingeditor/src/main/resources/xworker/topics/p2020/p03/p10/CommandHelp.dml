@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="CommandHelp" descriptors="xworker.lang.command.CommandDomain" th_createIndex="true"
+     th_registThing="child|xworker.lang.command.CommandIndex" th_registMyChilds="true"
+     group="command">
+    <QuickContent name="command help" _xmeta_id_="help" label="命令帮助" type="thingDesc" simpleBrowser="true">
+        <description><![CDATA[<h1>命令中心</h1>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker的命令中心，新的命令可以注册到xworker.lang.command.CommandIndex，可以通过create command命令来创建新的命令。</p>
+
+<h2>命令</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 命令相当于简单函数，在这里命令的作用是想实现通过键盘输入执行各种操作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 也希望命令以后可以通过语音来执行。</p>
+
+<h2>命令域</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;可以把围绕某个功能域的命令放在一起，这就是命令域。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如针对SQL数据源的命令域，这里的命令都是针对数据源的。</p>
+]]></description>
+    </QuickContent>
+    <CompoisteCommand name="view command domain actioncontext" _xmeta_id_="command domain actioncontext"
+         label="查看命令域变量上下文">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <ActionContextViewer name="ActionContextViewer" actionContext="var:domainContext"></ActionContextViewer>
+        </Composite>
+    </CompoisteCommand>
+    <CompoisteCommand name="view command domain variables" _xmeta_id_="command domain variables"
+         label="查看命令域变量">
+        <Composite>
+            <FillLayout name="FillLayout" _xmeta_id_="FillLayout1"></FillLayout>
+            <SashForm name="sashForm" style="VERTICAL" weights="60,40">
+                <ObjectViewer name="objectViewer"></ObjectViewer>
+                <Composite name="groovyConsole" BORDER="true">
+                    <GridLayout name="GridLayout"></GridLayout>
+                    <StyledText name="codeText" style="MULTI" H_SCROLL="true" V_SCROLL="true"
+                         BORDER="true" text="//command.getDomain().put(key, value)">
+                        <GridData name="GridData" descriptors="xworker.swt.layout.LayoutDatas/@GridData"
+                             style="FILL_BOTH"></GridData>
+                    </StyledText>
+                    <Composite name="buttonComposite" _xmeta_id_="5100">
+                        <GridData name="buttonCompositeGridData" _xmeta_id_="5101" style="FILL_HORIZONTAL"
+                             horizontalAlignment="END"></GridData>
+                        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="5102"></RowLayout>
+                        <Button name="executeButton" _xmeta_id_="5103" text="lang:d=执行(&amp;amp;E)&amp;en=Execute(&amp;amp;E)">
+                            <RowData name="RowData" _xmeta_id_="5104" width="80"></RowData>
+                            <Listeners _xmeta_id_="5105">
+                                <Listener name="executeButtonSelection" _xmeta_id_="5106">
+                                    <GroovyAction name="GroovyAction">
+                                        <code><![CDATA[import xworker.util.UtilAction;
+
+UtilAction.runGroovy(codeText.getText(), actionContext);]]></code>
+                                    </GroovyAction>
+                                </Listener>
+                            </Listeners>
+                        </Button>
+                    </Composite>
+                </Composite>
+            </SashForm>
+            <Code name="init">
+                <code><![CDATA[objectViewer.doAction("setObjects", actionContext, "objects", 
+    command.getDomain().getParams());
+    
+
+actionContext.g().put("command", command);]]></code>
+            </Code>
+        </Composite>
+    </CompoisteCommand>
+</CommandDomain>

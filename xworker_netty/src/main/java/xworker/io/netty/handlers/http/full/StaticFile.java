@@ -40,8 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import javax.activation.MimetypesFileTypeMap;
-
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 

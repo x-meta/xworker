@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<WebResourcesDesc name="WebResources" descriptors="xworker.web.WebResourcesDesc">
+    <Resource name="web.xml" _xmeta_id_="web_xml" path="/WEB-INF/web.xml">
+        <content><![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd"> -->
+<web-app>
+    <display-name>XWorker Application</display-name>
+       
+     <!--  not correct for fckedtor if not commoned.-->
+     <!--
+     <mime-mapping>
+		<extension>xml</extension> 
+		<mime-type>text/x-cross-domain-policy</mime-type>
+	</mime-mapping><-->
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.http.HttpServletDo</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <servlet-class>xworker.http.HttpActionMappingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>websoketServlet</servlet-name>
+        <servlet-class>xworker.http.WebSocketDo</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do/*</url-pattern>
+    </servlet-mapping>
+    
+	   <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.dml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.txt</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <url-pattern>*.ac</url-pattern>
+    </servlet-mapping>   
+    
+    <servlet-mapping>
+        <servlet-name>websoketServlet</servlet-name>
+        <url-pattern>/socket/*</url-pattern>
+    </servlet-mapping>    
+</web-app>]]></content>
+    </Resource>
+    <Resource name="InnerBrowserUtil.js" _xmeta_id_="InnerBrowserUtil_js" path="/js/xworker/InnerBrowserUtil.js">
+        <content><![CDATA[window.console = window.console || (function () {
+    var c = {}; c.log = c.warn = c.debug = c.info = c.error = c.time = c.dir = c.profile
+    = c.clear = c.exception = c.trace = c.assert = function () { };
+    return c;
+})();
+
+function invoke(status){  	
+	//alert(utilBrowserFunction);
+    if (typeof(utilBrowserFunction) == "undefined"){
+        window.status = status;
+        window.status = "";        
+    }else{
+        utilBrowserFunction(status);
+    }
+}
+
+function xw_invoke(status){  
+	if (typeof(utilBrowserFunction) == "undefined"){
+        window.status = status;
+        window.status = "";        
+    }else{
+        utilBrowserFunction(status);
+    }
+}]]></content>
+    </Resource>
+</WebResourcesDesc>

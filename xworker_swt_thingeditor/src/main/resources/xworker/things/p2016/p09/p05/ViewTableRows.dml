@@ -1,0 +1,428 @@
+%1590111809032
+@
+sname=ViewTableRows
+sBORDER=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_FOCUS=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=浏览表中的记录数
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Composite
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.app.db.manager.DbToolsComposites
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=通用.表管理
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@dataObjectEditor
+  sname=dataObjectEditor
+  squeryButton=true
+  snewButton=false
+  seditButton=false
+  seditBatchButton=false
+  sdeleteButton=false
+  sselectAllButton=false
+  sselectRerverseButton=false
+  stoolsButton=true
+  spagingToolbar=true
+  sactionContext=dataObjectContext
+  stableCheck=false
+  sdebug=false
+  sdescriptors=xworker.app.view.swt.Items/@DataObjectEditCompoiste
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=dataObjectEditor
+    @/@dataObjectEditor/@dataObjects
+    sname=dataObjects
+    sdescriptors=xworker.app.view.swt.widgets.DataObjectEditCompoiste/@DataObjects
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=dataObjects
+      @/@dataObjectEditor/@dataObjects/@AbstractDataObject
+      sname=AbstractDataObject
+      sdataSource=parent:dataSource
+      sshowSql=false
+      squerySqlForQueryOnly=false
+      skeepQuerySql=false
+      seditCols=2
+      spaging=false
+      snoTotalCount=false
+      spagineByCursor=false
+      sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+      screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+      supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+      sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+      LstoreAutoDestroy=false
+      sstoreAutoLoad=false
+      LstoreAutoSave=true
+      LstoreBatch=true
+      LstorePruneModifiedRecords=false
+      LstoreRemoteSort=false
+      LstoreRestful=false
+      sstoreRoot='rows'
+      sstoreSuccessProperty='success'
+      sstoreTotalProperty='totalCount'
+      sstoreMessageProperty='msg'
+      sgridEditable=true
+      sgridEditType=cell
+      sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+      sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+      sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+      sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+      spaging_afterPageText=页 共
+      spaging_beforePageText=第
+      Lpaging_displayInfo=false
+      spaging_displayMsg=第{0}-第{1}条，共{2}条
+      spaging_emptyMsg=没有数据
+      spaging_firstText=首页
+      spaging_lastText=最后一页
+      spaging_nextText=下一页
+      Lpaging_prependButtons=false
+      spaging_prevText=上一页
+      spaging_refreshText=刷新
+      sgridColumnLocking=false
+      sgridLockText='锁定'
+      sgridUnlockText='解锁'
+      scolumnGroup=false
+      sgridCheckable=false
+      sgridRowNumber=false
+      sgridGrouping=false
+      sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+      sgridRowExpander=false
+      sautoGenerateId=false
+      sidGenerateType=action
+      sidAction=generateId
+      sstoreSortDir=ASC
+      sautoInit=false
+      sautoInitAction=beforeCreate
+      scacheRelation=false
+      scacheRelationMaxSize=1000
+      scacheRelationReadnone=false
+      safterCreated=false
+      sonLoaded=false
+      sbeforeUpdate=false
+      safterUpdated=false
+      sbeforeDelete=false
+      safterDeleted=false
+      sbeforeQuery=false
+      safterQueryed=false
+      sshowUserTask=false
+      sdescriptors=xworker.dataObject.db.DbDataObject
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=AbstractDataObject
+        @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions
+        sname=actions
+        sdescriptors=xworker.dataObject.AbstractDataObject/@actions
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=actions
+          @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query
+          sname=doQuery
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          svarScope=Global
+          sdisableGlobalContext=false
+          Scode=
+#$@text#$@
+import xworker.dataObject.DataObject;
+import groovy.sql.Sql;
+import xworker.util.UtilAction;
+import xworker.util.XWorkerUtils;
+
+def dataSource = XWorkerUtils.getParentVar(actionContext, "dataSource");
+
+//获取全部的表
+def datas = [];
+def metadata = con.getMetaData();
+def catalog = getConditionData(actionContext, "catalog");
+def schemaPattern = getConditionData(actionContext, "schemaPattern");
+def tableNamePattern = getConditionData(actionContext, "tableNamePattern");
+def types = getConditionData(actionContext, "types");
+def rs = null;
+if(metadata.getDriverName().indexOf("Derby") != -1){
+    rs = metadata.getTables(null, null, null, ["TABLE"] as String[]);
+}else{
+    rs = metadata.getTables(null, metadata.getUserName(), null, ["TABLE"] as String[]);
+}
+
+try{    
+    while(rs.next()){        
+        def data = new DataObject("xworker.things.p2016.p09.p05.ViewTableRows/@dataObjectEditor/@dataObjects/@AbstractDataObject");
+        data.put("name", rs.getString("TABLE_NAME"));
+        def name = rs.getString("TABLE_NAME");
+        def schem = rs.getString("TABLE_SCHEM");
+        data.put("schem", schem);
+        data.put("name", name);
+
+        datas.add(data);
+    }
+    
+    for(data in datas){
+        //continue;
+        def name = data.getString("name");
+        def sqlCnt = "select count(1) as cnt from " + name;
+        //为了防止超时连接中断，总是从连接池中获取连接
+        def conn = dataSource.doAction("getConnection", actionContext);
+        def pst = conn.prepareStatement(sqlCnt);
+        def rsCnt = null;
+        try{
+            rsCnt = pst.executeQuery();
+            rsCnt.next();
+            def cnt = rsCnt.getInt(1);
+            log.info("get table row count: " + name + "=" + cnt);            
+            data.put("rowsCnt", cnt);
+            
+        }catch(Exception e){
+            log.warn(sqlCnt, e);
+            continue;
+        }finally{
+            if(rsCnt != null){
+                rsCnt.close();
+            }
+            if(pst != null){
+                pst.close();
+            }
+            if(conn != null){
+                conn.close();
+            }
+        }
+    }
+
+    return datas;
+}finally{
+    rs.close();
+}
+
+def getConditionData(actionContext, name){
+    if(actionContext.get("conditionData") == null){
+        return null;
+    }else{
+        try{
+            def v = Ognl.getValue(name, conditionData);
+            if(v instanceof String && v.trim() == ""){
+                return null;
+            }else{
+                return v;
+            }
+        }catch(Exception e){
+            return null;
+        }
+    }
+}
+#$@text#$@
+          sinterpretationType=Action
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sswitchResult=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+          sth_createIndex=false
+          sid=query
+            @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query/@contexts
+            sname=contexts
+            slabel=contexts
+            sdescriptors=xworker.lang.actions.Inout/@contexts
+            sid=contexts
+              @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query/@contexts/@dataSource
+              sname=dataSource
+              sconnectionName=con
+              stransaction=false
+              sdataSourcePath=self.dataSource
+              sdisable=false
+              sonError=ignore
+              spreventError=false
+              sinherit=true
+              sdescriptors=xworker.db.jdbc.DataSouceActionContext,xworker.lang.actions.Inout/@contexts/@context
+              sid=dataSource
+            @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query/@Variables
+            sname=Variables
+            sdescriptors=xworker.lang.actions.Inout/@Variables
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=Variables
+              @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query/@Variables/@log
+              sname=log
+              stagName=xworker.things.p2016.p09.p05.ViewTableRows/@dataObjectEditor/@dataObjects/@AbstractDataObject/@actions/@query
+              saction=true
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sid=log
+        @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@schemaName
+        sname=schem
+        slabel=表模式
+        sfieldName=schem
+        stype=string
+        soptional=true
+        skey=false
+        sdataField=true
+        sviewField=true
+        sreadField=true
+        screateEditor=true
+        seditEditor=true
+        sviewEditor=true
+        sgridEditor=true
+        squeryEditor=true
+        sreadOnly=false
+        seditable=true
+        sdisabled=false
+        sshowLabel=true
+        slabelAlign=right
+        slabelVAlign=baseline
+        svalidateAllowBlank=true
+        LvalidateOnBlur=true
+        LallowDecimals=true
+        LallowNegative=true
+        sshowInTable=true
+        sdisplayRelationLabel=false
+        sgridFixed=false
+        sgridHidden=false
+        sgridHideable=true
+        sgridSortable=false
+        scolumnLocked=false
+        sgridGroupable=true
+        sgridMenuDisabled=false
+        sgridResizable=true
+        sdescriptors=xworker.dataObject.db.DbDataObject/@attribute
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=schemaName
+        @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@name
+        sname=name
+        slabel=表名称
+        stype=string
+        soptional=true
+        skey=false
+        sdataField=true
+        sviewField=true
+        sreadField=true
+        screateEditor=true
+        seditEditor=true
+        sviewEditor=true
+        sgridEditor=true
+        squeryEditor=true
+        sreadOnly=false
+        seditable=true
+        sdisabled=false
+        sshowLabel=true
+        slabelAlign=right
+        slabelVAlign=baseline
+        svalidateAllowBlank=true
+        LvalidateOnBlur=true
+        LallowDecimals=true
+        LallowNegative=true
+        sshowInTable=true
+        sgridWidth=200
+        sdisplayRelationLabel=false
+        sgridFixed=false
+        sgridHidden=false
+        sgridHideable=true
+        sgridSortable=false
+        scolumnLocked=false
+        sgridGroupable=true
+        sgridMenuDisabled=false
+        sgridResizable=true
+        sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=name
+        @/@dataObjectEditor/@dataObjects/@AbstractDataObject/@rowsCnt
+        sname=rowsCnt
+        slabel=记录数
+        stype=long
+        soptional=true
+        skey=false
+        sdataField=true
+        sviewField=true
+        sreadField=true
+        screateEditor=true
+        seditEditor=true
+        sviewEditor=true
+        sgridEditor=true
+        squeryEditor=true
+        sreadOnly=false
+        seditable=true
+        sdisabled=false
+        sshowLabel=true
+        slabelAlign=right
+        slabelVAlign=baseline
+        svalidateAllowBlank=true
+        LvalidateOnBlur=true
+        LallowDecimals=true
+        LallowNegative=true
+        sshowInTable=true
+        sgridWidth=100
+        sdisplayRelationLabel=false
+        sgridFixed=false
+        sgridHidden=false
+        sgridHideable=true
+        sgridSortable=false
+        scolumnLocked=false
+        sgridGroupable=true
+        sgridMenuDisabled=false
+        sgridResizable=true
+        sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=rowsCnt

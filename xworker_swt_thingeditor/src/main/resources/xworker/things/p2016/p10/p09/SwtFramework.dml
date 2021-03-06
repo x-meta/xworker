@@ -1,0 +1,126 @@
+%1545737583628
+@
+sname=SwtFramework
+slabel=SWT框架
+stype=thingDesc
+sgroup=-9000|编程框架.-900|SWT框架.-1000|SWT框架
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=false
+Sdescription=
+#$@text#$@
+<h1>SWT框架</h1>
+
+<h2>1.SWT模型框架约定</h2>
+
+<p>&nbsp;&nbsp;&nbsp; SWT模型框架约定任何一个实现了create方法的模型都可以是SWT模型。</p>
+
+<h2>2.注册SWT模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 新的SWT模型可以以<strong>child</strong>的方式注册到<strong>xworker.swt.Widgets</strong>模型下。</p>
+
+<h2>3.SWT模型框架的原理</h2>
+
+<p>&nbsp;&nbsp;&nbsp; SWT模型框架的原理是遍历执行每一个模型节点的create方法，在create方法里根据模型节点的配置创建相关的SWT的Java对象，然后把创建的Java对象方法到全局变量上下文中，这样在事件处理时可以找到相应的Java对象。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 其中对子节点的create方法遍历执行是有当前节点实现的。</p>
+
+<h2>4.create方法中的parent的变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; SWT的大部分Java对象的构造方法里都要传入parent变量，parent变量一般是父容器控件，因此在SWT模型的create方法里当创建了相应Java对象，在遍历执行子节点的create方法时，一般把新的Java对象作为parent变量传入。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如下面的示意代码。</p>
+
+<pre class="brush:java;">
+//创建java对象
+Button button = new Button(parent, SWT.NONE);
+
+//放入新的parent变量
+actionContext.peek().put(&quot;parent&quot;, button);
+
+//执行子节点的craete方法
+for(Thing child : self.getChilds()){
+    //在child的create方法执行时，获取的parent变量是button
+    child.doAction(&quot;create&quot;, actionContext);
+}
+</pre>
+
+<h2>5.ThingCompositeCreator</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 使用事物模型制作的复合控件可以用xworker.swt.util.ThingCompositeCreator来快速创建。</p>
+
+<pre class="brush:java;">
+public class GroovyConsole {
+	public static Object create(ActionContext actionContext) {
+		Thing self = actionContext.getObject(&quot;self&quot;);
+		
+		//创建控件
+		ThingCompositeCreator creator = new ThingCompositeCreator(self, actionContext);
+		creator.setCompositeThing(World.getInstance().getThing(&quot;xworker.swt.xwidgets.prototypes.GroovyConsole/@mainComposite&quot;));		
+		Composite composite = (Composite) creator.create();
+				
+		ActionContext ac = creator.getNewActionContext();
+		
+		//初始化变量上下文
+		ActionContainer actions = ac.getObject(&quot;actions&quot;);
+		actions.doAction(&quot;doInit&quot;, ac);
+		
+		//保存变量
+		actionContext.g().put(self.getMetadata().getName(), actions);
+		
+		return composite;
+	}
+}</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label=SWT Framework
+sen_group=-9000|Programing.-900|SWT.-1000|Framework
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+Sen_description=
+#$@text#$@
+<h1>SWT Framework</h1>
+
+<h2>1.SWT Framework Convention</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The SWT model framework specifies that any model that implements the <strong>create</strong> method can be a SWT model.</p>
+
+<h2>2.Register SWT model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The new SWT model can be registered in the <strong>xworker.swt.Widgets</strong> model in <strong>child</strong>.</p>
+
+<h2>3.The framework of the SWT model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The principle of SWT model is the method of create traversal execution nodes of each model, the Java object in the Create method according to the model of node configuration to create the SWT, then the Java object method to create global variables in the context, in the event processing can find the corresponding Java object.</p>
+
+<p>&nbsp;&nbsp;&nbsp; In which the Create method of the node is executed by the current node.</p>
+
+<h2>4.Parent variables in the Create method</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Most of the Java structure of SWT object in all incoming parent variables, parent variables are generally the parent container control, so the Create method of SWT model for creating the corresponding Java object in the Create method implementation of sub node traversal, the new Java object as parent variables into.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Such as the following hint code.</p>
+
+<pre class="brush:java;">
+//创建java对象
+Button button = new Button(parent, SWT.NONE);
+
+//放入新的parent变量
+actionContext.peek().put(&quot;parent&quot;, button);
+
+//执行子节点的craete方法
+for(Thing child : self.getChilds()){
+    //在child的create方法执行时，获取的parent变量是button
+    child.doAction(&quot;create&quot;, actionContext);
+}
+</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sth_mark=false

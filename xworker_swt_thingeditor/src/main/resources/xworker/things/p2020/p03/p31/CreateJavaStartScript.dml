@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<CommandDomain name="CreateJavaStartScript" descriptors="xworker.lang.command.CommandDomain"
+     th_createIndex="true" th_registThing="child|xworker.lang.command.CommandIndex"
+     th_registMyChilds="true" group="xworker.tools.linux">
+    <CompoisteCommand name="create java linux start script" label="创建Linux下Java启动脚本">
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <RunAction>
+                <TextTemplate name="code" descriptors="xworker.lang.text.TextTemplate" outputVarName="code"
+                     varScope="Global" saveReturn="true">
+                    <templateCode><![CDATA[#!/bin/bash
+ 
+##############################
+work_dir=`pwd`
+pid_file="${r"$"}work_dir/run.pid"
+jar_file="${jar_file?if_exists}"
+run_log="${r"$"}work_dir/nohup.out"
+ 
+if [[ "${r"$"}DADA_ENV" == "production" ]]; then
+    java_opts="-Xms4g -Xmx4g"
+else
+    java_opts="-Xms512m -Xmx512m"
+fi
+ 
+##############################
+ 
+echo "work dir: "`pwd`
+echo "pid file: ${r"$"}{r"$"}pid_file"
+echo "jar file: ${r"$"}jar_file"
+echo "run log: ${r"$"}run_log"
+echo
+ 
+check_runing()
+{
+    pid=`cat ${r"$"}{pid_file}`
+    ps aux | grep ${r"$"}{pid} | grep -q ${r"$"}{jar_file}
+    echo ${r"$"}?
+}
+ 
+ 
+start()
+{
+    if [ -f ${r"$"}{pid_file} ];then
+        res=`check_runing`
+        if [ ${r"$"}res -eq 0 ];then
+            echo "already running"
+            exit 0
+        else
+            rm -f ${r"$"}{pid_file}
+        fi
+    fi
+ 
+    echo "DADA_ENV: ${r"$"}{DADA_ENV}"
+    if [[ "${r"$"}DADA_ENV" == "test" ]]; then
+       localIP=0.0.0.0
+       nohup java ${r"$"}{java_opts} -javaagent:/jacoco/lib/jacocoagent.jar=includes=com.dadaabc.*,output=tcpserver,port=40023,address=${r"$"}localIP -jar ${r"$"}{jar_file} >> ${r"$"}{run_log} 2>&1 & echo ${r"$"}! > ${r"$"}{pid_file}
+    else
+       nohup java ${r"$"}{java_opts} -jar ${r"$"}{jar_file} >> ${r"$"}{run_log} 2>&1 & echo ${r"$"}! > ${r"$"}{pid_file}
+    fi
+ 
+    sleep 3
+    res=`check_runing`
+    if [ ${r"$"}res -eq 0 ];then
+        echo "start OK"
+    else
+        echo "start Failed"
+        rm -f ${r"$"}{pid_file}
+    fi
+}
+ 
+ 
+stop()
+{
+    if [ -f ${r"$"}{pid_file} ];then
+        res=`check_runing`
+        if [ ${r"$"}res -eq 0 ];then
+            pid=`cat ${r"$"}{pid_file}`
+            kill -TERM ${r"$"}{pid}
+            sleep 3
+            res=`check_runing`
+            if [ ${r"$"}res -ne 0 ];then
+                rm -f ${r"$"}{pid_file}
+                echo "stop OK"
+            else
+                kill -9 ${r"$"}{pid}
+                rm -f ${r"$"}{pid_file}
+                echo "force stop OK"
+            fi
+        else
+            echo "${r"$"}{pid_file} exists, but ${r"$"}{jar_file} not running"
+            rm -f ${r"$"}{pid_file}
+        fi
+    else
+        echo "${r"$"}{jar_file} not running"
+    fi
+ 
+}
+ 
+ 
+usage()
+{
+    echo "${r"$"}0 stop"
+    echo "${r"$"}0 start"
+    echo "${r"$"}0 restart"
+}
+ 
+if [ ${r"$"}# -ne 1 ];then
+    usage
+    exit 1
+fi
+ 
+case ${r"$"}1 in
+    start)
+        start;;
+    stop)
+        stop;;
+    restart)
+        stop && sleep 1 && start;;
+    *)
+        usage && exit 1
+esac]]></templateCode>
+                </TextTemplate>
+            </RunAction>
+            <CodeViewer name="codeViewer" codeName="bash" codeType="bash" code="var:code"></CodeViewer>
+        </Composite>
+        <Parameter name="jar_file" command="xworker.lang.command.instances.CommonCommands/@InputString">
+            <description><![CDATA[<p>输入要执行的Jar文件。</p>
+]]></description>
+        </Parameter>
+    </CompoisteCommand>
+</CommandDomain>

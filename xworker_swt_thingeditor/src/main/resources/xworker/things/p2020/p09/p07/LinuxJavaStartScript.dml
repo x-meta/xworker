@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="LinuxJavaStartScript" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="composite" path="xworker.things.p2020.p09.p07.LinuxJavaStartScript/@Composite"
+     group="tools.deploy" icon="icons/application.png" th_createIndex="true" th_registThing="command|xworker.command.Root">
+    <description><![CDATA[<p>Linux下的启动Java应用的脚本。</p>
+]]></description>
+    <Composite>
+        <GridLayout name="GridLayout"></GridLayout>
+        <ThingForm name="form" _xmeta_id_="from" descriptorThing="xworker.app.actions.AppActions/@StartScriptLinux"
+             column="1">
+            <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+        </ThingForm>
+        <Composite name="buttonComposite" _xmeta_id_="17070">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="17071" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="17072"></RowLayout>
+            <Button name="generateButton" _xmeta_id_="17073" text="lang:d=生成脚本&amp;en=Generate Script">
+                <RowData name="RowData" _xmeta_id_="17074" width="80"></RowData>
+                <Listeners _xmeta_id_="17075">
+                    <Listener name="generateButtonSelection" _xmeta_id_="17076">
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import org.xmeta.Thing;
+
+def thing = new Thing("xworker.app.actions.AppActions/@StartScriptLinux");
+thing.getAttributes().putAll(form.doAction("getValues", actionContext));
+
+//def code = thing.getString("interpretationType");
+def code = thing.getAction().run(actionContext);
+codeViewer.setCode(code);]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+        <CodeViewer name="codeViewer" codeName="bash" codeType="bash">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </CodeViewer>
+    </Composite>
+</QuickFunction>

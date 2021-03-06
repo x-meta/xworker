@@ -1,0 +1,196 @@
+%1595920411482
+@
+sname=TestAliceWebSocket
+slabel=TestAliceWebSocket
+scheckPermission=false
+scheckLogin=false
+sdescriptors=xworker.http.controls.SimpleControl
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@doAction
+  sname=actions
+  sdescriptors=xworker.http.controls.SimpleControl/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=doAction
+    @/@doAction/@doAction
+    sname=doAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+def url = new String(request.getRequestURL());
+def wsUrl = null;
+if(url.startsWith("https:")){
+    wsUrl = "wss://";
+}else{
+    wsUrl = "ws://";
+}
+
+def index = url.indexOf("://");
+url = url.substring(index + 3, url.length());
+index = url.lastIndexOf("/");
+url = url.substring(0, index);
+
+wsUrl = wsUrl + url + "/socket/";
+actionContext.g().put("url", wsUrl);
+
+return "success";
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=doAction
+  @/@view
+  sname=view
+  sbelongToHtml=true
+  sdoctype=<!doctype html>
+  sstyle=default
+  shasHead=false
+  shasBottom=false
+  snoCache=false
+  SotherHeads=
+#$@text#$@
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<script type="text/javascript" src="js/xworker/InnerBrowserUtil.js"></script>
+#$@text#$@
+  sdescriptors=xworker.http.controls.SimpleControl/@view
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=view
+    @/@view/@JQuery
+    sversion=jquery-1.11.3.min.js
+    sname=JQuery
+    sdescriptors=xworker.html.jquery.JQuery
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=JQuery
+    @/@view/@content
+    sname=contentDiv
+    sid=content
+    sdescriptors=xworker.html.base.container.childs/@div
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    @/@view/@inputText
+    sname=inputText
+    stype=string
+    ssize=16
+    sdisabled=false
+    sdescriptors=xworker.html.base.container.childs/@textField
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=inputText
+    @/@view/@sendButton
+    sname=sendButton
+    svalue=发送
+    stype=button
+    sdisabled=false
+    sdescriptors=xworker.html.base.container.childs/@button
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=sendButton
+      @/@view/@sendButton/@onClick
+      sname=onClick
+      svalue=sendText()
+      sdescriptors=xworker.html.base.component.button/@event
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=onClick
+    @/@view/@code
+    sname=code
+    Scode=
+#$@text#$@
+<script language="javascript">
+// 初始化一个 WebSocket 对象
+var ws = new WebSocket("${url}xworker/example/web/websocket/AliceWebSocket");
+
+// 建立 web socket 连接成功触发事件
+ws.onopen = function () {
+  // 使用 send() 方法发送数据
+  ws.send("Hello World!");
+  //alert("数据发送中...");
+};
+
+// 接收服务端数据时触发事件
+ws.onmessage = function (evt) {
+  var received_msg = evt.data;
+  $("#content").html(received_msg);
+};
+
+// 断开 web socket 连接成功触发事件
+ws.onclose = function () {
+   $("#content").html("WebSocket session closed!");
+};
+
+function sendText(){    
+    var text = $("#inputText").val();
+    //alert(text);
+    ws.send(text);
+}
+</script>
+#$@text#$@
+    sdescriptors=xworker.html.base.container.childs/@code
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=code
+  @/@success
+  sname=success
+  stype=form
+  scontentType=text/html;charset=UTF-8
+  svalue=xworker.example.web.websocket.TestAliceWebSocket/@view
+  sdescriptors=xworker.http.controls.SimpleControl/@result
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=success

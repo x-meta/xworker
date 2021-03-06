@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="ActionCommonsExamples" descriptors="xworker.lang.ActionThing">
+    <GroovyAction name="GroovyAction" code="println &quot;hello world&quot;;"></GroovyAction>
+    <GroovyAction name="variables">
+        <code><![CDATA[println userDir;
+println javaHome;]]></code>
+        <Variables>
+            <GetUserDirectory name="userDir" descriptors="xworker.io.FileUtilActions/@GetUserDirectory"></GetUserDirectory>
+            <getJavaHome name="javaHome" descriptors="xworker.lang.actions.utils.SystemUtils/@getJavaHome"></getJavaHome>
+        </Variables>
+    </GroovyAction>
+    <GroovyAction name="defineActions" code="println md5(actionContext, &quot;message&quot;, &quot;hello world&quot;);">
+        <ActionDefined>
+            <MessageDigest name="md5" descriptors="xworker.java.security.MessageDigest" algorithm="MD5"
+                 input="var:message"></MessageDigest>
+        </ActionDefined>
+    </GroovyAction>
+    <GroovyAction name="actionListener">
+        <code><![CDATA[import groovy.sql.Sql;
+import xworker.lang.executor.Executor;
+
+def sql = new Sql(con);
+sql.eachRow("select count(*) as count from tblThings", {
+    Executor.info("ActionListener", "Thing count form db is " + it.count);
+});]]></code>
+        <contexts>
+            <DataSouceActionContext name="DataSouceActionContext" dataSourcePath="_local.xworker.db.XWorkerIDEDataSource"></DataSouceActionContext>
+        </contexts>
+    </GroovyAction>
+    <GroovyAction name="switch" switchResult="true">
+        <code><![CDATA[def r = new Random();
+return "case" + r.nextInt(2);]]></code>
+        <Println name="case0" message="This is case 0."></Println>
+        <Println name="case1" message="This is case 1."></Println>
+    </GroovyAction>
+    <GroovyAction name="saveReturn" code="return &quot;hello world&quot;;" saveReturn="true" returnVarName="hello"></GroovyAction>
+</ActionThing>

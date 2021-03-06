@@ -21,18 +21,23 @@ import xworker.swt.xworker.attributeEditor.editors.TextAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.TextareaAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.TruefalseAttributeEditor;
 import xworker.swt.xworker.attributeEditor.editors.TruefalseselectAttributeEditor;
+import xworker.util.XWorkerUtils;
 
 public class AttributeEditorFactory {
 	public static AttributeEditor createAttributeEditor(Thing formThing, Thing attribute, xworker.swt.form.GridData gridData, ActionContext actionContext) {
 		String inputType = attribute.getString("inputtype");
 		if("text".equals(inputType)) {
-			return new TextAttributeEditor(formThing, attribute, gridData, actionContext); 
+			return new TextAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("textarea".equals(inputType)) {
-			return new TextareaAttributeEditor(formThing, attribute, gridData, actionContext); 
+			return new TextareaAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("codeEditor".equals(inputType)) {
 			return new CodeEditorAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("html".equals(inputType)) {
-			return new HtmlAttributeEditor(formThing, attribute, gridData, actionContext);
+			if(XWorkerUtils.hasXWorker()) {
+				return new HtmlAttributeEditor(formThing, attribute, gridData, actionContext);
+			}else{
+				return new TextareaAttributeEditor(formThing, attribute, gridData, actionContext);
+			}
 		}else if("htmlDesc".equals(inputType)) {
 			return new HtmlDescAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("select".equals(inputType)) {

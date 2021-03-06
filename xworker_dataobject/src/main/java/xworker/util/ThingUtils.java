@@ -328,6 +328,10 @@ public class ThingUtils {
 			sql = "select distinct registType from tblThingRegists where registThingPath =?";
 		}
 		Thing dataSource = World.getInstance().getThing("xworker.ide.db.datasource.XWorkerDataSource");
+		if(dataSource == null){
+			return Collections.emptyList();
+		}
+
 		Connection con = dataSource.doAction("getConnection", actionContext);
 		PreparedStatement pst = null;
 		ResultSet rs = null;

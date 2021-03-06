@@ -1,4 +1,4 @@
-^1576487317429
+^1614905308509
 @
 sname
 thing
@@ -14,26 +14,41 @@ Sdescription
 #$@text#$@
 <p><strong>作用</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; MetaDescriptor3是一个常用的用来创建类的事物模型，可以使用它来定义新的类。</p>
+<p>&nbsp;&nbsp;&nbsp; MetaDescriptor3常用来定义新的模型，即用来定义作为描述者（类）的模型。</p>
 
-<p><strong>如何定义新的类</strong></p>
+<p><strong>如何定义新的模型</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 定义一个新的类，就是要定义有哪些属性、子事物和行为等。可以通过MetaDescriptor3的相应子事物来定义。</p>
+<p>&nbsp;&nbsp;&nbsp; 定义一个新的模型，就是要定义有哪些属性、子模型和行为等。可以通过MetaDescriptor3的相应子模型来定义。</p>
 
 <ul>
 	<li><strong>属性（attribute）</strong><br />
 	通过属性（attribute)子节点定义。<br />
 	&nbsp;</li>
 	<li><strong>子事物（thing)</strong><br />
-	子事物也是事物，通过事物(thing)子节点定义。<br />
+	即子模型，通过事物(thing)子节点定义。<br />
 	&nbsp;</li>
 	<li><strong>行为（action)</strong><br />
-	通过动作(actions)子节点定义，在actions子节点下定义具体的行为。</li>
+	通过动作(actions)子节点定义，在actions子节点下的模型是具体的行为。</li>
 </ul>
 
-<p><strong>事物编辑器</strong></p>
+<p><strong>模型编辑器</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 类型事物也用于生成对象事物的编辑器，可以通过事物(thing）节点和属性（attribute)节点控制。</p>
+<p>&nbsp;&nbsp;&nbsp; 编辑器相关的属性也是在这里定义的，可以在属性(attribute)节点上设置编辑方法和界面布局等。具体可以参看属性（attribute)节点的文档。</p>
+
+<p><strong>基本属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个模型可以有下面三个基本属性。</p>
+
+<ul>
+	<li>name(名字）<br />
+	模型的名字属性。<br />
+	&nbsp;</li>
+	<li>label(标签）<br />
+	用于编辑器中。可以实现多语言，如属性en_label的值对应语言en下的标签。<br />
+	&nbsp;</li>
+	<li>description(描述）<br />
+	模型的文档。可以实现多语言，如属性en_description的值对应语言en下的文档。</li>
+</ul>
 #$@text#$@
 szh_label
 Thing
@@ -721,7 +736,7 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
 
 <p>&nbsp;&nbsp;&nbsp; 可以重写List&lt;Map&lt;String, Thing&gt;&gt; getValues()方法获取可选数据，getValues()方法默认获取value子节点列表。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; Map&lt;String, Thing&gt;有两个主要key，分别是label和value。label是要显示的文本，value是键值。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Map&lt;String, Thing&gt;有两个主要key，分别是label和value。label是要显示的文本，value是键值，Thing的描述者可以是xworker.lang.MetaDescriptor3/@attribute/@value或不用设置。</p>
 
 <p>&nbsp;</p>
 #$@text#$@
@@ -4181,9 +4196,9 @@ time in a valid ...
   2
   Sdescription
 #$@text#$@
-<p><strong>子事物</strong></p>
+<p><strong>子模型</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 子事物也是事物，用于添加到父事物的子节点下。比如儿女可以是人的子事物，那么可以在人这个事物下定义儿女这个子事物。</p>
+<p>&nbsp;&nbsp;&nbsp; 子模型也是模型，继承于父模型，用于定义子节点。如儿女可以是人的子事物，那么可以在人这个事物下定义儿女这个子事物。</p>
 
 <p>&nbsp;&nbsp;&nbsp; 使用方法同事物。</p>
 #$@text#$@
@@ -4222,6 +4237,12 @@ time in a valid ...
   true
   seditCols
   2
+  Sdescription
+#$@text#$@
+<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>
+#$@text#$@
   szh_label
   动作
   sinheritDescription
@@ -4334,7 +4355,7 @@ things <p> system default editor is ui: local: swt.xworker.ThingDescritporForm. 
   xworker.lang.MetaDescriptor2/@thing
   Sdescription
 #$@text#$@
-<p>和事物相关的功能菜单，通常是在SWT相关的界面中使用，如事物编辑器。</p>
+<p>用于定义模型编辑器中编辑模型时的菜单，菜单是和描述者绑定的。</p>
 
 <p><strong>菜单简介</strong></p>
 

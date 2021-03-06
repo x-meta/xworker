@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="AddParamActions" descriptors="xworker.lang.util.ThingGuide" th_createIndex="true"
+     th_registThing="guide|xworker.lang.MetaDescriptor3" group="thing">
+    <description><![CDATA[<p>根据属性快速生成相应的参数动作，比如xxx属性生成getXxx()方法。</p>
+]]></description>
+    <Composite>
+        <Composite>
+            <FillLayout name="FillLayout"></FillLayout>
+            <Table name="table">
+                <DataStore name="dataStore">
+                    <dataObjects>
+                        <AbstractDataObject storeAutoLoad="true" gridEditable="true">
+                            <attribute name="name" editable="false" gridWidth="200"></attribute>
+                            <attribute name="type" inputtype="select" gridWidth="400">
+                                <DataStore>
+                                    <dataObjects>
+                                        <AbstractDataObject valueName="path" displayName="name">
+                                            <attribute name="path" key="true"></attribute>
+                                            <attribute name="name"></attribute>
+                                            <actions>
+                                                <GroovyAction name="doQuery">
+                                                    <code><![CDATA[import xworker.dataObject.DataObject;
+
+def thing = world.getThing("xworker.lang.actions.ActionUtil");
+def names = [];
+for(child in thing.getChilds()){
+    names.add(child.getMetadata().getName());
+}
+Collections.sort(names);
+
+def datas = [];
+for(name in names){
+    def child = getAction(name, thing);
+    def data = new DataObject("xworker.things.p2020.p10.p21.AddParamActions/@Composite/@Composite/@table/@dataStore/@dataObjects/@AbstractDataObject/@type/@DataStore/@dataObjects/@AbstractDataObject");
+    data.put("path", child.getMetadata().getPath());
+    data.put("name", child.getMetadata().getName());
+    
+    datas.add(data);
+}
+
+return datas;
+
+def getAction(name, thing){
+    for(child in thing.getChilds()){
+        if(name == child.getMetadata().getName()){
+            return child;
+        }
+    }
+}]]></code>
+                                                </GroovyAction>
+                                            </actions>
+                                        </AbstractDataObject>
+                                    </dataObjects>
+                                </DataStore>
+                            </attribute>
+                            <actions>
+                                <GroovyAction name="doQuery">
+                                    <code><![CDATA[import xworker.dataObject.DataObject;
+
+def thing = thingGuide.getEditThing();
+def datas = [];
+for(attr in thing.getChilds("attribute")){
+    def data = new DataObject("xworker.things.p2020.p10.p21.AddParamActions/@Composite/@Composite/@table/@dataStore/@dataObjects/@AbstractDataObject");
+    data.put("name", attr.getMetadata().getName());
+    data.put("type", getType(attr, thing));
+    datas.add(data);
+}
+return datas;
+
+def getType(attr, thing){
+    def name = attr.getMetadata().getName();
+    def actions = thing.getActionThings();
+    for(ac in actions){
+        if(ac.get("attributeName") == name){
+            return ac.getDescriptor().getMetadata().getPath();
+        }
+    }
+    
+    return null;
+}]]></code>
+                                </GroovyAction>
+                            </actions>
+                        </AbstractDataObject>
+                    </dataObjects>
+                </DataStore>
+            </Table>
+        </Composite>
+        <actions>
+            <GroovyAction name="doFinish">
+                <code><![CDATA[import org.xmeta.Thing;
+
+
+def datas = [];
+for(item in table.getItems()){
+    def data = item.getData();
+    def type = data.get("type");
+    if(type != null && type != ""){
+        datas.add(data);
+    }
+}
+
+def thing = thingGuide.getEditThing();
+def actions = thing.getThing("actions@0");
+if(actions == null){
+    actions = new Thing("xworker.lang.MetaDescriptor3/@actions");
+    actions.put("name", "actions");
+    thing.addChild(actions);
+}
+
+for(data in datas){
+    addAction(data, actions);
+}
+
+thing.save();
+
+def addAction(data, actions){
+    def attrName = data.get("name");
+    def type = data.get("type");
+    def actionThing = null;
+    for(ac in actions.getChilds()){
+        if(attrName == ac.get("attributeName")){
+            actionThing = ac;
+            break;
+        }
+    }
+    
+    if(actionThing != null && type == actionThing.getDescriptor().getMetadata().getPath()){
+        return;
+    }
+    
+    if(actionThing != null){
+        actions.removeChild(actionThing);
+    }
+    
+    actionThing = new Thing(type);
+    actionThing.put("attributeName", attrName);
+    if(type.indexOf("GetBoolean") != -1){
+        actionThing.put("name", "is" + cap(actionContext, "str", attrName));
+    }else{
+        actionThing.put("name", "get" + cap(actionContext, "str", attrName));
+    }
+    actionThing.put("usage", "params");
+    
+    actions.addChild(actionThing);
+}]]></code>
+                <ActionDefined>
+                    <capitalize name="cap" descriptors="xworker.lang.actions.utils.StringUtils/@capitalize"
+                         str="var:str"></capitalize>
+                </ActionDefined>
+            </GroovyAction>
+        </actions>
+    </Composite>
+</ThingGuide>

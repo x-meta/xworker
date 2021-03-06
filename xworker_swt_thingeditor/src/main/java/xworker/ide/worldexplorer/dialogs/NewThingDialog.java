@@ -11,16 +11,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Category;
@@ -380,14 +371,11 @@ public class NewThingDialog {
 
 		TreeItem item = categoryTree.getSelection()[0];
 
-		String webUrl = XWorkerUtils.getWebUrl();
-		//def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
-		//def webUrl = globalConfig.getString("webUrl");
-		historyBorwser.setUrl(webUrl + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" 
-				+ ((Thing) item.getData()).getMetadata().getPath());
-		    
 		List<Map<String, Object>> alist = new ArrayList<Map<String, Object>>();
-		for(Thing child : ((Thing) item.getData()).getAllChilds()){
+		ThingsGroup thingsGroup = (ThingsGroup) item.getData();
+		SwtUtils.setThingDesc(thingsGroup.getThing(), historyBorwser);
+		List<Thing> things = thingsGroup.getThings();
+		for(Thing child : things){//((Thing) item.getData()).getAllChilds()){
 		    if("Thing".equals(child.getThingName())){
 		        Map<String, Object> t = new HashMap<String, Object>();
 	            t.put("name",  child.getMetadata().getLabel());
@@ -727,10 +715,18 @@ public class NewThingDialog {
 		    TreeItem item = new TreeItem(categoryTree, SWT.NONE);
 		    item.setText(world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@newThingDialog/@historyRecord").getMetadata().getLabel());
 		    item.setImage(folderImage);
-		}       
+		}
+
 		List<Thing> allThings = new ArrayList<Thing>();
+		ThingsGroup thingsGroup = new ThingsGroup(actionContext);
+		initThings(categoryTree, thingsGroup, allThings, folderImage);
+
+		//用于查询
 		actionContext.getScope(0).put("allThings", allThings);
-		Thing coreThings = world.getThing("xworker.ide.config.Things");
+
+		/*
+
+		Thing coreThings = world.getThing("xworker.lang.LangThings");
 		if(coreThings != null){
 		    initThings(categoryTree, coreThings, allThings, folderImage);
 		}
@@ -738,10 +734,10 @@ public class NewThingDialog {
 		Thing registorThing = world.getThing("xworker.lang.ThingsIndex");
 		List<Thing> thingsList = ThingUtils.searchRegistThings(registorThing, "child", new ArrayList<String>(), actionContext);
 		for(Thing things : thingsList){
-		    if(!things.getMetadata().getPath().equals("xworker.ide.config.Things")){
+		    if(!things.getMetadata().getPath().equals("xworker.lang.LangThings")){
 		        initThings(categoryTree, things, allThings, folderImage);
 		    }
-		}
+		}*/
 
 		/*
 		for(thingManager in world.getThingManagers()){
@@ -792,7 +788,22 @@ public class NewThingDialog {
 		
 	}
 	
-	private void initThings(Object treeItem, Thing things, List<Thing> allThings, Image folderImage){
+	private void initThings(Object treeItem, ThingsGroup thingsGroup, List<Thing> allThings, Image folderImage){
+		for(ThingsGroup group : thingsGroup.getChilds()){
+			TreeItem item = null;
+			if(treeItem instanceof Tree) {
+				item = new TreeItem((Tree) treeItem, SWT.NONE);
+			}else {
+				item = new TreeItem((TreeItem) treeItem, SWT.NONE);
+			}
+			item.setImage(folderImage);
+			item.setData(group);
+			item.setText(group.getThing().getMetadata().getLabel());
+			allThings.addAll(group.getThings());
+
+			initThings(item, group, allThings, folderImage);
+		}
+		/*
 	    for(Thing child : things.getAllChilds()){
 	        String thingName = child.getThingName();
 	        if("Category".equals(thingName)){
@@ -830,13 +841,20 @@ public class NewThingDialog {
 	            
 	            initThings(item, child, allThings, folderImage);
 	        }else if("Thing".equals(thingName)){
+	        	Widget parent = (Widget) treeItem;
+	        	List<Thing> treeThings = (List<Thing>) parent.getData("things");
+	        	if(treeThings == null){
+					treeThings = new ArrayList<Thing>();
+					parent.setData("things", treeThings);
+				}
+	        	treeThings.add(child);
 	            allThings.add(child);
 	        }
 	    }
 	    
 	    if(treeItem instanceof TreeItem){
 	        //treeItem.setExpanded(true);
-	    }
+	    }*/
 	}
 }
 

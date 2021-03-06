@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="JsoupExampleActions" descriptors="xworker.lang.ActionThing">
+    <description><![CDATA[<h1>Jsoup示例</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Jsoup可以用来分析网页，可以做网络爬虫。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    <Document name="AllElements" descriptors="xworker.org.jsoup.DocumentActions/@Document"
+         url="https://www.xworker.org/do?sc=xworker.app.orgweb.web.Index&amp;id=11">
+        <description><![CDATA[<p>浏览文档的全部元素。</p>
+]]></description>
+        <AllElements interpretationType="">
+            <ListIterator>
+                <Groovy name="printLog">
+                    <code><![CDATA[import xworker.lang.executor.Executor;
+
+def TAG = "AllElements";
+Executor.info(TAG, element.tagName() + ":" + element.text());]]></code>
+                </Groovy>
+            </ListIterator>
+        </AllElements>
+    </Document>
+    <Document name="Select" descriptors="xworker.org.jsoup.DocumentActions/@Document" url="https://www.xworker.org/do?sc=xworker.app.orgweb.web.Index&amp;id=11">
+        <description><![CDATA[<p>使用select查找节点。</p>
+]]></description>
+        <Select cssQuery="a">
+            <ListIterator>
+                <Groovy name="printLog">
+                    <code><![CDATA[import xworker.lang.executor.Executor;
+
+def TAG = "Select";
+Executor.info(TAG, element.tagName() + " :  Text=" + element.text() + " :  Href=" + element.attr("href"));]]></code>
+                </Groovy>
+            </ListIterator>
+        </Select>
+    </Document>
+    <Document name="GrabLinks" descriptors="xworker.org.jsoup.DocumentActions/@Document"
+         url="https://www.xworker.org/do?sc=xworker.app.orgweb.web.Index&amp;id=11">
+        <description><![CDATA[<p>抓取网页中的所有连接，即&lt;a href=.../&gt;。</p>
+]]></description>
+        <ElementsByTag tagName="a">
+            <ListIterator>
+                <RunAction>
+                    <ExecutorLog name="log" descriptors="xworker.lang.executor.ExecutorActions/@Log"
+                         executorService="var:executorService" tag="GrabLinks" message="template:开始抓取：${element.absUrl(&quot;href&quot;)}"></ExecutorLog>
+                </RunAction>
+                <Document url="ognl:element.absUrl(&quot;href&quot;)">
+                    <RunAction>
+                        <ExecutorLog name="log" descriptors="xworker.lang.executor.ExecutorActions/@Log"
+                             executorService="var:executorService" tag="GrabLinks" message="template:URL已抓取：${document.title()}"></ExecutorLog>
+                    </RunAction>
+                </Document>
+            </ListIterator>
+        </ElementsByTag>
+    </Document>
+    <Document name="FormSubmit" descriptors="xworker.org.jsoup.DocumentActions/@Document"
+         url="https://www.xworker.org/do?sc=xworker.example.web.login.LoginExample">
+        <description><![CDATA[<p>首先抓取登录页面，然后填入用户名和密码并提交，最后在日志中输出表单提交后返回的界面。</p>
+]]></description>
+        <AllElements>
+            <Forms interpretationType="">
+                <Iterator>
+                    <Groovy name="setFormValue">
+                        <code><![CDATA[import xworker.lang.executor.Executor;
+
+def TAG = "FormSubmit";
+for(element in form.elements()){
+     if(element.attr("name") == "name"){
+         element.val("admin");
+     }else if(element.attr("name") == "password"){
+         element.val("admin");
+     }
+     Executor.info(TAG, element.attr("name") + "=" + element.val());
+}]]></code>
+                    </Groovy>
+                    <Submit>
+                        <Post>
+                            <RunAction descriptors="xworker.org.jsoup.Commons/@RunAction">
+                                <ExecutorLog name="log" descriptors="xworker.lang.executor.ExecutorActions/@Log"
+                                     executorService="var:executorService" tag="FormSubmit"
+                                     message="template:表单已提交：${document?string}"></ExecutorLog>
+                            </RunAction>
+                        </Post>
+                    </Submit>
+                </Iterator>
+            </Forms>
+        </AllElements>
+    </Document>
+</ActionThing>

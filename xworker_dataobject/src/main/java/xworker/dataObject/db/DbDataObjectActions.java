@@ -600,6 +600,11 @@ public class DbDataObjectActions {
         Thing cls = new Thing("xworker.db.hibernate.hibernate-mapping/@class");
         cls.set("entity-name", self.get("name"));
         cls.set("table", self.get("tableName"));
+        if(self.getStringBlankAsNull("comment") != null){
+            Thing comment = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@comment");
+            comment.set("_value", self.getString("comment"));
+            cls.addChild(comment);
+        }
         
         //id
         Thing keyThing = null;  //目前XWorker只支持单个key的Hibernate，如果有多个key，会在ddl中创建
@@ -611,9 +616,20 @@ public class DbDataObjectActions {
             if(attr.getBoolean("key")){
                 Thing id = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@id");
                 id.set("name", attr.get("name"));
-                id.set("column", attr.get("fieldName"));
+                //id.set("column", attr.get("fieldName"));
                 id.set("type", getType(attr.getString("type")));
-                id.set("length", attr.get("length"));        
+                id.set("length", attr.get("length"));
+
+                if(attr.getStringBlankAsNull("comment") != null){
+                    Thing column = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.id/@column1");
+                    column.set("name", attr.get("fieldName"));
+                    id.addChild(column);
+
+                    Thing comment = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@comment");
+                    comment.set("_value", attr.getString("comment"));
+                    column.addChild(comment);
+                }
+
                 if(attr.getStringBlankAsNull("generator") != null){
                     Thing gen = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.id/@generator");
                     gen.set("class", attr.get("generator"));
@@ -621,6 +637,8 @@ public class DbDataObjectActions {
                 }
                 cls.addChild(id);
                 keyThing = attr;
+
+
                 break;
             }
         }
@@ -634,13 +652,23 @@ public class DbDataObjectActions {
             if(attr != keyThing){//!attr.getBoolean("key")){
                 Thing property = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@property");
                 property.set("name", attr.get("name"));
-                property.set("column", attr.get("fieldName"));
+                //property.set("column", attr.get("fieldName"));
                 property.set("type", getType(attr.getString("type")));
                 property.set("length", attr.get("length"));
                 property.set("precision", attr.get("precision"));
                 property.set("index", attr.get("index"));
                 property.set("unique-key", attr.getString("unique-key"));
                 cls.addChild(property);
+
+                if(attr.getStringBlankAsNull("comment") != null){
+                    Thing column = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.id/@column1");
+                    column.set("name", attr.get("fieldName"));
+                    property.addChild(column);
+
+                    Thing comment = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@comment");
+                    comment.set("_value", attr.getString("comment"));
+                    column.addChild(comment);
+                }
             }
         }    
         

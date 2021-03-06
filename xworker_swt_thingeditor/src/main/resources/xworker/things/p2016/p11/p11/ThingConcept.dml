@@ -1,0 +1,149 @@
+%1572400760887
+@
+sname=ThingConcept
+slabel=事物
+stype=thingDesc
+sgroup=常见概念
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=true
+Sdescription=
+#$@text#$@
+<h1>事物</h1>
+
+<h2>1.概念解释</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 事物也是模型，事物是XWorker中的最基本的概念。在XWorker中<strong>对象</strong>、<strong>事物</strong>、<strong>模型</strong>和<strong>事物模型</strong>等概念基本都是等价的。</p>
+
+<h2>2.事物的结构</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;一个事物是由属性和子事物构成的，一个事物也是一个对象，可以包含多个行为。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 事物的结构是树形结构的，所以可以用XML、JSON等多种格式保存，XWorker默认使用类似Properties的文本格式保存事物模型。</p>
+
+<h2>3.事物的Java类</h2>
+
+<h3>3.1.org.xmeta.Thing</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 事物对应的类是org.xmeta.Thing。</p>
+
+<h3>3.2.创建事物的方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 大部分时候事物可能是通过事物管理器的编辑器创建的。事物也可以通过代码创建，示例如下。</p>
+
+<pre class="brush:java;">
+import org.xmeta.Thing;
+
+//创建一个空的事物，含义等价于Java的Object object = new Object();
+Thing thing = new Thing();
+
+//使用描述者（类）创建一个事物，含义等价于Java的Object user = new User();
+Thing user = new Thing(&quot;User&quot;);  //User字符串是User模型的路径</pre>
+
+<h3>3.3.操作属性的主要方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 属性的操作主要是set和get方法。</p>
+
+<pre class="brush:java;">
+//设置属性
+thing.set(String name, Object value);
+
+//获取属性
+Object value = thing.get(String name);
+
+//带有转换方法的获取属性
+T value = thing.getT(String name);
+T value = thing.getT(String name, T defaultValue);
+
+//从变量上下文获取属性值得方法，此时如果属性是字符串，支持var:ognl等表达式
+T value = thing.getT(String name, T defaultValue, ActionContext actionContext)</pre>
+
+<h3>3.4.操作子事物（子节点）的方法</h3>
+
+<pre class="brush:java;">
+//添加一个子节点
+thing.addChild(Thing child);
+
+//添加一个子节点但保留原子节点的父子关系
+thing.addChild(Thing child, false);
+
+//移除一个子节点
+thing.removeChild(Thing child);</pre>
+
+<h3>3.5.执行行为</h3>
+
+<pre class="brush:java;">
+//执行行为
+thing.doAction(String name, ActionContext actionContext);
+
+//带参数Map的执行
+thing.doAction(String name, ActionContext actionContext, Map&lt;String, Object&gt; params)
+
+//使用数组构造参数，注意key和value的成对
+thing.doAction(String name, ActionContext actionContext, String key1, Object value1, ...)</pre>
+
+<h3>3.6.面向对象相关方法</h3>
+
+<pre class="brush:java;">
+//获取直接描述者（类）列表，含义当于Java的List&lt;Class&gt; classes = object.getClasses()
+List&lt;Thing&gt; descritpors = thing.getDescriptors();
+//获取所有描述者（类）列表，包含了类所继承的所有类
+List&lt;Thing&gt; allDescriptors = thing.getAllDescriptors();
+
+//获取继承事物列表
+List&lt;Thing&gt; extends = thing.getExtends();
+//获取所有继承的事物列表，包含继承的继承
+List&lt;Thing&gt; allExtends = thing.getAllExtends();
+
+//设置事物的描述者（类），其中A、B、C等是描述者事物的路径
+thing.set(&quot;descriptors&quot;, &quot;A,B,C...&quot;);
+
+//设置事物的继承事物，其中A、B、C等是继承事物的路径
+thing.set(&quot;extends&quot;, &quot;A,B,C...&quot;);
+
+/获取事物名，相当于Java的object.getClass().getSimpleName();
+String thingName = thing.getThingName();</pre>
+
+<h3>3.7.其它常用方法</h3>
+
+<pre class="brush:java;">
+//保存事物模型，如保存到文件系统
+thing.save();
+
+//从系统中删除模型
+thing.remove();
+
+//获取元数据
+ThingMetadata metadata = thing.getMetadata();
+
+//获取事物的路径
+String path = metadata.getPath();
+
+//获取事物所在的事物管理器
+ThingManager thingManager = metadata.getThingManager();
+
+//获取事物的目录
+Category category = metadata.getCategory();
+
+//获取多语言适配的标签和描述
+String label = metadata.getLabel();
+String description = metadata.getDescription();
+
+//获取不为空name，即使name属性为null
+String name = metadata.getName();</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label=Thing
+sen_group=Common Concept
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_keywords=Thing
+sth_registThing=child|xworker.command.CommandAssistorIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

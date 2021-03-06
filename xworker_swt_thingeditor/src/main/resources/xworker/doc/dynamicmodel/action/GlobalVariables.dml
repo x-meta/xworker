@@ -1,0 +1,96 @@
+^0
+@
+sname
+GlobalVariables
+slabel
+全局变量
+stype
+thingDesc
+sgroup
+dynamicModel.-990|Actions.variables
+sgroupDescriptor
+false
+sicon
+icons/html.png
+sth_sortWeight
+10
+sstyledTextForInsert
+parentContext.parentContext.codeText
+suseTargetThingDoc
+false
+ssimpleBrowser
+true
+Sdescription
+#$@text#$@
+<h1>全局变量</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 全局变量是指动作上下文中所保存的一些变量，这些变量时在任何线程里都可以访问的，并且这些变量如果没有被主动删除，那么这些变量也总是存在。</p>
+
+<h2>1.直接设置全局变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在创建动作上下文时，可以直接设置全局变量。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+
+//创建动作上下文
+ActionContext actionContext = new ActionContext();
+
+//设置全局变量，key变量名，类型是String，object变量值，类型是Object
+actionContext.put(key, object);
+</pre>
+
+<h3>1.1.注意下面的代码不是设置全局变量</h3>
+
+<pre class="brush:groovy;">
+actionContext.push(null);
+
+//如上面已执行过push方法，那么再执行put方法设置的变量就不是全局的了
+actionContext.put(key, object);
+
+</pre>
+
+<h2>2.通过获取全局变量栈来设置全局变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作上下文的g()方法来返回全局变量栈。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+
+//创建动作上下文
+ActionContext actionContext = new ActionContext();
+
+//获取全局变量栈
+Bindings g = actionContext.g();
+
+//设置全局变量
+g.put(key, object);
+</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label
+Global Variables
+sdescriptors
+xworker.swt.xworker.ThingRegistThing
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.example.ExamplesIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_noThingRegistViewer
+false
+sth_fileMonitor
+false
+sth_mark
+false
+sth_registQueryOnlySelf
+false
+sid
+GlobalVariables

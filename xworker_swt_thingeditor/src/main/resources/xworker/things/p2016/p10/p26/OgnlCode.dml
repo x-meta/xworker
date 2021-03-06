@@ -1,0 +1,56 @@
+%1477559662900
+@
+sname=OgnlCode
+slabel=OgnlCode
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+smodifier=public
+sinheritDescription=false
+Sdescription=
+#$@text#$@
+<pre class="brush:java;">
+package xworker.lang.actions.code;
+
+import ognl.Ognl;
+import ognl.OgnlException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+public class OgnlAction {
+	private static Logger logger = LoggerFactory.getLogger(OgnlAction.class);
+	
+	public static Object run(ActionContext actionContext) throws OgnlException{
+		Thing self = (Thing) actionContext.get(&quot;self&quot;);
+		
+		//获取Ognl表达式
+		Object exp = self.getData(&quot;exp&quot;);
+		Long expTime = (Long) self.getData(&quot;expTime&quot;);
+		if(expTime == null || expTime.longValue() != self.getMetadata().getLastModified()){
+			String expression = self.getStringBlankAsNull(&quot;expression&quot;);
+			if(expression == null){
+				logger.warn(&quot;Ognl expression is null, action=&quot; + self.getMetadata().getPath());
+				return null;
+			}
+			exp = Ognl.parseExpression(expression);
+			self.setData(&quot;exp&quot;, exp);
+			self.setData(&quot;expTime&quot;, self.getMetadata().getLastModified());
+		}
+		
+		return Ognl.getValue(exp, actionContext);
+	}
+}
+</pre>
+
+<p><a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;nohead=true&amp;thing=xworker.things.p2016.p10.p27.SelfDefineAction">返回</a>。</p>
+#$@text#$@
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

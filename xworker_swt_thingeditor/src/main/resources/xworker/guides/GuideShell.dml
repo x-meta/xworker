@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=教程&amp;en=Tutorials"
+     width="300" height="500" label="GuideShell">
+    <GridLayout name="GridLayout"></GridLayout>
+    <ThingRegistor name="thingRegist" thing="xworker.lang.util.indexs.ShellGuideIndex" registType="child"
+         autoLoad="true">
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+        <actions>
+            <GroovyAction name="selected">
+                <code><![CDATA[if(thing != null){
+    runButton.setEnabled(true);
+    actionContext.g().put("thing", thing);
+}else{
+    runButton.setEnabled(false);
+}]]></code>
+            </GroovyAction>
+            <GroovyAction name="defaultSelected">
+                <code><![CDATA[if(thing != null){
+    runButton.setEnabled(true);
+    actionContext.g().put("thing", thing);
+    
+    runButtonSelection.handleEvent(null);
+}]]></code>
+            </GroovyAction>
+            <GroovyAction name="loaded">
+                <code><![CDATA[runButton.setEnabled(false);
+
+for(thing in things){
+    println thing.getMetadata().getPath();
+}]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingRegistor>
+    <Composite name="buttonComposite" _xmeta_id_="18238">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="18239" style="FILL_HORIZONTAL"
+             horizontalAlignment="END"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="18240"></RowLayout>
+        <Button name="runButton" _xmeta_id_="18241" text="lang:d=运行&amp;en=Run">
+            <RowData name="RowData" _xmeta_id_="18242" width="80"></RowData>
+            <Listeners _xmeta_id_="18243">
+                <Listener name="runButtonSelection" _xmeta_id_="18244">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[def guide = thing.doAction("create", actionContext);
+
+//执行向导时把本界面隐藏，当向导结束后再打开显示
+def shell = shell;
+shell.setVisible(false);
+new Thread({
+    Thread.sleep(1000);
+    while(guide.isDisposed() == false){
+        Thread.sleep(500);
+    }
+    
+    //println "heeeeee";
+    shell.getDisplay().asyncExec({
+        shell.setVisible(true);
+        shell.setActive();
+    });
+}).start();]]></code>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="closeButton" _xmeta_id_="18245" text="lang:d=关闭&amp;en=Close">
+            <RowData name="RowData" _xmeta_id_="18246" width="80"></RowData>
+            <Listeners _xmeta_id_="18247">
+                <Listener name="closeButtonSelection" _xmeta_id_="18248">
+                    <Dispose name="Dispose" descriptors="xworker.swt.actions.ControlActions/@Dispose"
+                         controlList="shell"></Dispose>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+</Shell>

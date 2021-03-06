@@ -1,0 +1,557 @@
+%1596696168797
+@
+sname=SystemMonitor
+slabel=SystemMonitor
+sdescriptors=xworker.lang.MetaDescriptor3
+smany=true
+seditCols=2
+sinitialization=false
+sgroup=java.system
+smodifier=public
+sinheritDescription=false
+snotXmlAttribute=false
+sjson_isArray=false
+sth_createIndex=true
+sth_registThing=child|xworker.ide.worldexplorer.StartupIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@systemMonitor
+    sname=init
+    slabel=系统资源监控
+    sgroup=java.system
+    senable=true
+    scallback=false
+    scallbackCancel=false
+    sthread=false
+    ssingleInstance=false
+    ssaveAsGlobalVar=false
+    sschedule=true
+    sdelay=10000
+    speriod=10000
+    sfixedRate=false
+    stimeUnit=MILLISECONDS
+    sfixTime=false
+    scalculatePassCount=false
+    Sdescription=
+#$@text#$@
+<p>定时从java.lang.management中获取系统信息，并把信息存放到xworker.things.p2019.p07.p31.SystemStatusIndex数据对象列表中。</p>
+
+<p>SystemStatusIndex是一个静态的数据对象列表，这些数据对象设置了在SWT中展示的界面。</p>
+#$@text#$@
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@Task
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sid=systemMonitor
+      @/@actions/@systemMonitor/@actions
+      sname=actions
+      sdescriptors=xworker.lang.task.Task/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sid=actions
+        @/@actions/@systemMonitor/@actions/@doTask
+        sname=doTask
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+//检查内存
+checkMemory(actionContext);
+
+//检查类加载器
+checkClassLoader(actionContext);
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sid=doTask
+          @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined
+          sname=ActionDefined
+          sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sid=ActionDefined
+            @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@getDataObject
+            sname=getDataObject
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+import xworker.dataObject.DataObject;
+
+//println dataObjectList;
+//从数据对象列表中获取数据对象
+def dataObject = dataObjectList.get("resourceId", id);
+
+if(dataObject == null){
+    dataObject = new DataObject("xworker.app.resource.dataobjects.ResourceStatus");
+    dataObject.put("resourceId", id);
+    dataObject.put("name", name);
+    dataObject.put("level", "info");
+    dataObject.put("resourceHandler", handler);
+    dataObject.put("indexThing", "xworker.things.p2019.p07.p31.SystemStatusIndex");
+    
+    //添加到列表中
+    dataObjectList.add(dataObject);
+    
+    //保存到数据库中
+    dataObject.create(actionContext);
+}
+
+return dataObject;
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=getDataObject
+              @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@getDataObject/@ins
+              sisValidate=false
+              sname=ins
+              sdescriptors=xworker.lang.actions.Inout/@ins
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sid=ins
+                @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@getDataObject/@ins/@id
+                sname=id
+                stypeCheck=false
+                soptional=true
+                scheck=false
+                scheckLevel=exception
+                sdescriptors=xworker.lang.actions.Inout/@ins/@param
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sid=id
+                @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@getDataObject/@ins/@name
+                sname=name
+                stypeCheck=false
+                soptional=true
+                scheck=false
+                scheckLevel=exception
+                sdescriptors=xworker.lang.actions.Inout/@ins/@param
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sid=name
+                @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@getDataObject/@ins/@handler
+                sname=handler
+                stypeCheck=false
+                soptional=true
+                scheck=false
+                scheckLevel=exception
+                sdescriptors=xworker.lang.actions.Inout/@ins/@param
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sid=handler
+            @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkMemory
+            sname=checkMemory
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+import xworker.util.UtilData;
+
+import java.lang.management.ManagementFactory;
+
+def data = getDataObject(actionContext, 
+        "id", "system_management_memory", 
+        "name", UtilData.getString("lang:d=内存&en=Memory", actionContext),
+        "handler", "xworker.things.p2019.p07.p31.MemoryHandlerSWT");
+        
+def mbean = ManagementFactory.getMemoryMXBean();
+def heap = mbean.getHeapMemoryUsage();
+def nonheap = mbean.getNonHeapMemoryUsage();
+def objectPendingFinalizationCount = mbean.getObjectPendingFinalizationCount();
+
+data.put("name", UtilData.getString("lang:d=内存&en=Memory", actionContext));
+data.put("heap", heap);
+data.put("source", "xworker.things.p2019.p07.p31.SystemMonitor/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkMemory");
+data.put("nonheap", nonheap);
+data.put("objectPendingFinalizationCount", objectPendingFinalizationCount);
+data.put("heapLabel", toSizeString(actionContext, "size", heap.getUsed()));
+data.put("nonheapLabel", toSizeString(actionContext, "size", nonheap.getUsed()));
+data.put("heapPercent", 
+     percentFormat(actionContext, "value", (100d * heap.getUsed() / heap.getCommitted())) + "%");
+data.put("nonheapPercent", 
+     percentFormat(actionContext, "value", (100d * nonheap.getUsed() / nonheap.getCommitted())) + "%");
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=checkMemory
+            @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@toSizeString
+            sname=toSizeString
+            ssize=var:size
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.io.FileUtilActions/@ByteCountToDisplaySize
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=toSizeString
+            @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@DecimalFormat
+            sname=percentFormat
+            spattern=#0.00
+            svalue=var:value
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.java.text.FormatActions/@DecimalFormat
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=DecimalFormat
+            @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader
+            sname=checkClassLoader
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+import xworker.util.UtilData;
+
+import java.lang.management.ManagementFactory;
+
+def bean = ManagementFactory.getClassLoadingMXBean();
+theData.put("loaded", bean.getLoadedClassCount());
+theData.put("total", bean.getTotalLoadedClassCount());
+theData.put("unloaded", bean.getUnloadedClassCount());
+theData.put("source", "xworker.things.p2019.p07.p31.SystemMonitor/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader");
+theData.put("info", """加载：${bean.getLoadedClassCount()}
+总数：${bean.getTotalLoadedClassCount()}
+卸载：${bean.getUnloadedClassCount()}""".toString());
+theData.put("name", UtilData.getString("lang:d=类加载器&en=ClassLoader", actionContext));
+theData.put("memo", memo);
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=checkClassLoader
+              @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader/@Variables
+              sname=Variables
+              sdescriptors=xworker.lang.actions.Inout/@Variables
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sid=Variables
+                @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader/@Variables/@theData
+                sname=theData
+                sstaticDataObjectList=xworker.things.p2019.p07.p31.SystemStatusIndex
+                skeyValues="system_management_classloader":resourceId
+                screateIfNotExists=true
+                sattributes="info":level
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
+                sisSynchronized=false
+                sthrowException=true
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.dataObject.staticdata.StaticDataActions/@GetDataObjectFormList
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sid=theData
+                @/@actions/@systemMonitor/@actions/@doTask/@ActionDefined/@checkClassLoader/@Variables/@memo
+                sname=memo
+                Sstring=
+#$@text#$@
+<b>加载：</b>当前加载的类的数量。<br/>
+<b>总数：</b>自系统启动到下载加载的类的总数。<br/>
+<b>卸载：</b>已经从系统里回收的类的总数。<br/>
+#$@text#$@
+                Sen_string=
+#$@text#$@
+<b>加载：</b>当前加载的类的数量。<br/>
+<b>总数：</b>自系统启动到下载加载的类的总数。<br/>
+<b>卸载：</b>已经从系统里回收的类的总数。<br/>
+#$@text#$@
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
+                sisSynchronized=false
+                sthrowException=true
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.text.GetI18nString
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_fileMonitor=false
+                sth_mark=false
+                sid=memo
+          @/@actions/@systemMonitor/@actions/@doTask/@Variables
+          sname=Variables
+          sdescriptors=xworker.lang.actions.Inout/@Variables
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sid=Variables
+            @/@actions/@systemMonitor/@actions/@doTask/@Variables/@dataObjectList
+            sname=dataObjectList
+            sthingPath=xworker.things.p2019.p07.p31.SystemStatusIndex
+            sactionName=getDataObjectList
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@ThingAction1
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sid=dataObjectList
+        @/@actions/@systemMonitor/@actions/@createUI
+        sname=createUI
+        snewActionContext=false
+        ssaveGlobalVariableMethod=newActionContext
+        sisSwtCreateMethod=false
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.actions.CommonActions/@CreateWidgets
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        sid=createUI
+          @/@actions/@systemMonitor/@actions/@createUI/@Widget
+          sname=Widget
+          sdescriptors=xworker.swt.actions.CommonActions/@CreateWidgets/@Widgets
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=Widget
+            @/@actions/@systemMonitor/@actions/@createUI/@Widget/@Composite
+            sname=Composite
+            sBORDER=false
+            sH_SCROLL=false
+            sV_SCROLL=false
+            sNO_BACKGROUND=false
+            sNO_FOCUS=false
+            sNO_MERGE_PAINTS=false
+            sNO_REDRAW_RESIZE=false
+            sNO_RADIO_GROUP=false
+            sEMBEDDED=false
+            sDOUBLE_BUFFERED=false
+            scapture=false
+            senabled=true
+            sredraw=true
+            spack=false
+            svisible=true
+            sdescriptors=xworker.swt.actions.CommonActions/@CreateWidgets/@Widgets/@Composite
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            sid=Composite
+              @/@actions/@systemMonitor/@actions/@createUI/@Widget/@Composite/@FillLayout
+              sname=FillLayout
+              stype=SWT.HORIZONTAL
+              sdescriptors=xworker.swt.Layouts/@FillLayout
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_noThingRegistViewer=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sth_registQueryOnlySelf=false
+              sid=FillLayout
+              @/@actions/@systemMonitor/@actions/@createUI/@Widget/@Composite/@DataObjectContainer
+              sname=dataObjectContainer
+              sdescriptors=xworker.app.view.swt.widgets.DataObjectContainer
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_noThingRegistViewer=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sth_registQueryOnlySelf=false
+              sid=DataObjectContainer
+              @/@actions/@systemMonitor/@actions/@createUI/@Widget/@Composite/@init
+              sname=init
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              svarScope=Local
+              sdisableGlobalContext=false
+              Scode=
+#$@text#$@
+//执行后会绑定到dataObjectContainer上，会自动显示界面
+def thing = world.getThing("xworker.things.p2019.p07.p31.SystemStatusIndex");
+thing.doAction("create", actionContext);
+#$@text#$@
+              sinterpretationType=Action
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sswitchResult=false
+              sdebugLog=false
+              sdescriptors=xworker.swt.widgets.Widget/@Code
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_noThingRegistViewer=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sth_registQueryOnlySelf=false
+              sid=init

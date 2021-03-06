@@ -1,0 +1,51 @@
+%1480576124333
+@
+sname=MappingFields
+slabel=映射属性
+stype=thingDesc
+sgroup=数据对象
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+Sdescription=
+#$@text#$@
+<p><strong>映射属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 映射属性是编辑数据对象是的一个快速添加属性的功能，比如从数据库表中映射字段到属性中。</p>
+
+<p><strong>实现方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象的定义模型需要实现一下几个方法。</p>
+
+<ul>
+	<li><strong>boolean isMappingAble()</strong><br />
+	是否是可映射的。需要重写并返回true，false表示没有映射属性的功能。默认返回false。<br />
+	&nbsp;</li>
+	<li><strong>String getAttributeDescriptor()</strong><br />
+	创建属性时使用的描述者的路径。一般返回数据对象自己的属性定义。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;Map&lt;String, String&gt;&gt; getMappingFields()</strong><br />
+	返回可以映射的属性列表。比如：
+	<pre class="brush:groovy;">
+return [
+    [&quot;colName&quot;:&quot;value&quot;, &quot;colTitle&quot;:&quot;值&quot;],
+    [&quot;colName&quot;:&quot;label&quot;, &quot;colTitle&quot;:&quot;标签&quot;]
+];</pre>
+
+	<p>属性可以编写的参数有：colName，attributeName，attributeLabel，inputtype，type，colspan，rowspan，queryEdito，key。</p>
+	</li>
+	<li>
+	<p><strong>String getMappingAttributeName()</strong><br />
+	返回colName映射到属性时的属性名称。比如数据库的表字段名映射到数据库数据对象的属性的fieldName属性上。默认返回name。</p>
+	</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.dataObject.DataObject
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

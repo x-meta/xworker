@@ -1,0 +1,426 @@
+%1482978455311
+@
+sname=ThingCoder
+slabel=事物编码
+seditCols=2
+sgroup=xworker.thing
+svalueName=name
+sdisplayName=label
+spaging=false
+snoTotalCount=false
+spagineByCursor=false
+sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+LstoreAutoDestroy=false
+sstoreAutoLoad=true
+LstoreAutoSave=true
+LstoreBatch=true
+LstorePruneModifiedRecords=false
+LstoreRemoteSort=false
+LstoreRestful=false
+sstoreRoot='rows'
+sstoreSuccessProperty='success'
+sstoreTotalProperty='totalCount'
+sstoreMessageProperty='msg'
+sgridEditable=false
+sgridEditType=cell
+sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+spaging_afterPageText=页 共
+spaging_beforePageText=第
+Lpaging_displayInfo=false
+spaging_displayMsg=第{0}-第{1}条，共{2}条
+spaging_emptyMsg=没有数据
+spaging_firstText=首页
+spaging_lastText=最后一页
+spaging_nextText=下一页
+Lpaging_prependButtons=false
+spaging_prevText=上一页
+spaging_refreshText=刷新
+sgridColumnLocking=false
+sgridLockText='锁定'
+sgridUnlockText='解锁'
+scolumnGroup=false
+sgridCheckable=false
+sgridRowNumber=false
+sgridGrouping=false
+sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+sgridRowExpander=false
+sautoGenerateId=false
+sidGenerateType=action
+sidAction=generateId
+sstoreSortDir=ASC
+sautoInit=false
+sautoInitAction=beforeCreate
+scacheRelation=false
+scacheRelationMaxSize=1000
+scacheRelationReadnone=false
+safterCreated=false
+sonLoaded=false
+sbeforeUpdate=false
+safterUpdated=false
+sbeforeDelete=false
+safterDeleted=false
+safterQueryed=false
+sshowUserTask=false
+sdescriptors=xworker.dataObject.DataObjects/@AbstractDataObject
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.dataObject.DataObjectIns
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@actions
+  sname=actions
+  sdescriptors=xworker.dataObject.AbstractDataObject/@actions
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=actions
+    @/@actions/@query
+    sname=query
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectUtil;
+
+def types = [
+    "dml_property":[label:"DML Properties格式（带缩进）", deprecated:"否"],
+    "dml_xml":[label:"DML XML格式", deprecated:"否"],
+    "dml_txt":[label:"DML Properties格式（没有缩进）", deprecated:"是，建议使用dml_property"],
+    "dmw_xml":[label:"DMW XML格式", deprecated:"否", deprecated:"否，执行时使用javaw.exe"],
+    "dmw_property":[label:"DMW Properties格式（带缩进）", deprecated:"否，执行时使用javaw.exe"],
+    "xer.txt":[label:"XER 文本格式", deprecated:"是,早期编码格式"],
+    "xer.xml":[label:"XER XML格式", deprecated:"是,早期编码格式"],
+    "xer":[label:"XER 二进制格式", deprecated:"是,早期编码格式"],
+    "xer.js":[label:"XER JSON格式", deprecated:"是,早期编码格式"]
+];
+
+def datas = [];
+for(thingCoder in world.getThingCoders()){
+    for(type in thingCoder.getCodeTypes()){
+        def t = types.get(type);
+        def dataObject = new DataObject("xworker.things.p2016.p12.p29.ThingCoder");
+        if(t != null){
+            dataObject.putAll(t);
+        }
+        
+        dataObject.put("name", type);
+        if(dataObject.get("label") == null){
+            dataObject.put("label", type);
+        }
+        
+        datas.add(dataObject);
+    }
+}
+
+return DataObjectUtil.query(datas, actionContext);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=query
+  @/@name
+  sname=name
+  slabel=名字
+  stype=string
+  soptional=true
+  skey=true
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=100
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=name
+  @/@label
+  sname=label
+  slabel=标签
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=200
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=label
+  @/@deprecated
+  sname=deprecated
+  slabel=是否已过时
+  stype=string
+  soptional=true
+  skey=false
+  sdataField=true
+  sviewField=true
+  sreadField=true
+  screateEditor=true
+  seditEditor=true
+  sviewEditor=true
+  sgridEditor=true
+  squeryEditor=true
+  sreadOnly=false
+  seditable=true
+  sdisabled=false
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  sshowInTable=true
+  sgridWidth=200
+  sdisplayRelationLabel=false
+  sgridFixed=false
+  sgridHidden=false
+  sgridHideable=true
+  sgridSortable=false
+  scolumnLocked=false
+  sgridGroupable=true
+  sgridMenuDisabled=false
+  sgridResizable=true
+  sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=deprecated
+  @/@Condition
+  sname=Condition
+  boperator=1
+  sjoin=and
+  smultiValueJoin=or
+  signoreNull=true
+  sdummySql=false
+  sisClause=false
+  sisClauseTemplate=false
+  saddOneDay=false
+  sdebug=false
+  sdescriptors=xworker.dataObject.DataObject/@Condition
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=Condition
+    @/@Condition/@name
+    sname=name
+    sattributeName=name
+    sdataName=name
+    boperator=10
+    sjoin=and
+    smultiValueJoin=or
+    signoreNull=true
+    sdummySql=false
+    sisClause=false
+    sisClauseTemplate=false
+    saddOneDay=false
+    sdebug=false
+    sdescriptors=xworker.dataObject.query.Condition/@Condition
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=name
+  @/@QueryFormDataObject
+  sname=QueryFormDataObject
+  sdescriptors=xworker.dataObject.DataObject/@QueryFormDataObject
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=QueryFormDataObject
+    @/@QueryFormDataObject/@AbstractDataObject
+    sname=AbstractDataObject
+    seditCols=2
+    spaging=false
+    snoTotalCount=false
+    spagineByCursor=false
+    sreadUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@read
+    screateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@create
+    supdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@update
+    sdestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectStore/@destroy
+    LstoreAutoDestroy=false
+    sstoreAutoLoad=false
+    LstoreAutoSave=true
+    LstoreBatch=true
+    LstorePruneModifiedRecords=false
+    LstoreRemoteSort=false
+    LstoreRestful=false
+    sstoreRoot='rows'
+    sstoreSuccessProperty='success'
+    sstoreTotalProperty='totalCount'
+    sstoreMessageProperty='msg'
+    sgridEditable=false
+    sgridEditType=cell
+    sformReadUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@read
+    sformCreateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@create
+    sformUpdateUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@update
+    sformDestroyUrl=do?sc=xworker.app.view.extjs.server.DataObjectForm/@delete
+    spaging_afterPageText=页 共
+    spaging_beforePageText=第
+    Lpaging_displayInfo=false
+    spaging_displayMsg=第{0}-第{1}条，共{2}条
+    spaging_emptyMsg=没有数据
+    spaging_firstText=首页
+    spaging_lastText=最后一页
+    spaging_nextText=下一页
+    Lpaging_prependButtons=false
+    spaging_prevText=上一页
+    spaging_refreshText=刷新
+    sgridColumnLocking=false
+    sgridLockText='锁定'
+    sgridUnlockText='解锁'
+    scolumnGroup=false
+    sgridCheckable=false
+    sgridRowNumber=false
+    sgridGrouping=false
+    sgridGroupTextTpl='{text} ({[values.rs.length]} 条)'
+    sgridRowExpander=false
+    sautoGenerateId=false
+    sidGenerateType=action
+    sidAction=generateId
+    sstoreSortDir=ASC
+    sautoInit=false
+    sautoInitAction=beforeCreate
+    scacheRelation=false
+    scacheRelationMaxSize=1000
+    scacheRelationReadnone=false
+    safterCreated=false
+    sonLoaded=false
+    sbeforeUpdate=false
+    safterUpdated=false
+    sbeforeDelete=false
+    safterDeleted=false
+    safterQueryed=false
+    sshowUserTask=false
+    sdescriptors=xworker.dataObject.DataObjects/@AbstractDataObject
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=AbstractDataObject
+      @/@QueryFormDataObject/@AbstractDataObject/@name
+      sname=name
+      slabel=名字
+      stype=string
+      soptional=true
+      skey=true
+      sdataField=true
+      sviewField=true
+      sreadField=true
+      screateEditor=true
+      seditEditor=true
+      sviewEditor=true
+      sgridEditor=true
+      squeryEditor=true
+      sreadOnly=false
+      seditable=true
+      sdisabled=false
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      sshowInTable=true
+      sgridWidth=100
+      sdisplayRelationLabel=false
+      sgridFixed=false
+      sgridHidden=false
+      sgridHideable=true
+      sgridSortable=false
+      scolumnLocked=false
+      sgridGroupable=true
+      sgridMenuDisabled=false
+      sgridResizable=true
+      sdescriptors=xworker.dataObject.AbstractDataObject/@attribute
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=name

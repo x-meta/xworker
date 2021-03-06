@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=选择MimeType&amp;en=Select Mime Type"
+     width="640" height="480" label="MimeTypeDialog">
+    <GridLayout name="GridLayout"></GridLayout>
+    <DataObjectEditCompoiste name="editor" dataObject="xworker.html.utils.ContentTypes" newButton="false"
+         editButton="false" deleteButton="false">
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+        <actions>
+            <Enabled name="tableSelection" descriptors="xworker.swt.actions.ControlActions/@Enabled"
+                 controlList="okButton"></Enabled>
+            <Enabled name="onStoreLoaded" descriptors="xworker.swt.actions.ControlActions/@Enabled"
+                 method="disable" controlList="okButton"></Enabled>
+        </actions>
+    </DataObjectEditCompoiste>
+    <Composite name="buttonComposite" _xmeta_id_="39407">
+        <GridData name="buttonCompositeGridData" _xmeta_id_="39408" style="FILL_HORIZONTAL"
+             horizontalAlignment="END"></GridData>
+        <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="39409"></RowLayout>
+        <Button name="okButton" _xmeta_id_="39410" text="lang:d=确定(&amp;amp;O)&amp;en=Ok(&amp;amp;O)"
+             enabled="false">
+            <RowData name="RowData" _xmeta_id_="39411" width="80"></RowData>
+            <Listeners _xmeta_id_="39412">
+                <Listener name="okButtonSelection" _xmeta_id_="39413">
+                    <GroovyAction name="GroovyAction">
+                        <code><![CDATA[def datas = editor.doAction("getSelection", actionContext);
+if(datas.size() > 0){
+    def data = datas.get(0);
+    def value = data.getString(params.returnType);
+    if(value != null){
+        text.setText(String.valueOf(value));
+    }
+}
+
+shell.dispose();]]></code>
+                    </GroovyAction>
+                </Listener>
+            </Listeners>
+        </Button>
+        <Button name="cancelButton" _xmeta_id_="39414" text="lang:d=取消(&amp;amp;C)&amp;en=Cancel(&amp;amp;C)">
+            <RowData name="RowData" _xmeta_id_="39415" width="80"></RowData>
+            <Listeners _xmeta_id_="39416">
+                <Listener name="cancelButtonSelection" _xmeta_id_="39417">
+                    <Dispose name="Dispose" descriptors="xworker.swt.actions.ControlActions/@Dispose"
+                         controlList="shell"></Dispose>
+                </Listener>
+            </Listeners>
+        </Button>
+    </Composite>
+</Shell>

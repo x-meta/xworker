@@ -1,0 +1,110 @@
+^0
+@
+sname
+UseVariables
+slabel
+使用变量
+stype
+thingDesc
+sgroup
+dynamicModel.-990|Actions.variables
+sgroupDescriptor
+false
+sicon
+icons/html.png
+sth_sortWeight
+30
+sstyledTextForInsert
+parentContext.parentContext.codeText
+suseTargetThingDoc
+false
+ssimpleBrowser
+true
+Sdescription
+#$@text#$@
+<h1>使用变量</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 一般在Java或脚本语言里使用动作上下文中的变量。</p>
+
+<h2>1.在Java中使用变量</h2>
+
+<h3>1.1.一般方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 一般直接通过动作上下文的get(key)方法获取变量。</p>
+
+<pre class="brush:as3;">
+import org.xmeta.ActionContext;
+
+//获取变量，参数key是String
+Object value = actionContext.get(key);
+
+//如果知道变量的类型，那么可以使用getObject()方法，getObject()会做变量强转
+Thing self = actionContext.getObject(&quot;self&quot;);
+
+</pre>
+
+<h3>1.2.通过变量栈获取变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 特殊情况下可以通过变量栈获取变量，比如想要获取一个动作的调用者所设置的变量等。</p>
+
+<pre class="brush:groovy;">
+//获取全局变量栈
+Bindings bindings = actionContext.g();
+
+//获取局部变量栈
+Bindings bindings = actionContext.l();
+
+//获取指定栈层的变量栈
+Bindings bindings = actionContext.getScope(-1);
+
+//通过遍历栈获取变量
+Object value = bindings.get(key);</pre>
+
+<h2>2.在脚本中使用变量</h2>
+
+<h3>2.1.使用变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在脚本语言里，通常可以直接使用动作上下文中设置的变量。比如下面的Groovy示意代码。</p>
+
+<pre class="brush:groovy;">
+//如果变量上下文中设置的name变量，那么可以直接使用
+println name;
+</pre>
+
+<h3>2.2.获取变量上下文</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在脚本语言里，变量actionContext是当前的动作上下文，可以直接使用。</p>
+
+<pre class="brush:groovy;">
+//脚本语言里可以直接使用actionContext变量
+Object value = actionContext.get(key);
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label
+Use Variables
+sdescriptors
+xworker.swt.xworker.ThingRegistThing
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.example.ExamplesIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_noThingRegistViewer
+false
+sth_fileMonitor
+false
+sth_mark
+false
+sth_registQueryOnlySelf
+false
+sid
+UseVariables

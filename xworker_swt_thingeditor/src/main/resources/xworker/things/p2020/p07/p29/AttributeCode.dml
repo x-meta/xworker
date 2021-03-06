@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="AttributeCode" descriptors="xworker.swt.xworker.ThingRegistThing" label="读取属性的代码"
+     type="composite" group="thing.code" icon="icons/application.png" th_createIndex="true"
+     th_registThing="command|xworker.lang.MetaDescriptor3">
+    <Composite>
+        <CodeViewer name="codeViewer" codeName="java" codeType="java"></CodeViewer>
+        <Code name="init">
+            <code><![CDATA[def ui = parentContext.parentContext.ui;
+
+//获取事物编辑器的变量上下文
+def thingContext = ui.getActionContext();
+def thing = thingContext.get("currentThing");
+
+def actions = thing.getThing("actions@0");
+def code = null;
+if(actions != null){
+    //println actions;
+    for(action in actions.getChilds()){
+        def name = action.getStringBlankAsNull("attributeName");
+        if(name == null){
+            continue;
+        }
+        
+        //println name;
+        def type = action.doAction("getType", actionContext);
+        if(type == null){
+            type = "Object";
+        }
+        
+        if(code != null){
+            code = code + "\n" + type;
+        } else {
+            code = type;
+        }
+        
+        code = code + " " + name + " = self.doAction(\"";
+        code = code + action.getMetadata().getName();
+        code = code + "\", actionContext);";
+        code = code + "\nif(" + name + " != null){"
+        code = code + "\n    xxxx.set" + cap(actionContext, "str", name);
+        code = code + "(" + name + ");"
+        code = code + "\n}\n";
+    }
+    
+    codeViewer.setCode(code);
+}]]></code>
+            <ActionDefined>
+                <capitalize name="cap" descriptors="xworker.lang.actions.utils.StringUtils/@capitalize"
+                     str="var:str"></capitalize>
+            </ActionDefined>
+        </Code>
+        <FillLayout name="FillLayout"></FillLayout>
+    </Composite>
+</QuickFunction>

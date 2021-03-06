@@ -1,4 +1,4 @@
-^1607078394937
+^1614751319359
 @
 sname
 shell
@@ -7376,13 +7376,14 @@ if(newType != null && newType != ""){
 #$@text#$@
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
+import xworker.swt.util.SwtUtils;
 
 //显示事物的文档
 if(actionContext.get("thing") == null){
     return;
 }
 
-homeDescBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+SwtUtils.setThingDesc(thing, homeDescBrowser);
 
 //显示可用的注册方式
 registTypeCombo.removeAll();
@@ -7400,6 +7401,8 @@ if(actionContext.get("type") != null){
             screateLocalVarScope
             false
             ssaveReturn
+            false
+            sswitchResult
             false
             sdebugLog
             false
@@ -9119,6 +9122,7 @@ actions.doAction("search", actionContext);
 import org.xmeta.Thing;
 
 import xworker.util.ThingUtils;
+import xworker.swt.util.SwtUtils;
 
 //通过事物树的选择事件，是thingTree的选择函数
 def item = event.item;//thingTree.getSelection()[0];
@@ -9134,8 +9138,7 @@ if(data instanceof Thing){
         actions.doAction("downButtonSelection");
     }else{    
         if(actionContext.get("descBrowser") != null){
-            def url = ThingUtils.getThingDescUrl(data);
-            descBrowser.setUrl(url);
+            SwtUtils.setThingDesc(data, descBrowser);
         }
         
         if(actionContext.get("downButton") != null && data.getThingName() == "ThingIndex"){
@@ -9160,6 +9163,8 @@ if(data instanceof Thing){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -10380,12 +10385,11 @@ if(actionContext.get("contentTabFolder") != null){
     tabItem.setData("tabKey", key);
     
     //设置属性
-    ac.descBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+    SwtUtils.setThingDesc(thing, ac.descBrowser);
     contentTabFolder.setSelection(tabItem);
 }else if(actionContext.get("contentComposite") != null){
     //Composite的显示方式
     SwtUtils.setThingDesc(thing, descBrowser);
-    //descBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
     contentCompositeStackLayout.topControl = descComposite;
     contentComposite.layout();
     //contentComposite.getParent().layout();
@@ -10396,6 +10400,8 @@ if(actionContext.get("contentTabFolder") != null){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false

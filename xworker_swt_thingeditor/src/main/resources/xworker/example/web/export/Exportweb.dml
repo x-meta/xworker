@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="Exportweb" descriptors="xworker.lang.ActionThing">
+    <JarCompressWithEntrys name="exportWar" _xmeta_id_="export1" descriptors="xworker.util.jar.JarActions/@JarCompressWithEntrys"
+         jarFile="./target/test.war" description="&lt;p&gt;导出一个WAR，jarFile为WAR文件名，注意文件名后缀是.war。&lt;/p&gt;">
+        <manifest><![CDATA[Manifest-Version: 1.0
+Extra:abcd]]></manifest>
+        <Entrys>
+            <XWorkerModuleEntry name="xworkerModules" path="WEB-INF/lib/" type="lib" trimParentPath="true">
+                <Module name="xworker_web_for_war" _xmeta_id_="xworker_web" module="xworker.ide.config.Modules/@xworker_web_for_war"></Module>
+                <Module name="x-meta" module="xworker.ide.config.Modules/@x-meta"></Module>
+            </XWorkerModuleEntry>
+            <StringEntry name="HelloWorld">
+                <content><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="HttpDo" descriptors="xworker.lang.MetaDescriptor3">
+    <actions>
+        <GroovyAction name="httpDo">
+            <code><![CDATA[def content = """
+Hello World!
+
+任何实现了httpDo方法的事物都可以看作是Web应用，本示例就是如此。
+
+Any thing implements httpDo method is a web application.
+""";
+
+response.setContentType("text/plain; charset=utf-8");
+response.writer.println(content.toString());_xmeta_cdata_tag_</code>
+        </GroovyAction>
+    </actions>
+</thing>]]></content>
+            </StringEntry>
+            <StringEntry name="index" path="index.html">
+                <content><![CDATA[<html>
+<head>
+</head>
+<body>
+
+</body>]]></content>
+            </StringEntry>
+        </Entrys>
+    </JarCompressWithEntrys>
+    <JarCompressWithEntrys name="exportWarStandalone" _xmeta_id_="export11" descriptors="xworker.util.jar.JarActions/@JarCompressWithEntrys"
+         jarFile="./target/test.war">
+        <manifest><![CDATA[Manifest-Version: 1.0
+Extra:abcd]]></manifest>
+        <description><![CDATA[<p>导出可以不依赖XWorker的War。</p>
+
+<p>注意修改web.xml，如果web容器中有多个动态模型的war项目，为避免冲突使用不同的路径。</p>
+
+<pre class="brush:xml;">
+    &lt;servlet&gt;
+        &lt;servlet-name&gt;scriptDo&lt;/servlet-name&gt;
+        &lt;servlet-class&gt;xworker.http.HttpServletDo&lt;/servlet-class&gt;
+        &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+        &lt;init-param&gt;
+        	&lt;param-name&gt;xworkerPath&lt;/param-name&gt;
+        	&lt;param-value&gt;./xworkers/xxxx/&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/servlet&gt;</pre>
+
+<p>&nbsp;</p>]]></description>
+        <Entrys>
+            <StringEntry name="Web.xml" _xmeta_id_="StringEntry" path="WEB-INF/web.xml">
+                <content><![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">-->
+<web-app>
+    <display-name>XWorker Application</display-name>
+    
+    <context-param>
+        <param-name>org.eclipse.rap.applicationConfiguration</param-name>
+        <param-value>xworker.rap.XWorkerConfiguration</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.eclipse.rap.rwt.engine.RWTServletContextListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.http.HttpServletDo</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>   
+            <param-name>xworkerPath</param-name>   
+            <param-value>{contextPath}</param-value>   
+        </init-param> 
+        <!-- 允许访问的ThingManager，不设置允许所有，如果设置了只允许访问指定事物管理器下的模型 ,
+             如果设置了多个使用英文逗号分隔。-->
+        <!--
+        <init-param>   
+            <param-name>thingManagers</param-name>   
+            <param-value>${thingManager?if_exists}</param-value>   
+        </init-param> 
+         -->
+        <!-- 初始化模型，如果设置了，在Servlet初始化时把xxx.xxx.xxx当作动作执行-->
+        <!--
+        <init-param>   
+            <param-name>init</param-name>   
+            <param-value>xxx.xxx.xxx</param-value>   
+        </init-param> 
+         -->
+        <!-- 设置XWorker的Configuration框架的profile，profile用于区分测试或发布等不通环境下的配置-->
+        <!--
+        <init-param>   
+            <param-name>profile</param-name>   
+            <param-value>test</param-value>   
+        </init-param> 
+         -->
+    </servlet>
+    
+    <servlet>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <servlet-class>xworker.http.HttpActionMappingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>rwtServlet</servlet-name>
+        <servlet-class>org.eclipse.rap.rwt.engine.RWTServlet</servlet-class>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.dml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.txt</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <url-pattern>*.ac</url-pattern>
+    </servlet-mapping>   
+    
+    <servlet-mapping>
+        <servlet-name>rwtServlet</servlet-name>
+        <url-pattern>/rap</url-pattern>
+    </servlet-mapping>
+</web-app>]]></content>
+            </StringEntry>
+            <DirectoryEntry name="copyCurentDir" directory=".">
+                <excludes><![CDATA[.*log.*
+.*rwt-resources.*
+.*thingslib.*
+.*web.xml
+.*target.*]]></excludes>
+            </DirectoryEntry>
+            <XWorkerModuleEntry name="xworkerModules" path="WEB-INF/lib/" type="lib" trimParentPath="true">
+                <Module name="x-meta" module="xworker.ide.config.Modules/@x-meta"></Module>
+                <Module name="xworker_dataobject" module="xworker.ide.config.Modules/@xworker_dataobject"></Module>
+                <Module name="xworker_web" _xmeta_id_="xworker_web1" module="xworker.ide.config.Modules/@xworker_web"></Module>
+            </XWorkerModuleEntry>
+        </Entrys>
+    </JarCompressWithEntrys>
+    <JarCompressWithEntrys name="exportWarWithServer" _xmeta_id_="exportRapWAR1" descriptors="xworker.util.jar.JarActions/@JarCompressWithEntrys"
+         jarFile="./target/test.war.jar">
+        <manifest><![CDATA[Manifest-Version: 1.0
+Main-Class: org.springframework.boot.loader.WarLauncher
+Start-Class: org.xmeta.util.JarRunner
+XWorker-Thing: JarJettyServer
+XWorker-Action: run
+XWorker-Home: .
+End:end]]></manifest>
+        <description><![CDATA[<p>导出一个可执行的Jar，运行后启动一个WebServer（Jetty)，并把当前的jar作为war发布到WebServer中。</p>
+
+<p><strong>JettyServer</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在JarJettyServer子节点中修改端口和ContextPath。</p>
+
+<p>&nbsp;</p>]]></description>
+        <Entrys>
+            <StringEntry name="Web.xml" _xmeta_id_="StringEntry" path="WEB-INF/web.xml">
+                <content><![CDATA[<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">-->
+<web-app>
+    <display-name>XWorker Application</display-name>
+    
+    <context-param>
+        <param-name>org.eclipse.rap.applicationConfiguration</param-name>
+        <param-value>xworker.rap.XWorkerConfiguration</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.eclipse.rap.rwt.engine.RWTServletContextListener</listener-class>
+    </listener>
+    
+    <servlet>
+        <servlet-name>scriptDo</servlet-name>
+        <servlet-class>xworker.http.HttpServletDo</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>   
+            <param-name>xworkerPath</param-name>   
+            <param-value>{contextPath}</param-value>   
+        </init-param> 
+        <!-- 允许访问的ThingManager，不设置允许所有，如果设置了只允许访问指定事物管理器下的模型 ,
+             如果设置了多个使用英文逗号分隔。-->
+        <!--
+        <init-param>   
+            <param-name>thingManagers</param-name>   
+            <param-value>${thingManager?if_exists}</param-value>   
+        </init-param> 
+         -->
+        <!-- 初始化模型，如果设置了，在Servlet初始化时把xxx.xxx.xxx当作动作执行-->
+        <!--
+        <init-param>   
+            <param-name>init</param-name>   
+            <param-value>xxx.xxx.xxx</param-value>   
+        </init-param> 
+         -->
+        <!-- 设置XWorker的Configuration框架的profile，profile用于区分测试或发布等不通环境下的配置-->
+        <!--
+        <init-param>   
+            <param-name>profile</param-name>   
+            <param-value>test</param-value>   
+        </init-param> 
+         -->
+    </servlet>
+    
+    <servlet>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <servlet-class>xworker.http.HttpActionMappingServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>rwtServlet</servlet-name>
+        <servlet-class>org.eclipse.rap.rwt.engine.RWTServlet</servlet-class>
+    </servlet>
+
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>/do</url-pattern>
+    </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.dml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.txt</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>scriptDo</servlet-name>
+        <url-pattern>*.xer.xml</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>HttpActionMappingServlet</servlet-name>
+        <url-pattern>*.ac</url-pattern>
+    </servlet-mapping>   
+    
+    <servlet-mapping>
+        <servlet-name>rwtServlet</servlet-name>
+        <url-pattern>/rap</url-pattern>
+    </servlet-mapping>
+</web-app>]]></content>
+            </StringEntry>
+            <XWorkerModuleEntry name="webModule" path="WEB-INF/lib-provided/" type="lib" trimParentPath="true"
+                 store="true">
+                <Module name="webModule" module="xworker.ide.config.Modules/@xworker_web"></Module>
+                <Module name="xworkerStartup" module="xworker.ide.config.Modules/@xworker_boot"></Module>
+                <Module name="jetty" module="xworker.ide.config.Modules/@jetty9"></Module>
+                <Module name="xworker_dataobject" module="xworker.ide.config.Modules/@xworker_dataobject"></Module>
+                <Module name="servlet" module="xworker.ide.config.Modules/@servlet"></Module>
+                <Module name="xworker_web_for_war" module="xworker.ide.config.Modules/@xworker_web_for_war"></Module>
+            </XWorkerModuleEntry>
+            <DirectoryEntry name="copyWeb" directory=".">
+                <excludes><![CDATA[.*log.*
+.*rwt-resources.*
+.*thingslib.*
+.*web.xml
+.*target.*]]></excludes>
+            </DirectoryEntry>
+            <XWorkerModuleEntry name="springLoader" _xmeta_id_="springLoader1" decompress="true"
+                 trimParentPath="true">
+                <Module name="srping_boot_loader" _xmeta_id_="Module" module="xworker.ide.config.Modules/@srping_boot_loader"></Module>
+                <Module name="Module" _xmeta_id_="Module1" label="log4j.properties" module="xworker.ide.config.Modules/@log4jProperties"></Module>
+            </XWorkerModuleEntry>
+            <StringEntry name="JarJettyServer" path="JarJettyServer.dml">
+                <content><![CDATA[template:<?xml version="1.0" encoding="utf-8"?>
+
+<JettyServer name="JarJettyServer" port="8080" descriptors="xworker.http.server.jetty.JettyServer">
+    <Handlers>
+        <WebAppContext contextPath="/" resourceBase="">
+            <actions descriptors="xworker.lang.MetaThing/@actions">
+                <GetCurrentJar name="getWebApp" descriptors="xworker.java.lang.RuntimeActions/@GetCurrentJar"></GetCurrentJar>
+            </actions>
+        </WebAppContext>
+    </Handlers>
+</JettyServer>]]></content>
+            </StringEntry>
+        </Entrys>
+    </JarCompressWithEntrys>
+</ActionThing>

@@ -1,0 +1,357 @@
+^1479893378329
+@
+sname
+WorkingSet
+slabel
+WorkingSet
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sicon
+icons/folder.gif
+sdescription
+<p>工作组是事物管理器的分类。</p>
+snotXmlAttribute
+false
+sjson_isArray
+false
+sth_createIndex
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@removeThingManager
+    sname
+    removeThingManager
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+deleteWorkingSet(self, name);
+
+def deleteWorkingSet(thing, thingManagerName){
+    def ok = false;
+    def list = [];
+    for(child in thing.getChilds()){
+        if(child.getThingName() == "ThingManager"){
+            if(child.getString("name") == thingManagerName){
+                list.add(child);
+            }
+        }else{
+            ok = ok | deleteWorkingSet(child, thingManagerName);
+        }
+    }
+    
+    for(delChild in list){
+        thing.removeChild(delChild);
+        ok = true;
+    }
+    
+    return ok;
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    removeThingManager
+      @/@actions/@removeThingManager/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@removeThingManager/@ins/@name
+        sname
+        name
+        stype
+        String
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        Sdescription
+#$@text#$@
+<p>事物管理器的名称。</p>
+#$@text#$@
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        name
+  @/@WorkingSet
+  sname
+  WorkingSet
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.ide.worldexplorer.things.WorkingSet
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  sicon
+  icons/folder.gif
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  WorkingSet
+  @/@ThingManager
+  sname
+  ThingManager
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  ThingManager
+    @/@ThingManager/@name
+    sname
+    name
+    sinputtype
+    inputSelect
+    sshowLabel
+    true
+    sinputattrs
+    xworker.ide.worldexplorer.actions.WorldExplorStores/@ThingManagerStore,,
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@ThingManager/@label
+    sname
+    label
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@ThingManager/@description
+    sname
+    description
+    sinputtype
+    html
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_mark
+    false
+    sid
+    description
+  @/@name
+  sname
+  name
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_mark
+  false
+  sid
+  description

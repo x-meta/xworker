@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="KeyTool" label="KeyToolShell">
+    <GridLayout name="GridLayout"></GridLayout>
+    <SashForm name="mainSashForm" style="VERTICAL" weights="60,40">
+        <SashForm name="topSashForm" weights="30,70">
+            <Tree name="menuTree" FULL_SELECTION="false" HIDE_SELECTION="false" BORDER="true"
+                 lineVisible="false" multipleColumns="false" headerVisible="false" sortIndicator="false"
+                 moveableColumns="false">
+                <TreeModels>
+                    <ThingTreeModel thingPath="xworker.things.p2020.p09.p23.KeyToolThing" rootVisiable="false">
+                        <actions>
+                            <GroovyAction name="getChildThings">
+                                <code><![CDATA[//目的是只生成一层，即第一层子节点
+def things = [];
+def root = world.getThing("xworker.things.p2020.p09.p23.KeyToolThing");
+
+if(thing == root){
+    for(th in root.getChilds()){
+        things.add(th);
+    }
+}
+
+return things;]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ThingTreeModel>
+                </TreeModels>
+                <Listeners>
+                    <Listener>
+                        <GroovyAction name="GroovyAction">
+                            <code><![CDATA[import org.xmeta.Thing;
+
+//值缓存
+def valuesCache = actionContext.get("valuesCache");
+if(valuesCache == null){
+    valuesCache = [:];
+    actionContext.g().put("valuesCache", valuesCache);
+}
+def values = thingForm.doAction("getValues", actionContext);
+if(values != null){
+    valuesCache.putAll(values);
+}
+
+
+def thing = event.item.getData()._source;
+def formThing = event.item.getData("formThing");
+if(formThing == null){
+    formThing = new Thing(thing.getMetadata().getPath());
+    event.item.setData("formThing", formThing);
+}
+
+thingForm.doAction("setThing", actionContext, "thing", formThing);
+thingForm.doAction("setValues", actionContext, "values", valuesCache);
+executeButton.setEnabled(true);
+
+commandLabel.setText(thing.getMetadata().getName() 
+    + "(" + thing.getMetadata().getLabel() + ")");]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Tree>
+            <Composite name="thingFormComposite" BORDER="true">
+                <Label name="commandLabel" font="|10|1|#000000">
+                    <GridData name="commandLabelGridData" style="FILL_HORIZONTAL"></GridData>
+                </Label>
+                <ThingForm name="thingForm" column="1">
+                    <GridData name="GridData" style="FILL_BOTH"></GridData>
+                </ThingForm>
+                <GridLayout name="GridLayout"></GridLayout>
+                <Composite name="buttonComposite" _xmeta_id_="29052">
+                    <GridData name="buttonCompositeGridData" _xmeta_id_="29053" style="FILL_HORIZONTAL"
+                         horizontalAlignment="END"></GridData>
+                    <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="29054"></RowLayout>
+                    <Button name="executeButton" _xmeta_id_="29055" text="lang:d=执行&amp;en=Execute"
+                         enabled="false">
+                        <RowData name="RowData" _xmeta_id_="29056" width="80"></RowData>
+                        <Listeners _xmeta_id_="29057">
+                            <Listener name="executeButtonSelection" _xmeta_id_="29058">
+                                <GroovyAction>
+                                    <code><![CDATA[import org.eclipse.swt.custom.CTabItem;
+import java.lang.ProcessBuilder;
+import org.xmeta.ActionContext;
+import org.xmeta.util.ExceptionUtil;
+
+//判断是否是打印公钥和私钥
+def menuThing = menuTree.getSelection()[0].getData()._source;
+println menuThing;
+if(menuThing.getMetadata().getName() == "PrintKeys"){
+    printKeys(actionContext);
+    return;
+}
+
+def thing = thingForm.doAction("getFormThing", actionContext);
+def cmd = thing.doAction("getCmdArrayString", actionContext);
+//println "cmdis:" + cmd;
+//println guide.getEditThing();
+cmd = javaHome(actionContext).getAbsolutePath() + "/bin/keytool\n-" + thing.getThingName() + "\n" + cmd;
+def cmdarray = cmd.split("[\n]");
+for(i=0; i<cmdarray.length; i++){
+    cmdarray[i] = cmdarray[i].trim();
+}
+if(cmdarray.length > 0){
+    //def file = new File(cmdarray[0]);
+    def name = thing.getThingName();
+    
+    println cmdarray;
+    def pb = new ProcessBuilder(cmdarray);
+    
+    def ac = new ActionContext();
+    ac.put("parent", processTabFolder);
+    def pthing = world.getThing("xworker.tools.process.ProcessExecutor/@PreparedWidgets/@processTabFodler/@item");
+    pthing.doAction("create", ac);
+    ac.item.setText(name);
+    processTabFolder.setSelection(ac.item);
+    
+    try{
+        def process =  pb.start();
+        ac.processConsole.doAction("setProcess", ac, "process", process);
+    }catch(Exception e){
+        def message = ExceptionUtil.toString(e);
+        ac.processConsole.doAction("setMessage", ac, "message", message);
+    }
+}]]></code>
+                                    <ActionDefined>
+                                        <GroovyAction name="printKeys">
+                                            <code><![CDATA[import java.security.KeyStore;
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
+
+def item = new CTabItem(processTabFolder, SWT.CLOSE);
+item.setText("PrintKeys");
+
+def ac = new ActionContext();
+ac.put("parent", processTabFolder)
+def serviceThing = new Thing("xworker.swt.Widgets/@ActionExecutorService1");
+serviceThing.set("name", "executorService");
+serviceThing.set("createItemsOnCTabFodler", "false");
+def composite = serviceThing.doAction("create", ac);
+item.setControl(composite);
+processTabFolder.setSelection(item);
+
+ac.executorService.runAction(doPrintKeys, actionContext);]]></code>
+                                        </GroovyAction>
+                                        <encodeBase64String name="base64" descriptors="xworker.org.apache.commons.codec.binary.BinaryActions/@encodeBase64String"
+                                             binaryData="var:data"></encodeBase64String>
+                                        <GroovyAction name="doPrintKeys">
+                                            <code><![CDATA[import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import javax.crypto.EncryptedPrivateKeyInfo;
+import xworker.lang.executor.Executor;
+
+def base64 = base64;
+def actionContext = actionContext;
+def TAG = "PrintKeys";
+Executor.info(TAG, "Init keystore...");
+def thing = thingForm.doAction("getFormThing", actionContext);
+def storetype = thing.getStringBlankAsNull("storetype");
+if(storetype == null){
+    storetype = "pkcs12";
+}
+
+def keyStore = KeyStore.getInstance(storetype);
+def file = new File(thing.getString("keystore"));
+def password = thing.getStringBlankAsNull("storepass");
+if(password == null){
+    password = "";
+}
+password = password.toCharArray();
+keyStore.load(new FileInputStream(file), password);
+
+Executor.info(TAG, "Print keys...");
+def alias = thing.getStringBlankAsNull("alias");
+if(alias == null){
+    for(aalias in keyStore.aliases()){
+        printKey(keyStore, aalias, password, TAG, actionContext, base64);
+    }
+}else{
+    printKey(keyStore, alias, password, TAG, actionContext, base64);
+}
+
+def printKey(keyStore, alias, password, TAG, actionContext, base64){
+    Executor.info(TAG, "Handle alias " + alias);
+    try{
+        def cert = keyStore.getCertificate(alias);
+        if(cert != null){
+            Executor.info(TAG, "Certificate " + alias);
+            def code = "\r\n-----BEGIN CERTIFICATE----- \r\n";
+            println code;
+            code = code + split(base64(actionContext, "data", cert.getEncoded()));
+            println code;
+            code = code + "\r\n-----END CERTIFICATE-----";
+            Executor.info(TAG, code);
+            println code;
+            def publicKey = cert.getPublicKey();
+            Executor.info(TAG, "Public key " + alias);
+            code = "\r\n-----BEGIN PUBLIC KEY----- \r\n";
+            code = code + split(base64(actionContext, "data", publicKey.getEncoded()));
+            code = code + "\r\n-----END PUBLIC KEY-----";
+            Executor.info(TAG, code);
+        }
+    }catch(Exception e){
+        Executor.warn(TAG, "print error", e);
+    }
+    
+    try{
+        def key = keyStore.getKey(alias, password);
+        if(key instanceof PrivateKey){
+            Executor.info(TAG, "Private key " + alias + ", format=" + key.getFormat());
+            def code = "\r\n-----BEGIN PRIVATE KEY----- \r\n";
+            //def keyInfo = new EncryptedPrivateKeyInfo(key.getEncoded());
+            code = code + split(base64(actionContext, "data", key.getEncoded()));
+            code = code + "\r\n-----END PRIVATE KEY-----";
+            Executor.info(TAG, code);
+        }else if(key instanceof PublicKey){
+            Executor.info(TAG, "Public key " + alias);
+            code = "\r\n-----BEGIN PUBLIC KEY----- \r\n";
+            code = code + split(base64(actionContext, "data", key.getEncoded()));
+            code = code + "\r\n-----END PUBLIC KEY-----";
+            Executor.info(TAG, code);
+        }
+    }catch(Exception e){
+        Executor.warn(TAG, "print error", e);
+    }
+}
+
+def split(code){
+    def str = "";
+    while(code.length() > 64){
+        str = str + code.substring(0, 64) + "\r\n";
+        code = code.substring(64, code.length());
+    }
+    if(code.length() > 0){
+        str = str + code;
+    }
+    
+    return str;
+    
+}]]></code>
+                                            <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                                                <Variable name="keyStore" varName="keyStore"
+                                                     scope="2" className="java.security.KeyStore"></Variable>
+                                            </VariablesDescs>
+                                        </GroovyAction>
+                                        <getJavaHome name="javaHome" descriptors="xworker.lang.actions.utils.SystemUtils/@getJavaHome"></getJavaHome>
+                                    </ActionDefined>
+                                </GroovyAction>
+                            </Listener>
+                        </Listeners>
+                    </Button>
+                </Composite>
+            </Composite>
+        </SashForm>
+        <CTabFolder name="processTabFolder" BORDER="true"></CTabFolder>
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+    </SashForm>
+</Shell>

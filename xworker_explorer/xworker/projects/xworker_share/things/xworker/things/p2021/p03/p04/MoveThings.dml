@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="MoveThings" descriptors="xworker.swt.xworker.ThingRegistThing" type="code"
+     group="xworker.thing" icon="icons/application.png" codeType="groovy" styledTextForInsert="groovyCodeText"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.GroovyCodeIndex">
+    <code><![CDATA[def things = """xworker.things.p2020.p12.p08.JsouptExample""";
+
+def targetThingManager = "xworker_jsoup";
+for(path in things.split("[\n]")){
+    def thing = world.getThing(path);
+    def thingManager = thing.getMetadata().getThingManager().getName();
+    if(thing != null && thingManager != targetThingManager){
+        //def newThing = thing.detach();
+        thing.saveAs(targetThingManager, path);
+        //thing.remove();
+        println path + " moved to " + targetThingManager;
+    }else{
+        println path + " not moved, not exists or thingmanager is " + thingManager;
+    }
+}]]></code>
+    <description><![CDATA[<p>用于移动模型。</p>
+]]></description>
+</QuickFunction>

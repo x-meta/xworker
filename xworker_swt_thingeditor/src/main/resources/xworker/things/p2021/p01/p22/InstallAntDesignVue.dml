@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="InstallAntDesignVue" descriptors="xworker.swt.xworker.ThingRegistThing"
+     type="state" group="com.antdev" th_createIndex="true" th_registThing="command|xworker.command.Root">
+    <State label="创建Ant-design vue项目">
+        <VariablesDescs _xmeta_id_="VariablesDesc">
+            <Variable name="projectDir" varName="projectDir" className="java.io.File"></Variable>
+        </VariablesDescs>
+        <NotExists name="checkDirector" label="项目目录不存在" keys="projectDir">
+            <Composite name="selectProjectDir" descriptors="xworker.lang.state.StateCompositeActions/@Composite"
+                 label="选择项目目录">
+                <Composite>
+                    <FillLayout name="FillLayout"></FillLayout>
+                    <ThingForm name="thingForm" column="1">
+                        <Thing>
+                            <attribute name="desc" inputtype="htmlDesc" showLabel="false"
+                                 default="xworker.things.p2021.p01.p22.InstallAntDesignVue/@State/@checkDirector/@selectProjectDir/@Composite/@thingForm/@Thing/@desc">
+                                <description><![CDATA[<p>请选择项目的目录路径，项目应该是一个空目录。</p>
+]]></description>
+                            </attribute>
+                            <attribute name="projectDir" _xmeta_id_="projecDir" inputtype="filePath"
+                                 size="60"></attribute>
+                        </Thing>
+                    </ThingForm>
+                </Composite>
+                <actions>
+                    <GroovyAction name="ok">
+                        <code><![CDATA[def values = thingForm.doAction("getValues", actionContext);
+def projectDir = values.projectDir;
+def file = new File(projectDir);
+if(file.exists() && file.isDirectory()){
+    state.set("projectDir", file);
+    return false;
+}else{
+    msg(actionContext);
+    return true;
+}]]></code>
+                        <ActionDefined>
+                            <MessageBox name="msg" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 shell="ognl:Composite.getShell()" icon="ICON_WARNING"
+                                 buttons="OK" title="lang:d=选择目录&amp;en=Selector Directory"
+                                 message="lang:d=请选择项目目录!&amp;en=Please select a project directory!"></MessageBox>
+                        </ActionDefined>
+                    </GroovyAction>
+                </actions>
+            </Composite>
+        </NotExists>
+        <Is name="projectDirExists" label="项目目录存在" keys="projectDir">
+            <NotExists name="vueCliNotInstalled" label="VUE脚手架安装未执行" keys="vueInstallExecuted">
+                <GroovyAction label="安装脚手架工具">
+                    <code><![CDATA[//暂停执行，直到进程终止
+state.setPause(true);
+
+state.set("vueInstallExecuted", true);]]></code>
+                    <ActionDefined>
+                        <Exec descriptors="xworker.java.lang.RuntimeActions/@Exec"
+                             dir="ognl:state.get(&quot;projectDir&quot;)" reservedVars="state">
+                            <cmdarray><![CDATA[npm install 
+-g
+@vue/cli]]></cmdarray>
+                            <actions>
+                                <StateResume name="onExited" descriptors="xworker.lang.state.StateActionActions/@Resume"></StateResume>
+                            </actions>
+                        </Exec>
+                    </ActionDefined>
+                </GroovyAction>
+            </NotExists>
+        </Is>
+    </State>
+</QuickFunction>

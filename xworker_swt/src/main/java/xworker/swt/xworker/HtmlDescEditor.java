@@ -23,6 +23,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.swt.design.Designer;
+import xworker.swt.util.SwtUtils;
 import xworker.util.GlobalConfig;
 
 public class HtmlDescEditor {
@@ -69,8 +70,7 @@ public class HtmlDescEditor {
 		final Browser browser = (Browser) self.getAttribute("browser");
 		//设置浏览器应该显示的内容
 		String value = (String) actionContext.get("value");
-		String url = GlobalConfig.getThingDescUrl(value);
-		browser.setUrl(url);
+		SwtUtils.setThingDesc(value, browser);
 	}
 
     public static Object getValue(ActionContext actionContext){    	

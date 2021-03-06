@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NettyClient name="NettySessionClient" descriptors="xworker.netty.NettyClient" host="localhost"
+     port="9022" singleInstance="false">
+    <Handlers descriptors="xworker.netty.NettyClient/@Handlers,xworker.netty.NettyServer/@Handlers">
+        <LengthFieldBasedFrameDecoder name="LengthFieldBasedFrameDecoder"></LengthFieldBasedFrameDecoder>
+        <JsonDecoder name="JsonDecoder"></JsonDecoder>
+        <ChannelInboundHandler printLog="false">
+            <actions>
+                <GroovyAction name="channelRead">
+                    <code><![CDATA[//println "dddddddddddddd" + actionContext.get("clientConsole");
+clientConsole.append(msg.from + " " + msg.time);
+//clientConsole.append(msg.from);
+clientConsole.append(msg.message);
+///println "ddddddddddddddxxxxxxxxxxx";]]></code>
+                </GroovyAction>
+            </actions>
+        </ChannelInboundHandler>
+        <LengthFieldPrepender name="LengthFieldPrepender"></LengthFieldPrepender>
+        <JsonEncoder name="JsonEncoder"></JsonEncoder>
+    </Handlers>
+    <actions>
+        <GroovyAction name="startSuccess" code="nettyClient.sendMessage([&quot;name&quot;:name, &quot;action&quot;:&quot;regist&quot;])"></GroovyAction>
+    </actions>
+</NettyClient>

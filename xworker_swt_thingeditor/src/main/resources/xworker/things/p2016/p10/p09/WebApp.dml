@@ -1,0 +1,85 @@
+%1500609793770
+@
+sname=WebApp
+slabel=WEB总应用框架
+stype=thingDesc
+sgroup=-9000|编程框架.WEB框架.-1000|总应用框架
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+Sdescription=
+#$@text#$@
+<h1>WEB应用框架</h1>
+
+<h2>1.使用模型编写WEB应用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 使用WEB应用模型可以编写WEB相关的应用。</p>
+
+<h2>2.WEB应用框架的约定</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;WEB应用框架约定凡是实现了<strong>httpDo</strong>方法的模型都可以作为WEB应用模型。</p>
+
+<h2>3.Servlet</h2>
+
+<p>&nbsp;&nbsp;&nbsp; WEB应用模型一般是在Servlet里被调用的，因此不同的Servlet实现可能调用的方法也会有一些区别。</p>
+
+<h3>3.1.变量</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在Servlet的实现里变量上下文应该包含如下内容。</p>
+
+<pre class="brush:java;">
+ActionContext actionContext = new ActionContext();
+//设置变量
+//基本变量
+actionContext.put(&quot;world&quot;, world);			
+		
+//访问变量
+actionContext.put(&quot;requestBean&quot;, new HttpRequestBean(request));
+		
+//http变量
+actionContext.put(&quot;request&quot;, request);
+actionContext.put(&quot;requestMethod&quot;, method);
+actionContext.put(&quot;response&quot;, response);	
+actionContext.put(&quot;servlet&quot;, this);				
+actionContext.put(&quot;session&quot;, request.getSession());			
+		
+//名称空间变量
+Names.attach(actionContext);</pre>
+
+<h3>3.2.调用WEB应用的httpDo方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在Servlet的实现里调用WEB应用模型的httpDo方法，运行WEB模型应用。</p>
+
+<pre class="brush:java;">
+//获取web应用模型
+Thing webThing = World.getInstance().getThing(request.getParameter(&quot;sc&quot;));
+
+//执行httpDo方法
+webThing.doAction(&quot;httpDo&quot;, actionContext);</pre>
+
+<h2>4.编写WEB应用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 根据WEB应用框架的规范WEB应用模型需要实现httpDo方法，由于Servlet中传入了request、response等变量，所以可以实现WEB的相关操作。</p>
+
+<h2>5.method常量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 变量上下文中requestMethod变量的值。</p>
+
+<pre class="brush:java;">
+	public static final String GET = &quot;GET&quot;;
+	public static final String POST = &quot;POST&quot;;
+	public static final String DELETE = &quot;DELETE&quot;;
+	public static final String HEAD = &quot;HEAD&quot;;
+	public static final String OPTIONS = &quot;OPTIONS&quot;;
+	public static final String PUT = &quot;PUT&quot;;
+	public static final String TRACE = &quot;TRACE&quot;;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_group=-9000|Programing.WEB.-1000|HTTP
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.command.Root
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

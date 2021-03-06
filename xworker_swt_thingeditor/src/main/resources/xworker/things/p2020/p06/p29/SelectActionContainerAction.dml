@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ThingGuide name="SelectActionContainerAction" descriptors="xworker.lang.util.ThingGuide"
+     label="设置动作名" th_createIndex="true" th_registThing="guide|xworker.lang.actions.ActionContainerAction">
+    <description><![CDATA[<p>选择和设置ActionContainer的动作名字，如果有也会设置响应的子节点。</p>
+]]></description>
+    <Composite label="选择动作">
+        <Composite name="mainComposite" _xmeta_id_="Composite">
+            <List name="actionList">
+                <Event name="onSelection">
+                    <Enabled name="Enabled" descriptors="xworker.swt.actions.ControlActions/@Enabled"
+                         controlList="okButton"></Enabled>
+                </Event>
+            </List>
+            <Label name="noActionContainerLabel" text="lang:d=没有设置actionContainerThing。&amp;en=actionContainerThing not setted."></Label>
+            <StackLayout name="stackLayout"></StackLayout>
+            <Code name="init">
+                <code><![CDATA[def thing = thingGuide.getEditThing();
+def actionsThing = world.getThing(thing.getString("actionContainerThing"));
+if(actionsThing == null){
+    stackLayout.topControl = noActionContainerLabel;
+}else{
+    def actions = [];
+    for(child in actionsThing.getChilds()){
+        actions.add(child.getMetadata().getName());
+    }
+    
+    Collections.sort(actions);
+    for(action in actions){
+        actionList.add(action);
+    }
+    stackLayout.topControl = actionList;
+}
+
+mainComposite.layout();]]></code>
+            </Code>
+        </Composite>
+        <actions>
+            <GroovyAction name="doFinish">
+                <code><![CDATA[import org.xmeta.Thing;
+
+if(actionList.getSelectionCount() > 0){
+    //选择动作
+    def action = actionList.getSelection()[0];
+    def thing = thingGuide.getEditThing();    
+    def actionsThing = world.getThing(thing.getString("actionContainerThing"));
+    def actionThing = null;
+    for(child in actionsThing.getChilds()){
+        if(action == child.getMetadata().getName()){
+            actionThing = child;
+            break;
+        }
+    }
+    thing.set("action", action);
+    
+    //设置动作
+    if(actionThing != null){
+        //获取输入参数列表
+        def ins = actionThing.getThing("ins@0");
+        if(ins != null){
+            for(inc in ins.getChilds()){
+                //先添加NOOP动作，以后通过NOOP动作的向导可以替换描述者
+                def ac = new Thing("xworker.lang.actions.Actions/@NOOP");
+                ac.set("name", inc.getMetadata().getName());
+                thing.addChild(ac);
+            }
+        }
+    }
+}]]></code>
+            </GroovyAction>
+        </actions>
+    </Composite>
+</ThingGuide>

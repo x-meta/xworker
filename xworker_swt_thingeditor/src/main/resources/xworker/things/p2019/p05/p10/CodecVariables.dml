@@ -1,0 +1,39 @@
+%1557490016141
+@
+sname=CodecVariables
+slabel=变量管理
+stype=thingDesc
+sgroup=codec
+sicon=icons/html.png
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+ssimpleBrowser=true
+Sdescription=
+#$@text#$@
+<h1>变量管理</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 在编码时需要把变量包装成byte[]，解码时需要把byte[]变成变量，那么变量如何管理呢？</p>
+
+<h2>1.object</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 变量上下文中始终存在一个名为object的变量，每一个编解码节点的名字是object属性的名字，这样编码时就从object取对应属性的值，解码后的值就存储到object中的对应属性上。</p>
+
+<h2>2.List和Array</h2>
+
+<p>&nbsp;&nbsp;&nbsp; List和Array遍历时会把遍历的当前元素作为object传入，解码时需要提供创建元素的方法。</p>
+
+<h2>3.创建元素对象的方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 像List和Array需要创建元素对象，方法是先通过creator属性找变量上下文中是否有对应的动作，如果没有调用编码解码节点的createObject方法。</p>
+
+<h2>4.List和Array中的基本类型的元素的编码</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 如果List和Array是基本类型，如int和String等，此时的object是一个Map，Map中只有对一个value键值对。</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.netty.buffer.CodecsIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

@@ -1,0 +1,540 @@
+%1607135696928
+@
+sname=ExampleDomain
+slabel=命令示例
+sen_label=Command Example
+sdescriptors=xworker.lang.command.CommandDomain
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@PredefinedCommands
+  sname=PredefinedCommands
+  sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=PredefinedCommands
+    @/@PredefinedCommands/@selectControl
+    sname=selectControl
+    slabel=选择控件
+    shasContents=true
+    smanualFinish=false
+    scommandContent=false
+    Sdescription=
+#$@text#$@
+<p>选择可以处理的控件。</p>
+#$@text#$@
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=selectControl
+      @/@PredefinedCommands/@selectControl/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@PredefinedCommands/@selectControl/@actions/@getContents
+        sname=getContents
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import xworker.swt.xwidgets.SelectContent;
+
+def list = [];
+//list.add(new SelectContent("browser", browser));
+list.add(new SelectContent("text", actionContext.g().get("text")));
+list.add(new SelectContent("okButton", okButton));
+list.add(new SelectContent("cancelButton", cancelButton));
+
+return list;
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getContents
+    @/@PredefinedCommands/@selectAttrubute
+    sname=selectAttrubute
+    slabel=选择属性
+    shasContents=true
+    smanualFinish=false
+    scommandContent=true
+    Sdescription=
+#$@text#$@
+<p>选择要设置的属性。</p>
+#$@text#$@
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=selectAttrubute
+      @/@PredefinedCommands/@selectAttrubute/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@PredefinedCommands/@selectAttrubute/@actions/@getContents
+        sname=getContents
+        Scommands=
+#$@text#$@
+xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@text,
+xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@color
+#$@text#$@
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.command.CommandActions/@CommandContents
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=getContents
+    @/@PredefinedCommands/@text
+    sname=text
+    slabel=文本
+    shasContents=true
+    smanualFinish=false
+    scommandContent=false
+    Sdescription=
+#$@text#$@
+<p>输入文本内容。</p>
+#$@text#$@
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=text
+      @/@PredefinedCommands/@text/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@PredefinedCommands/@text/@actions/@run
+        sname=onContent
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+def parent = command.getParent();
+def control= parent.getParams().get(0).getResult();
+control.setText(content);
+
+command.setResult(control);
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+    @/@PredefinedCommands/@color
+    sname=color
+    slabel=颜色
+    shasContents=true
+    smanualFinish=false
+    scommandContent=false
+    ScontentList=
+#$@text#$@
+red,
+blue,
+green,
+yellow,
+#$@text#$@
+    Sdescription=
+#$@text#$@
+<p>选择颜色。</p>
+#$@text#$@
+    sdescriptors=xworker.lang.command.CommandDomain/@OtherCommands/@Command
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=color
+      @/@PredefinedCommands/@color/@actions
+      sname=actions
+      sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@PredefinedCommands/@color/@actions/@run
+        sname=onContent
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.eclipse.swt.SWT;
+
+def parent = command.getParent();
+def control= parent.getParams().get(0).getResult();
+def color = content;
+//println color;
+if("red" == color){
+    control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_RED));
+}else if("blue" == color){
+    control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+}else if("green" == color){
+    control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+}else if("yellow" == color){
+    control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
+}else{
+    control.setForeground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+    executor.setTip("Unknow color, set to black");
+}
+
+command.setResult(control);
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=run
+          @/@PredefinedCommands/@color/@actions/@run/@81049
+          sname=VariablesDescs
+          sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          sid=81049
+            @/@PredefinedCommands/@color/@actions/@run/@81049/@81050
+            sname=control
+            svarName=control
+            spassive=false
+            sscope=0
+            stype=object
+            sclassName=org.eclipse.swt.widgets.Control
+            sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            sid=81050
+  @/@set
+  sname=set
+  slabel=设置
+  Sdescription=
+#$@text#$@
+<p>设置一个控件的属性。</p>
+#$@text#$@
+  sdescriptors=xworker.lang.command.CommandDomain/@Command1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_deprecated=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=set
+    @/@set/@control
+    sname=control
+    slabel=控件
+    scommand=xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@selectControl
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=control
+    @/@set/@attribute
+    sname=attribute
+    slabel=属性
+    scommand=xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@selectAttrubute
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=attribute
+  @/@enable
+  sname=enable
+  slabel=开启
+  Sdescription=
+#$@text#$@
+<p>激活一个控件。</p>
+#$@text#$@
+  sdescriptors=xworker.lang.command.CommandDomain/@Command1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_deprecated=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=enable
+    @/@enable/@control
+    sname=control
+    slabel=控件
+    scommand=xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@selectControl
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=control
+    @/@enable/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@enable/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.widgets.Control;
+
+def control = command.getParams().get(0).getResult();
+if(control != null){
+    if(control instanceof Control){
+        control.setEnabled(true);
+    }else{
+        commandExecutor.setTip("Please select a control!");
+    }
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@enable1
+  sname=disable
+  slabel=禁用
+  Sdescription=
+#$@text#$@
+<p>让一个控件变得不可用。</p>
+#$@text#$@
+  sdescriptors=xworker.lang.command.CommandDomain/@Command1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_deprecated=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=enable1
+    @/@enable1/@control
+    sname=control
+    slabel=控件
+    scommand=xworker.example.ui.command.ExampleDomain/@PredefinedCommands/@selectControl
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@Parameter
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=control
+    @/@enable1/@actions
+    sname=actions
+    sdescriptors=xworker.lang.command.CommandDomain/@Command/@actions
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@enable1/@actions/@run
+      sname=run
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import org.eclipse.swt.widgets.Control;
+//def control = command.getParams().get(0).getResult();
+//if(control != null){
+    if(control instanceof Control){
+        control.setEnabled(false);
+    }else{
+        commandExecutor.setTip("Please select a control!");
+    }
+//}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sswitchResult=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=run
+  @/@view example command model
+  sname=view example command model
+  slabel=查看命令示例模型
+  shasContents=false
+  Sdescription=
+#$@text#$@
+<p>查看当前命令域模型。</p>
+#$@text#$@
+  sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand1
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=view example command model
+    @/@view example command model/@Composite
+    sname=Composite
+    sBORDER=false
+    sH_SCROLL=false
+    sV_SCROLL=false
+    sNO_BACKGROUND=false
+    sNO_FOCUS=false
+    sNO_MERGE_PAINTS=false
+    sNO_REDRAW_RESIZE=false
+    sNO_RADIO_GROUP=false
+    sEMBEDDED=false
+    sDOUBLE_BUFFERED=false
+    scapture=false
+    senabled=true
+    sredraw=true
+    spack=false
+    svisible=true
+    sdescriptors=xworker.lang.command.CommandDomain/@CompoisteCommand1/@Composite
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    sid=Composite
+      @/@view example command model/@Composite/@FillLayout
+      sname=FillLayout
+      stype=SWT.HORIZONTAL
+      sdescriptors=xworker.swt.Layouts/@FillLayout
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=FillLayout
+      @/@view example command model/@Composite/@ThingEditor
+      sname=ThingEditor
+      sthingPath=xworker.example.ui.command.ExampleDomain
+      stitle=true
+      suseRootThing=false
+      ssaveActionContainer=false
+      sdescriptors=xworker.swt.Widgets/@ThingEditor
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      sid=ThingEditor

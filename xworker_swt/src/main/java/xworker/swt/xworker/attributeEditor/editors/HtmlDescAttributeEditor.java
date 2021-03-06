@@ -14,6 +14,7 @@ import org.xmeta.util.ThingRegistor;
 import org.xmeta.util.UtilString;
 
 import xworker.swt.form.FormModifyListener;
+import xworker.swt.util.SwtUtils;
 import xworker.swt.xworker.attributeEditor.AttributeEditor;
 import xworker.util.XWorkerUtils;
 
@@ -72,8 +73,8 @@ public class HtmlDescAttributeEditor extends AttributeEditor{
         	((ToolItem) htmlActionContext.get("toolItem")).dispose();
         	//设置Browser的地址
         	Browser browser = (Browser) htmlActionContext.get("browser");
-        	browser.setUrl(XWorkerUtils.getThingDescUrl(attr.get("thingPath")));
-        	
+			SwtUtils.setThingDesc(attr.get("thingPath"), browser);
+
         	return comp;
         }finally{
         	context.pop();

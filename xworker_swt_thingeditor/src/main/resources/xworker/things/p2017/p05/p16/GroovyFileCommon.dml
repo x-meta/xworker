@@ -1,0 +1,69 @@
+%1494901292548
+@
+sname=GroovyFileCommon
+slabel=常用操作
+stype=thingDesc
+sgroup=文档.文件
+sicon=icons/html.png
+sth_sortWeight=-100
+sstyledTextForInsert=parentContext.parentContext.codeText
+suseTargetThingDoc=false
+Sdescription=
+#$@text#$@
+<p><strong>文件内容操作</strong></p>
+
+<pre class="brush:groovy;">
+//获取文本内容
+println new File(&quot;test.txt&quot;).text;
+
+//转为Writable对象，可重定向输出  
+file.asWritable()  
+
+//添加内容
+file.append(&#39;hello world!&#39;)  </pre>
+
+<p><strong>文件内容按行操作</strong></p>
+
+<pre class="brush:groovy;">
+File file = new File(&#39;C:\\Users\\berdy\\Desktop\\test.txt&#39;)  
+
+//使用系统默认的编码处理文件流  
+file.eachLine {println it }  
+
+//指定处理流的编码  
+file.eachLine(&quot;utf8&quot;) {println it  }  
+
+//指定文件内容行标的起始数字，默认为1，根据需要设置为其他数值  
+file.eachLine(&quot;utf8&quot;,10) {str,lineNumber-&gt;  
+    println str  
+    println lineNumber }  
+  
+//对文件内容的每一行进行分割处理，比较常用在处理csv文件  
+file.splitEachLine(&quot;,&quot;) {println it  }  
+  
+//在闭包中定义过滤逻辑，对文件内容进行过滤处理  
+file.filterLine {String str-&gt;  
+    if (str.contains(&#39;code&#39;))  
+        println str  
+}.writeTo(new PrintWriter(System.out))  </pre>
+
+<p><strong>目录操作</strong></p>
+
+<pre class="brush:groovy;">
+File file = new File(&#39;.&#39;)  
+file.eachFileMatch(~/.*\.txt/) {File it-&gt; println it.name  } //使正则表达式匹配文件名  
+file.eachFileMatch(FILES, ~/.*\.txt/) { File it-&gt; println it.name  }  
+  
+new File(&quot;.&quot;).eachFileRecurse {  
+    println it.getPath();  
+} </pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.swt.xworker.ThingRegistThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=command|xworker.lang.actions.GroovyAction
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false

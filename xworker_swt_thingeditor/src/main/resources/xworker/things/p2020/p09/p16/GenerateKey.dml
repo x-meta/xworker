@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="GenerateKey" descriptors="xworker.swt.xworker.ThingRegistThing" type="composite"
+     group="tools.crypto" icon="icons/application.png" th_createIndex="true" th_registThing="command|xworker.command.Root">
+    <Composite>
+        <GridLayout name="GridLayout"></GridLayout>
+        <ThingForm name="thingForm" column="1">
+            <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
+            <Thing>
+                <attribute name="algorithm" _xmeta_id_="algorithms" inputtype="inputSelect"
+                     size="40">
+                    <DataStore dataObject="xworker.things.p2020.p06.p08.Algorithms">
+                        <queryConfig name="type" attributeName="type" dataName="type" value="Cipher"></queryConfig>
+                    </DataStore>
+                </attribute>
+                <attribute name="keysize"></attribute>
+                <attribute name="out" inputtype="select" default="HEX">
+                    <value name="HEX" value="HEX"></value>
+                    <value name="Base64" value="Base64"></value>
+                </attribute>
+            </Thing>
+        </ThingForm>
+        <Composite name="buttonComposite" _xmeta_id_="15962">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="15963" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="15964"></RowLayout>
+            <Button name="generateButton" _xmeta_id_="15965" text="lang:d=生成&amp;en=Generate">
+                <RowData name="RowData" _xmeta_id_="15966" width="80"></RowData>
+                <Listeners _xmeta_id_="15967">
+                    <Listener name="generateButtonSelection" _xmeta_id_="15968">
+                        <GroovyAction>
+                            <code><![CDATA[def values = thingForm.doAction("getValues", actionContext);
+
+try{
+    def key = generateKey(actionContext, (Map) values);
+    if(values.out == "HEX"){
+        log.append(toHex(actionContext, "message", key.getEncoded()));
+    }else{
+        log.append(toBase64(actionContext, "message", key.getEncoded()));
+    }
+}catch(Exception e){
+    log.append(e);
+}]]></code>
+                            <ActionDefined>
+                                <GenerateKey name="generateKey" descriptors="xworker.java.security.CipherActions/@GenerateKey"
+                                     algorithm="var:algorithm" keysize="var:keysize"></GenerateKey>
+                                <encodeHexString name="toHex" descriptors="xworker.org.apache.commons.codec.binary.BinaryActions/@encodeHexString"
+                                     data="var:message"></encodeHexString>
+                                <encodeBase64String name="toBase64" descriptors="xworker.org.apache.commons.codec.binary.BinaryActions/@encodeBase64String"
+                                     binaryData="var:message"></encodeBase64String>
+                            </ActionDefined>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+        <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+            <Console name="log"></Console>
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </StyledText>
+    </Composite>
+</QuickFunction>

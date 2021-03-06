@@ -1,0 +1,1055 @@
+^1539846987197
+@
+sname
+shell
+stext
+label:xworker.command.CommandAssistor/@resources/@I18nResource/@title
+sNO_TRIM
+false
+sCLOSE
+true
+sTITLE
+true
+sMIN
+true
+sMAX
+true
+sBORDER
+false
+sRESIZE
+true
+sON_TOP
+true
+sTOOL
+false
+sNO_FOCUS
+false
+swidth
+800
+sheight
+600
+scenterScreen
+true
+spack
+false
+smaximized
+false
+sfullScreen
+false
+sdesign
+true
+sisIde
+false
+sdesignDefaultOpen
+false
+sexitOnDispose
+false
+sH_SCROLL
+false
+sV_SCROLL
+false
+sNO_BACKGROUND
+false
+sNO_MERGE_PAINTS
+false
+sNO_REDRAW_RESIZE
+false
+sNO_RADIO_GROUP
+false
+sEMBEDDED
+false
+sDOUBLE_BUFFERED
+false
+slabel
+CommandAssistor
+scapture
+false
+senabled
+true
+sredraw
+true
+svisible
+true
+sdescriptors
+xworker.swt.widgets.Shell
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_mark
+false
+  @/@resources
+  sname
+  resources
+  sdescriptors
+  xworker.swt.Widgets/@Resource
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  resources
+    @/@resources/@I18nResource
+    sname
+    I18nResource
+    sdescriptors
+    xworker.swt.util.Resource/@I18nResource
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    I18nResource
+      @/@resources/@I18nResource/@title
+      sname
+      title
+      slabel
+      帮助小精灵
+      sen_label
+      Help Sperite
+      sdescriptors
+      xworker.lang.util.I18nResource/@resource
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      title
+  @/@ListenersPrepared
+  sname
+  ListenersPrepared
+  sdescriptors
+  xworker.swt.widgets.Widget/@ListenersPrepared
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  ListenersPrepared
+    @/@ListenersPrepared/@uiButtonSelection
+    sname
+    uiButtonSelection
+    stype
+    Selection
+    sdescriptors
+    xworker.swt.events.Listeners/@listenersPrepared/@Listener
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiButtonSelection
+      @/@ListenersPrepared/@uiButtonSelection/@GroovyAction
+      sname
+      GroovyAction
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import xworker.swt.design.Designer;
+
+//ui是否已经失效了
+if(event.widget.getData().isEnabled() == false){
+    event.widget.setEnabled(false);
+    return;
+}
+
+mainComposite.setEnabled(true);
+
+//取消不相关按钮的选择状态
+for(btn in uiComposite.getChildren()){
+    if(btn != event.widget){
+        btn.setSelection(false);
+    }else{
+        btn.setSelection(true);
+    }
+}
+
+actions.doAction("setUi", actionContext, "ui", event.widget.getData());
+
+//先屏蔽掉下面的语句了，会自动打开设计太扰人了
+if((event.stateMask & SWT.CTRL) == SWT.CTRL){
+    Designer.setCurrentDesignControl(ui.getControl());
+}else if((event.stateMask & SWT.ALT) == SWT.ALT){
+    Designer.setCurrentDesignControl(null);
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      GroovyAction
+  @/@listener
+  sname
+  listener
+  sdescriptors
+  xworker.swt.Widgets/@InteractiveListener
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  listener
+    @/@listener/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.swt.xwidgets.InteractiveListener/@actions1
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@listener/@actions/@connected
+      sname
+      connected
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+
+import xworker.swt.design.Designer;
+
+if(ui.isSameShell(shell)){//ui.getShellPath() == "xworker.command.CommandAssistor"){
+    //不能监听自己
+    return false;
+}
+
+def uiList = ui.getParentUis();
+uiList.add(ui);
+def displayUI = null;
+def priority = Integer.MIN_VALUE;
+for(pui in uiList){
+    def uiThing = pui.getThing();
+    def uiThingPriotiry = uiThing.getInt("priority");
+    //println(uiThingPriotiry);
+    if(uiThingPriotiry >= priority){
+        displayUI = pui;
+        priority = uiThingPriotiry;
+    }
+}
+
+if(!actions.doAction("setUi", actionContext, "ui", displayUI)){
+    return;
+}
+
+if(uiComposite.isDisposed()){
+    return;
+}
+
+//println(ui.getThing());
+if(displayUI.getControl() != null && displayUI.getThing().getMetadata().getName() == "InjectableCompositeUI"){
+    Designer.setCurrentDesignControl(displayUI.getControl());
+}
+
+//显示UI列表
+for(control in uiComposite.getChildren()){
+    control.dispose();
+}
+
+def eventThing = world.getThing("xworker.command.CommandAssistor/@ListenersPrepared/@uiButtonSelection");
+def lastBtn = null;
+for(pui in uiList){
+    def button = new Button(uiComposite, SWT.TOGGLE);
+    button.setText(pui.getThing().getMetadata().getLabel());
+    button.setData(pui);
+    if(pui.isEnabled() == false){
+        button.setEnabled(false);
+    }
+    
+    if(pui == displayUI){
+        lastBtn = button;
+    }
+    
+    //增加事件
+    button.addListener(SWT.Selection, uiButtonSelection);
+    //actionContext.peek().put("parent", button);    
+    //eventThing.doAction("create", actionContext);
+}
+
+//def ckButton = new Button(uiComposite, SWT.CHECK);
+//ckButton.setText("标记控件");
+
+lastBtn.setSelection(true);
+uiComposite.layout();
+shell.layout();
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      connected
+      @/@listener/@actions/@accept
+      sname
+      accept
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      true
+      sotherActionPath
+      xworker.command.CommandAssistor/@listener/@actions/@connected
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      accept
+  @/@commandAssistorGridLayout
+  sname
+  commandAssistorGridLayout
+  smakeColumnsEqualWidth
+  false
+  smarginWidth
+  0
+  smarginHeight
+  0
+  smarginLeft
+  0
+  smarginTop
+  0
+  smarginRight
+  0
+  smarginBottom
+  0
+  shorizontalSpacing
+  0
+  sverticalSpacing
+  0
+  sdescriptors
+  xworker.swt.Layouts/@GridLayout
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  commandAssistorGridLayout
+  @/@uiComposite
+  sname
+  uiComposite
+  sBORDER
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_FOCUS
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.Widgets/@Composite
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  uiComposite
+    @/@uiComposite/@uiCompositeGridData
+    sname
+    uiCompositeGridData
+    sstyle
+    FILL_HORIZONTAL
+    shorizontalIndent
+    0
+    swidth
+    -1
+    sheight
+    -1
+    shorizontalAlignment
+    BEGINNING
+    sverticalAlignment
+    CENTER
+    shorizontalSpan
+    1
+    sverticalSpan
+    1
+    sgrabExcessHorizontalSpace
+    false
+    sgrabExcessVerticalSpace
+    false
+    sdescriptors
+    xworker.swt.layout.LayoutDatas/@GridData
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiCompositeGridData
+    @/@uiComposite/@uiCompositeRowLayout
+    sname
+    uiCompositeRowLayout
+    sfill
+    false
+    sjustify
+    false
+    smarginWidth
+    0
+    smarginHeight
+    0
+    smarginLeft
+    3
+    smarginTop
+    3
+    smarginRight
+    3
+    smarginBottom
+    3
+    spack
+    true
+    sspacing
+    3
+    stype
+    SWT.HORIZONTAL
+    swrap
+    true
+    sdescriptors
+    xworker.swt.Layouts/@RowLayout
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiCompositeRowLayout
+  @/@mainComposite
+  sname
+  mainComposite
+  sBORDER
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_FOCUS
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.Widgets/@Composite
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  mainComposite
+    @/@mainComposite/@compositeFillLayout
+    sname
+    compositeFillLayout
+    stype
+    SWT.HORIZONTAL
+    sdescriptors
+    xworker.swt.Layouts/@FillLayout
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    compositeFillLayout
+    @/@mainComposite/@mainComposite
+    sname
+    mainCompositeGridData
+    sstyle
+    FILL_BOTH
+    shorizontalIndent
+    0
+    swidth
+    -1
+    sheight
+    -1
+    shorizontalAlignment
+    BEGINNING
+    sverticalAlignment
+    CENTER
+    shorizontalSpan
+    1
+    sverticalSpan
+    1
+    sgrabExcessHorizontalSpace
+    false
+    sgrabExcessVerticalSpace
+    false
+    sdescriptors
+    xworker.swt.layout.LayoutDatas/@GridData
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    mainComposite
+    @/@mainComposite/@thingRegist
+    sname
+    thingRegist
+    sthing
+    xworker.command.CommandAssistorIndex
+    sregistType
+    child
+    ssearchByKeywords
+    true
+    sshowDescBrowser
+    true
+    sdescBrowserRight
+    true
+    sautoLoad
+    true
+    scache
+    true
+    sdescritporForNewThing
+    xworker.lang.MetaDescriptor3
+    sdescriptors
+    xworker.swt.Widgets/@ThingRegistSelector
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    thingRegist
+      @/@mainComposite/@thingRegist/@actions
+      sname
+      actions
+      sdescriptors
+      xworker.swt.xworker.ThingRegistSelector/@actions1
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      actions
+        @/@mainComposite/@thingRegist/@actions/@getDescritporForNewThing
+        sname
+        getDescritporForNewThing
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Local
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+if(actionContext.get("parentContext") == null){
+    return;	
+}
+
+//println("xxxxxxxxxxxx: " + parentContext.get("ui"));
+if(parentContext.get("ui") == null){
+    return null;
+}
+
+def ui = parentContext.get("ui");
+def thing = ui.getThing();
+///println("thing=" + thing);
+if(thing == null){
+    return null;
+}
+
+//println(thing);
+return thing.doAction("getDescritporForNewThing", ui.getActionContext());
+#$@text#$@
+        sinterpretationType
+        Action
+        screateLocalVarScope
+        false
+        ssaveReturn
+        false
+        sdebugLog
+        false
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        getDescritporForNewThing
+  @/@Listeners
+  sname
+  Listeners
+  sdescriptors
+  xworker.swt.widgets.Widget/@Listeners
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  Listeners
+    @/@Listeners/@shellDispoose
+    sname
+    shellDispoose
+    stype
+    Dispose
+    sdescriptors
+    xworker.swt.events.Listeners/@listeners/@Listener
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    shellDispoose
+      @/@Listeners/@shellDispoose/@shellDisposeGroovy
+      sname
+      shellDisposeGroovy
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Local
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.swt.design.Designer;
+
+Designer.registInteractiveListener(null, null);
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_mark
+      false
+      sid
+      shellDisposeGroovy
+  @/@init
+  sname
+  init
+  sisSynchronized
+  false
+  sthrowException
+  true
+  suseOtherAction
+  false
+  svarScope
+  Local
+  sdisableGlobalContext
+  false
+  Scode
+#$@text#$@
+import xworker.swt.design.Designer;
+
+Designer.registInteractiveListener(null, listener);
+#$@text#$@
+  sinterpretationType
+  Action
+  screateLocalVarScope
+  false
+  ssaveReturn
+  false
+  sdebugLog
+  false
+  sdescriptors
+  xworker.swt.widgets.Widget/@Code
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  init
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.swt.Widgets/@actions
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@setUi
+    sname
+    setUi
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Button;
+
+if(ui.isSameShell(shell)){//ui.getShellPath() == "xworker.command.CommandAssistor"){
+    //不能监听自己
+    return false;
+}
+
+def gui = actionContext.g().get("ui");
+if(gui != null && gui != ui){
+    //断开先前连接的UI
+    gui.setInteractiveListener(null);
+}
+
+//注册类型
+def registThing = ui.getRegistThing();
+def registType = ui.getRegistType();
+
+//每次只能监听监听一个UI
+if(registThing == null){
+    def index = world.getThing(ui.getCommandIndex());
+    if(index != null){
+        def acThing = index.getActionThing("createCommandSelector");        
+        if(acThing != null){
+            registThing = world.getThing(acThing.getString("thingPath"));
+            registType = acThing.getStringBlankAsNull("type");
+        }
+        
+        if(registThing == null){
+            registThing = world.getThing(index.get("thingPath"));
+            registType = "command";
+        }
+    }
+}
+
+if(registThing == null || registThing == actionContext.get("registThing")){
+    //log.warn("regist thing is null, ui=" + ui.getThin
+}
+
+
+_g.put("registThing", registThing);
+thingRegist.doAction("init", actionContext, "thing", registThing, "type", registType);
+thingRegist.doAction("refresh", actionContext);
+
+
+//把ui放入到全局上下文中
+actionContext.g().put("ui", ui);
+actionContext.g().put("registThing", registThing);
+
+return true;
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    setUi
+    @/@actions/@uiDisabled
+    sname
+    uiDisabled
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    svarScope
+    Local
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+//让按钮失效
+for(btn in uiComposite.getChildren()){
+    if(ui == btn.getData()){
+        btn.setEnabled(false);
+    }
+    
+    //是当前正在选中的
+    if(btn.getSelection() == true){
+        mainComposite.setEnabled(false);
+    }
+}
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    uiDisabled
