@@ -4,7 +4,6 @@ import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.MenuItem;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import org.xmeta.ActionContext;
