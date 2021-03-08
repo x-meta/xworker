@@ -19,9 +19,9 @@ public class SceneActions {
         		scene.setCursor(cursor);
         	}
         }
-        if(thing.valueExists("nodeOrientation")){
-            scene.setNodeOrientation(NodeOrientation.valueOf(thing.getString("nodeOrientation")));
-        }        
+        if(thing.valueExists("nodeOrientation")) {
+			scene.setNodeOrientation(NodeOrientation.valueOf(thing.getString("nodeOrientation")));
+		}
 	}
 	
 	public static Scene create(ActionContext actionContext) {

@@ -98,4 +98,12 @@ public class StageActions {
 		
 		WindowActions.init(thing, stage, actionContext);
 	}
+
+	public static void createNodes(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+
+		for(Thing child : self.getChilds()){
+			child.doAction("create", actionContext);
+		}
+	}
 }
