@@ -2,6 +2,7 @@ package xworker.javafx.control;
 
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Control;
 import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Tooltip;
 import javafx.scene.text.Font;
@@ -48,14 +49,22 @@ public class TooltipActions {
 
     public static Tooltip create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
+        Object parent = actionContext.getObject("parent");
 
         Tooltip node = new Tooltip();
         init(node, self, actionContext);
         actionContext.g().put(self.getMetadata().getName(), node);
 
+        if(parent instanceof Control){
+            ((Control) parent).setTooltip(node);
+        }
+
         actionContext.peek().put("parent", node);
         for(Thing child : self.getChilds()) {
-            child.doAction("create", actionContext);
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Font){
+                node.setFont((Font) obj);
+            }
         }
 
         return node;

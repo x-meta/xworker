@@ -48,7 +48,10 @@ public class TextActions {
             node.setY(thing.getDouble("y"));
         }
         if(thing.valueExists("text")){
-            node.setText(thing.getString("text"));
+            String text = JavaFXUtils.getString(thing, "text", actionContext);
+            if(text != null) {
+                node.setText(text);
+            }
         }
     }
 
@@ -61,7 +64,10 @@ public class TextActions {
 
         actionContext.peek().put("parent", node);
         for(Thing child : self.getChilds()){
-            child.doAction("create", actionContext);
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Font){
+                node.setFont((Font) obj);
+            }
         }
 
         return node;

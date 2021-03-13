@@ -1,4 +1,4 @@
-^1582189225451
+^1615180263460
 @
 sname
 shell
@@ -114,6 +114,8 @@ false
   false
   slabel
   主页
+  sen_label
+  Home
   scapture
   false
   senabled
@@ -122,8 +124,6 @@ false
   true
   svisible
   true
-  sen_label
-  Home
   sdescriptors
   xworker.swt.Widgets/@Composite
   sinheritDescription
@@ -477,6 +477,7 @@ if(thing != null){
               Scode
 #$@text#$@
 import xworker.util.XWorkerUtils;
+import xworker.swt.util.SwtUtils;
 
 if(actionContext.get("topicBrowser") == null){
     return;
@@ -485,13 +486,13 @@ if(actionContext.get("topicBrowser") == null){
 if(thing != null){
     if("thingDesc" == thing.getString("type") || thing.getThingName() == "Word"){
         def docThing = world.getThing("xworker.ui.topic.help._Topic");
-        topicBrowser.setUrl(XWorkerUtils.getThingDescUrl(docThing));
+        SwtUtils.setThingDesc(docThing, topicBrowser)        
     }else{
-        topicBrowser.setUrl(XWorkerUtils.getThingDescUrl(thing));
+        SwtUtils.setThingDesc(thing, topicBrowser)
     }
 }else{
-    def docThing = world.getThing("xworker.ui.topic.help._Topic");
-    topicBrowser.setUrl(XWorkerUtils.getThingDescUrl(docThing));
+    def docThing = world.getThing("xworker.command.Root");
+    SwtUtils.setThingDesc(docThing, topicBrowser)
 }
 #$@text#$@
               sinterpretationType
@@ -499,6 +500,8 @@ if(thing != null){
               screateLocalVarScope
               false
               ssaveReturn
+              false
+              sswitchResult
               false
               sdebugLog
               false

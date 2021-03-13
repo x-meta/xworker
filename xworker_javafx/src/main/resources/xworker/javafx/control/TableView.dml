@@ -6,6 +6,20 @@
     <actions>
         <JavaAction name="create" outerClassName="xworker.javafx.control.TableViewActions"
              methodName="create"></JavaAction>
+        <GetObject name="getColumnResizePolicy" _xmeta_id_="22879" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="columnResizePolicy" usage="params"></GetObject>
+        <GetObject name="getFocusModel" _xmeta_id_="22880" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="focusModel" usage="params"></GetObject>
+        <GetObject name="getItems" _xmeta_id_="22881" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="items" usage="params"></GetObject>
+        <GetObject name="getPlaceholder" _xmeta_id_="22882" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="placeholder" usage="params"></GetObject>
+        <GetObject name="getRowFactory" _xmeta_id_="22883" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="rowFactory" usage="params"></GetObject>
+        <GetObject name="getSelectionModel" _xmeta_id_="22884" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="selectionModel" usage="params"></GetObject>
+        <GetObject name="getSortPolicy" _xmeta_id_="22885" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="sortPolicy" usage="params"></GetObject>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -27,6 +41,8 @@
     </attribute>
     <attribute name="items">
         <description><![CDATA[<p>The underlying data model for the TableView.</p>
+
+<p>接受Iterable&lt;Object&gt;。</p>
 ]]></description>
     </attribute>
     <attribute name="placeholder">
@@ -37,8 +53,14 @@
         <description><![CDATA[<p>A function which produces a TableRow.</p>
 ]]></description>
     </attribute>
-    <attribute name="selectionModel">
-        <description><![CDATA[<p>The SelectionModel provides the API through which it is possible to select single or multiple items within a TableView, as well as inspect which items have been selected by the user.</p>
+    <attribute name="selectionMode" _xmeta_id_="selectionModel" inputtype="select">
+        <description><![CDATA[<p>Sets the value of the property selectionMode.</p>
+]]></description>
+        <value name="SINGLE" value="SINGLE"></value>
+        <value name="MULTIPLE" value="MULTIPLE"></value>
+    </attribute>
+    <attribute name="cellSelectionEnabled" inputtype="truefalseselect">
+        <description><![CDATA[<p>A boolean property used to represent whether the table is in row or cell selection modes.</p>
 ]]></description>
     </attribute>
     <attribute name="sortPolicy">
@@ -72,4 +94,113 @@
     <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
         <Variable name="var" varName="_thingName_" className="javafx.scene.control.TableView"></Variable>
     </VariablesDescs>
+    <thing name="ColumnResizePolicy">
+        <description><![CDATA[<p>This is the function called when the user completes a column-resize operation.</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>Boolean call(TableView.ResizeFeatures param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TableViewActions"
+                 methodName="createColumnResizePolicy"></JavaAction>
+            <NOOP name="call">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TableView.ResizeFeatures"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="Placeholder" extends="xworker.javafx.scene.Nodes">
+        <description><![CDATA[<p>This Node is shown to the user when the table has no content to show.</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TableViewActions"
+                 methodName="createPlaceholder"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="RowFactory">
+        <description><![CDATA[<p>A function which produces a TableRow.&nbsp;</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>TableRow call(TableView param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TableViewActions"
+                 methodName="createRowFactory"></JavaAction>
+            <NOOP name="call">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TableView"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="SortPolicy">
+        <description><![CDATA[<p>The sort policy specifies how sorting in this TableView should be performed.</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>Boolean call(TableView param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TableViewActions"
+                 methodName="createSortPolicy"></JavaAction>
+            <NOOP name="call">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TableView"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="SelectionChangeListener" extends="xworker.javafx.control.TreeView/@SelectionChangeListener"
+         inheritDescription="true"></thing>
 </thing>

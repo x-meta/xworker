@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Application name="JavaFXEamples" descriptors="xworker.javafx.application.Application" title="JavaFX Examples">
+    <Resources>
+        <Image name="folderImg" url="icons/folder.png"></Image>
+        <Image name="appImg" url="icons/application.png"></Image>
+    </Resources>
+    <Nodes>
+        <SplitPane orientation="HORIZONTAL" dividerPositions="0.2">
+            <TreeView name="menuTree" showRoot="false">
+                <CellFactory>
+                    <TextFieldTreeCell>
+                        <StringConverter>
+                            <actions>
+                                <GroovyAction name="toString" descriptors="xworker.lang.actions.GroovyAction">
+                                    <code><![CDATA[if(object == null){
+    return null;
+}
+
+return object.getMetadata().getLabel();]]></code>
+                                </GroovyAction>
+                            </actions>
+                        </StringConverter>
+                    </TextFieldTreeCell>
+                </CellFactory>
+                <SelectionChangeListener>
+                    <actions>
+                        <GroovyAction name="changed" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[import org.xmeta.ActionContext;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.Label;
+
+def thing = newValue.getValue();
+
+def ext = world.getThing(thing.getString("extends"));
+if(ext != null){
+    def ac = new ActionContext();
+    def nodes = ext.getThing("Nodes@0");
+    if(nodes != null){
+        exampleBox.getChildren().clear();
+        nodes.doAction("create", ac);
+       
+        exampleBox.getChildren().add(ac.rootNode);
+        
+        //xml代码
+        codeText.setText(nodes.toXML());
+    }
+}]]></code>
+                        </GroovyAction>
+                    </actions>
+                </SelectionChangeListener>
+            </TreeView>
+            <VBox name="mainBox">
+                <Label name="Label" text="lang:d=示例&amp;en=Example"></Label>
+                <VBox name="exampleBox">
+                    <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>
+                </VBox>
+                <Label name="Label" _xmeta_id_="Label1" text="XML"></Label>
+                <TextArea name="codeText">
+                    <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>
+                </TextArea>
+            </VBox>
+            <RunAction>
+                <GroovyAction name="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[import javafx.scene.control.TreeItem;
+import javafx.scene.image.ImageView;
+
+def rootItem = new TreeItem();
+menuTree.setRoot(rootItem);
+
+def menu = world.getThing("xworker.javafx.examples.JavaFXExamlesMenu");
+for(child in menu.getChilds()){
+    createMenuItem(rootItem, child, folderImg, appImg);
+}
+
+def createMenuItem(rootItem, thing, folderImg, appImg){
+     def item = new TreeItem(thing);
+     rootItem.getChildren().add(item);
+     
+     //设置图标
+     if(thing.getStringBlankAsNull("extends") == null){
+         item.setGraphic(new ImageView(folderImg));
+     }else{
+         item.setGraphic(new ImageView(appImg));
+     }
+     
+     for(child in thing.getChilds()){
+         createMenuItem(item, child, folderImg, appImg);
+     }
+}]]></code>
+                    <VariablesDescs _xmeta_id_="3737" descriptors="xworker.lang.MetaThing/@VariablesDesc">
+                        <Variable name="rootItem" _xmeta_id_="3738" varName="rootItem"
+                             className="javafx.scene.control.TreeItem"></Variable>
+                    </VariablesDescs>
+                </GroovyAction>
+            </RunAction>
+        </SplitPane>
+    </Nodes>
+    <Scene name="Scene" root="var:SplitPane"></Scene>
+</Application>

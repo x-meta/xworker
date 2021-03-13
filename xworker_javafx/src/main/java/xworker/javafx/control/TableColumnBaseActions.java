@@ -28,7 +28,7 @@ public class TableColumnBaseActions {
             node.setEditable(thing.getBoolean("editable"));
         }
         if(thing.valueExists("graphic")){
-        	Node graphic = JavaFXUtils.getObject(thing, "graphic", actionContext);
+        	Node graphic = JavaFXUtils.getGraphic(thing, "graphic", actionContext);
         	if(graphic != null) {
         		node.setGraphic(graphic);
         	}

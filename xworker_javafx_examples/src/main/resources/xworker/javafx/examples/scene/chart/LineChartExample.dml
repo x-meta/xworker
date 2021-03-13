@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="LineChartExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode" _xmeta_id_="VBox">
+            <LineChart name="lineChart" _xmeta_id_="LineChart" title="LineChart Example">
+                <XAxis>
+                    <NumberAxis name="NumberAxis" label="No of employees"></NumberAxis>
+                </XAxis>
+                <YAxis>
+                    <NumberAxis name="NumberAxis" label="Revenue per employee"></NumberAxis>
+                </YAxis>
+            </LineChart>
+            <RunAction>
+                <GroovyAction name="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[import javafx.scene.chart.XYChart;
+
+XYChart.Series dataSeries1 = new XYChart.Series();
+dataSeries1.setName("2014");
+
+dataSeries1.getData().add(new XYChart.Data( 1, 567));
+dataSeries1.getData().add(new XYChart.Data( 5, 612));
+dataSeries1.getData().add(new XYChart.Data(10, 800));
+dataSeries1.getData().add(new XYChart.Data(20, 780));
+dataSeries1.getData().add(new XYChart.Data(40, 810));
+dataSeries1.getData().add(new XYChart.Data(80, 850));
+
+lineChart.getData().add(dataSeries1);]]></code>
+                </GroovyAction>
+            </RunAction>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

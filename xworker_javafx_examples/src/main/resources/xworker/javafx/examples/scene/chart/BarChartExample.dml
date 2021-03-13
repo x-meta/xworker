@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="BarChartExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode" _xmeta_id_="VBox">
+            <BarChart name="barChart" _xmeta_id_="BarChart" title="BarChart Example">
+                <XAxis>
+                    <CategoryAxis name="CategoryAxis" label="Devices"></CategoryAxis>
+                </XAxis>
+                <YAxis>
+                    <NumberAxis name="NumberAxis" label="Visits"></NumberAxis>
+                </YAxis>
+            </BarChart>
+            <RunAction>
+                <GroovyAction name="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[import javafx.scene.chart.XYChart;
+
+XYChart.Series dataSeries1 = new XYChart.Series();
+dataSeries1.setName("2014");
+
+dataSeries1.getData().add(new XYChart.Data("Desktop", 567));
+dataSeries1.getData().add(new XYChart.Data("Phone"  , 65));
+dataSeries1.getData().add(new XYChart.Data("Tablet"  , 23));
+
+barChart.getData().add(dataSeries1);]]></code>
+                </GroovyAction>
+            </RunAction>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

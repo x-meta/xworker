@@ -6,7 +6,7 @@ import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
 
 public class CellActions {
-    public static void init(Cell node, Thing thing, ActionContext actionContext){
+    public static void init(Cell<Object> node, Thing thing, ActionContext actionContext){
         LabeledActions.init(node, thing, actionContext);
 
         if(thing.valueExists("editable")){
@@ -18,10 +18,10 @@ public class CellActions {
         }
     }
 
-    public static Cell create(ActionContext actionContext){
+    public static Cell<Object> create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
 
-        Cell node = new Cell();
+        Cell<Object> node = new Cell<Object>();
         init(node, self, actionContext);
         actionContext.g().put(self.getMetadata().getName(), node);
 

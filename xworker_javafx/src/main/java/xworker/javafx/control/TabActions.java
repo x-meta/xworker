@@ -64,6 +64,8 @@ public class TabActions {
             Object obj = child.doAction("create", actionContext);
             if(obj instanceof Tooltip){
                 node.setTooltip((Tooltip) obj);
+            }else if(obj instanceof  Node){
+                node.setContent((Node) obj);
             }
         }
 

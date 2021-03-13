@@ -1,5 +1,6 @@
 package xworker.javafx.scene.text;
 
+import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -38,16 +39,23 @@ public class FontActions {
         }
         double size = self.getDouble("size");
 
+        Font font = null;
         if(weight != null && posture != null){
-            return Font.font(family, weight, posture, size);
+            font = Font.font(family, weight, posture, size);
         }else if(weight != null){
-            return Font.font(family, weight, size);
+            font = Font.font(family, weight, size);
         }else if(size > 0){
-            return Font.font(family, size);
+            font = Font.font(family, size);
         }else {
-            return Font.font(family);
+            font = Font.font(family);
         }
 
+        Object parent = actionContext.getObject("parent");
+        if(parent instanceof Labeled){
+            ((Labeled) parent).setFont(font);
+        }
+
+        return font;
 
     }
 }

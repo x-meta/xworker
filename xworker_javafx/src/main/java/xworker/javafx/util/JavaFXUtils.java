@@ -1,32 +1,41 @@
 package xworker.javafx.util;
 
-import java.io.InputStream;
-import java.time.chrono.Chronology;
-import java.time.chrono.HijrahChronology;
-import java.time.chrono.IsoChronology;
-import java.time.chrono.JapaneseChronology;
-import java.time.chrono.MinguoChronology;
-import java.time.chrono.ThaiBuddhistChronology;
-import java.util.Locale;
-
 import javafx.geometry.Insets;
+import javafx.geometry.Point3D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.SceneAntialiasing;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.media.Media;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.UtilData;
-
-import javafx.geometry.Point3D;
-import javafx.scene.Cursor;
-import javafx.scene.SceneAntialiasing;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.text.Font;
 import xworker.lang.executor.Executor;
+
+import java.io.InputStream;
+import java.time.chrono.*;
 
 public class JavaFXUtils {
 	private static final String TAG = JavaFXUtils.class.getName();
+
+	public static Color getColor(Thing thing, String name, ActionContext actionContext){
+		Object obj = getObject(thing, name, actionContext);
+		if(obj instanceof Color){
+			return (Color) obj;
+		}else if(obj instanceof  String){
+			return Color.valueOf((String) obj);
+		}else{
+			return null;
+		}
+	}
 
 	public static Duration getDuration(Thing thing, String name, ActionContext actionContext){
 		Object obj = getObject(thing, name, actionContext);
@@ -57,7 +66,17 @@ public class JavaFXUtils {
 		if(obj instanceof Image){
 			return (Image) obj;
 		}else if(obj instanceof  String){
-			return new Image((String) obj);
+			try {
+				return new Image((String) obj);
+			}catch(Exception e){
+				try {
+					InputStream in = World.getInstance().getResourceAsStream((String) obj);
+					return new Image(in);
+				}catch(Exception ee){
+					Executor.warn(TAG, "Can not create image, path=" + thing.getMetadata().getName());
+					return null;
+				}
+			}
 		}else if(obj instanceof InputStream){
 			return new Image((InputStream) obj);
 		}else{
@@ -67,7 +86,12 @@ public class JavaFXUtils {
 		
 	@SuppressWarnings("unchecked")
 	public static <T> T getObject(Thing thing, String name, ActionContext actionContext) {
-		return (T) UtilData.getData(thing.getString(name), actionContext);
+		String value  = thing.getStringBlankAsNull(name);
+		if(value != null) {
+			return (T) UtilData.getData(value, actionContext);
+		}else{
+			return null;
+		}
 	}
 
 	public static Insets getInsets(Thing thing, String name, ActionContext actionContext){
@@ -88,6 +112,15 @@ public class JavaFXUtils {
 			return new Insets(Double.parseDouble(strs[0]));
 		}else{
 			return new Insets(Double.parseDouble(strs[0]), Double.parseDouble(strs[1]), Double.parseDouble(strs[2]), Double.parseDouble(strs[3]));
+		}
+	}
+
+	public static String getString(Thing thing, String name, ActionContext actionContext){
+		try {
+			return xworker.util.UtilData.getString(thing, name, actionContext);
+		}catch(Exception e){
+			Executor.warn(TAG, "Get string '" + name + "' exception, path=" + thing.getMetadata().getPath(), e);
+			return thing.getString(name);
 		}
 	}
 
@@ -156,6 +189,13 @@ public class JavaFXUtils {
 	public static Point3D getPoint3D(String value) {
 		if(value == null || "".equals(value)) {
 			return null;
+		}
+		if("X_AXIS".equals(value)){
+			return Rotate.X_AXIS;
+		}else if("Y_AXIS".equals(value)){
+			return Rotate.Y_AXIS;
+		}else if("Z_AXIS".equals(value)){
+			return Rotate.Z_AXIS;
 		}
 		
 		double x, y, z = 0;
@@ -251,5 +291,37 @@ public class JavaFXUtils {
 
 		String[] strs = value.split("[,]");
 		return new Rectangle2D(Double.parseDouble(strs[0]), Double.parseDouble(strs[1]), Double.parseDouble(strs[2]), Double.parseDouble(strs[3]));
+	}
+
+	public static Node getGraphic(Thing thing, String name, ActionContext actionContext){
+		Object graphic = JavaFXUtils.getObject(thing, name, actionContext);
+		if(graphic instanceof Node){
+			return (Node) graphic;
+		}else if(graphic instanceof  String){
+			try{
+				return new ImageView((String) graphic);
+			}catch(Exception e){
+				try {
+					InputStream in = World.getInstance().getResourceAsStream((String) graphic);
+					if (in != null) {
+						Image image = new Image(in);
+						in.close();
+						return new ImageView(image);
+					}
+				}catch(Exception ee){
+				}
+				Executor.warn(TAG, "Create graphic from string  as imageview error, path=" + thing.getMetadata().getPath(), e);
+			}
+		}else if(graphic instanceof InputStream){
+			try{
+				Image image = new Image((InputStream) graphic);
+				return new ImageView(image);
+			}catch(Exception e){
+				Executor.warn(TAG, "Create graphic from inputstream as imageview error, path=" + thing.getMetadata().getPath(), e);
+			}
+		}
+
+		Executor.warn(TAG, "Can not careate graphic,name=" + name + ", path=\" + thing.getMetadata().getPath()");
+		return null;
 	}
 }

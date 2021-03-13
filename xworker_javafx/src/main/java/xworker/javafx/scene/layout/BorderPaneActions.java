@@ -22,7 +22,10 @@ public class BorderPaneActions {
 
         actionContext.peek().put("parent", node);
         for(Thing child : self.getChilds()){
-            child.doAction("create", actionContext);
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Node){
+                node.getChildren().add((Node) obj);
+            }
         }
 
         return node;

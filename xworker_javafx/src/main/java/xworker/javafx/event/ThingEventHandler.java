@@ -10,6 +10,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Window;
+import org.xmeta.World;
+import org.xmeta.util.ActionContainer;
+
+import java.util.Locale;
 
 public class ThingEventHandler implements EventHandler<Event> {
 	Thing thing;
@@ -26,6 +30,24 @@ public class ThingEventHandler implements EventHandler<Event> {
 			child.getAction().run(actionContext, "event", event);
 		}
 
+		String ref = thing.getStringBlankAsNull("ref");
+		if(ref != null){
+			int index = ref.indexOf(":");
+			if(index != -1){
+				ActionContainer actions = actionContext.getObject(ref.substring(0, index).trim());
+				String name = ref.substring(index + 1, ref.length()).trim();
+				if(actions != null){
+					actions.doAction(name, actionContext, "event", event);
+				}
+			}else{
+				Thing refThing = World.getInstance().getThing(ref);
+				if(refThing != null){
+					for (Thing child : refThing.getChilds()) {
+						child.getAction().run(actionContext, "event", event);
+					}
+				}
+			}
+		}
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -33,7 +55,11 @@ public class ThingEventHandler implements EventHandler<Event> {
 		Thing self = actionContext.getObject("self");
 
 		Object parent = actionContext.getObject("parent");
-		String eventName = self.getMetadata().getName();
+		String eventName = self.getString("type");
+		if(eventName == null || "".equals(eventName)){
+			return;
+		}
+
 		// EventType eventType = new EventType(self.getMetadata().getName());
 		EventHandler eventHandler = new ThingEventHandler(self, actionContext);
 
@@ -338,6 +364,21 @@ public class ThingEventHandler implements EventHandler<Event> {
 			ContextMenu obj = (ContextMenu) parent;
 			if("onAction".equals(eventName)) {
 				obj.setOnAction(eventHandler);
+			}
+		}
+
+		if(parent instanceof ChoiceBox){
+			ChoiceBox<?> obj = (ChoiceBox<?>) parent;
+			if ("onAction".equals(eventName)) {
+				obj.setOnAction(eventHandler);
+			}else if ("onHidden".equals(eventName)) {
+				obj.setOnHidden(eventHandler);
+			} else if ("onHiding".equals(eventName)) {
+				obj.setOnHiding(eventHandler);
+			} else if ("onShowing".equals(eventName)) {
+				obj.setOnShowing(eventHandler);
+			} else if ("onShown".equals(eventName)) {
+				obj.setOnShown(eventHandler);
 			}
 		}
 	}

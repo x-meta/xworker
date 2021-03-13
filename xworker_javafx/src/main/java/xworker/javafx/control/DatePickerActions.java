@@ -1,7 +1,10 @@
 package xworker.javafx.control;
 
+import java.time.LocalDate;
 import java.time.chrono.Chronology;
+import java.util.Date;
 
+import javafx.scene.control.ComboBoxBase;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -11,6 +14,13 @@ import xworker.javafx.util.JavaFXUtils;
 public class DatePickerActions {
 	public static void init(DatePicker picker, Thing thing, ActionContext actionContext) {
 		ComboBoxBaseActions.init(picker, thing, actionContext);
+
+		if(thing.valueExists("value")){
+			LocalDate value = JavaFXUtils.getObject(thing, "value", actionContext);
+			if(value != null){
+				picker.setValue(value);
+			}
+		}
 		
 		if(thing.valueExists("chronology")) {
 			Chronology chronology = JavaFXUtils.getChronology(thing.getString("chronology"));

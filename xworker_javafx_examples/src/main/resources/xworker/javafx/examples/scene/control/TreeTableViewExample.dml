@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="TreeTableViewExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode" _xmeta_id_="VBox">
+            <RunAction name="init" _xmeta_id_="RunAction">
+                <GroovyAction name="initItems" _xmeta_id_="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[def rootData = ["no":"000", "firstName": "Cusomers", "lastName":"", "checked":false];
+def datas = [
+    ["no":"001", "firstName": "John", "lastName":"Doe", "checked":true],
+    ["no":"002", "firstName": "Jane", "lastName":"Deer", "checked":false],
+    ["no":"003", "firstName": "Randall", "lastName":"Kovic", "checked":false],
+    ["no":"004", "firstName": "Irmelin", "lastName":"Satoshi", "checked":false],        
+];
+
+actionContext.g().put("rootData", rootData);
+actionContext.g().put("datas", datas);]]></code>
+                </GroovyAction>
+            </RunAction>
+            <TreeTableView name="treeTableView" _xmeta_id_="TreeTableView">
+                <TreeTableColumn name="firstNameColumn" prefWidth="150" text="First Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="firstName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="lsatNameCloumn" prefWidth="150" text="Last Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="lastName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeItem name="rooItem1" _xmeta_id_="TreeItem" value="var:rootData"></TreeItem>
+            </TreeTableView>
+            <TreeTableView name="treeTableView-placeholder">
+                <TreeTableColumn name="firstNameColumn" prefWidth="150" text="First Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="firstName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="lsatNameCloumn" prefWidth="150" text="Last Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="lastName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <Placeholder>
+                    <Label name="Label" text="No rows to display"></Label>
+                </Placeholder>
+            </TreeTableView>
+            <TreeTableView name="treeTableView_nested" _xmeta_id_="treeTableView-nested">
+                <TreeTableColumn name="customer" text="Customer">
+                    <TreeTableColumn name="customerNoColumn" _xmeta_id_="firstNameColumn1" descriptors="xworker.javafx.control.TreeTableView/@TreeTableColumn"
+                         editable="true" prefWidth="150" text="Customer No">
+                        <TreeMapPropertyValueFactory name="MapPropertyValueFactory" key="no"></TreeMapPropertyValueFactory>
+                    </TreeTableColumn>
+                    <TreeTableColumn name="nameColumn" descriptors="xworker.javafx.control.TreeTableView/@TreeTableColumn"
+                         text="Name">
+                        <TreeTableColumn name="firstNameColumn" descriptors="xworker.javafx.control.TreeTableView/@TreeTableColumn"
+                             editable="true" prefWidth="150" text="First Name">
+                            <TreeMapPropertyValueFactory name="MapValueFactory" key="firstName"></TreeMapPropertyValueFactory>
+                        </TreeTableColumn>
+                        <TreeTableColumn name="lastNameColumn" descriptors="xworker.javafx.control.TreeTableView/@TreeTableColumn"
+                             prefWidth="150" text="Last Name">
+                            <TreeMapPropertyValueFactory name="MapValueFactory" key="lastName"></TreeMapPropertyValueFactory>
+                        </TreeTableColumn>
+                    </TreeTableColumn>
+                </TreeTableColumn>
+                <TreeItem name="rooItemNested" _xmeta_id_="TreeItem" value="var:rootData"></TreeItem>
+            </TreeTableView>
+            <TreeTableView name="treeTableView_Editor" editable="true" cellSelectionEnabled="true">
+                <TreeTableColumn name="customerNoColumn" _xmeta_id_="firstNameColumn1" editable="true"
+                     prefWidth="150" text="Customer No">
+                    <TreeMapPropertyValueFactory name="MapPropertyValueFactory" key="no"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="firstNameColumn" editable="true" prefWidth="150" text="First Name">
+                    <TreeMapPropertyValueFactory name="MapValueFactory" key="firstName"></TreeMapPropertyValueFactory>
+                    <CellFactory>
+                        <TextFieldTreeTableCell>
+                            <StringConverter name="StringConverter"></StringConverter>
+                        </TextFieldTreeTableCell>
+                    </CellFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="lastNameColumn" editable="true" prefWidth="150" text="Last Name">
+                    <TreeMapPropertyValueFactory name="MapValueFactory" key="lastName"></TreeMapPropertyValueFactory>
+                    <CellFactory>
+                        <TextFieldTreeTableCell>
+                            <StringConverter name="StringConverter"></StringConverter>
+                        </TextFieldTreeTableCell>
+                    </CellFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="checkedItem" editable="true" text="Checked">
+                    <TreeMapPropertyValueFactory name="MapValueFactory" key="checked"></TreeMapPropertyValueFactory>
+                    <CellFactory>
+                        <CheckBoxTreeTableCell name="CheckBoxTreeTableCell"></CheckBoxTreeTableCell>
+                    </CellFactory>
+                </TreeTableColumn>
+                <TreeItem name="rooItemEdit" _xmeta_id_="TreeItem" value="var:rootData"></TreeItem>
+            </TreeTableView>
+            <TreeTableView name="treeTable-rowfactory" _xmeta_id_="TreeTableView1">
+                <TreeTableColumn name="firstNameColumn" prefWidth="150" text="First Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="firstName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeTableColumn name="lsatNameCloumn" prefWidth="150" text="Last Name">
+                    <TreeMapPropertyValueFactory name="TreeMapPropertyValueFactory" key="lastName"></TreeMapPropertyValueFactory>
+                </TreeTableColumn>
+                <TreeItem name="rooItemRow" _xmeta_id_="TreeItem" value="var:rootData"></TreeItem>
+                <RowFactory>
+                    <actions>
+                        <GroovyAction name="updateItem" _xmeta_id_="updatItem" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
+import javafx.scene.control.Label;
+
+if(item != null && item.get("no") == "000"){
+    //根节点特殊显示
+    def label = cell.getUserData();
+    if(label == null){
+        label = new Label();
+        cell.setUserData(label);
+        
+    }
+    
+    cell.setGraphic(label);
+    if(item == null || empty){
+        label.setText("");
+    }else{
+        label.setText(item.firstName);
+    }
+}]]></code>
+                        </GroovyAction>
+                    </actions>
+                </RowFactory>
+            </TreeTableView>
+            <RunAction _xmeta_id_="RunAction1">
+                <GroovyAction name="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[import javafx.scene.control.TreeItem;
+
+for(data in datas){
+    def item = new TreeItem(data);
+    rooItem1.getChildren().add(item);
+}
+
+for(data in datas){
+    def item = new TreeItem(data);
+    rooItemNested.getChildren().add(item);
+}
+
+for(data in datas){
+    def item = new TreeItem(data);
+    rooItemEdit.getChildren().add(item);
+}
+
+for(data in datas){
+    def item = new TreeItem(data);
+    rooItemRow.getChildren().add(item);
+}]]></code>
+                </GroovyAction>
+            </RunAction>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

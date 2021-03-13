@@ -53,7 +53,10 @@ public class ImageViewActions {
 
         actionContext.peek().put("parent", node);
         for(Thing child : self.getChilds()){
-            child.doAction("create", actionContext);
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Image){
+                node.setImage((Image) obj);
+            }
         }
 
         return node;

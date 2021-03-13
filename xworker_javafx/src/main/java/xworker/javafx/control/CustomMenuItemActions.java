@@ -40,4 +40,16 @@ public class CustomMenuItemActions {
 		
 		return item;
 	}
+
+	public static void createContent(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		CustomMenuItem parent = actionContext.getObject("parent");
+
+		for(Thing child : self.getChilds()){
+			Object obj = child.doAction("create", actionContext);
+			if(obj instanceof Node){
+				parent.setContent((Node) obj);
+			}
+		}
+	}
 }

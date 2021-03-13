@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="TableViewExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode" _xmeta_id_="VBox">
+            <RunAction name="init" _xmeta_id_="RunAction">
+                <GroovyAction name="initItems" _xmeta_id_="init" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[def datas = [
+    ["no":"001", "firstName": "John", "lastName":"Doe", "checked":true],
+    ["no":"002", "firstName": "Jane", "lastName":"Deer", "checked":false],
+    ["no":"003", "firstName": "Randall", "lastName":"Kovic", "checked":false],
+    ["no":"004", "firstName": "Irmelin", "lastName":"Satoshi", "checked":false],        
+];
+actionContext.g().put("datas", datas);]]></code>
+                </GroovyAction>
+            </RunAction>
+            <TableView name="tableView" _xmeta_id_="TableView" items="var:datas">
+                <TableColumn name="firstNameColumn" text="First Name" editable="true" prefWidth="150">
+                    <MapValueFactory name="MapValueFactory" key="firstName"></MapValueFactory>
+                </TableColumn>
+                <TableColumn name="lastNameColumn" text="Last Name" prefWidth="150">
+                    <MapValueFactory name="MapValueFactory" key="lastName"></MapValueFactory>
+                </TableColumn>
+            </TableView>
+            <TableView name="tableView-placeholder" _xmeta_id_="TableView1">
+                <TableColumn name="firstNameColumn" text="First Name" prefWidth="150">
+                    <MapValueFactory name="MapValueFactory" key="firstName"></MapValueFactory>
+                </TableColumn>
+                <TableColumn name="lastNameColumn" text="Last Name" prefWidth="150">
+                    <MapValueFactory name="MapValueFactory" key="lastName"></MapValueFactory>
+                </TableColumn>
+                <Placeholder>
+                    <Label name="Label" text="No rows to display"></Label>
+                </Placeholder>
+            </TableView>
+            <TableView name="tableView-Nested Columns" _xmeta_id_="TableView3" items="var:datas">
+                <TableColumn name="customer" text="Customer">
+                    <TableColumn name="customerNoColumn" _xmeta_id_="firstNameColumn1" descriptors="xworker.javafx.control.TableView/@TableColumn"
+                         text="Customer No" editable="true" prefWidth="150">
+                        <MapPropertyValueFactory name="MapPropertyValueFactory" key="no"></MapPropertyValueFactory>
+                    </TableColumn>
+                    <TableColumn name="nameColumn" text="Name">
+                        <TableColumn name="firstNameColumn" descriptors="xworker.javafx.control.TableView/@TableColumn"
+                             text="First Name" editable="true" prefWidth="150">
+                            <MapValueFactory name="MapValueFactory" key="firstName"></MapValueFactory>
+                        </TableColumn>
+                        <TableColumn name="lastNameColumn" descriptors="xworker.javafx.control.TableView/@TableColumn"
+                             text="Last Name" prefWidth="150">
+                            <MapValueFactory name="MapValueFactory" key="lastName"></MapValueFactory>
+                        </TableColumn>
+                    </TableColumn>
+                </TableColumn>
+            </TableView>
+            <TableView name="tableView-editor" _xmeta_id_="TableView2" editable="true" items="var:datas">
+                <TableColumn name="customerNoColumn" _xmeta_id_="firstNameColumn1" text="Customer No"
+                     editable="true" prefWidth="150">
+                    <MapPropertyValueFactory name="MapPropertyValueFactory" key="no"></MapPropertyValueFactory>
+                </TableColumn>
+                <TableColumn name="firstNameColumn" text="First Name" editable="true" prefWidth="150">
+                    <MapPropertyValueFactory name="MapValueFactory" key="firstName"></MapPropertyValueFactory>
+                    <CellFactory>
+                        <TextFieldTableCell>
+                            <StringConverter name="StringConverter"></StringConverter>
+                        </TextFieldTableCell>
+                    </CellFactory>
+                </TableColumn>
+                <TableColumn name="lastNameColumn" text="Last Name" editable="true" prefWidth="150">
+                    <MapPropertyValueFactory name="MapValueFactory" key="lastName"></MapPropertyValueFactory>
+                    <CellFactory>
+                        <TextFieldTableCell>
+                            <StringConverter name="StringConverter"></StringConverter>
+                        </TextFieldTableCell>
+                    </CellFactory>
+                </TableColumn>
+                <TableColumn name="checkedItem" text="Checked" editable="true">
+                    <MapPropertyValueFactory name="MapValueFactory" key="checked"></MapPropertyValueFactory>
+                    <CellFactory>
+                        <CheckBoxTableCell name="CheckBoxTableCell"></CheckBoxTableCell>
+                    </CellFactory>
+                </TableColumn>
+            </TableView>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

@@ -5,6 +5,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.javafx.scene.NodeActions;
@@ -46,6 +47,30 @@ public class ShapeActions {
         }
         if(thing.valueExists("strokeWidth")){
             node.setStrokeWidth(thing.getDouble("strokeWidth"));
+        }
+    }
+
+    public static void createFill(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object parent = actionContext.get("parent");
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Paint && parent instanceof Shape){
+                ((Shape) parent).setFill((Paint) obj);
+            }
+        }
+    }
+
+    public static void createStroke(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object parent = actionContext.get("parent");
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Paint && parent instanceof Shape){
+                ((Shape) parent).setFill((Paint) obj);
+            }
         }
     }
 }

@@ -4,6 +4,20 @@
     <actions>
         <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableViewActions"
              methodName="create"></JavaAction>
+        <GetObject name="getColumnResizePolicy" _xmeta_id_="18530" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="columnResizePolicy" usage="params"></GetObject>
+        <GetObject name="getFocusModel" _xmeta_id_="18531" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="focusModel" usage="params"></GetObject>
+        <GetObject name="getPlaceholder" _xmeta_id_="18532" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="placeholder" usage="params"></GetObject>
+        <GetObject name="getRoot" _xmeta_id_="18533" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="root" usage="params"></GetObject>
+        <GetObject name="getRowFactory" _xmeta_id_="18534" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="rowFactory" usage="params"></GetObject>
+        <GetShort name="getSortPolicy" _xmeta_id_="18535" descriptors="xworker.lang.actions.ActionUtil/@GetShort"
+             attributeName="sortPolicy" usage="params"></GetShort>
+        <GetObject name="getTreeColumn" _xmeta_id_="18536" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="treeColumn" usage="params"></GetObject>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
@@ -35,11 +49,17 @@
         <description><![CDATA[<p>A function which produces a TreeTableRow.</p>
 ]]></description>
     </attribute>
-    <attribute name="selectionModel">
+    <attribute name="selectionModel" inputtype="select">
         <description><![CDATA[<p>The SelectionModel provides the API through which it is possible to select single or multiple items within a TreeTableView, as well as inspect which rows have been selected by the user.</p>
 ]]></description>
+        <value name="SINGLE" value="SINGLE"></value>
+        <value name="MULTIPLE" value="MULTIPLE"></value>
     </attribute>
-    <attribute name="showRoot">
+    <attribute name="cellSelectionEnabled" inputtype="truefalseselect">
+        <description><![CDATA[<p>A boolean property used to represent whether the table is in row or cell selection modes.</p>
+]]></description>
+    </attribute>
+    <attribute name="showRoot" inputtype="truefalseselect">
         <description><![CDATA[<p>Property that represents whether or not the TreeTableView root node is visible.</p>
 ]]></description>
     </attribute>
@@ -85,4 +105,138 @@
     <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
         <Variable name="var" varName="_thingName_" className="javafx.scene.control.TreeTableView"></Variable>
     </VariablesDescs>
+    <thing name="ColumnResizePolicy">
+        <description><![CDATA[<p>This is the function called when the user completes a column-resize operation.</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>Boolean call(TableView.ResizeFeatures param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableViewActions"
+                 methodName="createColumnResizePolicy"></JavaAction>
+            <NOOP name="call">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TreeTableView.ResizeFeatures"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="Placeholder" extends="xworker.javafx.scene.Nodes">
+        <description><![CDATA[<p>This Node is shown to the user when the table has no content to show.</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableViewActions"
+                 methodName="createPlaceholder"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="RowFactory">
+        <description><![CDATA[<p>A function which produces a TableRow.&nbsp;</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>TableRow call(TableView param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableViewActions"
+                 methodName="createRowFactory"></JavaAction>
+            <JavaAction name="call" outerClassName="xworker.javafx.control.TreeTableViewActions"
+                 methodName="createDefaultRowFactory" interpretationType="Self" varScope="Local">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TreeTableView"></param>
+                </ins>
+            </JavaAction>
+            <NOOP name="updateItem">
+                <ins>
+                    <param name="item"></param>
+                    <param name="empty" type="java.lang.Boolean"></param>
+                    <param name="cell" type="javafx.scene.control.TreeCell"></param>
+                </ins>
+            </NOOP>
+            <GetObject name="getDisclosureNode" _xmeta_id_="11457" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="disclosureNode" usage="params"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="disclosureNode">
+            <description><![CDATA[<p>The disclosure node is commonly seen represented as a triangle that rotates on screen to indicate whether or not the TreeItem that it is placed beside is expanded or collapsed.</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+        <thing name="DisclosureNode" extends="xworker.javafx.scene.Nodes">
+            <description><![CDATA[<p>The disclosure node is commonly seen represented as a triangle that rotates on screen to indicate whether or not the TreeItem that it is placed beside is expanded or collapsed.</p>
+]]></description>
+            <actions>
+                <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableRowActions"
+                     methodName="createDisclosureNode"></JavaAction>
+            </actions>
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+    </thing>
+    <thing name="SortPolicy">
+        <description><![CDATA[<p>The sort policy specifies how sorting in this TableView should be performed.</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>Boolean call(TableView param)</strong></li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeTableViewActions"
+                 methodName="createSortPolicy"></JavaAction>
+            <NOOP name="call">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TreeTableView"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="SelectionChangeListener" extends="xworker.javafx.control.TreeView/@SelectionChangeListener"
+         inheritDescription="true"></thing>
 </thing>

@@ -1,8 +1,5 @@
 package xworker.javafx.control;
 
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
-
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
@@ -11,6 +8,8 @@ import javafx.scene.control.OverrunStyle;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
 
 public class LabeledActions {
@@ -60,7 +59,10 @@ public class LabeledActions {
             labeled.setTextOverrun(OverrunStyle.valueOf(thing.getString("textOverrun")));
         }
         if(thing.valueExists("text")){
-            labeled.setText(thing.getString("text"));
+            String text = JavaFXUtils.getString(thing, "text", actionContext);
+            if(text != null) {
+                labeled.setText(text);
+            }
         }
         if(thing.valueExists("underline")){
             labeled.setUnderline(thing.getBoolean("underline"));
@@ -69,4 +71,29 @@ public class LabeledActions {
             labeled.setWrapText(thing.getBoolean("wrapText"));
         }
 	}
+
+	public static void createTextFill(ActionContext actionContext){
+	    Thing self = actionContext.getObject("self");
+	    Object parent = actionContext.get("parent");
+
+	    for(Thing child : self.getChilds()){
+	        Object obj = child.doAction("create", actionContext);
+	        if(obj instanceof Paint && parent instanceof Labeled){
+                ((Labeled) parent).setTextFill((Paint) obj);
+            }
+        }
+
+    }
+
+    public static void createGraphic(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object parent = actionContext.get("parent");
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Node && parent instanceof Labeled){
+                ((Labeled) parent).setGraphic((Node) obj);
+            }
+        }
+    }
 }

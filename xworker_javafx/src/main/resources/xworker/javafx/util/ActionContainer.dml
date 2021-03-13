@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ActionContainer" _xmeta_id_="actions" descriptors="xworker.lang.MetaDescriptor3,xworker.lang.MetaDescriptor3/@thing"
+     extends="xworker.lang.MetaDescriptor3/@actions" group="_actions">
+    <description><![CDATA[<p>动作的容器（ActionContainer），可以定义一些动作在运行后期被调用。</p>
+
+<p>比如一个工作台（Workbentch）的界面通常需要提供打开视图、打开编辑器等功能，这些功能则可以定义在动作容器中。调用动作的方法是&lt;动作容器名&gt;.doAction(&lt;name&gt;, ....)，如workbentchActions.doAction(&quot;openView&quot;, [&quot;viewName&quot;:&quot;outline&quot;])。</p>
+
+<p>动作容器的方法主要有：</p>
+
+<ul>
+	<li>public Object doAction(String name)</li>
+	<li>public Object doAction(String name, ActionContext context)</li>
+	<li>public Object doAction(String name, Map&lt;String, Object&gt; parameters)</li>
+	<li>public Object doAction(String name, ActionContext context, Map&lt;String, Object&gt; parameters)</li>
+</ul>
+
+<p><strong>注意：</strong></p>
+
+<p>&nbsp;&nbsp; 避免添加名为<span style="color:rgb(255, 0, 0)"><strong>init</strong></span>的子动作，因为init是控件事物自己的初始化方法，会和其它冲突。</p>]]></description>
+    <actions>
+        <JavaAction name="create" descriptors="xworker.lang.actions.JavaAction" throwException="false"
+             outerClassName="xworker.javafx.util.RunAction" methodName="createActionContainer"></JavaAction>
+    </actions>
+    <attribute name="name" labelAlign="" labelVAlign=""></attribute>
+    <attribute name="label" _xmeta_id_="labe" labelAlign="" labelVAlign=""></attribute>
+    <attribute name="extends" inputtype="dataSelector" size="60" labelAlign="" labelVAlign=""></attribute>
+    <attribute name="log" inputtype="truefalse" default="false" description="&lt;p&gt;调用ActionContainer的方法时，如果方法不存在，是否打印日志。&lt;/p&gt;"></attribute>
+    <attribute name="description" inputtype="html" labelAlign="" labelVAlign=""></attribute>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="var" _xmeta_id_="shell" varName="ognl:thing.getMetadata().getName()"
+             scope="" type="actionContainer" thing="var:thing"></Variable>
+    </VariablesDescs>
+</thing>

@@ -1,35 +1,42 @@
 package xworker.javafx.util.converter;
 
-import java.util.List;
-
+import javafx.util.StringConverter;
+import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
-import javafx.util.StringConverter;
+public class ThingStringConverter extends StringConverter<Object> {
+    Thing thing;
+    ActionContext actionContext;
 
-public class ThingStringConverter extends StringConverter<Object>{
-	List<Thing> items;
-	
-	public ThingStringConverter(List<Thing> items) {
-		this.items = items;
-	}
-	
-	@Override
-	public String toString(Object object) {
-		if(object instanceof Thing) {
-			return ((Thing) object).getMetadata().getLabel();
-		}else {
-			return String.valueOf(object);
-		}
-	}
+    public ThingStringConverter(Thing thing, ActionContext actionContext){
+        this.thing = thing;
+        this.actionContext = actionContext;
+    }
 
-	@Override
-	public Object fromString(String string) {
-		for(Thing item : items) {
-			if(item.getMetadata().getLabel().equals(string)) {
-				return item;
-			}
-		}
-		
-		return null;
-	}
+    @Override
+    public String toString(Object object) {
+        return thing.doAction("toString", actionContext, "object", object);
+    }
+
+    @Override
+    public Object fromString(String string) {
+        return thing.doAction("fromString", actionContext, "string", string);
+    }
+
+    public static ThingStringConverter create(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+
+        ThingStringConverter converter = new ThingStringConverter(self, actionContext);
+        actionContext.g().put(self.getMetadata().getName(), converter);
+
+        return converter;
+    }
+
+    public static String defaultToString(ActionContext actionContext){
+        return String.valueOf(actionContext.get("object"));
+    }
+
+    public static Object defaultFromString(ActionContext actionContext){
+        return actionContext.get("string");
+    }
 }

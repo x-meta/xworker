@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="LinearGradient" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javafx.scene.paint.Paint">
+    <description><![CDATA[<p>The&nbsp;LinearGradient&nbsp;class fills a shape with a linear color gradient pattern. The user may specify two or more gradient colors, and this Paint will provide an interpolation between each color.</p>
+
+<p>两种创建方式，优先级如下：</p>
+
+<ol>
+	<li>如果valueOf属性不为空，那么通过LinearGradient.valueOf()创建。</li>
+	<li>根据属性创建。</li>
+</ol>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.javafx.scene.paint.LinearGradientActions"
+             methodName="create"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="startX">
+        <description><![CDATA[<p>the X coordinate of the gradient axis start point</p>
+]]></description>
+    </attribute>
+    <attribute name="startY">
+        <description><![CDATA[<p><span style="text-align: left; color: rgb(53, 56, 51); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: &quot;DejaVu Sans Mono&quot;, monospace; font-size: 14px; font-style: normal; font-weight: 400; word-spacing: 0px; float: none; display: inline !important; white-space: normal; orphans: 2; widows: 2; background-color: rgb(255, 255, 255); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;"><font face="Courier New">the Y coordinate of the gradient axis start point</font></span></p>
+]]></description>
+    </attribute>
+    <attribute name="endX">
+        <description><![CDATA[<p>the X coordinate of the gradient axis end point</p>
+]]></description>
+    </attribute>
+    <attribute name="endY">
+        <description><![CDATA[<p>the Y coordinate of the gradient axis end point</p>
+]]></description>
+    </attribute>
+    <attribute name="proportional" inputtype="truefalseselect" default="true">
+        <description><![CDATA[<p>&nbsp;whether the coordinates are proportional to the shape which this gradient fills</p>
+]]></description>
+    </attribute>
+    <attribute name="cycleMethod" inputtype="select" default="REPEAT">
+        <description><![CDATA[<p>cycle method applied to the gradient</p>
+]]></description>
+        <value name="NO_CYCLE" value="NO_CYCLE"></value>
+        <value name="REFLECT" value="REFLECT"></value>
+        <value name="REPEAT" value="REPEAT"></value>
+    </attribute>
+    <attribute name="valueOf" inputtype="textarea">
+        <description><![CDATA[<pre class="brush:plain;">
+Creates a linear gradient value from a string representation.
+The format of the string representation is based on JavaFX CSS specification for linear gradient which is
+
+ linear-gradient( [ [from &lt;point&gt; to &lt;point&gt;| [ to &lt;side-or-corner&gt;], ]? [ [ repeat | reflect ], ]? &lt;color-stop&gt;[, &lt;color-stop&gt;]+)
+ 
+where
+ &lt;side-or-corner&gt; = [left | right] || [top | bottom] 
+ &lt;point&gt; = [ [ &lt;length&gt; &lt;length&gt; ] | [ &lt;percentage&gt; | &lt;percentage&gt; ] ]
+ &lt;color-stop&gt; = [ &lt;color&gt; [ &lt;percentage&gt; | &lt;length&gt;]? ]
+ 
+Currently length can be only specified in px, the specification of unit can be omited. Format of color representation is the one used in Color.web(String color). The linear-gradient keyword can be omited. For additional information about the format of string representation, see the CSS Reference Guide.
+
+Examples:
+
+ LinearGradient g
+      = LinearGradient.valueOf(&quot;linear-gradient(from 0% 0% to 100% 100%, red  0% , blue 30%,  black 100%)&quot;);
+ LinearGradient g
+      = LinearGradient.valueOf(&quot;from 0% 0% to 100% 100%, red  0% , blue 30%,  black 100%&quot;);
+ LinearGradient g
+      = LinearGradient.valueOf(&quot;linear-gradient(from 0px 0px to 200px 0px, #00ff00 0%, 0xff0000 50%, 0x1122ff40 100%)&quot;);
+ LinearGradient g
+      = LinearGradient.valueOf(&quot;from 0px 0px to 200px 0px, #00ff00 0%, 0xff0000 50%, 0x1122ff40 100%&quot;);</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Stop">
+        <description><![CDATA[<p>Defines one element of the ramp of colors to use on a gradient. For more information see&nbsp;javafx.scene.paint.LinearGradient&nbsp;and&nbsp;javafx.scene.paint.RadialGradient.</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.scene.paint.LinearGradientActions"
+                 methodName="createStop"></JavaAction>
+            <GetObject name="getColor" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="color"></GetObject>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="offset">
+            <description><![CDATA[<p>Stop&#39;s position (ranging from&nbsp;0&nbsp;to&nbsp;1</p>
+]]></description>
+        </attribute>
+        <attribute name="color" inputtype="openWindow" size="50" inputattrs="xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|prefix=var%3A,descriptor=xworker.javafx.scene.paint.Color,seperator=%2C,returnType=path,append=false">
+            <description><![CDATA[<p>支持Color.valueOf()。</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

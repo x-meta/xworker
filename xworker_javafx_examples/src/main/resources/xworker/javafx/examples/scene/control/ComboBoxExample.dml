@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="ComboBoxExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <HBox name="rootNode" _xmeta_id_="HBox" spacing="5">
+            <ComboBox name="ComboBox1" _xmeta_id_="ComboBox" editable="true" promptText="Please select a choice">
+                <ThingItems>
+                    <Item name="Choice 1"></Item>
+                    <Item name="Choice 2"></Item>
+                    <Item name="Choice 3"></Item>
+                </ThingItems>
+            </ComboBox>
+            <ComboBox name="colorComboBox" _xmeta_id_="ColorComboBox">
+                <CellFactory>
+                    <ListCell>
+                        <actions>
+                            <GroovyAction name="updateItem" _xmeta_id_="updatItem" descriptors="xworker.lang.actions.GroovyAction">
+                                <code><![CDATA[import javafx.scene.shape.Rectangle;
+
+def rect = cell.getUserData();
+if(rect == null){
+    rect = new Rectangle(10, 10);
+    cell.setUserData(rect);
+}
+
+if(item == null || empty){
+    cell.setGraphic(null);
+    cell.setText("");
+}else{
+    rect.setFill(item.color);
+    cell.setGraphic(rect);
+    cell.setText(item.name);
+}]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ListCell>
+                </CellFactory>
+                <StringConverter>
+                    <actions>
+                        <GroovyAction name="fromString" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[//colors在init模型定义，是List<Map<String, Color>>。
+for(color in colors){
+    if(color.name == string){
+        return color;
+    }
+}
+
+return null;]]></code>
+                        </GroovyAction>
+                        <GroovyAction name="toString" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[//object在init中定义，["name":xx, "color":xx]
+if(object == null){
+    return "";
+}else{
+    return object.name;
+}]]></code>
+                        </GroovyAction>
+                    </actions>
+                </StringConverter>
+                <ButtonCell>
+                    <ListCell>
+                        <actions>
+                            <GroovyAction name="updateItem" _xmeta_id_="updatItem" descriptors="xworker.lang.actions.GroovyAction">
+                                <code><![CDATA[import javafx.scene.shape.Rectangle;
+
+def rect = cell.getUserData();
+if(rect == null){
+    rect = new Rectangle(10, 10);
+    cell.setUserData(rect);
+}
+
+if(item == null || empty){
+    cell.setGraphic(null);
+    cell.setText("");
+}else{
+    rect.setFill(item.color);
+    cell.setGraphic(rect);
+    cell.setText(item.name);
+}]]></code>
+                            </GroovyAction>
+                        </actions>
+                    </ListCell>
+                </ButtonCell>
+                <ComboBoxEventHandler name="onAction" type="onAction">
+                    <GroovyAction name="GroovyAction" descriptors="xworker.lang.actions.GroovyAction"
+                         code="println colorComboBox.getValue();"></GroovyAction>
+                </ComboBoxEventHandler>
+            </ComboBox>
+            <ComboBox name="CheckComboBox" _xmeta_id_="ComboBox1" promptText="Please select a choice">
+                <ThingItems>
+                    <Item name="Choice 1"></Item>
+                    <Item name="Choice 2"></Item>
+                    <Item name="Choice 3"></Item>
+                </ThingItems>
+                <CellFactory>
+                    <CheckBoxListCell>
+                        <SelectedStateCallback>
+                            <actions descriptors="MetaThing/@actions">
+                                <GroovyAction name="call" descriptors="xworker.lang.actions.GroovyAction">
+                                    <code><![CDATA[import javafx.beans.property.SimpleBooleanProperty;
+
+def value = param.getData("value");
+println value;
+if(value == null){
+    value = new SimpleBooleanProperty();
+    param.setData("value", value);
+}
+
+return value;]]></code>
+                                </GroovyAction>
+                            </actions>
+                        </SelectedStateCallback>
+                        <ThingValueStringConverter name="ThingValueStringConverter" thing="xworker.javafx.examples.scene.control.ComboBoxExample/@Nodes/@HBox/@ComboBox1/@ThingItems"
+                             valueThingName="Item"></ThingValueStringConverter>
+                    </CheckBoxListCell>
+                </CellFactory>
+            </ComboBox>
+            <RunAction name="init">
+                <GroovyAction name="GroovyAction" descriptors="xworker.lang.actions.GroovyAction">
+                    <code><![CDATA[import javafx.scene.paint.Color;
+
+def colors = [
+    ["name":"ALICEBLUE", "color": Color.ALICEBLUE],
+    ["name":"ANTIQUEWHITE", "color": Color.ANTIQUEWHITE],
+    ["name":"AQUA", "color": Color.AQUA],
+    ["name":"AQUAMARINE", "color": Color.AQUAMARINE],
+    ["name":"AZURE", "color": Color.AZURE],
+    ["name":"BEIGE", "color": Color.BEIGE],
+    ["name":"BISQUE", "color": Color.BISQUE],
+    ["name":"BLACK", "color": Color.BLACK],
+    ["name":"BLANCHEDALMOND", "color": Color.BLANCHEDALMOND]
+]
+colorComboBox.getItems().addAll(colors);
+actionContext.g().put("colors", colors);]]></code>
+                </GroovyAction>
+            </RunAction>
+            <ComboBox name="ChoiceComboBox" _xmeta_id_="ComboBox11" promptText="Please select a choice">
+                <ThingItems>
+                    <Item name="Choice 1"></Item>
+                    <Item name="Choice 2"></Item>
+                    <Item name="Choice 3"></Item>
+                </ThingItems>
+                <CellFactory>
+                    <ChoiceBoxListCell>
+                        <ThingValueStringConverter name="ThingValueStringConverter" thing="xworker.javafx.examples.scene.control.ComboBoxExample/@Nodes/@HBox/@ComboBox1/@ThingItems"
+                             valueThingName="Item"></ThingValueStringConverter>
+                    </ChoiceBoxListCell>
+                </CellFactory>
+            </ComboBox>
+            <ComboBox name="ComboCellComboBox" _xmeta_id_="ComboBox111" promptText="Please select a choice">
+                <ThingItems>
+                    <Item name="Choice 1"></Item>
+                    <Item name="Choice 2"></Item>
+                    <Item name="Choice 3"></Item>
+                </ThingItems>
+                <CellFactory>
+                    <ComboBoxListCell>
+                        <ThingValueStringConverter name="ThingValueStringConverter" thing="xworker.javafx.examples.scene.control.ComboBoxExample/@Nodes/@HBox/@ComboBox1/@ThingItems"
+                             valueThingName="Item"></ThingValueStringConverter>
+                    </ComboBoxListCell>
+                </CellFactory>
+            </ComboBox>
+        </HBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

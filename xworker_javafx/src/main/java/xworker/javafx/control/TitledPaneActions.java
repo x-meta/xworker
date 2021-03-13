@@ -5,6 +5,7 @@ import org.xmeta.Thing;
 
 import javafx.scene.Node;
 import javafx.scene.control.TitledPane;
+import xworker.javafx.util.JavaFXUtils;
 
 public class TitledPaneActions {
 	public static void init(TitledPane titledPane, Thing thing, ActionContext actionContext) {
@@ -24,8 +25,9 @@ public class TitledPaneActions {
 	public static TitledPane create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		//Object parent = actionContext.getObject("parent");
-		
-		TitledPane pane = new TitledPane();
+
+		String title = JavaFXUtils.getString(self, "title", actionContext);
+		TitledPane pane = title != null ? new TitledPane(title, null) : new TitledPane();
 		init(pane, self, actionContext);
 		actionContext.g().put(self.getMetadata().getName(), pane);
 		

@@ -1,11 +1,10 @@
 package xworker.javafx.control;
 
+import javafx.scene.Node;
+import javafx.scene.control.MenuItem;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
-
-import javafx.scene.Node;
-import javafx.scene.control.MenuItem;
 import xworker.javafx.util.JavaFXUtils;
 
 public class MenuItemActions {
@@ -17,7 +16,7 @@ public class MenuItemActions {
             item.setDisable(thing.getBoolean("disable"));
         }
         if(thing.valueExists("graphic")){
-        	Node graphic = (Node) UtilData.getData(thing.getString("graphic"), actionContext);
+        	Node graphic = JavaFXUtils.getGraphic(thing, "graphic", actionContext);
         	if(graphic != null) {
         		item.setGraphic(graphic);
         	}
@@ -53,4 +52,16 @@ public class MenuItemActions {
 		
 		return item;
 	}
+
+    public static void createGraphic(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object parent = actionContext.get("parent");
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Node && parent instanceof MenuItem){
+                ((MenuItem) parent).setGraphic((Node) obj);
+            }
+        }
+    }
 }

@@ -303,7 +303,8 @@ public class ThingEditorChildActions {
 	        	subItem = new TreeItem((TreeItem) item, SWT.NONE);
 	        }
 	        
-	        subItem.setText((String) g.get("__name__"));	        
+	        subItem.setText((String) g.get("__name__"));
+	        actionContext.peek().put("parent", subItem.getParent());
 	        Image img = (Image) ResourceManager.createIamge("icons/folder.png", actionContext);
 			if(img != null){
 			    subItem.setImage(img);

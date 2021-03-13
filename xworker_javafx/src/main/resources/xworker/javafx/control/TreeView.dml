@@ -4,42 +4,45 @@
     <description><![CDATA[<p>The TreeView control provides a view on to a tree root (of type&nbsp;TreeItem). By using a TreeView, it is possible to drill down into the children of a TreeItem, recursively until a TreeItem has no children (that is, it is a&nbsp;leaf&nbsp;node in the tree). To facilitate this, unlike controls like&nbsp;ListView, in TreeView it is necessary to&nbsp;only&nbsp;specify the&nbsp;root&nbsp;node.</p>
 ]]></description>
     <actions>
-        <JavaAction name="create" outerClassName="xworker.javafx.control." methodName="createTreeViewActions"></JavaAction>
+        <JavaAction name="create" outerClassName="xworker.javafx.control.TreeViewActions"
+             methodName="create"></JavaAction>
     </actions>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
-    <attribute name="cellFactory" group="Region">
+    <attribute name="cellFactory">
         <description><![CDATA[<p>Represents the cell factory that will be used for creating TreeCells, which are used to represent items in the TreeView.</p>
 ]]></description>
     </attribute>
-    <attribute name="editable" inputtype="truefalseselect" group="Region">
+    <attribute name="editable" inputtype="truefalseselect">
         <description><![CDATA[<p>Specifies whether this TreeView is editable - only if the TreeView and the TreeCells within it are both editable will a TreeCell be able to go into their editing state.</p>
 ]]></description>
     </attribute>
-    <attribute name="fixedCellSize" group="Region">
+    <attribute name="fixedCellSize">
         <description><![CDATA[<p>Specifies whether this control has cells that are a fixed height (of the specified value).</p>
 ]]></description>
     </attribute>
-    <attribute name="focusModel" group="Region">
+    <attribute name="focusModel">
         <description><![CDATA[<p>The FocusModel provides the API through which it is possible to control focus on zero or one rows of the TreeView.</p>
 ]]></description>
     </attribute>
-    <attribute name="root" group="Region">
+    <attribute name="root">
         <description><![CDATA[<p>Property representing the root node of the TreeView.</p>
 ]]></description>
     </attribute>
-    <attribute name="selectionModel" group="Region">
+    <attribute name="selectionMode" _xmeta_id_="selectionModel" inputtype="select">
         <description><![CDATA[<p>The SelectionModel provides the API through which it is possible to select single or multiple items within a TreeView, as well as inspect which rows have been selected by the user.</p>
 ]]></description>
+        <value name="MULTIPLE" value="MULTIPLE"></value>
+        <value name="SINGLE" value="SINGLE"></value>
     </attribute>
-    <attribute name="showRoot" inputtype="truefalseselect" group="Region">
+    <attribute name="showRoot" inputtype="truefalseselect">
         <description><![CDATA[<p>Property that represents whether or not the TreeView root node is visible.</p>
 ]]></description>
     </attribute>
     <attribute name="description" inputtype="html"></attribute>
     <thing name="TreeItem" extends="xworker.javafx.control.TreeItem" inheritDescription="true"></thing>
     <thing name="TreeViewEventHandler" _xmeta_id_="EventHandler" descriptors="xworker.lang.MetaDescriptor3"
-         extends="xworker.lang.actions.Actions">
+         extends="xworker.lang.actions.Actions" group="events">
         <actions>
             <JavaAction name="create" outerClassName="xworker.javafx.event.ThingEventHandler"
                  methodName="create"></JavaAction>
@@ -60,4 +63,71 @@
     <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
         <Variable name="var" varName="_thingName_" className="javafx.scene.control.TreeView"></Variable>
     </VariablesDescs>
+    <thing name="CellFactory" extends="xworker.javafx.control.TreeCells">
+        <description><![CDATA[<p>Represents the cell factory that will be used for creating TreeCells, which are used to represent items in the TreeView.</p>
+
+<p><strong>需要实现的方法：</strong></p>
+
+<ul>
+	<li><strong>TreeCell&lt;T&gt; call(TreeView&lt;T&gt; param)</strong><br />
+	创建TableCell，默认实现通过子节点创建。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeViewActions"
+                 methodName="createCellFactory"></JavaAction>
+            <JavaAction name="call" _xmeta_id_="call1" outerClassName="xworker.javafx.control.TreeViewActions"
+                 methodName="defaultCreateCell">
+                <ins>
+                    <param name="param" type="javafx.scene.control.TreeView"></param>
+                </ins>
+            </JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="SelectionChangeListener">
+        <description><![CDATA[<p><strong>需要重写下面的方法：</strong></p>
+
+<ul>
+	<li><strong>&nbsp;void changed(ObservableValue&lt;? extends T&gt; observable, T oldValue, T newValue)</strong></li>
+</ul>
+]]></description>
+        <actions _xmeta_id_="actions1">
+            <JavaAction name="create" outerClassName="xworker.javafx.control.TreeViewActions"
+                 methodName="createSelectionChangeListener"></JavaAction>
+            <NOOP name="changed">
+                <ins>
+                    <param name="observable"></param>
+                    <param name="oldValue"></param>
+                    <param name="newValue"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html">
+            <description><![CDATA[
+]]></description>
+        </attribute>
+        <thing name="actions" descriptors="xworker.lang.MetaDescriptor2/@thing" label="Actions"
+             extends="xworker.lang.actions.Actions" many="true" editCols="2" zh_label="动作"
+             inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
 </thing>

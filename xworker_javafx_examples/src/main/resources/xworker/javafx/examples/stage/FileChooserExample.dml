@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="FileChooserExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <HBox name="rootNode" _xmeta_id_="HBox">
+            <Label name="label"></Label>
+            <Button text="Select File">
+                <ButtonBaseEventHandler name="onAction" _xmeta_id_="ButtonBaseEventHandler" type="onAction">
+                    <ShowFileChooser descriptors="xworker.javafx.JavaFXActions/@ShowFileChooser">
+                        <actions>
+                            <GroovyAction name="onResult" descriptors="xworker.lang.actions.GroovyAction"
+                                 code="label.setText(&quot;Selected &quot; + result);"></GroovyAction>
+                        </actions>
+                    </ShowFileChooser>
+                </ButtonBaseEventHandler>
+            </Button>
+            <Button _xmeta_id_="Button1" text="Select Files">
+                <ButtonBaseEventHandler name="onAction" type="onAction">
+                    <ShowFileChooser descriptors="xworker.javafx.JavaFXActions/@ShowFileChooser"
+                         type="OpenMultiple">
+                        <selectedExtensionFilter><![CDATA[Text Files, *.txt
+Image Files,*.png, *.jpg, *.gif
+Audio Files, *.wav,"*.mp3,"*.aac
+All Files, *.*]]></selectedExtensionFilter>
+                        <actions>
+                            <GroovyAction name="onResult" descriptors="xworker.lang.actions.GroovyAction"
+                                 code="label.setText(&quot;Selected &quot; + result);"></GroovyAction>
+                        </actions>
+                    </ShowFileChooser>
+                </ButtonBaseEventHandler>
+            </Button>
+            <Button _xmeta_id_="Button2" text="Save File">
+                <ButtonBaseEventHandler name="onAction" type="onAction">
+                    <ShowFileChooser descriptors="xworker.javafx.JavaFXActions/@ShowFileChooser"
+                         type="Save">
+                        <actions>
+                            <GroovyAction name="onResult" descriptors="xworker.lang.actions.GroovyAction"
+                                 code="label.setText(&quot;Selected &quot; + result);"></GroovyAction>
+                        </actions>
+                    </ShowFileChooser>
+                </ButtonBaseEventHandler>
+            </Button>
+        </HBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

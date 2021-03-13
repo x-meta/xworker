@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="JavaFXActions" descriptors="xworker.lang.MetaDescriptor3" group="javafx"
+     th_createIndex="true" th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <description><![CDATA[<p>JavaFX相关的动作。</p>
+]]></description>
+    <thing name="ShowDialog" extends="xworker.lang.actions.SelfAction" group="javafx">
+        <description><![CDATA[<p>调用Dialog的showAndWait()方法，如果结果isPresent()==true，那么执行onResult(Dialog dialog, Object result)方法，如果result是ButtonType，那么根据ButtonType可以执行下面的方法。</p>
+
+<ul>
+	<li>apply</li>
+	<li>cancel</li>
+	<li>close</li>
+	<li>finish</li>
+	<li>next</li>
+	<li>no</li>
+	<li>ok</li>
+	<li>previous</li>
+	<li>yes</li>
+</ul>
+
+<p><strong>获取Dialog的优先级</strong></p>
+
+<ol>
+	<li>通过getDialog()方法获取，默认dialog属性设置。</li>
+	<li>通过Dialogs子节点定义的Dialog模型，此时每次都会创建新的Dialog。</li>
+</ol>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.javafx.actions.DialogActions" methodName="showDialog"></JavaAction>
+            <GetObject name="getDialog" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dialog"></GetObject>
+            <GetThing name="getDialogThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 childThingName="Dialogs" childThingFirstChild="true"></GetThing>
+            <NOOP name="apply"></NOOP>
+            <NOOP name="cancel"></NOOP>
+            <NOOP name="close"></NOOP>
+            <NOOP name="finish"></NOOP>
+            <NOOP name="next"></NOOP>
+            <NOOP name="no"></NOOP>
+            <NOOP name="ok"></NOOP>
+            <NOOP name="previous"></NOOP>
+            <NOOP name="yes"></NOOP>
+            <NOOP name="onResult"></NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="dialog" inputtype="openWindow" size="40" inputattrs="xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|prefix=var%3A,descriptor=xworker.javafx.control.Dialog,seperator=%2C,returnType=name,append=false"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Dialogs" extends="xworker.javafx.scene.Dialogs" inheritDescription="true"></thing>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="ShowFileChooser" extends="xworker.lang.actions.SelfAction" group="javafx">
+        <description><![CDATA[<p>Provides support for standard platform file dialogs. These dialogs have look and feel of the platform UI components which is independent of JavaFX.</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>void onResult(File or List&lt;File&gt; result)&nbsp;</strong><br />
+	打开FileChoose之后的返回值。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <GetString name="getTitle" _xmeta_id_="17047" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetString name="getType" _xmeta_id_="17048" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="type" usage="params"></GetString>
+            <GetFile name="getInitialDirectory" _xmeta_id_="17049" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="initialDirectory" usage="params"></GetFile>
+            <GetString name="getInitialFileName" _xmeta_id_="17050" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="initialFileName" usage="params"></GetString>
+            <GetString name="getSelectedExtensionFilter" _xmeta_id_="17051" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="selectedExtensionFilter" usage="params"></GetString>
+            <JavaAction name="run" outerClassName="xworker.javafx.stage.FileChooserActions"
+                 methodName="run"></JavaAction>
+            <GetObject name="getOwnerWindow" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="ownerWindow"></GetObject>
+            <NOOP name="onResult"></NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="title" size="50">
+            <description><![CDATA[<p>The title of the displayed file dialog.</p>
+]]></description>
+        </attribute>
+        <attribute name="type" inputtype="select" default="Open">
+            <value name="Open" value="Open"></value>
+            <value name="OpenMultiple" value="OpenMultiple"></value>
+            <value name="Save" value="Save"></value>
+        </attribute>
+        <attribute name="initialDirectory" inputtype="filePath" size="60">
+            <description><![CDATA[<p>The initial directory for the displayed file dialog.</p>
+]]></description>
+        </attribute>
+        <attribute name="initialFileName" size="60">
+            <description><![CDATA[<p>The initial file name for the displayed dialog.</p>
+]]></description>
+        </attribute>
+        <attribute name="selectedExtensionFilter" inputtype="textarea">
+            <description><![CDATA[<p>This property is used to pre-select the extension filter for the next displayed dialog and to read the user-selected extension filter from the dismissed dialog.</p>
+
+<p>字符串格式，如：</p>
+
+<pre class="brush:plain;">
+Text Files, *.txt
+Image Files,*.png, *.jpg, *.gif
+Audio Files, *.wav,&quot;*.mp3,&quot;*.aac
+All Files, *.*</pre>
+
+<p>&nbsp;</p>
+]]></description>
+        </attribute>
+        <attribute name="ownerWindow">
+            <description><![CDATA[<p>the owner window of the displayed file dialog</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="ShowDirectoryChooser" extends="xworker.lang.actions.SelfAction" group="javafx">
+        <description><![CDATA[<p>Provides support for standard directory chooser dialogs. These dialogs have look and feel of the platform UI components which is independent of JavaFX. On some platforms where file access may be restricted or not part of the user model (for example, on some mobile or embedded devices), opening a directory dialog may always result in a no-op (that is, null file being returned).</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>void onResult(File&nbsp; result)&nbsp;</strong><br />
+	打开FileChoose之后的返回值。</li>
+</ul>
+]]></description>
+        <actions>
+            <GetString name="getTitle" _xmeta_id_="17047" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetFile name="getInitialDirectory" _xmeta_id_="17049" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="initialDirectory" usage="params"></GetFile>
+            <GetObject name="getOwnerWindow" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="ownerWindow"></GetObject>
+            <JavaAction name="run" outerClassName="xworker.javafx.stage.DirectoryChooserActions"
+                 methodName="run"></JavaAction>
+            <NOOP name="onResult"></NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="title" size="50"></attribute>
+        <attribute name="initialDirectory" inputtype="filePath" size="60">
+            <description><![CDATA[<p>The initial directory for the displayed file dialog.</p>
+]]></description>
+        </attribute>
+        <attribute name="ownerWindow">
+            <description><![CDATA[<p>the owner window of the displayed file dialog</p>
+]]></description>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

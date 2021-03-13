@@ -3,7 +3,10 @@
 <thing name="Node" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javafx.layout.LayoutConstraints">
     <description><![CDATA[<p>Base class for scene graph nodes. A scene graph is a set of tree data structures where every item has zero or one parent, and each item is either a &quot;leaf&quot; with zero sub-items or a &quot;branch&quot; with zero or more sub-items.</p>
 ]]></description>
-    <actions name="actions"></actions>
+    <actions>
+        <GetString name="getStyle" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="style"></GetString>
+    </actions>
     <attribute name="id" size="50" group="Node">
         <description><![CDATA[<p>The id of this&nbsp;Node.</p>
 ]]></description>
@@ -135,8 +138,16 @@
         <value name="ENABLE" value="ENABLE"></value>
         <value name="INHERIT" value="INHERIT"></value>
     </attribute>
+    <attribute name="visible" inputtype="truefalseselect" group="Node">
+        <description><![CDATA[<p>Specifies whether this&nbsp;Node&nbsp;and any subnodes should be rendered as part of the scene graph.</p>
+]]></description>
+    </attribute>
     <attribute name="disable" inputtype="truefalseselect" group="Node">
         <description><![CDATA[<p>Defines the individual disabled state of this&nbsp;Node.</p>
+]]></description>
+    </attribute>
+    <attribute name="style" size="60" group="Node">
+        <description><![CDATA[<p>A string representation of the CSS style associated with this specific&nbsp;Node.</p>
 ]]></description>
     </attribute>
     <attribute name="focusTraversable" inputtype="truefalseselect" group="Node">
@@ -178,9 +189,12 @@
         <description><![CDATA[<p>Defines the angle of rotation about the&nbsp;Node&#39;s center, measured in degrees.</p>
 ]]></description>
     </attribute>
-    <attribute name="rotationAxis" size="40" group="Node">
+    <attribute name="rotationAxis" inputtype="inputSelect" size="40" group="Node">
         <description><![CDATA[<p>Defines the axis of rotation of this&nbsp;Node.</p>
 ]]></description>
+        <value name="X_AXIS" value="X_AXIS"></value>
+        <value name="Y_AXIS" value="Y_AXIS"></value>
+        <value name="Z_AXIS" value="Z_AXIS"></value>
     </attribute>
     <attribute name="scaleX" group="Node">
         <description><![CDATA[<p>Defines the factor by which coordinates are scaled about the center of the object along the X axis of this&nbsp;Node.</p>
@@ -194,10 +208,6 @@
         <description><![CDATA[<p>Defines the factor by which coordinates are scaled about the center of the object along the Z axis of this&nbsp;Node.</p>
 ]]></description>
     </attribute>
-    <attribute name="style" group="Node">
-        <description><![CDATA[<p>A string representation of the CSS style associated with this specific&nbsp;Node.</p>
-]]></description>
-    </attribute>
     <attribute name="translateX" group="Node">
         <description><![CDATA[<p>Defines the x coordinate of the translation that is added to this&nbsp;Node&#39;s transform.</p>
 ]]></description>
@@ -208,10 +218,6 @@
     </attribute>
     <attribute name="translateZ" group="Node">
         <description><![CDATA[<p>Defines the Z coordinate of the translation that is added to the transformed coordinates of this&nbsp;Node.</p>
-]]></description>
-    </attribute>
-    <attribute name="visible" inputtype="truefalseselect" group="Node">
-        <description><![CDATA[<p>Specifies whether this&nbsp;Node&nbsp;and any subnodes should be rendered as part of the scene graph.</p>
 ]]></description>
     </attribute>
     <thing name="NodeEventHandler" _xmeta_id_="EventHandler" descriptors="xworker.lang.MetaDescriptor3"
@@ -268,4 +274,7 @@
             <Variable name="event" _xmeta_id_="var" varName="event" className="javafx.event.Event"></Variable>
         </VariablesDescs>
     </thing>
+    <thing name="RunAction" extends="xworker.javafx.util.RunAction" group="action" inheritDescription="true"></thing>
+    <thing name="ActionContainer" extends="xworker.javafx.util.ActionContainer" group="action"
+         inheritDescription="true"></thing>
 </thing>

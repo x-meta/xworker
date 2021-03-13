@@ -94,7 +94,10 @@ public class NodeActions {
             node.setScaleZ(thing.getDouble("scaleZ"));
         }
         if(thing.valueExists("style")){
-            node.setStyle(thing.getString("style"));
+            String style = JavaFXUtils.getString(thing, "style", actionContext);
+            if(style != null) {
+                node.setStyle(style);
+            }
         }
         if(thing.valueExists("translateX")){
             node.setTranslateX(thing.getDouble("translateX"));

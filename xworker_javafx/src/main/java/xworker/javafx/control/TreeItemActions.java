@@ -12,7 +12,7 @@ public class TreeItemActions {
             node.setExpanded(thing.getBoolean("expanded"));
         }
         if(thing.valueExists("graphic")){
-            Node graphic = JavaFXUtils.getObject(thing, "graphic", actionContext);
+            Node graphic = JavaFXUtils.getGraphic(thing, "graphic", actionContext);
             if(graphic != null) {
                 node.setGraphic(graphic);
             }

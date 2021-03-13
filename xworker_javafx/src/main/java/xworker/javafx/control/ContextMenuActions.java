@@ -1,6 +1,7 @@
 package xworker.javafx.control;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.MenuItem;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -13,10 +14,15 @@ public class ContextMenuActions {
 
     public static ContextMenu create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
+        Object parent = actionContext.getObject("parent");
 
         ContextMenu box = new ContextMenu();
         init(box, self, actionContext);
         actionContext.g().put(self.getMetadata().getName(), box);
+
+        if(parent instanceof Control){
+            ((Control) parent).setContextMenu(box);
+        }
 
         actionContext.peek().put("parent", box);
         for(Thing child : self.getChilds()) {

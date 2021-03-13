@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="Dialog" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>A Dialog in JavaFX wraps a&nbsp;DialogPane&nbsp;and provides the necessary API to present it to end users. In JavaFX 8u40, this essentially means that the&nbsp;DialogPane&nbsp;is shown to users inside a&nbsp;Stage, but future releases may offer alternative options (such as &#39;lightweight&#39; or &#39;internal&#39; dialogs). This API therefore is intentionally ignorant of the underlying implementation, and attempts to present a common API for all possible implementations.</p>
+]]></description>
+    <actions>
+        <GetString name="getContentText" _xmeta_id_="9515" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="contentText" usage="params"></GetString>
+        <GetObject name="getDialogPane" _xmeta_id_="9516" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="dialogPane" usage="params"></GetObject>
+        <GetObject name="getGraphic" _xmeta_id_="9517" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="graphic" usage="params"></GetObject>
+        <GetString name="getHeaderText" _xmeta_id_="9518" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="headerText" usage="params"></GetString>
+        <GetObject name="getResultConverter" _xmeta_id_="9519" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="resultConverter" usage="params"></GetObject>
+        <GetObject name="getResult" _xmeta_id_="9520" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="result" usage="params"></GetObject>
+        <JavaAction name="create" outerClassName="xworker.javafx.control.DialogActions" methodName="create"></JavaAction>
+        <GetString name="getTitle" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="title"></GetString>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="title" size="50" group="Dialog">
+        <description><![CDATA[<p>Return the titleProperty of the dialog.</p>
+]]></description>
+    </attribute>
+    <attribute name="headerText" size="50" group="Dialog">
+        <description><![CDATA[<p>A property representing the header text for the dialog pane.</p>
+]]></description>
+    </attribute>
+    <attribute name="contentText" size="50" group="Dialog">
+        <description><![CDATA[<p>A property representing the content text for the dialog pane.</p>
+]]></description>
+    </attribute>
+    <attribute name="dialogPane" inputtype="openWindow" group="Dialog" inputattrs="xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|prefix=var%3A,descriptor=xworker.javafx.scene.Node,seperator=%2C,returnType=name,append=false">
+        <description><![CDATA[<p>The root node of the dialog, the DialogPane contains all visual elements shown in the dialog.</p>
+]]></description>
+    </attribute>
+    <attribute name="graphic" inputtype="openWindow" group="Dialog" inputattrs="xworker.swt.xworker.attributeEditor.openWins.SelectThingOpenWindow/@shell|prefix=var%3A,descriptor=xworker.javafx.scene.Node,seperator=%2C,returnType=name,append=false">
+        <description><![CDATA[<p>The dialog graphic, presented either in the header, if one is showing, or to the left of the content.</p>
+]]></description>
+    </attribute>
+    <attribute name="resizable" inputtype="truefalseselect" group="Dialog">
+        <description><![CDATA[<p>Represents whether the dialog is resizable.</p>
+]]></description>
+    </attribute>
+    <attribute name="resultConverter" group="Dialog">
+        <description><![CDATA[<p>API to convert the ButtonType that the user clicked on into a result that can be returned via the result property.</p>
+]]></description>
+    </attribute>
+    <attribute name="result" group="Dialog">
+        <description><![CDATA[<p>A property representing what has been returned from the dialog.</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DialogPane" extends="xworker.javafx.control.DialogPane" inheritDescription="true"></thing>
+    <thing name="Graphic" extends="xworker.javafx.control.Graphic"></thing>
+    <thing name="ResultConverter" extends="xworker.lang.actions.Actions">
+        <description><![CDATA[<p>API to convert the&nbsp;ButtonType&nbsp;that the user clicked on into a result that can be returned via the&nbsp;result&nbsp;property.</p>
+
+<p>子节点是动作，传入的变量是param: ButtonType，返回Object。</p>
+]]></description>
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.DialogActions"
+                 methodName="createResultConverter"></JavaAction>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="param" varName="param" scope="2" className="javafx.scene.control.ButtonType"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="DialogEventHandler" _xmeta_id_="EventHandler" descriptors="xworker.lang.MetaDescriptor3"
+         extends="xworker.lang.actions.Actions">
+        <actions>
+            <JavaAction name="create" outerClassName="xworker.javafx.control.DialogActions"
+                 methodName="createEvent"></JavaAction>
+        </actions>
+        <attribute name="name" _xmeta_id_="name1"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="type" _xmeta_id_="name" inputtype="select">
+            <value name="onCloseRequest" value="onCloseRequest"></value>
+            <value name="onHidden" value="onHidden"></value>
+            <value name="onHiding" value="onHiding"></value>
+            <value name="onShowing" value="onShowing"></value>
+            <value name="onShown" value="onShown"></value>
+        </attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+            <Variable name="event" _xmeta_id_="var" varName="event" className="javafx.event.Event"></Variable>
+        </VariablesDescs>
+    </thing>
+    <thing name="ButtonType" extends="xworker.javafx.control.ButtonType" inheritDescription="true"></thing>
+</thing>

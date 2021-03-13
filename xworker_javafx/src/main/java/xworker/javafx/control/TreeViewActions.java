@@ -1,10 +1,13 @@
 package xworker.javafx.control;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.javafx.util.ThingCallback;
 
 public class TreeViewActions {
     public static void init(TreeView<Object> node, Thing thing, ActionContext actionContext){
@@ -35,9 +38,10 @@ public class TreeViewActions {
             }
         }
         if(thing.valueExists("selectionModel")){
-            MultipleSelectionModel<TreeItem<Object>> selectionModel = JavaFXUtils.getObject(thing, "selectionModel", actionContext);
-            if(selectionModel != null) {
-                node.setSelectionModel(selectionModel);
+            if("MULTIPLE".equals(thing.getString("selectionModel"))){
+                node.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            }else{
+                node.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             }
         }
         if(thing.valueExists("showRoot")){
@@ -60,6 +64,66 @@ public class TreeViewActions {
             }
         }
 
+        node.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TreeItem<Object>>() {
+            @Override
+            public void changed(ObservableValue<? extends TreeItem<Object>> observable, TreeItem<Object> oldValue, TreeItem<Object> newValue) {
+
+            }
+        });
+
         return node;
+    }
+
+    public static void createCellFactory(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeView<?> parent = actionContext.getObject("parent");
+
+        parent.setCellFactory(new ThingCallback<>(self, actionContext));
+    }
+
+    public static Object defaultCreateCell(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        for(Thing  child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof TreeCell){
+                return obj;
+            }
+        }
+
+        return null;
+    }
+
+    public static void createSelectionChangeListener(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object parent = actionContext.getObject("parent");
+        if(parent instanceof TreeView){
+            ((TreeView) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }else if(parent instanceof TableView){
+            ((TableView) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }else if(parent instanceof TreeTableView){
+            ((TreeTableView) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }else if(parent instanceof ListView){
+            ((ListView) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }else if(parent instanceof ComboBox){
+            ((ComboBox) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }else if(parent instanceof ChoiceBox){
+            ((ChoiceBox) parent).getSelectionModel().selectedItemProperty().addListener(new ThingChangeListener(self, actionContext));
+        }
+    }
+
+    public static class ThingChangeListener<T> implements  ChangeListener<T>{
+        Thing thing;
+        ActionContext actionContext;
+
+        public ThingChangeListener(Thing thing, ActionContext actionContext){
+            this.thing = thing;
+            this.actionContext = actionContext;
+        }
+
+        @Override
+        public void changed(ObservableValue<? extends T> observable, T oldValue, T newValue) {
+            thing.doAction("changed", actionContext, "observable", observable,
+                    "oldValue", oldValue, "newValue", newValue);
+        }
     }
 }

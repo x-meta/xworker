@@ -7,6 +7,7 @@ import javafx.util.Callback;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.javafx.util.ThingCallback;
 
 import java.util.Comparator;
 
@@ -93,8 +94,40 @@ public class TreeTableColumnActions {
         actionContext.peek().put("parent", node);
         for(Thing child : self.getChilds()){
             Object obj = child.doAction("create", actionContext);
+            if(obj instanceof ContextMenu){
+                node.setContextMenu((ContextMenu) obj);
+            }else if(obj instanceof TreeTableColumn){
+                node.getColumns().add((TreeTableColumn<Object, ?>) obj);
+            }
         }
 
         return node;
+    }
+
+
+    public static void createCellFactory(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableColumn<?,?> parent = actionContext.getObject("parent");
+
+        parent.setCellFactory(new ThingCallback<>(self, actionContext));
+    }
+
+    public static void createCellValueFactory(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableColumn<?,?> parent = actionContext.getObject("parent");
+
+        parent.setCellValueFactory(new ThingCallback<>(self, actionContext));
+    }
+
+    public static Object defaultCreateCell(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        for(Thing  child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof TreeTableCell){
+                return obj;
+            }
+        }
+
+        return null;
     }
 }

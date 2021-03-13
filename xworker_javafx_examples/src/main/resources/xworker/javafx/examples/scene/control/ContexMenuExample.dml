@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="ContexMenuExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <HBox name="rootNode" _xmeta_id_="HBox" fillHeight="true">
+            <ToggleGroup name="radioGroup"></ToggleGroup>
+            <TextArea>
+                <text><![CDATA[import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class ContextMenuExample extends Application {
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    public void start(Stage primaryStage) {
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem menuItem1 = new MenuItem("Choice 1");
+        MenuItem menuItem2 = new MenuItem("Choice 2");
+        MenuItem menuItem3 = new MenuItem("Choice 3");
+
+        menuItem3.setOnAction((event) -> {
+            System.out.println("Choice 3 clicked!");
+        });
+
+        contextMenu.getItems().addAll(menuItem1,menuItem2,menuItem3);
+
+        TextArea textArea = new TextArea();
+
+        textArea.setContextMenu(contextMenu);
+
+        VBox vBox = new VBox(textArea);
+        Scene scene = new Scene(vBox);
+
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("JavaFX App");
+
+        primaryStage.show();
+    }
+}]]></text>
+                <ContextMenu>
+                    <MenuItem name="openMenuItem" text="Open"></MenuItem>
+                    <MenuItem name="saveMenuItem" text="Save"></MenuItem>
+                    <SeparatorMenuItem name="SeparatorMenuItem"></SeparatorMenuItem>
+                    <Menu name="item2" text="Item">
+                        <MenuItem name="MenuItem" text="Item 2 1"></MenuItem>
+                        <Menu name="item2" text="Item">
+                            <MenuItem name="MenuItem" text="Item 2 1"></MenuItem>
+                        </Menu>
+                    </Menu>
+                    <CheckMenuItem name="CheckMenuItem" text="Check this!"></CheckMenuItem>
+                    <SeparatorMenuItem name="SeparatorMenuItem" _xmeta_id_="SeparatorMenuItem1"></SeparatorMenuItem>
+                    <RadioMenuItem name="RadioMenuItem" toggleGroup="var:radioGroup" text="Choice 1"></RadioMenuItem>
+                    <RadioMenuItem name="RadioMenuItem" _xmeta_id_="RadioMenuItem1" toggleGroup="var:radioGroup"
+                         text="Choice 1"></RadioMenuItem>
+                    <RadioMenuItem name="RadioMenuItem" _xmeta_id_="RadioMenuItem2" toggleGroup="var:radioGroup"
+                         text="Choice 1"></RadioMenuItem>
+                    <SeparatorMenuItem name="SeparatorMenuItem" _xmeta_id_="SeparatorMenuItem11"></SeparatorMenuItem>
+                    <CustomMenuItem name="ProgressMenuItem">
+                        <Content>
+                            <ProgressBar name="ProgressBar"></ProgressBar>
+                        </Content>
+                    </CustomMenuItem>
+                    <CustomMenuItem name="ButtonMenuItem">
+                        <Content>
+                            <Button name="Button" text="Custom Menu Item Button"></Button>
+                        </Content>
+                    </CustomMenuItem>
+                </ContextMenu>
+            </TextArea>
+        </HBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="LoginExample" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode">
+            <GridPane name="loginGrid" hgap="5" vgap="5">
+                <Label name="nameLabel" text="名字：">
+                    <GridePaneConstraints name="GridePaneConstraints" columnIndex="0" rowIndex="0"></GridePaneConstraints>
+                </Label>
+                <TextField name="nameText" prefColumnCount="20" promptText="请输入登录名/邮件/手机号">
+                    <GridePaneConstraints name="GridePaneConstraints" columnIndex="1" rowIndex="0"></GridePaneConstraints>
+                </TextField>
+                <Label name="passwordLabel" text="密码：">
+                    <GridePaneConstraints name="GridePaneConstraints" columnIndex="0" rowIndex="1"></GridePaneConstraints>
+                </Label>
+                <PasswordField name="passwordText" prefColumnCount="20" promptText="请输入密码">
+                    <GridePaneConstraints name="GridePaneConstraints" columnIndex="1" rowIndex="1"></GridePaneConstraints>
+                </PasswordField>
+            </GridPane>
+            <Button name="loginButton" text="登录"></Button>
+            <Label name="infoLabel" text="这里显示消息。"></Label>
+            <StringProperty name="password" property="ognl: passwordText.textProperty()">
+                <IsEmpty>
+                    <When>
+                        <ThenString value="请输入密码">
+                            <Otherwise value="密码已经输入">
+                                <BindToProperty name="BindToProperty" properties="ognl: infoLabel.textProperty()"></BindToProperty>
+                            </Otherwise>
+                        </ThenString>
+                    </When>
+                </IsEmpty>
+            </StringProperty>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

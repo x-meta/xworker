@@ -211,7 +211,7 @@ public class SimpleThingEditor {
 
 			downloaded = true;
 			if(download(url, worldPath + "/lib/swt.jar")) {
-				System.out.println("Please add " + worldPath + "/lib/swt.jar to classpath");
+				System.out.println("Please add " + worldPath + "/lib/swt.jar as current project's library");
 			}
 		}
 	}
@@ -333,7 +333,7 @@ public class SimpleThingEditor {
 		if(downloaded){
 			String worldPath = World.getInstance().getPath();
 
-			System.out.println("Please set JVM options -Djava.library.path=" + worldPath + "/library/ when start ThingEditor");
+			System.out.println("Please set JVM options -Djava.library.path=" + worldPath + "/library/ when start current program");
 			System.out.println("Please restart ThingEditor");
 			return;
 		}

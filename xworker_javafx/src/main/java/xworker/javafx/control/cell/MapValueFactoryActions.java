@@ -10,7 +10,7 @@ public class MapValueFactoryActions {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static MapValueFactory<Object> create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
-		Object parent = actionContext.getObject("TableColumn");
+		Object parent = actionContext.getObject("parent");
 		
 		Object key = self.doAction("getKey", actionContext);
 		MapValueFactory<Object> mf = new MapValueFactory<Object>(key);

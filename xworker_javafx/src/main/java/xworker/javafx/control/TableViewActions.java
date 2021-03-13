@@ -1,5 +1,6 @@
 package xworker.javafx.control;
 
+import javafx.scene.control.SelectionMode;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -12,6 +13,9 @@ import javafx.scene.control.TableView.TableViewFocusModel;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.util.Callback;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.javafx.util.ThingCallback;
+
+import java.util.Iterator;
 
 public class TableViewActions {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -36,12 +40,17 @@ public class TableViewActions {
         		node.setFocusModel(model);
         	}
         }
-        if(thing.valueExists("items")){
-        	ObservableList<Object> items = (ObservableList<Object>) JavaFXUtils.getObject(thing, "items", actionContext);
-        	if(items != null) {
-        		node.getItems().clear();
-        		node.getItems().addAll(items);
-        	}
+        if(thing.valueExists("items")) {
+			Object obj = JavaFXUtils.getObject(thing, "items", actionContext);
+			if (obj instanceof ObservableList) {
+				node.setItems((ObservableList<Object>) obj);
+			} else if(obj instanceof Iterable){
+				Iterable<Object> items = (Iterable<Object>) obj;
+				Iterator<Object> iter = items.iterator();
+				while (iter.hasNext()) {
+					node.getItems().add(iter.next());
+				}
+			}
         }
         if(thing.valueExists("placeholder")){
         	Node placeholder = (Node) JavaFXUtils.getObject(thing, "placeholder", actionContext);
@@ -56,11 +65,15 @@ public class TableViewActions {
         	}
         }
         if(thing.valueExists("selectionModel")){
-        	TableViewSelectionModel<Object> model = (TableViewSelectionModel<Object>) JavaFXUtils.getObject(thing, "selectionModel", actionContext);
-        	if(model != null) {
-        		node.setSelectionModel(model);
-        	}
+        	if("MULTIPLE".equals(thing.getString("selectionModel"))){
+        		node.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+			}else{
+				node.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			}
         }
+		if(thing.valueExists("cellSelectionEnabled")){
+			node.getSelectionModel().setCellSelectionEnabled(thing.getBoolean("cellSelectionEnabled"));
+		}
         if(thing.valueExists("sortPolicy")){
         	Callback<TableView<Object>,Boolean> sp = (Callback<TableView<Object>,Boolean>) JavaFXUtils.getObject(thing, "sortPolicy", actionContext);
         	if(sp != null) {
@@ -91,5 +104,39 @@ public class TableViewActions {
 		}
 		
 		return item;
+	}
+
+	public static void createColumnResizePolicy(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableView<?> parent = actionContext.getObject("parent");
+
+		parent.setColumnResizePolicy(new ThingCallback<>(self, actionContext));
+	}
+
+	public static void createRowFactory(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableView<?> parent = actionContext.getObject("parent");
+
+		parent.setRowFactory(new ThingCallback<>(self, actionContext));
+	}
+
+	public static void createSortPolicy(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableView<?> parent = actionContext.getObject("parent");
+
+		parent.setSortPolicy(new ThingCallback<>(self, actionContext));
+	}
+
+	public static void createPlaceholder(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableView<?> parent = actionContext.getObject("parent");
+
+
+		for(Thing child : self.getChilds()){
+			Object obj = child.doAction("create", actionContext);
+			if(obj instanceof Node){
+				parent.setPlaceholder((Node) obj);
+			}
+		}
 	}
 }

@@ -4,6 +4,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import javafx.scene.control.ComboBoxBase;
+import xworker.javafx.util.JavaFXUtils;
 
 public class ComboBoxBaseActions {
 	public static void init(ComboBoxBase<?> base, Thing thing, ActionContext actionContext) {
@@ -13,8 +14,10 @@ public class ComboBoxBaseActions {
             base.setEditable(thing.getBoolean("editable"));
         }
         if(thing.valueExists("promptText")){
-            base.setPromptText(thing.getString("promptText"));
+            String promptText = JavaFXUtils.getString(thing, "promptText", actionContext);
+            if(promptText != null) {
+                base.setPromptText(promptText);
+            }
         }
-
 	}
 }

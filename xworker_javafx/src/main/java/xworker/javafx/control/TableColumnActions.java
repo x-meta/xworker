@@ -1,5 +1,7 @@
 package xworker.javafx.control;
 
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.TableView;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -9,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.util.Callback;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.javafx.util.ThingCallback;
 
 public class TableColumnActions {
 	public static void init(TableColumn<Object, Object> node, Thing thing, ActionContext actionContext) {
@@ -40,9 +43,40 @@ public class TableColumnActions {
 		
 		actionContext.peek().put("parent", item);
 		for(Thing child : self.getChilds()) {
-			child.doAction("create", actionContext);					
+			Object obj = child.doAction("create", actionContext);
+			if(obj instanceof ContextMenu){
+				item.setContextMenu((ContextMenu) obj);
+			}else if(obj instanceof TableColumn){
+				item.getColumns().add((TableColumn<Object, ?>) obj);
+			}
 		}
 		
 		return item;
+	}
+
+	public static void createCellFactory(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableColumn<?,?> parent = actionContext.getObject("parent");
+
+		parent.setCellFactory(new ThingCallback<>(self, actionContext));
+	}
+
+	public static void createCellValueFactory(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		TableColumn<?,?> parent = actionContext.getObject("parent");
+
+		parent.setCellValueFactory(new ThingCallback<>(self, actionContext));
+	}
+
+	public static Object defaultCreateCell(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		for(Thing  child : self.getChilds()){
+			Object obj = child.doAction("create", actionContext);
+			if(obj instanceof TableCell){
+				return obj;
+			}
+		}
+
+		return null;
 	}
 }

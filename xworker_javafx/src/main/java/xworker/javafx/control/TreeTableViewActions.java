@@ -2,11 +2,11 @@ package xworker.javafx.control;
 
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.text.Font;
 import javafx.util.Callback;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.javafx.util.ThingCallback;
 
 public class TreeTableViewActions {
     public static void init(TreeTableView<Object> node, Thing thing, ActionContext actionContext){
@@ -49,10 +49,14 @@ public class TreeTableViewActions {
             }
         }
         if(thing.valueExists("selectionModel")){
-            TreeTableView.TreeTableViewSelectionModel<Object> selectionModel = JavaFXUtils.getObject(thing, "selectionModel", actionContext);
-            if(selectionModel != null) {
-                node.setSelectionModel(selectionModel);
+            if("MULTIPLE".equals(thing.getString("selectionModel"))){
+                node.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+            }else{
+                node.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
             }
+        }
+        if(thing.valueExists("cellSelectionEnabled")){
+            node.getSelectionModel().setCellSelectionEnabled(thing.getBoolean("cellSelectionEnabled"));
         }
         if(thing.valueExists("showRoot")){
             node.setShowRoot(thing.getBoolean("showRoot"));
@@ -95,5 +99,61 @@ public class TreeTableViewActions {
         }
 
         return node;
+    }
+
+    public static void createColumnResizePolicy(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableView<?> parent = actionContext.getObject("parent");
+
+        parent.setColumnResizePolicy(new ThingCallback<>(self, actionContext));
+    }
+
+    public static void createRowFactory(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableView<?> parent = actionContext.getObject("parent");
+
+        parent.setRowFactory(new ThingRowFactory<>(self, actionContext));
+    }
+
+    public static void createSortPolicy(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableView<?> parent = actionContext.getObject("parent");
+
+        parent.setSortPolicy(new ThingCallback<>(self, actionContext));
+    }
+
+    public static void createPlaceholder(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeTableView<?> parent = actionContext.getObject("parent");
+
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Node){
+                parent.setPlaceholder((Node) obj);
+            }
+        }
+    }
+
+    public static class ThingRowFactory<S> implements Callback<TreeTableView<S>,TreeTableRow<S>>{
+        Thing thing;
+        ActionContext actionContext;
+
+        public ThingRowFactory(Thing thing, ActionContext actionContext){
+            this.thing = thing;
+            this.actionContext = actionContext;
+        }
+
+        @Override
+        public TreeTableRow<S> call(TreeTableView<S> param) {
+            TreeTableRow node  = new TreeTableRowActions.ThingTreeTableRow(thing, actionContext);
+            TreeTableRowActions.init(node, thing, actionContext);
+
+            actionContext.peek().put("parent", node);
+            for(Thing child : thing.getChilds()){
+                child.doAction("create", actionContext);
+            }
+            return node;
+        }
     }
 }

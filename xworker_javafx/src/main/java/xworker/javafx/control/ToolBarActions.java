@@ -1,5 +1,6 @@
 package xworker.javafx.control;
 
+import javafx.geometry.Orientation;
 import javafx.scene.Node;
 import javafx.scene.control.ToolBar;
 import org.xmeta.ActionContext;
@@ -8,6 +9,10 @@ import org.xmeta.Thing;
 public class ToolBarActions {
     public static void init(ToolBar node, Thing thing, ActionContext actionContext) {
         ControlActions.init(node, thing, actionContext);
+
+        if(thing.valueExists("orientation")){
+            node.setOrientation(Orientation.valueOf(thing.getString("orientation")));
+        }
     }
 
     public static ToolBar create(ActionContext actionContext){

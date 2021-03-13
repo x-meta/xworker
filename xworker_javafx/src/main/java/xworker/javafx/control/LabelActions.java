@@ -16,6 +16,7 @@ public class LabelActions {
 		
 		Label item = new Label();
 		init(item, self, actionContext);
+
 		actionContext.g().put(self.getMetadata().getName(), item);
 		
 		actionContext.peek().put("parent", item);
