@@ -2,6 +2,7 @@ package xworker.javafx.scene.layout;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -13,6 +14,19 @@ import xworker.javafx.util.JavaFXUtils;
 public class GridPaneActions {
     public static void init(GridPane node, Thing thing, ActionContext actionContext){
         PaneActions.init(node, thing, actionContext);
+
+        if(thing.valueExists("alignment")){
+            node.setAlignment(Pos.valueOf(thing.getString("alignment")));
+        }
+        if(thing.valueExists("gridLinesVisible")){
+            node.setGridLinesVisible(thing.getBoolean("gridLinesVisible"));
+        }
+        if(thing.valueExists("hgap")){
+            node.setHgap(thing.getDouble("hgap"));
+        }
+        if(thing.valueExists("vgap")){
+            node.setVgap(thing.getDouble("vgap"));
+        }
     }
 
     public static GridPane create(ActionContext actionContext){

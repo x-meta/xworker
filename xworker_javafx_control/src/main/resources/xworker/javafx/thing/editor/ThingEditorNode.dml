@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="ThingEditorNode" _xmeta_id_="ThingEditor" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="mainBox" fillWidth="true" spacing="5">
+            <Label name="titleLabel" text="标题"></Label>
+            <MenuBar name="menuBar"></MenuBar>
+            <ToolBar name="tooBar">
+                <Button name="toolbarSaveButton" contentDisplay="GRAPHIC_ONLY" graphic="icons/save.gif"
+                     prefHeight="16" prefWidth="16">
+                    <style><![CDATA[.button {
+    -fx-background-color: transparent, transparent, transparent, transparent;
+}
+
+.button:hover{
+    -fx-background-color: transparent, rgba(0,0,0,.1), rgba(0,0,0,.1), transparent;
+}
+
+.button:armed {
+    -fx-background-color: transparent, rgba(0,0,0,.1), rgba(0,0,0,.1), rgba(0,0,0,.2);
+}]]></style>
+                </Button>
+                <Button name="toolbarDeleteButton" contentDisplay="GRAPHIC_ONLY">
+                    <Graphic>
+                        <ImageView name="ImageView" fitHeight="16" fitWidth="16" image="icons/delete.gif"></ImageView>
+                    </Graphic>
+                </Button>
+                <Button name="toolbarMoveUpButton" graphic="icons/moveUp.gif"></Button>
+                <Button name="toolbarMoveDownButton" graphic="icons/moveDown.gif"></Button>
+                <Button name="toolbarFindButton">
+                    <Graphic>
+                        <ImageView name="ImageView" fitHeight="16" fitWidth="16" image="icons/search.gif"></ImageView>
+                    </Graphic>
+                </Button>
+                <Separator name="Separator"></Separator>
+                <Button name="classStructureButton" graphic="icons/descriptorExtends.gif"></Button>
+                <Separator name="Separator" _xmeta_id_="Separator1"></Separator>
+                <ChoiceBox name="descriptorChoiceBox">
+                    <ThingStringConverter name="ThingStringConverter" descriptors="xworker.javafx.control.ControlStringValueConverters/@ThingStringConverter"></ThingStringConverter>
+                </ChoiceBox>
+                <MenuButton name="actionMenuButton" text="lang:d=动作&amp;en=Action"></MenuButton>
+            </ToolBar>
+            <SplitPane name="splitPane" dividerPositions="0.3,0.7">
+                <TreeView name="outlineTree">
+                    <ThingTreeCellFactory name="ThingTreeCellFactory" descriptors="xworker.javafx.control.cell.ThingTreeCellFactory"></ThingTreeCellFactory>
+                </TreeView>
+                <VBox name="contentBox" fillWidth="true"></VBox>
+                <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>
+            </SplitPane>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:mainBox"></Scene>
+</Stage>

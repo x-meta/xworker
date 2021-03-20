@@ -97,6 +97,9 @@ public class DefaultAttributeEditor extends AttributeEditor{
 		    			if(context.g().get(inputName) == null) {
 		    				context.getScope(0).put(inputName, editControl);
 		    			}
+		    			if(editControl instanceof Text){
+							this.initCodeAssistor(editControl, context);
+						}
 		    		}
 		    		Designer.attach(editControl, path, context, true);
 		    		

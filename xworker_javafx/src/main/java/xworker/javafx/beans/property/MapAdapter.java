@@ -1,13 +1,15 @@
 package xworker.javafx.beans.property;
 
 import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import java.util.*;
 
-public class MapAdapter implements Map<String, Object> {
-    private Map<String, Property> valueMap = new HashMap<>();
+public class MapAdapter<K, V> implements Map<K, V> {
+    private ObservableMap<K, Property> valueMap = FXCollections.observableMap(new HashMap<>());
     Thing thing;
     ActionContext actionContext;
 
@@ -16,6 +18,13 @@ public class MapAdapter implements Map<String, Object> {
         this.actionContext = actionContext;
     }
 
+    public MapAdapter(){
+
+    }
+
+    public ObservableMap<K, Property> getValueMap(){
+        return valueMap;
+    }
 
     @Override
     public int size() {
@@ -37,25 +46,25 @@ public class MapAdapter implements Map<String, Object> {
         return valueMap.containsValue(value);
     }
 
-    public void setProperty(String key, Property property){
+    public void setProperty(K key, Property<Object> property){
         valueMap.put(key, property);
     }
 
-    public Property getProperty(String key){
+    public Property<Object> getProperty(K key){
         return valueMap.get(key);
     }
 
     @Override
-    public Object get(Object key) {
+    public V get(Object key) {
         Property<?> p = valueMap.get(key);
         if(p != null){
-            return p.getValue();
+            return (V) p.getValue();
         }
         return null;
     }
 
     @Override
-    public Object put(String key, Object value) {
+    public V put(K key, V value) {
         Property p = valueMap.get(key);
         if(p != null){
             p.setValue(value);
@@ -94,13 +103,13 @@ public class MapAdapter implements Map<String, Object> {
     }
 
     @Override
-    public Object remove(Object key) {
-        return valueMap.remove(key);
+    public V remove(Object key) {
+        return (V) valueMap.remove(key);
     }
 
     @Override
-    public void putAll(Map<? extends String, ?> m) {
-        for(String key : m.keySet()){
+    public void putAll(Map<? extends K, ? extends V> m) {
+        for(K key : m.keySet()){
             put(key, m.get(key));
         }
     }
@@ -111,23 +120,23 @@ public class MapAdapter implements Map<String, Object> {
     }
 
     @Override
-    public Set<String> keySet() {
+    public Set<K> keySet() {
         return valueMap.keySet();
     }
 
     @Override
-    public Collection<Object> values() {
-        List<Object> values = new ArrayList<>();
+    public Collection<V> values() {
+        List<V> values = new ArrayList<>();
 
         for(Property  p : valueMap.values()){
-            values.add(p.getValue());
+            values.add((V) p.getValue());
         }
 
         return values;
     }
 
     @Override
-    public Set<Entry<String, Object>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         throw new UnsupportedOperationException();
     }
 }

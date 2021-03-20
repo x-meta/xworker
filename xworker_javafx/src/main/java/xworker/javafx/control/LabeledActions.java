@@ -32,7 +32,7 @@ public class LabeledActions {
         	}
         }
         if(thing.valueExists("graphic")){
-        	Node graphic = thing.doAction("getGraphic", actionContext);
+        	Node graphic = JavaFXUtils.getGraphic(thing, "graphic", actionContext);
         	if(graphic != null) {
         		labeled.setGraphic(graphic);
         	}

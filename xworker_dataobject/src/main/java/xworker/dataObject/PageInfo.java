@@ -36,6 +36,8 @@ public class PageInfo{
 	
 	public PageInfo(){
 		 data = new HashMap<String, Object>();
+		 setLimit(100);
+		 setPage(0);
 	}
 	
 	public PageInfo(Map<String, Object> data){
@@ -92,9 +94,22 @@ public class PageInfo{
 		setStart(start);
 		//setLimit(start + getPageSize() - 1);		
 	}
-	
+
+	/**
+	 * 查询后如果数据对象是新创建的，那么可以通过该方法快速设置。
+	 * @param dataObject
+	 */
 	public void setDataObject(Thing dataObject){
 		data.put("dynamicDataObject", dataObject);
+	}
+
+	/**
+	 * 返回查询新生成的数据对象，如果存在。
+	 *
+	 * @return
+	 */
+	public Thing getDataObject(){
+		return (Thing) data.get("dynamicDataObject");
 	}
 	
 	public boolean hasPrePage(){

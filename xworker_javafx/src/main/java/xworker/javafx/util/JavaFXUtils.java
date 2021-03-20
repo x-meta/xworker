@@ -19,12 +19,18 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilData;
 import xworker.lang.executor.Executor;
+import xworker.util.UtilFileIcon;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.chrono.*;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class JavaFXUtils {
 	private static final String TAG = JavaFXUtils.class.getName();
+	private static final Map<String, Image> imageCahe = new WeakHashMap<>();
 
 	public static Color getColor(Thing thing, String name, ActionContext actionContext){
 		Object obj = getObject(thing, name, actionContext);
@@ -66,22 +72,48 @@ public class JavaFXUtils {
 		if(obj instanceof Image){
 			return (Image) obj;
 		}else if(obj instanceof  String){
-			try {
-				return new Image((String) obj);
-			}catch(Exception e){
-				try {
-					InputStream in = World.getInstance().getResourceAsStream((String) obj);
-					return new Image(in);
-				}catch(Exception ee){
-					Executor.warn(TAG, "Can not create image, path=" + thing.getMetadata().getName());
-					return null;
-				}
-			}
+			return getImage((String) obj);
 		}else if(obj instanceof InputStream){
 			return new Image((InputStream) obj);
 		}else{
 			return null;
 		}
+	}
+
+	public static Image getImage(String imagePath){
+		Image image = imageCahe.get(imagePath);
+		if(image != null){
+			return image;
+		}
+
+		try {
+			image = new Image(imagePath);
+		}catch(Exception e){
+			try {
+				InputStream in = World.getInstance().getResourceAsStream(imagePath);
+				image = new Image(in);
+			}catch(Exception ee){
+				Executor.warn(TAG, "Can not create image, path=" + imagePath);
+				return null;
+			}
+		}
+
+		imageCahe.put(imagePath, image);
+		return image;
+	}
+
+	public static Image getImage(File file) {
+		if(file.isDirectory()){
+			return getImage("icons/folder.png");
+		}
+
+		try {
+			String icon = UtilFileIcon.getFileIcon(file, false);
+			return getImage(icon);
+		} catch (IOException e) {
+			return getImage("icons/page_white.png");
+		}
+
 	}
 		
 	@SuppressWarnings("unchecked")

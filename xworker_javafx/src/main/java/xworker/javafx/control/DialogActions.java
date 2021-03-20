@@ -98,6 +98,8 @@ public class DialogActions {
     }
 
     public static void createEvent(ActionContext actionContext) {
+        ThingEventHandler.create(actionContext);
+        /*
         Thing self = actionContext.getObject("self");
         Dialog<Object> obj = actionContext.getObject("parent");
         String eventName = self.getString("type");
@@ -114,7 +116,7 @@ public class DialogActions {
         }else if("onShown".equals(eventName)) {
             obj.setOnShown(eventHandler);
         }
-
+        */
     }
 
     public static class ThingResultConverter implements Callback<ButtonType,Object>{

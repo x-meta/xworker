@@ -46,7 +46,6 @@ public class ChoiceBoxActions {
 				box.getItems().addAll(list);
 			}
 		}
-
 	}
 
 	String name = "abc";

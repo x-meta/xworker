@@ -519,6 +519,37 @@ public class XWorkerUtils {
     public static String getThingDescUrl(String thingPath) {
     	return GlobalConfig.getThingDescUrl(thingPath);
     }
+
+	/**
+	 * 返回模型的描述文档。
+	 *
+	 * @param thing
+	 * @return
+	 */
+	public static String getThingDesc(Thing thing){
+		Thing realThing = thing;
+		while(true){
+			String description = realThing.getStringBlankAsNull("description");
+			if((description == null || "".equals(description.trim())) && realThing.getBoolean("inheritDescription")){
+				//是否是继承描述
+				List<Thing> extendsThing = realThing.getExtends();
+				if(extendsThing.size() > 0){
+					realThing = extendsThing.get(0);
+				}else{
+					break;
+				}
+			}else{
+				break;
+			}
+		}
+
+		String description = realThing.getStringBlankAsNull("description");
+		if(description != null) {
+			return  description;
+		}else {
+			return "";
+		}
+	}
     
     /**
      * 事物Http协议的客户端向服务器端发送请求。

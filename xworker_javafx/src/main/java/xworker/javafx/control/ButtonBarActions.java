@@ -25,7 +25,7 @@ public class ButtonBarActions {
 		init(bar, self, actionContext);
 		actionContext.g().put(self.getMetadata().getName(), bar);
 		
-		actionContext.g().put("parent", bar);
+		actionContext.peek().put("parent", bar);
 		for(Thing child : self.getChilds()) {
 			Object obj = child.doAction("create", actionContext);
 			if(obj instanceof Button) {

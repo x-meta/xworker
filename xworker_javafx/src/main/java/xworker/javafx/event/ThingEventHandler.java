@@ -1,27 +1,38 @@
 package xworker.javafx.event;
 
-import javafx.scene.control.*;
-import javafx.scene.media.MediaView;
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
-
+import com.sun.javafx.property.adapter.ReadOnlyPropertyDescriptor;
+import javafx.beans.value.WritableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.stage.Window;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
+import xworker.javafx.util.FXThingLoader;
+import xworker.lang.executor.Executor;
 
-import java.util.Locale;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class ThingEventHandler implements EventHandler<Event> {
-	Thing thing;
-	ActionContext actionContext;
+	private static final String TAG = ThingEventHandler.class.getName();
 
-	public ThingEventHandler(Thing thing, ActionContext actionContext) {
+	static final byte METHOD_E_A = 0;
+	static final byte METHOD_E = 1;
+	static final byte METHOD_A = 2;
+	static final byte METHOD = 3;
+	Thing thing;
+	Object methodOwner;
+	ActionContext actionContext;
+	Method handlerMehtod;
+	String methodName;
+	byte methodType = METHOD;
+
+	public ThingEventHandler(Thing thing, Object methodOwner, ActionContext actionContext) {
 		this.thing = thing;
 		this.actionContext = actionContext;
+		this.methodOwner = methodOwner;
+		this.methodName = thing.getStringBlankAsNull("methodName");
 	}
 
 	@Override
@@ -48,6 +59,73 @@ public class ThingEventHandler implements EventHandler<Event> {
 				}
 			}
 		}
+
+		if(methodOwner != null && methodName != null){
+			if(handlerMehtod == null){
+				try{
+					handlerMehtod = methodOwner.getClass().getMethod(methodName, Event.class, ActionContext.class);
+					if(handlerMehtod == null){
+						handlerMehtod = methodOwner.getClass().getMethod(methodName, Event.class);
+
+						if(handlerMehtod == null){
+							handlerMehtod = methodOwner.getClass().getMethod(methodName, ActionContext.class);
+
+							if(handlerMehtod == null){
+								handlerMehtod = methodOwner.getClass().getMethod(methodName);
+
+								if(handlerMehtod != null){
+									methodType = METHOD;
+								}
+							}else{
+								methodType = METHOD_A;
+							}
+						}else{
+							methodType = METHOD_E;
+						}
+					}else{
+						methodType = METHOD_E_A;
+					}
+
+				}catch(Exception ignored){
+				}
+			}
+
+			try {
+				if (handlerMehtod != null) {
+					switch (methodType) {
+						case METHOD_E_A:
+							handlerMehtod.invoke(methodOwner, event, actionContext);
+							break;
+						case METHOD_E:
+							handlerMehtod.invoke(methodOwner, event);
+							break;
+						case METHOD_A:
+							handlerMehtod.invoke(methodOwner, actionContext);
+							break;
+						case METHOD:
+							handlerMehtod.invoke(methodOwner);
+							break;
+					}
+
+				}
+			}catch(Exception e){
+				Executor.warn(TAG, "Invoker event handler error, thing=" + thing.getMetadata().getPath() + ",method=" + methodName, e);
+			}
+		}
+	}
+
+	public static WritableValue<Object> getEventHandlerProperty(Object parent, String eventName){
+		try {
+Field field = parent.getClass().getField(eventName);
+			if(field != null){
+				return (WritableValue<Object>) field.get(parent);
+			}
+		}catch(Exception e){
+			Executor.warn(TAG, "Get event handler property exception, class=" + parent.getClass().getName()
+					+ ", name=" + eventName, e);
+		}
+
+		return null;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -55,14 +133,28 @@ public class ThingEventHandler implements EventHandler<Event> {
 		Thing self = actionContext.getObject("self");
 
 		Object parent = actionContext.getObject("parent");
-		String eventName = self.getString("type");
+		String eventName = self.getString("name");
 		if(eventName == null || "".equals(eventName)){
 			return;
 		}
 
 		// EventType eventType = new EventType(self.getMetadata().getName());
-		EventHandler eventHandler = new ThingEventHandler(self, actionContext);
-
+		EventHandler eventHandler = new ThingEventHandler(self, FXThingLoader.getObject(), actionContext);
+		/*
+		WritableValue<Object> eventProperty = getEventHandlerProperty(parent, eventName);
+		if(eventProperty != null){
+			eventProperty.setValue(eventHandler);
+		}*/
+		String setMethodName = "set" + ReadOnlyPropertyDescriptor.capitalizedName(eventName);
+		try{
+			Method setEventHandler = parent.getClass().getMethod(setMethodName, EventHandler.class);
+			if(setEventHandler != null){
+				setEventHandler.invoke(parent, eventHandler);
+			}
+		}catch(Exception e){
+			Executor.warn(TAG, "Set event handler exception, method=" + setMethodName + ",thing=" + self.getMetadata().getPath(), e);
+		}
+		/*
 		if (parent instanceof Window) {
 			Window window = (Window) parent;
 			if ("onCloseRequest".equals(eventName)) {
@@ -380,7 +472,6 @@ public class ThingEventHandler implements EventHandler<Event> {
 			} else if ("onShown".equals(eventName)) {
 				obj.setOnShown(eventHandler);
 			}
-		}
+		}*/
 	}
-
 }

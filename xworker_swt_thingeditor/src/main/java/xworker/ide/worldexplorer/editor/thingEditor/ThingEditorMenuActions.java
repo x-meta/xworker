@@ -64,7 +64,22 @@ public class ThingEditorMenuActions {
 		ActionContainer actions = actionContext.getObject("actions");
 		Action showMessage = actionContext.getObject("showMessage");
 		Action showException = actionContext.getObject("showException");
-		
+
+		ActionContext context = new ActionContext();
+		context.put("parent", coolBar.getShell());
+		context.put("editorShell", coolBar.getShell());
+		context.put("explorerActions", explorerActions);
+		context.put("explorerContext", explorerContext);
+		context.put("thingContext", actionContext);
+		context.put("utilBrowser",  utilBrowser);
+		context.put("thing", currentThing);
+		context.put("currentThing", currentThing);
+		context.put("currentModelContext", currentModelContext);
+		context.put("currentModel", currentModel);
+		context.put("editorContext", actionContext);
+		context.put("editorActions", actions);
+		context.put("event", actionContext.get("event"));
+
 		try{
 		    if(actionUrl != null){
 		        if(actionUrl.startsWith("http:") || actionUrl.startsWith("https:")){
@@ -80,12 +95,12 @@ public class ThingEditorMenuActions {
 		            explorerActions.doAction("openUrl", explorerContext, "url", url, "name", currentThing.getMetadata().getPath());
 		        }else if(actionUrl.startsWith("action:")){
 		            String actionName = actionUrl.substring(7, actionUrl.length());
-		            currentThing.doAction(actionName, actionContext);
+		            currentThing.doAction(actionName, context);
 		        }else{
 		            Action action = world.getAction(actionUrl);
 		            //log.info(actionUrl);
 		            if(action != null){    
-		                action.run(actionContext);
+		                action.run(context);
 		            }
 		        }
 		    }else if(menuThing.getStringBlankAsNull("shell") != null){
@@ -99,21 +114,8 @@ public class ThingEditorMenuActions {
 		        }
 		        Thing shellThing = (Thing) world.get(shellPath);
 		        if(shellThing != null){
-		            ActionContext context = new ActionContext();
-		            context.put("parent", coolBar.getShell());
-		            context.put("editorShell", coolBar.getShell());
-		            context.put("explorerActions", explorerActions);
-		            context.put("explorerContext", explorerContext);
-		            context.put("thingContext", actionContext);
-		            context.put("utilBrowser",  utilBrowser);
-		            context.put("thing", currentThing);
-		            context.put("currentThing", currentThing);
-		            context.put("currentModelContext", currentModelContext);
-		            context.put("currentModel", currentModel);
-		            context.put("params", params);
-		            context.put("editorContext", actionContext);
-		            context.put("editorActions", actions);
-		            
+
+					context.put("params", params);
 		            Shell newShell = shellThing.doAction("create", context);
 		            if(newShell != null){
 		                if(UtilData.isTrue(newShell.getData("menuShellDispose"))){

@@ -665,6 +665,7 @@ Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>
     <attribute name="name"></attribute>
     <attribute name="label"></attribute>
     <attribute name="syntax" inputtype="inputSelect" default="proto2">
+        <value name="proto1" value="proto1"></value>
         <value name="proto2" value="proto2"></value>
         <value name="proto3" value="proto3"></value>
     </attribute>
@@ -977,7 +978,7 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
 //接收方：${data.receiver?if_exists}
 message ${data.getMetadata().getName()}{
     <#list data.getChilds("Field") as f>
-    <#if (proto.syntax?exists && proto.syntax == "proto2") || f.modifier == "repeated">${f.modifier?if_exists} </#if>${f.type?if_exists} ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
+    <#if (proto.syntax?exists && (proto.syntax == "proto2" ||  proto.syntax == "proto1")) ||  f.modifier == "repeated">${f.modifier?if_exists} </#if>${f.type?if_exists}<#if proto.syntax?exists && proto.syntax != "proto2" && f.modifier == "repeated"></#if> ${f.name?if_exists} = ${f.index?if_exists};    //${f.getMetadata().getLabel()}
     </#list>    
     <#list data.getChilds("enum") as enu>
     

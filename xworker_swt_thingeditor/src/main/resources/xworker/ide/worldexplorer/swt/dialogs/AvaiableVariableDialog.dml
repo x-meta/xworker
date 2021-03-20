@@ -41,6 +41,29 @@ import ${var.className};
 </#list>
 
 ########################################################
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
+<#if var.className?exists && var.className != "">
+${var.className} ${var.name};
+<#else>
+Object ${var.name};
+</#if>
+</#list>
+
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
+<#if var.className?exists && var.className != "">
+    ${var.name} = actionContext.getObject("${var.name}");
+<#else>
+    ${var.name} = actionContext.get("${var.name}");
+</#if>
+</#list>
+
+########################################################
 import org.xmeta.ActionContext;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionField;

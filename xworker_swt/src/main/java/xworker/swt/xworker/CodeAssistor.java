@@ -654,7 +654,7 @@ public class CodeAssistor implements KeyListener, DisposeListener, VariableProvi
 				}
 				return;
 			}
-		}else if(c == ' ' || c == '\n'){
+		}else if(c == ' ' || c == '\n' || c == ':'){
 			if(methodIndex > index){
 				lists.add(0, text.substring(index + 1, methodIndex));
 			}

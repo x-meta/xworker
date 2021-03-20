@@ -8,21 +8,29 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import xworker.javafx.application.ThingApplication;
+import xworker.javafx.util.JavaFXUtils;
 
 public class StageActions {
-	public static void create(final ActionContext actionContext) {
+	public static void run(final ActionContext actionContext){
 		final Thing self = actionContext.getObject("self");
-		
+
 		ThingApplication.checkStart();
-		
+
 		Platform.runLater(new Runnable() {
 			public void run() {
-				create(self, actionContext);
+				Stage stage = create(self, actionContext);
+				stage.show();
 			}
 		});
 	}
+
+	public static Object create(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+		Stage stage = create(self, actionContext);
+		return stage;
+	}
 	
-	public static void create(Thing self, ActionContext actionContext) {
+	public static Stage create(Thing self, ActionContext actionContext) {
 		String style = self.getStringBlankAsNull("style");
 		StageStyle sstyle = null;
 		if(style != null) {
@@ -47,7 +55,7 @@ public class StageActions {
 			child.doAction("create", actionContext);
 		}
 		
-		stage.show();		
+		return stage;
 	}
 
 	public static void init(Stage stage, Thing thing, ActionContext actionContext) {
@@ -91,7 +99,7 @@ public class StageActions {
 			stage.setResizable(thing.getBoolean("resizable"));
 		}
 		
-		String title = thing.getStringBlankAsNull("title");
+		String title = JavaFXUtils.getString(thing, "title", actionContext);
 		if(title != null) {
 			stage.setTitle(title);
 		}
