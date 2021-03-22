@@ -22,16 +22,25 @@ public class MenuItemActions {
         	}
         }
         if(thing.valueExists("id")){
-            item.setId(thing.getString("id"));
+            String id = JavaFXUtils.getString(thing, "id", actionContext);
+            if(id != null) {
+                item.setId(thing.getString("id"));
+            }
         }
         if(thing.valueExists("mnemonicParsing")){
             item.setMnemonicParsing(thing.getBoolean("mnemonicParsing"));
         }
         if(thing.valueExists("style")){
-            item.setStyle(thing.getString("style"));
+            String style = JavaFXUtils.getString(thing, "style", actionContext);
+            if(style != null) {
+                item.setStyle(style);
+            }
         }
         if(thing.valueExists("text")){
-            item.setText(thing.getString("text"));
+            String text = JavaFXUtils.getString(thing, "text", actionContext);
+            if(text != null) {
+                item.setText(text);
+            }
         }
         if(thing.valueExists("visible")){
             item.setVisible(thing.getBoolean("visible"));

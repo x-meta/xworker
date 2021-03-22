@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="SimpleThingEditor" descriptors="xworker.javafx.stage.Stage" title="SimpleThingEditor">
+    <Nodes>
+        <SplitPane name="mainSplitPane" orientation="VERTICAL" dividerPositions="0.7,0.3">
+            <SplitPane name="topSplitPane" dividerPositions="0.2,0.6,0.2">
+                <TreeView name="projectTree">
+                    <XWorkerIndex name="indexTreeModel" descriptors="xworker.javafx.thing.model.XWorkerIndex"></XWorkerIndex>
+                    <ContextMenu>
+                        <MenuItem name="createThingMenuItem" text="lang:d=新模型&amp;en=New Model">
+                            <MenuItemEventHandler name="onAction" methodName="openCreateThingDialog"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="rfreshMenuItem" text="lang:d=刷新&amp;en=Refresh">
+                            <MenuItemEventHandler name="onAction" methodName="projectTreeRefresh"></MenuItemEventHandler>
+                        </MenuItem>
+                    </ContextMenu>
+                </TreeView>
+                <TabPane name="mainTabPane">
+                    <Tab name="packageViewTab" text="lang:d=目录浏览&amp;en=Packages">
+                        <TableView name="packageTabView">
+                            <IndexTableViewModel name="packageTabModel" descriptors="xworker.javafx.thing.model.IndexTableViewModel"></IndexTableViewModel>
+                        </TableView>
+                    </Tab>
+                </TabPane>
+                <WebView name="webView" prefWidth="150"></WebView>
+            </SplitPane>
+        </SplitPane>
+    </Nodes>
+    <Scene name="Scene" root="var:mainSplitPane"></Scene>
+</Stage>

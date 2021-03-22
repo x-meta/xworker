@@ -14,16 +14,7 @@ public class SplitPaneActions {
 		if(thing.valueExists("orientation")){
             node.setOrientation(Orientation.valueOf(thing.getString("orientation")));
         }
-        if(thing.valueExists("dividerPositions")){
-        	String dp = thing.getString("dividerPositions");
-        	
-        	int index = 0;
-        	for(String d : dp.split("[,]")) {
-        		d = d.trim();
-        		node.setDividerPosition(index, Double.parseDouble(d));
-        		index++;
-        	}
-        }
+
 	}
 	
 	public static SplitPane create(ActionContext actionContext) {
@@ -40,7 +31,18 @@ public class SplitPaneActions {
 				item.getItems().add((Node) obj);
 			}
 		}
-		
+		if(self.valueExists("dividerPositions")){
+			String dp = self.getString("dividerPositions");
+
+			String dps[] = dp.split("[,]");
+			double ds[] = new double[dps.length];
+			int index = 0;
+			for(String d : dps) {
+				ds[index] = Double.parseDouble(d);
+				index++;
+			}
+			item.setDividerPositions(ds);
+		}
 		return item;
 	}
 }

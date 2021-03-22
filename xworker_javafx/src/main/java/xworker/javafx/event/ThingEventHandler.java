@@ -35,6 +35,13 @@ public class ThingEventHandler implements EventHandler<Event> {
 		this.methodName = thing.getStringBlankAsNull("methodName");
 	}
 
+	private static Method getMethod(Class<?> cls, String name, Class<?> ... params){
+		try{
+			return cls.getMethod(name, params);
+		}catch(Exception e){
+			return null;
+		}
+	}
 	@Override
 	public void handle(Event event) {
 		for (Thing child : thing.getChilds()) {
@@ -63,15 +70,15 @@ public class ThingEventHandler implements EventHandler<Event> {
 		if(methodOwner != null && methodName != null){
 			if(handlerMehtod == null){
 				try{
-					handlerMehtod = methodOwner.getClass().getMethod(methodName, Event.class, ActionContext.class);
+					handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class, ActionContext.class);
 					if(handlerMehtod == null){
-						handlerMehtod = methodOwner.getClass().getMethod(methodName, Event.class);
+						handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class);
 
 						if(handlerMehtod == null){
-							handlerMehtod = methodOwner.getClass().getMethod(methodName, ActionContext.class);
+							handlerMehtod =getMethod(methodOwner.getClass(), methodName, ActionContext.class);
 
 							if(handlerMehtod == null){
-								handlerMehtod = methodOwner.getClass().getMethod(methodName);
+								handlerMehtod = getMethod(methodOwner.getClass(), methodName);
 
 								if(handlerMehtod != null){
 									methodType = METHOD;
@@ -106,7 +113,8 @@ public class ThingEventHandler implements EventHandler<Event> {
 							handlerMehtod.invoke(methodOwner);
 							break;
 					}
-
+				}else{
+					Executor.warn(TAG, "Can not invoke method " + methodOwner.getClass().getName() + ":" + methodName);
 				}
 			}catch(Exception e){
 				Executor.warn(TAG, "Invoker event handler error, thing=" + thing.getMetadata().getPath() + ",method=" + methodName, e);
@@ -116,7 +124,7 @@ public class ThingEventHandler implements EventHandler<Event> {
 
 	public static WritableValue<Object> getEventHandlerProperty(Object parent, String eventName){
 		try {
-Field field = parent.getClass().getField(eventName);
+             Field field = parent.getClass().getField(eventName);
 			if(field != null){
 				return (WritableValue<Object>) field.get(parent);
 			}

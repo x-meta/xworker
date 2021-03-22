@@ -36,13 +36,22 @@ public class TabActions {
             }
         }
         if(thing.valueExists("id")){
-            tab.setId(thing.getString("id"));
+            String id = JavaFXUtils.getString(thing, "id", actionContext);
+            if(id != null) {
+                tab.setId(id);
+            }
         }
         if(thing.valueExists("style")){
-            tab.setStyle(thing.getString("style"));
+            String style = JavaFXUtils.getString(thing, "style", actionContext);
+            if(style != null) {
+                tab.setStyle(style);
+            }
         }
         if(thing.valueExists("text")){
-            tab.setText(thing.getString("text"));
+            String text = JavaFXUtils.getString(thing, "text", actionContext);
+            if(text != null) {
+                tab.setText(text);
+            }
         }
         if(thing.valueExists("tooltip")){
             Tooltip tooltip = JavaFXUtils.getObject(thing, "tooltip", actionContext);
