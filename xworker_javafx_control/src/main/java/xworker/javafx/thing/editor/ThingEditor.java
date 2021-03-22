@@ -51,7 +51,7 @@ public class ThingEditor {
     SimpleBooleanProperty modifiedProperty = new SimpleBooleanProperty();
 
     public ThingEditor(){
-        actionContext = new ActionContext();
+        this(new ActionContext());
     }
 
     public ThingEditor(ActionContext actionContext){

@@ -47,6 +47,9 @@ public class HtmlEditor extends AttributeEditor {
         String html = editor.getHtmlText();
         String tag = "<body contenteditable=\"true\">";
         int index1 = html.indexOf(tag) + tag.length();
+        if(index1 == -1){
+            return html;
+        }
         return html.substring(index1, html.length() - 14);
     }
 }

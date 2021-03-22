@@ -1,5 +1,7 @@
 package xworker.javafx.util;
 
+import javafx.fxml.FXML;
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionField;
@@ -22,7 +24,7 @@ public class FXThingLoader {
      * @param thing
      * @param actionContext
      */
-    public static void load(Object object, Thing thing, ActionContext actionContext){
+    public static <T> T load(Object object, Thing thing, ActionContext actionContext){
         Stack<Object> stack = objectLocal.get();
         if(stack == null) {
             stack = new Stack<>();
@@ -30,8 +32,9 @@ public class FXThingLoader {
         }
 
         stack.push(object);
+        T result = null;
         try{
-            thing.doAction("create", actionContext);
+            result = thing.doAction("create", actionContext);
 
             //查找字段的注解
             java.util.List<Field> allFieldList = new ArrayList<Field>() ;
@@ -50,27 +53,43 @@ public class FXThingLoader {
                         vname = name;
                     }
 
-                    boolean accessChanged = false;
-                    try {
-                        if(!field.isAccessible()) {
-                            field.setAccessible(true);
-                            accessChanged = true;
-                        }
-                        field.set(object, actionContext.get(vname));
-                    } catch (IllegalAccessException e) {
-                        Executor.warn(TAG, "Set field value exception, field=" + name + ", valueName=" + vname, e);
-                    } finally {
-                        if(accessChanged) {
-                            field.setAccessible(false);
-                        }
-                    }
+                    setFieldValue(object, field, vname, actionContext);
+                }
+
+                FXML fxmlField = field.getAnnotation(FXML.class);
+                if(fxmlField != null) {
+                    String name = field.getName();
+
+                    setFieldValue(object, field, name, actionContext);
                 }
             }
         }finally {
             stack.pop();
         }
+
+        return result;
     }
 
+    private static void setFieldValue(Object object, Field field, String valueName, ActionContext actionContext){
+        if(valueName == null || "".equals(valueName)){
+            valueName = field.getName();
+        }
+
+        boolean accessChanged = false;
+        try {
+            if(!field.isAccessible()) {
+                field.setAccessible(true);
+                accessChanged = true;
+            }
+            field.set(object, actionContext.get(valueName));
+        } catch (IllegalAccessException e) {
+            Executor.warn(TAG, "Set field value exception, field=" + field.getName() + ", valueName=" + valueName, e);
+        } finally {
+            if(accessChanged) {
+                field.setAccessible(false);
+            }
+        }
+    }
     public static Object getObject(){
         Stack<Object> stack = objectLocal.get();
         if(stack != null && stack.size() > 0){
