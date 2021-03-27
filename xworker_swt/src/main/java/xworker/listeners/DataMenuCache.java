@@ -188,7 +188,7 @@ public class DataMenuCache {
 	/**
 	 * 设置和合并菜单。
 	 * 
-	 * @param cahce
+	 * @param cacheList
 	 * @param menuList
 	 * @param names
 	 */

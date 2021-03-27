@@ -24,9 +24,9 @@ public class TextFieldEditor extends AttributeEditor {
         double size = attribute.getDouble("size");
         textField = new TextField();
         if(size > 0 ){
-            textField.setMaxWidth(size * 6);
+            textField.setMaxWidth(size * 7);
         }else{
-            textField.setMaxWidth(150);
+            textField.setMaxWidth(200);
         }
 
         textField.textProperty().addListener(new ChangeListener<String>() {

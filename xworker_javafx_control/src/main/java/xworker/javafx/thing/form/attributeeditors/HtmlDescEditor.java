@@ -24,6 +24,7 @@ public class HtmlDescEditor extends AttributeEditor {
     public Node createEditor() {
         editor = new HTMLEditor();
         editor.setPrefHeight(300);
+        editor.setMinHeight(200);
         GridPane.setVgrow(editor, Priority.ALWAYS);
         GridPane.setHgrow(editor, Priority.ALWAYS);
         editor.accessibleTextProperty().addListener(new ChangeListener<String>() {

@@ -29,6 +29,7 @@ import org.xmeta.ui.session.SessionManager;
 import org.xmeta.util.UtilResource;
 
 import xworker.lang.executor.Executor;
+import xworker.listeners.SwtMenuListener;
 import xworker.swt.app.View;
 import xworker.swt.design.Designer;
 import xworker.util.ThingUtils;
@@ -340,6 +341,11 @@ public class SimpleThingEditor {
 
 		World world = World.getInstance();
 		//World.getInstance().getClassLoader().addClassPath(new File(world.getPath() + "/config/").toURI().toURL());
+
+		//公共的模型菜单
+		Thing menuThing = world.getThing("xworker.ide.config.ProjectMenuSwt");
+		SwtMenuListener.getInstance().updateMenu(menuThing);
+
 		Thing simpleEditor = World.getInstance().getThing("xworker.swt.xwidgets.prototypes.SimpleThingEditor");
 		simpleEditor.doAction("run", new ActionContext());
 	}

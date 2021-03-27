@@ -131,6 +131,12 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
                     if(!"thing".equals(thing.getThingName())){
                         desChilds.remove(i);
                         i--;
+                        continue;
+                    }
+                    if ("private".equals(thing.getString("modifier"))) {
+                        desChilds.remove(i);
+                        i--;
+                        continue;
                     }
                     //去重，为啥会重，暂时未知，以上代码从swt拷贝，按理不会重
                     String path = thing.getMetadata().getPath();
@@ -169,6 +175,7 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
                     webView.getEngine().loadContent(XWorkerUtils.getThingDesc(thing));
 
                     Thing newThing = new Thing(thing);
+                    newThing.put("name", null);
                     thingForm.setThing(newThing);
                 }else{
                     addButton.setDisable(true);
@@ -183,6 +190,10 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
             public void handle(ActionEvent event) {
                 Thing thing = thingForm.getThing(true);
                 thingEditor.add(thing);
+
+                Map<String, Object> values = thingForm.getValues();
+                values.put("name", "");
+                thingForm.setValues(values);
             }
         });
     }

@@ -398,10 +398,10 @@ public class ThingEditorChildActions {
 		}
 		//查找并添加注册的子事物
 		try{
+			Map<String, Thing> context = new HashMap<String, Thing>();
 		    Thing registThing = world.getThing("xworker.ide.db.dbindex.app.dataObject.RegistsByThing");
 		    if(registThing != null){
 		        List<DataObject> rchilds = registThing.doAction("query", actionContext, "thing", descriptor, "noDescriptor", true, "registType", "child");
-		        Map<String, Thing> context = new HashMap<String, Thing>();
 		        for(DataObject rc : rchilds){
 		            //log.info("child=" + rc);
 		            Thing child = world.getThing((String) rc.get("path"));        
@@ -434,9 +434,8 @@ public class ThingEditorChildActions {
 		                }
 		            }
 		        }
-		    
-		        ThingUtils.initFromRegistCache(desChilds, context, descriptor, "child");
 		    }
+			ThingUtils.initFromRegistCache(desChilds, context, descriptor, "child");
 		}catch(Exception e){
 		    Executor.info(TAG, "add regist child error", e);
 		}

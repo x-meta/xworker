@@ -1,6 +1,5 @@
 package xworker.javafx.control;
 
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
@@ -97,6 +96,19 @@ public class DialogActions {
         dialog.setResultConverter(new ThingResultConverter(self, actionContext));
     }
 
+    public static void createContent(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Dialog<Object> dialog = actionContext.getObject("parent");
+
+        for(Thing child : self.getChilds()){
+            Object obj = child.doAction("create", actionContext);
+            if(obj instanceof Node){
+                dialog.getDialogPane().setContent((Node) obj);
+                return;
+            }
+        }
+    }
+
     public static void createEvent(ActionContext actionContext) {
         ThingEventHandler.create(actionContext);
         /*
@@ -137,4 +149,5 @@ public class DialogActions {
             return result;
         }
     }
+
 }

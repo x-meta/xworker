@@ -144,7 +144,17 @@ public class IndexTableViewModel {
         setIndex(Index.getInstance());
     }
 
+    public void refresh(){
+        this.index.refresh();
+        setIndex(index);
+    }
+
+    public TableView.TableViewSelectionModel<Index> getSelectionModel(){
+        return tableView.getSelectionModel();
+    }
+
     public void setIndex(Index index){
+        this.index = index;
         tableView.getItems().clear();
 
         if(index.getParent() != null){
@@ -170,7 +180,7 @@ public class IndexTableViewModel {
                 fdir = new File(((FileThingManager) thingManager).getFilePath());
             }
         }
-        if(fdir != null){
+        if(fdir != null && fdir.exists()){
             for(File f : fdir.listFiles()){
                 if(f.isDirectory() || isThingFile(f.getName())) continue;
                 FileIndex fileIndex = new FileIndex(index, f);

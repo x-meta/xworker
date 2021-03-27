@@ -21,6 +21,7 @@ public class HtmlEditor extends AttributeEditor {
     public Node createEditor() {
         editor = new HTMLEditor();
         editor.setPrefHeight(300);
+        editor.setMinHeight(200);
         GridPane.setVgrow(editor, Priority.ALWAYS);
         GridPane.setHgrow(editor, Priority.ALWAYS);
         editor.accessibleTextProperty().addListener(new ChangeListener<String>() {
@@ -46,10 +47,15 @@ public class HtmlEditor extends AttributeEditor {
     public Object getValue() {
         String html = editor.getHtmlText();
         String tag = "<body contenteditable=\"true\">";
-        int index1 = html.indexOf(tag) + tag.length();
+        int index1 = html.indexOf(tag);
         if(index1 == -1){
             return html;
         }
-        return html.substring(index1, html.length() - 14);
+        index1 =  index1 + tag.length();
+        try {
+            return html.substring(index1, html.length() - 14);
+        }catch(Exception e){
+            return html.substring(index1, html.length());
+        }
     }
 }

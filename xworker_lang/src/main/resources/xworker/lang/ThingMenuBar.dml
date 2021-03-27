@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ThingMenuBar" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>模型菜单定义，在模型编辑器里，当编辑一个模型的时候在编辑器上生成的菜单。</p>
+]]></description>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Menu">
+        <description><![CDATA[<p><strong>平台</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以设置platform属性，表示该菜单属于哪一个平台。一般用于不同的模型编辑器打开窗口，比如swt的窗口在javafx的模型编辑器下可能会打开失败（未引用swt的模型库）。</p>
+
+<p><strong>菜单执行时的动作上下文中的变量</strong></p>
+
+<ul>
+	<li><strong>parentContext: ActionContext</strong><br />
+	一般是模型编辑器的动作上下文。<br />
+	&nbsp;</li>
+	<li><strong>currentThing:Thing</strong><br />
+	当前正在编辑的模型。是模型编辑器中模型结构树中选中的节点中的那个模型。<br />
+	&nbsp;</li>
+	<li><strong>menu: ThingMenu</strong><br />
+	当前模型定义。</li>
+</ul>
+
+<p><strong>菜单执行顺序和返回值</strong></p>
+
+<ol>
+	<li><strong>doAction方法</strong><br />
+	首先会执行菜单本身的doAction方法。&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>action</strong><br />
+	如果设置了action属性，那么先检查是否是action:xxx格式，如果是，那么取出xxx，把xxx作为当前模型的行为的名字，执行当前模型的行为xxx。如果不是action:xxx格式，那么获取认为action属性的值是引用的动作的路径，如果动作存在则执行动作。<br />
+	&nbsp;</li>
+	<li><strong>window</strong><br />
+	如果window属性不为空，那么根据window属性设置的模型路径获取模型，如果模型存在那么执行create方法。</li>
+</ol>
+
+<p>&nbsp;&nbsp;&nbsp; 返回最后一次执行的结果。</p>
+
+<p>&nbsp; &nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <NOOP name="doAction"></NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="platform" inputtype="inputSelect">
+            <value name="swt" value="swt"></value>
+            <value name="javafx" value="javafx"></value>
+            <value name="html" _xmeta_id_="window" value="html"></value>
+        </attribute>
+        <attribute name="action" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="window" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="sortWeight" default="0">
+            <description><![CDATA[<p>第一层Menu生效，即应用于MenuBar的Menu有效，越大排序越靠后。</p>
+]]></description>
+        </attribute>
+        <attribute name="icon" inputtype="file" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Menu" extends="xworker.lang.ThingMenuBar/@Menu" inheritDescription="true"></thing>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+</thing>

@@ -44,12 +44,22 @@ public class InputSelectEditor extends AttributeEditor {
 
     @Override
     public void setValue(Object value) {
+        Thing thing = null;
         if(value instanceof Thing){
-            comboBox.setValue((Thing) value);
+            thing = (Thing) value;
         }else if(value instanceof  String) {
-            comboBox.setValue(converter.fromString((String) value));
+            thing = converter.fromString((String) value);
+        }
+        if(thing == null){
+            thing = converter.fromString(null);
+
+        }
+
+        comboBox.setValue(thing);
+        if(thing.getStringBlankAsNull("value") == null){
+            comboBox.getEditor().setText(" ");
         }else{
-            comboBox.setValue(null);
+            comboBox.getEditor().setText(thing.getMetadata().getLabel());
         }
     }
 
@@ -59,7 +69,7 @@ public class InputSelectEditor extends AttributeEditor {
         if(thing != null){
             return thing.get("value");
         }else {
-            return comboBox.getEditor().getText();
+            return comboBox.getEditor().getText().trim();
         }
     }
 }

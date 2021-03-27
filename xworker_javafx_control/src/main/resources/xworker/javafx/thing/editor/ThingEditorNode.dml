@@ -2,12 +2,12 @@
 
 <Stage name="ThingEditorNode" _xmeta_id_="ThingEditor" descriptors="xworker.javafx.stage.Stage">
     <Nodes>
-        <VBox name="mainBox" fillWidth="true" spacing="5">
+        <VBox name="mainBox" fillWidth="true" spacing="0">
             <Label name="titleLabel" text="标题"></Label>
             <MenuBar name="menuBar"></MenuBar>
             <ToolBar name="tooBar">
                 <Button name="toolbarSaveButton" contentDisplay="GRAPHIC_ONLY" graphic="icons/save.gif"
-                     prefHeight="16" prefWidth="16">
+                     prefWidth="16" prefHeight="16">
                     <style><![CDATA[.button {
     -fx-background-color: transparent, transparent, transparent, transparent;
 }
@@ -43,6 +43,38 @@
             <SplitPane name="splitPane" dividerPositions="0.3,0.7">
                 <TreeView name="outlineTree">
                     <ThingTreeCellFactory name="ThingTreeCellFactory" descriptors="xworker.javafx.control.cell.ThingTreeCellFactory"></ThingTreeCellFactory>
+                    <ContextMenu name="outlineTreeContextMenu">
+                        <MenuItem name="copyPathMenuItem" text="lang:d=拷贝路径&amp;en=Copy Path">
+                            <MenuItemEventHandler name="onAction" methodName="copyPath"></MenuItemEventHandler>
+                        </MenuItem>
+                        <SeparatorMenuItem name="sp1"></SeparatorMenuItem>
+                        <MenuItem name="moveUpMenuItem" text="lang:d=节点上移&amp;en=MoveUp">
+                            <MenuItemEventHandler name="onAction" methodName="moveUp"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="moveDownMenuItem" text="lang:d=节点下移&amp;en=MoveDown">
+                            <MenuItemEventHandler name="onAction" methodName="moveDown"></MenuItemEventHandler>
+                        </MenuItem>
+                        <SeparatorMenuItem name="split2"></SeparatorMenuItem>
+                        <MenuItem name="deleteMenuItem" text="lang:d=删除&amp;en=Delete">
+                            <MenuItemEventHandler name="onAction" methodName="remove"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="cutMenuItem" text="lang:d=剪切&amp;en=Cut">
+                            <MenuItemEventHandler name="onAction" methodName="cut"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="copyMenuItem" text="lang:d=复制&amp;en=Copy">
+                            <MenuItemEventHandler name="onAction" methodName="copy"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="pasteMenuItem" text="lang:d=粘贴&amp;en=Paste">
+                            <MenuItemEventHandler name="onAction" methodName="paste"></MenuItemEventHandler>
+                        </MenuItem>
+                        <MenuItem name="pasteAsChildMenuItem" text="lang:d=粘贴-作为子节点&amp;en=Paste as Child">
+                            <MenuItemEventHandler name="onAction" methodName="pasteAsChild"></MenuItemEventHandler>
+                        </MenuItem>
+                        <SeparatorMenuItem name="split3"></SeparatorMenuItem>
+                        <MenuItem name="refreshMenuItem" text="lang:d=刷新&amp;en=Refresh">
+                            <MenuItemEventHandler name="onAction" methodName="refresh"></MenuItemEventHandler>
+                        </MenuItem>
+                    </ContextMenu>
                 </TreeView>
                 <VBox name="contentBox" fillWidth="true"></VBox>
                 <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>

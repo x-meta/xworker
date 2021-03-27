@@ -10,12 +10,13 @@ import java.util.Optional;
 public class DialogActions {
     public static Object showDialog(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
-
+        ActionContext ac = new ActionContext();
+        ac.put("parentContext", actionContext);
         Dialog<Object> dialog = self.doAction("getDialog", actionContext);
         if(dialog == null){
             Thing thing = self.doAction("getDialogThing", actionContext);
             if(thing != null){
-                dialog = thing.doAction("create", actionContext);
+                dialog = thing.doAction("create", ac);
             }
         }
 

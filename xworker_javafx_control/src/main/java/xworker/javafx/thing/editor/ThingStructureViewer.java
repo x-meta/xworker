@@ -2,10 +2,14 @@ package xworker.javafx.thing.editor;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import xworker.javafx.util.JavaFXUtils;
 import xworker.util.XWorkerUtils;
 
 public class ThingStructureViewer {
@@ -35,14 +39,30 @@ public class ThingStructureViewer {
                 if(newValue != null){
                     Thing thing = World.getInstance().getThing(newValue);
                     if(thing != null){
-                        webView.getEngine().loadContent(XWorkerUtils.getThingDesc(thing));
+                        JavaFXUtils.showThingDesc(thing, webView);
                     }
+                }
+            }
+        };
+        EventHandler<MouseEvent> doubleClick = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                ListView<String> view = (ListView<String>) event.getSource();
+                String item = view.getSelectionModel().getSelectedItem();
+                Thing thing = World.getInstance().getThing(item);
+                if(thing != null){
+                    XWorkerUtils.ideOpenThing(thing);
+                    stage.close();
                 }
             }
         };
         actionListView.getSelectionModel().selectedItemProperty().addListener(changeListener);
         classListView.getSelectionModel().selectedItemProperty().addListener(changeListener);
         extendsListView.getSelectionModel().selectedItemProperty().addListener(changeListener);
+
+        actionListView.setOnMouseClicked(doubleClick);
+        classListView.setOnMouseClicked(doubleClick);
+        extendsListView.setOnMouseClicked(doubleClick);
     }
 
     public void setThing(Thing thing){

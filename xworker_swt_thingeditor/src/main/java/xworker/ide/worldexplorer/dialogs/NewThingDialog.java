@@ -282,8 +282,9 @@ public class NewThingDialog {
 		    
 		    //def globalConfig = world.getThing("_local.xworker.config.GlobalConfig");
 		    //def webUrl = globalConfig.getString("webUrl");
-		    String webUrl = XWorkerUtils.getThingDescUrl(docPath);
-		    historyBorwser.setUrl(webUrl);// + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + docPath);
+			SwtUtils.setThingDesc(docPath, historyBorwser);
+		    //String webUrl = XWorkerUtils.getThingDescUrl(docPath);
+		    //historyBorwser.setUrl(webUrl);// + "do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&thing=" + docPath);
 		    /*String html = pathObj.getString("description");
 		    if(html == null){
 		        html = "";

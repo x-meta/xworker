@@ -2,29 +2,74 @@
 
 <Stage name="SimpleThingEditor" descriptors="xworker.javafx.stage.Stage" title="SimpleThingEditor">
     <Nodes>
-        <SplitPane name="mainSplitPane" orientation="VERTICAL" dividerPositions="0.7,0.3">
-            <SplitPane name="topSplitPane" dividerPositions="0.2,0.6,0.2">
-                <TreeView name="projectTree">
-                    <XWorkerIndex name="indexTreeModel" descriptors="xworker.javafx.thing.model.XWorkerIndex"></XWorkerIndex>
-                    <ContextMenu>
-                        <MenuItem name="createThingMenuItem" text="lang:d=新模型&amp;en=New Model">
-                            <MenuItemEventHandler name="onAction" methodName="openCreateThingDialog"></MenuItemEventHandler>
-                        </MenuItem>
-                        <MenuItem name="rfreshMenuItem" text="lang:d=刷新&amp;en=Refresh">
-                            <MenuItemEventHandler name="onAction" methodName="projectTreeRefresh"></MenuItemEventHandler>
-                        </MenuItem>
-                    </ContextMenu>
-                </TreeView>
-                <TabPane name="mainTabPane">
-                    <Tab name="packageViewTab" text="lang:d=目录浏览&amp;en=Packages">
-                        <TableView name="packageTabView">
-                            <IndexTableViewModel name="packageTabModel" descriptors="xworker.javafx.thing.model.IndexTableViewModel"></IndexTableViewModel>
-                        </TableView>
+        <VBox name="mainPane" fillWidth="true">
+            <MenuBar name="menuBar">
+                <Menu name="fileMenu" text="lang:d=文件&amp;en=File">
+                    <MenuItem name="exitMenuItem" text="lang:d=退出&amp;en=Exit">
+                        <MenuItemEventHandler name="onAction" methodName="exit"></MenuItemEventHandler>
+                    </MenuItem>
+                </Menu>
+            </MenuBar>
+            <ToolBar name="toobar">
+                <Button name="openThingButton" graphic="icons/openThing.gif">
+                    <ButtonBaseEventHandler name="onAction" methodName="openThingDialog"></ButtonBaseEventHandler>
+                </Button>
+            </ToolBar>
+            <SplitPane name="mainSplitPane" orientation="VERTICAL" dividerPositions="0.8,0.2">
+                <style><![CDATA[.split-pane *.split-pane-divider {
+    -fx-padding: 0 1 0 1;
+}]]></style>
+                <SplitPane name="topSplitPane" dividerPositions="0.2,0.6,0.2">
+                    <style><![CDATA[.split-pane > .split-pane-divider {  
+    -fx-padding: 0 0.75em 0 0.75em;  
+}]]></style>
+                    <TreeView name="projectTree" maxWidth="380" minWidth="200" prefWidth="300">
+                        <XWorkerIndex name="indexTreeModel" descriptors="xworker.javafx.thing.model.XWorkerIndex"></XWorkerIndex>
+                        <ContextMenu>
+                            <MenuItem name="createThingMenuItem" text="lang:d=新模型&amp;en=New Model">
+                                <MenuItemEventHandler name="onAction" methodName="openCreateThingDialog"></MenuItemEventHandler>
+                            </MenuItem>
+                            <SeparatorMenuItem name="splitMenuItem1"></SeparatorMenuItem>
+                            <MenuItem name="projectTreeNewCategoryMenuItem" text="lang:d=新建目录&amp;en=New Category">
+                                <MenuItemEventHandler name="onAction" methodName="projectTreeNewCategory"></MenuItemEventHandler>
+                            </MenuItem>
+                            <MenuItem name="projectTreeDeleteCategoryMenuItem" text="lang:d=删除目录&amp;en=Remove Category">
+                                <MenuItemEventHandler name="onAction" methodName="projectTreeRemoveCategory"></MenuItemEventHandler>
+                            </MenuItem>
+                            <SeparatorMenuItem name="splitMenuITem"></SeparatorMenuItem>
+                            <MenuItem name="rfreshMenuItem" text="lang:d=刷新&amp;en=Refresh">
+                                <MenuItemEventHandler name="onAction" methodName="projectTreeRefresh"></MenuItemEventHandler>
+                            </MenuItem>
+                        </ContextMenu>
+                    </TreeView>
+                    <TabPane name="mainTabPane">
+                        <Tab name="packageViewTab" closable="false" text="lang:d=目录浏览&amp;en=Packages">
+                            <TableView name="packageTabView">
+                                <IndexTableViewModel name="packageTabModel" descriptors="xworker.javafx.thing.model.IndexTableViewModel"></IndexTableViewModel>
+                                <ContextMenu>
+                                    <MenuItem name="pacakgeViewRefreshMenuItem" text="lang:d=刷新&amp;en=Refresh">
+                                        <MenuItemEventHandler name="onAction" methodName="refreshPackageView"></MenuItemEventHandler>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </TableView>
+                        </Tab>
+                    </TabPane>
+                    <WebView name="webView" maxWidth="380" minWidth="200" prefWidth="300"></WebView>
+                </SplitPane>
+                <TabPane name="bottomTab" minHeight="150" prefWidth="200">
+                    <Tab name="consoleTab" closable="false" text="lang:d=控制台&amp;en=Console">
+                        <TextArea name="consoleArea" editable="false" prefHeight="200">
+                            <ContextMenu name="consoleAreaConextMenu">
+                                <MenuItem name="consoleClearMenuItem" text="lang:d=清空&amp;en=Clear">
+                                    <MenuItemEventHandler name="onAction" methodName="clearConsole"></MenuItemEventHandler>
+                                </MenuItem>
+                            </ContextMenu>
+                        </TextArea>
                     </Tab>
                 </TabPane>
-                <WebView name="webView" prefWidth="150"></WebView>
+                <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>
             </SplitPane>
-        </SplitPane>
+        </VBox>
     </Nodes>
-    <Scene name="Scene" root="var:mainSplitPane"></Scene>
+    <Scene name="Scene" root="var:mainPane"></Scene>
 </Stage>

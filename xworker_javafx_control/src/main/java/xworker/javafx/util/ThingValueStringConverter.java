@@ -42,6 +42,9 @@ public class ThingValueStringConverter extends StringConverter<org.xmeta.Thing> 
                 if (thing.getMetadata().getLabel().equals(string)) {
                     return thing;
                 }
+                if(string.equals(thing.getString("value"))){
+                    return thing;
+                }
             }
         }
         Thing value = new Thing();

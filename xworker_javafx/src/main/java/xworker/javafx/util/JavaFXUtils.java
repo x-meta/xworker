@@ -13,6 +13,7 @@ import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javafx.scene.web.WebView;
 import javafx.util.Duration;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -20,6 +21,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilFileIcon;
+import xworker.util.XWorkerUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +33,14 @@ import java.util.WeakHashMap;
 public class JavaFXUtils {
 	private static final String TAG = JavaFXUtils.class.getName();
 	private static final Map<String, Image> imageCahe = new WeakHashMap<>();
+
+	public static void showThingDesc(Thing thing, WebView webView){
+		if(thing == null || webView == null){
+			return;
+		}
+
+		webView.getEngine().loadContent(XWorkerUtils.getThingDesc(thing));
+	}
 
 	public static Color getColor(Thing thing, String name, ActionContext actionContext){
 		Object obj = getObject(thing, name, actionContext);
@@ -75,6 +85,30 @@ public class JavaFXUtils {
 			return getImage((String) obj);
 		}else if(obj instanceof InputStream){
 			return new Image((InputStream) obj);
+		}else{
+			return null;
+		}
+	}
+
+	/**
+	 * 返回一个模型
+	 * @param thing
+	 * @return
+	 */
+	public static Image getImage(Thing thing){
+		String icon = thing.getStringBlankAsNull("icon");
+		if(icon == null){
+			for(Thing descriptor : thing.getAllDescriptors()){
+				//println descriptor.getMetadata().getPath();
+				icon = descriptor.getString("icon");
+				//println icon;
+				if(icon != null && !"".equals(icon)){
+					break;
+				}
+			}
+		}
+		if(icon != null){
+			return JavaFXUtils.getImage(icon);
 		}else{
 			return null;
 		}
