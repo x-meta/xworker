@@ -50,8 +50,13 @@ public class EditorFactory {
         types.put("css", "text");
         }
 
-    public static Editor createEditor(Object content){
-        if(content instanceof ThingIndex){
+    public static Editor<?> createEditor(Object content){
+        if(content instanceof Thing){
+            SThingEditor thingEditor = new SThingEditor();
+            Thing thing = (Thing) content;
+            thingEditor.setContent(thing);
+            return thingEditor;
+        } else if(content instanceof ThingIndex){
             SThingEditor thingEditor = new SThingEditor();
             Thing thing = World.getInstance().getThing(((ThingIndex)content).path);
             thingEditor.setContent(thing);

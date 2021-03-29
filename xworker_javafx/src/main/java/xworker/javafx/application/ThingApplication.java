@@ -96,7 +96,10 @@ public class ThingApplication extends Application{
 		}
 		ThingApplication.started = true;
 	}
-	
+
+	public static void setStarted(){
+		ThingApplication.started = true;
+	}
 	
 	public static void main(String[] args) {
 		checkStart();

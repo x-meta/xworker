@@ -1,6 +1,5 @@
 package xworker.javafx.thingeditor.editors;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
@@ -8,13 +7,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.HTMLEditor;
 import xworker.javafx.util.JavaFXUtils;
 import xworker.lang.executor.Executor;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 
 public class MediaEditor extends AbstractEditor<File>{
     public static final String TAG = TextFileEditor.class.getName();

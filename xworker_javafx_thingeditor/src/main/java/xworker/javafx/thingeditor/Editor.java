@@ -23,6 +23,8 @@ public interface Editor<T> {
 
     public Node getEditorNode();
 
+    public Node getStructureNode();
+
     public void init();
 
     public String getId();

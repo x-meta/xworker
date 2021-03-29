@@ -5,17 +5,30 @@ import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import org.xmeta.Thing;
 import xworker.javafx.thing.editor.ThingEditor;
 import xworker.javafx.thing.editor.ThingEditorEvent;
+import xworker.javafx.util.JavaFXUtils;
 import xworker.util.XWorkerUtils;
 
 public class SThingEditor extends AbstractEditor<Thing>{
     ThingEditor editor = new ThingEditor();
     Thing thing;
+    VBox strucutreNode = new VBox();
+    WebView webView = new WebView();
 
     public SThingEditor(){
+        strucutreNode.getChildren().add(webView);
+        VBox.setVgrow(webView, Priority.ALWAYS);
+    }
+
+    @Override
+    public Node getStructureNode() {
+        return strucutreNode;
     }
 
     @Override
@@ -25,19 +38,14 @@ public class SThingEditor extends AbstractEditor<Thing>{
             public void handle(ThingEditorEvent event) {
                 org.xmeta.Thing thing = event.getThingEditor().getCurrentThing();
                 if(thing != null){
-                    String html = XWorkerUtils.getThingDesc(thing.getDescriptor());
-                    if(html != null){
-                        simpleThingEditor.webView.getEngine().loadContent(html);
-                    }else{
-                        simpleThingEditor.webView.getEngine().loadContent("");
-                    }
+                    JavaFXUtils.showThingDesc(thing.getDescriptor(), webView);
                 }
             }
         });
         editor.setOnRemove(new Callback<org.xmeta.Thing, Boolean>() {
             @Override
             public Boolean call(org.xmeta.Thing param) {
-                simpleThingEditor.packageTabModel.refresh();
+                simpleThingEditor.refreshPackageView();
                 simpleThingEditor.removeEditor(SThingEditor.this);
                 return true;
             }

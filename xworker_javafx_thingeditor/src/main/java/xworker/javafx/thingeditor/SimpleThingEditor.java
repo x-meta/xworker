@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -12,32 +13,33 @@ import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.xmeta.*;
 import org.xmeta.annotation.ActionField;
 import org.xmeta.index.CategoryIndex;
 import org.xmeta.util.UtilString;
 import xworker.io.SystemIoRedirector;
 import xworker.io.SystemIoRedirectorListener;
-import xworker.javafx.thingeditor.dialog.CreateThingDialog;
+import xworker.javafx.application.ThingApplication;
 import xworker.javafx.thing.editor.ThingEditor;
-import xworker.javafx.thing.editor.ThingEditorEvent;
 import xworker.javafx.thing.model.IndexTableViewModelEvent;
+import xworker.javafx.thingeditor.dialog.CreateThingDialog;
 import xworker.javafx.thingeditor.editors.EditorFactory;
+import xworker.javafx.thingeditor.editors.PackageViewEditor;
 import xworker.javafx.util.FXThingLoader;
 import xworker.lang.executor.Executor;
 import xworker.util.ThingUtils;
 import xworker.util.UtilAction;
 import xworker.util.XWorkerUtils;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.function.Consumer;
 
 public class SimpleThingEditor extends Application {
     private static final String TAG = SimpleThingEditor.class.getName();
+    public static final String ID_PACKAGEVIEW = "PackageViewer";
     ActionContext actionContext = new ActionContext();
 
     @ActionField
@@ -47,16 +49,13 @@ public class SimpleThingEditor extends Application {
     public javafx.scene.control.TabPane mainTabPane;
 
     @ActionField
-    public xworker.javafx.thing.model.IndexTableViewModel packageTabModel;
-
-    @ActionField
     public javafx.scene.control.TreeView<Index> projectTree;
 
     @ActionField
     public javafx.scene.control.SplitPane topSplitPane;
 
     @ActionField
-    public javafx.scene.web.WebView webView;
+    public VBox rightBox;
     @ActionField
     public Tab packageViewTab;
     @ActionField
@@ -100,7 +99,8 @@ public class SimpleThingEditor extends Application {
                 if(Index.TYPE_THINGMANAGER.equals(type) || Index.TYPE_CATEGORY.equals(type)){
                     index.refresh();
                 }
-                packageTabModel.setIndex(index);
+
+                setPackageViewIndex(index);
                 mainTabPane.getSelectionModel().select(packageViewTab);
             }
         });
@@ -122,17 +122,6 @@ public class SimpleThingEditor extends Application {
                         createThingMenuItem.setDisable(true);
                         projectTreeNewCategoryMenuItem.setDisable(true);
                     }
-                }
-            }
-        });
-        packageTabModel.setOnOpenIndex(new EventHandler<IndexTableViewModelEvent>() {
-            @Override
-            public void handle(IndexTableViewModelEvent event) {
-                Executor.info(TAG, "PackageView OpenIndex");
-                Index index = event.getIndex();
-                Editor<?> editor = EditorFactory.createEditor(index.getIndexObject());
-                if(editor != null){
-                    openEditor(editor);
                 }
             }
         });
@@ -168,6 +157,54 @@ public class SimpleThingEditor extends Application {
                 }
             }
         });
+
+        mainTabPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+            @Override
+            public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+                if(newValue != null){
+                    rightBox.getChildren().clear();
+
+                    if(newValue.getUserData() instanceof Editor){
+                        Editor<?> editor = (Editor<?>) newValue.getUserData();
+
+                        Node structNode = editor.getStructureNode();
+                        VBox.setVgrow(structNode, Priority.ALWAYS);
+
+                        rightBox.getChildren().add(structNode);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 设置PackageView的索引，如果PackageView没有打开则先打开。
+     *
+     * @param index
+     */
+    public void setPackageViewIndex(Index index){
+        Editor<Index> editor = (Editor<Index> ) getEditor(SimpleThingEditor.ID_PACKAGEVIEW);
+        if(editor == null){
+            editor = new PackageViewEditor();
+        }
+        editor.setContent(index);
+        openEditor(editor);
+    }
+
+    /**
+     * 根据标识获取编辑器。
+     *
+     * @param id
+     * @return
+     */
+    public Editor<?> getEditor(String id){
+        for(Tab tab : mainTabPane.getTabs()){
+            if(id.equals(tab.getProperties().get("id"))){
+                return (Editor<?>) tab.getUserData();
+            }
+        }
+
+        return null;
     }
 
     public void openEditor(Editor<?> editor){
@@ -176,6 +213,7 @@ public class SimpleThingEditor extends Application {
             return;
         }
         editor.setSimpleThingEditor(this);
+        editor.init();
 
         for(Tab tab : mainTabPane.getTabs()){
             if(id.equals(tab.getProperties().get("id"))){
@@ -206,7 +244,10 @@ public class SimpleThingEditor extends Application {
                 if(thing != null){
                     SimpleThingEditor.this.openThintEditor(thing);
 
-                    packageTabModel.refresh();
+                    PackageViewEditor editor = (PackageViewEditor) getEditor(SimpleThingEditor.ID_PACKAGEVIEW);
+                    if(editor != null) {
+                        editor.packageTabModel.refresh();
+                    }
                 }
             }
         });
@@ -237,58 +278,17 @@ public class SimpleThingEditor extends Application {
      * @param thing
      */
     public void openThintEditor(Thing thing){
-        if(thing == null){
-            throw new NullPointerException();
-        }
-
-        thing = thing.getRoot();
-        for(Tab tab : mainTabPane.getTabs()){
-            if(tab.getProperties().get("thing") == thing){
-                mainTabPane.getSelectionModel().select(tab);
-                return;
-            }
-        }
-
-        final Tab tab = new Tab();
-        tab.getProperties().put("thing", thing);
-        tab.setText(thing.getMetadata().getLabel());
-        tab.setTooltip(new Tooltip(thing.getMetadata().getThingManager().getName()
-                + ":" + thing.getMetadata().getPath()));
-
-        ThingEditor editor = new ThingEditor();
-        tab.setUserData(editor);
-        tab.setContent(editor.getThingEditorNode());
-        editor.setThing(thing);
-        editor.setOnSelectThing(new EventHandler<ThingEditorEvent>() {
-            @Override
-            public void handle(ThingEditorEvent event) {
-                Thing thing = event.getThingEditor().getCurrentThing();
-                if(thing != null){
-                    String html = XWorkerUtils.getThingDesc(thing.getDescriptor());
-                    if(html != null){
-                        webView.getEngine().loadContent(html);
-                    }else{
-                        webView.getEngine().loadContent("");
-                    }
-                }
-            }
-        });
-        editor.setOnRemove(new Callback<Thing, Boolean>() {
-            @Override
-            public Boolean call(Thing param) {
-                packageTabModel.refresh();
-                mainTabPane.getTabs().remove(tab);
-                return true;
-            }
-        });
-
-        mainTabPane.getTabs().add(tab);
-        mainTabPane.getSelectionModel().select(tab);
-
+        Editor<?> editor = EditorFactory.createEditor(thing);
+        openEditor(editor);
     }
 
     public void removeEditor(Editor<?> editor){
-
+        for(Tab tab : mainTabPane.getTabs()){
+            if(tab.getUserData() == editor){
+                mainTabPane.getTabs().remove(tab);
+                return;
+            }
+        }
     }
 
     public void save(){
@@ -312,10 +312,25 @@ public class SimpleThingEditor extends Application {
         }
     }
     public static void run(){
+        //SimpeleThingEditor是第一个应用
+        ThingApplication.setStarted();
+
         //启动注册缓存
         ThingUtils.startRegistThingCache();
 
         Application.launch(SimpleThingEditor.class);
+    }
+
+    /**
+     * 作为在已经启动的JavaFX的应用中启动。
+     */
+    public void start(){
+        Stage stage = new Stage();
+        try {
+            start(stage);
+        }catch (Exception e){
+            Executor.error(TAG, "Start SimpleThingEditor error", e);
+        }
     }
 
     public void projectTreeRefresh(){
@@ -323,7 +338,10 @@ public class SimpleThingEditor extends Application {
     }
 
     public void refreshPackageView(){
-        packageTabModel.refresh();
+        PackageViewEditor editor = (PackageViewEditor) getEditor(SimpleThingEditor.ID_PACKAGEVIEW);
+        if(editor != null) {
+            editor.packageTabModel.refresh();
+        }
     }
 
     public static void runAsStage() throws Exception{

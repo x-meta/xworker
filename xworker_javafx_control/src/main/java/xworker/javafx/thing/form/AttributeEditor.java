@@ -6,12 +6,16 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.OverrunStyle;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.web.WebView;
 import org.xmeta.Thing;
+import xworker.util.XWorkerUtils;
 
 public abstract class AttributeEditor {
     protected Thing attribute;
@@ -64,6 +68,13 @@ public abstract class AttributeEditor {
         label.setAlignment(Pos.TOP_RIGHT);
         GridPane.setHalignment(label, HPos.RIGHT);
         GridPane.setHgrow(label, Priority.NEVER);
+
+        String desc = XWorkerUtils.getThingDesc(attribute);
+        if(desc != null && !"".equals(desc)) {
+            Tooltip tooltip = new Tooltip();
+            tooltip.setText(desc);
+            label.setTooltip(tooltip);
+        }
         return label;
     }
 
