@@ -1,5 +1,6 @@
 package xworker.javafx.thingeditor;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import xworker.lang.executor.ExecuteRequest;
 import xworker.lang.executor.services.AbstractLogService;
@@ -25,10 +26,18 @@ public class TextAreaExecutService extends AbstractLogService{
     }
 
     @Override
-    public void log(byte level, String msg) {
-        if(textArea.getText().length() > 1024 * 1024){
-            textArea.replaceText(0, 10 * 1024, "");
-        }
-        textArea.appendText(msg + "\n");
+    public void log(byte level, final String msg) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (textArea.getText().length() > 1024 * 1024) {
+                        textArea.replaceText(0, 10 * 1024, "");
+                    }
+                    textArea.appendText(msg + "\n");
+                }catch(Exception e){
+                }
+            }
+        });
     }
 }

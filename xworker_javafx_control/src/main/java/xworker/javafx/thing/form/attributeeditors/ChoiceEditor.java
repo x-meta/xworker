@@ -19,8 +19,8 @@ public class ChoiceEditor extends AttributeEditor {
     List<Thing> values;
     StringConverter<Thing> converter = null;
 
-    public ChoiceEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public ChoiceEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
 
         values = attribute.getAllChilds("value");
         converter = new ThingValueStringConverter(values);

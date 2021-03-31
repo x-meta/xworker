@@ -14,14 +14,16 @@ public class DataObjectLongProperty extends SimpleLongProperty {
         this.dataObject = dataObject;
         this.name = name;
 
-        super.set(dataObject.getLong(name));
+        if(dataObject != null) {
+            super.set(dataObject.getLong(name));
 
-        this.dataObject.addListener(new DataObjectListener() {
-            @Override
-            public void changed(DataObject dataObject) {
-                DataObjectLongProperty.super.set(dataObject.getLong(name));
-            }
-        });
+            this.dataObject.addListener(new DataObjectListener() {
+                @Override
+                public void changed(DataObject dataObject) {
+                    DataObjectLongProperty.super.set(dataObject.getLong(name));
+                }
+            });
+        }
     }
 
     public DataObjectLongProperty(DataObject dataObject, Thing attribute){
@@ -32,6 +34,8 @@ public class DataObjectLongProperty extends SimpleLongProperty {
     public void set(long v) {
         super.set(v);
 
-        dataObject.put(name, v);
+        if(dataObject != null) {
+            dataObject.put(name, v);
+        }
     }
 }

@@ -15,7 +15,7 @@ public class DataStoreComboBox implements DataStoreListener {
         this.dataStore = dataStore;
         this.comboBox = comboBox;
 
-        comboBox.itemsProperty().bind(dataStore.datasProperty());
+        //comboBox.itemsProperty().bind(dataStore.datasProperty());
         dataStore.addListener(this);
     }
 
@@ -28,5 +28,7 @@ public class DataStoreComboBox implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
+
+        comboBox.setItems(dataStore.getDatas());
     }
 }

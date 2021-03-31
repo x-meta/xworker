@@ -4,6 +4,7 @@ import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.util.UtilString;
 import xworker.util.XWorkerUtils;
 
 import java.util.*;
@@ -79,8 +80,19 @@ public class ThingMenu implements Comparable<ThingMenu>{
         //打开窗口，如果存在，执行create方法
         String windowPath = thing.getStringBlankAsNull("window");
         if(windowPath != null){
+            Map<String, String> params = null;
+            int index = windowPath.indexOf("?");
+            if(index != -1){
+                String paramStr = windowPath.substring(index + 1, windowPath.length());
+                windowPath = windowPath.substring(0, index);
+                params = UtilString.getParams(paramStr);
+            }else{
+                params = new HashMap<>();
+            }
             Thing window = World.getInstance().getThing(windowPath);
             if(window != null){
+                actionContext.peek().put("result", result);
+                actionContext.peek().putAll(params);
                 result = window.doAction("create", actionContext);
             }
         }

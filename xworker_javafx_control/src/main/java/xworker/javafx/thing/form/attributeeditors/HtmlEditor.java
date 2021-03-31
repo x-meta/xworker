@@ -13,8 +13,8 @@ import xworker.javafx.thing.form.ThingForm;
 
 public class HtmlEditor extends AttributeEditor {
     HTMLEditor editor;
-    public HtmlEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public HtmlEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

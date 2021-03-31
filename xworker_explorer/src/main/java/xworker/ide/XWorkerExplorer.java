@@ -15,12 +15,11 @@
 ******************************************************************************/
 package xworker.ide;
 
-import java.io.File;
-
 import org.xmeta.Thing;
 import org.xmeta.World;
-
 import xworker.io.SystemIoRedirector;
+
+import java.io.File;
 
 public class XWorkerExplorer {
 	public static void main(String[] args){

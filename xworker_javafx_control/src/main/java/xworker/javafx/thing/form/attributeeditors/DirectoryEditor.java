@@ -21,8 +21,8 @@ public class DirectoryEditor extends AttributeEditor {
     TextField textField;
     Button selectButton;
 
-    public DirectoryEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public DirectoryEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

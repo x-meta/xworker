@@ -6,6 +6,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -14,10 +16,7 @@ import xworker.util.ThingGroup;
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ThingEditorAddChild implements ThingEditorContentNode{
     Node node;
@@ -30,6 +29,7 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
     javafx.scene.control.TextField searchText;
     xworker.javafx.thing.form.ThingForm thingForm;
     javafx.scene.web.WebView webView;
+    List<Thing> desChilds = null;
 
     public ThingEditorAddChild(ThingEditor thingEditor){
         this.thingEditor = thingEditor;
@@ -45,6 +45,52 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
         searchText = actionContext.getObject("searchText");
         thingForm = actionContext.getObject("thingForm");
         webView = actionContext.getObject("webView");
+
+        searchText.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                if(event.getCode() == KeyCode.DOWN){
+                    childsTree.getSelectionModel().selectNext();
+                }else if(event.getCode() == KeyCode.UP){
+                    childsTree.getSelectionModel().selectPrevious();
+                }
+            }
+        });
+        searchText.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(desChilds == null){
+                    return;
+                }
+
+                List<Thing> childs = new ArrayList<>();
+                String q = newValue.toLowerCase();
+                if(q.isEmpty()){
+                    childs = desChilds;
+                }else {
+                    for (Thing thing : desChilds) {
+                        String name = thing.getMetadata().getName().toLowerCase();
+                        String label = thing.getMetadata().getLabel().toLowerCase();
+                        if(name.contains(q) || label.contains(q)){
+                            childs.add(thing);
+                        }
+                    }
+                }
+                ThingGroup thingGroup = new ThingGroup();
+                thingGroup.addThings(childs);
+                thingGroup.sort();
+
+                TreeItem<ThingGroup> rootItem = new TreeItem<>(thingGroup);
+                for(ThingGroup child : thingGroup.getChilds()){
+                    initChildTreeItem(rootItem, child);
+                }
+                childsTree.setRoot(rootItem);
+                childsTree.getSelectionModel().select(0);
+                for(TreeItem<ThingGroup> item : rootItem.getChildren()){
+                    item.setExpanded(true);
+                }
+            }
+        });
 
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -65,7 +111,7 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
                 }
 
                 //在这里也过滤了excludeDescriptorsForChilds的事物
-                List<Thing> desChilds = newValue.getAllChilds("thing");
+                desChilds = newValue.getAllChilds("thing");
                 //for(child in desChilds){
                 //    log.info("child=" + child);
                 //}

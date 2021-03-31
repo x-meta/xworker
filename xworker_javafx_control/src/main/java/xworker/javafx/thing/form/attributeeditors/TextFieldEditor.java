@@ -11,12 +11,13 @@ import org.xmeta.Thing;
 import xworker.javafx.beans.property.ProxyProperty;
 import xworker.javafx.thing.form.AttributeEditor;
 import xworker.javafx.thing.form.ThingForm;
+import xworker.javafx.util.FXCodeAssistor;
 
 public class TextFieldEditor extends AttributeEditor {
     TextField textField;
 
-    public TextFieldEditor(ThingForm thingForm, Thing attribute, Property<Object> property){
-        super(thingForm, attribute, property);
+    public TextFieldEditor(ThingForm thingForm, Thing attribute){
+        super(thingForm, attribute);
     }
 
     @Override
@@ -35,6 +36,8 @@ public class TextFieldEditor extends AttributeEditor {
                 thingForm.modified(TextFieldEditor.this);
             }
         });
+
+        FXCodeAssistor.bind(thingForm.getThing(), textField, thingForm.getActionContext());
         return textField;
     }
 

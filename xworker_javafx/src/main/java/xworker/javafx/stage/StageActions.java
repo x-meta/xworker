@@ -1,5 +1,6 @@
 package xworker.javafx.stage;
 
+import javafx.stage.Modality;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -93,7 +94,9 @@ public class StageActions {
 		if(thing.getStringBlankAsNull("minWidth") != null) {
 			stage.setMinWidth(thing.getDouble("minWidth"));
 		}
-		
+		if(thing.valueExists("modality")){
+			stage.initModality(Modality.valueOf(thing.getString("modality")));
+		}
 		
 		if(thing.getStringBlankAsNull("resizable") != null) {
 			stage.setResizable(thing.getBoolean("resizable"));

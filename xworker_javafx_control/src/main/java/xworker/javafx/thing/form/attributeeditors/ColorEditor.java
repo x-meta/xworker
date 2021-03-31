@@ -13,8 +13,8 @@ import xworker.javafx.thing.form.ThingForm;
 public class ColorEditor extends AttributeEditor {
     ColorPicker colorPicker = null;
 
-    public ColorEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public ColorEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

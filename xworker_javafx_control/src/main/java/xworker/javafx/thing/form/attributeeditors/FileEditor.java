@@ -21,8 +21,8 @@ public class FileEditor extends AttributeEditor {
     TextField textField;
     Button selectButton;
 
-    public FileEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public FileEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

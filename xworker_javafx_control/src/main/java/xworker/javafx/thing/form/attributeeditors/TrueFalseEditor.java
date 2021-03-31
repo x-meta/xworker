@@ -13,8 +13,8 @@ import xworker.util.UtilData;
 public class TrueFalseEditor extends AttributeEditor {
     CheckBox checkBox;
 
-    public TrueFalseEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public TrueFalseEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

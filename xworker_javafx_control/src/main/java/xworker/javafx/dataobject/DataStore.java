@@ -2,15 +2,19 @@ package xworker.javafx.dataobject;
 
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import org.xmeta.ActionContext;
+import org.xmeta.Index;
 import org.xmeta.Thing;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
 import xworker.javafx.dataobject.datastore.DataStoreChoiceBox;
 import xworker.javafx.dataobject.datastore.DataStoreComboBox;
+import xworker.javafx.dataobject.datastore.DataStorePagination;
 import xworker.javafx.dataobject.datastore.DataStoreTableView;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
@@ -51,7 +55,7 @@ public class DataStore {
     /**
      * 查询结果数据对象列表。
      */
-    SimpleListProperty<DataObject> datas = new SimpleListProperty<>(FXCollections.observableArrayList());
+    ObservableList<DataObject> datas = FXCollections.emptyObservableList();
 
     /**
      * DataStore模型的定义。
@@ -69,8 +73,17 @@ public class DataStore {
         this.thing = thing;
         dataObject = thing.doAction("getDataObject", actionContext);
         resultDataObject = dataObject;
-
         condition = thing.doAction("getCondition", actionContext);
+        int pageSize = thing.doAction("getPageSize", actionContext);
+        if(pageSize > 0){
+            pageInfo.setPageSize(pageSize);
+        }else if(dataObject != null){
+            pageSize = dataObject.getInt("pageSize");
+            if(pageSize > 0){
+                pageInfo.setPageSize(pageSize);
+            }
+        }
+
         List<String> binds = thing.doAction("getBindTo", actionContext);
         for(String bind : binds){
             Object obj = actionContext.getObject(bind);
@@ -80,11 +93,14 @@ public class DataStore {
                 new DataStoreComboBox(this, (ComboBox<DataObject>) obj);
             }else if(obj instanceof ChoiceBox){
                 new DataStoreChoiceBox(this, (ChoiceBox<DataObject>) obj);
+            }else if(obj instanceof Pagination){
+                new DataStorePagination(this, (Pagination) obj);
             }
         }
         if(UtilData.isTrue(thing.doAction("isAutoLoad", actionContext))){
             this.load(new HashMap<>());
         }
+
     }
 
     public DataStore(Thing dataObject, Thing condition, ActionContext actionContext){
@@ -121,8 +137,12 @@ public class DataStore {
         doLoad();
     }
 
-    public SimpleListProperty<DataObject> datasProperty(){
+    public ObservableList<DataObject> getDatas(){
         return datas;
+    }
+
+    public PageInfo getPageInfo(){
+        return pageInfo;
     }
 
     private void doLoad(){
@@ -143,9 +163,11 @@ public class DataStore {
                         }
                     }
 
-                    datas.clear();
-                    datas.addAll(dataObjects);
+                    datas = FXCollections.observableList(dataObjects);
 
+                    for(DataStoreListener listener :listeners){
+                        listener.onLoaded(DataStore.this);
+                    }
                 }catch(Exception e){
                     Executor.error(TAG, "Do dataobject query exception, dataObject=" + getDataObjectPath(), e);
                 }

@@ -17,10 +17,17 @@ public class NettySessionManager {
 	}
 	
 	public NettySession removeSession(String sessionId) {
+		if(sessionId == null){
+			return null;
+		}
 		return sessions.remove(sessionId);
 	}
 	
 	public NettySession getSession(String sessionId) {
+		if(sessionId == null){
+			return null;
+		}
+
 		return sessions.get(sessionId);
 	}
 	

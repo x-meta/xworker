@@ -1,0 +1,60 @@
+package xworker.javafx.dataobject.datastore;
+
+import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
+import org.xmeta.Thing;
+import xworker.dataObject.PageInfo;
+import xworker.javafx.dataobject.DataStore;
+import xworker.javafx.dataobject.DataStoreListener;
+
+public class DataStorePagination implements DataStoreListener {
+    DataStore dataStore;
+    Pagination pagination;
+    boolean onLoading = false;
+    VBox blankNode = new VBox();
+
+    public DataStorePagination(DataStore dataStore, Pagination pagination){
+        this.dataStore = dataStore;
+        this.pagination = pagination;
+        pagination.setPageFactory(new Callback<Integer, Node>() {
+            @Override
+            public Node call(Integer param) {
+                //加载新的页
+                if(onLoading == false) {
+                    dataStore.load(param + 1);
+                }
+                //pagination.setCurrentPageIndex(param);
+                //return new Label("page:"+ param);
+                return blankNode;
+            }
+        });
+        dataStore.addListener(this);
+    }
+
+    @Override
+    public void onReconfig(DataStore dataStore, Thing dataObject) {
+        pagination.setPageCount(1);
+        pagination.setCurrentPageIndex(0);
+    }
+
+    @Override
+    public void onLoaded(DataStore dataStore) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                onLoading = true;
+                try {
+                    PageInfo pageInfo = dataStore.getPageInfo();
+                    pagination.setPageCount(pageInfo.getTotalPage());
+                }finally {
+                    onLoading = false;
+                }
+            }
+        });
+
+    }
+}

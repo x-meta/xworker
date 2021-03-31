@@ -16,7 +16,7 @@ public class DataStoreChoiceBox implements DataStoreListener {
         this.dataStore = dataStore;
         this.choiceBox = choiceBox;
 
-        choiceBox.itemsProperty().bind(dataStore.datasProperty());
+        //hoiceBox.itemsProperty().bind(dataStore.datasProperty());
         dataStore.addListener(this);
     }
 
@@ -28,5 +28,6 @@ public class DataStoreChoiceBox implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
+        choiceBox.setItems(dataStore.getDatas());
     }
 }

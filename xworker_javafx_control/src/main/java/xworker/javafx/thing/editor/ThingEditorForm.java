@@ -64,7 +64,8 @@ public class ThingEditorForm implements ThingEditorContentNode{
         for(String key : valuesChache.keySet()){
             Thing thing = world.getThing(key);
             if(thing != null){
-                thing.getAttributes().putAll(valuesChache.get(key));
+                thing.putAll(valuesChache.get(key));
+
             }
         }
 

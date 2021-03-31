@@ -175,6 +175,7 @@ public class PageInfo{
 	
 	public void setPageSize(int pageSize){
 		data.put(DataObjectConstants.PAGEINFO_PAGESIZE, pageSize);
+		data.put(DataObjectConstants.PAGEINFO_LIMIT, pageSize);
 	}
 
 	private int getInt(String name){
@@ -205,7 +206,8 @@ public class PageInfo{
 
 
 	public void setLimit(int limit) {
-		data.put(DataObjectConstants.PAGEINFO_LIMIT, limit);		
+		data.put(DataObjectConstants.PAGEINFO_LIMIT, limit);
+		data.put(DataObjectConstants.PAGEINFO_PAGESIZE, limit);
 	}
 
 

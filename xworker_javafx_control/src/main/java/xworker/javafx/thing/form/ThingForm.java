@@ -30,7 +30,7 @@ public class ThingForm {
     /**
      * 用于保存表单的值。
      */
-    MapAdapter<String, Object> values = new MapAdapter<>();
+    //MapAdapter<String, Object> values = new MapAdapter<>();
 
     /**
      * 属性编辑器列表。
@@ -45,21 +45,19 @@ public class ThingForm {
 
     SimpleBooleanProperty modifiedProperty = new SimpleBooleanProperty();
 
-    public ThingForm(Thing thing, ActionContext actionContext){
-        this.formThing = thing;
-        this.actionContext = actionContext;
-        rootNode = new VBox();
-        column = thing.doAction("getColumn", actionContext);
+    public ThingForm(){
+        this(null, new ActionContext());
+    }
 
-        Thing th = thing.doAction("getThing", actionContext);
-        if(th != null){
-            setThing(th);
-        }else {
-            Thing descritpor = thing.doAction("getDescriptor", actionContext);
-            if(descritpor != null){
-                setDescriptor(descritpor);
-            }
-        }
+    public ThingForm(ActionContext actionContext){
+        this(null, actionContext);
+    }
+
+    public ThingForm(Thing thing, ActionContext actionContext){
+        rootNode = new VBox();
+
+        setFormThing(thing, actionContext);
+
     }
 
     public boolean isModified(){
@@ -172,6 +170,7 @@ public class ThingForm {
      * @param descriptor
      */
     public void setDescriptor(Thing descriptor){
+        //this.values.clear();
         this.editThingDescriptor = descriptor;
         int cols = column;
         if(cols < 1){
@@ -195,7 +194,7 @@ public class ThingForm {
         List<ThingAttributeGroup> groups = ThingAttributeGroup.parseGroups(attributes);
         if(groups.size() == 1 && groups.get(0).getName().equals("")){
             //只有一个默认组，不需要创建TabPane
-            formNode = createSingleFormPane(groups.get(0).getAttributes(), values, attributeEditors, cols);
+            formNode = createSingleFormPane(groups.get(0).getAttributes(), attributeEditors, cols);
         }else{
             TabPane tabPane = new TabPane();
             for(ThingAttributeGroup group : groups){
@@ -207,7 +206,7 @@ public class ThingForm {
                     tab.setText(group.getName());
                 }
 
-                tab.setContent(createSingleFormPane(group.getAttributes(), values, attributeEditors, cols));
+                tab.setContent(createSingleFormPane(group.getAttributes(), attributeEditors, cols));
                 tabPane.getTabs().add(tab);
             }
             formNode = tabPane;
@@ -222,10 +221,9 @@ public class ThingForm {
      * 创建一个表单，并把
      *
      * @param attributes
-     * @param values
      * @return
      */
-    private Node createSingleFormPane(List<Thing> attributes, MapAdapter<String, Object> values, List<AttributeEditor> attributeEditors, int column){
+    private Node createSingleFormPane(List<Thing> attributes,  List<AttributeEditor> attributeEditors, int column){
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);;
@@ -233,15 +231,16 @@ public class ThingForm {
         GridPane gridPane = new GridPane();
         gridPane.setHgap(5);
         gridPane.setVgap(5);
+
         FormLayout<Thing> layout  = new FormLayout<>(column, attributes.size() * 10);
         for(Thing attribute : attributes) {
             layout.add(attribute.getInt("colspan"), attribute.getInt("rowspan"), attribute);
         }
         for(FormLayoutData<Thing> layoutData : layout.getLayoutDatas()){
             Thing attribute = layoutData.getObject();
-            Property property = new SimpleObjectProperty();
-            values.setProperty(attribute.getMetadata().getName(), property);
-            AttributeEditor editor = AttributeEditorFactory.createAttributeEditor(this, attribute, property);
+
+            AttributeEditor editor = AttributeEditorFactory.createAttributeEditor(this, attribute);
+
             if(editor != null){
                 int columnIndex = layoutData.getColumnIndex() * 2;
                 int rowIndex = layoutData.getRowIndex();
@@ -260,6 +259,7 @@ public class ThingForm {
 ;
                 attributeEditors.add(editor);
             }
+
         }
 
         scrollPane.setContent(gridPane);
@@ -292,12 +292,28 @@ public class ThingForm {
         return formThing;
     }
 
-    public ActionContext getActionContext(){
-        return actionContext;
+    public void setFormThing(Thing formThing, ActionContext actionContext){
+        this.formThing = formThing;
+        this.actionContext = actionContext;
+
+        if(formThing != null) {
+            Integer col = formThing.doAction("getColumn", actionContext);
+            column = col != null ? col : 1;
+
+            Thing th = formThing.doAction("getThing", actionContext);
+            if (th != null) {
+                setThing(th);
+            } else {
+                Thing descritpor = formThing.doAction("getDescriptor", actionContext);
+                if (descritpor != null) {
+                    setDescriptor(descritpor);
+                }
+            }
+        }
     }
 
-    public ObservableMap<String, Property> getValueMap(){
-        return values.getValueMap();
+    public ActionContext getActionContext(){
+        return actionContext;
     }
 
     /**
@@ -307,7 +323,9 @@ public class ThingForm {
     public void modified(AttributeEditor editor){
         if(changeSource != this) {
             modifiedProperty.set(true);
-            formThing.doAction("modified", actionContext, "editor", editor, "form", this);
+            if(formThing != null) {
+                formThing.doAction("modified", actionContext, "editor", editor, "form", this);
+            }
         }
     }
 

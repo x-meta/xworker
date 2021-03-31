@@ -54,9 +54,8 @@ public class SThingEditor extends AbstractEditor<Thing>{
 
     @Override
     public void setContent(Thing content) {
-        thing = content.getRoot();
-        editor.setThing(thing);
-
+        this.thing = content.getRoot();
+        editor.setThing(content);
     }
 
     @Override

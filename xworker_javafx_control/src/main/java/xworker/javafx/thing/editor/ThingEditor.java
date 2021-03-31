@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import org.xmeta.ActionContext;
@@ -124,6 +125,22 @@ public class ThingEditor {
 
                 if(onSelectThingProperty().get() != null){
                     onSelectThingProperty().get().handle(new ThingEditorEvent(ThingEditor.this));
+                }
+            }
+        });
+
+        //双击一个节点重新加载该节点
+        outlineTree.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(event.getClickCount() >= 2){
+                    TreeItem<Thing> treeItem = outlineTree.getSelectionModel().getSelectedItem();
+                    if(treeItem != null){
+                        setCurrentThing(treeItem.getValue());
+                        if(contentNode == addChild){
+                            showForm();
+                        }
+                    }
                 }
             }
         });
@@ -502,15 +519,39 @@ public class ThingEditor {
 
         this.thing = thing.getRoot();
 
-        TreeItem<Thing> rootItem = new TreeItem<>(thing);
+        TreeItem<Thing> rootItem = new TreeItem<>(this.thing);
         outlineTree.setRoot(rootItem);
 
-        for(Thing child : thing.getChilds()){
+        for(Thing child : this.thing.getChilds()){
             initOutlineTreeItem(rootItem, child);
         }
 
         rootItem.setExpanded(true);
-        outlineTree.getSelectionModel().select(0);
+        selectThing(thing);
+    }
+
+    /**
+     * 在节点树上选中指定的模型，该模型应该是正在编辑的模型的某个子节点。
+     *
+     * @param thing
+     */
+    public void selectThing(Thing thing){
+        selectThing(thing, outlineTree.getRoot());
+    }
+
+    private boolean selectThing(Thing thing, TreeItem<Thing> treeItem){
+        if(treeItem.getValue() == thing){
+            outlineTree.getSelectionModel().select(treeItem);
+            return true;
+        }
+
+        for(TreeItem<Thing> childItem : treeItem.getChildren()){
+            if(selectThing(thing,childItem)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void initOutlineTreeItem(TreeItem<Thing> parentItem, Thing thing){

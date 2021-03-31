@@ -5,26 +5,26 @@ import org.xmeta.Thing;
 import xworker.javafx.thing.form.attributeeditors.*;
 
 public class AttributeEditorFactory {
-    public static AttributeEditor createAttributeEditor(ThingForm thingForm, Thing attribute, Property<Object> property) {
+    public static AttributeEditor createAttributeEditor(ThingForm thingForm, Thing attribute) {
         String inputType = attribute.getString("inputtype");
         if("text".equals(inputType)) {
-            return new TextFieldEditor(thingForm, attribute, property);
+            return new TextFieldEditor(thingForm, attribute);
         }else if("textarea".equals(inputType)) {
-            return new TextAreaEditor(thingForm, attribute, property);
+            return new TextAreaEditor(thingForm, attribute);
         }else if("codeEditor".equals(inputType)) {
-            return new TextAreaEditor(thingForm, attribute, property);
+            return new TextAreaEditor(thingForm, attribute);
         }else if("html".equals(inputType)) {
-            return new HtmlEditor(thingForm, attribute, property);
+            return new HtmlEditor(thingForm, attribute);
         }else if("htmlDesc".equals(inputType)) {
-            return new HtmlDescEditor(thingForm, attribute, property);
+            return new HtmlDescEditor(thingForm, attribute);
         }else if("select".equals(inputType)) {
-            return new ChoiceEditor(thingForm, attribute, property);
+            return new ChoiceEditor(thingForm, attribute);
         }else if("truefalse".equals(inputType)) {
-            return new TrueFalseEditor(thingForm, attribute, property);
+            return new TrueFalseEditor(thingForm, attribute);
         }else if("truefalseselect".equals(inputType)) {
-            return new TrueFalseSelectorEditor(thingForm, attribute, property);
+            return new TrueFalseSelectorEditor(thingForm, attribute);
         }else if("inputSelect".equals(inputType)) {
-            return new InputSelectEditor(thingForm, attribute, property);
+            return new InputSelectEditor(thingForm, attribute);
         }/*else if("radio".equals(inputType)) {
             return new RadioAttributeEditor(formThing, attribute, gridData, actionContext);
         }else if("checkBox".equals(inputType)) {
@@ -42,7 +42,7 @@ public class AttributeEditorFactory {
         }else if("__subGroup__editor__".equals(inputType)){
             return new SubGroupEditor(formThing, attribute, gridData, actionContext);
         }*/else {
-            return new TextFieldEditor(thingForm, attribute, property);
+            return new TextFieldEditor(thingForm, attribute);
         }
     }
 }

@@ -132,7 +132,7 @@ public class JavaFXUtils {
 			}
 		}
 
-		imageCahe.put(imagePath, image);
+		//imageCahe.put(imagePath, image);
 		return image;
 	}
 

@@ -16,8 +16,8 @@ public class HtmlDescEditor extends AttributeEditor {
     HTMLEditor editor;
     String thingPath;
 
-    public HtmlDescEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public HtmlDescEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

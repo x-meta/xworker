@@ -14,8 +14,8 @@ import xworker.util.UtilData;
 public class TrueFalseSelectorEditor extends AttributeEditor {
     ChoiceBox<String> choiceBox;
 
-    public TrueFalseSelectorEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public TrueFalseSelectorEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override

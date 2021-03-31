@@ -10,11 +10,12 @@ import javafx.scene.layout.Priority;
 import org.xmeta.Thing;
 import xworker.javafx.thing.form.AttributeEditor;
 import xworker.javafx.thing.form.ThingForm;
+import xworker.javafx.util.FXCodeAssistor;
 
 public class TextAreaEditor extends AttributeEditor {
     TextArea textArea;
-    public TextAreaEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty) {
-        super(thingForm, attribute, valueProperty);
+    public TextAreaEditor(ThingForm thingForm, Thing attribute) {
+        super(thingForm, attribute);
     }
 
     @Override
@@ -31,6 +32,8 @@ public class TextAreaEditor extends AttributeEditor {
                 );
             }
         });
+
+        FXCodeAssistor.bind(thingForm.getThing(), textArea, thingForm.getActionContext());
         return textArea;
     }
 

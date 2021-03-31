@@ -21,6 +21,8 @@ public class TestSimpleThingEditor {
                     world.addFileThingManager(file.getName(), resoures, false, false);
                 }
             }
+            world.addFileThingManager("_local", new File("./xworker_explorer\\xworker\\projects\\_local\\things\\"), false, false);
+
             SimpleThingEditor.run();
         }catch (Exception e){
             e.printStackTrace();

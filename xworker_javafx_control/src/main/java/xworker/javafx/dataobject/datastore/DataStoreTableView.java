@@ -19,7 +19,7 @@ public class DataStoreTableView implements DataStoreListener {
         this.dataStore = dataStore;
         this.tableView = tableView;
 
-        tableView.itemsProperty().bind(dataStore.datasProperty());
+        //tableView.itemsProperty().bind(dataStore.datasProperty());
         dataStore.addListener(this);
     }
 
@@ -82,5 +82,6 @@ public class DataStoreTableView implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
+        tableView.setItems(dataStore.getDatas());
     }
 }

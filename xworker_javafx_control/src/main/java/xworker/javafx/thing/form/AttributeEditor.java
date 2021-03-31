@@ -19,20 +19,11 @@ import xworker.util.XWorkerUtils;
 
 public abstract class AttributeEditor {
     protected Thing attribute;
-    protected Property<Object> valueProperty;
     protected ThingForm thingForm;
 
-    public AttributeEditor(ThingForm thingForm, Thing attribute, Property<Object> valueProperty){
+    public AttributeEditor(ThingForm thingForm, Thing attribute){
         this.thingForm = thingForm;
         this.attribute = attribute;
-        this.valueProperty = valueProperty;
-        this.valueProperty.addListener(new ChangeListener<Object>() {
-
-            @Override
-            public void changed(ObservableValue<?> observable, Object oldValue, Object newValue) {
-
-            }
-        });
     }
 
     /**
@@ -70,6 +61,7 @@ public abstract class AttributeEditor {
         GridPane.setHgrow(label, Priority.NEVER);
 
         String desc = XWorkerUtils.getThingDesc(attribute);
+        desc = attribute.getMetadata().getName() + "\n" + desc;
         if(desc != null && !"".equals(desc)) {
             Tooltip tooltip = new Tooltip();
             tooltip.setText(desc);
