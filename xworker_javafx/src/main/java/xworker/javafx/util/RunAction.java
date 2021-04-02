@@ -24,7 +24,7 @@ public class RunAction {
             scriptContainer.append(ext);
         }
 
-        actionContext.getScope(0).put(self.getString("name"), scriptContainer);
+        actionContext.getScope(0).put(self.getMetadata().getName(), scriptContainer);
         return scriptContainer;
     }
 }

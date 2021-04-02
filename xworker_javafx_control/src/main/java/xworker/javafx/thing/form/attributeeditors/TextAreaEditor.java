@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.util.Callback;
 import org.xmeta.Thing;
 import xworker.javafx.thing.form.AttributeEditor;
 import xworker.javafx.thing.form.ThingForm;
@@ -33,7 +34,13 @@ public class TextAreaEditor extends AttributeEditor {
             }
         });
 
-        FXCodeAssistor.bind(thingForm.getThing(), textArea, thingForm.getActionContext());
+        FXCodeAssistor assistor = FXCodeAssistor.bind(thingForm.getThing(), textArea, thingForm.getActionContext());
+        assistor.setThingFactory(new Callback<FXCodeAssistor, Thing>() {
+            @Override
+            public Thing call(FXCodeAssistor param) {
+                return thingForm.getThing();
+            }
+        });
         return textArea;
     }
 

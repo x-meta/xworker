@@ -237,9 +237,11 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
                 Thing thing = thingForm.getThing(true);
                 thingEditor.add(thing);
 
-                Map<String, Object> values = thingForm.getValues();
-                values.put("name", "");
-                thingForm.setValues(values);
+                //重置值
+                Thing newThing = new Thing(thing.getDescriptor());
+                newThing.initDefaultValue();;
+                newThing.set("name", "");
+                thingForm.setValues(newThing.getAttributes());
             }
         });
     }

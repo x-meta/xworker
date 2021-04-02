@@ -1,17 +1,15 @@
 package xworker.javafx.control;
 
-import javafx.scene.control.SelectionMode;
-import org.xmeta.ActionContext;
-import org.xmeta.Thing;
-
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableView.TableViewFocusModel;
-import javafx.scene.control.TableView.TableViewSelectionModel;
 import javafx.util.Callback;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
 import xworker.javafx.util.JavaFXUtils;
 import xworker.javafx.util.ThingCallback;
 

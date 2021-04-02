@@ -13,6 +13,7 @@ import org.xmeta.Thing;
 import xworker.javafx.thing.editor.ThingEditor;
 import xworker.javafx.thing.editor.ThingEditorEvent;
 import xworker.javafx.util.JavaFXUtils;
+import xworker.util.ThingBackupUtil;
 import xworker.util.XWorkerUtils;
 
 public class SThingEditor extends AbstractEditor<Thing>{

@@ -38,6 +38,9 @@ public class FontActions {
             posture = FontPosture.valueOf(self.getString("posture"));
         }
         double size = self.getDouble("size");
+        if(size == 0){
+            size = -1;
+        }
 
         Font font = null;
         if(weight != null && posture != null){
@@ -50,6 +53,7 @@ public class FontActions {
             font = Font.font(family);
         }
 
+        actionContext.g().put(self.getMetadata().getName(), font);
         Object parent = actionContext.getObject("parent");
         if(parent instanceof Labeled){
             ((Labeled) parent).setFont(font);

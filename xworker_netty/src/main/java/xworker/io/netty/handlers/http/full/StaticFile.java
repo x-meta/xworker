@@ -417,45 +417,12 @@ public class StaticFile {
         contentTypes.put(".xap","application/x-silverlight-app");
     }
 
-    public static FullHttpResponse doRequest(ActionContext actionContext) throws IOException, ParseException {
-    	Thing self = actionContext.getObject("self");
-    	ChannelHandlerContext ctx = actionContext.getObject("ctx");
-    	FullHttpRequest request = actionContext.getObject("request");
-    	
-        if (!request.decoderResult().isSuccess()) {
-            return sendError(ctx, BAD_REQUEST);
-        }
-
-        if (!GET.equals(request.method())) {
-            return sendError(ctx, METHOD_NOT_ALLOWED);
-        }
-
+    public static FullHttpResponse doRequest(ChannelHandlerContext ctx, FullHttpRequest request, File file) throws IOException, ParseException {
         boolean keepAlive = HttpUtil.isKeepAlive(request);
         String uri = request.uri();
-        String path = sanitizeUri(uri);
-        if (path == null) {
-            return sendError(ctx, FORBIDDEN);
-        }
 
-        String contextPath = self.doAction("getContextPath", actionContext);
-        //过滤参数
-        int index = path.indexOf("?");
-        if(index > 0) {
-        	path = path.substring(0, index);
-        }
-        //过滤contextPath
-        if(contextPath != null) {
-        	path.substring(contextPath.length(), path.length());
-        }
-        
-        File rootFile = self.doAction("getFileRoot", actionContext);
-        if(rootFile == null) {
-        	return sendError(ctx, NOT_FOUND);
-        }
-        
-        File file = new File(rootFile, path);
         if (file == null || file.isHidden() || !file.exists()) {
-            sendError(ctx, NOT_FOUND);            
+            sendError(ctx, NOT_FOUND);
         }
 
         if (file.isDirectory()) {
@@ -489,7 +456,7 @@ public class StaticFile {
         try {
             raf = new RandomAccessFile(file, "r");
         } catch (FileNotFoundException ignore) {
-            return sendError(ctx, NOT_FOUND);            
+            return sendError(ctx, NOT_FOUND);
         }
         long fileLength = raf.length();
 
@@ -545,6 +512,47 @@ public class StaticFile {
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
+
+        return doRequest(ctx, request, file);
+    }
+
+    public static FullHttpResponse doRequest(ActionContext actionContext) throws IOException, ParseException {
+    	Thing self = actionContext.getObject("self");
+    	ChannelHandlerContext ctx = actionContext.getObject("ctx");
+    	FullHttpRequest request = actionContext.getObject("request");
+    	
+        if (!request.decoderResult().isSuccess()) {
+            return sendError(ctx, BAD_REQUEST);
+        }
+
+        if (!GET.equals(request.method())) {
+            return sendError(ctx, METHOD_NOT_ALLOWED);
+        }
+
+        boolean keepAlive = HttpUtil.isKeepAlive(request);
+        String uri = request.uri();
+        String path = sanitizeUri(uri);
+        if (path == null) {
+            return sendError(ctx, FORBIDDEN);
+        }
+
+        String contextPath = self.doAction("getContextPath", actionContext);
+        //过滤参数
+        int index = path.indexOf("?");
+        if(index > 0) {
+        	path = path.substring(0, index);
+        }
+        //过滤contextPath
+        if(contextPath != null) {
+        	path.substring(contextPath.length(), path.length());
+        }
+        
+        File rootFile = self.doAction("getFileRoot", actionContext);
+        if(rootFile == null) {
+        	return sendError(ctx, NOT_FOUND);
+        }
+
+        File file = new File(rootFile, path);
         
         //自行处理回复的消息了
         return null;

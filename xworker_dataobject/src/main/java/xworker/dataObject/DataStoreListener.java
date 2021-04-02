@@ -1,7 +1,6 @@
-package xworker.javafx.dataobject;
+package xworker.dataObject;
 
 import org.xmeta.Thing;
-import xworker.dataObject.DataObject;
 
 public interface DataStoreListener {
     public void onReconfig(DataStore dataStore, Thing dataObject);

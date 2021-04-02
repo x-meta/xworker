@@ -1,21 +1,7 @@
-package xworker.javafx.dataobject;
+package xworker.dataObject;
 
-import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableView;
 import org.xmeta.ActionContext;
-import org.xmeta.Index;
 import org.xmeta.Thing;
-import xworker.dataObject.DataObject;
-import xworker.dataObject.PageInfo;
-import xworker.javafx.dataobject.datastore.DataStoreChoiceBox;
-import xworker.javafx.dataobject.datastore.DataStoreComboBox;
-import xworker.javafx.dataobject.datastore.DataStorePagination;
-import xworker.javafx.dataobject.datastore.DataStoreTableView;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
@@ -24,9 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 封装数据对象的查询。
- */
 public class DataStore {
     private static final String TAG = DataStore.class.getName();
 
@@ -55,7 +38,7 @@ public class DataStore {
     /**
      * 查询结果数据对象列表。
      */
-    ObservableList<DataObject> datas = FXCollections.emptyObservableList();
+    DataObjectList datas = new DataObjectList();
 
     /**
      * DataStore模型的定义。
@@ -67,13 +50,24 @@ public class DataStore {
      */
     ActionContext actionContext;
 
+    /**
+     * 是否后台加载，如果是那么加载时会启动供应给线程。
+     */
+    boolean loadBackground;
+
     List<DataStoreListener> listeners = new ArrayList<>();
 
     public DataStore(Thing thing, ActionContext actionContext){
         this.thing = thing;
         dataObject = thing.doAction("getDataObject", actionContext);
         resultDataObject = dataObject;
+        datas = new DataObjectList(dataObject);
+
         condition = thing.doAction("getCondition", actionContext);
+        if(this.condition == null){
+            this.condition = dataObject.doAction("getQueryCondition", actionContext);
+        }
+
         int pageSize = thing.doAction("getPageSize", actionContext);
         if(pageSize > 0){
             pageInfo.setPageSize(pageSize);
@@ -84,23 +78,9 @@ public class DataStore {
             }
         }
 
-        List<String> binds = thing.doAction("getBindTo", actionContext);
-        for(String bind : binds){
-            Object obj = actionContext.getObject(bind);
-            if(obj instanceof TableView){
-                new DataStoreTableView(this, (TableView<DataObject>) obj);
-            }else if(obj instanceof ComboBox){
-                new DataStoreComboBox(this, (ComboBox<DataObject>) obj);
-            }else if(obj instanceof ChoiceBox){
-                new DataStoreChoiceBox(this, (ChoiceBox<DataObject>) obj);
-            }else if(obj instanceof Pagination){
-                new DataStorePagination(this, (Pagination) obj);
-            }
-        }
         if(UtilData.isTrue(thing.doAction("isAutoLoad", actionContext))){
             this.load(new HashMap<>());
         }
-
     }
 
     public DataStore(Thing dataObject, Thing condition, ActionContext actionContext){
@@ -108,6 +88,10 @@ public class DataStore {
         this.resultDataObject = dataObject;
         this.condition = condition;
         this.actionContext = actionContext;
+
+        if(this.condition == null){
+            this.condition = dataObject.doAction("getQueryCondition", actionContext);
+        }
     }
 
     public void addListener(DataStoreListener listener){
@@ -115,6 +99,9 @@ public class DataStore {
 
         if(resultDataObject != null) {
             listener.onReconfig(this, resultDataObject);
+        }
+        if(datas.size() > 0){
+            listener.onLoaded(this);
         }
     }
 
@@ -137,7 +124,7 @@ public class DataStore {
         doLoad();
     }
 
-    public ObservableList<DataObject> getDatas(){
+    public DataObjectList getDatas(){
         return datas;
     }
 
@@ -163,7 +150,8 @@ public class DataStore {
                         }
                     }
 
-                    datas = FXCollections.observableList(dataObjects);
+                    datas.clear();
+                    datas.addAll(dataObjects);
 
                     for(DataStoreListener listener :listeners){
                         listener.onLoaded(DataStore.this);

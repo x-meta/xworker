@@ -202,6 +202,7 @@ public class CreateThingDialog extends Dialog<Thing> {
                     Thing thing = new Thing(classText.getText());
                     if(category != null){
                         thing.saveAs(category.getThingManager().getName(), path);
+                        thing = world.getThing(path);
                     }
                     thing.set("name", nameText.getText());
 

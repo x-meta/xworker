@@ -2,14 +2,13 @@ package xworker.javafx.dataobject.datastore;
 
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import org.xmeta.Thing;
+import xworker.dataObject.DataStore;
+import xworker.dataObject.DataStoreListener;
 import xworker.dataObject.PageInfo;
-import xworker.javafx.dataobject.DataStore;
-import xworker.javafx.dataobject.DataStoreListener;
 
 public class DataStorePagination implements DataStoreListener {
     DataStore dataStore;

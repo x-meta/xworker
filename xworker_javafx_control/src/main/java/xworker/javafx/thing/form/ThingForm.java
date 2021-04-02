@@ -283,7 +283,7 @@ public class ThingForm {
      */
     public Thing getThing(boolean saveValues){
         if(editThing != null && saveValues){
-            editThing.getAttributes().putAll(getValues());
+            editThing.putAll(getValues());
         }
         return editThing;
     }

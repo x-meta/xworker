@@ -27,8 +27,8 @@ import xworker.javafx.util.FXThingLoader;
 import xworker.javafx.util.JavaFXUtils;
 import xworker.lang.executor.Executor;
 import xworker.thingeditor.ThingMenu;
+import xworker.util.ThingBackupUtil;
 
-import java.text.DateFormat;
 import java.util.function.Consumer;
 
 public class ThingEditor {
@@ -202,6 +202,7 @@ public class ThingEditor {
 
     private void initMenu(ThingMenu thingMenu, Menu menu){
         MenuItem menuItem = null;
+        thingMenu.setThingEditor(this);
 
         if(thingMenu.getChilds().size() > 0){
             menuItem = new Menu();
@@ -441,6 +442,12 @@ public class ThingEditor {
 
         currentThing.save();
         modifiedProperty.set(false);
+
+        try {
+            ThingBackupUtil.backup(currentThing.getRoot());
+        }catch (Exception e){
+
+        }
     }
 
     private void setCurrentThing(Thing thing){

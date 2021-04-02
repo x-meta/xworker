@@ -1,5 +1,8 @@
 package xworker.javafx.util;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -65,11 +68,11 @@ public class FXCodeAssistor implements EventHandler<KeyEvent>{
                             return;
                         }
 
-                        /*String text = item.getValue();
-                        if(item.getLabel() != null && !item.getLabel().equals(item.getValue())){
-                            text = text + "-" + item.getLabel();
-                        }*/
-                        setText(item.getLabel());
+                        String text = item.getLabel();
+                        if(text == null || text.isEmpty()){
+                            text = item.getValue();
+                        }
+                        setText(text);
                     }
                 };
             }
@@ -127,30 +130,45 @@ public class FXCodeAssistor implements EventHandler<KeyEvent>{
         }
     }
 
+    public Thing getThing(){
+        Thing th = null;
+        Callback<FXCodeAssistor, Thing> thingFactory = getThingFactory();
+        if(thingFactory != null){
+            return thingFactory.call(this);
+        }else{
+            return thing;
+        }
+    }
+
     @Override
     public void handle(KeyEvent event) {
-        if(event.getCode() == KeyCode.COMMA){
-            contents = codeAssistor.getClassContents(thing, getText(), getCaretPosition(), actionContext);
+        if(event.getCode() == KeyCode.PERIOD){
+            contents = codeAssistor.getClassContents(getThing(), getText(), getCaretPosition(), actionContext);
             listView.getItems().clear();
             listView.getItems().addAll(contents);
             searchText.setText("");
-            popup.show(getOwner());
+            if(contents != null && contents.size() > 0) {
+                popup.show(getOwner());
+            }
         }else if(event.isAltDown() && event.getCode() == KeyCode.H){
             String text = getText();
             int index = getCaretPosition();
             if(index > 0){
                 if(text.charAt(index - 1) == '.'){
-                    contents = codeAssistor.getClassContents(thing, text, index, actionContext);
+                    contents = codeAssistor.getClassContents(getThing(), text, index, actionContext);
                 }else{
-                    contents = codeAssistor.getAssistContents(thing, text, index, actionContext);
+                    contents = codeAssistor.getAssistContents(getThing(), text, index, actionContext);
                 }
             }else {
-                contents = codeAssistor.getAssistContents(thing, text, index, actionContext);
+                contents = codeAssistor.getAssistContents(getThing(), text, index, actionContext);
             }
 
-            searchText.setText(codeAssistor.getCurrentWord(text, index));
+            if(contents != null && contents.size() > 0) {
+                searchText.setText(codeAssistor.getCurrentWord(text, index));
 
-            popup.show(getOwner());
+                searchContents(searchText.getText());
+                popup.show(getOwner());
+            }
         }
     }
 
@@ -192,22 +210,35 @@ public class FXCodeAssistor implements EventHandler<KeyEvent>{
         }
     }
 
-    public static void bind(Thing thing, TextField textField, ActionContext actionContext){
+    private final ObjectProperty<Callback<FXCodeAssistor, Thing>> thingFactory = new SimpleObjectProperty<>();
+    public final void setThingFactory(Callback<FXCodeAssistor, Thing> factory){
+        thingFactory.set(factory);
+    }
+    public final Callback<FXCodeAssistor, Thing> getThingFactory(){
+        return thingFactory.get();
+    }
+    public final  ObjectProperty<Callback<FXCodeAssistor, Thing>> thingFactory(){
+        return thingFactory;
+    }
+
+    public static FXCodeAssistor bind(Thing thing, TextField textField, ActionContext actionContext){
         FXCodeAssistor assistor = new FXCodeAssistor();
         assistor.codeAssistor = new CodeAssistor(actionContext);
         assistor.thing = thing;
         assistor.textField = textField;
         assistor.actionContext = actionContext;
         textField.addEventHandler(KeyEvent.KEY_PRESSED, assistor);
+        return assistor;
     }
 
-    public static void bind(Thing thing, TextArea textArea, ActionContext actionContext){
+    public static FXCodeAssistor bind(Thing thing, TextArea textArea, ActionContext actionContext){
         FXCodeAssistor assistor = new FXCodeAssistor();
         assistor.codeAssistor = new CodeAssistor(actionContext);
         assistor.thing = thing;
         assistor.textArea = textArea;
         assistor.actionContext = actionContext;
         textArea.addEventHandler(KeyEvent.KEY_PRESSED, assistor);
+        return assistor;
     }
 
 }

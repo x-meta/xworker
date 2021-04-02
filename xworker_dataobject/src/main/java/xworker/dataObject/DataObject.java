@@ -143,6 +143,31 @@ public class DataObject extends HashMap<String, Object> {
 		metadata = new DataObjectMetadata(descriptor, this);
 	}
 
+	/**
+	 * 返回第一个主键的值。
+	 * @return
+	 */
+	public Object getKeyValue(){
+		Object[][] keyDatas = getKeyAndDatas();
+		if(keyDatas != null && keyDatas.length > 0){
+			return keyDatas[0][1];
+		}
+
+		return null;
+	}
+
+	/**
+	 * 设置第一个主键的值。
+	 *
+	 * @param value
+	 */
+	public void setKeyValue(Object value){
+		Thing[] keys = getMetadata().getKeys();
+		if(keys != null  && keys.length > 0){
+			this.put(keys[0].getMetadata().getName(), value);
+		}
+	}
+
 	public void addListener(DataObjectListener listener) {
 		if(listener == null) {
 			return;

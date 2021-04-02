@@ -19,11 +19,20 @@ public class ThingMenu implements Comparable<ThingMenu>{
     int sortWeight;
     ActionContext actionContext;
     List<ThingMenu> childs = new ArrayList<>();
+    Object thingEditor;
+    ThingMenu parent;
 
+    private ThingMenu(){
+
+    }
     public ThingMenu(Thing currentThing, Thing thing, ActionContext actionContext){
         this.currentThing = currentThing;
         this.thing = thing;
         this.actionContext = actionContext;
+    }
+
+    public void setThingEditor(Object thingEditor){
+        this.thingEditor = thingEditor;
     }
 
     public String getLabel(){
@@ -59,6 +68,7 @@ public class ThingMenu implements Comparable<ThingMenu>{
         ac.put("parentContext", ac);
         ac.put("currentThing", currentThing);
         ac.put("menu", this);
+        ac.put("thingEditor", thingEditor);
 
         Object result = thing.doAction("doAction", ac);
 
@@ -91,9 +101,9 @@ public class ThingMenu implements Comparable<ThingMenu>{
             }
             Thing window = World.getInstance().getThing(windowPath);
             if(window != null){
-                actionContext.peek().put("result", result);
-                actionContext.peek().putAll(params);
-                result = window.doAction("create", actionContext);
+                ac.peek().put("result", result);
+                ac.peek().putAll(params);
+                result = window.doAction("run", ac);
             }
         }
 
@@ -109,6 +119,22 @@ public class ThingMenu implements Comparable<ThingMenu>{
         }else {
             return 1;
         }
+    }
+
+    private void initParnets(ThingMenu parent){
+        this.parent = parent;
+        for(ThingMenu menu : childs){
+            menu.initParnets(this);
+        }
+    }
+
+    public ThingMenu getRoot(){
+        ThingMenu parent = this;
+        while(parent.parent != null){
+            parent = parent.parent;
+        }
+
+        return parent;
     }
 
     /**
@@ -134,6 +160,10 @@ public class ThingMenu implements Comparable<ThingMenu>{
 
         //应该只对Menubar的部分排序
         Collections.sort(menus);
+
+        ThingMenu root = new ThingMenu();
+        root.childs.addAll(menus);
+        root.initParnets(null);
 
         return menus;
     }

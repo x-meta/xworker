@@ -1,0 +1,424 @@
+^1617339939848
+@
+sname
+AvailableVariables
+stitle
+lang:d=可用变量&en=Available Variables
+swidth
+1024
+sheight
+768
+sdescriptors
+xworker.javafx.stage.Stage
+sinheritDescription
+false
+sth_createIndex
+false
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_noThingRegistViewer
+false
+sth_fileMonitor
+false
+sth_mark
+false
+sth_registQueryOnlySelf
+false
+  @/@919
+  sname
+  Nodes
+  sdescriptors
+  xworker.javafx.stage.Stage/@Nodes
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  919
+    @/@919/@937
+    sname
+    mainSplitPane
+    sdividerPositions
+    0.2,0.8
+    sdescriptors
+    xworker.javafx.scene.Nodes/@SplitPane
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+      @/@919/@937/@951
+      sname
+      variableListView
+      sdescriptors
+      xworker.javafx.scene.Nodes/@ListView
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      @/@919/@937/@959
+      sname
+      mainTabPane
+      sdescriptors
+      xworker.javafx.scene.Nodes/@TabPane
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+        @/@919/@937/@959/@977
+        sname
+        codeTab
+        sclosable
+        false
+        stext
+        lang:d=代码&en=Code
+        sdescriptors
+        xworker.javafx.control.TabPane/@Tab
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+          @/@919/@937/@959/@977/@1072
+          sname
+          codeText
+          swrapText
+          false
+          sdescriptors
+          xworker.javafx.scene.Nodes/@TextArea
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sth_registQueryOnlySelf
+          false
+  @/@1083
+  sname
+  Scene
+  sroot
+  var:mainSplitPane
+  sdescriptors
+  xworker.javafx.stage.Stage/@Scene
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  1083
+  @/@157
+  sname
+  actions
+  slog
+  false
+  sdescriptors
+  xworker.javafx.stage.Stage/@ActionContainer
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  157
+    @/@157/@TextTemplate
+    sname
+    toCode
+    stype
+    freemarker
+    svarScope
+    Local
+    stemplateEncoding
+    UTF-8
+    soutputEncoding
+    UTF-8
+    StemplateCode
+#$@text#$@
+######################### Get Variables ###############################
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+import ${var.className};
+</#if>
+</#list>
+
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
+<#if var.className?exists && var.className != "">
+    ${var.className} ${var.name} = actionContext.getObject("${var.name}");
+<#else>
+    Object ${var.name} = actionContext.get("${var.name}");
+</#if>
+</#list>
+
+########################## ######## ##############################
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
+<#if var.className?exists && var.className != "">
+${var.className} ${var.name};
+<#else>
+Object ${var.name};
+</#if>
+</#list>
+
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+<#continue>
+</#if>
+<#if var.className?exists && var.className != "">
+    ${var.name} = actionContext.getObject("${var.name}");
+<#else>
+    ${var.name} = actionContext.get("${var.name}");
+</#if>
+</#list>
+
+##########################Java Action Class##############################
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionClass;
+import org.xmeta.annotation.ActionField;
+<#list vars as var>
+<#if var.className?exists && var.isStaticClass()>
+import ${var.className};
+</#if>
+</#list>
+ 
+//@ActionClass(creator="createInstance")
+@ActionClass
+public class MyClass {
+    public static MyClass createInstance(ActionContext actionContext){
+        //return new MyClass();    
+        String key = MyClass.class.getName();
+        MyClass obj = actionContext.getObject(key);
+        if(obj == null){
+            obj = new MyClass();
+            actionContext.g().put(key, obj);
+        }
+        
+        return obj;
+    }    
+    <#list vars as var>
+    <#if var.className?exists && var.isStaticClass()>
+    <#continue>
+    </#if>
+    <#if var.className?exists && var.className != "">
+    @ActionField
+    public ${var.className} ${var.name};
+    <#else>
+    @ActionField
+    public Object ${var.name};
+    </#if>
+    </#list> 
+}
+#$@text#$@
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.text.TextTemplate
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    TextTemplate
+  @/@154
+  sname
+  init
+  sdescriptors
+  xworker.javafx.stage.Stage/@RunAction
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  154
+    @/@154/@148
+    sname
+    init
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.javafx.thingeditor.dialog.AvailableVariablesDialog
+    smethodName
+    init
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    148

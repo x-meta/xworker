@@ -1,11 +1,12 @@
 package xworker.javafx.dataobject.datastore;
 
+import javafx.collections.FXCollections;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import org.xmeta.Thing;
 import xworker.dataObject.DataObject;
-import xworker.javafx.dataobject.DataStore;
-import xworker.javafx.dataobject.DataStoreListener;
+import xworker.dataObject.DataStore;
+import xworker.dataObject.DataStoreListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +83,6 @@ public class DataStoreTableView implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
-        tableView.setItems(dataStore.getDatas());
+        tableView.setItems(FXCollections.observableList(dataStore.getDatas()));
     }
 }

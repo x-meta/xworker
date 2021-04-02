@@ -2,6 +2,7 @@ package xworker.javafx.thing.form;
 
 import javafx.beans.property.Property;
 import org.xmeta.Thing;
+import xworker.dataObject.DataStore;
 import xworker.javafx.thing.form.attributeeditors.*;
 
 public class AttributeEditorFactory {
@@ -18,13 +19,23 @@ public class AttributeEditorFactory {
         }else if("htmlDesc".equals(inputType)) {
             return new HtmlDescEditor(thingForm, attribute);
         }else if("select".equals(inputType)) {
-            return new ChoiceEditor(thingForm, attribute);
+            DataStore dataStore = AttributeDataStore.getDataStore(attribute, thingForm.getActionContext());
+            if(dataStore == null) {
+                return new ChoiceEditor(thingForm, attribute);
+            }else{
+                return new ChoiceDataStoreEditor(thingForm, attribute, dataStore);
+            }
         }else if("truefalse".equals(inputType)) {
             return new TrueFalseEditor(thingForm, attribute);
         }else if("truefalseselect".equals(inputType)) {
             return new TrueFalseSelectorEditor(thingForm, attribute);
         }else if("inputSelect".equals(inputType)) {
-            return new InputSelectEditor(thingForm, attribute);
+            DataStore dataStore = AttributeDataStore.getDataStore(attribute, thingForm.getActionContext());
+            if(dataStore == null) {
+                return new InputSelectEditor(thingForm, attribute);
+            }else{
+                return new InputSelectDataStoreEditor(thingForm, attribute, dataStore);
+            }
         }/*else if("radio".equals(inputType)) {
             return new RadioAttributeEditor(formThing, attribute, gridData, actionContext);
         }else if("checkBox".equals(inputType)) {

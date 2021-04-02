@@ -4,9 +4,8 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.util.Callback;
-import org.xmeta.ActionContext;
 import xworker.dataObject.DataObject;
-import xworker.javafx.dataobject.DataStore;
+import xworker.dataObject.DataStore;
 
 public class DataStoreListCellFactory implements Callback<ListView<DataObject>, ListCell<DataObject>>{
     DataStore dataStore;
