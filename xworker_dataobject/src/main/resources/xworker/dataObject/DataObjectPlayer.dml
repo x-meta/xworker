@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataObjectPlayer" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>用于自动或者手动遍历数据对象。执行create方法后创建DataObjectPlayer对象。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.dataObject.DataObjectPlayer" methodName="create"></JavaAction>
+        <GetThing name="getDataObject" _xmeta_id_="11858" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataObject" childThingName="DataObjects" childThingFirstChild="true"
+             usage="params"></GetThing>
+        <GetThing name="getCondition" _xmeta_id_="11859" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="condition" childThingName="Condition" usage="params"></GetThing>
+        <GetJsonObject name="getConditionValues" _xmeta_id_="11860" descriptors="xworker.lang.actions.ActionUtil/@GetJsonObject"
+             attributeName="conditionValues" usage="params"></GetJsonObject>
+        <GetBoolean name="isAutoPlay" _xmeta_id_="1312" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="autoPlay" usage="params"></GetBoolean>
+        <GetBoolean name="isLoop" _xmeta_id_="1313" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="loop" usage="params"></GetBoolean>
+        <GetLong name="getInterval" _xmeta_id_="1314" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="interval" usage="params"></GetLong>
+        <NOOP name="play">
+            <ins>
+                <param name="dataObject" type="xworker.dataObject.DataObject"></param>
+                <param name="player" type="xworker.dataObject.DataObjectPlayer"></param>
+            </ins>
+        </NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="autoPlay" inputtype="truefalse" default="false"></attribute>
+    <attribute name="loop" inputtype="truefalse" default="false"></attribute>
+    <attribute name="interval" default="2000"></attribute>
+    <attribute name="dataObject" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="condition" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="conditionValues" inputtype="textarea"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataObjects" extends="xworker.dataObject.DataObjects"></thing>
+    <thing name="Condition" extends="xworker.dataObject.query.Condition" inheritDescription="true"></thing>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作" inheritDescription="true">
+        <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+        <attribute name="name"></attribute>
+    </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="var" varName="_thingName_" className="xworker.dataObject.DataObjectPlayer"></Variable>
+    </VariablesDescs>
+</thing>

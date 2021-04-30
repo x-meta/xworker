@@ -1,0 +1,1142 @@
+%1555926744595
+@
+sname=shell
+stext=SimpleRulesCompositeExample
+sNO_TRIM=false
+sCLOSE=true
+sTITLE=true
+sMIN=true
+sMAX=true
+sBORDER=false
+sRESIZE=true
+sON_TOP=false
+sTOOL=false
+sNO_FOCUS=false
+swidth=800
+sheight=600
+scenterScreen=true
+spack=false
+smaximized=false
+sfullScreen=false
+sdesign=true
+sisIde=false
+sdesignDefaultOpen=false
+sexitOnDispose=false
+sH_SCROLL=false
+sV_SCROLL=false
+sNO_BACKGROUND=false
+sNO_MERGE_PAINTS=false
+sNO_REDRAW_RESIZE=false
+sNO_RADIO_GROUP=false
+sEMBEDDED=false
+sDOUBLE_BUFFERED=false
+slabel=SimpleRulesCompositeExample
+scapture=false
+senabled=true
+sredraw=true
+svisible=true
+sdescriptors=xworker.swt.widgets.Shell
+sinheritDescription=false
+sth_createIndex=false
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_mark=false
+  @/@FillLayout
+  sname=FillLayout
+  stype=SWT.HORIZONTAL
+  sdescriptors=xworker.swt.Layouts/@FillLayout
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=FillLayout
+  @/@SimpleRulesComposite
+  sname=SimpleRulesComposite
+  stype=refresh
+  sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=SimpleRulesComposite
+    @/@SimpleRulesComposite/@actions
+    sname=actions
+    sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@actions1
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=actions
+      @/@SimpleRulesComposite/@actions/@init
+      sname=init
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+//初始化Computer和User赢得局数
+engine.set("pc", 0);
+engine.set("user", 0);
+engine.set("results", []);
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=init
+      @/@SimpleRulesComposite/@actions/@play
+      sname=play
+      sisSynchronized=false
+      sthrowException=true
+      suseOtherAction=false
+      svarScope=Local
+      sdisableGlobalContext=false
+      Scode=
+#$@text#$@
+import java.util.Random;
+import xworker.util.UtilData;
+
+//判断游戏的输赢
+def r = new Random();
+
+def pc = r.nextInt(3);
+def userLabel = getLabel(user, actionContext);
+def pcLabel = getLabel(pc, actionContext);
+def userWin = 0;
+
+if(user == 0) {
+    if(pc == 2){
+        engine.user = engine.user + 1;
+        userWin = 1;
+    }else if(pc == 1){
+        engine.pc = engine.pc + 1;
+        userWin = 2;
+    }
+}else if(user == 1) {
+    if(pc == 0){
+        engine.user = engine.user + 1;
+        userWin = 1;
+    }else if(pc == 2){
+        engine.pc = engine.pc + 1;
+        userWin = 2;
+    }
+}else if(user == 2) {
+    if(pc == 1){
+        engine.user = engine.user + 1;
+        userWin = 1;
+    }else if(pc == 0){
+        engine.pc = engine.pc + 1;
+        userWin = 2;
+    }
+}
+
+//结果
+if(userWin == 1){
+    engine.results.add(userWinResult(actionContext, "user", userLabel, "pc", pcLabel));
+}else if(userWin == 2){
+    engine.results.add(userLostResult(actionContext, "user", userLabel, "pc", pcLabel));
+}else{
+    engine.results.add(equals(actionContext, "user", userLabel, "pc", pcLabel));
+}
+
+//继续执行引擎
+engine.fire();
+
+def getLabel(v, actionContext){
+   if(v == 0){
+       return UtilData.getString("lang:d=石头&en=Rock", actionContext);
+   }else if(v == 1){
+       return UtilData.getString("lang:d=布&en=Paper", actionContext);
+   }else{
+       return UtilData.getString("lang:d=剪刀&en=Scissors", actionContext);
+   }
+}
+#$@text#$@
+      sinterpretationType=Action
+      screateLocalVarScope=false
+      ssaveReturn=false
+      sdebugLog=false
+      sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=play
+        @/@SimpleRulesComposite/@actions/@play/@ActionDefined
+        sname=ActionDefined
+        sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=ActionDefined
+          @/@SimpleRulesComposite/@actions/@play/@ActionDefined/@toResult
+          sname=userWinResult
+          sstring=template:你出的是${user}，电脑出的是${pc}，你赢了。
+          sen_string=template:Your is ${user}, Computer is ${pc}, you win.
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.text.GetI18nString
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=toResult
+          @/@SimpleRulesComposite/@actions/@play/@ActionDefined/@toResult1
+          sname=userLostResult
+          sstring=template:你出的是${user}，电脑出的是${pc}，电脑赢了。
+          sen_string=template:Your is ${user}, Computer is ${pc}, computer win.
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.text.GetI18nString
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=toResult1
+          @/@SimpleRulesComposite/@actions/@play/@ActionDefined/@toResult2
+          sname=equals
+          sstring=template:你出的是${user}，电脑出的是${pc}，平局。
+          sen_string=template:Your is ${user}, Computer is ${pc}, no one wins.
+          sinterpretationType=Self
+          sattributeTemplate=false
+          schildsAttributeTemplate=false
+          svarScope=Local
+          sisSynchronized=false
+          sthrowException=true
+          suseOtherAction=false
+          screateLocalVarScope=false
+          ssaveReturn=false
+          sdisableGlobalContext=false
+          sdebugLog=false
+          sdescriptors=xworker.lang.actions.text.GetI18nString
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=toResult2
+    @/@SimpleRulesComposite/@playGame
+    sname=playGame
+    sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=playGame
+      @/@SimpleRulesComposite/@playGame/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SimpleRulesComposite/@playGame/@Composite/@GridLayout
+        sname=GridLayout
+        smakeColumnsEqualWidth=false
+        smarginWidth=5
+        smarginHeight=5
+        smarginLeft=0
+        smarginTop=0
+        smarginRight=0
+        smarginBottom=0
+        shorizontalSpacing=5
+        sverticalSpacing=5
+        sdescriptors=xworker.swt.Layouts/@GridLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GridLayout
+        @/@SimpleRulesComposite/@playGame/@Composite/@statusLabel
+        sname=statusLabel
+        sBORDER=false
+        stype=HORIZONTAL
+        salignment=LEFT
+        stext=lang:d=石头剪刀布&en=Ro Sham Bo!
+        scapture=false
+        senabled=true
+        sfont=|14|1|#000000
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Label
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=statusLabel
+          @/@SimpleRulesComposite/@playGame/@Composite/@statusLabel/@GridData
+          sname=GridData
+          sstyle=FILL_HORIZONTAL
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+        @/@SimpleRulesComposite/@playGame/@Composite/@rockButton
+        sname=rockButton
+        stext=lang:d=石头&en=Rock
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=rockButton
+          @/@SimpleRulesComposite/@playGame/@Composite/@rockButton/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@playGame/@Composite/@rockButton/@onSelection
+          sname=onSelection
+          sdescriptors=xworker.swt.widgets.Widget/@Event
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onSelection
+            @/@SimpleRulesComposite/@playGame/@Composite/@rockButton/@onSelection/@RefAction
+            sname=RefAction
+            srefActionPath=xworker.example.ai.rules.swt.SimpleRulesCompositeExample/@SimpleRulesComposite/@actions/@play
+            skeepSelf=true
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@RefAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=RefAction
+              @/@SimpleRulesComposite/@playGame/@Composite/@rockButton/@onSelection/@RefAction/@Variables
+              sname=Variables
+              sdescriptors=xworker.lang.actions.Inout/@Variables
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=Variables
+                @/@SimpleRulesComposite/@playGame/@Composite/@rockButton/@onSelection/@RefAction/@Variables/@user
+                sname=user
+                stype=nextInt
+                sintn=3
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
+                sisSynchronized=false
+                sthrowException=true
+                suseOtherAction=false
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.utils.RandomActions/@Random
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=user
+        @/@SimpleRulesComposite/@playGame/@Composite/@paperButton
+        sname=paperButton
+        stext=lang:d=布&en=Paper
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=paperButton
+          @/@SimpleRulesComposite/@playGame/@Composite/@paperButton/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@playGame/@Composite/@paperButton/@onSelection
+          sname=onSelection
+          sdescriptors=xworker.swt.widgets.Widget/@Event
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onSelection
+            @/@SimpleRulesComposite/@playGame/@Composite/@paperButton/@onSelection/@RefAction
+            sname=RefAction
+            srefActionPath=xworker.example.ai.rules.swt.SimpleRulesCompositeExample/@SimpleRulesComposite/@actions/@play
+            skeepSelf=true
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@RefAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=RefAction
+              @/@SimpleRulesComposite/@playGame/@Composite/@paperButton/@onSelection/@RefAction/@Variables
+              sname=Variables
+              sdescriptors=xworker.lang.actions.Inout/@Variables
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=Variables
+                @/@SimpleRulesComposite/@playGame/@Composite/@paperButton/@onSelection/@RefAction/@Variables/@user
+                sname=user
+                stype=nextInt
+                sintn=3
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
+                sisSynchronized=false
+                sthrowException=true
+                suseOtherAction=false
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.utils.RandomActions/@Random
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=user
+        @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton
+        sname=scissorsButton
+        stext=lang:d=剪刀&en=Scissors
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=scissorsButton
+          @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton/@onSelection
+          sname=onSelection
+          sdescriptors=xworker.swt.widgets.Widget/@Event
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onSelection
+            @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton/@onSelection/@RefAction
+            sname=RefAction
+            srefActionPath=xworker.example.ai.rules.swt.SimpleRulesCompositeExample/@SimpleRulesComposite/@actions/@play
+            skeepSelf=true
+            sinterpretationType=Self
+            sattributeTemplate=false
+            schildsAttributeTemplate=false
+            svarScope=Local
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdisableGlobalContext=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@RefAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=RefAction
+              @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton/@onSelection/@RefAction/@Variables
+              sname=Variables
+              sdescriptors=xworker.lang.actions.Inout/@Variables
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=Variables
+                @/@SimpleRulesComposite/@playGame/@Composite/@scissorsButton/@onSelection/@RefAction/@Variables/@user
+                sname=user
+                stype=nextInt
+                sintn=3
+                sinterpretationType=Self
+                sattributeTemplate=false
+                schildsAttributeTemplate=false
+                svarScope=Local
+                sisSynchronized=false
+                sthrowException=true
+                suseOtherAction=false
+                screateLocalVarScope=false
+                ssaveReturn=false
+                sdisableGlobalContext=false
+                sdebugLog=false
+                sdescriptors=xworker.lang.actions.utils.RandomActions/@Random
+                sinheritDescription=false
+                sth_createIndex=false
+                sth_registMyChilds=false
+                sth_registDisabled=false
+                sth_mark=false
+                sid=user
+        @/@SimpleRulesComposite/@playGame/@Composite/@resultGroup
+        sname=resultGroup
+        stext=lang:d=结果&en=Results
+        sstyle=SHADOW_ETCHED_IN
+        sBORDER=false
+        sH_SCROLL=false
+        sV_SCROLL=false
+        sNO_BACKGROUND=false
+        sNO_FOCUS=false
+        sNO_MERGE_PAINTS=false
+        sNO_REDRAW_RESIZE=false
+        sNO_RADIO_GROUP=false
+        sEMBEDDED=false
+        sDOUBLE_BUFFERED=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Group
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=resultGroup
+          @/@SimpleRulesComposite/@playGame/@Composite/@resultGroup/@GridData
+          sname=GridData
+          sstyle=FILL_HORIZONTAL
+          shorizontalIndent=0
+          swidth=-1
+          sheight=400
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@playGame/@Composite/@resultGroup/@FillLayout
+          sname=FillLayout
+          stype=SWT.HORIZONTAL
+          sdescriptors=xworker.swt.Layouts/@FillLayout
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=FillLayout
+          @/@SimpleRulesComposite/@playGame/@Composite/@resultGroup/@text
+          sname=text
+          sstyle=MULTI
+          sFULL_SELECTION=false
+          sREAD_ONLY=false
+          sWRAP=false
+          sH_SCROLL=true
+          sV_SCROLL=true
+          sBORDER=false
+          salign=LEFT
+          slineNumber=false
+          sNO_BACKGROUND=false
+          sNO_FOCUS=false
+          sNO_MERGE_PAINTS=false
+          sNO_REDRAW_RESIZE=false
+          sNO_RADIO_GROUP=false
+          sEMBEDDED=false
+          sDOUBLE_BUFFERED=false
+          scapture=false
+          senabled=true
+          sredraw=true
+          spack=false
+          svisible=true
+          sdescriptors=xworker.swt.Widgets/@StyledText
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=text
+      @/@SimpleRulesComposite/@playGame/@actions
+      sname=actions
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@SimpleRulesComposite/@playGame/@actions/@if
+        sname=if
+        sexpression=engine.getInt("pc") < 2 && engine.getInt("user") < 2
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@Ongl
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=if
+        @/@SimpleRulesComposite/@playGame/@actions/@init
+        sname=init
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+rule.ac.text.setText("");
+ 
+for(result in engine.results){
+    rule.ac.text.append(result + "\n");
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=init
+    @/@SimpleRulesComposite/@userWin
+    sname=userWin
+    sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=userWin
+      @/@SimpleRulesComposite/@userWin/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SimpleRulesComposite/@userWin/@Composite/@GridLayout
+        sname=GridLayout
+        smakeColumnsEqualWidth=false
+        smarginWidth=5
+        smarginHeight=5
+        smarginLeft=0
+        smarginTop=0
+        smarginRight=0
+        smarginBottom=0
+        shorizontalSpacing=5
+        sverticalSpacing=5
+        sdescriptors=xworker.swt.Layouts/@GridLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GridLayout
+        @/@SimpleRulesComposite/@userWin/@Composite/@statusLabel
+        sname=statusLabel
+        sBORDER=false
+        stype=HORIZONTAL
+        salignment=LEFT
+        stext=lang:d=你已赢了两局，你胜利了！&en=You have won two, you win!
+        scapture=false
+        senabled=true
+        sfont=|14|1|#000000
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Label
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=statusLabel
+          @/@SimpleRulesComposite/@userWin/@Composite/@statusLabel/@GridData
+          sname=GridData
+          sstyle=FILL_HORIZONTAL
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+        @/@SimpleRulesComposite/@userWin/@Composite/@rockButton
+        sname=restartButton
+        stext=lang:d=重新开始&en=Restart
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=rockButton
+          @/@SimpleRulesComposite/@userWin/@Composite/@rockButton/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@userWin/@Composite/@rockButton/@onSelection
+          sname=onSelection
+          sdescriptors=xworker.swt.widgets.Widget/@Event
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onSelection
+            @/@SimpleRulesComposite/@userWin/@Composite/@rockButton/@onSelection/@GroovyAction
+            sname=GroovyAction
+            sisSynchronized=false
+            sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+//初始化Computer和User赢得局数
+engine.set("pc", 0);
+engine.set("user", 0);
+engine.set("results", []);
+
+//重新开始
+engine.fire();
+#$@text#$@
+            sinterpretationType=Action
+            screateLocalVarScope=false
+            ssaveReturn=false
+            sdebugLog=false
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_mark=false
+            sid=GroovyAction
+      @/@SimpleRulesComposite/@userWin/@actions
+      sname=actions
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@SimpleRulesComposite/@userWin/@actions/@if
+        sname=if
+        sexpression=engine.getInt("user") >= 2
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@Ongl
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=if
+    @/@SimpleRulesComposite/@computerWin
+    sname=computerWin
+    sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=computerWin
+      @/@SimpleRulesComposite/@computerWin/@Composite
+      sname=Composite
+      sBORDER=false
+      sH_SCROLL=false
+      sV_SCROLL=false
+      sNO_BACKGROUND=false
+      sNO_FOCUS=false
+      sNO_MERGE_PAINTS=false
+      sNO_REDRAW_RESIZE=false
+      sNO_RADIO_GROUP=false
+      sEMBEDDED=false
+      sDOUBLE_BUFFERED=false
+      scapture=false
+      senabled=true
+      sredraw=true
+      spack=false
+      svisible=true
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@Composite
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=Composite
+        @/@SimpleRulesComposite/@computerWin/@Composite/@GridLayout
+        sname=GridLayout
+        smakeColumnsEqualWidth=false
+        smarginWidth=5
+        smarginHeight=5
+        smarginLeft=0
+        smarginTop=0
+        smarginRight=0
+        smarginBottom=0
+        shorizontalSpacing=5
+        sverticalSpacing=5
+        sdescriptors=xworker.swt.Layouts/@GridLayout
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=GridLayout
+        @/@SimpleRulesComposite/@computerWin/@Composite/@statusLabel
+        sname=statusLabel
+        sBORDER=false
+        stype=HORIZONTAL
+        salignment=LEFT
+        stext=lang:d=电脑已赢了两局，你输了！&en=The computer has won two games, you lost!
+        scapture=false
+        senabled=true
+        sfont=|14|1|#000000
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Label
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=statusLabel
+          @/@SimpleRulesComposite/@computerWin/@Composite/@statusLabel/@GridData
+          sname=GridData
+          sstyle=FILL_HORIZONTAL
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+        @/@SimpleRulesComposite/@computerWin/@Composite/@rockButton
+        sname=restartButton
+        stext=lang:d=重新开始&en=Restart
+        stype=SWT.PUSH
+        sflat=false
+        sborder=false
+        sselected=false
+        scapture=false
+        senabled=true
+        sredraw=true
+        spack=false
+        svisible=true
+        sdescriptors=xworker.swt.Widgets/@Button
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=rockButton
+          @/@SimpleRulesComposite/@computerWin/@Composite/@rockButton/@GridData
+          sname=GridData
+          sstyle=FILL_BOTH
+          shorizontalIndent=0
+          swidth=-1
+          sheight=-1
+          shorizontalAlignment=BEGINNING
+          sverticalAlignment=CENTER
+          shorizontalSpan=1
+          sverticalSpan=1
+          sgrabExcessHorizontalSpace=false
+          sgrabExcessVerticalSpace=false
+          sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=GridData
+          @/@SimpleRulesComposite/@computerWin/@Composite/@rockButton/@onSelection
+          sname=onSelection
+          sref=xworker.example.ai.rules.swt.SimpleRulesCompositeExample/@SimpleRulesComposite/@userWin/@Composite/@rockButton/@onSelection/@GroovyAction
+          sdescriptors=xworker.swt.widgets.Widget/@Event
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_mark=false
+          sid=onSelection
+      @/@SimpleRulesComposite/@computerWin/@actions
+      sname=actions
+      sdescriptors=xworker.ai.rules.swt.SimpleRulesComposite/@Rule/@actions1
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_mark=false
+      sid=actions
+        @/@SimpleRulesComposite/@computerWin/@actions/@if
+        sname=if
+        sexpression=engine.getInt("pc") >= 2
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sdisableGlobalContext=false
+        sdebugLog=false
+        sdescriptors=xworker.lang.actions.Actions/@Ongl
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_mark=false
+        sid=if

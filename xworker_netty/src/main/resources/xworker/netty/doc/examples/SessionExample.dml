@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="SessionExample" descriptors="xworker.swt.xworker.ThingRegistThing" type="thingEditor"
+     group="xworker.netty" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <NettyExample name="SessionExample" _xmeta_id_="UiFlow" descriptors="xworker.netty.doc.examples.NettyExample">
+        <NettyServer descriptors="xworker.netty.doc.examples.NettyExample/@NettyServer,xworker.netty.NettyServer"
+             port="9022">
+            <Handlers>
+                <LengthFieldBasedFrameDecoder name="LengthFieldBasedFrameDecoder"></LengthFieldBasedFrameDecoder>
+                <JsonDecoder name="JsonDecoder"></JsonDecoder>
+                <ChannelInboundHandler printLog="false">
+                    <actions>
+                        <GroovyAction name="channelRead">
+                            <code><![CDATA[import java.text.SimpleDateFormat;
+def sf = new SimpleDateFormat("HH:mm:ss");
+
+println msg;
+if(msg.action == "regist"){
+    session.setSessionId(msg.name);
+    
+    println("session registed, name is " + msg.name);
+    
+    msg.put("from", "System");
+    msg.put("time", sf.format(new Date()));
+    msg.put("message", session.getSessionId() + " has registed!");
+    session.getSessionManager().sendMessageToGroup("all", msg);
+}else if(msg.action == "sendMessage"){    
+    msg.put("from",  session.getSessionId());
+    msg.put("time", sf.format(new Date()));
+    if(msg.to == "all"){
+        session.getSessionManager().sendMessageToGroup("all", msg);
+    }else{
+        session.getSessionManager().sendMessage(msg.to, msg);
+    }
+}]]></code>
+                            <Variables>
+                                <GetNettySession name="session" descriptors="xworker.netty.NettyActions/@GetNettySession"></GetNettySession>
+                            </Variables>
+                        </GroovyAction>
+                    </actions>
+                </ChannelInboundHandler>
+                <LengthFieldPrepender name="LengthFieldPrepender"></LengthFieldPrepender>
+                <JsonEncoder name="JsonEncoder"></JsonEncoder>
+            </Handlers>
+            <actions>
+                <GroovyAction name="closed" code="println &quot;server closed&quot;;"></GroovyAction>
+                <GroovyAction name="sessionClosed" _xmeta_id_="onSessionClosed">
+                    <code><![CDATA[import java.text.SimpleDateFormat;
+def sf = new SimpleDateFormat("HH:mm:ss");
+
+println"session disconnected, " + session.getRemoteIp());
+
+def msg =[:];
+msg.put("from", "System");
+msg.put("time", sf.format(new Date()));
+msg.put("message", session.getSessionId() + " has closed!");
+session.getSessionManager().sendMessageToGroup("all", msg);]]></code>
+                </GroovyAction>
+                <GroovyAction name="sessionConnected" _xmeta_id_="onSessionConnected">
+                    <code><![CDATA[session.addToGroup("all");
+println("session connected and add to group 'all', " + session.getRemoteIp());]]></code>
+                </GroovyAction>
+                <GroovyAction name="startFailure" code="println(&quot;server start failure, &quot; + cause);"></GroovyAction>
+                <GroovyAction name="startSuccess" code="println(&quot;server start success&quot;);"></GroovyAction>
+            </actions>
+        </NettyServer>
+        <NettyClient descriptors="xworker.netty.doc.examples.NettyExample/@NettyClient,xworker.netty.NettyClient"
+             host="localhost" port="9022" singleInstance="false">
+            <Handlers descriptors="xworker.netty.NettyClient/@Handlers,xworker.netty.NettyServer/@Handlers">
+                <LengthFieldBasedFrameDecoder name="LengthFieldBasedFrameDecoder"></LengthFieldBasedFrameDecoder>
+                <JsonDecoder name="JsonDecoder"></JsonDecoder>
+                <ChannelInboundHandler printLog="false">
+                    <actions>
+                        <GroovyAction name="channelRead">
+                            <code><![CDATA[//println "dddddddddddddd" + actionContext.get("clientConsole");
+println(msg.from + " " + msg.time);
+//clientConsole.append(msg.from);
+println(msg.message);
+///println "ddddddddddddddxxxxxxxxxxx";]]></code>
+                        </GroovyAction>
+                    </actions>
+                </ChannelInboundHandler>
+                <LengthFieldPrepender name="LengthFieldPrepender"></LengthFieldPrepender>
+                <JsonEncoder name="JsonEncoder"></JsonEncoder>
+            </Handlers>
+            <actions>
+                <GroovyAction name="startSuccess">
+                    <code><![CDATA[nettyClient.sendMessage(["name":"A", "action":"regist"])
+
+//nettyClient.sendMessage(["to":"B", "action":"sendMessage", "message":"Hello World"]);]]></code>
+                </GroovyAction>
+            </actions>
+        </NettyClient>
+    </NettyExample>
+</QuickFunction>

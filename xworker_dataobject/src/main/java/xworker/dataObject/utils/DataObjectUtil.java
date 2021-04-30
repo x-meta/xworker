@@ -322,15 +322,15 @@ public class DataObjectUtil {
                 if(pageInfo.getStart() > dataObjects.size()){
                     pageInfo.setStart(dataObjects.size());
                 }
-                int toIndex = pageInfo.getStart() + pageInfo.getLimit();
+                int toIndex = (int) (pageInfo.getStart() + pageInfo.getLimit());
                 if(toIndex > dataObjects.size()){ 
                     toIndex = dataObjects.size();
                 }
-                int startIndex = pageInfo.getStart();
+                int startIndex = (int) pageInfo.getStart();
                 if(startIndex < 0){
                     startIndex = 0;
                 }    
-                pageInfo.setDatas(dataObjects.subList(pageInfo.getStart(), toIndex));
+                pageInfo.setDatas(dataObjects.subList((int) pageInfo.getStart(), toIndex));
             }else{
                 pageInfo.setDatas(dataObjects);
             }
@@ -851,16 +851,16 @@ public class DataObjectUtil {
             self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);
             if(pageInfo != null && pageInfo.getLimit() != 0){
                 int index = ((List) cds).size() + 1;
-                int start = pageInfo.getStart() + 1;
+                long start = pageInfo.getStart() + 1;
                 
                 switch(pageType){
                 case DataObjectUtil.PAGE_BETWEEN:
-                	 pst.setInt(index, start);
-                     pst.setInt(index + 1, start + pageInfo.getLimit() - 1);
+                	 pst.setLong(index, start);
+                     pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
                      break;
                 case DataObjectUtil.PAGE_LIMIT:
-                	pst.setInt(index, start-1);
-                    pst.setInt(index + 1, pageInfo.getLimit());
+                	pst.setLong(index, start-1);
+                    pst.setLong(index + 1, pageInfo.getLimit());
                      break;
                      default:
                     	 throw new ActionException("Unknown page type " + pageType + ", dataObject=" + self.getMetadata().getPath());

@@ -1,14 +1,13 @@
 package xworker.dataObject;
 
+import javafx.print.Collation;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 public class DataStore {
     private static final String TAG = DataStore.class.getName();
@@ -55,16 +54,33 @@ public class DataStore {
      */
     boolean loadBackground;
 
+    /**
+     * 是否自动保存数据。
+     */
+    boolean autoSave;
+
+    /**
+     * 标签字段。
+     */
+    String labelField;
+
     List<DataStoreListener> listeners = new ArrayList<>();
+
+    boolean loading = true;
 
     public DataStore(Thing thing, ActionContext actionContext){
         this.thing = thing;
         dataObject = thing.doAction("getDataObject", actionContext);
         resultDataObject = dataObject;
+        this.actionContext = actionContext;
+        if(this.actionContext == null){
+            this.actionContext = new ActionContext();
+        }
+
         datas = new DataObjectList(dataObject);
 
         condition = thing.doAction("getCondition", actionContext);
-        if(this.condition == null){
+        if(this.condition == null && dataObject != null){
             this.condition = dataObject.doAction("getQueryCondition", actionContext);
         }
 
@@ -81,6 +97,12 @@ public class DataStore {
         if(UtilData.isTrue(thing.doAction("isAutoLoad", actionContext))){
             this.load(new HashMap<>());
         }
+        autoSave = thing.getBoolean("autoSave");
+        labelField = thing.getStringBlankAsNull("labelField");
+    }
+
+    public boolean isLoading() {
+        return loading;
     }
 
     public DataStore(Thing dataObject, Thing condition, ActionContext actionContext){
@@ -88,10 +110,21 @@ public class DataStore {
         this.resultDataObject = dataObject;
         this.condition = condition;
         this.actionContext = actionContext;
+        if(this.actionContext == null){
+            this.actionContext = new ActionContext();
+        }
 
         if(this.condition == null){
             this.condition = dataObject.doAction("getQueryCondition", actionContext);
         }
+    }
+
+    public boolean isAutoSave(){
+        return autoSave;
+    }
+
+    public void setAutoSave(boolean autoSave){
+        this.autoSave = autoSave;
     }
 
     public void addListener(DataStoreListener listener){
@@ -109,6 +142,12 @@ public class DataStore {
         listeners.remove(listener);
     }
 
+    public void load(Map<String, Object> params, int page){
+        this.params = params;
+        pageInfo.setPage(page);
+        doLoad();
+    }
+
     public void load(Map<String, Object> params){
         this.params = params;
         pageInfo.setPage(0);
@@ -119,6 +158,7 @@ public class DataStore {
         pageInfo.setPage(page);
         doLoad();
     }
+
 
     public void reload(){
         doLoad();
@@ -133,10 +173,15 @@ public class DataStore {
     }
 
     private void doLoad(){
+        loading = true;
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    if(dataObject == null){
+                        return;
+                    }
+
                     if (params == null) {
                         params = new HashMap<>();
                     }
@@ -158,6 +203,8 @@ public class DataStore {
                     }
                 }catch(Exception e){
                     Executor.error(TAG, "Do dataobject query exception, dataObject=" + getDataObjectPath(), e);
+                }finally{
+                    loading = false;
                 }
             }
         }).start();
@@ -181,5 +228,111 @@ public class DataStore {
             child.doAction("ceate", actionContext);
         }
         return store;
+    }
+
+    public Thing getDataObject(){
+        return dataObject;
+    }
+
+    public String getLabelField() {
+        return labelField;
+    }
+
+    public void setLabelField(String labelField) {
+        this.labelField = labelField;
+    }
+
+    /**
+     * 返回数据仓库的定义模型。
+     *
+     * @return
+     */
+    public Thing getThing(){
+        return thing;
+    }
+
+    public ActionContext getActionContext(){
+        return actionContext;
+    }
+
+    public void add(DataObject dataObject){
+        datas.add(dataObject);
+
+        fireChanged();
+    }
+
+    public void fireChanged(){
+        for(DataStoreListener listener : listeners){
+            listener.onChanged(this);
+        }
+    }
+    public void add(int index, DataObject dataObject){
+        datas.add(index, dataObject);
+
+        fireChanged();
+    }
+
+    public void addAll(Collection<DataObject> datas){
+        this.datas.addAll(datas);
+
+        fireChanged();
+    }
+
+    public void addAll(int index, Collection<DataObject> datas){
+        this.datas.addAll(index, datas);
+
+        fireChanged();
+    }
+
+    public boolean remove(DataObject data){
+        if(this.datas.remove(data)){
+            this.fireChanged();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public DataObject remove(int index){
+        DataObject data = datas.remove(index);
+        if(data != null){
+            this.fireChanged();
+        }
+
+        return data;
+    }
+
+    public boolean removeAll(Collection<DataObject> datas){
+        if(this.datas.removeAll(datas)){
+            this.fireChanged();
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void setDataObject(Thing dataObject){
+        Thing condition = dataObject.getThing("Condition@0");
+        setDataObject(dataObject, condition);
+    }
+
+    public void setDataObject(Thing dataObject, Thing condition){
+        this.dataObject = dataObject;
+        this.condition = condition;
+
+        int pageSize = thing.doAction("getPageSize", actionContext);
+        if(pageSize > 0){
+            pageInfo.setPageSize(pageSize);
+        }else if(dataObject != null){
+            pageSize = dataObject.getInt("pageSize");
+            if(pageSize > 0){
+                pageInfo.setPageSize(pageSize);
+            }
+        }
+
+        for(DataStoreListener listener : listeners){
+            listener.onReconfig(this, dataObject);
+        }
     }
 }

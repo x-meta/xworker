@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="TestSSLExample" descriptors="xworker.swt.xworker.ThingRegistThing" type="thingEditor"
+     group="xworker.netty" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <NettyExample name="TestSSLExample" _xmeta_id_="NettyDemo" descriptors="xworker.netty.doc.examples.NettyExample">
+        <NettyServer name="DemoNettyServer" port="6022">
+            <Handlers>
+                <TestSSLServerHandler name="TestSSLServerHandler"></TestSSLServerHandler>
+                <LengthFieldBasedFrameDecoder name="LengthFieldBasedFrameDecoder"></LengthFieldBasedFrameDecoder>
+                <StringDecoder name="StringDecoder"></StringDecoder>
+                <DemoServerHandler name="DemoServerHandler" sslOperationComplete="true"></DemoServerHandler>
+                <LengthFieldPrepender name="LengthFieldPrepender"></LengthFieldPrepender>
+                <StringEncoder name="StringEncoder"></StringEncoder>
+            </Handlers>
+            <Handler>
+                <LoggingHandler name="LoggingHandler" loggerName="Test"></LoggingHandler>
+            </Handler>
+        </NettyServer>
+        <NettyClient name="DemoNettyClient" host="localhost" port="6022">
+            <Handlers>
+                <TestSSLClientHandler name="TestSSLClientHandler"></TestSSLClientHandler>
+                <LengthFieldBasedFrameDecoder name="LengthFieldBasedFrameDecoder"></LengthFieldBasedFrameDecoder>
+                <StringDecoder name="StringDecoder"></StringDecoder>
+                <DemoClientHandler name="DemoClientHandler"></DemoClientHandler>
+                <LengthFieldPrepender name="LengthFieldPrepender"></LengthFieldPrepender>
+                <StringEncoder name="StringEncoder"></StringEncoder>
+            </Handlers>
+        </NettyClient>
+    </NettyExample>
+</QuickFunction>

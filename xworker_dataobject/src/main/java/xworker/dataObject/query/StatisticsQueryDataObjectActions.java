@@ -162,15 +162,15 @@ public class StatisticsQueryDataObjectActions {
                 if(pageInfo.getStart() > datas.size()){
                     pageInfo.setStart( datas.size());
                 }
-                int toIndex = pageInfo.getStart() + pageInfo.getLimit();
+                int toIndex = (int) (pageInfo.getStart() + pageInfo.getLimit());
                 if(toIndex > datas.size()){ 
                     toIndex = datas.size();
                 }
-                int startIndex = pageInfo.getStart();
+                int startIndex = (int) pageInfo.getStart();
                 if(startIndex < 0){
                     startIndex = 0;
                 }    
-                pageInfo.put("datas", datas.subList(pageInfo.getStart(), toIndex));
+                pageInfo.put("datas", datas.subList((int) pageInfo.getStart(), toIndex));
             }else{
                 pageInfo.put("datas", datas);
             }

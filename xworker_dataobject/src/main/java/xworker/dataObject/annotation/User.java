@@ -1,6 +1,7 @@
 package xworker.dataObject.annotation;
 
+@BeanDataObject
 public class User {
-    @Field(label="名字",sortable=true)
+    @BeanDataObjectField(label="名字",sortable=true)
     String name;
 }

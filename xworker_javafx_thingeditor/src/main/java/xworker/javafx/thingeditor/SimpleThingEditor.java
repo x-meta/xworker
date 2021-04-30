@@ -327,6 +327,9 @@ public class SimpleThingEditor extends Application {
     public void start(){
         Stage stage = new Stage();
         try {
+            //启动注册缓存
+            ThingUtils.startRegistThingCache();
+
             start(stage);
         }catch (Exception e){
             Executor.error(TAG, "Start SimpleThingEditor error", e);

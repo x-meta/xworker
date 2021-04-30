@@ -15,9 +15,7 @@ import org.xmeta.Thing;
 import org.xmeta.ThingManager;
 import org.xmeta.World;
 import org.xmeta.ui.session.SessionManager;
-import org.xmeta.util.ThingRegistor;
-import org.xmeta.util.UtilData;
-import org.xmeta.util.UtilString;
+import org.xmeta.util.*;
 
 import freemarker.template.TemplateException;
 import io.netty.buffer.Unpooled;
@@ -99,13 +97,15 @@ public class SimpleControl {
 								break;
 							}
 						}
-						
-						webControlName = webControlName.replace('/', '.');		
-						if(allowUnderLine){
-							//_下划线是老的应用在用，但是_也是事物的路径所允许的，因此现有版本不建议使用
-							webControlName = webControlName.replace('_', '.');
+
+						if(webControlName != null) {
+							webControlName = webControlName.replace('/', '.');
+							if (allowUnderLine) {
+								//_下划线是老的应用在用，但是_也是事物的路径所允许的，因此现有版本不建议使用
+								webControlName = webControlName.replace('_', '.');
+							}
+							webControl = world.getThing(webControlName);
 						}
-						webControl = world.getThing(webControlName);
 					}
 				}
 			}else {
@@ -139,7 +139,7 @@ public class SimpleControl {
 					}
 				}
 				
-				return webControl.doAction("httpDo", actionContext, "request", requestBean);
+				return webControl.doAction("httpDo", actionContext);
 			}
 		}finally {
 			SessionManager.setLocalSessionManager(null);
@@ -489,51 +489,57 @@ public class SimpleControl {
 	public static Object httpDo(ActionContext actionContext) throws Exception{
 		//获取SimpleControl框架配置本身
         Thing self = (Thing) actionContext.get("self");
-        
-        //权限检查
-        if(!checkPermission(self, actionContext)){
-        	return null;
-        }
-        
-        //登录校验
-        if(self.getBoolean("checkLogin")){
-        	Object obj = self.doAction("doCheckLogin", actionContext);
-        	if(obj instanceof Boolean && (Boolean) obj == false){
-        		return null;
-        	}
-        }
-        
-        String result = "success";
-        //执行业务逻辑，并返回结果
-        Object r = self.doAction("doAction", actionContext);
-        if(r instanceof HttpResponse) {
-        	return r;
-        }
-        
-        if(r instanceof String){
-            result = (String) r;
-        }
-        
-        //寻找并处理结果
-        List<Thing> results = self.getChilds("result");
-		Thing resultObject = null;
-		for(int i=0; i<results.size(); i++){
-			Thing rObject = results.get(i);
-			if(rObject.getMetadata().getName().equals(result)){	
-				resultObject = rObject;
-                break;
+
+        try {
+			//权限检查
+			if (!checkPermission(self, actionContext)) {
+				return null;
 			}
+
+			//登录校验
+			if (self.getBoolean("checkLogin")) {
+				Object obj = self.doAction("doCheckLogin", actionContext);
+				if (obj instanceof Boolean && (Boolean) obj == false) {
+					return null;
+				}
+			}
+
+			String result = "success";
+			//执行业务逻辑，并返回结果
+			Object r = self.doAction("doAction", actionContext);
+			if (r instanceof HttpResponse) {
+				return r;
+			}
+
+			if (r instanceof String) {
+				result = (String) r;
+			}
+
+			//寻找并处理结果
+			List<Thing> results = self.getChilds("result");
+			Thing resultObject = null;
+			for (int i = 0; i < results.size(); i++) {
+				Thing rObject = results.get(i);
+				if (rObject.getMetadata().getName().equals(result)) {
+					resultObject = rObject;
+					break;
+				}
+			}
+
+			//执行结果的方法，相当于输出界面
+			if (resultObject != null) {
+				return resultObject.doAction("doResult", actionContext);
+			}
+
+			FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK,
+					Unpooled.copiedBuffer(result + ".\r\n", CharsetUtil.UTF_8));
+			response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=utf-8");
+			return response;
+		}catch(Exception e){
+			FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR,
+					Unpooled.copiedBuffer(ExceptionUtil.toString(e) + ".\r\n", CharsetUtil.UTF_8));
+			response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=utf-8");
+			return response;
 		}
-		
-		//执行结果的方法，相当于输出界面
-		if(resultObject != null){
-			return resultObject.doAction("doResult", actionContext);
-		}
-		
-		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK,
-    			Unpooled.copiedBuffer(result + ".\r\n", CharsetUtil.UTF_8));
-		response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=utf-8");
-		return response;
-       
     }
 }

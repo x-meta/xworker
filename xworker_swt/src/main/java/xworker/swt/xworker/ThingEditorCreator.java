@@ -58,12 +58,17 @@ public class ThingEditorCreator {
 		}else {
 			editorThing = world.getThing("xworker.ide.worldexplorer.ThingEditor/@shell/@mainComposite");
 		}
-		
+
+		boolean isThingViewer = false;
 		if(editorThing == null){			
-			editorThing = new Thing("xworker.swt.xworker.ThingViewer");
+			editorThing = world.getThing("xworker.swt.xworker.prototype.RapThingViewer");
+			/*
+			new Thing("xworker.swt.xworker.ThingViewer");
 			editorThing.put("name", "editor");
+			*/
 			Thing editorActions = world.getThing("xworker.swt.xworker.ThingViewer/@ActionContainer");
 			editorActions.doAction("create", ac);
+			isThingViewer = true;
 		}
 		//System.out.println("ThingEditor create actons time: " + (System.currentTimeMillis() - start));
 		//start = System.currentTimeMillis();
@@ -84,10 +89,17 @@ public class ThingEditorCreator {
 		//创建概要，如果outlineBrowser存在且是Composite
 		Object outlineBrowser = actionContext.get("outlineBrowser");
 		if(outlineBrowser != null && outlineBrowser.getClass().getName().equals("org.eclipse.swt.widgets.Composite")) {
-			ActionContext thingContext =  (ActionContext) ac.get("thingContext");
+			Thing outlineThing = null;
+			if(isThingViewer){
+				outlineThing = new Thing("xworker.swt.browser.Browser");
+				outlineThing.set("name", "outlineBrowser");
+			}else {
+				outlineThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
+			}
+			ActionContext thingContext = (ActionContext) ac.get("thingContext");
 			thingContext.peek().put("parent", outlineBrowser);
-			Thing outlineThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineBrowser");
-			outlineThing.doAction("create",thingContext);
+
+			outlineThing.doAction("create", thingContext);
 			((Composite) outlineBrowser).layout();
 		}
 		//System.out.println("ThingEditor outline create time: " + (System.currentTimeMillis() - start));

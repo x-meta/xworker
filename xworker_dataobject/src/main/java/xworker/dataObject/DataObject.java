@@ -38,18 +38,19 @@ import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.query.Condition;
 import xworker.dataObject.query.UtilCondition;
 import xworker.dataObject.utils.DataObjectUtil;
+import xworker.lang.executor.Executor;
+import xworker.task.TaskManager;
 import xworker.task.UserTask;
 import xworker.task.UserTaskManager;
 
 /**
- * <p>数据对象是数据存储和界面之间的媒介，既可以从数据存储中读取、修改和删除数据，也可以向各种提供数据，
- * 还可以通过数据对象快速生成各种节目。
- * 
- * <p>在这里数据存储是指数据、Excel、Csv、List等等可以获取和保存数据的地方。</p>
- * 
+ * <p>数据存储是一种关系模型，一个数据对象是一个二维表，数据对象可以关联不同种类的数据，如数据库数据对象关联CSV数据对象。</p>
+ *
+ * <p>数据对象可以映射数据，实现CURD操作，数据对象也包含界面相关的数据，可以用于快速生成界面。</p>
+ *
  * <p>数据对象是一个Map，用于存放key-value键值对，MetaData保存了关键字、属性定义和脏字段信息等。</p>
  * 
- * <p>数据对象的定义是事物，数据对象的行为是由事物实现的，可以有自己的行为。</p>
+ * <p>数据对象的定义是模型，数据对象一般在模型里调用。</p>
  * 
  * <p>数据对象如果已初始化setInited(true)，那么会记录脏字段信息，否则不会记录。</p>
  * 
@@ -61,6 +62,7 @@ import xworker.task.UserTaskManager;
  * 
  */
 public class DataObject extends HashMap<String, Object> {
+	private static final String TAG = DataObject.class.getName();
 	private static final long serialVersionUID = 1L;
 
 	/** 标志 - 已保存 */
@@ -541,40 +543,61 @@ public class DataObject extends HashMap<String, Object> {
 	
 	@Override
 	public Object get(Object key) {
-		if(this.wrappedObject != null) {
-			if(metadata != null){
+		if (this.wrappedObject != null) {
+			if (metadata != null) {
 				Thing definition = metadata.getDefinition(key.toString());
-				if(definition != null) {
+				if (definition != null) {
 					String propertyPath = definition.getStringBlankAsNull("propertyPath");
-					if(propertyPath == null) {
+					if (propertyPath == null) {
 						propertyPath = key.toString();
 					}
-					
+
 					return OgnlUtil.getValue(propertyPath, wrappedObject);
 				}
 			}
-			
-			return OgnlUtil.getValue(key, wrappedObject);			
+
+			return OgnlUtil.getValue(key, wrappedObject);
 		}
-		
+
 		if (!isInited()) {
 			load(null);
 		}
 
-		Object obj = super.get(key);
-		if (obj instanceof DataObject) {
-			DataObject dobj = (DataObject) obj;
-			if (!dobj.isInited()) {
-				dobj.load(null);
+		String keyStr = String.valueOf(key);
+		if (keyStr.indexOf('.') != -1) {
+			String[] keys = keyStr.split("[.]");
+			//DataObject data = this;
+			Object data = this;
+			for (String k : keys) {
+				if (data instanceof DataObject) {
+					data = ((DataObject) data).get(k);
+				} else {
+					data = OgnlUtil.getValue(k, data);
+				}
+				if (data == null) {
+					break;
+				}
 			}
-		} else if (obj instanceof DataObjectList) {
-			DataObjectList dobjlist = (DataObjectList) obj;
-			if (!dobjlist.isInited()) {
-				dobjlist.load(null);
-			}
-		}
+			return data;
+		} else {
+			Object obj = super.get(key);
+			/*
+			下面的对象也应该是延迟加载的。
+			if (obj instanceof DataObject) {
+				DataObject dobj = (DataObject) obj;
+				if (!dobj.isInited()) {
+					dobj = dobj.load(null);
+					super.put((String) key, dobj);
+				}
+			} else if (obj instanceof DataObjectList) {
+				DataObjectList dobjlist = (DataObjectList) obj;
+				if (!dobjlist.isInited()) {
+					dobjlist.load(null);
+				}
+			}*/
 
-		return obj;
+			return obj;
+		}
 	}
 
 	/**
@@ -601,6 +624,32 @@ public class DataObject extends HashMap<String, Object> {
 			return this;
 		}
 	}
+
+	/**
+	 * 后台加载数据对象。加载后一般会触发监听器的加载和修改事件。
+	 *
+	 * @param actionContext
+	 */
+	public void loadBackground(final ActionContext actionContext){
+		TaskManager.getExecutorService().execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					synchronized (DataObject.this) {
+						if (DataObject.this.isInited()) {
+							return;
+						}else{
+							setInited(true);
+						}
+					}
+
+					DataObject.this.load(actionContext);
+				}catch(Exception e){
+					Executor.warn(TAG, "Load dataobject error, path=" + getMetadata().getDescriptor().getMetadata().getPath(), e);
+				}
+			}
+		});
+	}
 	
 	/**
 	 * <p>根据条件查询，如果返回的数据对象的列表不为空，那么把第一个数据对象作为加载的数据对象。</p>
@@ -617,7 +666,7 @@ public class DataObject extends HashMap<String, Object> {
 			setInited(true);
 			DataObject dataObj = datas.get(0);
 			this.putAll(dataObj);
-			
+
 			return this;
 		}else {
 			return null;
@@ -631,7 +680,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param condition 查询条件
 	 * @return
 	 */
-	public Object update(ActionContext actionContext, Condition condition){
+	public int update(ActionContext actionContext, Condition condition){
 		return update(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
 	}
 	
@@ -644,7 +693,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * @return
 	 */
-	public Object update(ActionContext actionContext, Object condition,
+	public int update(ActionContext actionContext, Object condition,
 			Object queryDatas) {
 		if (actionContext == null) {
 			actionContext = new ActionContext();
@@ -659,7 +708,7 @@ public class DataObject extends HashMap<String, Object> {
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
 
-			return doAction("updateBatch", actionContext);
+			return (Integer) doAction("updateBatch", actionContext);
 		} finally {
 			actionContext.pop();
 		}
@@ -670,9 +719,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 * @return 删除的数量
 	 */
-	public Object delete(ActionContext actionContext, Condition condition){
+	public int delete(ActionContext actionContext, Condition condition){
 		return delete(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
 	}
 	
@@ -682,9 +731,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
-	 * @return
+	 * @return 删除的数量
 	 */
-	public Object delete(ActionContext actionContext, Object condition,
+	public int delete(ActionContext actionContext, Object condition,
 			Object queryDatas) {
 		if (actionContext == null) {
 			actionContext = new ActionContext();
@@ -700,7 +749,7 @@ public class DataObject extends HashMap<String, Object> {
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
 
-			return doAction("deleteBatch", actionContext);
+			return (Integer) doAction("deleteBatch", actionContext);
 		} finally {
 			actionContext.pop();
 		}
@@ -726,8 +775,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public List<DataObject> query(ActionContext actionContext, Object condition,
-			Object queryDatas) {
+	public List<DataObject> query(ActionContext actionContext, Object condition, Object queryDatas) {
 		if (actionContext == null) {
 			actionContext = new ActionContext();
 		}
@@ -777,7 +825,8 @@ public class DataObject extends HashMap<String, Object> {
 		
 		Object[][] otherKeyDatas = dataObject.getKeyAndDatas();
 		Object[][] keyDatas = this.getKeyAndDatas();
-		if(otherKeyDatas == null || keyDatas == null || (otherKeyDatas.length != keyDatas.length)) {
+		if(otherKeyDatas == null || keyDatas == null || (otherKeyDatas.length != keyDatas.length) || keyDatas.length == 0) {
+			//没有设置主键的也返回false
 			return false;
 		}
 		
@@ -794,6 +843,40 @@ public class DataObject extends HashMap<String, Object> {
 			}			
 		}
 		
+		return true;
+	}
+
+	/**
+	 * 根据主键的值比较是否匹配。和equals(Object ... keys)方法不同，本方法不传主键的名字，
+	 * 因此匹配时传入的数组的主键顺序应该和数据对象定义的主键顺序一致，否则可能会不能正确匹配。
+	 *
+	 * @param keys
+	 * @return
+	 */
+	public boolean equalsByKey(Object ... keys){
+		if(keys == null) {
+			return false;
+		}
+
+		Object[][] keyDatas = this.getKeyAndDatas();
+		if(keyDatas == null || keyDatas.length == 0) {
+			//如果没有主键，不能通过主键比较，返回false
+			return false;
+		}
+
+		if(keys.length < keyDatas.length){
+			//键值个数不一样，缺少键值
+			return false;
+		}
+
+		for(int i = 0; i < keyDatas.length; i++) {
+			Object[] ks = keyDatas[i];
+			Object key = DataObjectUtil.getValue(keys[i], (Thing) ks[0]);
+			if(!UtilCondition.equals(ks[1], key, null, null, false, null)) {
+				return false;
+			}
+		}
+
 		return true;
 	}
 	
@@ -877,17 +960,30 @@ public class DataObject extends HashMap<String, Object> {
 	}
 
 	/**
-	 * 创建或更新。
+	 * 创建或更新。先按主键加载，如果存在则更新，否则创建。
+	 *
+	 * @param actionContext
+	 *
+	 * @return　返回DataObject是创建，返回int是更新
 	 */
-	public void createOrUpdate(ActionContext actionContext) {
+	public Object createOrUpdate(ActionContext actionContext) {
 		DataObject loadData = this.load(actionContext); 
 		if(loadData != null){
-			this.update(actionContext);
+			return this.update(actionContext);
 		}else{
-			this.create(actionContext);
+			return this.create(actionContext);
 		}
 	}
-	
+
+	/**
+	 * 根据指定的主键列表创建或更新。根据keys查询，条件的值是本数据对象中对应的值。如果查询存在，则把本数据对象的脏字段设置到查询结果的
+	 * 数据对象中，并执行更新操作，返回
+	 *
+	 * @param keys
+	 * @param actionContext
+	 * @return
+	 */
+	/* 该方法存在歧义，因此不建议使用。
 	public DataObject createOrUpdate(List<String> keys, ActionContext actionContext) {
 		if(keys == null || keys.size() == 0){
 			throw new ActionException("No key fields");
@@ -905,6 +1001,9 @@ public class DataObject extends HashMap<String, Object> {
 		}
 		
 		if(loadData != null){
+			for(String name : this.metadata.getDirtyFields()){
+				loadData.put(name, get(name));
+			}
 			loadData.update(actionContext);
 			
 			return loadData;
@@ -913,14 +1012,14 @@ public class DataObject extends HashMap<String, Object> {
 		}
 	}
 	
-	public DataObject createOrUpdate( ActionContext actionContext, String ... keys) {
+	public DataObject createOrUpdate(ActionContext actionContext, String ... keys) {
 		List<String> ks = new ArrayList<String>();
 		for(String key : keys){
 			ks.add(key);
 		}
 		
 		return createOrUpdate(ks, actionContext);
-	}
+	}*/
 	
 	/**
 	 * 通过keys执行的字段名作为查询条件判断记录是否存在，如果存在则不创建，否则执行创建。
@@ -1086,24 +1185,34 @@ public class DataObject extends HashMap<String, Object> {
 	public static void finishThreadCache() {
 		DataObjectCache.finish();
 	}
-	
+
 	/**
 	 * 数据对象装载后的初始化 ，初始化一对多的关系和装载事件。
 	 */
-	public void fireOnLoaded(ActionContext actionContext){                
+	public void fireOnLoaded(ActionContext actionContext){
 		Thing descriptor = getMetadata().getDescriptor();
-		
+
 		//初始化多个属性列表
         List<Thing> things = getMetadata().getThings();
         for(int i=0; i<things.size(); i++){
         	Thing thing = things.get(i);
+
             if(thing.getBoolean("many")){
+            	//列表映射（一对多）
                 DataObjectList list = new DataObjectList(thing, this);
                 list.setInited(false);
-                put(thing.getString("name"), list);
-            }
+                put(thing.getString("name"), list, false);
+            }else{
+            	//单对象映射（多对一）
+            	Thing refDesc = World.getInstance().getThing(thing.getString("dataObjectPath"));
+            	if(refDesc != null) {
+					DataObject data = DataObjectCache.getDataObjectThreadCache(refDesc, thing.getString("refAttributeName"),
+							get(thing.getString("localAttributeName")));
+					put(thing.getMetadata().getName(), data, false);
+				}
+			}
         }
-        
+
         //触发onLoaded事件
         if(descriptor.getBoolean("onLoaded")){
         	descriptor.doAction("onLoaded", actionContext);
@@ -1223,6 +1332,12 @@ public class DataObject extends HashMap<String, Object> {
 		this.wrappedObject = wrappedObject;
 	}
 
+	/**
+	 * 返回数据对象的标签值。如果数据对象设置了displayName，即要作为标签的字段名，那么返回该字段的值的字符串，否则返回主键的值字符串，
+	 * 如果没有主键，使用默认的父类的toString()方法。
+	 *
+	 * @return
+	 */
 	public String getLabel() {
 		String label = null;
 		//优先返回标签字段的内容

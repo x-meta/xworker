@@ -48,12 +48,17 @@ public class DataStorePagination implements DataStoreListener {
                 onLoading = true;
                 try {
                     PageInfo pageInfo = dataStore.getPageInfo();
-                    pagination.setPageCount(pageInfo.getTotalPage());
+                    pagination.setPageCount((int) pageInfo.getTotalPage());
                 }finally {
                     onLoading = false;
                 }
             }
         });
+
+    }
+
+    @Override
+    public void onChanged(DataStore dataStore) {
 
     }
 }

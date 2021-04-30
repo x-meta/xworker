@@ -7,14 +7,19 @@ import org.xmeta.World;
 import xworker.dataObject.DataObject;
 import xworker.javafx.thing.form.ThingForm;
 
+import java.util.List;
 import java.util.Map;
 
 public class DataObjectForm {
+    DataObjectFormType type = DataObjectFormType.EDIT;
     ThingForm thingForm = new ThingForm();
     DataObject dataObject = null;
 
     public DataObjectForm(){
+    }
 
+    public void setType(DataObjectFormType type){
+        this.type = type;
     }
 
     public DataObjectForm(DataObject dataObject){
@@ -63,10 +68,39 @@ public class DataObjectForm {
             thingForm.setDescriptor(null);
         }else {
             Thing descriptor = dataObject.getMetadata().getDescriptor();
-            thingForm.setDescriptor(descriptor);
+            List<Thing> attributes = descriptor.getAllChilds("attribute");
+
+            //移除不符合类型的字段
+            for(int i=0; i<attributes.size(); i++){
+                if(!checkAttributeType(attributes.get(i), type)){
+                    attributes.remove(i);
+                    i--;
+                }
+            }
+
+            thingForm.setDescriptor(descriptor, attributes);
 
             thingForm.setValues(dataObject);
         }
+    }
+
+    private boolean checkAttributeType(Thing attribute, DataObjectFormType type){
+        String name = null;
+        if(type == DataObjectFormType.CREATE){
+            name = "createEditor";
+        }else if(type == DataObjectFormType.QUERY){
+            name = "queryEditor";
+        }else if(type == DataObjectFormType.VIEW){
+            name = "viewEditor";
+        }else{
+            name = "editEditor";
+        }
+
+        return attribute.getBoolean(name);
+    }
+
+    public void setColumn(int column){
+        thingForm.setColumn(column);
     }
 
     public Map<String, Object> getValues(){
@@ -93,6 +127,11 @@ public class DataObjectForm {
         Thing self = actionContext.getObject("self");
         DataObjectForm form = new DataObjectForm();
         form.setFormThing(self, actionContext);
+        String type = self.getStringBlankAsNull("type");
+        if(type != null){
+            form.setType(DataObjectFormType.valueOf(type));
+        }
+        form.setColumn(self.getInt("cols"));
         actionContext.g().put(self.getMetadata().getName(), form);
 
         DataObject dataObject = self.doAction("getDataObject", actionContext);

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="HttpServerExample" descriptors="xworker.swt.xworker.ThingRegistThing" type="thingEditor"
+     group="xworker.netty" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p>使用Netty编写的Http服务器示例。</p>
+
+<p><strong>HttpServerHandler</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; HttpServerHandler是XWorker编写的一个Handler，用于处理FullHttpRequest，可以用来快速实现一个简单的HttpSever。</p>
+
+<p><strong>示例说明</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; HttpServerHandler下有3个Http处理器。</p>
+
+<ul>
+	<li><strong>helloworld</strong><br />
+	是一个SimpleControl，处理固定的url。<br />
+	&nbsp;</li>
+	<li><strong>SimpleControl</strong><br />
+	是一个SimpleControl，通过sc参数指定要执行的SimpleControl模型。<br />
+	&nbsp;</li>
+	<li><strong>StaticFile</strong><br />
+	静态文件浏览。<br />
+	&nbsp;</li>
+	<li><strong>FileUpload</strong><br />
+	文件上传示例。<br />
+	&nbsp;</li>
+	<li><strong>WebSocket</strong><br />
+	WebSocket示例。有SSL的情况下IE可用，谷歌浏览器报证书错误。在没有SLL的情况下，各浏览器都可以用，需要在WebSocketServerProtocolHandler设置allowExtentions=true。</li>
+</ul>
+
+<p><strong>SimpleControl</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 是一个简单的MVC框架，使用了xworker_web下的模型。</p>
+
+<p><strong>访问示例</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 启动（start)后，在浏览器中输入<a href="http://localhost:8080/helloworld">http://localhost:8080/helloworld。</a></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <NettyServer name="HttpServerExample" _xmeta_id_="DemoNettyServer" descriptors="xworker.netty.NettyServer"
+         port="8080">
+        <Handlers>
+            <HttpServerCodec name="HttpServerCodec"></HttpServerCodec>
+            <HttpObjectAggregator name="HttpObjectAggregator" maxContentLength="314572800"></HttpObjectAggregator>
+            <WebSocketServerCompressionHandler name="WebSocketServerCompressionHandler"></WebSocketServerCompressionHandler>
+            <WebSocketServerProtocolHandler name="WebSocketServerProtocolHandler" websocketPath="/socket" allowExtensions="false"></WebSocketServerProtocolHandler>
+            <ChunkedWriteHandler name="ChunkedWriteHandler"></ChunkedWriteHandler>
+            <WebSocketFrameHandler>
+                <actions descriptors="MetaThing/@actions">
+                    <GroovyAction name="onText" _xmeta_id_="onTextMessage">
+                        <code><![CDATA[import java.text.SimpleDateFormat;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+
+def sf = new SimpleDateFormat("HH:mm:ss");
+def message = frame.text();
+//println text;
+def response = alice(actionContext, "message", message);
+
+//println response;
+if(response != null){
+    TextWebSocketFrame data = new TextWebSocketFrame(response);
+    ctx.writeAndFlush(data);
+}]]></code>
+                        <ActionDefined>
+                            <Alice name="alice" descriptors="xworker.ai.chatterbean.Alice"></Alice>
+                        </ActionDefined>
+                    </GroovyAction>
+                </actions>
+            </WebSocketFrameHandler>
+            <HttpServerHandler>
+                <SimpleControl name="helloworld" descriptors="xworker.netty.handlers.http.HttpServerHandlers/@SimpleControl"
+                     pathRegex="/helloworld" contextPath="/" controls="false">
+                    <view>
+                        <htmlCode name="htmlCode">
+                            <htmlCode><![CDATA[<p>Hello world!</p>
+]]></htmlCode>
+                        </htmlCode>
+                    </view>
+                    <result name="success" value="xworker.netty.doc.examples.HttpServerExample/@DemoNettyServer/@Handlers/@HttpServerHandler/@helloworld/@view"></result>
+                </SimpleControl>
+                <SimpleControl name="SimpleControl" descriptors="xworker.netty.handlers.http.HttpServerHandlers/@SimpleControl"
+                     pathRegex="/do.*" contextPath="/"></SimpleControl>
+                <StaticFile name="StaticFile" pathRegex=".*" contextPath="/" fileRoot="xworker:webroot"></StaticFile>
+            </HttpServerHandler>
+        </Handlers>
+        <Handler>
+            <LoggingHandler name="LoggingHandler" loggerName="Test"></LoggingHandler>
+        </Handler>
+    </NettyServer>
+</QuickFunction>

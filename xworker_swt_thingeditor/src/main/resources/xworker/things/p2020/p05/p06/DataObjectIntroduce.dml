@@ -5,75 +5,88 @@
      simpleBrowser="true" en_label="DataObject" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
     <description><![CDATA[<h1>数据对象</h1>
 
-<h2>1.作用</h2>
+<h2>1.基本概念</h2>
+
+<h3>1.1.关系模型</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象是一种关系模型，每一个数据对象对应一个二维表，它支不同类型的数据对象的关联，如数据库数据对象和CSV数据对象关联。</p>
+
+<h3>1.2.对象</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象可以具有行为，比如和CURD相关的query、create、update和delete等方法，数据对象也可以自定义行为。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象对应的Java类是xworker.dataObject.DataObject，DataObject也是一个Map&lt;String, Object&gt;。</p>
+
+<h3>1.3.界面</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象也包含了一些界面相关的属性，可以用于生成编辑数据的表格和表单等。</p>
+
+<h2>2.数据对象的用途</h2>
+
+<h3>2.1.生成界面</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象常用于界面，可以快速生成编辑数据的表格和表单等等。</p>
+
+<h3>2.2.映射和编辑数据</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象可以映射数据，比如数据库中的表，Excel的中Sheet等。当数据对象模型定义好后，通常就可以直接使用工具来编辑和管理数据了。</p>
+
+<h3>2.3.其它功能</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 随着数据对象的发展，可能以后还会提供导入导出和分析统计等功能。</p>
+
+<h2>3.基本使用方法</h2>
+
+<h3>3.1.映射数据</h3>
+
+<h4>3.1.1.单一主键</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 一个数据对象建议只有一个主键，多个主键可能在某些界面里不支持。</p>
+
+<h4>3.1.2.使用预定义的数据对象</h4>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker提供了一些常用的数据对象，比如数据库数据对象、CSV数据对象等等。这些数据对象实现了默认的CURD等操作。</p>
+
+<h4>3.1.3.使用抽象的数据对象（AbstractDataObject)</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 当预定义的数据对象不能满足需求时，可以使用抽象的数据对象，自行实现相关的方法。可以根据需要只实现必要的方法，比如一个数据对象只用于查询，那么只要事先doQuery()方法即可。</p>
+
+<h4>3.1.4.数据关联</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象支持多对一和一对多的数据关联，也就是数据对象的一个字段可以和其它数据对象关联，关联后的结果可以是一个数据对象或一个数据对象列表。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如在表示学生的数据对象，性别可以映射成数据对象，课程可以映射为数据对象列表。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 关联支持延迟加载。</p>
+
+<h3>3.2.基本操作</h3>
+
+<h4>3.2.1.CURD</h4>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 一般是针对存储的操作，比如对数据库中的数据进行增删改查。</p>
 
 <ul>
-	<li><strong>映射数据</strong><br />
-	使用数据对象可以映射数据库、Excel、CSV等等各种数据，通过对象可以实现对各种数据的CURD的操作。<br />
+	<li><strong>DataObject&nbsp;doCreate(DataObject theData)</strong><br />
+	创建数据对象操作。<br />
 	&nbsp;</li>
-	<li><strong>生成界面</strong><br />
-	和界面控件结合后，可以快速生成表格、表单等数据的查询编辑界面。</li>
+	<li><strong>int doUpdate(DataObject theData)</strong><br />
+	更新数据，返回更新的条数。如果返回值大于0，表示更新成功。<br />
+	&nbsp;</li>
+	<li><strong>int doDelete(DataObject&nbsp;theData)</strong><br />
+	删除数据，返回删除的条数。如果返回值大于0，表示删除成功。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;DataObject&gt; doQuery(Thing conditionConfig, Map&lt;String, Object&gt;&nbsp;conditionData,&nbsp;PageInfo pageInfo)</strong><br />
+	查询操作，如果pageInfo存在是分页查询。conditionConfig是查询条件设置（条件表达式），conditionData是查询条件的值。&nbsp;&nbsp;&nbsp;<br />
+	数据对象的查询条件的规则一般是如果条件的值存在那么条件生效，比如查询条件设置了name=? and age=?，如果name的条件值存在那么anme=?就生效，否则就name=?就不生效。</li>
 </ul>
 
-<h2>2.主要概念</h2>
+<h4>3.2.2.其它操作</h4>
 
-<h3>2.1.数据对象（DataObject)</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 其它操作如遍历和批量CURD等，可参看其它文档和示例。&nbsp;&nbsp;&nbsp;</p>
 
-<p>&nbsp;&nbsp;&nbsp; 数据对象对应的Java类是xworker.dataObject.DataObject，DataObject继承于Map&lt;String, Object&gt;。</p>
+<h3>3.3.界面操作</h3>
 
-<h4>2.1.1.数据</h4>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象是数据，它是Map&lt;String, Object&gt;可以用于保存数据。</p>
-
-<h4>2.1.2.对象</h4>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象它也是一个对象，可以执行自己的行为，行为在数据对象模型上定义。</p>
-
-<p>&nbsp;&nbsp;&nbsp; 执行数据对象的行为是通过<strong>doAction(name, actionContext)</strong>方法来执行，其它数据对象自己会以<strong>theData</strong>变量传入。</p>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象的增删改查（create、delete、load、update)等等方法也是最终通过doAction方法执行的。</p>
-
-<h4>2.1.3.属性</h4>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象是Map&lt;String, Object&gt;，属性就是Map中的Key。定义一个数据对象，比如定义一个数据库数据对象，一般是定义数据对象的属性和数据库表中字段的映射。</p>
-
-<h4>2.1.3.关联</h4>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象之间可以实现1对1或1对多的关联，并且可以跨类型的关联。</p>
-
-<h3>2.2.查询条件(Condition)</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 查询条件用于定义查询的条件和表达式等，通过查询条件可以生成条件SQL，可以用于过滤List中的对象等等。</p>
-
-<p>&nbsp;&nbsp;&nbsp; Condition对应的Java类是xworker.dataObject.query.Condition。</p>
-
-<h3>2.3.数据对象列表（DataObjectList）</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象列表对应的Java类是xworker.dataObject.DataObjectList，它继承于List&lt;DataObject&gt;。</p>
-
-<h3>2.4.数据仓库(DataStore)</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 数据仓库是界面的组件，为表格、下拉列表等等控件提供要展示数据等等。</p>
-
-<h2>3.基本知识</h2>
-
-<h3>3.1.关键字&nbsp;&nbsp;</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 对应数据库表的主键，可以指定某个属性是关键字，没有关键字属性不能实现数据的删除和更新等（可能会误删除和更新其它数据）。</p>
-
-<p>&nbsp;&nbsp;&nbsp; 建议一个数据对象只设置<strong>一个关键字属性</strong>（因为某些界面控件只支持单关键字）。&nbsp;</p>
-
-<h3>3.2.通过DataObject操作</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 数据一般会封装成DataObject，然后再通过DataObject实现CURD操作，以及在界面上显示等。</p>
-
-<h3>3.3.使用数据对象</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 在新建事物对话框中数据对象模型在xworker.dataObjects分组下。</p>
-
-<h3>3.4.示例</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 数据对象是一个基础框架，可以在SWT等界面和其它模型的示例中找到。</p>
+<p>&nbsp;&nbsp;&nbsp; 请参看其它文档和示例。</p>
 
 <p>&nbsp;</p>
 ]]></description>

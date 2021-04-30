@@ -15,19 +15,18 @@
 ******************************************************************************/
 package xworker.dataObject;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import xworker.util.UtilData;
 
 
 /**
- * 分页信息，为兼容以前的程序继承HashMap，以前很多程序的分页信息是HashMap。
- * 
+ * <p>分页信息，为兼容以前的程序继承HashMap，以前很多程序的分页信息是HashMap。</p>
+ *
+ * <p>有两种设置分页的方法。一是根据记录的偏移量（start，从0开始)和数量(limit，要大于0）设置。二是根据页数（page，从1开始）和页大小（pageSize，要大于0）
+ * 来设置。这两种设置方法可以相互转换，其中Limit==pageSize。</p>
  * @author Administrator
  *
  */
@@ -43,12 +42,16 @@ public class PageInfo{
 	public PageInfo(Map<String, Object> data){
 		if(data == null) {
 			data = new HashMap<String, Object>();
+			this.data = data;
+
+			setLimit(100);
+			setPage(0);
+		}else {
+			this.data = data;
 		}
-		
-		this.data = data; 
 	}
 	
-	public PageInfo(int start, int limit){
+	public PageInfo(long start, long limit){
 		this();
 		
 		setStart(start);
@@ -69,11 +72,16 @@ public class PageInfo{
 		
 		return null;
 	}
-	
-	public int getPage(){
-		int start = getStart() + 1;
-		int totalCount = getTotalCount();
-		int limit = getLimit();
+
+	/**
+	 * 返回当前页数。
+	 *
+	 * @return
+	 */
+	public long getPage(){
+		long start = getStart() + 1;
+		long totalCount = getTotalCount();
+		long limit = getLimit();
 		if(start > totalCount){
 			start = totalCount / limit + 1;
 		}
@@ -85,18 +93,34 @@ public class PageInfo{
 		
 		return start / limit + (start % limit > 0 ? 1 : 0);
 	}
-	
-	public void setPage(int page){
+
+	/**
+	 * 设置当前页。
+	 *
+	 * @param page
+	 */
+	public void setPage(long page){
 		if(page < 1){
 			page = 1;
 		}
-		int start = (page - 1) * getLimit(); 
+		long start = (page - 1) * getLimit();
 		setStart(start);
 		//setLimit(start + getPageSize() - 1);		
 	}
 
 	/**
-	 * 查询后如果数据对象是新创建的，那么可以通过该方法快速设置。
+	 * 通过偏移量设置当前页。
+	 *
+	 * @param offset
+	 */
+	public void setPageByOffset(long offset){
+		long pageSize = getPageSize();
+		long start = (offset / pageSize) * pageSize;
+		setStart(start);
+	}
+
+	/**
+	 * 如果查询后的结果是动态生成的新的数据对象，那么可以通过该方法快速设置。
 	 * @param dataObject
 	 */
 	public void setDataObject(Thing dataObject){
@@ -111,14 +135,24 @@ public class PageInfo{
 	public Thing getDataObject(){
 		return (Thing) data.get("dynamicDataObject");
 	}
-	
+
+	/**
+	 * 返回是否有前一页。
+	 *
+	 * @return 如果当前页大于1则返回true
+	 */
 	public boolean hasPrePage(){
 		return getPage() > 1;
 	}
-	
-	public List<Integer> getPrePages(){
-		List<Integer> ps = new ArrayList<Integer>();
-		int page = getPage();
+
+	/**
+	 * 获取前面的最多5页。
+	 *
+	 * @return
+	 */
+	public List<Long> getPrePages(){
+		List<Long> ps = new ArrayList<>();
+		long page = getPage();
 		
 		while(page > 1){
 			if(ps.size() >= 5){
@@ -133,16 +167,26 @@ public class PageInfo{
 		
 		return ps;
 	}
-	
+
+	/**
+	 * 返回是否有下一页。
+	 *
+	 * @return
+	 */
 	public boolean hasNextPage(){
 		return getTotalPage() > getPage();
 	}
-	
-	public List<Integer> getNextPages(){
-		List<Integer> ps = new ArrayList<Integer>();
-		int page = getPage();
-		int totalPage = getTotalPage();
-		int maxCount = 10 - page;
+
+	/**
+	 * 返回后续的最多5个页。
+	 *
+	 * @return
+	 */
+	public List<Long> getNextPages(){
+		List<Long> ps = new ArrayList<>();
+		long page = getPage();
+		long totalPage = getTotalPage();
+		long maxCount = 10 - page;
 		if(maxCount < 4){
 			maxCount = 4;
 		}
@@ -157,69 +201,112 @@ public class PageInfo{
 		
 		return ps;
 	}
-	
-	public int getTotalPage(){
-		int totalCount = getTotalCount();
-		int limit = getLimit();
-		
-		int totalPage = totalCount /limit + (totalCount % limit > 0 ? 1 : 0); 
+
+	/**
+	 * 返回总页数。
+	 *
+	 * @return
+	 */
+	public long getTotalPage(){
+		long totalCount = getTotalCount();
+		long limit = getLimit();
+
+		long totalPage = totalCount /limit + (totalCount % limit > 0 ? 1 : 0);
 		return totalPage;
 	}
-	public int getStart() {		
-		return getInt(DataObjectConstants.PAGEINFO_START);		
+
+	/**
+	 * 返回记录的起始。
+	 *
+	 * @return
+	 */
+	public long getStart() {
+		return getLong(DataObjectConstants.PAGEINFO_START);
 	}
-	
-	public int getPageSize(){
-		return getInt(DataObjectConstants.PAGEINFO_PAGESIZE);
+
+	/**
+	 * 返回页大小。
+	 *
+	 * @return
+	 */
+	public long getPageSize(){
+		long pageSize = getLong(DataObjectConstants.PAGEINFO_PAGESIZE);
+		return pageSize > 0 ? pageSize : 100;
 	}
-	
+
+	/**
+	 * 设置一页的大小。
+	 *
+	 * @param pageSize
+	 */
 	public void setPageSize(int pageSize){
+		if(pageSize < 1){
+			pageSize = 1;
+		}
+
 		data.put(DataObjectConstants.PAGEINFO_PAGESIZE, pageSize);
 		data.put(DataObjectConstants.PAGEINFO_LIMIT, pageSize);
 	}
 
-	private int getInt(String name){
-		Integer start = (Integer) data.get(name);
-		if(start == null){
-			return 0;
-		}else{
-			return start;
-		}
+	private long getLong(String name){
+		return UtilData.getLong(data.get(name), 0);
 	}
 
-	public void setStart(int start) {
+	/**
+	 * 设置起始偏移量。
+	 *
+	 * @param start
+	 */
+	public void setStart(long start) {
 		data.put(DataObjectConstants.PAGEINFO_START, start);
 	}
 
 	/**
-	 * 条目的截止。
+	 * 返回限制数量，同pageSize。
 	 * 
 	 * @return
 	 */
-	public int getLimit() {
-		int limit = getInt(DataObjectConstants.PAGEINFO_LIMIT);
+	public long getLimit() {
+		long limit = getLong(DataObjectConstants.PAGEINFO_LIMIT);
 		if(limit <= 0) {
 			limit = 100;
 		}
 		return limit;
 	}
 
-
-	public void setLimit(int limit) {
+	/**
+	 * 设置限制数量，同pageSize。
+	 *
+	 * @param limit
+	 */
+	public void setLimit(long limit) {
 		data.put(DataObjectConstants.PAGEINFO_LIMIT, limit);
 		data.put(DataObjectConstants.PAGEINFO_PAGESIZE, limit);
 	}
 
 
+	/**
+	 *返回查询的数据列表。
+	 */
 	@SuppressWarnings("unchecked")
 	public List<DataObject> getDatas() {
 		return (List<DataObject>) data.get(DataObjectConstants.PAGEINFO_DATAS);
 	}
 
+	/**
+	 * 返回PageInfo所属的Map。
+	 *
+	 * @return
+	 */
 	public Map<String, Object> getPageInfoData(){
 		return data;
 	}
 
+	/**
+	 * 设置查询的结果列表。
+	 *
+	 * @param datas
+	 */
 	public void setDatas(List<DataObject> datas) {
 		data.put(DataObjectConstants.PAGEINFO_DATAS, datas);
 	}
@@ -236,7 +323,7 @@ public class PageInfo{
 		
 		return false;
 	}
-	
+
 	public boolean isSuccess() {
 		return getBoolean(DataObjectConstants.PAGEINFO_SUCCESS);
 	}
@@ -257,12 +344,12 @@ public class PageInfo{
 	}
 
 
-	public int getTotalCount() {
-		return getInt(DataObjectConstants.PAGEINFO_TOTALCOUNT);
+	public long getTotalCount() {
+		return getLong(DataObjectConstants.PAGEINFO_TOTALCOUNT);
 	}
 
 
-	public void setTotalCount(int totalCount) {
+	public void setTotalCount(long totalCount) {
 		data.put(DataObjectConstants.PAGEINFO_TOTALCOUNT, totalCount);
 	}
 
@@ -281,6 +368,14 @@ public class PageInfo{
 		return (String) data.get(DataObjectConstants.PAGEINFO_DIR);
 	}
 
+	public boolean isSortAsc(){
+		String dir = getDir();
+		if(dir != null){
+			return !"desc".equals(dir.toLowerCase(Locale.ROOT));
+		}else{
+			return true;
+		}
+	}
 
 	public void setDir(String dir) {
 		data.put(DataObjectConstants.PAGEINFO_DIR, dir);		
@@ -295,14 +390,14 @@ public class PageInfo{
 	}
 	
 	/**
-	 * 返回分页信息。
+	 * 返回分页信息。该方法应该还没有写完，不能使用。
 	 * 
 	 * @return
 	 */
 	public List<Page> getPagination(int count){
 		List<Page> pages = new ArrayList<Page>();
-		int currentPage = this.getPage();
-		int totalPage = this.getTotalPage();
+		long currentPage = this.getPage();
+		long totalPage = this.getTotalPage();
 		
 		//是否有向前翻页
 		if(currentPage - count >= 1){
@@ -317,7 +412,7 @@ public class PageInfo{
 	}
 	
 	public static class Page{
-		public int page;
+		public long page;
 		public boolean isCurrentPage = false;
 		public boolean isPrePage = false;
 		public boolean isNextPage = false;

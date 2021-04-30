@@ -356,27 +356,33 @@ public class ConditionCreator {
             column = condition.getString("attributeName");
         }
         String sql = "";
-        Object vl = getMulityValues(value);
-        if(vl instanceof Object[] || vl instanceof List){
-            sql = sql + "(";
-            for(Object v : UtilJava.getIterable(vl)){
-                if(!"(".equals(sql)){
-                	if("and".equals(condition.getString("multiValueJoin"))){
-                		sql = sql + " and ";
-                	}else{
-                		sql = sql + " or ";
-                	}
-                }
-                sql = sql + column + " " + operator + " ?";
-                Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",v, "operator",operator, "condition", condition});
-                cds.add(cd);
-            }
-            sql = sql + ")";
-        }else{
-            sql = column + " " + operator + " ?";
-            Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value", vl, "operator",operator, "condition", condition});
-            cds.add(cd);
-        }
+        if(condition.getBoolean("multiple")) {
+			Object vl = getMulityValues(value);
+			if (vl instanceof Object[] || vl instanceof List) {
+				sql = sql + "(";
+				for (Object v : UtilJava.getIterable(vl)) {
+					if (!"(".equals(sql)) {
+						if ("and".equals(condition.getString("multiValueJoin"))) {
+							sql = sql + " and ";
+						} else {
+							sql = sql + " or ";
+						}
+					}
+					sql = sql + column + " " + operator + " ?";
+					Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition});
+					cds.add(cd);
+				}
+				sql = sql + ")";
+			} else {
+				sql = column + " " + operator + " ?";
+				Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition});
+				cds.add(cd);
+			}
+		}else{
+			sql = column + " " + operator + " ?";
+			Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition});
+			cds.add(cd);
+		}
         return sql;
     }
     

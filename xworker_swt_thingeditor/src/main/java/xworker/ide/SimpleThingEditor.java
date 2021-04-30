@@ -31,6 +31,7 @@ import org.xmeta.util.UtilResource;
 import xworker.lang.executor.Executor;
 import xworker.listeners.SwtMenuListener;
 import xworker.swt.app.View;
+import xworker.swt.app.Workbench;
 import xworker.swt.design.Designer;
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
@@ -51,9 +52,10 @@ public class SimpleThingEditor {
 	
 	public void changeLanguage() {
 		Action saveDialog = actionContext.getObject("saveDialog");
-		
+
+		Workbench oldWorkbench = workbench;
 		//当有编辑器未保存时，不修改语言
-		if(workbench.getEditorContainer() != null && workbench.getEditorContainer().isDirty()){
+		if(oldWorkbench.getEditorContainer() != null && oldWorkbench.getEditorContainer().isDirty()){
 		    saveDialog.run(actionContext);
 		    return;
 		}
@@ -79,10 +81,10 @@ public class SimpleThingEditor {
 		}
 
 		//重新启动Workbench
-		Thing thing =  workbench.getThing();
+		Thing thing =  oldWorkbench.getThing();
 
 		//为避免系统退出，先建一个shell，保证不会触发最后一个Shell退出时系统退出
-		Shell shell = new Shell(SWT.NONE);
+		Shell shell = new Shell(oldWorkbench.getShell().getDisplay(), SWT.NONE);
 		Display oldDisplay = shell.getDisplay();
 		
 		//重新创建一个Workbench
@@ -91,7 +93,7 @@ public class SimpleThingEditor {
 		thing.doAction("run", ac);
 				
 		//关闭之前的
-		workbench.exit();
+		oldWorkbench.exit();
 		shell.dispose();
 		
 		try{
@@ -353,7 +355,7 @@ public class SimpleThingEditor {
 	public static void main(String[] args) {
 		try {
 			World world = World.getInstance();
-			world.init(".");
+			world.init("./xworker/");
 						
 			run();
 		}catch(Exception e) {

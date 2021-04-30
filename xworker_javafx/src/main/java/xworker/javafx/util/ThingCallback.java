@@ -7,15 +7,27 @@ import org.xmeta.Thing;
 public class ThingCallback<P, R> implements Callback<P, R> {
     Thing thing;
     ActionContext actionContext;
+    Object object;
 
     public ThingCallback(Thing thing, ActionContext actionContext){
         this.thing = thing;
         this.actionContext = actionContext;
+        object = FXThingLoader.getObject();
     }
 
     @Override
     public R call(P param) {
-        return thing.doAction("call", actionContext, "param", param);
+        if(object != null){
+            FXThingLoader.push(object);
+            try{
+                return thing.doAction("call", actionContext, "param", param);
+            }finally {
+                FXThingLoader.pop();
+            }
+        }else{
+            return thing.doAction("call", actionContext, "param", param);
+        }
+
     }
 
     public static ThingCallback create(ActionContext actionContext){

@@ -32,7 +32,7 @@ public class XWorkerUtils {
 	private static IIde ide = null;	
 	private static IThingUtils thingUtils = null;
 	private static Boolean isRWT = null;
-	
+
 	static{
 		try {
 			Class<?> cls = Class.forName("xworker.util.ThingUtilsImpl");
@@ -124,7 +124,11 @@ public class XWorkerUtils {
 			}
 		});
 	}
-	
+
+	public static boolean hasWebServer(){
+		return GlobalConfig.getWebUrl() != null;
+	}
+
 	/**
 	 * 返回系统是否包含了XWorker的环境，主要是判断编辑器等是否存在。
 	 * 

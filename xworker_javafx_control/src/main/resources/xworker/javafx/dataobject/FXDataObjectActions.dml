@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="FXDataObjectActions" descriptors="xworker.lang.MetaDescriptor3" th_createIndex="true"
+     th_registThing="child|xworker.lang.actions.Actions" th_registMyChilds="true">
+    <thing name="CreateDataObjectDialog" extends="xworker.lang.actions.SelfAction" group="javafx.dataobject">
+        <description><![CDATA[<p>打开一个新建数据对象的对话框。</p>
+
+<p><strong>数据对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 优先通过dataStore获取，其次是通过dataObject。</p>
+
+<p><strong>dataStore</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果dataStore存在且数据对象创建成功，那么会把新创建的数据对象加入到dataStore中。</p>
+
+<p><strong>可以监听的事件</strong></p>
+
+<ul>
+	<li><strong>void ok(DataObject data)</strong><br />
+	用户点击了确定按钮，并且数据创建成功。<br />
+	&nbsp;</li>
+	<li><strong>String exception(Exception e)</strong><br />
+	执行create方法时抛出了异常。返回提示字符串。<br />
+	&nbsp;</li>
+	<li><strong>String fail(DataObject data)</strong><br />
+	执行create方法时返回了null。返回提示字符串。<br />
+	&nbsp;</li>
+	<li><strong>cancel()</strong><br />
+	用户点击的取消按钮。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions name="run" _xmeta_id_="actions">
+            <JavaAction name="run" outerClassName="xworker.javafx.dataobject.DataObjectActions"
+                 methodName="createDataObjectDialog"></JavaAction>
+            <GetString name="getTitle" _xmeta_id_="2092" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetThing name="getDataObject" _xmeta_id_="2093" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="dataObject" usage="params"></GetThing>
+            <GetString name="getFailMessage" _xmeta_id_="2094" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="failMessage" usage="params"></GetString>
+            <GetString name="getExceptionMessage" _xmeta_id_="2095" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="exceptionMessage" usage="params"></GetString>
+            <GetDouble name="getWidth" _xmeta_id_="6922" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="width" usage="params"></GetDouble>
+            <GetDouble name="getHeight" _xmeta_id_="6923" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="height" usage="params"></GetDouble>
+            <NOOP name="ok">
+                <ins>
+                    <param name="data" type="xworker.dataObject.DataObject"></param>
+                </ins>
+            </NOOP>
+            <NOOP name="cancel"></NOOP>
+            <NOOP name="fail"></NOOP>
+            <NOOP name="exception">
+                <ins>
+                    <param name="exception" type="java.lang.Exception"></param>
+                </ins>
+            </NOOP>
+            <GetJsonObject name="getInitValues" descriptors="xworker.lang.actions.ActionUtil/@GetJsonObject"
+                 attributeName="initValues"></GetJsonObject>
+            <GetObject name="getDataStore" _xmeta_id_="1730" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dataStore" usage="params"></GetObject>
+            <GetBoolean name="isMulti" _xmeta_id_="2196" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="multi" usage="params"></GetBoolean>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="title"></attribute>
+        <attribute name="dataStore" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="dataObject" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="failMessage" size="60"></attribute>
+        <attribute name="exceptionMessage" size="60"></attribute>
+        <attribute name="width"></attribute>
+        <attribute name="height"></attribute>
+        <attribute name="multi" inputtype="truefalse" default="false">
+            <description><![CDATA[<p>如果为真，那么在点击确定按钮创建数据对象成功后并不会关闭窗口，而是重新初始化值，可以持续创建数据。</p>
+]]></description>
+        </attribute>
+        <attribute name="initValues" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="EditDataObjectDialog" extends="xworker.lang.actions.SelfAction" group="javafx.dataobject">
+        <description><![CDATA[<p>编辑数据对象的对话框。</p>
+
+<p><strong>数据源</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据源可以是各种控件或DataObject。如果是控件，那么需要提供数据选择器来获取选中的数据。常用的控件提供了默认选择器，对于非常规的选择数据的方法或不是常用控件，那么可以自行实现数据选择器(DataSelectors子节点)。</p>
+
+<p><strong>可以监听的事件</strong></p>
+
+<ul>
+	<li><strong>void ok(Integer count)</strong><br />
+	用户点击了确定按钮，返回已更新的数量。<br />
+	&nbsp;</li>
+	<li><strong>String exception(Exception e)</strong><br />
+	执行create方法时抛出了异常。返回提示字符串。<br />
+	&nbsp;</li>
+	<li><strong>cancel()</strong><br />
+	用户点击的取消按钮。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.javafx.dataobject.DataObjectActions"
+                 methodName="editDataObjectDialog"></JavaAction>
+            <GetString name="getTitle" _xmeta_id_="2092" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetString name="getExceptionMessage" _xmeta_id_="2095" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="exceptionMessage" usage="params"></GetString>
+            <GetDouble name="getWidth" _xmeta_id_="6922" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="width" usage="params"></GetDouble>
+            <GetDouble name="getHeight" _xmeta_id_="6923" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="height" usage="params"></GetDouble>
+            <NOOP name="ok">
+                <ins>
+                    <param name="count" _xmeta_id_="data" type="java.lang.Integer"></param>
+                </ins>
+            </NOOP>
+            <NOOP name="cancel"></NOOP>
+            <GetObject name="getDataSource" _xmeta_id_="1726" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dataSource" usage="params"></GetObject>
+            <NOOP name="exception">
+                <ins>
+                    <param name="exception" type="java.lang.Exception"></param>
+                </ins>
+            </NOOP>
+            <GetThing name="getDataSelector" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 childThingName="DataSelectors" childThingFirstChild="true"></GetThing>
+            <GetString name="getNoDataMessage" _xmeta_id_="10837" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="noDataMessage" usage="params"></GetString>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="dataSource" _xmeta_id_="dataObject" size="50">
+            <description><![CDATA[<p>可以是控件、DataObject或xworker.javafx.util.DataSelector。</p>
+]]></description>
+        </attribute>
+        <attribute name="title" size="50"></attribute>
+        <attribute name="noDataMessage" size="60" default="lang:d=请先选择一条记录!&amp;Please select a record!"></attribute>
+        <attribute name="exceptionMessage" size="60"></attribute>
+        <attribute name="width"></attribute>
+        <attribute name="height"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="DataSelectors" extends="xworker.javafx.util.DataSelectors">
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="DeleteDataObjectDialog" _xmeta_id_="RemoveDataObjectDialog" extends="xworker.lang.actions.SelfAction"
+         group="javafx.dataobject">
+        <description><![CDATA[<p>打开一个删除数据的提示框，当用户点击确定时删除选中的数据。</p>
+
+<p><strong>可以监听的事件：</strong></p>
+
+<ul>
+	<li><strong>void ok(List&lt;DataObject&gt; dataObjects, DataStore dataStore)</strong><br />
+	用户点击了确定按钮。<br />
+	&nbsp;</li>
+	<li><strong>void cancek(List&lt;DataObject&gt; dataObjects)</strong><br />
+	用户点击的取消按钮。&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.javafx.dataobject.DataObjectActions"
+                 methodName="deleteDataObjectDialog"></JavaAction>
+            <GetObject name="getDataStore" _xmeta_id_="1730" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dataStore" usage="params"></GetObject>
+            <GetObject name="getDataSource" _xmeta_id_="1726" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dataSource" usage="params"></GetObject>
+            <GetString name="getNoDataMessage" _xmeta_id_="10837" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="noDataMessage" usage="params"></GetString>
+            <GetString name="getConfirmMessage" _xmeta_id_="10838" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="confirmMessage" usage="params"></GetString>
+            <GetString name="getTitle" _xmeta_id_="2092" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetThing name="getDataSelector" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 childThingName="DataSelectors" childThingFirstChild="true"></GetThing>
+            <NOOP name="ok">
+                <ins>
+                    <param name="dataObjects" type="java.util.List"></param>
+                </ins>
+            </NOOP>
+            <NOOP name="cancel">
+                <ins>
+                    <param name="dataObjects" type="java.util.List"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="dataSource" size="50"></attribute>
+        <attribute name="dataStore" size="50"></attribute>
+        <attribute name="title" size="50" default="lang:d=删除&amp;en=Delete"></attribute>
+        <attribute name="noDataMessage" size="60" default="lang:d=请先选择一条记录!&amp;Please select a record!"></attribute>
+        <attribute name="confirmMessage" size="60" default="lang:d=确定要删除选中的数据么？&amp;en=Are you sure to delete selected records?"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="DataSelectors" extends="xworker.javafx.util.DataSelectors">
+            <attribute name="name"></attribute>
+            <attribute name="label"></attribute>
+            <attribute name="description" inputtype="html"></attribute>
+        </thing>
+        <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+             label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+             zh_label="动作" inheritDescription="true">
+            <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+            <attribute name="name"></attribute>
+        </thing>
+    </thing>
+    <thing name="SelectDataObjectDialog" extends="xworker.javafx.dataobject.DataObjectEditor,xworker.lang.actions.SelfAction"
+         group="javafx.dataobject">
+        <description><![CDATA[<p>数据对象选择器，可以选择单个或多个数据对象。</p>
+
+<p><strong>可以监听的事件：</strong></p>
+
+<ul>
+	<li><strong>boolean onSelected(List&lt;DataObject&gt; dataObjects)&nbsp;</strong><br />
+	用户点击了对话框确定按钮后触发。如果返回<strong>true</strong>将不关闭对话框。<br />
+	&nbsp;</li>
+</ul>
+
+<p>&nbsp; &nbsp;&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.javafx.dataobject.DataObjectActions"
+                 methodName="selectDataObjectDialog"></JavaAction>
+            <GetString name="getTitle" _xmeta_id_="3740" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="title" usage="params"></GetString>
+            <GetDouble name="getWidth" _xmeta_id_="3741" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="width" usage="params"></GetDouble>
+            <GetDouble name="getHeight" _xmeta_id_="3742" descriptors="xworker.lang.actions.ActionUtil/@GetDouble"
+                 attributeName="height" usage="params"></GetDouble>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="title" size="60"></attribute>
+        <attribute name="width" default="800"></attribute>
+        <attribute name="height" default="600"></attribute>
+    </thing>
+    <thing name="BatchInsertDataObjectDialog" extends="xworker.lang.actions.SelfAction"
+         group="javafx.dataobject">
+        <description><![CDATA[<p>批量插入数据对象。</p>
+
+<p><strong>总是执行插入操作</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 无论成功或或失败，都会变量每一个数据对象并执行插入操作。</p>
+
+<p><strong>过滤重复</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以设置condition来过滤重复。查询的条件值是要插入的数据对象。</p>
+
+<p><strong>进度</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 会弹出一个不可操作的窗口显示进度。</p>
+
+<p><strong>可以监听的方法</strong></p>
+
+<ul>
+	<li><strong>void onSuccessed(DataObject data)</strong><br />
+	插入成功的事件。&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>void onFailure(DataObject data, Exception exception)</strong><br />
+	插入失败的事件。如果有异常，那么exception不为null。<br />
+	&nbsp;</li>
+	<li><strong>void onRepeated(DataObject data)</strong><br />
+	数据重复的事件。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" outerClassName="xworker.javafx.dataobject.DataObjectActions"
+                 methodName="batchInsertDataObjectDialog"></JavaAction>
+            <GetObject name="getDataObjects" _xmeta_id_="8411" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="dataObjects" usage="params"></GetObject>
+            <GetThing name="getCondition" _xmeta_id_="8412" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+                 attributeName="condition" childThingName="Condition" usage="params"></GetThing>
+            <GetObject name="getOwnerWindow" _xmeta_id_="8413" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+                 attributeName="ownerWindow" usage="params"></GetObject>
+            <NOOP name="onSuccessed">
+                <ins>
+                    <param name="data" type="xworker.dataObject.DataObject"></param>
+                </ins>
+            </NOOP>
+            <NOOP name="onFailed">
+                <ins>
+                    <param name="data" type="xworker.dataObject.DataObject"></param>
+                    <param name="exception" type="java.lang.Exception"></param>
+                </ins>
+            </NOOP>
+            <NOOP name="onRepeated">
+                <ins>
+                    <param name="data" type="xworker.dataObject.DataObject"></param>
+                </ins>
+            </NOOP>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="dataObjects" size="50"></attribute>
+        <attribute name="condition" inputtype="dataSelector" size="60"></attribute>
+        <attribute name="ownerWindow" size="50"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <thing name="Condition" extends="xworker.dataObject.query.Condition" inheritDescription="true"></thing>
+    </thing>
+</thing>

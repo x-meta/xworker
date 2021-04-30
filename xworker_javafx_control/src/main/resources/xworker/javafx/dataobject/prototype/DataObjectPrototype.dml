@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Stage name="DataObjectPrototype" descriptors="xworker.javafx.stage.Stage">
+    <Nodes>
+        <VBox name="rootNode" fillWidth="true">
+            <DataObjectForm name="queryForm" descriptors="xworker.javafx.XWorkerControls/@182"></DataObjectForm>
+            <ButtonBar name="buttonBar">
+                <Button name="queryButton" text="lang:d=查询&amp;en=Query">
+                    <ButtonBaseEventHandler name="onAction" _xmeta_id_="ButtonBaseEventHandler">
+                        <Load name="Load" descriptors="xworker.javafx.dataobject.FXDataStoreActions/@Load"
+                             dataStore="var:dataStore" params="var:queryForm" page="0"></Load>
+                    </ButtonBaseEventHandler>
+                </Button>
+                <Button name="createButton" text="lang:d=新建&amp;en=New">
+                    <ButtonBaseEventHandler name="onAction">
+                        <CreateDataObjectDialog name="CreateDataObjectDialog" descriptors="xworker.javafx.dataobject.FXDataObjectActions/@CreateDataObjectDialog"
+                             dataStore="var:dataStore"></CreateDataObjectDialog>
+                    </ButtonBaseEventHandler>
+                </Button>
+                <Button name="editButton" text="lang:d=编辑&amp;en=Edit">
+                    <ButtonBaseEventHandler name="onAction">
+                        <EditDataObjectDialog name="EditDataObjectDialog" descriptors="xworker.javafx.dataobject.FXDataObjectActions/@EditDataObjectDialog"
+                             dataSource="var:tableView"></EditDataObjectDialog>
+                    </ButtonBaseEventHandler>
+                </Button>
+                <Button name="deleteButton" text="lang:d=删除&amp;en=Delete">
+                    <ButtonBaseEventHandler name="onAction">
+                        <DeleteDataObjectDialog name="DeleteDataObjectDialog" descriptors="xworker.javafx.dataobject.FXDataObjectActions/@RemoveDataObjectDialog"
+                             dataSource="var:tableView" dataStore="var:dataStore"></DeleteDataObjectDialog>
+                    </ButtonBaseEventHandler>
+                </Button>
+            </ButtonBar>
+            <TableView name="tableView">
+                <VBoxConstraints name="VBoxConstraints" vgrow="ALWAYS"></VBoxConstraints>
+            </TableView>
+            <Pagination name="pagination" style="-fx-page-information-visible:false"></Pagination>
+            <DataStore name="dataStore" descriptors="xworker.javafx.dataobject.DataStore"
+                 autoSave="true" bindTo="tableView,pagination">
+                <actions descriptors="MetaThing/@actions">
+                    <GetVariable name="isCheck" varName="check"></GetVariable>
+                </actions>
+            </DataStore>
+        </VBox>
+    </Nodes>
+    <Scene name="Scene" root="var:rootNode"></Scene>
+</Stage>

@@ -1,23 +1,15 @@
 package xworker.swt.custom;
 
-import java.util.List;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ControlEditor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.*;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
-
 import xworker.swt.custom.tableEditors.ItemEditorUtils;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Item编辑器，Table、Tree、Grid等的编辑器的基础类。

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<SimpleControl name="FileUploadExample" descriptors="xworker.netty.handlers.http.full.SimpleControl">
+    <actions>
+        <GroovyAction name="doAction">
+            <code><![CDATA[println requestBean;
+
+if(requestBean.ac == "upload"){
+    actionContext.g().put("name", requestBean.getParameter("name"));
+    actionContext.g().put("fileUpload", requestBean.get("file"));
+    return "result";
+}else{
+    return "upload";
+}]]></code>
+        </GroovyAction>
+    </actions>
+    <view name="uploadPage">
+        <htmlCode name="htmlCode">
+            <htmlCode><![CDATA[<h1>上传文件测试</h1>
+
+<form action="do?sc=xworker.example.things.p2020.p09.p16.FileUploadExample&amp;ac=upload" enctype="multipart/form-data" method="post" name="form">
+<p>名称：<input name="name" size="30" type="text" value="test" /></p>
+
+<p>文件：<input name="file" type="file" /></p>
+
+<p><button type="submit">上传</button></p>
+</form>
+
+<p>&nbsp;</p>
+]]></htmlCode>
+        </htmlCode>
+    </view>
+    <result name="upload" value="xworker.example.things.p2020.p09.p16.FileUploadExample/@uploadPage"></result>
+    <view name="ResultPage">
+        <htmlCode name="htmlCode">
+            <htmlCode><![CDATA[<h1>上传结果</h1>
+]]></htmlCode>
+        </htmlCode>
+        <code name="code">
+            <code><![CDATA[<#if fileUpload?exists>
+<p>名称：${requestBean.name?if_exists}</p>
+<p>字段名：${fileUpload.getName()?if_exists}</p>
+<p>文件名：${fileUpload.getFilename()?if_exists}</p>
+<p>是否已上传完毕：${fileUpload.isCompleted()?string}</p>
+<p>是否在内存中：${fileUpload.isInMemory()?string}</p>
+<#if fileUpload.isInMemory() == false>
+<p>临时文件名：${fileUpload.getFile()?string}</p>
+</#if>
+<p>大小：${fileUpload.length()?string}</p>
+<#else>
+<p>未上传文件。</p>
+</#if>
+<p><a href="do?sc=xworker.example.things.p2020.p09.p16.FileUploadExample">重新上传</a></p>]]></code>
+        </code>
+    </view>
+    <result name="result" value="xworker.example.things.p2020.p09.p16.FileUploadExample/@ResultPage"></result>
+</SimpleControl>

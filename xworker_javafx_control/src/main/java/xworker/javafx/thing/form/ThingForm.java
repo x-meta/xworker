@@ -4,6 +4,7 @@ import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableMap;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -15,6 +16,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 import xworker.javafx.beans.property.MapAdapter;
+import xworker.javafx.thing.form.attributeeditors.HiddenEditor;
 import xworker.thingeditor.ThingAttributeGroup;
 
 import java.util.*;
@@ -165,28 +167,21 @@ public class ThingForm {
     }
 
     /**
-     * 设置新的描述者。如果需要有默认初始值，setThing(new Thing(descriptor))。
+     * 设置表单的描述者，使用给定的属性列表。
      *
      * @param descriptor
+     * @param attributes
      */
-    public void setDescriptor(Thing descriptor){
+    public void setDescriptor(Thing descriptor, List<Thing> attributes){
         //this.values.clear();
+        //清空之前保存的属性编辑器
+        attributeEditors.clear();
         this.editThingDescriptor = descriptor;
         int cols = column;
         if(cols < 1){
             cols = descriptor.getInt("editCols");
             if(cols < 1){
                 cols = 1;
-            }
-        }
-        //获取属性定义，并且去重
-        List<Thing> attributes = new ArrayList<>();
-        Map<String, String> context = new HashMap<>();
-        for(Thing attr : descriptor.getAllChilds("attribute")){
-            String name = attr.getMetadata().getName();
-            if(context.get(name) == null){
-                attributes.add(attr);
-                context.put(name, name);
             }
         }
 
@@ -218,6 +213,26 @@ public class ThingForm {
     }
 
     /**
+     * 设置新的描述者。如果需要有默认初始值，setThing(new Thing(descriptor))。
+     *
+     * @param descriptor
+     */
+    public void setDescriptor(Thing descriptor){
+        //获取属性定义，并且去重
+        List<Thing> attributes = new ArrayList<>();
+        Map<String, String> context = new HashMap<>();
+        for(Thing attr : descriptor.getAllChilds("attribute")){
+            String name = attr.getMetadata().getName();
+            if(context.get(name) == null){
+                attributes.add(attr);
+                context.put(name, name);
+            }
+        }
+
+        setDescriptor(descriptor, attributes);
+    }
+
+    /**
      * 创建一个表单，并把
      *
      * @param attributes
@@ -226,7 +241,8 @@ public class ThingForm {
     private Node createSingleFormPane(List<Thing> attributes,  List<AttributeEditor> attributeEditors, int column){
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);;
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPadding(new Insets(0));
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(5);
@@ -234,7 +250,12 @@ public class ThingForm {
 
         FormLayout<Thing> layout  = new FormLayout<>(column, attributes.size() * 10);
         for(Thing attribute : attributes) {
-            layout.add(attribute.getInt("colspan"), attribute.getInt("rowspan"), attribute);
+            String inputType = attribute.getString("inputtype");
+            if("hidden".equals(inputType)){
+                //隐藏的不参加布局
+            }else {
+                layout.add(attribute.getInt("colspan"), attribute.getInt("rowspan"), attribute);
+            }
         }
         for(FormLayoutData<Thing> layoutData : layout.getLayoutDatas()){
             Thing attribute = layoutData.getObject();
@@ -247,9 +268,10 @@ public class ThingForm {
                 int colspan = layoutData.getColspan();
                 int rowspan = layoutData.getRowspan();
                 //System.out.println("" + columnIndex + ":" + rowIndex + ":" + colspan + ":" + rowspan);
-                if(attribute.valueExists("showLabel") == false || attribute.getBoolean("showLabel")){
+                if(!attribute.valueExists("showLabel") || attribute.getBoolean("showLabel")){
                     gridPane.add(editor.createLabel(), columnIndex, rowIndex, 1, rowspan);
                     Node editorNode = editor.createEditor();
+
                     gridPane.add(editorNode, columnIndex + 1, rowIndex, colspan * 2 - 1, rowspan);
 
                 }else{
@@ -260,6 +282,14 @@ public class ThingForm {
                 attributeEditors.add(editor);
             }
 
+        }
+
+        for(Thing attribute : attributes) {
+            String inputType = attribute.getString("inputtype");
+            if ("hidden".equals(inputType)) {
+                //隐藏的不参加布局，但是要添加到编辑器中
+                attributeEditors.add(new HiddenEditor(this, attribute));
+            }
         }
 
         scrollPane.setContent(gridPane);
@@ -286,6 +316,10 @@ public class ThingForm {
             editThing.putAll(getValues());
         }
         return editThing;
+    }
+
+    public void setColumn(int column){
+        this.column = column;
     }
 
     public Thing getFormThing(){

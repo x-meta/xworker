@@ -24,7 +24,7 @@ public class ThingValueStringConverter extends StringConverter<org.xmeta.Thing> 
 
     @Override
     public String toString(org.xmeta.Thing object) {
-        if(object == null){
+        if(object == null || object == nullValue){
             return "";
         }else {
             return object.getMetadata().getLabel();

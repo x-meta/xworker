@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RwtWidget name="Login" descriptors="xworker.swt.rwt.RwtWidget">
+    <Shell name="shell" _xmeta_id_="126" descriptors="xworker.swt.widgets.Shell" text="lang:d=登录&amp;en=Login"
+         MIN="false" MAX="false" width="640" height="480" pack="true">
+        <GridLayout name="shellGridLayout"></GridLayout>
+        <ThingForm name="form" column="1">
+            <Thing>
+                <attribute name="loginName" label="登录名" size="40" default="admin" validateAllowBlank="false"
+                     blankText="登录名不能为空！" en_label="Name"></attribute>
+                <attribute name="password" label="密码" inputtype="password" size="40" default="admin"
+                     validateAllowBlank="false" blankText="请输入密码！" en_label="Password"></attribute>
+            </Thing>
+        </ThingForm>
+        <Composite name="buttonComposite">
+            <GridData name="GridData" style="FILL_HORIZONTAL" horizontalAlignment="END"></GridData>
+            <RowLayout name="RowLayout"></RowLayout>
+            <Button name="loginButton" text="lang:d=登录&amp;en=Login">
+                <Event name="onSelection" methodName="doLogin">
+                    <JavaAction name="doLogin" descriptors="xworker.lang.actions.JavaAction"
+                         outerClassName="xworker.web.thingeditor.Login" methodName="login"
+                         varScope="Local">
+                        <ActionDefined>
+                            <MessageBox name="error" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                                 shell="var:shell" buttons="OK" title="lang:d=登录&amp;en=Login"
+                                 message="lang:d=用户密码错误!&amp;en=User / password not matched!"></MessageBox>
+                        </ActionDefined>
+                    </JavaAction>
+                </Event>
+            </Button>
+            <Button name="languageButton" text="lang:d=English&amp;en=默认语言">
+                <Event name="onSelection" methodName="changeLanguage">
+                    <JavaAction name="changeLanguage" _xmeta_id_="GroovyAction" descriptors="xworker.lang.actions.JavaAction"
+                         outerClassName="xworker.web.thingeditor.Login" methodName="changeLanguage"
+                         varScope="Local"></JavaAction>
+                </Event>
+            </Button>
+        </Composite>
+    </Shell>
+</RwtWidget>

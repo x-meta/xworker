@@ -233,7 +233,7 @@ public class EditDataObjectsDialog {
 		    }
 		    		    		 
 		    PageInfo ppifno = PageInfo.getPageInfo(pageDataStore.get("pageInfo"));
-		    if(statusArray.get(ppifno.getStart())){
+		    if(statusArray.get((int) ppifno.getStart())){
 		        modifyLabel.setText("***");
 		    }else{
 		        modifyLabel.setText(" ");

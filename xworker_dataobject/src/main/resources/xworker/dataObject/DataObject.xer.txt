@@ -1,4 +1,4 @@
-^1608776486161
+^1618994530418
 @
 sname
 DataObject
@@ -1927,7 +1927,7 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     scodeType
     java.java
     scode
-    ognl:currentThing.doAction("toJavaEntityCode", actionContext, null)
+    ognl:currentThing.doAction("toDataObjectEntityCode", actionContext, null)
     sinterpretationType
     Self
     sattributeTemplate
@@ -3431,7 +3431,7 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         tableItem
     @/@actions/@toJavaEntityCode
     sname
-    toJavaEntityCode
+    toDataObjectEntityCode
     schangeSelf
     true
     sselfVarName
@@ -3549,6 +3549,143 @@ public class ${data.getMetadata().getName()} extends DataObjectEntity<${data.get
             return count;
         }
     }
+}
+#$@text#$@
+      sinterpretationType
+      Self
+      sattributeTemplate
+      false
+      schildsAttributeTemplate
+      false
+      sisSynchronized
+      false
+      sthrowException
+      true
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdisableGlobalContext
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.text.TextTemplate
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      TextTemplate
+    @/@actions/@toJavaEntityCode1
+    sname
+    toJavaBeanEntityCode
+    schangeSelf
+    true
+    sselfVarName
+    data
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@ActionGroup
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    toJavaEntityCode1
+      @/@actions/@toJavaEntityCode1/@TextTemplate
+      sname
+      TextTemplate
+      stype
+      freemarker
+      svarScope
+      Local
+      stemplateEncoding
+      UTF-8
+      soutputEncoding
+      UTF-8
+      StemplateCode
+#$@text#$@
+<#if packageName?exists>
+package ${packageName};
+
+</#if>
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import org.xmeta.World;
+
+/**
+ * <b>${data.getMetadata().getLabel()?if_exists}</b><p/>
+ * ${data.getMetadata().getDescription()?if_exists}
+ */
+public class ${data.getMetadata().getName()} {
+    <#list data.getChilds("attribute") as attribute>
+    ${attribute.doAction("getJavaType", actionContext)?if_exists} ${attribute.getMetadata().getName()};
+    </#list>
+    
+    public ${data.getMetadata().getName()}(){
+    }
+      
+    <#list data.getChilds("attribute") as attribute>
+    public void set${attribute.getMetadata().getName()?cap_first}(${attribute.doAction("getJavaType", actionContext)?if_exists} value){
+        this.${attribute.getMetadata().getName()} = value;
+    }
+    
+    public ${attribute.doAction("getJavaType", actionContext)?if_exists} get${attribute.getMetadata().getName()?cap_first}(){
+        return ${attribute.getMetadata().getName()};
+    }
+    </#list>    
 }
 #$@text#$@
       sinterpretationType
@@ -3861,6 +3998,59 @@ ${data.doAction("toJavaEntityCode", actionContext)?if_exists?html}
         xworker.lang.actions.Inout/@ins/@param
         sid
         theData
+    @/@actions/@menu_toJavaModel1
+    sname
+    menu_toJavaBeanEntity
+    sshell
+    ognl:coolBar.getShell()
+    scodeType
+    java.java
+    scode
+    ognl:currentThing.doAction("toJavaBeanEntityCode", actionContext, null)
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.swt.actions.DialogActions/@ShowCodeDialog
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_deprecated
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    menu_toJavaModel1
   @/@name
   sname
   name
@@ -6041,7 +6231,7 @@ Note...
         sname
         toJavaModel
         slabel
-        生成JavaModel
+        生成DataObjectEntity
         surl
         xworker.dataObject.DataObject/@actions/@menu_toJavaModel
         sisSplit
@@ -6064,6 +6254,33 @@ Note...
         false
         sid
         toJavaModel
+        @/@sswtMenus/@dataObject/@Java/@toJavaModel1
+        sname
+        toBeanEntity
+        slabel
+        生成BeanEntity
+        surl
+        xworker.dataObject.DataObject/@actions/@menu_toJavaModel1
+        sisSplit
+        false
+        sattachParam
+        true
+        sen_label
+        Generate Java Model
+        sdescriptors
+        xworker.lang.Menu/@menu
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_mark
+        false
+        sid
+        toJavaModel1
   @/@defaultQueryConfig
   sname
   defaultQueryConfig

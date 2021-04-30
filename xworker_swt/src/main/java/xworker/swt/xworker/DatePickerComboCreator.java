@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -41,6 +40,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilMap;
 
 import xworker.swt.ActionContainer;
+import xworker.swt.custom.TableCursor;
 import xworker.swt.design.Designer;
 import xworker.swt.events.SwtListener;
 import xworker.swt.util.SwtDialog;

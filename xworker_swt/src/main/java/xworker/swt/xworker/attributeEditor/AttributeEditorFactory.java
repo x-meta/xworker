@@ -33,7 +33,7 @@ public class AttributeEditorFactory {
 		}else if("codeEditor".equals(inputType)) {
 			return new CodeEditorAttributeEditor(formThing, attribute, gridData, actionContext);
 		}else if("html".equals(inputType)) {
-			if(XWorkerUtils.hasXWorker()) {
+			if(XWorkerUtils.hasWebServer()) {
 				return new HtmlAttributeEditor(formThing, attribute, gridData, actionContext);
 			}else{
 				return new TextareaAttributeEditor(formThing, attribute, gridData, actionContext);

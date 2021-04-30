@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableCursor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.DateTime;
@@ -30,6 +29,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.xmeta.ActionContext;
 
 import xworker.swt.ActionContainer;
+import xworker.swt.custom.TableCursor;
 import xworker.swt.util.UtilResource;
 
 public class DatePickerComboDataPickerCompositeCreator {

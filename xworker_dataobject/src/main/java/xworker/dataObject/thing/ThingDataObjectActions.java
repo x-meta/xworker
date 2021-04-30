@@ -147,15 +147,15 @@ public class ThingDataObjectActions {
                 if(pageInfo.getStart() > matchedDatas.size()){
                     pageInfo.setStart(matchedDatas.size());
                 }
-                int toIndex = pageInfo.getStart() + pageInfo.getLimit();
+                int toIndex = (int) (pageInfo.getStart() + pageInfo.getLimit());
                 if(toIndex > matchedDatas.size()){ 
                     toIndex = matchedDatas.size();
                 }
-                int startIndex = pageInfo.getStart();
+                int startIndex = (int) pageInfo.getStart();
                 if(startIndex < 0){
                     startIndex = 0;
                 }    
-                pageInfo.put("datas", matchedDatas.subList(pageInfo.getStart(), toIndex));
+                pageInfo.put("datas", matchedDatas.subList((int) pageInfo.getStart(), toIndex));
             }else{
                 pageInfo.put("datas", matchedDatas);
             }

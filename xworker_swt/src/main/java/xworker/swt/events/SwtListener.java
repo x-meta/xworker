@@ -15,6 +15,7 @@
 ******************************************************************************/
 package xworker.swt.events;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ import org.xmeta.util.UtilString;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
+import xworker.swt.util.SWTThingLoader;
 
 /**
  * <p>Swt的通用事件。</p>
@@ -44,12 +46,22 @@ import xworker.swt.ActionContainer;
 public class SwtListener implements Listener{
 	/** 日志 */
 	private static final String TAG = SwtListener.class.getName();
+
+	static final byte METHOD_E_A = 0;
+	static final byte METHOD_E = 1;
+	static final byte METHOD_A = 2;
+	static final byte METHOD = 3;
 	
 	private static World world = World.getInstance();
 	
 	private ThingEntry entry = null;
 	private ActionContext actionContext;
 	private boolean isThingAction;
+
+	Object methodOwner;
+	Method handlerMehtod;
+	String methodName;
+	byte methodType = METHOD;
 	
 	public SwtListener(Thing swtListenerThing, ActionContext actionContext){
 		this(swtListenerThing, actionContext, false);
@@ -62,6 +74,9 @@ public class SwtListener implements Listener{
 		entry = new ThingEntry(athing.getMetadata().getPath(), athing);
 		this.actionContext = actionContext;
 		this.isThingAction = isThingAction;
+
+		this.methodOwner = SWTThingLoader.getObject();
+		this.methodName = athing.getStringBlankAsNull("methodName");
 	}
 	
 	public Thing getThing(){
@@ -150,6 +165,68 @@ public class SwtListener implements Listener{
 			Executor.error(TAG, "Swt listener :" + thing.getMetadata().getPath(), e);
 		}finally{
 			actionContext.pop();
+		}
+
+		if(methodOwner != null && methodName != null) {
+			if (handlerMehtod == null) {
+				try {
+					handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class, ActionContext.class);
+					if (handlerMehtod == null) {
+						handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class);
+
+						if (handlerMehtod == null) {
+							handlerMehtod = getMethod(methodOwner.getClass(), methodName, ActionContext.class);
+
+							if (handlerMehtod == null) {
+								handlerMehtod = getMethod(methodOwner.getClass(), methodName);
+
+								if (handlerMehtod != null) {
+									methodType = METHOD;
+								}
+							} else {
+								methodType = METHOD_A;
+							}
+						} else {
+							methodType = METHOD_E;
+						}
+					} else {
+						methodType = METHOD_E_A;
+					}
+
+				} catch (Exception ignored) {
+				}
+			}
+
+			try {
+				if (handlerMehtod != null) {
+					switch (methodType) {
+						case METHOD_E_A:
+							handlerMehtod.invoke(methodOwner, event, actionContext);
+							break;
+						case METHOD_E:
+							handlerMehtod.invoke(methodOwner, event);
+							break;
+						case METHOD_A:
+							handlerMehtod.invoke(methodOwner, actionContext);
+							break;
+						case METHOD:
+							handlerMehtod.invoke(methodOwner);
+							break;
+					}
+				} else {
+					Executor.warn(TAG, "Can not invoke method " + methodOwner.getClass().getName() + ":" + methodName);
+				}
+			} catch (Exception e) {
+				Executor.warn(TAG, "Invoker event handler error, thing=" + thing.getMetadata().getPath() + ",method=" + methodName, e);
+			}
+		}
+	}
+
+	private static Method getMethod(Class<?> cls, String name, Class<?> ... params){
+		try{
+			return cls.getMethod(name, params);
+		}catch(Exception e){
+			return null;
 		}
 	}
 }

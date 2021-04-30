@@ -302,7 +302,7 @@ public class Workbench implements IEditorListener{
 		if(shell.getDisplay().getShells().length == 1) {
 			//只有当前的Shell，唯一的，那么进入Display的等待循环
 			Display display = shell.getDisplay();
-    		while (!shell.isDisposed ()) {
+    		while (display.getShells().length >= 0) {
     			try{
     				if (!display.readAndDispatch ()) display.sleep ();
     			}catch(Exception e){

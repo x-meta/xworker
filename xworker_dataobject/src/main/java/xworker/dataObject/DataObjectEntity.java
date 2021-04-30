@@ -570,14 +570,15 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 			data.createOrUpdate(actionContext);
 		}		
 	}
-	
+
+	/*
 	public T createOrUpdate(List<String> keys, ActionContext actionContext) {
 		if(data != null) {
 			return toT(data.createOrUpdate(keys, actionContext));
 		}
 		
 		return null;
-	}
+	}*/
 	
 	public T createOrUpdate( ActionContext actionContext, String ... keys) {
 		if(data != null) {

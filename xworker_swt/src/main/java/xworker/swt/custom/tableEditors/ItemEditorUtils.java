@@ -1,8 +1,6 @@
 package xworker.swt.custom.tableEditors;
 
 import org.eclipse.swt.custom.ControlEditor;
-import org.eclipse.swt.custom.TableCursor;
-import org.eclipse.swt.custom.TreeCursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -13,6 +11,8 @@ import org.xmeta.util.UtilMap;
 import xworker.lang.executor.Executor;
 import xworker.swt.custom.ItemCursor;
 import xworker.swt.custom.ItemEditor;
+import xworker.swt.custom.TableCursor;
+import xworker.swt.custom.TreeCursor;
 
 public class ItemEditorUtils {
 	private static final String TAG = ItemEditorUtils.class.getName();

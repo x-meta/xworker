@@ -40,6 +40,7 @@ import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
 import xworker.lang.executor.Executor;
+import xworker.security.SecurityManager;
 import xworker.swt.ActionContainer;
 import xworker.swt.browser.BrowserCallback;
 import xworker.swt.design.Designer;
@@ -171,7 +172,7 @@ public class HtmlEditorCreator {
     
     public static void htmlToolBarSelection(ActionContext actionContext){
     	if(!xworker.security.SecurityManager.doCheck(SwtUtils.getEnviroment(),
-				UtilBrowser.class.getName(), "openThing", "abcd", actionContext)) {
+				SecurityManager.XWorker_Thing_Manager, "openThing", "abcd", actionContext)) {
     		return;
     	}
     	

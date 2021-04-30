@@ -41,7 +41,7 @@ public class JettyServer {
 		
 		//创建独立的变量上下文
 		ActionContext actionContext = new ActionContext();
-		Map<String, Object> variables = self.doAction("getVariables", actionContext);
+		Map<String, Object> variables = self.doAction("getVariables", parentContext);
 		if(variables != null) {
 			actionContext.g().putAll(variables);
 		}

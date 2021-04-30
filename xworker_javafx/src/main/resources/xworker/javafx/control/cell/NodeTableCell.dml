@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="NodeTableCell" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javafx.control.TableCell">
+    <description><![CDATA[<p>可以自定义标签节点和编辑节点的单元格。</p>
+
+<p><strong>变量上下文</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用独立的变量上下文，parentContext是父变量上下文，变量上下文中默认变量cell:xworker.javafx.control.cell.NodeTableCell。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li>
+	<p><strong>void startEdit(NodeTableCell cell)</strong><br />
+	开始编辑。<br />
+	&nbsp;</p>
+	</li>
+	<li>
+	<p><strong>void cancelEdit(NodeTableCell cell)</strong><br />
+	取消编辑。<br />
+	&nbsp;</p>
+	</li>
+	<li>
+	<p><strong>void updateItem(NodeTableCell cell, Object item, boolean empty)</strong><br />
+	更新条目，其中item是单元格的中值，empty表示改行是非数据行（是空行）。</p>
+	</li>
+</ul>
+
+<p><strong>&nbsp;编辑和非编辑的</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 编辑时使用的是EditNode，非编辑器时使用的是LabelNode。如果没有EditNode那么不能编辑。</p>
+
+<p><strong>编辑器提价和取消编辑</strong></p>
+
+<ul>
+	<li><strong>cell.commitEdit(Object value)</strong><br />
+	提交编辑。可以使用cell.getConverter().fromString(str)方法从字符串转化为对象，不过converter可能为null，调用前应判断。<br />
+	&nbsp;</li>
+	<li><strong>cell.cancelEdit()</strong><br />
+	取消编辑。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.javafx.control.cell.NodeTableCell"
+             methodName="create"></JavaAction>
+        <GetThing name="getLabelNode" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="labelNode" childThingName="LabelNode" childThingFirstChild="true"></GetThing>
+        <GetThing name="getEditNode" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="editNode" childThingName="EditNode" childThingFirstChild="true"></GetThing>
+        <NOOP name="startEdit">
+            <ins>
+                <param name="cell" type="xworker.javafx.control.cell.NodeTableCell"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="cancelEdit">
+            <ins>
+                <param name="cell" type="xworker.javafx.control.cell.NodeTableCell"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="updateItem">
+            <ins>
+                <param name="cell" type="xworker.javafx.control.cell.NodeTableCell"></param>
+                <param name="item"></param>
+                <param name="empty" type="java.lang.Boolean"></param>
+            </ins>
+        </NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="labelNode" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="editNode" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="LabelNode" extends="xworker.javafx.scene.Nodes">
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="EditNode" extends="xworker.javafx.scene.Nodes">
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作" inheritDescription="true">
+        <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>
+        <attribute name="name"></attribute>
+    </thing>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="cell" varName="cell" scope="2" className="xworker.javafx.control.cell.NodeTableCell"></Variable>
+    </VariablesDescs>
+</thing>

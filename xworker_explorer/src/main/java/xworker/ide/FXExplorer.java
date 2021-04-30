@@ -25,7 +25,7 @@ public class FXExplorer {
             File dir = new File("../");
             for(File file : dir.listFiles()){
                 File resoures = new File(file, "src/main/resources");
-                if(resoures.exists()){
+                if(resoures.exists() && world.getThingManager(file.getName()) == null){
                     world.addFileThingManager(file.getName(), resoures, false, false);
                 }
             }

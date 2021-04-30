@@ -176,7 +176,7 @@ public class ThingViewerCreator {
     	    String xml = XmlCoder.encodeToString(thing);
     	     
     	    xmlText.setCode("xml", "xml", xml);
-    	    Executor.info(ThingViewerCreator.class.getName(), xml);
+    	    //Executor.info(ThingViewerCreator.class.getName(), xml);
     	    
     	    //触发selection事件
     	    Thing viewerThing = actionContext.getObject("viewerThing");

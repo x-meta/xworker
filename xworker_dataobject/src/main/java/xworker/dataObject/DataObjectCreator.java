@@ -30,6 +30,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilJava;
 
 import ognl.OgnlException;
+import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.http.DataObjectHttpUtils;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.JsonFormator;
@@ -45,7 +46,7 @@ public class DataObjectCreator {
     	
     	DataObject theData = (DataObject) self.doAction("doLoad", actionContext);
     	if(theData != null){
-    		//初始化关系
+    		//初始化关系和触发加载事件
     		theData.fireOnLoaded(actionContext);
     	}
     	
@@ -164,9 +165,14 @@ public class DataObjectCreator {
     	}
     	List<DataObject> datas = (List<DataObject>) self.doAction("doQuery", actionContext);
     	if(datas != null){
-	    	for(DataObject data : datas){
-	    		data.fireOnLoaded(actionContext);
-	    	}
+            DataObjectCache.begin();
+            try {
+                for (DataObject data : datas) {
+                    data.fireOnLoaded(actionContext);
+                }
+            }finally {
+                DataObjectCache.finish();
+            }
     	}else{
     		datas = Collections.EMPTY_LIST;
     	}

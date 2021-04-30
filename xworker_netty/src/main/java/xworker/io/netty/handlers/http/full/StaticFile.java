@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -471,6 +472,55 @@ public class StaticFile {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
+        //下载起始位置
+        long since=0;
+        //下载结束位置
+        long until = fileLength - 1;
+
+
+        //获取Range，下载范围
+        String range = request.headers().get("range");
+        if(range != null){
+            //剖解range
+            range = range.split("=")[1];
+            String[] rs=range.split("-");
+            try {
+                since = Integer.parseInt(rs[0]);
+            }catch(Exception e) {
+                since = 0;
+            }
+            if(rs.length > 1){
+                try {
+                    until=Integer.parseInt(rs[1]);
+                }catch(Exception e) {
+                }
+            }
+        }
+        if(until > fileLength) {
+            until = fileLength - 1;
+        }
+
+        boolean hasRange = true;
+        String browser=request.headers().get("user-agent");
+        if((until - since + 1) == fileLength) {
+            //下载全部时，不需要设置206
+            hasRange = false;
+        }else {
+            if(browser != null && browser.contains("MSIE")) {
+                //200 响应头，不支持断点续传
+                since = 0;
+                until = fileLength - 1;
+                hasRange = false;
+            }else{
+                response.setStatus(HttpResponseStatus.PARTIAL_CONTENT);
+            }
+        }
+        String cd = "attachment; filename*=utf-8''" + URLEncoder.encode(file.getName(), "utf-8");
+        response.headers().set("Content-Disposition", cd);
+        response.headers().set("Content-Length", "" + (until - since + 1));
+        response.headers().set("Accept-Ranges", "bytes");
+        response.headers().set("Content-Range", "bytes " + since+"-" + until + "/"	+ fileLength);
+
         // Write the initial line and the header.
         ctx.write(response);
 
@@ -479,12 +529,12 @@ public class StaticFile {
         ChannelFuture lastContentFuture;
         if (ctx.pipeline().get(SslHandler.class) == null) {
             sendFileFuture =
-                    ctx.write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), ctx.newProgressivePromise());
+                    ctx.write(new DefaultFileRegion(raf.getChannel(), since, until), ctx.newProgressivePromise());
             // Write the end marker.
             lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
             sendFileFuture =
-                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
+                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, since, until, 8192)),
                             ctx.newProgressivePromise());
             // HttpChunkedInput will write the end marker (LastHttpContent) for us.
             lastContentFuture = sendFileFuture;
@@ -513,7 +563,7 @@ public class StaticFile {
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
 
-        return doRequest(ctx, request, file);
+        return null;
     }
 
     public static FullHttpResponse doRequest(ActionContext actionContext) throws IOException, ParseException {
@@ -555,7 +605,7 @@ public class StaticFile {
         File file = new File(rootFile, path);
         
         //自行处理回复的消息了
-        return null;
+        return doRequest(ctx, request, file);
     }
 
     public static FullHttpResponse exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataObjectEditor" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.javafx.layout.LayoutConstraints">
+    <description><![CDATA[<p>数据对象编辑器。</p>
+
+<p><strong>可以监听的事件：</strong></p>
+
+<ul>
+	<li><strong>selectionChanged(javafx.scene.control.TableView.TableViewSelectionModel oldValue, TableViewSelectionModel newValue)</strong><br />
+	TableView的选择事件。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.javafx.dataobject.DataObjectEditor"
+             methodName="create"></JavaAction>
+        <GetThing name="getDataObject" _xmeta_id_="8969" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataObject" usage="params"></GetThing>
+        <GetThing name="getQueryForm" _xmeta_id_="8970" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="queryForm" childThingName="QueryForm" usage="params"></GetThing>
+        <GetThing name="getCondition" _xmeta_id_="8971" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="condition" childThingName="Condition" usage="params"></GetThing>
+        <GetBoolean name="isCreateButton" _xmeta_id_="8972" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="createButton" usage="params"></GetBoolean>
+        <GetBoolean name="isEditButton" _xmeta_id_="8973" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="editButton" usage="params"></GetBoolean>
+        <GetBoolean name="isDeleteButton" _xmeta_id_="8974" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="deleteButton" usage="params"></GetBoolean>
+        <NOOP name="selectionChanged" _xmeta_id_="NOOP">
+            <ins>
+                <param name="oldValue" type="javafx.scene.control.TableView.TableViewSelectionModel"></param>
+                <param name="newValue" type="javafx.scene.control.TableView.TableViewSelectionModel"></param>
+                <param name="editor" type="xworker.javafx.dataobject.DataObjectEditor"></param>
+            </ins>
+        </NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="dataObject" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="queryForm" _xmeta_id_="queryFormThing" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="condition" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="check" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>表格是否有复选框，如果有那么表格讲设置为多选模式。</p>
+]]></description>
+    </attribute>
+    <thing name="Condition" extends="xworker.dataObject.query.Condition" inheritDescription="true">
+        <actions>
+            <NOOP name="create"></NOOP>
+        </actions>
+    </thing>
+    <thing name="QueryForm" extends="xworker.dataObject.AbstractDataObject">
+        <actions>
+            <NOOP name="create"></NOOP>
+        </actions>
+    </thing>
+    <attribute name="createButton" inputtype="truefalse" default="true"></attribute>
+    <attribute name="editButton" inputtype="truefalse" default="true"></attribute>
+    <attribute name="deleteButton" inputtype="truefalse" default="true"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="Buttons" extends="xworker.javafx.scene.Nodes">
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+        <actions>
+            <NOOP name="create"></NOOP>
+        </actions>
+    </thing>
+</thing>

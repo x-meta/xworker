@@ -38,13 +38,18 @@ public class DataStoreChoiceBox implements DataStoreListener {
                 choiceBox.setValue((DataObject) value);
             }else{
                 for(DataObject data : dataStore.getDatas()){
-                    if(data.equals(new Object[]{value})){
+                    if(data.equalsByKey(value)){
                         choiceBox.setValue(data);
                         break;
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public void onChanged(DataStore dataStore) {
+
     }
 
     public DataObjectStringConverter getStringConverter(){
@@ -62,7 +67,7 @@ public class DataStoreChoiceBox implements DataStoreListener {
             choiceBox.setValue((DataObject) value);
         }else{
             for(DataObject data : dataStore.getDatas()){
-                if(data.equals(new Object[]{value})){
+                if(data.equalsByKey(value)){
                     choiceBox.setValue(data);
                     break;
                 }

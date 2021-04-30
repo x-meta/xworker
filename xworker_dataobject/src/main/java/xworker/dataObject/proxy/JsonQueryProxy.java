@@ -13,11 +13,13 @@ import org.xmeta.util.ExceptionUtil;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectConstants;
+import xworker.dataObject.DataObjectList;
 import xworker.dataObject.PageInfo;
+import xworker.dataObject.cache.DataObjectCache;
 import xworker.util.JacksonFormator;
 
 /**
- * 把查询和结果封装为JSON的代理。增加其它方法。
+ * <p>JSON数据对象代理，通常是为了远程调用数据对象。除了查询也支持其他方法，如create、update和delete。</p>
  * 
  * @author zhangyuxiang
  *
@@ -38,7 +40,15 @@ public class JsonQueryProxy {
 		data.put("conditionData", conditionData);
 		return JacksonFormator.formatObject(data);
 	}
-	
+
+	/**
+	 * 执行批量的操作。支持deleteBatch和updateBatch两个方法。
+	 *
+	 * @param json
+	 * @param actionContext
+	 * @return
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	public static String doBatchAction(String json, ActionContext actionContext) throws Exception {
 		Map<String, Object> params = (Map<String, Object>) JacksonFormator.parseObject(json);
@@ -135,7 +145,7 @@ public class JsonQueryProxy {
 	}
 	
 	/**
-	 * 分析执行数据对象动作的结果。结果是Map，Map中的值有action，dataObjectPath，data和result。
+	 * <p>分析执行数据对象动作的结果。结果是Map，Map中的值有action，dataObjectPath，data和result。</p>
 	 * 
 	 * action是create、load、update或delete。
 	 * data如果是load、create那么是加载和创建的数据对象，否则是null。对于update和delete是传入的值。
@@ -189,16 +199,14 @@ public class JsonQueryProxy {
 		data.put("params", params);
 		
 		Map<String, Object> page = new HashMap<String, Object>();
-		PageInfo pp = new PageInfo(page);
-		if(pageInfo != null) {
-			pp.setDir(pageInfo.getDir());
-			pp.setPage(pageInfo.getPage());
-			pp.setPageSize(pageInfo.getPageSize());
-			pp.setLimit(pageInfo.getLimit());
+		if(pageInfo != null){
+			page.putAll(pageInfo.getPageInfoData());
 		}else {
+			PageInfo pp = new PageInfo(page);
 			pp.setPage(0);
-			pp.setPageSize(200);
-			pp.setLimit(200);
+			pp.setPageSize(100);
+			pp.setLimit(100);
+			pp.setStart(0);
 		}
 		
 		data.put("pageInfo", page);
@@ -235,7 +243,16 @@ public class JsonQueryProxy {
 			for(DataObject d : ds) {
 				Map<String, Object> theData = new HashMap<String, Object>();
 				for(Thing attribute : dataObject.getChilds("attribute")) {
-					String name = attribute.getMetadata().getName(); 
+					String name = attribute.getMetadata().getName();
+					if(name.contains(".")){
+						//关联字段属性不设置
+						continue;
+					}
+					Object object = d.get(name);
+					if(object instanceof DataObject || object instanceof DataObjectList){
+						//关联的数据对象和数据对象列表也不格式化
+						continue;
+					}
 					theData.put(name, d.get(name));
 				}
 				datas.add(theData);
@@ -296,10 +313,17 @@ public class JsonQueryProxy {
 		Map<String, Object> pageInfo = actionContext.getObject("pageInfo");
 		List<Map<String, Object>> datas = (List<Map<String, Object>>) data.get("datas");
 		List<DataObject> ds = new ArrayList<DataObject>();
-		for(Map<String, Object> d : datas) {
-			DataObject theData = new DataObject(dataObject);
-			theData.putAll(d);
-			ds.add(theData);
+		DataObjectCache.begin();
+		try {
+			for (Map<String, Object> d : datas) {
+				DataObject theData = new DataObject(dataObject);
+				theData.putAll(d);
+
+				theData.fireOnLoaded(actionContext);
+				ds.add(theData);
+			}
+		}finally {
+			DataObjectCache.finish();
 		}
 		
 		if(pageInfo == null) {

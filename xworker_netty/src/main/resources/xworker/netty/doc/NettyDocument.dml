@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickFunction name="NettyDocument" descriptors="xworker.swt.xworker.ThingRegistThing" label="Netty"
+     type="thingDesc" group="xworker.netty" groupDescriptor="true" icon="icons/html.png"
+     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>Netty</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 本文假设你已掌握了Netty的基本知识。</p>
+
+<h2>1.Server</h2>
+
+<h3>1.1.模型和Java类</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Netty服务器模型是<strong>xworker.netty.NettyServer</strong>，对应的Java类是<strong>xworker.io.netty.NettyServer</strong>。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个服务器模型一般只有一个Java对象实例。</p>
+
+<h3>1.2.常用方法</h3>
+
+<ul>
+	<li><strong>NettyServer start()</strong><br />
+	启动服务器。<br />
+	&nbsp;</li>
+	<li><strong>NettyServer close()</strong><br />
+	关闭服务器。</li>
+</ul>
+
+<h2>2.Client</h2>
+
+<h3>2.1.模型和Java类</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Netty的客户端模型是xworker.netty.NettyClient，对应的Java类是xworker.io.netty.NettyClient。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个客户端模型可以有一个或者多个Java对象实例。</p>
+
+<h3>2.2.常用方法</h3>
+
+<ul>
+	<li><strong>NettyClient connect()</strong><br />
+	连接服务器。<br />
+	&nbsp;</li>
+	<li><strong>NettyClient close()</strong><br />
+	关闭连接。</li>
+</ul>
+
+<h2>3.Netty使用指南</h2>
+
+<h3>3.1.接收消息</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 使用自己的ChannelHandler来处理收到的消息，比如在解码消息后添加一个ChannelInboundHandler，并重写channelRead(Session session, Object msg)，在channelRead方法里处理接收到的消息。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 以上方法对服务器和客户端都有效。</p>
+
+<h3>3.2.发送消息</h3>
+
+<h4>3.2.1.客户端</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 客户端可以通过NettyClient.sendMessage(Object message)方法发送消息。如果NettyClient未连接将抛出一个ChannelException。</p>
+
+<h4>3.2.2.服务器端</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 服务器通过Session发送消息，可以在channelRead中缓存Session，如用户登录注册时根据用户的ID缓存Session，后期通过用户ID从自己的缓存中获取Session，调用Session.setMessage(Object message)方法发送消息。如果Session已关闭等，会抛出IOException。</p>
+
+<h3>3.3.服务器端简易会话管理</h3>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker提供了一个简易的服务器端的会话管理，可以对会话进行分组，也可以对某个组发送消息等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如下面的示例代码：</p>
+
+<pre class="brush:groovy;">
+import java.text.SimpleDateFormat;
+def sf = new SimpleDateFormat(&quot;HH:mm:ss&quot;);
+
+if(msg.action == &quot;regist&quot;){
+    session.setSessionId(msg.name);
+    
+    msg.put(&quot;from&quot;, &quot;System&quot;);
+    msg.put(&quot;time&quot;, sf.format(new Date()));
+    msg.put(&quot;message&quot;, session.getSessionId() + &quot; has registed!&quot;);
+    session.getSessionManager().sendMessageToGroup(&quot;all&quot;, msg);
+}else if(msg.action == &quot;sendMessage&quot;){    
+    msg.put(&quot;from&quot;,  session.getSessionId());
+    msg.put(&quot;time&quot;, sf.format(new Date()));
+    if(msg.to == &quot;all&quot;){
+        session.getSessionManager().sendMessageToGroup(&quot;all&quot;, msg);
+    }else{
+        session.getSessionManager().sendMessage(msg.to, msg);
+    }
+}</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickFunction>

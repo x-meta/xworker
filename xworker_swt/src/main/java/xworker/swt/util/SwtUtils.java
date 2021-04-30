@@ -15,86 +15,20 @@
 ******************************************************************************/
 package xworker.swt.util;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.DirectColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.WritableRaster;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import ognl.OgnlException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-//import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.Path;
-import org.eclipse.swt.graphics.PathData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
-import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.DateTime;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.ExpandBar;
-import org.eclipse.swt.widgets.ExpandItem;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Widget;
-import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
-import org.xmeta.Bindings;
-import org.xmeta.Thing;
-import org.xmeta.World;
+import org.eclipse.swt.widgets.*;
+import org.xmeta.*;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
-
-import ognl.OgnlException;
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
@@ -111,6 +45,16 @@ import xworker.swt.widgets.ControlActions;
 import xworker.swt.widgets.ControlCreator;
 import xworker.util.StringUtils;
 import xworker.util.XWorkerUtils;
+
+import java.awt.image.*;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.*;
 
 public class SwtUtils {	
 	private static final String TAG = SwtUtils.class.getName();
@@ -1280,62 +1224,7 @@ public class SwtUtils {
 			return "DEFAULT";
 		}
 	}
-	
-	/**
-	 * 把一个Path添加到Region中。
-	 * 
-	 * @param region
-	 * @param path
-	 */
-	public static void addPathToRegion(Region region, Path path) {
-		PathData pathData = path.getPathData();
-		float[] points = pathData.points;
-		byte[] types = pathData.types;
-		
-		int start = 0, end = 0;
-		for (byte type : types) {
-			switch (type) {
-				case SWT.PATH_MOVE_TO: {
-					if (start != end) {
-						int n = 0;
-						int[] temp = new int[end - start];
-						for (int k = start; k < end; k++) {
-							temp[n++] = Math.round(points[k]);
-						}
-						region.add(temp);
-					}
-					start = end;
-					end += 2;
-					break;
-				}
-				case SWT.PATH_LINE_TO: {
-					end += 2;
-					break;
-				}
-				case SWT.PATH_CLOSE: {
-					if (start != end) {
-						int n = 0;
-						int[] temp = new int[end - start];
-						for (int k = start; k < end; k++) {
-							temp[n++] = Math.round(points[k]);
-						}
-						region.add(temp);
-					}
-					start = end;
-					break;
-				}
-				case SWT.PATH_CUBIC_TO:{
-					end += 6;
-					break;
-				}
-				case SWT.PATH_QUAD_TO:{
-					end += 6;
-					break;
-				}
-			}
-		}
-	}
-	
+
 	private static boolean validateText(String text, String type, String pattern, boolean required){	
 		if(text == null || "".equals(text.trim())){
 			if(required){
@@ -1468,7 +1357,7 @@ public class SwtUtils {
 			return;
 		}
 		
-		if(XWorkerUtils.hasXWorker()) {
+		if(XWorkerUtils.hasWebServer()) {
 			browser.setUrl(XWorkerUtils.getThingDescUrl(thing));
 		}else {
 			Thing realThing = thing;

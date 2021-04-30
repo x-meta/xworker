@@ -16,6 +16,22 @@ public class FXThingLoader {
     private static final String TAG = FXThingLoader.class.getName();
     private static ThreadLocal<Stack<Object>> objectLocal = new ThreadLocal<>();
 
+    public static void push(Object object){
+        Stack<Object> stack = objectLocal.get();
+        if(stack == null) {
+            stack = new Stack<>();
+            objectLocal.set(stack);
+        }
+        stack.push(object);
+    }
+
+    public static void pop(){
+        Stack<Object> stack = objectLocal.get();
+
+        if(stack != null) {
+            stack.pop();
+        }
+    }
     /**
      * 执行thing的create(actionContext)方法，执行时如果是EventHandler等可能会吧object的相应方法绑定到handler上，
      * 最后会把对象的@FXML和@ActionField等注解的字段赋值。

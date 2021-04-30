@@ -18,12 +18,19 @@ public class AttributeEditorFactory {
             return new HtmlEditor(thingForm, attribute);
         }else if("htmlDesc".equals(inputType)) {
             return new HtmlDescEditor(thingForm, attribute);
-        }else if("select".equals(inputType)) {
+        }else if("select".equals(inputType) || "radio".equals(inputType)) {
             DataStore dataStore = AttributeDataStore.getDataStore(attribute, thingForm.getActionContext());
             if(dataStore == null) {
                 return new ChoiceEditor(thingForm, attribute);
             }else{
                 return new ChoiceDataStoreEditor(thingForm, attribute, dataStore);
+            }
+        }else if("multSelect".equals(inputType) || "checkBox".equals(inputType)){
+            DataStore dataStore = AttributeDataStore.getDataStore(attribute, thingForm.getActionContext());
+            if(dataStore == null) {
+                return new MultiComboEditor(thingForm, attribute);
+            }else{
+                return new MultiComboDataStoreEditor(thingForm, attribute, dataStore);
             }
         }else if("truefalse".equals(inputType)) {
             return new TrueFalseEditor(thingForm, attribute);
@@ -36,6 +43,10 @@ public class AttributeEditorFactory {
             }else{
                 return new InputSelectDataStoreEditor(thingForm, attribute, dataStore);
             }
+        }else if("datePick".equals(inputType)){
+            return new DatePickEditor(thingForm, attribute);
+        }else if("colorpicker".equals(inputType)) {
+            return new ColorEditor(thingForm, attribute);
         }/*else if("radio".equals(inputType)) {
             return new RadioAttributeEditor(formThing, attribute, gridData, actionContext);
         }else if("checkBox".equals(inputType)) {

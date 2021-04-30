@@ -23,6 +23,10 @@ public class DataStoreComboBox implements DataStoreListener {
         dataStore.addListener(this);
     }
 
+    public DataObjectStringConverter getStringConverter(){
+        return stringConverter;
+    }
+
     @Override
     public void onReconfig(DataStore dataStore, Thing dataObject) {
         //清空原有的列
@@ -41,13 +45,18 @@ public class DataStoreComboBox implements DataStoreListener {
                 comboBox.setValue((DataObject) value);
             }else{
                 for(DataObject data : dataStore.getDatas()){
-                    if(data.equals(new Object[]{value})){
+                    if(data.equalsByKey(value)){
                         comboBox.setValue(data);
                         break;
                     }
                 }
             }
         }
+    }
+
+    @Override
+    public void onChanged(DataStore dataStore) {
+
     }
 
     public void setValue(Object value){
@@ -57,7 +66,7 @@ public class DataStoreComboBox implements DataStoreListener {
             comboBox.setValue((DataObject) value);
         }else{
             for(DataObject data : dataStore.getDatas()){
-                if(data.equals(new Object[]{value})){
+                if(data.equalsByKey(value)){
                     comboBox.setValue(data);
                     break;
                 }

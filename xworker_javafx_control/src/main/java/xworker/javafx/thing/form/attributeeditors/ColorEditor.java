@@ -20,6 +20,7 @@ public class ColorEditor extends AttributeEditor {
     @Override
     public Node createEditor() {
         colorPicker = new ColorPicker();
+        colorPicker.setEditable(true);
         int size = attribute.getInt("size");
         if(size > 0 ){
             colorPicker.setPrefWidth(size * 1.5);
@@ -30,12 +31,13 @@ public class ColorEditor extends AttributeEditor {
                 thingForm.modified(ColorEditor.this);
             }
         });
+        colorPicker.setValue(null);
         return colorPicker;
     }
 
     @Override
     public void setValue(Object value) {
-        if(value instanceof  String){
+        if(value instanceof  String && !"".equals(value)){
             Color color = Color.web((String) value);
             colorPicker.setValue(color);
         }else if(value instanceof  Color){
@@ -52,6 +54,7 @@ public class ColorEditor extends AttributeEditor {
             int r = (int)Math.round(color.getRed() * 255.0);
             int g = (int)Math.round(color.getGreen() * 255.0);
             int b = (int)Math.round(color.getBlue() * 255.0);
+            //int p = (int) Math.round(color.getOpacity() * 255.0);
 
             return String.format("#%02x%02x%02x" , r, g, b);
         }else{

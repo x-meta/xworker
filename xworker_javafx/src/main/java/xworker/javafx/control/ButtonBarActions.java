@@ -1,5 +1,6 @@
 package xworker.javafx.control;
 
+import javafx.scene.Node;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
@@ -34,5 +35,20 @@ public class ButtonBarActions {
 		}
 		
 		return bar;
+	}
+
+	public static void createButtonData(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object parent = actionContext.getObject("parent");
+		if(parent instanceof Node){
+			Node node = (Node) parent;
+
+			if(self.valueExists("buttonData")) {
+				ButtonBar.ButtonData data = ButtonBar.ButtonData.valueOf(self.getString("buttonData"));
+				if(data != null){
+					ButtonBar.setButtonData(node, data);
+				}
+			}
+		}
 	}
 }

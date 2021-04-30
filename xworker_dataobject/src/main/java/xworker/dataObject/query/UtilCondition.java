@@ -685,8 +685,12 @@ public class UtilCondition {
 	/**
 	 * 比较两个值小于。
 	 * 
-	 * @param v1
-	 * @param v2
+	 * @param value
+	 * @param conditionValue
+	 * @param type
+	 * @param pattern
+	 * @param ignoreNull
+	 * @param actionContext
 	 * @return
 	 * @throws ParseException 
 	 */

@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -167,8 +168,8 @@ public class HttpUtilActions {
 		}
 		
 		response.setContentType(contentType);
-		response.setHeader("Content-Disposition", "attachment; filename=\"" +
-				new String(fileName.getBytes(),"ISO8859_1")+ "\"");
+		String cd = "attachment; filename*=utf-8''" + URLEncoder.encode(fileName, "utf-8");
+		response.setHeader("Content-Disposition", cd);
 		response.setHeader("Content-Length", "" + (until - since + 1));
 		response.setHeader("Accept-Ranges", "bytes");
 		response.setHeader("Content-Range", "bytes " + since+"-" + until + "/"	+ totalLength);

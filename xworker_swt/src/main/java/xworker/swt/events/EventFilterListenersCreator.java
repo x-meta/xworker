@@ -43,7 +43,7 @@ public class EventFilterListenersCreator {
 	/**
 	 * 创建事件，如果事件类型为2，那么是注册到Display的事件。
 	 * 
-	 * @param binding
+	 * @param actionContext
 	 * @param acttionType
 	 */
 	private static void createListener1(ActionContext actionContext, int acttionType){

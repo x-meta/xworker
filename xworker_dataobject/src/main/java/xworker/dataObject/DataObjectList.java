@@ -24,10 +24,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
-import org.xmeta.ActionContext;
-import org.xmeta.Bindings;
-import org.xmeta.Thing;
-import org.xmeta.World;
+import org.xmeta.*;
+import xworker.dataObject.query.Condition;
+import xworker.lang.executor.Executor;
+import xworker.task.TaskManager;
 
 /**
  * 数据对象列表。
@@ -36,6 +36,7 @@ import org.xmeta.World;
  *
  */
 public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
+	private static final String TAG = DataObjectList.class.getName();
 	private static final long serialVersionUID = 1L;
 	
 	/** 描述者 */
@@ -49,6 +50,9 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	/** 监听器列表 */
 	List<DataObjectListListener> listeners = null;
 	boolean fireEvent = true;
+	Condition condition;
+	String refAttributeName;
+	String localAttributeName;
 
 	public DataObjectList() {		
 	}
@@ -81,6 +85,12 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	public DataObjectList(Thing descriptor, DataObject parent){
 		this.descriptor = descriptor;
 		this.parent = parent;
+		if(parent != null) {
+			World world = World.getInstance();
+			this.descriptor = world.getThing(descriptor.getString("dataObjectPath"));
+			refAttributeName = descriptor.getString("refAttributeName");
+			localAttributeName = descriptor.getString("localAttributeName");
+		}
 	}
 	
 	/**
@@ -127,27 +137,92 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	@SuppressWarnings("unchecked")
 	public void load(ActionContext actionContext){
 		if(descriptor == null) {
-			return;
+			throw new ActionException("Descriptor is null");
 		}
 		
 		inited = true;
-		
-		Object condition = descriptor.getThing("Condition@0");
-		if(condition == null){
-			condition = new HashMap<String, Object>();
-			HashMap<String, Object> c = (HashMap<String, Object>) condition;
-			c.put("name", descriptor.get("refAttributeName"));
-			c.put("operator", "1");
-			c.put("dataName", descriptor.get("localAttributeName"));
+
+		Thing condition = null;
+		Map<String, Object> conditionData = null;
+		if(parent != null){
+			Condition con = new Condition();
+			con.eq(refAttributeName, parent.get(localAttributeName));
+			condition = con.getConditionThing();
+			conditionData = con.getConditionValues();
+		}else {
+			conditionData = new HashMap<>();
+			Thing con = descriptor.getThing("Condition@0");
+			if(con != null){
+				condition = con;
+			}
 		}
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("conditionConfig", condition);
-		params.put("conditionData", parent);
+		params.put("conditionData", conditionData);
 		List<DataObject> datas = (List<DataObject>) doAction("query", actionContext, params);
 		setDataObjects(datas);
 	}
-	
+
+	/**
+	 * 删除全部关联。
+	 *
+	 * @param actionContext
+	 */
+	public Integer delete(ActionContext actionContext){
+		if(descriptor == null) {
+			throw new ActionException("Descriptor is null");
+		}
+
+		inited = true;
+
+		Thing condition = null;
+		Map<String, Object> conditionData = null;
+		if(parent != null){
+			Condition con = new Condition();
+			con.eq(refAttributeName, parent.get(localAttributeName));
+			condition = con.getConditionThing();
+			conditionData = con.getConditionValues();
+		}else {
+			conditionData = new HashMap<>();
+			Thing con = descriptor.getThing("Condition@0");
+			if(con != null){
+				condition = con;
+			}
+		}
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("conditionConfig", condition);
+		params.put("conditionData", conditionData);
+		return (Integer) doAction("deleteBatch", actionContext, params);
+	}
+
+	/**
+	 * 后台加载。
+	 *
+	 * @param actionContext
+	 */
+	public void loadBackground(final ActionContext actionContext){
+		TaskManager.getExecutorService().execute(new Runnable() {
+			@Override
+			public void run() {
+				try{
+					synchronized (DataObjectList.this) {
+						if (DataObjectList.this.inited) {
+							return;
+						}else{
+							//这里设置inited不要取消，是为了同步
+							DataObjectList.this.inited = true;
+						}
+					}
+					load(actionContext);
+				}catch(Exception e){
+					Executor.warn(TAG, "Load background error, path=" + descriptor, e);
+				}
+			}
+		});
+	}
+
 	/**
 	 * 设置新的数据对象列表，并会触发onLoaded()事件。
 	 * 

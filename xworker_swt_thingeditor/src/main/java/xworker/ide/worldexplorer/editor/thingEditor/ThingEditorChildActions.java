@@ -405,7 +405,7 @@ public class ThingEditorChildActions {
 		        for(DataObject rc : rchilds){
 		            //log.info("child=" + rc);
 		            Thing child = world.getThing((String) rc.get("path"));        
-		            if(excludes.get(child.getMetadata().getPath()) != null) {
+		            if(child == null || excludes.get(child.getMetadata().getPath()) != null) {
 		            	continue;
 		            }
 		            

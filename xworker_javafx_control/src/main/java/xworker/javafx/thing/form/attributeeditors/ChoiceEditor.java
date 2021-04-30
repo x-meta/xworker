@@ -29,6 +29,12 @@ public class ChoiceEditor extends AttributeEditor {
     @Override
     public Node createEditor() {
         choiceBox = new ChoiceBox<>();
+        double size = attribute.getDouble("size");
+        if(size > 0 ){
+            choiceBox.setMaxWidth(size * 7);
+        }else{
+            choiceBox.setMaxWidth(200);
+        }
         choiceBox.setConverter(converter);
         choiceBox.getItems().addAll(values);
         choiceBox.selectionModelProperty().addListener(new ChangeListener<SingleSelectionModel<Thing>>() {
@@ -47,6 +53,8 @@ public class ChoiceEditor extends AttributeEditor {
             choiceBox.setValue((Thing) value);
         }else if(value instanceof  String) {
             choiceBox.setValue(converter.fromString((String) value));
+        }else if(value != null){
+            choiceBox.setValue(converter.fromString(String.valueOf(value)));
         }else{
             choiceBox.setValue(null);
         }

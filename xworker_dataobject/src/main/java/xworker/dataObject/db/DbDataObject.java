@@ -400,6 +400,9 @@ public class DbDataObject {
 		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
+		if(cds.size() == 0){
+			throw new SQLException("Full table update is not allowed! path=" + self.getMetadata().getPath());
+		}
 		//设置参数值
 		Connection con = (Connection) actionContext.get("con");
 		PreparedStatement pst = con.prepareStatement(sql);
@@ -466,6 +469,9 @@ public class DbDataObject {
 		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
+		if(cds.size() == 0){
+			throw new SQLException("Full table deletion is not allowed! path=" + self.getMetadata().getPath());
+		}
 		//设置参数值和查询
 		Connection con = (Connection) actionContext.get("con");
 		PreparedStatement pst = con.prepareStatement(sql);
@@ -756,7 +762,8 @@ public class DbDataObject {
 			//----------------生成SQL完毕--------------------
 	
 			//----------------执行查询-----------------------
-			if(pageInfo != null && (Integer) pageInfo.get("limit") != 0){
+			PageInfo pageInfo1 = new PageInfo(pageInfo);
+			if(pageInfo != null && pageInfo1.getLimit() != 0){
 			    //有分页查询
 			    String dbType = (String) actionContext.get("dbType"); //dbType是有DataSource上下文设置的
 			    if(dbType != null &&  !"".equals(dbType) && self.getBoolean("pagineByCursor") == false){
@@ -1171,9 +1178,9 @@ public class DbDataObject {
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
 		    if(pageInfo != null && pageInfo.getLimit() != 0){
 		        int index = cds.size() + 1;
-		        int start = pageInfo.getStart() + 1;
-		        pst.setInt(index, start);
-		        pst.setInt(index + 1, start + pageInfo.getLimit() - 1);
+				long start = pageInfo.getStart() + 1;
+		        pst.setLong(index, start);
+		        pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
 		    }
 		    
 		    //执行sql
@@ -1254,9 +1261,9 @@ public class DbDataObject {
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
 		    if(pageInfo != null && pageInfo.getLimit() != 0){
 		        int index = cds.size() + 1;
-		        int start = pageInfo.getStart() + 1;
-		        pst.setInt(index, start);
-		        pst.setInt(index + 1, start + pageInfo.getLimit() - 1);
+		        long start = pageInfo.getStart() + 1;
+		        pst.setLong(index, start);
+		        pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
 		    }
 		    
 		    //执行sql
@@ -1306,9 +1313,9 @@ public class DbDataObject {
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
 		    if(pageInfo != null && pageInfo.getLimit() != 0){
 		        int index = cds.size() + 1;
-		        int start = pageInfo.getStart() + 1;
-		        pst.setInt(index, start-1);
-		        pst.setInt(index + 1, pageInfo.getLimit());
+		        long start = pageInfo.getStart() + 1;
+		        pst.setLong(index, start-1);
+		        pst.setLong(index + 1, pageInfo.getLimit());
 		        //println("start=" + (start -1) + ",limit=" + (start + pageInfo.limit - 2));
 		    }
 		    
@@ -1361,9 +1368,9 @@ public class DbDataObject {
 		    self.doAction("setStatementParams", actionContext, UtilMap.toMap("cds", cds, "pst", pst, "attributes", attributes, "index", 1));
 		    if(pageInfo != null && pageInfo.getLimit() != 0){
 		        int index = cds.size() + 1;
-		        int start = pageInfo.getStart() + 1;
-		        pst.setInt(index, start);
-		        pst.setInt(index + 1, start + pageInfo.getLimit() - 1);
+		        long start = pageInfo.getStart() + 1;
+		        pst.setLong(index, start);
+		        pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
 		    }
 		    
 		    //执行sql

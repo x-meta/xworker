@@ -1,7 +1,6 @@
 package xworker.swt.custom;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TreeCursor;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Tree;
 import org.xmeta.ActionContext;

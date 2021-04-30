@@ -8,6 +8,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 import xworker.swt.style.StyleSetStyleCreator;
+import xworker.swt.util.RegionUtils;
 import xworker.swt.util.SwtUtils;
 
 public class PathActions {
@@ -29,7 +30,7 @@ public class PathActions {
 		
 		Region region = actionContext.getObject("region");
 		if(region != null) {
-			SwtUtils.addPathToRegion(region, path);
+			RegionUtils.addPathToRegion(region, path);
 		}
 	}
 	

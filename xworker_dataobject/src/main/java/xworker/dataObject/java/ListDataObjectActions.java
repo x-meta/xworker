@@ -175,15 +175,15 @@ public class ListDataObjectActions {
                 if(pageInfo.getStart() > matchedDatas.size()){
                     pageInfo.setStart(matchedDatas.size());
                 }
-                int toIndex = pageInfo.getStart() + pageInfo.getLimit();
+                long toIndex = pageInfo.getStart() + pageInfo.getLimit();
                 if(toIndex > matchedDatas.size()){ 
                     toIndex = matchedDatas.size();
                 }
-                int startIndex = pageInfo.getStart();
+                long startIndex = pageInfo.getStart();
                 if(startIndex < 0){
                     startIndex = 0;
                 }    
-                pageInfo.setDatas(matchedDatas.subList(pageInfo.getStart(), toIndex));
+                pageInfo.setDatas(matchedDatas.subList((int) pageInfo.getStart(), (int) toIndex));
             }else{
                 pageInfo.setDatas(matchedDatas);
             }

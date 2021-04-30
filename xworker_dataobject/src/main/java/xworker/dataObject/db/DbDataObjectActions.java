@@ -393,7 +393,7 @@ public class DbDataObjectActions {
             rs = pst.executeQuery();
             List<DataObject> ds = new ArrayList<DataObject>();
             attributes = self.getChilds("attribute"); //取查询数据对象实际的列
-            int start = pageInfo.getStart() + 1;
+            int start = (int) (pageInfo.getStart() + 1);
             int count = 0;
             boolean hasNext = false;
             if(supportScroll){

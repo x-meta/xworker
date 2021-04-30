@@ -49,6 +49,8 @@ public class InputSelectEditor extends AttributeEditor {
             thing = (Thing) value;
         }else if(value instanceof  String) {
             thing = converter.fromString((String) value);
+        }else if(value != null){
+            thing = converter.fromString(String.valueOf(value));
         }
         if(thing == null){
             thing = converter.fromString(null);

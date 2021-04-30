@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.xmeta.ActionContext;
 
 import xworker.swt.design.Designer;
+import xworker.swt.util.RegionUtils;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
@@ -221,7 +222,7 @@ public class Subtitle implements PaintListener, Listener, DisposeListener, Runna
 			Path path = new Path(gc.getDevice());
 			path.addString(l, left, top, gc.getFont());
 
-	        SwtUtils.addPathToRegion(region, path);
+	        RegionUtils.addPathToRegion(region, path);
 	        //gc.setForeground(black);
 	        //
 	        //gc.setForeground(color);

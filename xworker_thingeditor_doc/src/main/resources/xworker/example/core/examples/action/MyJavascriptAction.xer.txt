@@ -1,0 +1,141 @@
+@xworker.example.core.examples.action.MyJavascriptAction
+sname
+MyJavascriptAction
+slabel
+MyJavascriptAction
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+sid
+MyJavascriptAction
+@xworker.example.core.examples.action.MyJavascriptAction/@name
+sname
+name
+slabel
+名称
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+name
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.example.core.examples.action.MyJavascriptAction/@code
+sname
+code
+slabel
+JavaScript代码
+sinputtype
+codeEditor
+scolspan
+2
+sinputattrs
+rows="15" cols="70" codeName="JavaScript" codeType="JavaScript"
+LvalidateOnBlur
+false
+LallowDecimals
+false
+LallowNegative
+false
+sid
+code
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+@xworker.example.core.examples.action.MyJavascriptAction/@actions
+sname
+actions
+sid
+actions
+slabel
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+@xworker.example.core.examples.action.MyJavascriptAction/@actions/@run
+sname
+run
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+suseOuterJava
+false
+sclassName
+MyJavaScript
+smethodName
+run
+Scode
+#$@text#$@
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptEngine;
+
+import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
+import org.xmeta.Action;
+import org.xmeta.Thing;
+import org.xmeta.World;
+import org.xmeta.ActionException;
+
+import xworker.actions.ActionScriptContext;
+import xworker.util.UtilAction;
+
+public class MyJavaScript{
+    static World world = World.getInstance();
+
+    /**
+     * 用来解释执行JavaScript的静态方法。
+     *
+     * JavaAction执行的是参数为ActionContext的静态方法。
+     */
+    public static Object run(ActionContext actionContext) throws Exception{   
+        //初始化JavaScript引擎     
+        ScriptEngineManager manager = (ScriptEngineManager) world.getData("JavaScriptEngineManager");
+        if(manager == null){
+            manager = new ScriptEngineManager();
+            world.setData("JavaScriptEngineManager", manager);
+        }
+        
+        //找到使用JavaScript定义的动作，一般是-3级的变量范围。
+        Bindings bindings = actionContext.getScope(actionContext.getScopesSize() - 3);		
+        Action action = (Action) bindings.caller;
+        Thing self = action.getThing();
+        
+        //执行JavaScript
+        ScriptEngine engine = manager.getEngineByName("javascript");                
+        if(engine != null){
+            try{
+                Bindings topBindings = actionContext.push();
+                topBindings.put("actionContext", actionContext);
+                topBindings.put("world", world);
+                
+                //取原始的self调用者，一般是-5级的变量范围。
+				if(actionContext.getScopesSize() >= 5){
+					Bindings callerBindings = actionContext.getScope(actionContext.getScopesSize() - 5);
+					Object self1 = callerBindings.get("self");
+					topBindings.put("self", self1);
+				}
+ 
+                Object value = engine.eval(self.getString("code"), new ActionScriptContext(actionContext));                
+                return value;            
+            }finally{
+                actionContext.pop();
+            }
+        }else{
+            throw new ActionException("Can not find script engine : " + self.getString("language"));
+        }
+    }
+}
+#$@text#$@
+sid
+run
+sdescriptors
+xworker.lang.actions.Actions/@JavaAction

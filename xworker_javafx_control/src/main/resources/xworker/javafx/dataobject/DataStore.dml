@@ -1,13 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <thing name="DataStore" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.dataObject.DataStore"
-     group="model.dataobject" th_createIndex="true" th_registThing="child|xworker.javafx.scene.Nodes">
+     group="xworker.dataobject">
     <actions>
         <JavaAction name="create" outerClassName="xworker.javafx.dataobject.DataStoreActions"
              methodName="create"></JavaAction>
         <GetString name="getBindTo" _xmeta_id_="139" descriptors="xworker.lang.actions.ActionUtil/@GetString"
              attributeName="bindTo"></GetString>
+        <GetBoolean name="isCheck" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="check"></GetBoolean>
     </actions>
-    <attribute name="bindTo" size="50" default="parent"></attribute>
-    <attribute name="description" inputtype="htmlDesc"></attribute>
+    <thing name="TableColumn" extends="xworker.javafx.control.TableColumn" inheritDescription="true">
+        <description><![CDATA[<p>用于自定义TableColumn，或再后面附加新的TableColumn。</p>
+
+<p><strong>自定义TableColumn</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过attributeName指定属性名，对应属性的使用该TableColumn。</p>
+
+<p><strong>其它</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 其它TableColumn是附加到末尾的。</p>
+]]></description>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="attributeName"></attribute>
+    </thing>
+    <attribute name="check" inputtype="truefalse" group="TableView" default="false">
+        <description><![CDATA[<p>如果为true，那么第一列是CheckBox，可以通过CheckBox来选择记录。</p>
+
+<p><strong>检测一行是否被选中的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如下面的代码。</p>
+
+<pre class="brush:groovy;">
+import xworker.javafx.dataobject.datastore.CheckTableColumn;
+
+def dataObject = cell.getTableRow().getItem();
+println CheckTableColumn.isChecked(dataObject);</pre>
+
+<p>&nbsp;</p>
+]]></description>
+    </attribute>
 </thing>

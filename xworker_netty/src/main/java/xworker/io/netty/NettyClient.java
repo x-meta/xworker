@@ -3,6 +3,7 @@ package xworker.io.netty;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import io.netty.channel.ChannelException;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
@@ -173,6 +174,8 @@ public class NettyClient {
 			if(flush) {
 				channelFuture.channel().flush();
 			}
+		}else{
+			throw new ChannelException("Client not connected!");
 		}
 	}
 	

@@ -28,7 +28,7 @@ import xworker.dataObject.DataObject;
  * DataStore可以通过条件查询数据对象、缓存数据对象的记录，是界面和数据对象之间的一个桥梁。
  * 
  * @author Administrator
- *
+ * @deprecated 使用xworker.dataObject.DataStore
  */
 public class DataStore {
 	/** 数据对象 */

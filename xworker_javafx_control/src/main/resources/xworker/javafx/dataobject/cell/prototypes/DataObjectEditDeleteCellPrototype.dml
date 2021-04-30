@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<NodeTableCell name="DataObjectEditDeleteCellPrototype" descriptors="xworker.javafx.control.cell.NodeTableCell">
+    <LabelNode>
+        <HBox name="hbox" alignment="CENTER" spacing="5">
+            <Hyperlink name="editHyperLink" visited="true" text="lang:d=编辑&amp;en=Edit">
+                <ButtonBaseEventHandler name="onAction">
+                    <EditDataObjectDialog name="EditDataObjectDialog" descriptors="xworker.javafx.dataobject.FXDataObjectActions/@EditDataObjectDialog"
+                         dataSource="ognl:cell.getTableRow().getItem()" width="var:editDialogWith"
+                         height="var:editDialogHeight"></EditDataObjectDialog>
+                </ButtonBaseEventHandler>
+            </Hyperlink>
+            <Hyperlink name="deleteHyperLink" visited="true" text="lang:d=删除&amp;en=Delete">
+                <ButtonBaseEventHandler name="onAction">
+                    <DeleteDataObjectDialog descriptors="xworker.javafx.dataobject.FXDataObjectActions/@RemoveDataObjectDialog"
+                         dataSource="ognl:cell.getTableRow().getItem()" confirmMessage="lang:d=确定要删除当前数据么？&amp;en=Are you sure to delete current record?">
+                        <actions descriptors="xworker.lang.actions.SelfAction/@actions1">
+                            <JavaAction name="ok" outerClassName="xworker.javafx.dataobject.cell.DataObjectEditDeleteCell"
+                                 methodName="deleteOk"></JavaAction>
+                        </actions>
+                    </DeleteDataObjectDialog>
+                </ButtonBaseEventHandler>
+            </Hyperlink>
+        </HBox>
+    </LabelNode>
+</NodeTableCell>

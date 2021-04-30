@@ -70,9 +70,9 @@ public class ThingEventHandler implements EventHandler<Event> {
 		if(methodOwner != null && methodName != null){
 			if(handlerMehtod == null){
 				try{
-					handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class, ActionContext.class);
+					handlerMehtod = getMethod(methodOwner.getClass(), methodName, event.getClass(), ActionContext.class);
 					if(handlerMehtod == null){
-						handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class);
+						handlerMehtod = getMethod(methodOwner.getClass(), methodName, event.getClass());
 
 						if(handlerMehtod == null){
 							handlerMehtod =getMethod(methodOwner.getClass(), methodName, ActionContext.class);

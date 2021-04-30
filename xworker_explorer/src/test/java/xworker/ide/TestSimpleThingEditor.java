@@ -9,9 +9,8 @@ public class TestSimpleThingEditor {
 			//读取所有的事物，看看内存占用
 			World world = World.getInstance();
 			world.init("xworker");
-			
-			Thing editor = world.getThing("xworker.swt.xwidgets.prototypes.SimpleThingEditor");
-			editor.doAction("run");
+
+			SimpleThingEditor.run();
 		}catch(Exception e){
 			e.printStackTrace();
 		}

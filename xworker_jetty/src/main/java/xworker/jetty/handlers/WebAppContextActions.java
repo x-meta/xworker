@@ -14,6 +14,8 @@ import org.xmeta.util.UtilData;
 
 import xworker.http.WebsocketJavax;
 
+import java.io.File;
+
 public class WebAppContextActions {
 	public static Object create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
@@ -40,6 +42,21 @@ public class WebAppContextActions {
 		}
 				
 		if(self.getBoolean("useXWorkerClassLoader")) {
+			World world = World.getInstance();
+
+			/*
+			File webLib = new File(webApp + "/WEB-INF/lib");
+			if(webLib.exists()) {
+				world.getClassLoader().addJarOrZip(webLib);
+			}
+			File webClasses = new File(webApp + "/WEB-INF/classes");
+			if(webClasses.exists()){
+				try {
+					world.getClassLoader().addClassPath(webClasses.toURI().toURL());
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}*/
 			context.setClassLoader(World.getInstance().getClassLoader());
 		}
 		

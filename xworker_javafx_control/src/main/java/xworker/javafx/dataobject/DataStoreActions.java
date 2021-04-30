@@ -1,26 +1,20 @@
 package xworker.javafx.dataobject;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableView;
 import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataStore;
-import xworker.dataObject.PageInfo;
 import xworker.javafx.dataobject.datastore.DataStoreChoiceBox;
 import xworker.javafx.dataobject.datastore.DataStoreComboBox;
 import xworker.javafx.dataobject.datastore.DataStorePagination;
 import xworker.javafx.dataobject.datastore.DataStoreTableView;
-import xworker.lang.executor.Executor;
-import xworker.util.UtilData;
+import xworker.javafx.thing.form.ThingForm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +22,7 @@ import java.util.Map;
  */
 public class DataStoreActions {
 
+    @SuppressWarnings("unchecked")
     public static DataStore create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
         DataStore store = new DataStore(self, actionContext);
@@ -53,5 +48,29 @@ public class DataStoreActions {
             child.doAction("ceate", actionContext);
         }
         return store;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void load(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+
+        DataStore dataStore = self.doAction("getDataStore", actionContext);
+        Object params = self.doAction("getParams", actionContext);
+        Integer page = self.doAction("getPage", actionContext);
+
+        if(dataStore == null){
+            throw new ActionException("DataStore is null, action=" + self.getMetadata().getPath());
+        }
+        if(params instanceof Map){
+            dataStore.load((Map<String, Object>) params, page);
+        }else if(params instanceof ThingForm){
+            ThingForm form = (ThingForm) params;
+            dataStore.load(form.getValues(), page);
+        }else if(params instanceof DataObjectForm){
+            DataObjectForm form = (DataObjectForm) params;
+            dataStore.load(form.getValues(), page);
+        }else{
+            dataStore.load(page);
+        }
     }
 }
