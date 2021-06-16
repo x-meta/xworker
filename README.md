@@ -45,7 +45,7 @@ XWorker提供了模型编辑器，可以在模型编辑器里编辑模型。由�
 #### 3.3.如何发布模型程序
 同Java程序的打包和发布，模型可以打包到Jar中，动态模型的应用也是Java应用。
 
-更多内容可以参看[XWorker主页](https://www.xworker.org)或[Wiki](./wikis/pages)
+更多内容可以参看[XWorker主页](https://www.xworker.org)或[Wiki](../../wikis/pages)
 
 ## 加入我们
 XWorker是一个基于Apache2.0开源协议的平台，XWorker期待你的参与，请加入我们一起来完善它，QQ群：**312989786**。
