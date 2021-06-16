@@ -1,42 +1,50 @@
-XWorker [English](README_en.md)
-============
-## 项目简介
-XWorker是动态模型的开发平台，使用XWorker可以编辑、运行和发布模型程序。
+# XWorker
 
-XWorker的官网是[XWorker官网](https://www.xworker.org)，可以在官网上下载和安装XWorker，也可以查看文档、示例和教程等。
+XWorker是动态模型的开发平台，XWorker也提供了一些模型库。
 
-## 动态模型简介
-动态模型是一种编程方法，它使用模型来编程，模型可以用XML来表示。
+## 动态模型
 
-比如下面的XML代码是一个模型程序。
+### 1.基于结构化数据的面向对象编程方法
 
-```xml
+动态模型是一种基于模型的面向对象的编程方法，其中模型可以用XML等来表示。
+
+比如下面的XML就是一个模型程序，这个XML的每一个节点都是一个对象。可以点击这里运行模型， 运行后会打开一个窗口，窗口中有一个显示XWorker主页的浏览器。
+
+```
 <?xml version="1.0" encoding="utf-8"?>
-
-<Shell name="HelloWorld" descriptors="xworker.swt.widgets.Shell" text="Hello World" RESIZE="true"
-     width="800" height="600">
+ 
+<Shell name="shell" text="Hello World" descriptors="xworker.swt.widgets.Shell"
+               width="800" height="600">
     <FillLayout name="FillLayout"></FillLayout>
-    <Browser name="Browser" url="https://www.xworker.org" WEBKIT="true"></Browser>
+    <Browser name="Browser" url="https://www.xworker.org"></Browser>
 </Shell>
 ```
 上面的模型是一个SWT应用，运行后截图如下。
+
 ![SWT](https://images.gitee.com/uploads/images/2019/1217/164635_22cd7199_493262.png "SWT应用")
 
-## 编译和运行XWorker
-### 编译
-XWorker包含几个Eclipse项目，都需要导入到Eclipse中，由Eclipse自动编译。
+### 2.动态模型的特点
+-  **动态编程** 
+使用动态模型可以实现动态编程，即在系统运行时实时编程，从而动态修改系统的功能。
+ 
+- **快速编程**
+使用动态模型可以实现快速编程。这是因为模型一般是对各种API的使用接口的封装，通过模型可以快速的使用这些API，并且使用动态模型也可以很容易的把不同的API整合在一起，从而更容易地开发出复杂的应用。
 
-最好也把动态模型的项目导入进来，以免编译不通过。
+### 3.如何使用动态模型
 
-gitee: https://gitee.com/xworker/x-meta.git, github: https://github.com/x-meta/x-meta.git.
+#### 3.1.模型库
+XWorker所使用的动态模型引擎X-Meta是使用Java开发，模型库也是通过Jar的形式发布的，一般在Java项目中引入相关的类库就可以使用动态模型了。
 
-### 运行
-编译通过后，运行xworker_explorer项目下的xworker.ide.XWorkerExplorer。XWorker运行后的截图如下。
+XWorker的模型库是发布到Maven上的，可以在[Maven里](https://mvnrepository.com/search?q=xworker)查看已发布的类库。
 
-![事物管理器](http://git.oschina.net/uploads/images/2016/0623/192549_72e935b0_493262.png "模型管理器")
+#### 3.2.如何编辑和运行模型
+模型虽然可以用XML来表示，但手工编辑模型难度可能会比较大，所以一般使用模型编辑器来编辑模型。
 
-### 打包
-可以运行XWorker目录下的mvn_install_nopause.cmd来打包XWorker，打包后的XWorker在xworker_explorer/target/xworker目录下。
+XWorker提供了模型编辑器，可以在模型编辑器里编辑模型。由于动态模型一般是实时动态编程，所以模型编辑器一般也是你的程序的一部分，可以一边运行程序一般编辑模型。
 
-### 多语言
-XWorker支持中文和英文，不过大部分文档都是中文的，没有对应的英文。 
+#### 3.3.如何发布模型程序
+同Java程序的发布，模型可以打包到Jar中。
+
+## 加入我们
+XWorker是一个基于Apache2.0开源协议的平台，XWorker期待你的参与，请加入我们一起来完善它，QQ群：**312989786**。
+
