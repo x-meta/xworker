@@ -1,4 +1,4 @@
-^1618994530418
+^1627007145173
 @
 sname
 DataObject
@@ -10,6 +10,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 sgroup
@@ -57,7 +59,7 @@ Sdescription
 	<li><strong>boolean doDelete(DataObject theData)</strong><br />
 	删除数据，如果删除失败返回false,否则返回true。<br />
 	&nbsp;</li>
-	<li><strong>List&lt;DataObject&gt; doQuery(Thing conditionConfig, Map&lt;String, Object&gt; conditionData, Map&lt;String, Object&gt; pageInfo)</strong><br />
+	<li><strong>List&lt;DataObject&gt; doQuery(QueryConfig queryConfig)</strong><br />
 	查询数据并返回复合条件的数据对象列表。查询条件可以参看<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.dataObject.query.Condition">xworker.dataObject.query.Condition</a>。</li>
 </ul>
 
@@ -303,32 +305,11 @@ false
       xworker.lang.actions.Inout/@ins
       sid
       ins
-        @/@actions/@updateBatch/@ins/@conditionData
+        @/@actions/@updateBatch/@ins/@queryConfig
         sname
-        conditionData
+        queryConfig
         stype
-        java.util.Map<String, Object>
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescription
-        <p>查询条件数据。</p>
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sth_createIndex
-        false
-        sid
-        conditionData
-        @/@actions/@updateBatch/@ins/@conditionConfig
-        sname
-        conditionConfig
-        stype
-        org.xmeta.Thing
+        xworker.dataObject.query.QueryConfig
         stypeCheck
         false
         soptional
@@ -339,10 +320,28 @@ false
         exception
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
         sth_createIndex
         false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
         sid
-        conditionConfig
+        queryConfig
     @/@actions/@delete
     sname
     delete
@@ -428,28 +427,11 @@ false
       xworker.lang.actions.Inout/@ins
       sid
       ins
-        @/@actions/@deleteBatch/@ins/@conditionData
+        @/@actions/@deleteBatch/@ins/@queryConfig
         sname
-        conditionData
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescription
-        <p>查询条件数据。</p>
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sth_createIndex
-        false
-        sid
-        conditionData
-        @/@actions/@deleteBatch/@ins/@conditionConfig
-        sname
-        conditionConfig
+        queryConfig
+        stype
+        xworker.dataObject.query.QueryConfig
         stypeCheck
         false
         soptional
@@ -460,10 +442,28 @@ false
         exception
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
         sth_createIndex
         false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
         sid
-        conditionConfig
+        queryConfig
     @/@actions/@query
     sname
     query
@@ -518,45 +518,11 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
       xworker.lang.actions.Inout/@ins
       sid
       ins
-        @/@actions/@query/@ins/@theData
+        @/@actions/@query/@ins/@queryConfig
         sname
-        conditionConfig
+        queryConfig
         stype
-        org.xmeta.Thing
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sid
-        theData
-        @/@actions/@query/@ins/@conditionData
-        sname
-        conditionData
-        stype
-        java.util.Map<String, Object>
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sid
-        conditionData
-        @/@actions/@query/@ins/@pageInfo
-        sname
-        pageInfo
-        stype
-        java.util.Map<String, Object>
+        xworker.dataObject.query.QueryConfig
         stypeCheck
         false
         soptional
@@ -573,10 +539,22 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         false
         sth_registMyChilds
         false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
         sth_mark
         false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
         sid
-        pageInfo
+        queryConfig
     @/@actions/@validate
     sname
     validate
@@ -1799,98 +1777,11 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
       false
       sid
       ins
-        @/@actions/@doQuery/@ins/@theData
+        @/@actions/@doQuery/@ins/@queryConfig
         sname
-        theData
+        queryConfig
         stype
-        xworker.dataObject.DataObject
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sinheritDescription
-        false
-        sth_createIndex
-        false
-        sth_registMyChilds
-        false
-        sth_registDisabled
-        false
-        sth_fileMonitor
-        false
-        sth_mark
-        false
-        sid
-        theData
-        @/@actions/@doQuery/@ins/@conditionData
-        sname
-        conditionData
-        stype
-        java.util.Map<String, Object>
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sinheritDescription
-        false
-        sth_createIndex
-        false
-        sth_registMyChilds
-        false
-        sth_registDisabled
-        false
-        sth_fileMonitor
-        false
-        sth_mark
-        false
-        sid
-        conditionData
-        @/@actions/@doQuery/@ins/@condition
-        sname
-        condition
-        stype
-        org.xmeta.Thing
-        stypeCheck
-        false
-        soptional
-        true
-        scheck
-        false
-        scheckLevel
-        exception
-        sdescriptors
-        xworker.lang.actions.Inout/@ins/@param
-        sinheritDescription
-        false
-        sth_createIndex
-        false
-        sth_registMyChilds
-        false
-        sth_registDisabled
-        false
-        sth_fileMonitor
-        false
-        sth_mark
-        false
-        sid
-        condition
-        @/@actions/@doQuery/@ins/@pageInfo
-        sname
-        pageInfo
-        stype
-        java.util.Map<String, Object>
+        xworker.dataObject.query.QueryConfig
         stypeCheck
         false
         soptional
@@ -1917,8 +1808,123 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         false
         sth_registQueryOnlySelf
         false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
         sid
-        pageInfo
+        queryConfig
+    @/@actions/@createIterator
+    sname
+    createIterator
+    sunimplementedException
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@NOOP
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sid
+    createIterator
+      @/@actions/@createIterator/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sid
+      ins
+        @/@actions/@createIterator/@ins/@queryConfig
+        sname
+        queryConfig
+        stype
+        xworker.dataObject.query.QueryConfig
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        queryConfig
     @/@actions/@menu_toJavaModel
     sname
     menu_toJavaModel

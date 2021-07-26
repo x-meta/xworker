@@ -3,10 +3,12 @@ package xworker.swt.app;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionParams;
 
+import org.xmeta.util.ThingLoader;
 import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
@@ -41,7 +43,14 @@ public class MenuContainer {
 		if(menuThing == null) {
 			return;
 		}
-		
+
+		//编辑器以及编辑器绑定的对象
+		Thing editorThing = actionContext.getObject("editorThing");
+		Object objectForThingLoader = null;
+		if(editorThing != null){
+			objectForThingLoader = editorThing.doAction("getObjectForThingLoader", actionContext);
+		}
+
 		String refType = menuConfig.doAction("getRefType", actionContext);
 		String refMenuPath = menuConfig.doAction("getRefMenuPath", actionContext);
 		MenuItem refItem = getReferenceMenuItem(menu, refMenuPath);
@@ -55,16 +64,32 @@ public class MenuContainer {
 				index = index + 1;
 			}
 		}
-		
-		if(hasRoot) {
-			ItemIndex.set(index);
-			menuThing.doAction("create", actionContext, "parent", parent, "menu", parent);
-		}else {
-			for(Thing itemThing : menuThing.getChilds()) {
+
+		Bindings bindings = actionContext.push();
+		try {
+			bindings.put("parent", parent);
+			bindings.put("menu", parent);
+
+			if (hasRoot) {
 				ItemIndex.set(index);
-				index++;
-				itemThing.doAction("create", actionContext, "parent", parent, "menu", parent);
+				if(objectForThingLoader == null) {
+					menuThing.doAction("create", actionContext);
+				}else{
+					ThingLoader.load(objectForThingLoader, menuThing, actionContext);
+				}
+			} else {
+				for (Thing itemThing : menuThing.getChilds()) {
+					ItemIndex.set(index);
+					index++;
+					if(objectForThingLoader == null) {
+						itemThing.doAction("create", actionContext);
+					}else{
+						ThingLoader.load(objectForThingLoader, itemThing, actionContext);
+					}
+				}
 			}
+		}finally {
+			actionContext.pop();
 		}
 	}
 	

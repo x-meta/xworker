@@ -20,15 +20,15 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
+import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectUtil;
 
 
 /**
@@ -72,17 +72,13 @@ public class UtilCondition {
 	public static final byte between = 16;
 	/** not in */
     public static final byte notin = 17;
+    /** 自定义 */
+    public static final byte selfDefine = 100;
 	public static final String AND = "and";
 	public static final String OR = "or";
 	
 	/**
 	 * 根据操作符判断是否匹配。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param operator
-	 * @param ignoreNull
-	 * @return
 	 */
 	public static boolean isMatch(Object value, Object conditionValue, byte operator, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		switch(operator){
@@ -125,14 +121,6 @@ public class UtilCondition {
 	
 	/**
 	 * 比较like。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean like(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		return UtilCondition.lrlike(value, conditionValue, type, pattern, ignoreNull, actionContext);		
@@ -141,13 +129,6 @@ public class UtilCondition {
 	/**
 	 * 左类似。
 	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean llike(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(value == conditionValue){
@@ -159,7 +140,7 @@ public class UtilCondition {
 		if(value != null && conditionValue == null){
 			return false;
 		}
-		if(value == null && conditionValue != null){
+		if(value == null){
 			return false;
 		}
 			
@@ -170,13 +151,6 @@ public class UtilCondition {
 	/**
 	 * 右类似。
 	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean rlike(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(value == conditionValue){
@@ -198,14 +172,6 @@ public class UtilCondition {
 	
 	/**
 	 * 是否在里面。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean in(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(value == conditionValue){
@@ -217,7 +183,7 @@ public class UtilCondition {
 		if(value != null && conditionValue == null){
 			return false;
 		}
-		if(value == null && conditionValue != null){
+		if(value == null){
 			return false;
 		}
 					
@@ -233,14 +199,6 @@ public class UtilCondition {
 	
 	/**
 	 * 是否在不在里面。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean notin(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(value == conditionValue){
@@ -268,14 +226,6 @@ public class UtilCondition {
 	
 	/**
 	 * 正则表达式。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean regex(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(conditionValue == null && ignoreNull){
@@ -297,14 +247,6 @@ public class UtilCondition {
 	
 	/**
 	 * 通过Java的equals比较。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean equals(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(conditionValue == null && ignoreNull){
@@ -325,14 +267,6 @@ public class UtilCondition {
 	
 	/**
 	 * 是否为null。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean isnull(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		return value == null;
@@ -340,14 +274,6 @@ public class UtilCondition {
 	
 	/**
 	 * 是否部位null。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean notnull(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		return value != null;
@@ -355,14 +281,6 @@ public class UtilCondition {
 	
 	/**
 	 * 左右类似。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean lrlike(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		if(value == conditionValue){
@@ -486,7 +404,7 @@ public class UtilCondition {
 		if(value != null && conditionValue == null){
 			return false;
 		}
-		if(value == null && conditionValue != null){
+		if(value == null){
 			return false;
 		}
 			
@@ -529,12 +447,12 @@ public class UtilCondition {
 			}else if("boolean".equals(type)){
 				if(value instanceof Boolean && conditionValue instanceof String){
 					String v2 = ((String) conditionValue).trim().toLowerCase();
-					boolean bv2 = v2.equals(true) || v2.equals(1);
-					return ((Boolean) value).booleanValue() == bv2;
+					boolean bv2 = v2.equals("true") || v2.equals("1");
+					return (Boolean) value == bv2;
 				}else if(value instanceof String && conditionValue instanceof Boolean){
 					String v2 = ((String) value).trim().toLowerCase();
-					boolean bv2 = v2.equals(true) || v2.equals(1);
-					return ((Boolean) conditionValue).booleanValue() == bv2;
+					boolean bv2 = v2.equals("true") || v2.equals("1");
+					return (Boolean) conditionValue == bv2;
 				}
 			}else if(value.toString().equals(conditionValue.toString())){
 			    return true;
@@ -546,14 +464,6 @@ public class UtilCondition {
 	
 	/**
 	 * 比较大于等于。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean gteq(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		return UtilCondition.eq(value, conditionValue, type, pattern, ignoreNull, actionContext) 
@@ -649,14 +559,6 @@ public class UtilCondition {
 	
 	/**
 	 * 比较两个值小于。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean lt(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		try{
@@ -668,14 +570,6 @@ public class UtilCondition {
 	
 	/**
 	 * 比较小于等于。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
 	 */
 	public static boolean lteq(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext){
 		return UtilCondition.lt(value, conditionValue, type, pattern, ignoreNull, actionContext) ||
@@ -684,15 +578,6 @@ public class UtilCondition {
 	
 	/**
 	 * 比较两个值小于。
-	 * 
-	 * @param value
-	 * @param conditionValue
-	 * @param type
-	 * @param pattern
-	 * @param ignoreNull
-	 * @param actionContext
-	 * @return
-	 * @throws ParseException 
 	 */
 	@SuppressWarnings("unchecked")
 	private static boolean lt1(Object value, Object conditionValue, String type, String pattern, boolean ignoreNull, ActionContext actionContext) throws ParseException{
@@ -790,12 +675,6 @@ public class UtilCondition {
 	
 	/**
 	 * 获取条件设置的查询条件的值。
-	 * 
-	 * @param condition
-	 * @param actionContext
-	 * @return
-	 * @throws ParseException 
-	 * @throws OgnlException 
 	 */
 	public static Object getConditionValue(Thing condition, ActionContext actionContext) throws OgnlException, ParseException{
 		Object datas = actionContext.get("datas");
@@ -805,15 +684,202 @@ public class UtilCondition {
 	
 	/**
 	 * 添加一个要执行的查询条件,这个值是要设置到查询中的。
-	 * 
-	 * @param condition
-	 * @param value
-	 * @param actionContext
 	 */
 	@SuppressWarnings("unchecked")
 	public static void addConditionValue(Thing condition, Object value, ActionContext actionContext){
 		List<Map<String, Object>> cds = (List<Map<String, Object>>) actionContext.get("cds");
 	    Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",value, "operator",getOperator(condition), "condition", condition});
         cds.add(cd);
+	}
+
+	public static boolean check(DataObject dataObject, byte operator, String name, Object value, String multiJoin){
+		Thing attribute = dataObject.getMetadata().getDefinition(name);
+
+		Object dataValue = dataObject.get("name");
+
+		if(operator == Condition.in || operator == Condition.notin || operator == Condition.between || operator == Condition.notbetween){
+			List<?> values;
+			if(value instanceof Object[]){
+				values = Arrays.asList((Object[]) value);
+			}else if(value instanceof List<?>){
+				values = (List<?>) value;
+			}else{
+				values = Collections.singletonList(value);
+			}
+
+			return check(operator, dataValue, values);
+		}else if(operator == Condition.isnull){
+			return dataValue == null;
+		}else if(operator == Condition.notnull){
+			return dataValue != null;
+		}
+
+		if(value instanceof Object[]){
+			for(Object v : ((Object[]) value)){
+				v = DataObjectUtil.getValue(v, attribute);
+				if(Condition.AND.equals(multiJoin)){
+					if(!check(operator, dataValue, v)){
+						return false;
+					}
+				}else{
+					if(check(operator, dataValue, v)){
+						return true;
+					}
+				}
+			}
+		}else if(value instanceof List<?>){
+			for(Object v : (List<?>) value){
+				v = DataObjectUtil.getValue(v, attribute);
+				if(Condition.AND.equals(multiJoin)){
+					if(!check(operator, dataValue, v)){
+						return false;
+					}
+				}else{
+					if(check(operator, dataValue, v)){
+						return true;
+					}
+				}
+			}
+		}else{
+			dataValue = DataObjectUtil.getValue(dataValue, attribute);
+			return check(operator, dataValue, value);
+		}
+
+		return false;
+	}
+
+	public static boolean check(byte operator, Object dataValue, Object conValue){
+		switch (operator){
+			case Condition.eq:
+			case Condition.equals:
+				return eq(dataValue, conValue);
+			case Condition.gt:
+				return gt(dataValue, conValue);
+			case Condition.gteq:
+				return gteq(dataValue, conValue);
+			case Condition.like:
+			case Condition.lrlike:
+				return String.valueOf(dataValue).contains(String.valueOf(conValue));
+			case Condition.llike:
+				return String.valueOf(dataValue).startsWith(String.valueOf(conValue));
+			case Condition.rlike:
+				return String.valueOf(dataValue).endsWith(String.valueOf(conValue));
+			case Condition.lt:
+				return lt(dataValue, conValue);
+			case Condition.lteq:
+				return lteq(dataValue, conValue);
+			case Condition.uneq:
+				return !eq(dataValue, conValue);
+			case Condition.regex:
+				return String.valueOf(dataValue).matches(String.valueOf(conValue));
+		}
+
+		return false;
+	}
+
+	public static boolean check(byte operator, Object dataValue, List<Object> values){
+		switch (operator){
+			case Condition.between:
+				if(values.size() == 2){
+					return gteq(dataValue, values.get(0)) && lteq(dataValue, values.get(1));
+				}else{
+					return false;
+				}
+			case Condition.notbetween:
+				if(values.size() == 2){
+					return lt(dataValue, values.get(0)) || gt(dataValue, values.get(1));
+				}else{
+					return false;
+				}
+			case Condition.in:
+				for(Object value : values){
+					if(eq(dataValue, value)){
+						return true;
+					}
+				}
+
+				return false;
+			case Condition.notin:
+				for(Object value : values){
+					if(eq(dataValue, value)){
+						return false;
+					}
+				}
+
+				return true;
+
+		}
+
+		return false;
+	}
+
+	public static boolean eq(Object dataValue, Object conValue){
+		return Objects.equals(dataValue, conValue);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean gt(Object dataValue, Object conValue){
+		if(dataValue == null && conValue == null){
+			return false;
+		}else if(dataValue == null){
+			return true;
+		}else if(conValue == null){
+			return false;
+		}
+
+		if(dataValue instanceof Comparable && conValue instanceof Comparable){
+			return ((Comparable) conValue).compareTo((Comparable) dataValue) > 0;
+		}else return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean gteq(Object dataValue, Object conValue){
+		if(dataValue == null && conValue == null){
+			return false;
+		}else if(dataValue == null){
+			return false;
+		}else if(conValue == null){
+			return true;
+		}
+
+		if(dataValue instanceof Comparable && conValue instanceof Comparable){
+			return ((Comparable) conValue).compareTo((Comparable) dataValue) >= 0;
+		}else{
+			return false;
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean lt(Object dataValue, Object conValue){
+		if(dataValue == null && conValue == null){
+			return false;
+		}else if(dataValue == null){
+			return false;
+		}else if(conValue == null){
+			return true;
+		}
+
+		if(dataValue instanceof Comparable && conValue instanceof Comparable){
+			return ((Comparable) conValue).compareTo((Comparable) dataValue) < 0;
+		}else{
+			return false;
+		}
+	}
+
+	@SuppressWarnings({"unchecked"})
+	public static boolean lteq(Object dataValue, Object conValue){
+		if(dataValue == null && conValue == null){
+			return false;
+		}else if(dataValue == null){
+			return true;
+		}else if(conValue == null){
+			return false;
+		}
+
+		if(dataValue instanceof Comparable && conValue instanceof Comparable){
+			return ((Comparable) conValue).compareTo((Comparable) dataValue) <= 0;
+		}else{
+			return false;
+		}
 	}
 }

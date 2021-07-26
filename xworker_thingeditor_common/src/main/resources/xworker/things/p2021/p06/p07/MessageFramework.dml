@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="MessageFramework" descriptors="xworker.content.QuickContent" label="消息框架"
+     type="thingDesc" group="xworker.-1000|lang" icon="icons/html.png" th_sortWeight="40"
+     simpleBrowser="true" en_label="Message" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>消息框架</h1>
+
+<h2>1.作用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 消息框架是基于发布和订阅的简单消息框架。消息发送者可以把一个对象发布到一个主题上，消息消费者可以订阅一个或者多个主题。</p>
+
+<h2>2.发布消息</h2>
+
+<pre class="brush:groovy;">
+import xworker.lang.system.message.Message;
+
+//创建消息，主题不能为空，主题为自定义
+Message message = new Message(&quot;/test/atopic&quot;);
+
+//发布消息
+message.publish();</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 除了主题Message还可以设置其它可选参数。</p>
+
+<h2>3.订阅和处理消息</h2>
+
+<h3>3.1.订阅和处理消息</h3>
+
+<pre class="brush:java;">
+import xworker.lang.system.message.MessageConsumer ;
+
+//创建MessageConsumer
+MessageConsumer messageConsumer = new MessageConsumer(){
+	@Override
+	public void handleMessage(Message message) {
+		//处理消息...
+	}
+};
+
+//订阅一个主题
+messageConsumer.subscribe(&quot;/test/atopic&quot;);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; MessageConsumer还有其它几个构造函数，是为模型使用的，参看具体模型的文档。</p>
+
+<h3>3.2.取消订阅</h3>
+
+<pre class="brush:groovy;">
+//取消订阅一个主题
+MessageConsumer.unsubscribe(&quot;test.atopic&quot;);
+
+//取消订阅所有已经订阅的主题
+MessageConsumer.unsubscribeAll();</pre>
+
+<h2>4.主题规则</h2>
+
+<h3>4.1.多级主题</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 多级主题使用/来分割，如/test/system/monitor；</p>
+
+<h3>4.2.通配符</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 支持#通配符，#代表一级后多级主题。如/test/#，/test/#/montior;</p>
+
+<h2>5.消息中心</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 消息发布者应该注册消息相关的信息，这样消息处理者能有一个参考。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在<a href="javascript:invoke('composite:xworker.lang.system.message.MessageDescriptorViewer/@messageViewer')">消息中西</a>查看已经注册的消息，消息中心也可以在模型管理器的主工具栏中打开。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

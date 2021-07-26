@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="MavenActions" descriptors="xworker.lang.MetaDescriptor3" th_registThing="child|xworker.lang.actions.Actions"
+     th_registMyChilds="true">
+    <description><![CDATA[<p>Maven相关的动作集合。</p>
+]]></description>
+    <thing name="CopyPomDependenciesToDir" _xmeta_id_="CopyDependencies" extends="xworker.lang.actions.SelfAction"
+         group="org.apache.maven">
+        <description><![CDATA[<p><strong>拷贝Mavan项目的依赖到执行的目录下</strong></p>
+
+<p>&nbsp;&nbsp; 启动一个系统进程，执行mvn dependency:copy-dependencies -DoutputDirectory=${outputDirectory}命令。</p>
+
+<p><strong>mvn命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在<a href="javascript:invoke('composite:xworker.ide.worldexplorer.swt.tools.PreferencesEditor/@mainComposite')">参数配置</a>里设置，或重写String getMvnCommand()方法。</p>
+
+<p>&nbsp;</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.org.apache.maven.MavenActions"
+                 methodName="copyPomDependenciesToDir" varScope="Local">
+                <code><![CDATA[def cmdarray = self.doAction("getMvnCommand", actionContext) + 
+                  "\ndependency:copy-dependencies\n-f\n" +
+               self.doAction("getPomFile", actionContext) + 
+               "\n-DoutputDirectory=" + 
+               self.doAction("getOutputDirectory", actionContext);
+
+//println cmdarray;               
+def timeout = self.doAction("getTimeout", actionContext);
+def sync = self.doAction("isSync", actionContext);
+exec(actionContext, "cmdarray", cmdarray, "timeout", timeout, "sync", sync);]]></code>
+                <ActionDefined>
+                    <Exec name="exec" _xmeta_id_="Exec" descriptors="xworker.java.lang.RuntimeActions/@Exec"
+                         timeout="var:timeout" cmdarray="var:cmdarray">
+                        <actions>
+                            <GetVariable name="isSync" varName="sync"></GetVariable>
+                        </actions>
+                    </Exec>
+                </ActionDefined>
+            </JavaAction>
+            <GetString name="getPomFile" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="pomFile" usage="params"></GetString>
+            <GetString name="getOutputDirectory" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="outputDirectory" usage="params"></GetString>
+            <GetBoolean name="isSync" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="sync" defaultValue="false" usage="params"></GetBoolean>
+            <GetLong name="getTimeout" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+                 attributeName="timeout" usage="params"></GetLong>
+            <GetMavenCommand name="getMvnCommand" _xmeta_id_="getMvnCommand1" descriptors="xworker.org.apache.maven.MavenActions/@GetMavenCommand"
+                 usage="params"></GetMavenCommand>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="pomFile" inputtype="file" size="60"></attribute>
+        <attribute name="outputDirectory" inputtype="filePath" size="60"></attribute>
+        <attribute name="sync" inputtype="truefalse" default="false" description="&lt;p&gt;如果同步执行，那么会把进程的outputStream的内容当作字符串返回。&lt;/p&gt;"></attribute>
+        <attribute name="timeout" default="10000"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="CopyDependenciesToDir" extends="xworker.lang.actions.SelfAction" group="tools.maven">
+        <description><![CDATA[<p><strong>拷贝Maven依到指定目录下</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在属性dependencies里指定Maven的依赖，执行时会生成一个pom.xml文件，最后会执行mvn dependency:copy-dependencies拷贝依赖到指定目录下。</p>
+
+<p><strong>mvn命令</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在<a href="javascript:invoke('composite:xworker.ide.worldexplorer.swt.tools.PreferencesEditor/@mainComposite')"><font color="#0066cc">参数配置</font></a>里设置，或重写String getMvnCommand()方法。</p>
+]]></description>
+        <actions>
+            <JavaAction name="run" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.org.apache.maven.MavenActions"
+                 methodName="copyDependenciesToDir" varScope="Local">
+                <code><![CDATA[//依赖
+def dependencies = self.doAction("getDependencies", actionContext);
+
+//输出目录
+def outputDir = self.doAction("getOutputDir", actionContext);
+if(outputDir.exists() == false){
+    outputDir.mkdirs();
+}
+
+//是否拷贝源码
+def copySource = self.doAction("isCopySource", actionContext);
+
+def path = shortenPath(actionContext, "thing", self);
+path = path.replace('.', '/');
+path = world.getPath() + "/work/maven/" + path + ".pom";
+def pomOutFile = new File(path);
+pomOutFile.getParentFile().mkdirs();
+
+//生成pom
+toPom(actionContext, "dependencies", dependencies, "thing", self,
+     "output", pomOutFile.getAbsolutePath(), "copySource", copySource,
+     "libOutout", outputDir.getAbsolutePath());
+     
+//执行pom
+//def mvnPath = self.doAction("getMvnPath", actionContext);
+//def cmd = mvnPath + "\npackage \n-f \n" + pomOutFile.getAbsolutePath();
+
+def cmd = self.doAction("getMvnCommand", actionContext) + 
+                  "\ndependency:copy-dependencies\n-f\n" +
+               pomOutFile.getAbsolutePath() + 
+               "\n-DoutputDirectory=" + 
+               outputDir.getAbsolutePath();
+exec(actionContext, "cmd", cmd);]]></code>
+                <ActionDefined>
+                    <TextTemplate name="toPom" descriptors="xworker.lang.text.TextTemplate"
+                         output="output">
+                        <templateCode><![CDATA[<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.xworker</groupId>
+  <artifactId>${thing.getMetadata().getName()}</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>${thing.getMetadata().getName()}</name>
+  <url>http://maven.apache.org</url>
+  <licenses>
+     <license>
+       <name>The Apache License, Version 2.0</name>
+       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+     </license>
+   </licenses>
+   <properties>
+	  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	  	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	  	<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+	  	<argLine>-Dfile.encoding=UTF-8</argLine>
+  </properties>  
+  <build>  
+    <plugins>        
+	  <!-- 拷贝依赖的jar包到lib目录 -->  
+     <plugin>  
+         <groupId>org.apache.maven.plugins</groupId>  
+         <artifactId>maven-dependency-plugin</artifactId>  
+         <version>2.10</version>
+         <executions>  
+             <execution>  
+                 <id>copy</id>  
+                 <phase>package</phase>  
+                 <goals>
+	              <goal>copy-dependencies</goal>
+	            </goals>
+                 <configuration>  
+                     <outputDirectory>  
+                         ${libOutout}
+                     </outputDirectory>
+                 </configuration>  
+             </execution>  
+             <#if copySource>
+             <execution>  
+                 <id>copy-source</id>  
+                 <phase>package</phase>  
+                 <goals>
+	              <goal>copy-dependencies</goal>
+	            </goals>
+                 <configuration>  
+                 	<includeArtifactIds>xworker_function,xworker_core,xworker_dataobject,xworker_swt,xworker_web,xworker_app,xworker_app,xworker_jfreechart,org.xmeta.engine</includeArtifactIds>
+                     <classifier>sources</classifier>
+                     <outputDirectory>  
+                         ${output}
+                     </outputDirectory>
+                     <type>java-source</type>  
+                 </configuration>  
+             </execution>  
+             </#if>
+         </executions>  
+     </plugin>         
+    </plugins>
+    </build>
+    <dependencies>
+    ${dependencies?if_exists}
+    </dependencies>
+</project>]]></templateCode>
+                    </TextTemplate>
+                    <GetShortenPath name="shortenPath" descriptors="xworker.lang.actions.thing.ThingActions/@GetShortenPath"
+                         thing="var:thing"></GetShortenPath>
+                    <Exec name="exec" descriptors="xworker.java.lang.RuntimeActions/@Exec"
+                         sync="true" cmdarray="var:cmd"></Exec>
+                </ActionDefined>
+            </JavaAction>
+            <GetString name="getDependencies" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="dependencies"></GetString>
+            <GetBoolean name="isCopySource" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+                 attributeName="copySource"></GetBoolean>
+            <GetFile name="getOutputDir" _xmeta_id_="getOutputDir1" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+                 attributeName="outputDir"></GetFile>
+            <GetString name="getMvnPath" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+                 attributeName="mvnPath"></GetString>
+            <GetMavenCommand name="getMvnCommand" _xmeta_id_="getMvnCommand1" descriptors="xworker.org.apache.maven.MavenActions/@GetMavenCommand"></GetMavenCommand>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="outputDir" _xmeta_id_="dir" inputtype="filePath" size="60"></attribute>
+        <attribute name="copySource" inputtype="truefalse" default="false"></attribute>
+        <attribute name="dependencies" inputtype="textarea"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+    <thing name="GetMavenCommand" extends="xworker.lang.actions.SelfAction" group="org.apache.maven">
+        <description><![CDATA[<p>Maven的可执行命令放在偏好配置里的，通过偏好配置编写。</p>
+]]></description>
+        <actions>
+            <Ognl name="run" expression="@xworker.org.apache.maven.MavenConfig@getMavenCommand()"></Ognl>
+        </actions>
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

@@ -3,9 +3,11 @@ package xworker.swt.app;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.CoolItem;
 import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.annotation.ActionParams;
 
+import org.xmeta.util.ThingLoader;
 import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
@@ -39,7 +41,14 @@ public class CoolBarContainer {
 		if(itemThing == null) {
 			return;
 		}
-		
+
+		//编辑器以及编辑器绑定的对象
+		Thing editorThing = actionContext.getObject("editorThing");
+		Object objectForThingLoader = null;
+		if(editorThing != null){
+			objectForThingLoader = editorThing.doAction("getObjectForThingLoader", actionContext);
+		}
+
 		String refType = menuConfig.doAction("getRefItemType", actionContext);
 		String refMenuPath = menuConfig.doAction("getRefItemPath", actionContext);
 		CoolItem refItem = getReferenceItem(coolBar, refMenuPath);
@@ -55,7 +64,17 @@ public class CoolBarContainer {
 		}
 		
 		ItemIndex.set(index);
-		itemThing.doAction("create", actionContext, "parent", parent);
+		Bindings bindings = actionContext.push();
+		try {
+			bindings.put("parent", parent);
+			if(objectForThingLoader == null){
+				itemThing.doAction("create", actionContext);
+			}else{
+				ThingLoader.load(objectForThingLoader, itemThing, actionContext);
+			}
+		}finally {
+			actionContext.pop();
+		}
 		CoolBarCreator.initCoolBar(parent);
 		parent.layout();
 		parent.getParent().layout();

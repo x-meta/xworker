@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="QuickContent" descriptors="xworker.lang.MetaDescriptor3" icon="icons/application_cascade.png"
+     en_label="QuickFunction" th_thingRegistViewer="self">
+    <description><![CDATA[<p><strong>快速内容</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 用于快速创建各种类型的内容的界面。如网页、说明文档、向导和各种演示等等。</p>
+
+<p><strong>类型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 要显示的内容的类型。</p>
+
+<ul>
+	<li><strong>url</strong><br />
+	在WEB浏览器中打开一个url。&nbsp;</li>
+	<li><strong>thingDesc</strong><br />
+	在WEB浏览器中打开一个事物的文档。</li>
+	<li><strong>thingControl</strong><br />
+	在WEB浏览器中打开一个WEB应用。</li>
+	<li><strong>thingEditor</strong><br />
+	事物编辑器。</li>
+	<li><strong>thingRegist</strong><br />
+	事物注册器，在path中设置，如:child|xxxxxx|desc|openMethod|displayType。其中child是注册类型，xxxxx是注册到的事物地址；desc是创建事物时的默认描述者；openMethod是默认打开方式，如thingDesc等；displayType是显示方式，有TabFolder和Composite两种。</li>
+	<li><strong>composite</strong><br />
+	打开一个SWT的面板。</li>
+	<li><strong>shell</strong><br />
+	打开一个SWT窗口。</li>
+	<li><strong>uiFlow</strong><br />
+	打开一个界面流程应用。</li>
+	<li><strong>uiFunction</strong><br />
+	打开一个交互函数。</li>
+	<li><strong>autoDemo</strong><br />
+	打开一个自动演示。</li>
+	<li><strong>swtDemo</strong><br />
+	打开一个SWT演示。</li>
+	<li><strong>webDemo</strong><br />
+	打开一个WEB应用演示。</li>
+	<li><strong>thingDemo</strong><br />
+	打开一个事物演示。</li>
+	<li><strong>action</strong><br />
+	执行一个动作。</li>
+	<li><strong>groovy</strong><br />
+	可以修改和执行的groovy脚本。</li>
+	<li><strong>dataObjectEditor</strong><br />
+	编辑一个数据对象</li>
+	<li><strong>dataObjectSelector</strong><br />
+	编辑和选择一个数据对象的数据，需要实现void dataObjectSelected(DataObject data)方法。</li>
+	<li><strong>dataObjectMultiSelector</strong><br />
+	编辑并可以选择多个数据对象，需要实现void dataObjectSelected(List&lt;DataObject&gt; datas)方法。</li>
+	<li><strong>code</strong><br />
+	代码，显示一段代码，可以通过codeType指定代码着色。</li>
+	<li><strong>State</strong><br />
+	简单的基于状态机的编程方法。</li>
+</ul>
+
+<p><strong>获取要打开的内容的方法</strong></p>
+
+<p>&nbsp;&nbsp; 首先通过path获取，除了url其它基本都当作事物的路径，如果path为空，那么获取第一个子事物作为要演示的内容。</p>
+]]></description>
+    <actions>
+        <GetThing name="getThing" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="path"></GetThing>
+        <GetString name="getString" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="path"></GetString>
+        <GetString name="getCode" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="code"></GetString>
+        <NOOP name="init"></NOOP>
+        <JavaAction name="run" outerClassName="xworker.groovy.GroovyAction" className="GroovyAction"
+             methodName="run"></JavaAction>
+        <NOOP name="dataObjectSelected"></NOOP>
+        <JavaAction name="create" outerClassName="xworker.content.QuickContent" methodName="create"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="type" inputtype="select" default="url">
+        <value name="url" value="url"></value>
+        <value name="thingDesc" value="thingDesc"></value>
+        <value name="thingControl" value="thingControl"></value>
+        <value name="thingEditor" value="thingEditor"></value>
+        <value name="thingRegist" value="thingRegist"></value>
+        <value name="composite" value="composite"></value>
+        <value name="shell" value="shell"></value>
+        <value name="uiFlow" value="uiFlow"></value>
+        <value name="uiFunction" value="uiFunction"></value>
+        <value name="autoDemo" value="autoDemo"></value>
+        <value name="swtDemo" value="swtDemo"></value>
+        <value name="swtGuide" value="swtGuide"></value>
+        <value name="webDemo" value="webDemo"></value>
+        <value name="thingDemo" value="thingDemo"></value>
+        <value name="action" value="action"></value>
+        <value name="groovy" value="groovy"></value>
+        <value name="dataObjectEditor" value="dataObjectEditor"></value>
+        <value name="dataObjectSelector" value="dataObjectSelector"></value>
+        <value name="dataObjectMultiSelector" value="dataObjectMultiSelector"></value>
+        <value name="code" value="code"></value>
+        <value name="html" value="html"></value>
+        <value name="state" value="state"></value>
+    </attribute>
+    <attribute name="path" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="group" size="60"></attribute>
+    <attribute name="groupDescriptor" inputtype="truefalse" default="false" description="&lt;p&gt;是否是分组的描述，如果是那么分组使用该模型来显示，也会用自己的权限替换分组的权重。&lt;/p&gt;"></attribute>
+    <attribute name="icon" _xmeta_id_="group1" inputtype="inputSelect" size="60" default="icons/folder_table.png">
+        <value name="Word" value="icons/font.png"></value>
+        <value name="Folder" value="icons/folder_table.png"></value>
+        <value name="Html" value="icons/html.png"></value>
+        <value name="Url" value="icons/world.png"></value>
+        <value name="Application" value="icons/application.png"></value>
+        <value name="Tools" value="icons/wrench.png"></value>
+        <value name="Help" value="icons/help.png"></value>
+        <value name="Example" value="icons/application_view_icons.png"></value>
+        <value name="Setting" value="icons/server_edit.png"></value>
+        <value name="Guide" value="icons/user_comment.png"></value>
+    </attribute>
+    <attribute name="th_sortWeight" _xmeta_id_="sortWeight" label="排序权重" description="&lt;p&gt;排序时的权重，比如显示在树节点中时。&lt;/p&gt;"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false" en_label="Sort Weight"></attribute>
+    <attribute name="codeType" group="Code"></attribute>
+    <attribute name="styledTextForInsert" size="60" group="Code" default="parentContext.parentContext.codeText">
+        <description><![CDATA[<p>用于获取可以插入代码的Text或StyledText控件。如果存在，界面上会有一个<strong>插入(Insert)</strong>按钮。</p>
+
+<p><strong>获取方法：</strong></p>
+
+<ul>
+	<li>先从父变量上下文中获取（递归）</li>
+	<li>如果没有，使用Ognl表达式从当前变量上下文获取。&nbsp;<br />
+	&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>]]></description>
+    </attribute>
+    <attribute name="code" inputtype="textarea" group="Code" inputattrs="codeName=java codeType=java wrap=false fillBoth=true cols= rows="></attribute>
+    <attribute name="useTargetThingDoc" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>使用目标的事物文档。</p>
+
+<p>比如像事物动作等会显示一个事物文档，此时可以选择用快速功能的文档，还是使用目标动作的文档。</p>]]></description>
+    </attribute>
+    <attribute name="simpleBrowser" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>当type=url、thingDesc或Control时是否使用简单的浏览器。</p>
+
+<p>完整的浏览器有地址栏，可以同时显示多个网页等。简单浏览器只是一个Browser控件，没有地址栏等等。</p>]]></description>
+    </attribute>
+    <attribute name="hideOutline" _xmeta_id_="noOutline" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>如果为true，则不显示outline。</p>
+
+<p>outline一般是一个浏览器，用于显示文档。有些内容本身就是文档，或者不需要显示文档，那么可以隐藏outline。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         zh_label="动作">
+        <description><![CDATA[<p><strong>动作集合</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过动作可以定义事物的行为，事物的行为即动作，可以用多种语言和方式编写。</p>
+
+<p><strong>self变量</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个动作作为一个事物的行为执行时，会把该事物以self变量传给动作。</p>
+
+<p><strong>第一个动作集合生效</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有事物的第一个actions子节点才被认为是行为的定义集合，第二个及以后不算。</p>]]></description>
+        <en_description><![CDATA[<p><strong>Actions</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use actions can define behaviors of the&nbsp;thing. Behavior is action, can be defined by many program languages or other things.</p>
+
+<p><strong>Variable self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; When a action is executed as a behavior, in the actionContext will have a virable named &#39;self&#39;, self like this in java, self is it&#39;s onwer thing.</p>
+
+<p><strong>First actions is validate</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Only first actions node is behaviros collections.</p>]]></en_description>
+        <attribute name="name"></attribute>
+    </thing>
+    <thing name="Composite" extends="xworker.swt.widgets.Composite" group="swt" inheritDescription="true"></thing>
+    <thing name="UiFlow" extends="xworker.lang.flow.uiflow.UiFlow" group="swt" inheritDescription="true"></thing>
+    <thing name="SimpleControl" extends="xworker.http.controls.SimpleControl" inheritDescription="true"></thing>
+    <thing name="Shell" extends="xworker.swt.widgets.Shell" group="swt" inheritDescription="true"></thing>
+    <thing name="SwtGuide" extends="xworker.swt.guide.Guide" group="swt" inheritDescription="true"></thing>
+    <thing name="ActionThing" extends="xworker.lang.ActionThing" inheritDescription="true"></thing>
+    <thing name="State" extends="xworker.lang.state.State" inheritDescription="true"></thing>
+    <thing name="GroovyAction" extends="xworker.lang.actions.GroovyAction" description="&lt;p&gt;当type=groovy时，用于设置多个实例脚本，这些脚本在演示界面里可以通过工具栏选择。&lt;/p&gt;">
+        <attribute name="seperator" inputtype="truefalse" group="Menu" default="false"></attribute>
+    </thing>
+</thing>

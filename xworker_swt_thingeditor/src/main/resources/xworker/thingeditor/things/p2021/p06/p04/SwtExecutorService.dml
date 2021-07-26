@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SwtExecutorService" descriptors="xworker.content.QuickContent" type="swtDemo"
+     path="xworker.thingeditor.things.p2021.p06.p04.SwtExecutorService/@Composite"
+     group="xworker.-1000|lang.executor" icon="icons/application.png" th_sortWeight="30"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p><strong>SwtExecutorService控件演示</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 包含日志和请求的服务。</p>
+]]></description>
+    <Composite label="SWT Executor Service">
+        <GridLayout name="GridLayout"></GridLayout>
+        <SWTExecutorService name="executorService">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </SWTExecutorService>
+        <Composite name="buttonComposite" _xmeta_id_="6218">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="6219" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="6220"></RowLayout>
+            <Button name="pringLogButton" _xmeta_id_="6221" text="打印日志">
+                <RowData name="RowData" _xmeta_id_="6222" width="80"></RowData>
+                <Listeners _xmeta_id_="6223">
+                    <Listener name="pringLogButtonSelection" _xmeta_id_="6224">
+                        <GroovyAction name="GroovyAction" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[import xworker.lang.executor.Executor;
+
+Executor.push(executorService);
+try{
+    Executor.info("Test", "Hello World!");
+    Executor.warn("Test", "Hello Exception!", new Exception("Hello"));
+}finally{
+    Executor.pop();
+}]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+            <Button name="sendRequestButton" _xmeta_id_="6225" text="发送请求">
+                <RowData name="RowData" _xmeta_id_="6226" width="80"></RowData>
+                <Listeners _xmeta_id_="6227">
+                    <Listener name="sendRequestButtonSelection" _xmeta_id_="6228">
+                        <RequestUI name="requestUI" _xmeta_id_="RequestUI" descriptors="xworker.lang.executor.ExecutorActions/@RequestUI"
+                             executorService="var:executorService">
+                            <ThingForm validate="true">
+                                <Thing>
+                                    <attribute name="name" validateAllowBlank="false"></attribute>
+                                    <attribute name="label"></attribute>
+                                </Thing>
+                                <actions>
+                                    <GroovyAction name="onOk" descriptors="xworker.lang.actions.GroovyAction"
+                                         code="println &quot;ok:&quot; + values;"></GroovyAction>
+                                    <GroovyAction name="onCancel" descriptors="xworker.lang.actions.GroovyAction"
+                                         code="println &quot;cancel&quot;;"></GroovyAction>
+                                    <GroovyAction name="onValidateFalse" descriptors="xworker.lang.actions.GroovyAction">
+                                        <code><![CDATA[println "validate false";
+
+return true;]]></code>
+                                    </GroovyAction>
+                                </actions>
+                            </ThingForm>
+                            <Url name="Url" url="https://www.xworker.org"></Url>
+                            <Html name="Html" html="&lt;h1&gt;Hello World!&lt;h1/&gt;"></Html>
+                            <ThingDesc name="ThingDesc">
+                                <description><![CDATA[<h1>Hello World ThingDesc.</h1>
+]]></description>
+                            </ThingDesc>
+                        </RequestUI>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+    </Composite>
+</QuickContent>

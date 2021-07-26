@@ -21,7 +21,7 @@ public class ThingGroup implements Comparable<ThingGroup>{
 	int sortWeight = 0;
 	int weightCount = 0;
 	
-	List<ThingGroup> childs = new ArrayList<ThingGroup>();
+	List<ThingGroup> childs = new ArrayList<>();
 	
 	/**
 	 * 创建一个根分组。
@@ -126,9 +126,7 @@ public class ThingGroup implements Comparable<ThingGroup>{
 	
 	/**
 	 * 查找Group，如果不存在则增加一个。
-	 * 
-	 * @param group
-	 * @return
+	 *
 	 */
 	private ThingGroup findGroup(String group) {
 		String g = filteGroup(group);
@@ -147,8 +145,6 @@ public class ThingGroup implements Comparable<ThingGroup>{
 	/**
 	 * 过滤掉权重等，只剩下group字符串。
 	 * 
-	 * @param group
-	 * @return
 	 */
 	private String filteGroup(String group) {
 		if(group != null) {

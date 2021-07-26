@@ -390,4 +390,15 @@ public class JavaFXUtils {
 		Executor.warn(TAG, "Can not careate graphic,name=" + name + ", path=\" + thing.getMetadata().getPath()");
 		return null;
 	}
+
+	/**
+	 * 获取一个WebView上已经打开的网页的源码。
+	 *
+	 * @param webView
+	 *
+	 * @return 网页源码
+	 */
+	public static String getWebViewHTML(WebView webView){
+		return (String) webView.getEngine().executeScript("document.documentElement.outerHTML");
+	}
 }

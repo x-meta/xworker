@@ -1,4 +1,4 @@
-^1497609874392
+^1623392583298
 @
 sname
 SegmentTask
@@ -12,6 +12,8 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 sgroup
@@ -22,38 +24,44 @@ sinheritDescription
 false
 Sdescription
 #$@text#$@
-<p>分段任务，把一个大任务分为小段来并行处理。</p>
+<p>分段任务。把一个大任务分为小段来并行处理。</p>
 
-<p><strong>原理</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 从分段管理器（RanageManager）获取一个分段，从getCallable方法返回分段的处理方法，分段处理执行完后通知分段管理器，然后再返回新的段。当所有的段都完成则整个任务完成，如果是持续任务，当没有新的段时会休眠一段时间，然后再尝试读取新的段。</p>
-
-<p><strong>需要重写的方法：</strong></p>
+<p><strong>基本概念</strong></p>
 
 <ul>
-	<li><strong>RangeManager getRanageManager()</strong><br />
-	返回分段管理器，在动作的_actions.task.segment分组下有一些现成的RanageManager可用。<br />
+	<li><strong>段（Range)</strong><br />
+	分段任务是对数字范围来分段的。比0~10按照步骤（Step)1来分段，可以分成10段。每次一段都有一个开始（start)和结束（end)，分段任务可以针对段做相应的操作。<br />
+	注意：段应该是start &lt;= range &lt; end，即大于等于开始，而小于结束。<br />
 	&nbsp;</li>
-	<li><strong>Thing&nbsp;getRangeTaskThing(Range range)</strong><br />
-	返回执行分段任务的事物，默认返回自己，返回的事物需要实现下面的doRange方法。<br />
+	<li><strong>段生成器(RangeGenerator)</strong><br />
+	用于生成段和把数字转成对象。比如时间段生成器可以按照天、月等生成段，并把开始和结束转化为时间对象。<br />
 	&nbsp;</li>
-	<li><strong>boolean doRange(SegmentTask task, RangeTask rangeTask, Range range)</strong><br />
-	在默认的getCallable方法下需要实现此方法，执行指定的分段任务，返回任务是否执行成功。</li>
+	<li><strong>段存储器(RangeStore)</strong><br />
+	段存储器用于保存段的数据。使用持久化的段段存储器可以在重新启动分段任务时恢复先前的状态。</li>
 </ul>
 
-<p><strong>任务的启动、终止和重置</strong></p>
+<p><strong>使用方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 一个分段任务同一时刻只能有一个实例，启动任务执行run方法，终止用stop方法，对于已经结束的任务可以执行removeTask方法重置。</p>
+<p>&nbsp;&nbsp;&nbsp; 设置段生成器和段存储器，重写<strong>boolean doRange(SegmentTask task，Range range, Object start, Object end)</strong>方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 一个分段任务同一时刻只有一个实例，启动任务执行run方法，停止用stop方法。</p>
 
 <p><strong>可以重写的方法</strong></p>
 
 <ul>
-	<li><strong>void onRangeSuccess(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
-	<li><strong>void onRangeException(Range range, Callable&lt;Boolean&gt; callable, Exception e)</strong></li>
-	<li><strong>void onRangeFailed(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
-	<li><strong>void onException(Exception e)</strong></li>
-	<li><strong>void onFinished()</strong></li>
-	<li><strong>void onRangeTimeout(Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+	<li><strong>boolean doRange(SegmentTask task，Range range, Object start, Object end)</strong><br />
+	执行段的操作。返回true表示处理成功，返回false表示处理失败。</li>
+</ul>
+
+<p><strong>可以监听的事件</strong></p>
+
+<ul>
+	<li><strong>void onRangeSuccess(SegmentTask task，Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+	<li><strong>void onRangeException(SegmentTask task，Range range, Callable&lt;Boolean&gt; callable, Exception e)</strong></li>
+	<li><strong>void onRangeFailed(SegmentTask task，Range range, Callable&lt;Boolean&gt; callable)</strong></li>
+	<li><strong>void onException(SegmentTask task，Exception e)</strong></li>
+	<li><strong>void onFinished(SegmentTask task)</strong></li>
+	<li><strong>void onRangeTimeout(SegmentTask task，Range range, Callable&lt;Boolean&gt; callable)</strong></li>
 </ul>
 
 <p>&nbsp;</p>
@@ -93,68 +101,6 @@ false
   false
   sid
   actions
-    @/@actions/@getRanageManager
-    sname
-    getRanageManager
-    sdescriptors
-    xworker.lang.actions.Actions/@NOOP
-    sinheritDescription
-    false
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    getRanageManager
-    @/@actions/@getRangeTaskThing
-    sname
-    getRangeTaskThing
-    sisSynchronized
-    false
-    sthrowException
-    true
-    suseOtherAction
-    false
-    suseOuterJava
-    true
-    suseInnerJava
-    false
-    souterClassName
-    xworker.task.segment.SegmentTaskActions
-    smethodName
-    getRangeTaskThing
-    sdisableGlobalContext
-    false
-    sattributeTemplate
-    false
-    sinterpretationType
-    Action
-    svarScope
-    Global
-    screateLocalVarScope
-    false
-    ssaveReturn
-    false
-    sdebugLog
-    false
-    sdescriptors
-    xworker.lang.actions.Actions/@JavaAction
-    sinheritDescription
-    false
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    getRangeTaskThing
     @/@actions/@run
     sname
     run
@@ -335,6 +281,109 @@ false
     false
     sid
     onRangeSuccess1
+      @/@actions/@onRangeSuccess1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onRangeSuccess1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onRangeSuccess1/@ins/@range
+        sname
+        range
+        stype
+        xworker.task.segment.Range
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        range
     @/@actions/@onRangeException1
     sname
     onRangeException
@@ -380,6 +429,146 @@ false
     false
     sid
     onRangeException1
+      @/@actions/@onRangeException1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onRangeException1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onRangeException1/@ins/@range
+        sname
+        range
+        stype
+        xworker.task.segment.Range
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        range
+        @/@actions/@onRangeException1/@ins/@exception
+        sname
+        exception
+        stype
+        java.lang.Exception
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        exception
     @/@actions/@onRangeFailure1
     sname
     onRangeFailure
@@ -425,6 +614,109 @@ false
     false
     sid
     onRangeFailure1
+      @/@actions/@onRangeFailure1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onRangeFailure1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onRangeFailure1/@ins/@range
+        sname
+        range
+        stype
+        xworker.task.segment.Range
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        range
     @/@actions/@onRanageTimeout1
     sname
     onRangeTimeout
@@ -470,6 +762,109 @@ false
     false
     sid
     onRanageTimeout1
+      @/@actions/@onRanageTimeout1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onRanageTimeout1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onRanageTimeout1/@ins/@range
+        sname
+        range
+        stype
+        xworker.task.segment.Range
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        range
     @/@actions/@onException1
     sname
     onException
@@ -515,6 +910,109 @@ false
     false
     sid
     onException1
+      @/@actions/@onException1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onException1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onException1/@ins/@exception
+        sname
+        exception
+        stype
+        java.lang.Exception
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        exception
     @/@actions/@onFinished1
     sname
     onFinished
@@ -560,6 +1058,109 @@ false
     false
     sid
     onFinished1
+      @/@actions/@onFinished1/@ins
+      sisValidate
+      false
+      sname
+      ins
+      sdescriptors
+      xworker.lang.actions.Inout/@ins
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      ins
+        @/@actions/@onFinished1/@ins/@task
+        sname
+        task
+        stype
+        xworker.task.segment.SegmentTask
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        task
+        @/@actions/@onFinished1/@ins/@exception
+        sname
+        exception
+        stype
+        java.lang.Exception
+        stypeCheck
+        false
+        soptional
+        true
+        scheck
+        false
+        scheckLevel
+        exception
+        sdescriptors
+        xworker.lang.actions.Inout/@ins/@param
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        exception
     @/@actions/@doRange
     sname
     doRange
@@ -603,6 +1204,132 @@ false
     false
     sid
     doRange
+    @/@actions/@1543
+    sname
+    getRangeStore
+    sattributeName
+    rangeStore
+    schildThingName
+    RangeStores
+    schildThingFirstChild
+    true
+    sreturnSelf
+    false
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    susage
+    params
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sid
+    1543
+    @/@actions/@1544
+    sname
+    getRangeGenerator
+    sattributeName
+    rangeGenerator
+    schildThingName
+    RangeGenerators
+    schildThingFirstChild
+    true
+    sreturnSelf
+    false
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    susage
+    params
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@getThing
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sid
+    1544
   @/@name
   sname
   name
@@ -665,48 +1392,17 @@ false
   false
   sid
   label
-  @/@continueTask
-  sname
-  continueTask
-  sinputtype
-  truefalse
-  sshowLabel
-  true
-  sreadOnly
-  false
-  sdefault
-  false
-  sinheritDescription
-  false
-  sdescription
-  <p>如果为true那么表示这是一个持续的分段任务。如果已有的分段已经结束，那么会sleep短暂的时间后继续获取新的分段并执行。</p>
-  svalidateAllowBlank
-  true
-  LvalidateOnBlur
-  true
-  LallowDecimals
-  true
-  LallowNegative
-  true
-  snotXmlAttribute
-  false
-  sdescriptors
-  xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex
-  false
-  sth_registMyChilds
-  false
-  sth_registDisabled
-  false
-  sth_mark
-  false
-  sid
-  continueTask
   @/@threadCount
   sname
   threadCount
   sshowLabel
   true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
   sreadOnly
   false
   sdefault
@@ -714,7 +1410,7 @@ false
   sinheritDescription
   false
   sdescription
-  <p>执行任务的最大线程数。</p>
+  <p>启动任务时创建的ExecutorService的线程数。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur
@@ -739,17 +1435,23 @@ false
   threadCount
   @/@timeOut
   sname
-  timeOut
+  timeout
   sshowLabel
   true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
   sreadOnly
   false
   sdefault
-  -1
+  0
   sinheritDescription
   false
   sdescription
-  <p>单个段任务的超时时间，超时任务将会标记为失败。</p>
+  <p>单个段任务的超时时间，超时任务将会标记为失败。&lt;=0表示没有超时时间。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur
@@ -772,6 +1474,363 @@ false
   false
   sid
   timeOut
+  @/@retryOnRangeFail
+  sname
+  retryOnRangeFail
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  retryOnRangeFail
+  @/@maxCountOfRetry
+  sname
+  maxCountOfRetry
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  3
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  maxCountOfRetry
+  @/@intervalOfRetry
+  sname
+  intervalOfRetry
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  -1
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>类型：long</p>
+
+<p>&lt; 0&nbsp; 下次重新启动分段任务时重试，只对有永久存储分段状态的有效。</p>
+
+<p>= 0&nbsp; 立即加入到失败列表，一般会马上重试</p>
+
+<p>&gt; 0&nbsp; 等待对应的时间（秒）后重试。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  intervalOfRetry
+  @/@removeOnSuccess
+  sname
+  removeRangeOnSuccess
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>一个段执行成功后，是否从存储中删除段的记录。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  removeOnSuccess
+  @/@removeRangeOnFinalFail
+  sname
+  removeRangeOnFinalFail
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>最终失败的条件是，1 设置了不重试， 2 失败次数大于指定的值。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  removeRangeOnFinalFail
+  @/@rangeStore
+  sname
+  rangeStore
+  sinputtype
+  dataSelector
+  ssize
+  60
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  rangeStore
+  @/@rangeGenerator
+  sname
+  rangeGenerator
+  sinputtype
+  dataSelector
+  ssize
+  60
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  rangeGenerator
   @/@description
   sname
   description
@@ -867,3 +1926,363 @@ false
     xworker.lang.MetaDescriptor2/@attribute
     sid
     name
+  @/@RangeGenerators
+  sname
+  RangeGenerators
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.task.RangeGenerators
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  Sdescription
+#$@text#$@
+<p>段生成器。必须要设置，第一个子节点生效。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  RangeGenerators
+    @/@RangeGenerators/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    name
+    @/@RangeGenerators/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    label
+    @/@RangeGenerators/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    description
+  @/@RangeStores
+  sname
+  RangeStores
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.task.RangeStores
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  Sdescription
+#$@text#$@
+<p>段存储器。必须要设置，第一个子节点生效。</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  RangeStores
+    @/@RangeStores/@name
+    sname
+    name
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    name
+    @/@RangeStores/@label
+    sname
+    label
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    label
+    @/@RangeStores/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    slabelAlign
+    right
+    slabelVAlign
+    baseline
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sjson_isArray
+    false
+    sid
+    description

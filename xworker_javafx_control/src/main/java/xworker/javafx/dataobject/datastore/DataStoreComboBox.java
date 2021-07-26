@@ -9,6 +9,8 @@ import xworker.dataObject.DataStoreListener;
 import xworker.javafx.dataobject.DataStoreActions;
 import xworker.javafx.util.DataObjectStringConverter;
 
+import java.util.Map;
+
 public class DataStoreComboBox implements DataStoreListener {
     DataStore dataStore;
     ComboBox<DataObject> comboBox;
@@ -56,6 +58,11 @@ public class DataStoreComboBox implements DataStoreListener {
 
     @Override
     public void onChanged(DataStore dataStore) {
+
+    }
+
+    @Override
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
 
     }
 

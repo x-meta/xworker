@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="FileListExplorer" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.swt.widgets.Control">
+    <description><![CDATA[<p>文件浏览器，显示详细信息列表的。</p>
+
+<p><strong>保存和返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 保存的是FileListExplorer，返回的是Table。</p>
+
+<p><strong>FileLike&lt;?&gt;</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 除了文件系统，为了能够支持Sftp等使用了xworker.io.FileLike&lt;?&gt;来包装文件对象。</p>
+
+<p><strong>初始根目录获取顺序</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 满足一个后续不再执行。</p>
+
+<ol>
+	<li>File getRootDir()。</li>
+	<li>FileLike&lt;?&gt; getRootFileLikeDir()。</li>
+	<li>boolean isSysRoots()。</li>
+</ol>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.swt.xwidgets.io.FileListExplorer"
+             methodName="create"></JavaAction>
+        <GetFile name="getRootDir" _xmeta_id_="11634" descriptors="xworker.lang.actions.ActionUtil/@GetFile"
+             attributeName="rootDir" usage="params"></GetFile>
+        <GetObject name="getRootFileLikeDir" _xmeta_id_="11635" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="rootFileLikeDir" usage="params"></GetObject>
+        <GetBoolean name="isSysRoots" _xmeta_id_="11636" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="sysRoots" usage="params"></GetBoolean>
+        <NOOP name="onSelection" usage="event">
+            <ins>
+                <param name="file" _xmeta_id_="fileLike" type="xworker.io.FileLike"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="onDefaultSelection" usage="event">
+            <ins>
+                <param name="file" _xmeta_id_="fileLike" type="xworker.io.FileLike"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="onSetDir">
+            <ins>
+                <param name="dir" _xmeta_id_="fileLike" type="xworker.io.FileLike"></param>
+            </ins>
+        </NOOP>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="rootDir" inputtype="filePath" size="60"></attribute>
+    <attribute name="rootFileLikeDir" _xmeta_id_="rootFileListDir" size="50"></attribute>
+    <attribute name="sysRoots" inputtype="truefalse" default="false"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
+        <Variable name="var" varName="_thingName_" className="xworker.swt.xwidgets.io.FileListExplorer"></Variable>
+    </VariablesDescs>
+</thing>

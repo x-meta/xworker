@@ -27,7 +27,41 @@ public class ActionDesc {
 	}
 	
 	public String getDescription() {
-		return thing.getMetadata().getDescription();
+		StringBuilder sb = new StringBuilder();
+
+		//动作本身的文档
+		String desc = thing.getMetadata().getDescription();
+		if(desc != null){
+			sb.append(desc);
+		}
+
+		//查看是否是属性对应的参数动作
+		String attributeName = thing.getStringBlankAsNull("attributeName");
+		if(attributeName != null){
+			Thing parent = thing.getParent();
+			if(parent != null){
+				parent = parent.getParent();
+			}
+			if(parent != null){
+				for(Thing attr : parent.getChilds("attribute")){
+					if(attributeName.equals(attr.getMetadata().getName())){
+						desc = attr.getMetadata().getDescription();
+						if(desc != null){
+							sb.append(desc);
+						}
+
+						//动作描述者的文档
+						desc = thing.getDescriptor().getMetadata().getDescription();
+						if(desc != null){
+							sb.append(desc);
+						}
+
+						break;
+					}
+				}
+			}
+		}
+		return sb.toString();
 	}
 	
 	public String getReturnType() {

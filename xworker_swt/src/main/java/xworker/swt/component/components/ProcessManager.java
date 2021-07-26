@@ -166,6 +166,7 @@ public class ProcessManager {
 		}
 	}
 
+	//xworker.swt.component.components.ProcessManager/@Composite/@doinit
 	public static void init(ActionContext actionContext) {
 		IProcessManager service = ServiceManager.getService(IProcessManager.class); 
 		if(service == null || service.isDisposed()) {

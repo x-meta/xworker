@@ -156,8 +156,12 @@ public class ThingGuide {
 			returnToFormEditor();
 		}
 	}
-	
+
 	public void cancel(){
+		cancel(true);
+	}
+
+	public void cancel(boolean returnToFormEditor){
 		if(controlThing != null) {
 			//作为SWT控件使用
 			ActionContext parentContext = actionContext.getObject(ActionContext.PARENT_CONTEXT);
@@ -169,7 +173,9 @@ public class ThingGuide {
 			}
 		}else {
 			//在事物编辑器中
-			returnToFormEditor();
+			if(returnToFormEditor) {
+				returnToFormEditor();
+			}
 		}
 	}
 	

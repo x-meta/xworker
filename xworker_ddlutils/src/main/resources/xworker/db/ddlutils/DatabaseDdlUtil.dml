@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DatabaseDdlUtil" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.db.ddlutils.DdlUtil">
+    <description><![CDATA[<p>Apache database的ddl。</p>
+
+<p>注意：不使用database本身设置的DataSource。</p>
+]]></description>
+    <actions>
+        <GetBoolean name="isDropTablesFirst" _xmeta_id_="17484" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="dropTablesFirst" usage="params"></GetBoolean>
+        <GetBoolean name="isContinueOnError" _xmeta_id_="17485" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="continueOnError" usage="params"></GetBoolean>
+        <GetThing name="getDatabase" _xmeta_id_="17486" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="database" childThingName="database" usage="params"></GetThing>
+        <JavaAction name="create" outerClassName="xworker.db.ddlutils.DatabaseDdlUtil" methodName="create"></JavaAction>
+        <JavaAction name="alter" outerClassName="xworker.db.ddlutils.DatabaseDdlUtil" methodName="alter"></JavaAction>
+        <JavaAction name="drop" outerClassName="xworker.db.ddlutils.DatabaseDdlUtil" methodName="drop"></JavaAction>
+        <GetObject name="getDataSource" _xmeta_id_="4928" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="dataSource" usage="params"></GetObject>
+        <GetThing name="getDataSourceThing" _xmeta_id_="6476" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataSourceThing" childThingName="DataSource" usage="params"></GetThing>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="dropTablesFirst" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>执行createTables方法时会用，是否先删除表。</p>
+]]></description>
+    </attribute>
+    <attribute name="continueOnError" inputtype="truefalse" default="false"></attribute>
+    <attribute name="database" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="dataSource" inputtype="40" size="60" default="var:dataSource"></attribute>
+    <attribute name="dataSourceThing" inputtype="dataSelector" size="60">
+        <description><![CDATA[<p>用于设置DataSource模型。优先级低于dataSource属性。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="database" _xmeta_id_="database1" extends="xworker.db.ddlutils.database"
+         inheritDescription="true"></thing>
+    <thing name="DataSource" extends="xworker.db.jdbc.DataSource" inheritDescription="true"></thing>
+</thing>

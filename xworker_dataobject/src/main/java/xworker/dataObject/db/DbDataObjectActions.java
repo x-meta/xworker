@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2007-2016 The xworker.org.
  *
  * Licensed to the X-Meta under one or more
@@ -18,26 +18,21 @@
  */
 package xworker.dataObject.db;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import org.xmeta.ActionContext;
+import org.xmeta.ActionException;
+import org.xmeta.Thing;
+import xworker.dataObject.DataObject;
+import xworker.dataObject.PageInfo;
+import xworker.dataObject.query.QueryConfig;
+import xworker.dataObject.utils.DataObjectUtil;
+import xworker.dataObject.utils.DbUtil;
+import xworker.lang.executor.Executor;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
-import org.xmeta.Thing;
-
-import xworker.dataObject.DataObject;
-import xworker.dataObject.PageInfo;
-import xworker.dataObject.utils.DataObjectUtil;
-import xworker.dataObject.utils.DbUtil;
-import xworker.lang.executor.Executor;
 
 public class DbDataObjectActions {
 	private static final String TAG = DbDataObjectActions.class.getName();
@@ -56,27 +51,27 @@ public class DbDataObjectActions {
         //生成insert sql语句
         List<Thing> rattributes = theData.getMetadata().getAttributes();
         List<Thing> attributes = new ArrayList<Thing>();
-        for(int i=0; i<rattributes.size(); i++){
-            if(!rattributes.get(i).getBoolean("dataField")){
+        for (Thing rattribute : rattributes) {
+            if (!rattribute.getBoolean("dataField")) {
                 continue;
             }
-            
-            attributes.add(rattributes.get(i));
+
+            attributes.add(rattribute);
         }
         
-        String sql = "select ";
+        StringBuilder sql = new StringBuilder("select ");
         for(int i=0; i<attributes.size(); i++){
             if(!attributes.get(i).getBoolean("dataField")){
                 continue;
             }
             String fieldSql = attributes.get(i).getString("sql");
             if(fieldSql != null && !"".equals(fieldSql)){
-                sql = sql + fieldSql;
+                sql.append(fieldSql);
             }else{
-                sql = sql + attributes.get(i).getString("fieldName");
+                sql.append(attributes.get(i).getString("fieldName"));
             }
             if(i < attributes.size() - 1){
-                sql = sql + ",";
+                sql.append(",");
             }
         }
         String tableName = self.getString("tableName");
@@ -84,22 +79,22 @@ public class DbDataObjectActions {
         if(querySql != null){
             tableName = querySql;
         }
-        sql = sql + " from " + tableName + " where ";
+        sql.append(" from ").append(tableName).append(" where ");
         for(int i=0; i<keyDatas.length; i++){
-            sql = sql + ((Thing) keyDatas[i][0]).get("fieldName") + "=?";
+            sql.append(((Thing) keyDatas[i][0]).get("fieldName")).append("=?");
             if(i < keyDatas.length -1){
-                sql = sql + " and ";
+                sql.append(" and ");
             }
         }
         if(self.getBoolean("showSql")){
-        	Executor.info(TAG, sql);
+        	Executor.info(TAG, sql.toString());
         }
         
         //设置参数值
         PreparedStatement pst = null;
         ResultSet rs = null;
         try{
-            pst = con.prepareStatement(sql);
+            pst = con.prepareStatement(sql.toString());
             int index = 1;
             for(int i=0; i<keyDatas.length; i++){
                 //log.info(keyDatas[i][0].get("name") + "=" + keyDatas[i][1]);
@@ -113,8 +108,8 @@ public class DbDataObjectActions {
                 theData.setInited(false);
                 
                 //设置属性值
-                for(int i=0; i<attributes.size(); i++){
-                    theData.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
+                for (Thing attribute : attributes) {
+                    theData.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
                 }
                 
                 theData.setInited(true);   
@@ -132,18 +127,18 @@ public class DbDataObjectActions {
         }
     }
 
-    public static Object generateSeqId(ActionContext actionContext) throws SQLException, Exception{
+    public static Object generateSeqId(ActionContext actionContext) throws Exception{
     	Thing self = actionContext.getObject("self");
         Connection con = actionContext.getObject("con");
         
         String seqName = self.getStringBlankAsNull("sequenceName");
-        if(seqName == null || seqName ==""){
+        if(seqName == null || seqName.isEmpty()){
             if("native".equals(self.getString("idGenerateType"))){
                 //native是通过hibernate生成的
                 seqName = "HIBERNATE_SEQUENCE";
             }
         }
-        if(seqName == null || seqName ==""){
+        if(seqName == null || seqName.isEmpty()){
             throw new Exception("SequenceName is null");
         }
         
@@ -151,7 +146,7 @@ public class DbDataObjectActions {
         if(dotIndex != -1){
         	//使用从表中读取Seq的方法
         	String tableName = seqName.substring(0, dotIndex);
-        	String sName = seqName.substring(dotIndex + 1, seqName.length());
+        	String sName = seqName.substring(dotIndex + 1);
         	
         	ResultSet rs = null;
         	PreparedStatement ps = null;
@@ -189,25 +184,15 @@ public class DbDataObjectActions {
         	}
         }else{
             String driverName = con.getMetaData().getDriverName();
-            if(driverName != null && driverName.indexOf("Oracle") != -1){
+            if(driverName != null && driverName.contains("Oracle")){
                 //oracle数据库
                 String sql = "select " + seqName + ".nextval as nextID from dual";
-                PreparedStatement pst = con.prepareStatement(sql);
-                ResultSet rs = null;
-                try{
-                    rs = pst.executeQuery();
-                    if(rs.next()){
+                try (PreparedStatement pst = con.prepareStatement(sql); ResultSet rs = pst.executeQuery()) {
+                    if (rs.next()) {
                         return rs.getInt("nextID");
-                    }else{
+                    } else {
                         throw new Exception("cannot get seq from " + self.getString("sequenceName") + ", thing=" + self.getMetadata().getPath());
                     }
-                }finally{
-                     if(rs != null){
-                         rs.close();
-                     }
-                     if(pst != null){
-                         pst.close();
-                     }
                 }
             }else{
             	Executor.warn(TAG, "database driver " + driverName + " not supported sequence");
@@ -223,7 +208,7 @@ public class DbDataObjectActions {
         Connection con = actionContext.getObject("con");
         
         String driverName = con.getMetaData().getDriverName();
-        if(driverName != null && driverName.indexOf("Oracle") != -1){
+        if(driverName != null && driverName.contains("Oracle")){
         	return self.doAction("generateSeqId", actionContext);     
         }else{
             return null;
@@ -340,9 +325,9 @@ public class DbDataObjectActions {
     public static Object queryCursorPage(ActionContext actionContext) throws Exception{
     	Thing self = actionContext.getObject("self");
         Connection con = actionContext.getObject("con");
-        
-        Object cds = actionContext.get("cds");
+        QueryConfig queryConfig = actionContext.getObject("queryConfig");
         List<Thing> attributes = actionContext.getObject("attributes");
+        Boolean createIterator = actionContext.getObject("createIterator");
         
         PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
         String sql = actionContext.getObject("sql");
@@ -352,7 +337,7 @@ public class DbDataObjectActions {
         try{
             //查询总数
         	boolean hasTotalCount = false;
-        	if(self.getBoolean("noTotalCount") == false){
+        	if(!self.getBoolean("noTotalCount")){
 	            String countSql = "select count(*) from (" + sql + ") t";
 	            if(self.getBoolean("showSql")){
 	            	Executor.info(TAG, countSql);
@@ -360,7 +345,7 @@ public class DbDataObjectActions {
 	            pst = con.prepareStatement(countSql);
 	            
 	            //设置查询参数
-	            self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);
+                DbDataObject.setStatementParams(pst, 1, queryConfig, attributes);
 	            rs = pst.executeQuery();
 	            rs.next();
 	            pageInfo.setTotalCount(rs.getInt(1));
@@ -387,11 +372,12 @@ public class DbDataObjectActions {
             	pst = con.prepareStatement(sql);
             	supportScroll = false;
             }
-            self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);
+
+            DbDataObject.setStatementParams(pst, 1, queryConfig, attributes);
   
             //执行sql
             rs = pst.executeQuery();
-            List<DataObject> ds = new ArrayList<DataObject>();
+            List<DataObject> ds = new ArrayList<>();
             attributes = self.getChilds("attribute"); //取查询数据对象实际的列
             int start = (int) (pageInfo.getStart() + 1);
             int count = 0;
@@ -410,52 +396,57 @@ public class DbDataObjectActions {
             		c++;
             	}
             }
-            
-        	while(count < pageInfo.getLimit()){
-        		if(supportScroll){
-        			if(!hasNext){
-        				break;
-        			}        				
 
-        		}else if(!rs.next()){
-        			break;
-        		}
-                //构造对象
-            	DataObject data = new DataObject(self);
-                data.setInited(false);
-                
-                //设置属性值
-                for(int i=0; i<attributes.size(); i++){
-                    if(!attributes.get(i).getBoolean("dataField")){
-                        continue;
+
+            if(createIterator != null && createIterator){
+                return new DbDataObjectIterator(self, attributes, pageInfo, con, pst, rs, actionContext);
+            }else {
+                while (count < pageInfo.getLimit()) {
+                    if (supportScroll) {
+                        if (!hasNext) {
+                            break;
+                        }
+
+                    } else if (!rs.next()) {
+                        break;
                     }
-                    
-                    try{
-                        data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
-                    }catch(Exception e){
-                    	Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
-                        throw e;
+                    //构造对象
+                    DataObject data = new DataObject(self);
+                    data.setInited(false);
+
+                    //设置属性值
+                    for (int i = 0; i < attributes.size(); i++) {
+                        if (!attributes.get(i).getBoolean("dataField")) {
+                            continue;
+                        }
+
+                        try {
+                            data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
+                        } catch (Exception e) {
+                            Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
+                            throw e;
+                        }
+                    }
+
+                    data.setInited(true);
+
+                    ds.add(data);
+                    count++;
+
+                    if (supportScroll) {
+                        //游标滚动是在末尾next，而无游标的是在前面
+                        hasNext = rs.next();
                     }
                 }
-                
-                data.setInited(true);
-                
-                ds.add(data);   
-                count++;
-                
-                if(supportScroll){
-                	//游标滚动是在末尾next，而无游标的是在前面
-                	hasNext = rs.next();
+
+                if (!hasTotalCount) {
+                    if (ds.size() < pageInfo.getLimit()) {
+                        pageInfo.setTotalCount(pageInfo.getPage() * pageInfo.getLimit() + ds.size());
+                    } else {
+                        pageInfo.setTotalCount((pageInfo.getPage() + 1) * pageInfo.getLimit());
+                    }
                 }
-        	}
-            
-        	if(hasTotalCount == false){
-	        	if(ds.size() < pageInfo.getLimit()){
-	        		pageInfo.setTotalCount(pageInfo.getPage() * pageInfo.getLimit() + ds.size());
-	        	}else{
-	        		pageInfo.setTotalCount((pageInfo.getPage() + 1) * pageInfo.getLimit());
-	        	}
-        	}
+            }
         	/*
         	if(supportScroll){
 	            //rs.last(); Oracle查询数量大时会缓存数据到内存，造成此方法几乎不会结束，所以先注释掉，等待更好的方法
@@ -489,11 +480,12 @@ public class DbDataObjectActions {
     	Thing self = actionContext.getObject("self");
         Connection con = actionContext.getObject("con");
         
-        Object cds = actionContext.get("cds");
-        
-        PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
-        
-        return DataObjectUtil.dbQueryPage(self, con, cds, pageInfo, pageType, countSql, querySql, actionContext);        
+        List<Thing> attributes = actionContext.getObject("attributes");
+        Boolean createIterator = actionContext.getObject("createIterator");
+
+        QueryConfig queryConfig = actionContext.getObject("queryConfig");
+
+        return DataObjectUtil.doDbQueryPage(createIterator, self, attributes, con, queryConfig, queryConfig.getPageInfo(), pageType, countSql, querySql, actionContext);
     }
     
     public static void menu_reverse(ActionContext actionContext){
@@ -609,14 +601,13 @@ public class DbDataObjectActions {
         //id
         Thing keyThing = null;  //目前XWorker只支持单个key的Hibernate，如果有多个key，会在ddl中创建
         for(Thing attr : self.getChilds("attribute")){
-            if(attr.getBoolean("dataField") == false){
+            if(!attr.getBoolean("dataField")){
                 continue;
             }
             
             if(attr.getBoolean("key")){
                 Thing id = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@id");
                 id.set("name", attr.get("name"));
-                //id.set("column", attr.get("fieldName"));
                 id.set("type", getType(attr.getString("type")));
                 id.set("length", attr.get("length"));
 
@@ -628,6 +619,8 @@ public class DbDataObjectActions {
                     Thing comment = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@comment");
                     comment.set("_value", attr.getString("comment"));
                     column.addChild(comment);
+                }else{
+                    id.set("column", attr.get("fieldName"));
                 }
 
                 if(attr.getStringBlankAsNull("generator") != null){
@@ -645,7 +638,7 @@ public class DbDataObjectActions {
         
         //attribute
         for(Thing attr : self.getChilds("attribute")){
-            if(attr.getBoolean("dataField") == false){
+            if(!attr.getBoolean("dataField")){
                 continue;
             }
             
@@ -699,7 +692,7 @@ public class DbDataObjectActions {
     	Connection con = actionContext.getObject("con");
         
         //获取全部的表
-        List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> datas = new ArrayList<>();
         DatabaseMetaData metadata = con.getMetaData();
         String tableName = self.getStringBlankAsNull("tableName");
         if(tableName != null){
@@ -717,28 +710,16 @@ public class DbDataObjectActions {
 	            getColumns(rs, datas);
 	        }
 	        if(datas.size() == 0){
-	        	PreparedStatement pst = null;
-	        	try{
-	        		pst = con.prepareStatement("select * from " + tableName);
-	        		getColumnsFromMetadata(pst.getMetaData(), datas);
-	        	}finally{
-	        		if(pst != null){
-	        			pst.close();
-	        		}
-	        	}
+                try (PreparedStatement pst = con.prepareStatement("select * from " + tableName)) {
+                    getColumnsFromMetadata(pst.getMetaData(), datas);
+                }
 	        }	        
         }else{
         	String sql = self.getStringBlankAsNull("querySql");
         	if(sql != null){
-        		PreparedStatement pst = null;
-	        	try{
-	        		pst = con.prepareStatement(sql);
-	        		getColumnsFromMetadata(pst.getMetaData(), datas);
-	        	}finally{
-	        		if(pst != null){
-	        			pst.close();
-	        		}
-	        	}
+                try (PreparedStatement pst = con.prepareStatement(sql)) {
+                    getColumnsFromMetadata(pst.getMetaData(), datas);
+                }
         	}
         }
         
@@ -750,7 +731,7 @@ public class DbDataObjectActions {
     public static void  getColumns(ResultSet rs, List<Map<String, Object>> columns) throws SQLException{
         try{    
             while(rs.next()){
-                Map<String, Object> data = new HashMap<String, Object>();
+                Map<String, Object> data = new HashMap<>();
                 data.put("colName", rs.getString("COLUMN_NAME"));
                 data.put("colTitle", rs.getString("REMARKS"));
                 //数据类型
@@ -764,7 +745,7 @@ public class DbDataObjectActions {
     
     public static void  getColumnsFromMetadata(ResultSetMetaData meta, List<Map<String, Object>> columns) throws SQLException{
     	for(int i=1; i<=meta.getColumnCount(); i++){
-    		Map<String, Object> data = new HashMap<String, Object>();
+    		Map<String, Object> data = new HashMap<>();
             data.put("colName", meta.getColumnName(i));
             data.put("colTitle", meta.getColumnLabel(i));
             data.put("size", meta.getColumnDisplaySize(i) * 5);

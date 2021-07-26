@@ -105,4 +105,5 @@ public class StyledTextLogViewer extends DelayExecutor implements LogViewer{
 		styledText.setText(logStringBuilder.toString());
 		showSelection();
 	}
+
 }

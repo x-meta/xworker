@@ -1,4 +1,4 @@
-%1577239252158
+%1622692969474
 @
 sname=SimpleMonitor
 slabel=SimpleMonitor
@@ -97,7 +97,8 @@ try{
         
         //发送通知
         if(self.getBoolean("notify")){
-            notify(actionContext, "html", html, "subject", subject);
+            notify(actionContext, "html", html, "subject", subject,
+                  "requestId", self.getMetadata().getPath());
         }
         
         //发送邮件
@@ -153,78 +154,88 @@ try{
         sth_registDisabled=false
         sth_mark=false
         sid=sendMail
-        @/@actions/@doTask/@ActionDefined/@notify
+        @/@actions/@doTask/@ActionDefined/@notify1
         sname=notify
-        slevel=primary
-        spersistent=false
-        ssync=false
-        stimeout=9600
-        sincludeActionContext=false
-        svariables=html,subject
+        sactionContext=var:actionContext
         sinterpretationType=Self
         sattributeTemplate=false
         schildsAttributeTemplate=false
         svarScope=Local
         sisSynchronized=false
         sthrowException=true
+        suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdisableGlobalContext=false
         sdebugLog=false
-        sdescriptors=xworker.notification.Notification
+        sdescriptors=xworker.lang.executor.ExecutorActions/@RequestUI
         sinheritDescription=false
         sth_createIndex=false
         sth_registMyChilds=false
         sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
         sth_mark=false
-        sid=notify
-          @/@actions/@doTask/@ActionDefined/@notify/@QuickFunction
-          sname=QuickFunction
-          stype=html
-          sicon=icons/folder_table.png
-          sstyledTextForInsert=parentContext.parentContext.codeText
-          scode=var:html
-          suseTargetThingDoc=false
-          ssimpleBrowser=false
-          sdescriptors=xworker.lang.system.message.Message/@QuickFunction
+        sth_registQueryOnlySelf=false
+        snotXmlAttribute=false
+        sjson_isArray=false
+        sid=notify1
+          @/@actions/@doTask/@ActionDefined/@notify1/@Html
+          sname=Html
+          shtml=var:html
+          spriority=normal
+          stimeout=360
+          srequestId=var:requestId
+          Svariables=
+#$@text#$@
+{
+    html:"var:html"
+}
+#$@text#$@
+          sdescriptors=xworker.lang.executor.RequestIndex/@Html
           sinheritDescription=false
           sth_createIndex=false
           sth_registMyChilds=false
           sth_registDisabled=false
+          sth_noThingRegistViewer=false
           sth_fileMonitor=false
           sth_mark=false
-          sid=QuickFunction
-          @/@actions/@doTask/@ActionDefined/@notify/@actions
-          sname=actions
-          sdescriptors=xworker.lang.system.message.Message/@actions1
-          sinheritDescription=false
-          sth_createIndex=false
-          sth_registMyChilds=false
-          sth_registDisabled=false
-          sth_fileMonitor=false
-          sth_mark=false
-          sid=actions
-            @/@actions/@doTask/@ActionDefined/@notify/@actions/@getLabel
-            sname=getLabel
-            svarName=subject
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
-            sisSynchronized=false
-            sthrowException=true
-            screateLocalVarScope=false
-            ssaveReturn=false
-            sdisableGlobalContext=false
-            sdebugLog=false
-            sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+          sth_registQueryOnlySelf=false
+          snotXmlAttribute=false
+          sjson_isArray=false
+          sid=Html
+            @/@actions/@doTask/@ActionDefined/@notify1/@Html/@actions
+            sname=actions
+            sdescriptors=xworker.lang.system.message.Message/@actions1
             sinheritDescription=false
             sth_createIndex=false
             sth_registMyChilds=false
             sth_registDisabled=false
             sth_fileMonitor=false
             sth_mark=false
-            sid=getLabel
+            sid=actions
+              @/@actions/@doTask/@ActionDefined/@notify1/@Html/@actions/@getLabel
+              sname=getLabel
+              svarName=subject
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@GetVariable1
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_fileMonitor=false
+              sth_mark=false
+              sid=getLabel
     @/@actions/@getMailTo
     sname=getMailTo
     sattributeName=mailTo

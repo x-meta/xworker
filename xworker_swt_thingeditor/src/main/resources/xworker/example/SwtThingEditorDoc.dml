@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SwtThingEditorDoc" descriptors="xworker.content.QuickContent" label="swt_thingeditor"
+     type="thingDesc" group="xworker.swt_thingeditor" groupDescriptor="true" icon="icons/html.png"
+     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>xworker_swt_thingeditor</h1>
+
+<p>&nbsp;&nbsp;&nbsp; xworker_swt_thingeditor是使用SWT编写的模型管理器。</p>
+
+<h2>1.自定义模型管理器</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用<strong>xworker.swt.SwtThingEditorConfig</strong>编写配置模型，在启动模型管理器传入，见下面的被注释的相关代码。</p>
+
+<pre class="brush:java;">
+import org.xmeta.World;
+import xworker.swt.SwtThingEditor;
+
+import java.io.File;
+
+public class TestSimpleThingEditor {
+    public static void main(String args[]){
+        try{
+            //获得动态模型引擎的实例
+            World world = World.getInstance();
+            //初始化引擎的工作目录，可能会生成一些临时文件，该目录要可写
+            world.init(&quot;./xworker/&quot;);
+
+            //添加模型管理器，即模型存放的目录，编辑模型需要。Test是模型管理器的名字，不能和其它模型管理重复。
+            world.addFileThingManager(&quot;Test&quot;, new File(&quot;./src/main/resources&quot;), false, true);
+           //模型可以放到Java源码目录下，模型可以和Java一起编译和打包，不过在jar中的模型一般是只读的
+
+            //运行模型编辑器
+            SwtThingEditor.run();
+
+            //也可以使用xworker.swt.SwtThingEditorConfig编写配置，用于自定义菜单、工具栏等等
+            //Thing editorConfig = world.getThing(&quot;xxxx&quot;);
+            //SwtThingEditor.run(editorConfig)
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

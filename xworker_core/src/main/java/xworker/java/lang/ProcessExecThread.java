@@ -3,6 +3,7 @@ package xworker.java.lang;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
@@ -24,7 +25,7 @@ public class ProcessExecThread extends Thread{
 	boolean exited = false;
 	StringBuffer buffer = new StringBuffer();
 	Bindings reservedVars = null;
-	ExecutorService executorService;
+	List<ExecutorService> executorServiceList;
 	boolean log = false;
 	
 	public ProcessExecThread(Process process, Thing thing, ActionContext actionContext){
@@ -50,8 +51,8 @@ public class ProcessExecThread extends Thread{
 		if(outErr instanceof OutputStream){
 			errorOutputSteam = (OutputStream) outErr;
 		}
-		
-		executorService = Executor.getExecutorService();
+
+		executorServiceList = Executor.getExecutorServices();
 	}
 	
 	public void write(byte[] bytes) throws IOException{
@@ -96,7 +97,7 @@ public class ProcessExecThread extends Thread{
 	}
 	
 	public void setExecutorService(ExecutorService executorService) {
-		this.executorService = executorService;
+		this.executorServiceList.add(executorService);
 	}
 	
 	public boolean isLog() {
@@ -110,7 +111,7 @@ public class ProcessExecThread extends Thread{
 	public void run(){
 		int exitValue = -1;
 		try {
-			Executor.push(executorService);
+			Executor.push(executorServiceList);
 			//启动Process的两个线程
 			new InputThread(this, process.getInputStream(), true).start();
 			new InputThread(this, process.getErrorStream(), false).start();
@@ -166,7 +167,7 @@ public class ProcessExecThread extends Thread{
 		
 		public void run(){
 			try{
-				Executor.push(pt.executorService);
+				Executor.push(pt.executorServiceList);
 				
 				int length = -1;
 				byte[] bytes = new byte[2048];
@@ -204,8 +205,6 @@ public class ProcessExecThread extends Thread{
 				
 			}catch(Exception e){
 				//e.printStackTrace();				
-			}finally {
-				Executor.pop();
 			}
 		}
 		

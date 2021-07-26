@@ -1,9 +1,11 @@
 package xworker.lang.executor;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -11,27 +13,71 @@ import org.xmeta.World;
 import xworker.lang.executor.services.AbstractLogService;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.ThingCompositeCreator;
+import xworker.util.StringUtils;
 
 public class SwtExecutorService extends AbstractLogService{
 	LogViewer logViewer;
-	UIHandler uiHandler;
+	DefaultRequestService requestService;
+	CTabItem requestTabItem;
 	
-	public SwtExecutorService(LogViewer logViewer, UIHandler uiHandler) {
+	public SwtExecutorService(LogViewer logViewer, DefaultRequestService requestService) {
 		this.logViewer = logViewer;
-		this.uiHandler = uiHandler;		
-		if(uiHandler != null) {
-			uiHandler.setExecutorService(Executor.getExecutorService());
+		this.requestService = requestService;
+	}
+
+	private void setRequestTabItem(CTabItem requestTabItem){
+		this.requestTabItem = requestTabItem;
+
+		if(requestTabItem != null && requestService != null){
+			requestService.addListener(new DefaultRequestServiceListener() {
+				@Override
+				public void requestAdded(DefaultRequestService defaultRequestService, Request request) {
+					updateUnReadCount();
+				}
+
+				@Override
+				public void requestRemoved(DefaultRequestService defaultRequestService, Request request) {
+					updateUnReadCount();
+				}
+
+				@Override
+				public void requestUpdated(DefaultRequestService defaultRequestService, Request request) {
+					updateUnReadCount();
+				}
+			});
+
+			updateUnReadCount();
+		}
+	}
+
+	private void updateUnReadCount(){
+		if(requestTabItem != null && requestService != null && !requestTabItem.isDisposed()){
+			requestTabItem.getDisplay().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						String text = StringUtils.getString("lang:d=请求&en=Request", new ActionContext());
+
+						int unreadCount = requestService.getUnreadCount();
+						if(unreadCount > 0){
+							text = text + "(" + unreadCount + ")";
+						}
+
+						requestTabItem.setText(text);
+					} catch (IOException e) {
+					}
+				}
+			});
 		}
 	}
 	
 	@Override
-	public void requestUI(ExecuteRequest request) {
-		if(uiHandler != null) {
-			uiHandler.handleUIRequest(request);
-		}else {
-			Executor.superRequestUI(this, request);
+	public Request requestUI(Thing thing, ActionContext actionContext) {
+		if(requestService != null){
+			return requestService.requestUI(thing, actionContext);
 		}
-		
+
+		return null;
 	}
 
 	@Override
@@ -48,11 +94,24 @@ public class SwtExecutorService extends AbstractLogService{
 		}
 	}
 
+	@Override
+	public boolean isSupportRequest() {
+		return requestService != null;
+	}
+
+	@Override
+	public boolean isSupportLog() {
+		return logViewer != null;
+	}
+
 	public static void create(ActionContext actionContext) {
 		LogViewer logViewer = actionContext.getObject("logViewer");
-		UIHandler uiHandler = actionContext.getObject("uiHandler");
-		
-		SwtExecutorService executorService = new SwtExecutorService(logViewer, uiHandler);
+		DefaultRequestService requestService = actionContext.getObject("requestService");
+		CTabItem requestTabItem = actionContext.getObject("requestTabItem");
+
+		SwtExecutorService executorService = new SwtExecutorService(logViewer, requestService);
+		executorService.setRequestTabItem(requestTabItem);
+
 		actionContext.g().put("executorService", executorService);
 	}
 
@@ -103,9 +162,7 @@ public class SwtExecutorService extends AbstractLogService{
 	
 	@Override
 	public Thread getThread() {
-		if(uiHandler != null) {
-			return uiHandler.getThread();
-		}else if(logViewer != null){
+		if(logViewer != null){
 			return logViewer.getDisplay().getThread();
 		}else {
 			return null;
@@ -170,18 +227,18 @@ public class SwtExecutorService extends AbstractLogService{
 	}
 
 	@Override
-	public void removeRequest(ExecuteRequest request) {
-		if(uiHandler != null) {
-			uiHandler.removeRequest(request);
+	public void removeRequest(Request request) {
+		if(requestService != null) {
+			requestService.removeRequest(request);
 		}else {
 			super.removeRequest(request);
 		}
 	}
 
 	@Override
-	public List<ExecuteRequest> getRequestUIs() {
-		if(uiHandler != null) {
-			return uiHandler.getRequestUIs();
+	public List<Request> getRequests() {
+		if(requestService != null) {
+			return requestService.getRequests();
 		}else {
 			return Collections.emptyList();
 		}

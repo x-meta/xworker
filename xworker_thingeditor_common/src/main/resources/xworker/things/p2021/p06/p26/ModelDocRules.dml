@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="ModelDocRules" descriptors="xworker.content.QuickContent" label="模型文档约定"
+     type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="100" simpleBrowser="true"
+     en_label="Model Document Rules" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>模型文档约定</h1>
+
+<h2>1.模型的文档一般在模型里</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 由于模型的文档一般是写在模型里的，打包发布时文档也在模型里。为了避免模型的体积过大（可能也没有太大影响），模型的文档一般都比较&ldquo;精简&rdquo;。</p>
+
+<h3>1.1.需要有一定的Java或相关API的知识</h3>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker中的模型一般是对各种API的封装。XWorker中的文档假设你已经对这些API有了一些基本的了解，XWorker中的文档不会对这些API做详细介绍，如需要了解基本知识可以参看API自身的文档。</p>
+
+<h2>2.模型的方法相关文档</h2>
+
+<h3>2.1.使用Java的代码格式表示</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的方法是模型自己的行为，不是Java代码中的方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的方法在文档中使用Java代码的格式描述，如：<strong>File getFile(String path)。</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; getFile是指模型下有一个名字为getFile的动作模型，执行它时变量上下文中需要有名为path类型为java.lang.String的变量，执行后它的返回值是java.io.File类型。</p>
+
+<h3>2.2.可以重写的方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在模型的文档里可能会看到下面这样的文档。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>File getFile()</strong><br />
+	返回一个文件。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 可以重写的方法一般是作为参数的方法，有时也有可能是其它类型的方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如一个模型的方法的功能是从文件里读取字符串，那么执行它时需要一个文件参数。如何让使用者知道这个模型需要一个文件参数呢？方法一般就是在这个模型里定义一个名为file的属性，然后模型实现一个getFile方法，这个getFile方法默认通过模型的file属性来获取最终要使用的文件参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 因此作为获取参数的方法，默认一般是通过属性的值根据某种规则获取参数对象。当使用属性不能满足获取参数的需要时，使用者可以通过重写它来实现自己的获取对应参数的方法。</p>
+
+<h3>2.3.需要重写的方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在模型文档里可能会看下下面这样的文档。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>需要重写的方法：</strong></p>
+
+<ul>
+	<li><strong>void handleFileContent(File file, String cotnent)</strong><br />
+	处理文件。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;需要重写的方法一般是各种需要处理的方法。比如在数据库的连接框架里，连接模型需要重写Connection getConnection()方法。</p>
+
+<h3>2.4.和事件相关的方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如果方法是和事件相关的，通常是和监听器或回调等相关的方法。比如一个模型是要打开一个确认对话框，那么它就有可能设置ok或cancel等方法，这样可以监听到对话框是点了确定还是取消。</p>
+
+<h3>2.5.动作的用途</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 现在动作模型里，有动作的使用用途。动作的使用用途是用户自定义的字符串，但下面几个是常用的。</p>
+
+<ul>
+	<li><strong>params</strong><br />
+	表明该动作是用于获取参数的。一般情况下，参数是由模型的属性和动作公共完成的，即默认的动作实现是通过模型的指定属性来获取参数值的，用户可以重写该方法。<br />
+	&nbsp;</li>
+	<li><strong>event</strong><br />
+	事件和回调。该动作一般是用于事件和回调的。用户可以重写该方法。</li>
+</ul>
+
+<h2>3.保存和返回的对象</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 有一些模型执行相关方法（一般是create方法）后会创建Java对象。比如SWT和JavaFX模型，执行create方法后会创建模型对应Java对象。</p>
+
+<h3>3.1.保存的对象</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 保存的对象一般是指保存在变量上下文的全局栈中的变量。这些变量可以在以后使用。</p>
+
+<h3>3.2.返回的对象</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 返回的对象通常是框架需要的对象。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如XWorker的SWT中的ThingForm模型，ThingForm执行create后会创建两个对象。一个变量是SWT框架需要它返回的类型为Control的对象，另一个是为以后使用的保存的对象，其中保存的对象的类型就可以是自定义的了。</p>
+]]></description>
+</QuickContent>

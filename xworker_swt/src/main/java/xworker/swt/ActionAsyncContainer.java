@@ -36,13 +36,11 @@ public class ActionAsyncContainer {
 	private static final String TAG = ActionAsyncContainer.class.getName();
 	static World world = World.getInstance();
 	
-	private Thing actions;
-	private ActionContext actionContext;	
 	private Display display;
+	private ActionContainer actionContainer;
 	
-	public ActionAsyncContainer(Thing actions, ActionContext actionContext){
-		this.actionContext = actionContext;
-		this.actions = actions;
+	public ActionAsyncContainer(ActionContainer actionContainer){
+		this.actionContainer = actionContainer;
 		this.display = Display.getCurrent();		
 	}
 	
@@ -51,18 +49,14 @@ public class ActionAsyncContainer {
 	}
 	
 	public Thing getThing(){
-		return actions;
+		return actionContainer.getThing();
 	}
 	
 	public void doAction(final String name){
 		display.asyncExec(new Runnable(){
 			public void run(){
 				try{
-					Thing actionThing = getActionThing(name);
-					if(actionThing != null){
-						Action action = world.getAction(actionThing.getMetadata().getPath());
-						action.run(actionContext);
-					}
+					actionContainer.doAction(name);
 				}catch(Throwable e){
 					Executor.error(TAG, "Container do action " + name, e);
 				}
@@ -75,11 +69,7 @@ public class ActionAsyncContainer {
 		display.asyncExec(new Runnable(){
 			public void run(){
 				try{
-					Thing actionThing = getActionThing(name);
-					if(actionThing != null){
-						Action action = world.getAction(actionThing.getMetadata().getPath());
-						action.run(context);
-					}
+					actionContainer.doAction(name, context);
 				}catch(Throwable e){
 					Executor.error(TAG, "Container do action " + name, e);
 				}
@@ -91,54 +81,32 @@ public class ActionAsyncContainer {
 	public void doAction(String name, Map<String, Object> parameters){
 		display.asyncExec(new Runnable(){
 			public void run(){
-				
+				try{
+					actionContainer.doAction(name, parameters);
+				}catch(Exception e){
+					Executor.error(TAG, "Container do action " + name, e);
+				}
 			}
 		});
-		try{
-			Thing actionThing = getActionThing(name);
-			if(actionThing != null){
-				Action action = world.getAction(actionThing.getMetadata().getPath());
-				action.run(actionContext, parameters);
-			}
-		}catch(Throwable e){
-			Executor.error(TAG, "Container do action " + name, e);
-		}
 	}
 	
 	public void doAction(String name, ActionContext context, Map<String, Object> parameters){
 		display.asyncExec(new Runnable(){
 			public void run(){
-				
+				try{
+					actionContainer.doAction(name, context, parameters);
+				}catch(Throwable e){
+					Executor.error(TAG, "Container do action " + name, e);
+				}
 			}
 		});
-		try{
-			Thing actionThing = getActionThing(name);
-			if(actionThing != null){
-				Action action = world.getAction(actionThing.getMetadata().getPath());
-				action.run(context, parameters);
-			}
-		}catch(Throwable e){
-			Executor.error(TAG, "Container do action " + name, e);
-		}
 	}
 	
 	public Thing getActionThing(String name){
-		display.asyncExec(new Runnable(){
-			public void run(){
-				
-			}
-		});
-		for(Thing child : actions.getAllChilds()){
-			if(child.getMetadata().getName().equals(name)){
-				return child;
-			}
-		}
-		
-		Executor.warn(TAG, "action is not found : " + actions.getMetadata().getPath() + "/@" + name);
-		return null;
+		return actionContainer.getActionThing(name);
 	}
 	
 	public ActionContext getActionContext(){
-		return actionContext;
+		return actionContainer.getActionContext();
 	}
 }

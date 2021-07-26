@@ -79,6 +79,7 @@ import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.XWorkerTreeUtil;
 import xworker.swt.xworker.DataTable;
+import xworker.thingeditor.ThingMenu;
 import xworker.util.XWorkerUtils;
 import xworker.utils.ThingBackupUtil;
 
@@ -337,9 +338,16 @@ public class ThingEditorActions {
 		//初始化编辑表单
 		if(editPartCompositeStackLayout.topControl == guideComposite){
 		    //不能设置为取消，否则会递归，向导现在默认取消，以后可能会有其他动作
-		    //thingGuide.cancel();
+			if(UtilData.isTrue(actions.doAction("isGuideEditor"))){
+				//如果是向导界面，退出向导
+				ThingGuide thingGuide = actionContext.getObject("thingGuide");
+			//	thingGuide.cancel(false);
+			}
+
 		    editPartCompositeStackLayout.topControl = contentEditComposite;
 		    editPartComposite.layout();
+
+			((Listener) actionContext.get("descriptSelection")).handleEvent(null);
 		}else if(!UtilData.isTrue(actions.doAction("isXmlEditor", actionContext))){
 		    //表单编辑
 		    ((Listener) actionContext.get("descriptSelection")).handleEvent(null);  
@@ -353,7 +361,8 @@ public class ThingEditorActions {
 		//初始化添加子节点
 		//由于子节点需要通过点击按钮才能看见，因此默认不初始化
 		actionContext.getScope(0).put("doInitChildTree", false);
-		((Listener) actionContext.get("descriptsComboSelection")).handleEvent(null);
+		//这个是子节点的下拉框的选择事件
+		//((Listener) actionContext.get("descriptsComboSelection")).handleEvent(null);
 
 		//切换到编辑界面
 		if(editPartCompositeStackLayout.topControl == addChildSashForm){
@@ -505,7 +514,7 @@ public class ThingEditorActions {
 		    }
 		}
 
-		if(UtilData.isTrue(actionContext.get("refresh")) == true){    
+		if(UtilData.isTrue(actionContext.get("refresh"))){
 		    innerOutline.setSelection(innerOutline.getItems()[0]);
 		    Listener refreshMenuSelection = actionContext.getObject("refreshMenuSelection");
 		    refreshMenuSelection.handleEvent(null);
@@ -545,8 +554,7 @@ public class ThingEditorActions {
 		    }
 		}
 
-		if(UtilData.isTrue(actions.doAction("isXmlEditor")) == true){
-		}else{
+		if(!UtilData.isTrue(actions.doAction("isXmlEditor"))){
 		    //可以从添加子节点的界面切换到编辑界面
 			StackLayout contentEditCompositeStackLayout = actionContext.getObject("contentEditCompositeStackLayout");
 			Composite contentComposite = actionContext.getObject("contentComposite");
@@ -1157,7 +1165,12 @@ public class ThingEditorActions {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 该方法应该没有被用到。
+	 * @param actionContext
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public Object initToobarMenu(ActionContext actionContext) {
 		MessageCenter.publish("/xworker/ide/thingeditor/toolbar/menu/init", null, actionContext);
@@ -1243,10 +1256,12 @@ public class ThingEditorActions {
 		}
 
 		if(menuBarComposite != null && !menuBarComposite.isDisposed()){
-		    //初始化菜单
+		    //初始化菜单，旧版本只支持SWT的菜单，以后会淘汰掉
 		    List<Thing> menus = null;
 		    SwtMenuListener swtMenu = SwtMenuListener.getInstance();
+		    Thing descriptor = null;
 		    if(objStruct != null){
+		    	descriptor = thing.getDescriptors().get(0);
 		        String[] paths = thing.getDescriptors().get(0).getMetadata().getPaths();
 		        menus = swtMenu.getMenu(thing, paths, "data");
 		    }else{        	
@@ -1254,6 +1269,7 @@ public class ThingEditorActions {
 		    	String descriptors = actionContext.getObject("descriptors");
 		        String strFullPath = (structurePath == null || "".equals(structurePath.trim())) ? descriptors : (descriptors + ":" + structurePath);
 		        menus = swtMenu.getMenu(thing, new String[] {strFullPath}, "data");
+		        descriptor = world.getThing(structurePath);
 		    }
 		    
 		    Thing toolItemListenerObject = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@tempShell/@listenersPrepared/@toolBarItemSelection");
@@ -1281,11 +1297,90 @@ public class ThingEditorActions {
 		        }    
 		        item.setData("menu", amenu);
 		    }
+
+		    //新版本的通用菜单
+			/*
+			for(ThingMenu thingMenu : ThingMenu.getThingMenus(thing, newValue, "javafx", actionContext)){
+				javafx.scene.control.Menu menu = new javafx.scene.control.Menu();
+				menu.setText(thingMenu.getLabel());
+				menuBar.getMenus().add(menu);
+
+				for(ThingMenu childMenu : thingMenu.getChilds()){
+					initMenu(childMenu, menu);
+				}
+			}*/
 		}
 	
 		return null;
 	}
-	
+
+	private void initMenuItem(Menu parent, ThingMenu thingMenu){
+		int style = SWT.PUSH;
+		if(thingMenu.getChilds().size() > 0){
+			style = SWT.CASCADE;
+		}else if(thingMenu.isSeparator()){
+			style = SWT.SEPARATOR;
+		}
+
+		//放入一些变量
+		final Shell shell = parent.getParent().getShell();
+		Bindings g = thingMenu.getActionContext().g();
+		ActionContext p = thingMenu.getParentContext();
+		g.put("shell", parent.getParent().getShell());
+		g.put("refreshMenuSelection", p.get("refreshMenuSelection"));
+		g.put("explorerContext", p.get("explorerContext"));
+		g.put("actions", p.get("actions"));
+		g.put("explorerActions", p.get("explorerActions"));
+
+		MenuItem mitem = new MenuItem(parent, style);;
+
+		mitem.setData("menu", thingMenu);
+		String accelerator = thingMenu.getAccelerator();
+		if(accelerator != null){
+			mitem.setText(thingMenu.getLabel() + "\t" + accelerator);
+			mitem.setAccelerator(SwtUtils.getAccelerator(accelerator));
+		}else{
+			mitem.setText(thingMenu.getLabel());
+		}
+		mitem.addListener(SWT.Selection, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				try {
+					thingMenu.execute();
+				}catch (Exception e){
+					p.peek().put("parent", shell);
+					p.peek().put("throwable", e);
+					Thing viewer = world.getThing("xworker.swt.xworker.editor.thingmenus.ExceptionViewer");
+					Shell newShell =viewer.doAction("create", p);
+					newShell.setText(thingMenu.getLabel());
+					newShell.setVisible(true);
+				}
+			}
+		});
+
+		/* 这一部分不知道是做什么的，可能对新的菜单无效
+		String url = menuData.getString("url");
+		if(url != null && url != ""){
+			//if(menuData.getBoolean("attachParam")){
+			//    mitem.setData("url", menuData.getString("url") + attachUrl);
+			//}else{
+			mitem.setData("url", menuData.getString("url"));
+			//}
+		}else{
+			Thing menuActions = menuData.getThing("actions@0");
+			if(menuActions != null && menuActions.getChilds().size() > 0){
+				mitem.setData("url", menuActions.getChilds().get(0).getMetadata().getPath());
+			}
+		}*/
+
+		if(thingMenu.getChilds().size() > 0){
+			Menu subMenu = new Menu(mitem);
+			mitem.setMenu(subMenu);
+			for(ThingMenu childMenu : thingMenu.getChilds()){
+				initMenuItem(subMenu, childMenu);
+			}
+		}
+	}
 	@SuppressWarnings("unchecked")
 	private void initMenuItem(Menu parent, Thing menuData, String attachUrl,Thing  menuListenerObject, ActionContext swtActionContext) {
 		int style = SWT.PUSH;
@@ -2160,6 +2255,30 @@ public class ThingEditorActions {
 		        }    
 		        item.setData("menu", amenu);
 		    }
+
+		    //新版本的菜单
+			List<ThingMenu> thingMenus = null;
+		    if(structureThing == null){
+		    	thingMenus = ThingMenu.getThingMenus(currentThing, currentThing.getDescriptor(), "swt", actionContext);
+			}else{
+		    	thingMenus = ThingMenu.getThingMenus(currentThing, structureThing, "swt", actionContext);
+			}
+			for(ThingMenu thingMenu : thingMenus){
+				ToolItem item = new ToolItem(toolBar, SWT.PUSH);
+				//println item;
+				item.setText(thingMenu.getLabel());
+				item.addListener(SWT.Selection, new SwtListener(toolItemListenerObject, actionContext));
+				item.addListener(SWT.Dispose, new SwtListener(disposeListenerObject, actionContext));
+
+				String attachUrl = "&thingName=" + thing.getMetadata().getPath() + "&descriptors=";
+				//创建菜单
+				Menu amenu = new Menu(toolBar.getShell(), SWT.POP_UP);
+				//item.setMenu(amenu);
+				for(ThingMenu childMenu : thingMenu.getChilds()){
+					initMenuItem(amenu, childMenu);
+				}
+				item.setData("menu", amenu);
+			}
 		}
 
 		//log.info("初始化菜单：" + (System.currentTimeMillis() - start));

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="ExecutorDoc" descriptors="xworker.content.QuickContent" label="日志和请求" type="thingDesc"
+     group="xworker.-1000|lang.executor" groupDescriptor="true" icon="icons/html.png"
+     th_sortWeight="20" simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>日志和请求</h1>
+
+<h2>1.作用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Executor是XWorker的日志和请求框架。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 由于动态模型常常在运行时使用模型编辑器来编写和运行模型，这个时候模型程序的日志或者交互请求等可能希望发送到特定的界面上，Executor框架是为了满足这个需要而编写的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 一般建议使用Executor输出日志，这样可以方便调试，因为Executor输出的日志控制可以很细。比如要运行一个动作，那么可以针对本次运行设置日志级别和输出目的地等，这样可以只看到动作本身执行时产生的相关日志。</p>
+
+<h3>1.1.请求</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 请求是发送给用户的，需要用户操作的。请求可以是多种多样的，比如一段信息或需要用户输入的表单等。请求默认有<strong>确定</strong>和<strong>取消</strong>两个按钮，请求模型可以通过ok和cancel两个方法来监听用户是点了确定还是取消。</p>
+
+<h2>2.Java类</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Executor对应的Java类是<strong>xworker.lang.executor.Executor</strong>。</p>
+
+<h2>3.使用</h2>
+
+<h3>3.1.日志</h3>
+
+<h4>3.1.1.输出日志</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 输出日志一般使用Executor.xxx(String TAG, String message, ...)等方法。日中xxx可以是debug、trace、info、warn和error，方法是参照Slf4j设置的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如：</p>
+
+<pre class="brush:groovy;">
+import xworker.lang.executor.Executor;
+
+String TAG = &quot;xworker.lang.executor.Executor&quot;;
+
+Executor.info(TAG, &quot;Hello world!&quot;);
+Executor.info(TAG, &quot;Hello world, {}!&quot;, &quot;myname&quot;);
+</pre>
+
+<h4>3.1.2.设置日志级别</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 允许指定的日志级别即更高级别的日志可以输出。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如：</p>
+
+<pre class="brush:groovy;">
+//设置当前的日志服务的日志级别，相当于Executor.getLogExecutorService().setLogLevel(byte level)
+Executor.setLogLevel(Executor.INFO);
+
+//设置指定TAG的日志级别，可以针对包名设置。针对TAG的日志级别是全局的，对所有日志服务都有效
+Executor.setLogLEvel(&quot;xworker.lang.executor&quot;, Executor.INFO);
+
+//判断日志级别是否激活
+boolean enabled = Executor.isLogLevelEnabled(TAG, Executor.INFO);</pre>
+
+<h3>3.2.发送请求</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 请求是模型，需要先编写一个请求模型，然后使用Executor发送请求。</p>
+
+<h4>3.2.1.创建请求模型</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用xworker.lang.executor.RequestIndex来创建请求模型，注意它的子节点才是请求模型。</p>
+
+<h4>3.2.2.发送请求模型</h4>
+
+<pre class="brush:groovy;">
+//发送请求
+Executor.requestUI(thing, actionContext);
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

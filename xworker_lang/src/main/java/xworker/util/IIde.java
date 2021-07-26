@@ -15,6 +15,24 @@ import xworker.lang.actions.ActionContainer;
  *
  */
 public interface IIde {
+	public static final int ICON_ERROR = 1;
+	public static final int ICON_INFORMATION = 2;
+	public static final int ICON_QUESTION = 4;
+	public static final int ICON_WARNING = 8;
+	public static final int ICON_WORKING = 16;
+	public static final int ICON_SEARCH = 512;
+	public static final int ICON_CANCEL = 256;
+
+	public static final int OK = 32;
+	public static final int YES = 64;
+	public static final int NO = 128;
+	public static final int CANCEL = 256;
+	public static final int ABORT = 512;
+	public static final int RETRY = 1024;
+	public static final int IGNORE = 2048;
+	public static final int OPEN = 4096;
+	public static final int SAVE = 8192;
+
 	/**
 	 * 在IDE中打开一个文件。
 	 * 
@@ -74,7 +92,7 @@ public interface IIde {
 	 * @param message 消息的内容
 	 * @param style 消息窗口的类型，可参看SWT的MessageBox的类型设置
 	 */
-	public void ideShowMessageBox(final String title, final String message, final int style);
+	public void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback);
 	
 	/**
 	 * 是否是事物管理器，如果不是返回false。如一些简单的应用可能也要实现此接口，但应该返回false。

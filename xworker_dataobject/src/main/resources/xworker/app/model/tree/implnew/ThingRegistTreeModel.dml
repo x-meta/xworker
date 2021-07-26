@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ThingRegistTreeModel" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.app.model.tree.AbstractTreeModel"
+     group="xworker">
+    <description><![CDATA[<p>事物注册的树模型，可以把指定事物子事物的以及注册到该事物的事物按照group转化成一个颗树模型。</p>
+]]></description>
+    <actions>
+        <JavaAction name="getRoot" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.app.model.tree.implnew.ThingRegistTreeModel"
+             methodName="getRoot"></JavaAction>
+        <JavaAction name="getChilds" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.app.model.tree.implnew.ThingRegistTreeModel"
+             methodName="getChilds"></JavaAction>
+        <GetThing name="getRegistThing" _xmeta_id_="25234" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="registThing" usage="params"></GetThing>
+        <GetString name="getRegistType" _xmeta_id_="25235" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="registType" usage="params"></GetString>
+        <GetStringList name="getKeys" _xmeta_id_="25666" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="keys" usage="params"></GetStringList>
+        <GetBoolean name="isParent" _xmeta_id_="25667" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="parent" usage="params"></GetBoolean>
+        <GetBoolean name="isNoDescriptor" _xmeta_id_="25668" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="noDescriptor" usage="params"></GetBoolean>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="registThing" _xmeta_id_="thingPath" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="registType" _xmeta_id_="type" extends="xworker.lang.MetaThing/@th_registThing"
+         inputtype="select"></attribute>
+    <attribute name="keys" size="60"></attribute>
+    <attribute name="parent" inputtype="truefalse"></attribute>
+    <attribute name="noDescriptor" inputtype="truefalse"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <attribute name="delayLoad" label="延迟加载" inputtype="truefalse" group="NotModify" default="false"
+         en_label="Delay Load">
+        <description><![CDATA[<p>ThingRegistTreeModel是一次全部加载的，不支持延迟加载。</p>
+]]></description>
+    </attribute>
+    <attribute name="rootVisible" _xmeta_id_="rootVisiable" label="根节点是否可见" inputtype="truefalse"
+         group="NotModify" default="false" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false">
+        <description><![CDATA[<p>根节点没有意义，不要显示。</p>
+]]></description>
+    </attribute>
+</thing>

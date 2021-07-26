@@ -1,0 +1,158 @@
+%1622700835232
+@
+sname=RequestIndex
+slabel=RequestIndex
+sgroup=xworker.executor
+Sdescription=
+#$@text#$@
+<p>请求(Request)模型索引。可以通过子节点编写请求（Request)模型。</p>
+
+<h2>1.Request</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Request属于xworker_lang下的Executor框架，Executor框架界面可以定向日志和请求。比如一个WEB应用可能会有多个用户使用，这是使用Executor框架可以让用户看到自己的应用的日志和请求。</p>
+
+<p>&nbsp;&nbsp;&nbsp; Request代表应用向户发送的请求，如果用户的界面上有相应的ExecutorService，那么用户可以看到这些请求并处理。比如可以发送一个Confirm请求让用户确认或取消。</p>
+
+<h3>1.1.Request用户不一定会处理</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 需要注意的是，用户不一定会处理这些请求。比如用户的界面上就没有能够处理请求的服务，或用户并没有及时处理请求等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 因此，如果请求是同步的，那么应该设置一个超时时间。如果请求是异步的，那么应该设置相应的回调。&nbsp;&nbsp;&nbsp;</p>
+
+<h2>2.变量上下文</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Request使用自己独立的变量上下文，变量上下文中常用的变量如下。</p>
+
+<ul>
+	<li><strong>parentContext: ActionContext</strong><br />
+	发出Request时的变量上下文。<br />
+	&nbsp;</li>
+	<li><strong>request: xworker.lang.executor.Request</strong><br />
+	请求封装之后的Java对象。<br />
+	&nbsp;</li>
+	<li><strong>variables:</strong><br />
+	Ruquest设置了各种变量。比如从parentContext带入到请求自己的变量上下文中的变量。<br />
+	&nbsp;</li>
+	<li><strong>UI variables:</strong><br />
+	界面执行create方法后创建了各种变量。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 由于变量上下文会放置默认的变量，也会放置转入的变量和界面的变量，此时应该避免变量名不要重复，以免造成变量覆盖。</p>
+
+<h2>3.可以重写的方法</h2>
+
+<ul>
+	<li><strong>Object create(Object parent, String platform)</strong><br />
+	用于创建界面，一般在定义Request模型时编写。用于创建非按钮区域的内容界面。<br />
+	&nbsp;</li>
+	<li><strong>ok()</strong><br />
+	用于点击了确定按钮后触发的事件。<br />
+	&nbsp;</li>
+	<li><strong>cancel()</strong><br />
+	用户点击了取消按钮之后触发的事件。<br />
+	&nbsp;</li>
+	<li><strong>其它可以重写的方法</strong><br />
+	参看具体的Request模型。</li>
+</ul>
+
+<h3>&nbsp;</h3>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
+sdescriptors=xworker.lang.util.ThingIndex
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.lang.util.ThingIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sth_fileMonitor=false
+sth_mark=false
+  @/@ThingForm
+  sname=ThingForm
+  sdescriptors=xworker.lang.util.ThingIndex/@thing
+  sextends=xworker.lang.executor.requests.ThingForm
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  sgroup=requests
+  smodifier=public
+  sinheritDescription=true
+  sdescription=<p>模型表单请求。</p>
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=ThingForm
+  @/@Html
+  sname=Html
+  sdescriptors=xworker.lang.util.ThingIndex/@thing
+  sextends=xworker.lang.executor.requests.Html
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  sgroup=requests
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=Html
+  @/@ThingDesc
+  sname=ThingDesc
+  sdescriptors=xworker.lang.util.ThingIndex/@thing
+  sextends=xworker.lang.executor.requests.ThingDesc
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  sgroup=requests
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=ThingDesc
+  @/@Url
+  sname=Url
+  sdescriptors=xworker.lang.util.ThingIndex/@thing
+  sextends=xworker.lang.executor.requests.Url
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  sgroup=requests
+  smodifier=public
+  sinheritDescription=true
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=Url

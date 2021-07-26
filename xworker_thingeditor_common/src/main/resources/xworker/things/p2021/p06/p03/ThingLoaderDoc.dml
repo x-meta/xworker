@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="ThingLoaderDoc" descriptors="xworker.content.QuickContent" label="ThingLoader"
+     type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="10" simpleBrowser="true"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>ThingLoader</h1>
+
+<h2>1.作用</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;ThingLoader用于Java代码和模型的相互调用。比如一些模型运行后会创建一个或者多个Java对象，需要在Java代码里处理这些对象时可以使用ThingLoader，如SWT、JavaFX等界面模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; ThingLoader的功能主要是：</p>
+
+<ol>
+	<li><strong>执行模型的create方法</strong>，通常模型在create方法中创建Java对象，这些Java对象一般是保存到全局变量栈中的</li>
+	<li><strong>指定一个Java对象，对这个对象的有@ActionField注解的字段赋值</strong>，值从变量上下文文中取</li>
+	<li><strong>模型调用对象的方法</strong>，需要模型支持，比如下面的示例模型的<strong>closeButton</strong>的的监听器调用了对象的<strong>close()</strong>方法</li>
+</ol>
+
+<h2>2.示例</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 示例模型是一个SWT窗口，窗口中有一个浏览器显示XWorker的主页，有一个关闭按钮，点击后关闭窗口。</p>
+
+<h3>2.2.Java代码中调用模型</h3>
+
+<h4>2.2.1.模型代码</h4>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;SwtExample&quot; label=&quot;SwtExample&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Browser name=&quot;browser&quot;&gt;
+        &lt;GridData name=&quot;GridData&quot; style=&quot;FILL_BOTH&quot;&gt;&lt;/GridData&gt;
+    &lt;/Browser&gt;
+    &lt;Composite name=&quot;buttonComposite&quot;&gt;
+        &lt;GridData name=&quot;buttonCompositeGridData&quot; style=&quot;FILL_HORIZONTAL&quot;
+             horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+        &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot;&gt;&lt;/RowLayout&gt;
+        &lt;Button name=&quot;closeButton&quot;  text=&quot;lang:d=关闭&amp;amp;en=Close&quot;&gt;
+            &lt;RowData name=&quot;RowData&quot;  width=&quot;80&quot;&gt;&lt;/RowData&gt;
+            &lt;Listeners&gt;
+                &lt;Listener name=&quot;closeButtonSelection&quot; methodName=&quot;close&quot;&gt;&lt;/Listener&gt;
+            &lt;/Listeners&gt;
+        &lt;/Button&gt;
+    &lt;/Composite&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 以上是SWT模型，SWT模型都有一个create方法，执行create方法后一般会创建一个对应的Java对象，Java对应用模型的名字作为变量名保存到全局变量栈中。</p>
+
+<h4>2.2.2.Java对象代码</h4>
+
+<pre class="brush:java;">
+package xworker.examples.lang.thingloader;
+
+import org.xmeta.annotation.ActionField;
+
+public class SwtExample {
+    @ActionField
+    public org.eclipse.swt.browser.Browser browser;
+    @ActionField
+    public org.eclipse.swt.widgets.Button closeButton;
+    @ActionField
+    public org.eclipse.swt.widgets.Shell shell;
+
+    public void init(){
+        browser.setUrl(&quot;https://www.xworker.org&quot;);
+    }
+
+    public void close(){
+        shell.dispose();
+    }
+}</pre>
+
+<h4>2.2.3.使用ThingLoader加载模型</h4>
+
+<pre class="brush:groovy;">
+import org.xmeta.util.ThingLoader;
+
+//获取模型
+Thing thing = world.getThing(&quot;xworker.example.lang.thingloader.SwtExample&quot;);
+
+//实例化Java对象
+SwtExample object = new SwtExample();
+
+//加载模型，执行模型的create方法，最后对object的ActionField注解的字段赋值
+Shell shell = ThingLoader.load(object, thing, actionContext);
+
+//其它Java代码，如调用Java对象的方法初始化
+object.init();</pre>
+
+<h3>2.3.在模型中调用Java代码</h3>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;SwtExample2&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;SwtExample&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Browser name=&quot;browser&quot;&gt;
+        &lt;GridData name=&quot;GridData&quot; style=&quot;FILL_BOTH&quot;&gt;&lt;/GridData&gt;
+    &lt;/Browser&gt;
+    &lt;ThingLoader name=&quot;swtExample&quot; init=&quot;true&quot; objectForLoadClass=&quot;xworker.examples.lang.thingloader.SwtExample&quot;&gt;
+        &lt;Composite name=&quot;buttonComposite&quot;&gt;
+            &lt;GridData name=&quot;buttonCompositeGridData&quot; style=&quot;FILL_HORIZONTAL&quot;
+                 horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+            &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot; &gt;&lt;/RowLayout&gt;
+            &lt;Button name=&quot;closeButton&quot;  text=&quot;lang:d=关闭&amp;amp;en=Close&quot;&gt;
+                &lt;RowData name=&quot;RowData&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
+                &lt;Listeners&quot;&gt;
+                    &lt;Listener name=&quot;closeButtonSelection&quot;  methodName=&quot;close&quot;&gt;&lt;/Listener&gt;
+                &lt;/Listeners&gt;
+            &lt;/Button&gt;
+        &lt;/Composite&gt;
+    &lt;/ThingLoader&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在模型里调用Java对象使用的是ThingLoader模型，ThingLoader模型可以调用已存在的对象，或通过类名实例化一个对象（必须有默认构造函数），ThingLoader可以执行对象的public void init()方法，ThingLoader获取或创建的Java对象会保存到全局变量上下文中。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 在这里Java代码同上面的<strong>SwtExample.java，<a href="javascript:invoke('shell:xworker.example.lang.thingloader.SwtExample2')">点击这里</a></strong>可以运行示例。<strong> </strong></p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

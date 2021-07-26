@@ -28,7 +28,7 @@ public class ActionContainer extends xworker.lang.actions.ActionContainer{
 	public ActionContainer(Thing actions, ActionContext actionContext){
 		super(actions, actionContext);
 		
-		asyncContainer = new ActionAsyncContainer(actions, actionContext);
+		asyncContainer = new ActionAsyncContainer(this);
 	}
 
 	public ActionAsyncContainer async(){

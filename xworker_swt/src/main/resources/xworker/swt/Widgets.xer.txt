@@ -1,4 +1,4 @@
-^1614049549098
+^1626415212419
 @
 sname
 Widgets
@@ -56,7 +56,7 @@ false
   sdescriptors
   xworker.lang.MetaDescriptor3/@thing
   sextends
-  xworker.lang.MetaDescriptor3/@actions
+  xworker.lang.actions.ActionContainer,xworker.lang.MetaDescriptor3/@actions
   smany
   true
   seditCols
@@ -73,22 +73,9 @@ false
   false
   Sdescription
 #$@text#$@
-<p>动作的容器（ActionContainer），可以定义一些动作在运行后期被调用。</p>
+<p>参看<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionContainer">ActionContainer</a>。</p>
 
-<p>比如一个工作台（Workbentch）的界面通常需要提供打开视图、打开编辑器等功能，这些功能则可以定义在动作容器中。调用动作的方法是&lt;动作容器名&gt;.doAction(&lt;name&gt;, ....)，如workbentchActions.doAction(&quot;openView&quot;, [&quot;viewName&quot;:&quot;outline&quot;])。</p>
-
-<p>动作容器的方法主要有：</p>
-
-<ul>
-	<li>public Object doAction(String name)</li>
-	<li>public Object doAction(String name, ActionContext context)</li>
-	<li>public Object doAction(String name, Map&lt;String, Object&gt; parameters)</li>
-	<li>public Object doAction(String name, ActionContext context, Map&lt;String, Object&gt; parameters)</li>
-</ul>
-
-<p><strong>注意：</strong></p>
-
-<p>&nbsp;&nbsp; 避免添加名为<span style="color:rgb(255, 0, 0)"><strong>init</strong></span>的子动作，因为init是控件事物自己的初始化方法，会和其它冲突。</p>
+<p>创建和保存的是xworker.swt.ActionContainer，增加了一个public ActionAsyncContainer async()方法，使用ActionAsyncContainer可以使用Display.asyncExec()执行动作。</p>
 #$@text#$@
   snotXmlAttribute
   false
@@ -164,189 +151,6 @@ false
       false
       sid
       create
-    @/@actions/@name
-    sname
-    name
-    sshowLabel
-    true
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    name
-    @/@actions/@labe
-    sname
-    label
-    sshowLabel
-    true
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    labe
-    @/@actions/@extends
-    sname
-    extends
-    sinputtype
-    dataSelector
-    ssize
-    60
-    sshowLabel
-    true
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    extends
-    @/@actions/@log
-    sname
-    log
-    sinputtype
-    truefalse
-    sshowLabel
-    true
-    slabelAlign
-    right
-    slabelVAlign
-    baseline
-    smodifier
-    public
-    sreadOnly
-    false
-    sdefault
-    false
-    sinheritDescription
-    false
-    sdescription
-    <p>调用ActionContainer的方法时，如果方法不存在，是否打印日志。</p>
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_fileMonitor
-    false
-    sth_mark
-    false
-    sid
-    log
-    @/@actions/@description
-    sname
-    description
-    sinputtype
-    html
-    sshowLabel
-    true
-    smodifier
-    public
-    sreadOnly
-    false
-    sinheritDescription
-    false
-    svalidateAllowBlank
-    true
-    LvalidateOnBlur
-    true
-    LallowDecimals
-    true
-    LallowNegative
-    true
-    snotXmlAttribute
-    false
-    sdescriptors
-    xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex
-    false
-    sth_registMyChilds
-    false
-    sth_registDisabled
-    false
-    sth_mark
-    false
-    sid
-    description
     @/@actions/@VariablesDescs
     sname
     VariablesDescs
@@ -8228,3 +8032,126 @@ false
   false
   sid
   InputDataManager
+  @/@ThingLoader
+  sname
+  ThingLoader
+  sdescriptors
+  xworker.lang.util.ThingIndex/@thing
+  sextends
+  xworker.lang.ThingLoader,xworker.swt.Widgets
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  util
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  ThingLoader
+  @/@SwtRequestService
+  sname
+  SwtRequestService
+  sdescriptors
+  xworker.lang.util.ThingIndex/@thing
+  sextends
+  xworker.lang.executor.swt.SwtRequestService
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  xworker.lang.executor
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  SwtRequestService
+  @/@FileListExplorer
+  sname
+  FileListExplorer
+  sdescriptors
+  xworker.lang.util.ThingIndex/@thing
+  sextends
+  xworker.swt.xwidgets.io.FileListExplorer
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  xwidgets.io
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  FileListExplorer

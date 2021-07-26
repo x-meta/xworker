@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="FileListExplorerShell" descriptors="xworker.swt.widgets.Shell">
+    <FillLayout name="FillLayout"></FillLayout>
+    <Table name="table">
+        <DataStore name="dataStore" loadBackground="false" autoLoad="false">
+            <dataObjects>
+                <AbstractDataObject>
+                    <attribute name="name" label="名字" gridWidth="300" en_label="Name"></attribute>
+                    <attribute name="ext" label="后缀" gridWidth="45" en_label="Ext"></attribute>
+                    <attribute name="size" label="大小" gridWidth="100" gridAlign="right" en_label="Size"></attribute>
+                    <attribute name="date" label="日期" gridWidth="135" en_label="Date"></attribute>
+                    <attribute name="permission" label="权限" en_label="Permission"></attribute>
+                    <attribute name="group" label="组" en_label="Group"></attribute>
+                    <attribute name="owner" label="所有者" en_label="Owner"></attribute>
+                    <actions>
+                        <Ognl name="getIcon" expression="theData.get(&quot;icon&quot;)"></Ognl>
+                    </actions>
+                </AbstractDataObject>
+            </dataObjects>
+        </DataStore>
+    </Table>
+    <GroovyAction name="init" descriptors="xworker.swt.Widgets/@Code1">
+        <code><![CDATA[import xworker.dataObject.DataObject;
+
+def data = new DataObject("xworker.swt.xwidgets.io.prototypes.FileListExplorerShell/@table/@dataStore/@dataObjects/@AbstractDataObject");
+data.put("name", "xworker_spring-1.0.0-SNAPSHOT-sources.jar.asc");
+data.put("ext", "asc");
+data.put("size", "12,232,233,233");
+data.put("date", "2021-12-12 11:23:23");
+data.put("permission", "drwxr-xr-x");
+data.put("group", "root");
+data.put("owner", "root");
+
+dataStore.records.add(data);
+println "ddddddddddd";]]></code>
+    </GroovyAction>
+</Shell>

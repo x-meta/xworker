@@ -121,7 +121,7 @@ public class ThingUtils {
 					try{
 						//logger.info("start refresh regist thing cache");
 						refreshRegistThingCache();
-					}catch(Exception e){
+					}catch(Throwable e){
 						Executor.error(TAG, "refreshRegistThingCache error", e);
 					}
 				}

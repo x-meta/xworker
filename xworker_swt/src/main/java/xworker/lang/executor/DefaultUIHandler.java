@@ -8,18 +8,21 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
+import xworker.swt.util.SwtUtils;
+import xworker.swt.util.ThingCompositeCreator;
+import xworker.swt.widgets.CompositeCreator;
+import xworker.util.StringUtils;
 import xworker.util.XWorkerUtils;
 
 public class DefaultUIHandler implements UIHandler{
+	private static final String TAG = DefaultUIHandler.class.getName();
+
 	Table table;
 	Browser browser;
 	Composite composite;
@@ -47,15 +50,14 @@ public class DefaultUIHandler implements UIHandler{
 				}
 				
 				//文档
-				String url = XWorkerUtils.getThingDescUrl(request.request.getThing());
-				DefaultUIHandler.this.browser.setUrl(url);
+				SwtUtils.setThingDesc(request.request.getThing(), DefaultUIHandler.this.browser);
 			}
 			
 		});
 	}
 	
 	@Override
-	public void handleUIRequest(final ExecuteRequest request) {
+	public void handleUIRequest(final xworker.lang.executor.Request request) {
 		if(table.isDisposed()) {
 			return;
 		}
@@ -72,7 +74,7 @@ public class DefaultUIHandler implements UIHandler{
 						}
 					}
 					
-					Request req = new Request(thread, request, actionContext, 
+					Request req = new Request(thread, request, actionContext,
 							(ExecutorService) DefaultUIHandler.this.executorService);
 					req.createTabeItem(table);
 				}catch(Exception e) {					
@@ -83,7 +85,7 @@ public class DefaultUIHandler implements UIHandler{
 
 	static class Request{
 		Thread thread;
-		ExecuteRequest request;
+		xworker.lang.executor.Request request;
 		ActionContext ac;
 		int count = 1;
 		String time = null;
@@ -92,7 +94,7 @@ public class DefaultUIHandler implements UIHandler{
 		TableItem item;
 		Composite composite;
 		
-		public Request(Thread thread, ExecuteRequest request, ActionContext actionContext, ExecutorService executorService) {
+		public Request(Thread thread, xworker.lang.executor.Request request, ActionContext actionContext, ExecutorService executorService) {
 			this.thread = thread;
 			this.request = request;
 			
@@ -102,8 +104,8 @@ public class DefaultUIHandler implements UIHandler{
 		}
 		
 		public boolean equals(Thread thread, Thing thing, ActionContext actionContext) {
-			if(thread == this.thread && thing == this.request.getThing() 
-					&& actionContext == this.request.getActionContext()) {
+			boolean unique = thing.getBoolean("unique");
+			if(unique && thing == this.request.getThing()) {
 				return true;
 			}else {
 				return false;
@@ -127,11 +129,49 @@ public class DefaultUIHandler implements UIHandler{
 		
 		public Composite getComposite(Composite parent) {
 			if(composite == null) {
-				ac = new ActionContext();
-				ac.putAll(request.getVariables());
-				ac.put("parent", parent);
-				
-				composite = (Composite) request.createSWT(parent, ac);
+				try {
+					Thing prototype = World.getInstance().getThing("xworker.lang.executor.requests.prototypes.QuestPrototype/@contentComposite");
+					composite = prototype.doAction("create", request.getActionContext(), "parent", parent);
+					Composite contentComposite = request.getActionContext().getObject("contentComposite");
+					Composite buttonComposite = request.getActionContext().getObject("buttonComposite");
+
+					//创建请求自身的界面
+					request.create(contentComposite, "swt");
+
+					//创建按钮
+					Button okButton = new Button(buttonComposite, SWT.NONE);
+					okButton.setText(StringUtils.getString("lang:d=确定&en=Ok", request.getActionContext()));
+					okButton.addListener(SWT.Selection, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+							ok();
+						}
+					});
+
+					for(Thing buttons : request.getThing().getChilds("Buttons")){
+						for(Thing buttonThing : buttons.getChilds()){
+							Button button = new Button(buttonComposite, SWT.NONE);
+							button.setText(buttonThing.getMetadata().getLabel());
+							button.addListener(SWT.Selection, new Listener() {
+								@Override
+								public void handleEvent(Event event) {
+									buttonThing.doAction("doAction", request.getActionContext());
+								}
+							});
+						}
+					}
+
+					Button cancelButton = new Button(buttonComposite, SWT.NONE);
+					cancelButton.setText(StringUtils.getString("lang:d=取消&en=Cancel", request.getActionContext()));
+					cancelButton.addListener(SWT.Selection, new Listener() {
+						@Override
+						public void handleEvent(Event event) {
+							cancel();
+						}
+					});
+				}catch(Exception e){
+					Executor.error(TAG, "Create composite error", e);
+				}
 			}
 			
 			return composite;
@@ -140,45 +180,29 @@ public class DefaultUIHandler implements UIHandler{
 		public void ok() {
 			try {
 				Executor.push(request.getExecutorService());
-				
-				Object result = null;
-				if(ac != null) {
-					ActionContainer actions = ac.getObject("actions");
-					if(actions != null) {
-						result = actions.doAction("getResult", ac);
-					}
+
+				Object result = request.doAction("ok");
+				if(result instanceof Boolean && !(Boolean) result){
+					return;
+				}else{
+					request.finish();
 				}
-				
-				request.doAction("ok", "result", result);
 			}finally {
 				Executor.pop();
-				
-				//销毁控件
-				if(item != null) {
-					item.dispose();
-				}
-				
-				if(composite != null) {
-					composite.dispose();
-				}
 			}
 		}
 		
 		public void cancel() {
 			try {
 				Executor.push(executorService);
-				request.doAction("cancel");
+				Object result = request.doAction("cancel");
+				if(result instanceof Boolean && !(Boolean) result){
+					return;
+				}else{
+					request.finish();
+				}
 			}finally {
 				Executor.pop();
-				
-				//销毁控件
-				if(item != null) {
-					item.dispose();
-				}
-				
-				if(composite != null) {
-					composite.dispose();
-				}
 			}
 		}
 	}
@@ -219,7 +243,7 @@ public class DefaultUIHandler implements UIHandler{
 	}
 
 	@Override
-	public void removeRequest(final ExecuteRequest request) {
+	public void removeRequest(final xworker.lang.executor.Request request) {
 		if(table.isDisposed()) {
 			return;
 		}
@@ -256,8 +280,8 @@ public class DefaultUIHandler implements UIHandler{
 	}
 
 	@Override
-	public List<ExecuteRequest> getRequestUIs() {
-		List<ExecuteRequest> requests = new ArrayList<ExecuteRequest>();
+	public List<xworker.lang.executor.Request> getRequests() {
+		List<xworker.lang.executor.Request> requests = new ArrayList<xworker.lang.executor.Request>();
 		if(table != null && table.isDisposed() == false) {
 			for(TableItem item : table.getItems()) {
 				Request request = (Request) item.getData();

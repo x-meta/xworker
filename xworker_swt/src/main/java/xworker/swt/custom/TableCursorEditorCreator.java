@@ -222,7 +222,7 @@ public class TableCursorEditorCreator {
 		    editorThing = defaultEditorThing;
 		}
 		
-		if(editorThing.getChilds().size() > 0) {
+		if(editorThing != null && editorThing.getChilds().size() > 0) {
 			return editorThing.getChilds().get(0);
 		}else {
 			return null;

@@ -28,7 +28,7 @@
             <Image name="saveImage" imageFile="/xworker/ide/images/save.gif"></Image>
             <Image name="newImage" imageFile="/xworker/ide/images/new.gif"></Image>
             <Image name="openImage" imageFile="/xworker/ide/images/open.gif"></Image>
-            <Color name="tabSelectBackground" type="" rgb="&quot;#D2E9FF&quot;"></Color>
+            <Color name="tabSelectBackground" rgb="&quot;#D2E9FF&quot;"></Color>
             <Image name="flowImage" imageFile="/xworker/ide/images/thingFlow.GIF"></Image>
             <Image name="xImage" imageFile="icons/application_key.png"></Image>
             <Image name="openThingImage" imageFile="/xworker/ide/images/openThing.gif"></Image>
@@ -61,7 +61,7 @@
         <GridData name="mainCoolBarGridData" descriptors="xworker.swt.Commons/@GridData"
              style="FILL_HORIZONTAL"></GridData>
         <CoolItem name="mainCollItem">
-            <ToolBar name="mainToolBar" FLAT="true" enabled="" redraw="" visible="">
+            <ToolBar name="mainToolBar" FLAT="true">
                 <ToolItem name="topicToolItem" image="topicImage" toolTiptext="主页">
                     <listeners>
                         <Listener name="topicToolItemSelection">
@@ -202,7 +202,7 @@ shell.open();
                 </ToolItem>
                 <InteractiveUI name="mainToolbarUI" _xmeta_id_="projectTreeUI" descriptors="xworker.swt.Widgets/@InteractiveUI"
                      label="主工具栏" commandIndex="xworker.ide.worldexplorer.swt.help.commander.MainToolbar"
-                     priority="" en_label="Main Toolbar" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
+                     en_label="Main Toolbar" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
             </ToolBar>
         </CoolItem>
     </CoolBar>
@@ -211,8 +211,7 @@ shell.open();
         <GridData name="mainCoolBarGridData" descriptors="xworker.swt.Commons/@GridData"
              style="FILL_HORIZONTAL" width="300" horizontalAlignment="END"></GridData>
         <CoolItem name="mainCollItem">
-            <ToolBar name="rightMainToolBar" _xmeta_id_="mainToolBar" FLAT="true" RIGHT="true"
-                 enabled="" redraw="" visible="">
+            <ToolBar name="rightMainToolBar" _xmeta_id_="mainToolBar" FLAT="true" RIGHT="true">
                 <ToolItem name="commandAssistorItem" image="guideImage" text="label:xworker.ide.worldexplorer.swt.i18n.I18nResource/@SystemInfo/@helpSpriteButton">
                     <listeners>
                         <Listener name="openCommander">
@@ -220,17 +219,17 @@ shell.open();
                         </Listener>
                     </listeners>
                 </ToolItem>
-                <ToolItem name="systemMessageItem" image="messageImage" text="label:xworker.ide.worldexplorer.swt.i18n.I18nResource/@SystemInfo/@systemMessageItem">
+                <ToolItem name="systemMessageItem" image="messageImage" text="lang:d=通知和请求&amp;en=Notification &amp;amp; Request">
                     <listeners>
                         <Listener name="systemMessageItemSelection">
                             <openComposite name="openComposite" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@openComposite"
-                                 title="系统通知" compositePath="xworker.notification.NotificationManager/@mainSashForm"></openComposite>
+                                 title="系统通知" compositePath="xworker.lang.executor.swt.DefaultRequestService/@mainComposite"></openComposite>
                         </Listener>
                     </listeners>
                 </ToolItem>
                 <InteractiveUI name="projectTreeUI" descriptors="xworker.swt.Widgets/@InteractiveUI"
                      label="帮助小精灵" registThing="xworker.command.CommandAssistorIndex"
-                     registType="child" priority="" en_label="Help Sprite" en_group="Thing Explorer"
+                     registType="child" en_label="Help Sprite" en_group="Thing Explorer"
                      th_createIndex="true" group="事物管理器"></InteractiveUI>
             </ToolBar>
         </CoolItem>
@@ -273,6 +272,7 @@ view.doAction("refreshProjectTree");]]></code>
             <code><![CDATA[import xworker.util.XWorkerUtils;
 import xworker.notification.NotificationManager;
 import xworker.notification.SwtNotificationManagerListener;
+import xworker.ide.executor.RequestCountListener;
 
 //IDE是Shell的，是有基本的功能，使用本ActionContainer扩充
 def actionsThing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@actions");
@@ -286,9 +286,10 @@ commonFeature.doAction("init", actionContext);
 actions.doAction("refreshAllMenu", actionContext, "mainMenu", mainMenuBar);
 
 //系统通知加事件监听，有通知时显示数量
-def notifyListenerThing = world.getThing("xworker.notification.ExplorerMessageButtonListener");
-def notifyListener = new SwtNotificationManagerListener(notifyListenerThing, actionContext);
-NotificationManager.addListener(notifyListener);
+//def notifyListenerThing = world.getThing("xworker.notification.ExplorerMessageButtonListener");
+//def notifyListener = new SwtNotificationManagerListener(notifyListenerThing, actionContext);
+//NotificationManager.addListener(notifyListener);
+new RequestCountListener(systemMessageItem, actionContext);
 
 //事物管理器的帮助小精灵
 def thing = world.getThing("xworker.ide.worldexplorer.swt.SimpleExplorer/@explorerUI");
@@ -300,7 +301,7 @@ thing.doAction("create", actionContext, "parent", mainTabFolder);]]></code>
     </actions>
     <InteractiveUI name="explorerUI" descriptors="xworker.swt.Widgets/@InteractiveUI" label="事物管理器"
          commandIndex="xworker.ide.worldexplorer.swt.help.commander.ThingExplorer"
-         priority="" en_label="Thing Explorer" en_group="Thing Explorer" group="事物管理器">
+         en_label="Thing Explorer" en_group="Thing Explorer" group="事物管理器">
         <description><![CDATA[<h2>事物管理器</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 事物管理器是XWorker的编辑和运行事物模型的平台，可以使用事物管理器开发和运行各种模型程序。</p>
@@ -309,5 +310,5 @@ thing.doAction("create", actionContext, "parent", mainTabFolder);]]></code>
     </InteractiveUI>
     <InteractiveUI name="editorUI" descriptors="xworker.swt.Widgets/@InteractiveUI" label="工作区"
          commandIndex="xworker.ide.worldexplorer.swt.help.commander.EditorTabFolder"
-         priority="" en_label="Working Area" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
+         en_label="Working Area" en_group="Thing Explorer" group="事物管理器"></InteractiveUI>
 </Workbench>

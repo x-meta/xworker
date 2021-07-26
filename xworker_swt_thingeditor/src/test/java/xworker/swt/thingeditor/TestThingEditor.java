@@ -4,6 +4,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import xworker.ide.SimpleThingEditor;
+import xworker.swt.SwtThingEditor;
 
 public class TestThingEditor {
 	public static void main(String[] args) {
@@ -11,7 +12,7 @@ public class TestThingEditor {
 			World world = World.getInstance();
 			world.init("./xworker/");
 
-			SimpleThingEditor.run();
+			SwtThingEditor.run();
 			
 		}catch(Exception e) {
 			e.printStackTrace();

@@ -13,7 +13,7 @@ import xworker.dataObject.DataObject;
 import xworker.lang.actions.ActionUtils;
 
 public class DataObjectUtils {
-	public static void initThings(ActionContext actionContext) throws IOException, OgnlException{
+	public static void initThings(ActionContext actionContext) throws Exception {
 		Thing self = actionContext.getObject("self");				
 		Thing configThing = (Thing) self.doAction("getConfigThing", actionContext);
 				

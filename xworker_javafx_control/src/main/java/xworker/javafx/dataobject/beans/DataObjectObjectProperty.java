@@ -10,6 +10,7 @@ import xworker.dataObject.DataStore;
 import xworker.dataObject.DataStoreListener;
 
 import java.util.List;
+import java.util.Map;
 
 public class DataObjectObjectProperty<T> extends SimpleObjectProperty<T> implements AutoSaveable{
     List<Thing> values = null;
@@ -65,6 +66,11 @@ public class DataObjectObjectProperty<T> extends SimpleObjectProperty<T> impleme
             @Override
             public void onChanged(DataStore dataStore) {
                 onLoaded(dataStore);
+            }
+
+            @Override
+            public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
+
             }
         });
     }

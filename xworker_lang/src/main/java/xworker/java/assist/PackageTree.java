@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class PackageTree {
 	public String name;
-	List<PackageTree> childs = new ArrayList<PackageTree>();
+	List<PackageTree> childs = new ArrayList<>();
 	PackageTree parent = null;
 	
 	public PackageTree(String name){

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<database name="DbSegmentDatabase" descriptors="xworker.db.ddlutils.database" dataSource="var:dataSource">
+    <table name="tblSegmentTask">
+        <column name="taskId" primaryKey="true" required="true" size="128"></column>
+        <column name="offset" type="BIGINT"></column>
+    </table>
+    <table name="tblSegmentTaskRanges">
+        <column name="rangeId" primaryKey="true" required="true" size="128"></column>
+        <column name="taskId" size="128"></column>
+        <column name="start" type="BIGINT"></column>
+        <column name="end" type="BIGINT"></column>
+        <column name="status" type="TINYINT"></column>
+        <column name="runCount" type="INTEGER"></column>
+        <index name="IDX_RANGES_TASKID">
+            <index-column name="taskId"></index-column>
+        </index>
+    </table>
+</database>

@@ -1,4 +1,4 @@
-%1534489077242
+%1625048078701
 @
 sname=Console
 slabel=Console
@@ -6,21 +6,50 @@ sdescriptors=xworker.lang.MetaDescriptor3
 sextends=xworker.io.ConsoleNodes,xworker.lang.actions.SelfAction
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 sgroup=xworker.io
 smodifier=public
 sinheritDescription=false
 Sdescription=
 #$@text#$@
-<p>对java.io.Console的包装，用于方便编写基于Console的程序。</p>
-
-<p><strong>异常</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 注意Console可能为null，此时会抛出异常。</p>
+<p>对java.io.Console的包装，用于方便编写基于java.io.Console的命令行交互程序。</p>
 
 <p><strong>使用方法</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 添加子节点，如果子节点只有一个，那么会立即执行子节点的run方法，如有多个则会顺序执行。</p>
+<p>&nbsp;&nbsp;&nbsp; 交互命令通过添加子节点实现，参看Console的子节点。</p>
+
+<p><strong>变量管理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 变量可以统一保存在consoleBindings中。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Bindings;
+
+//获取consoleBindings
+Bindings consoleBindings = actionContext.getObject(&quot;consoleBindings&quot;);
+
+//保存变量
+consoleBindings.put(&quot;name&quot;, &quot;xworker&quot;);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 保存的变量在运行时可以直接使用。</p>
+
+<pre class="brush:groovy;">
+def name = actionContext.get(&quot;name&quot;);
+
+//console变量也总是有
+java.io.Console console = actionContext.getObject(&quot;console&quot;);
+console.writer().println(name);</pre>
+
+<p><strong>运行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 需要从系统的命令行终端里启动。点击模型菜单Console-&gt;Start，会打开一个窗口，拷贝窗口中的命令，到系统的命令行终端里执行。</p>
+
+<p><strong>编写新的节点</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 新的节点需要实现run方法，如果run方法返回值的类型是<strong>xworker.io.ConsoleNode</strong>，那么表示跳转到ConsoleNode指定的节点。其它返回值的类型忽略。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 新的节点可以以<strong>child</strong>的方式注册到<strong>xworker.io.ConsoleNodes</strong>下。</p>
 #$@text#$@
 snotXmlAttribute=false
 sjson_isArray=false
@@ -74,8 +103,10 @@ sth_mark=false
     suseOtherAction=false
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdisableGlobalContext=false
     sdebugLog=false
+    susage=params
     sdescriptors=xworker.lang.actions.ActionUtil/@GetString
     sinheritDescription=false
     sth_createIndex=false
@@ -83,6 +114,35 @@ sth_mark=false
     sth_registDisabled=false
     sth_mark=false
     sid=getWelcomeMessage
+    @/@actions/@getCommands
+    sname=getCommands
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.io.ConsoleActions
+    smethodName=getCommands
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=getCommands
   @/@name
   sname=name
   sshowLabel=true
@@ -153,3 +213,102 @@ sth_mark=false
   sth_registDisabled=false
   sth_mark=false
   sid=description
+  @/@VariablesDescs
+  sname=VariablesDescs
+  sdescriptors=xworker.lang.MetaThing/@VariablesDesc
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sid=VariablesDescs
+    @/@VariablesDescs/@var
+    sname=var
+    svarName=_thingName_
+    spassive=true
+    sscope=0
+    stype=object
+    sclassName=java.lang.Process
+    sstaticClass=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=var
+    @/@VariablesDescs/@console
+    sname=console
+    svarName=console
+    spassive=false
+    sscope=2
+    stype=object
+    sclassName=java.io.Console
+    sstaticClass=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=console
+  @/@MenuBar
+  sname=MenuBar
+  sdescriptors=xworker.lang.MetaDescriptor3/@MenuBar
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sid=MenuBar
+    @/@MenuBar/@Console
+    sname=Console
+    ssortWeight=0
+    sdescriptors=xworker.lang.ThingMenuBar/@Menu
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=Console
+      @/@MenuBar/@Console/@Strat
+      sname=Start
+      scodeType=text
+      sactionName=getCommands
+      sdescriptors=xworker.lang.thingmenus.Menus/@CodeWindow
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      snotXmlAttribute=false
+      sjson_isArray=false
+      sid=Strat

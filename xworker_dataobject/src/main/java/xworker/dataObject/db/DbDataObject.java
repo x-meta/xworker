@@ -1,18 +1,18 @@
-/*******************************************************************************
-* Copyright 2007-2013 See AUTHORS file.
- * 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* 
-*   http://www.apache.org/licenses/LICENSE-2.0
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-******************************************************************************/
+/******************************************************************************
+ Copyright 2007-2013 See AUTHORS file.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package xworker.dataObject.db;
 
 import java.sql.Connection;
@@ -36,8 +36,11 @@ import org.xmeta.util.UtilString;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectException;
+import xworker.dataObject.DataObjectIterator;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.query.Condition;
+import xworker.dataObject.query.ConditionValue;
+import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.utils.DbUtil;
 import xworker.db.jdbc.DataSouceActionContextActions;
 import xworker.db.jdbc.DataSourceActions;
@@ -50,9 +53,22 @@ public class DbDataObject {
 	//private static Logger log = LoggerFactory.getLogger(DbDataObject.class);
 	private static final String TAG = DbDataObject.class.getName();
 	
-	/** 防止数据查询一次读取太多记录而设置的，太多记录应该使用iterator，而不是直接查询。*/
-	private static int MAX_ROWS = 100000;  
-	
+	public static int setStatementParams(PreparedStatement pst, int index, QueryConfig queryConfig, List<Thing> attributes) throws SQLException {
+		List<ConditionValue> values = queryConfig.getCondition().getConditionValueList(attributes);
+		for(int i=0; i<values.size(); i++){
+			ConditionValue value = values.get(i);
+			String type = value.getType();
+			if(type == null){
+				Executor.warn(TAG, "Can not find determine condition value type, condition=" + value);
+				type = "string";
+			}
+
+			DbUtil.setParameterValue(pst, index + i, type , value.getValue());
+		}
+
+		return index + values.size();
+	}
+
 	/**
 	 * 设置参数。
 	 * 
@@ -152,7 +168,7 @@ public class DbDataObject {
 	public static int createBatch(ActionContext actionContext) throws SQLException {
 		Thing self = actionContext.getObject("self");
 		List<DataObject> datas = actionContext.getObject("datas");
-		List<Thing> attributes = new ArrayList<Thing>();
+		List<Thing> attributes = new ArrayList<>();
 		for(Thing attr : self.getChilds("attribute")) {
 			if(attr.getBoolean("dataField")) {
 				attributes.add(attr);
@@ -355,9 +371,6 @@ public class DbDataObject {
 	
 	/**
 	 * 批量更新。
-	 * 
-	 * @param actionContext
-	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
 	public static int updateBatch(ActionContext actionContext) throws SQLException{
@@ -381,6 +394,8 @@ public class DbDataObject {
 		    }
 		}
 
+		QueryConfig queryConfig = actionContext.getObject("queryConfig");
+		/*
 		Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");
 		if(datas == null){
 		    datas = Collections.emptyMap();
@@ -392,6 +407,8 @@ public class DbDataObject {
 		}
 		List<Map<String, Object>> cds = new ArrayList<Map<String, Object>>();
 		String clause = DbUtil.getConditionSql(conditionConfig, actionContext, datas, cds);
+		*/
+		String clause = queryConfig.getConditionSql();
 		//log.info("clause=" + clause);
 		if(clause != null && clause != ""){
 		    sql = sql + " where " + clause;
@@ -400,6 +417,7 @@ public class DbDataObject {
 		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
 		}
 
+		List<ConditionValue> cds = queryConfig.getConditionValueList();
 		if(cds.size() == 0){
 			throw new SQLException("Full table update is not allowed! path=" + self.getMetadata().getPath());
 		}
@@ -415,9 +433,8 @@ public class DbDataObject {
 		    }
 		    
 		    for(int i=0; i<cds.size(); i++){
-		        Map<String, Object> c = cds.get(i);
-		        Thing thing = theData.getMetadata().getDefinition((String) c.get("name"));        
-		        DbUtil.setParameterValue(pst, index + i, thing.getString("type"), c.get("value"));
+				ConditionValue c = cds.get(i);
+		        DbUtil.setParameterValue(pst, index + i, c.getType(), c.getValue());
 		    }
 		    
 		    //执行sql
@@ -431,9 +448,6 @@ public class DbDataObject {
 	
 	/**
 	 * 批量删除数据。
-	 * 
-	 * @param actionContext
-	 * @throws SQLException 
 	 */
 	@SuppressWarnings("unchecked")
 	public static int deleteBatch(ActionContext actionContext) throws SQLException{
@@ -442,24 +456,13 @@ public class DbDataObject {
 		if(theData == null){
 			theData = new DataObject(self);
 		}
-
-		//生成查询sql语句
-		Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");
-		if(datas == null){
-		    datas = Collections.emptyMap();
-		}
-		//log.info("" + datas);
-		Object conditionConfig = (Object) actionContext.get("conditionConfig");
-		if(conditionConfig == null){
-		    conditionConfig = Collections.emptyMap();
-		}
-
 		String sql = "delete from ";
 		String tableName = self.getString("tableName");
 		sql = sql + tableName;
 
-		List<Map<String, Object>> cds = new ArrayList<Map<String, Object>>();
-		String clause = DbUtil.getConditionSql(conditionConfig, actionContext, datas, cds);
+		QueryConfig queryConfig = actionContext.getObject("queryConfig");
+		List<ConditionValue> cds = queryConfig.getConditionValueList();
+		String clause = queryConfig.getConditionSql();
 		//log.info("clause=" + clause);
 		if(clause != null && clause != ""){
 		    sql = sql + " where " + clause;
@@ -474,29 +477,20 @@ public class DbDataObject {
 		}
 		//设置参数值和查询
 		Connection con = (Connection) actionContext.get("con");
-		PreparedStatement pst = con.prepareStatement(sql);
-		try{
-		    int index = 1;
-		    for(int i=0; i<cds.size(); i++){
-		        Map<String, Object> c = cds.get(i);
-		        Thing thing = theData.getMetadata().getDefinition((String) c.get("name"));        
-		        DbUtil.setParameterValue(pst, index + i, thing.getString("type"), c.get("value"));
-		    }
-		    
-		    //执行sql
-		    return pst.executeUpdate();
-		}finally{		
-		    if(pst != null){
-		        pst.close();
-		    }
+		try (PreparedStatement pst = con.prepareStatement(sql)) {
+			int index = 1;
+			for (int i = 0; i < cds.size(); i++) {
+				ConditionValue c = cds.get(i);
+				DbUtil.setParameterValue(pst, index + i, c.getType(), c.getValue());
+			}
+
+			//执行sql
+			return pst.executeUpdate();
 		}
 	}
 	
 	/**
 	 * 获取数据库字段名。
-	 * 
-	 * @param thing
-	 * @return
 	 */
 	public static String getFieldName(Thing thing){
 		String fieldName = thing.getString("sql"); 
@@ -512,9 +506,6 @@ public class DbDataObject {
 	
 	/**
 	 * 查询SQL数据对象的遍历方法。
-	 * 
-	 * @param actionContext
-	 * @throws Exception
 	 */
 	public static void iterateSql(ActionContext actionContext) throws Exception{
 		Thing self = (Thing) actionContext.get("self");
@@ -616,10 +607,6 @@ public class DbDataObject {
 	
 	/**
 	 * 查询SQL数据对象的查询方法。
-	 * 
-	 * @param actionContext
-	 * @return
-	 * @throws Exception
 	 */
 	public static Object querySql(ActionContext actionContext) throws Exception{
 		Thing self = (Thing) actionContext.get("self");
@@ -718,6 +705,95 @@ public class DbDataObject {
     	
     	return result;		
 	}
+
+	public static DataObjectIterator createIterator(ActionContext actionContext) throws  Exception{
+		Thing self = (Thing) actionContext.get("self");
+		UserTask userTask =  DataObject.getUserTask(self, actionContext);
+
+		try{
+			//---------------查询参数----------------
+			QueryConfig queryConfig = actionContext.getObject("queryConfig");
+			if(queryConfig == null) {
+
+				Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
+				if (datas == null) {
+					datas = Collections.emptyMap();
+				}
+
+				Object conditionConfig = actionContext.get("conditionConfig"); //查询配置
+				if (conditionConfig == null) {
+					conditionConfig = new Thing();
+				}
+				Executor.debug(TAG, "" + conditionConfig);
+				//分页信息
+				//Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");
+				queryConfig = new QueryConfig((Thing) conditionConfig, datas, PageInfo.getPageInfo(actionContext), actionContext);
+			}
+
+			List<Thing> attributes = (List<Thing>) self.get("attribute@");
+			for(int i=0; i<attributes.size(); i++){
+				//过滤非数据字段和不需要显示的字段
+				if(!attributes.get(i).getBoolean("dataField")){
+					attributes.remove(i);
+					i--;
+				}
+			}
+
+			//----------------生成SQL语句--------------
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
+
+			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+				Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+			}
+			UserTaskManager.setUserTaskLabelDetail(userTask, "Sql setted", sql);
+
+			//----------------生成SQL完毕--------------------
+
+			//----------------执行查询-----------------------
+			PageInfo pageInfo1 = queryConfig.getPageInfo();
+			if(pageInfo1.getLimit() > 0){
+				//有分页查询
+				String dbType = (String) actionContext.get("dbType"); //dbType是有DataSource上下文设置的
+				if(dbType != null &&  !"".equals(dbType) && !self.getBoolean("pagineByCursor")){
+					dbType = dbType.toLowerCase();
+					if("oracle".equals(dbType) || dbType.startsWith("oracle")){
+						return self.doAction("queryOraclePage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+					}else if("derby".equals(dbType)){
+						return self.doAction("queryDerbyPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+					}else if("mysql".equals(dbType)){
+						return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+					}else if("sqlserver2005".equals(dbType)){
+						return self.doAction("querySqlServer2005Page", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+					}else if("sqlite".equals(dbType)){
+						return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+					}
+				}
+
+				//其他使用游标分页查询
+				return self.doAction("queryCursorPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
+				//throw new Exception("dbType=" + dbType + ", not supported page query now");
+			}else{
+				//没有分页查询
+				//设置参数值和查询
+				Connection con = (Connection) actionContext.get("con");
+				PreparedStatement pst = con.prepareStatement(sql);
+				UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
+				UserTaskManager.setUserTaskData(userTask, "pst", pst);
+
+				//设置查询参数
+				setStatementParams(pst, 1, queryConfig, attributes);
+				//self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
+
+				//执行sql
+				ResultSet rs = pst.executeQuery();
+				UserTaskManager.setUserTaskLabelDetail(userTask, "Statement executed", null);
+
+				return new DbDataObjectIterator(self, attributes, pageInfo1, con, pst, rs, actionContext);
+			}
+		}finally{
+			DataObject.userTaskFinished();
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static Object query(ActionContext actionContext) throws Exception{
@@ -726,18 +802,23 @@ public class DbDataObject {
 		
 		try{
 			//---------------查询参数----------------
-			Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
-			if(datas == null){
-			    datas = Collections.emptyMap();
+			QueryConfig queryConfig = actionContext.getObject("queryConfig");
+			if(queryConfig == null) {
+
+				Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
+				if (datas == null) {
+					datas = Collections.emptyMap();
+				}
+
+				Object conditionConfig = actionContext.get("conditionConfig"); //查询配置
+				if (conditionConfig == null) {
+					conditionConfig = new Thing();
+				}
+				Executor.debug(TAG, "" + conditionConfig);
+				//分页信息
+				//Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");
+				queryConfig = new QueryConfig((Thing) conditionConfig, datas, PageInfo.getPageInfo(actionContext), actionContext);
 			}
-			
-			Object conditionConfig = actionContext.get("conditionConfig"); //查询配置
-			if(conditionConfig == null){
-			    conditionConfig = new Thing();
-			}
-			Executor.debug(TAG, "" +  conditionConfig);
-			//分页信息
-			Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");		
 			
 			List<Thing> attributes = (List<Thing>) self.get("attribute@");
 			for(int i=0; i<attributes.size(); i++){
@@ -746,13 +827,10 @@ public class DbDataObject {
 			    	attributes.remove(i);
 			    	i--;
 			    }
-			}	
-			
-			List<Map<String, Object>> cds = new ArrayList<Map<String, Object>>();
-			
+			}
+
 			//----------------生成SQL语句--------------
-			String sql = self.doAction("getQuerySqlAndParams", actionContext, "pageInfo", pageInfo,
-					"attributes", attributes, "cds", cds, "conditionConfig", conditionConfig, "datas", datas);
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
 			
 			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
 			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
@@ -762,27 +840,33 @@ public class DbDataObject {
 			//----------------生成SQL完毕--------------------
 	
 			//----------------执行查询-----------------------
-			PageInfo pageInfo1 = new PageInfo(pageInfo);
-			if(pageInfo != null && pageInfo1.getLimit() != 0){
+			PageInfo pageInfo1 = queryConfig.getPageInfo();
+			if(pageInfo1.getLimit() > 0){
 			    //有分页查询
 			    String dbType = (String) actionContext.get("dbType"); //dbType是有DataSource上下文设置的
-			    if(dbType != null &&  !"".equals(dbType) && self.getBoolean("pagineByCursor") == false){
+			    if(dbType != null &&  !"".equals(dbType) && !self.getBoolean("pagineByCursor")){
 			    	dbType = dbType.toLowerCase();
 			        if("oracle".equals(dbType) || dbType.startsWith("oracle")){
-			            return self.doAction("queryOraclePage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			            return self.doAction("queryOraclePage", actionContext, UtilMap.toMap("sql",sql,
+								"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			        }else if("derby".equals(dbType)){
-			            return self.doAction("queryDerbyPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			            return self.doAction("queryDerbyPage", actionContext, UtilMap.toMap("sql",sql,
+								"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			        }else if("mysql".equals(dbType)){
-			            return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			            return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql,
+								"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			        }else if("sqlserver2005".equals(dbType)){
-			        	return self.doAction("querySqlServer2005Page", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			        	return self.doAction("querySqlServer2005Page", actionContext, UtilMap.toMap("sql",sql,
+								"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			        }else if("sqlite".equals(dbType)){
-			        	return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			        	return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql,
+								"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			        }
 			    }
 			    
 			    //其他使用游标分页查询
-			    return self.doAction("queryCursorPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes}));
+			    return self.doAction("queryCursorPage", actionContext, UtilMap.toMap("sql",sql,
+						"attributes",attributes, "createIterator", false, "queryConfig, queryConfig"));
 			    //throw new Exception("dbType=" + dbType + ", not supported page query now");
 			}else{
 			    //没有分页查询
@@ -795,7 +879,8 @@ public class DbDataObject {
 				ResultSet rs = null;
 			    try{
 			        //设置查询参数
-			        self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
+					setStatementParams(pst, 1, queryConfig, attributes);
+			        //self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
 			        
 			        //执行sql
 			        rs = pst.executeQuery();			        
@@ -803,7 +888,6 @@ public class DbDataObject {
 			        
 			        List<DataObject> ds = new ArrayList<DataObject>();
 			        long start = System.currentTimeMillis();
-			        int count = 0;
 			        while(rs.next()){
 			            //构造对象
 			        	DataObject data = new DataObject(self);
@@ -820,11 +904,6 @@ public class DbDataObject {
 			            if(userTask != null && System.currentTimeMillis() - start > 1000){
 			            	UserTaskManager.setUserTaskLabelDetail(userTask, ds.size() + " rows has getted", null);
 			            	start = System.currentTimeMillis();
-			            }
-			            
-			            count++;
-			            if(count > MAX_ROWS) {
-			            	break;
 			            }
 			        }
 			        
@@ -860,101 +939,34 @@ public class DbDataObject {
 
 		UserTask userTask = DataObject.getUserTask(self, actionContext);
 		try{
-		
 			//---------------查询参数----------------
-			Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
-			if(datas == null){
-			    datas = Collections.emptyMap();
+			QueryConfig queryConfig = actionContext.getObject("queryConfig");
+			if(queryConfig == null) {
+				Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
+				if (datas == null) {
+					datas = Collections.emptyMap();
+				}
+
+				Object conditionConfig = actionContext.get("conditionConfig"); //查询配置
+				if (conditionConfig == null) {
+					conditionConfig = new Thing();
+				}
+
+				//分页信息
+				queryConfig = new QueryConfig((Thing) conditionConfig, datas, PageInfo.getPageInfo(actionContext), actionContext);
 			}
-			
-			Object conditionConfig = actionContext.get("conditionConfig"); //查询配置
-			if(conditionConfig == null){
-			    conditionConfig = new Thing();
-			}
-			
-			//分页信息
-			Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");		
-			
-	
-			//----------------生成SQL语句--------------
-			//排序的列，一会要判断排序的列是否存在
-			String sortField = null;
-			String sortDir = null;
-			if(pageInfo != null){
-				sortField = (String) pageInfo.get("sort");
-			    String dir = (String) pageInfo.get("dir");		    
-			    if(dir != null && !"".equals(dir)){
-			        sortDir = dir;
-			    }
-			}
-	
-			if(sortField == null || "".equals(sortField)){
-			    //默认排序
-			    sortField = self.getString("storeSortField");
-			    sortDir = self.getString("storeSortDir");
-			}
-	
+
 			List<Thing> attributes = (List<Thing>) self.get("attribute@");
 			for(int i=0; i<attributes.size(); i++){
-			    //过滤非数据字段和不需要显示的字段
-			    if(!attributes.get(i).getBoolean("dataField")){
-			    	attributes.remove(i);
-			    	i--;
-			    }
-			}
-			String sql = null;
-			List<Map<String, Object>> cds = new ArrayList<Map<String, Object>>();
-			String clause = DbUtil.getConditionSql(conditionConfig, actionContext, datas, cds);
-			String querySql= self.getStringBlankAsNull("querySql");
-			if(self.getBoolean("keepQuerySql") && querySql != null){
-				sql = querySql;
-			}else{
-				sql = "select ";
-				int atrCount = 0;
-				//要选择的字段列表
-				boolean haveSortField = false;
-				for(int i=0; i<attributes.size(); i++){
-				    if(atrCount > 0){
-				       sql = sql + ",";
-				    }
-		
-				    atrCount ++;
-				    String fieldName = getFieldName(attributes.get(i)); 
-				    sql = sql + fieldName;
-				    
-				    String name = attributes.get(i).getMetadata().getName();
-				    if(!haveSortField && name.equals(sortField)){
-				        haveSortField = true; //排序的列存在
-				        sortField = fieldName;
-				    }
-				}
-				/*
-				if(!haveSortField){
-				    sortField = null; //置为空，没有排序
-				}*/
-		
-				//表名或子查询
-				String tableName = UtilString.getString(self, "tableName", actionContext);//self.getString("tableName");
-				if(querySql != null && !"".equals(querySql)){
-				    tableName = querySql;
-				}
-				sql = sql + " from " + tableName;
-		
-				//查询条件
-				
-				if(clause != null && clause != ""){
-				    sql = sql + " where " + clause;
-				}
-		
-				//排序，排序的字段是否选择的列中呢？
-				if(sortField  != null && !"".equals(sortField)){
-				    sql = sql + " order by " + sortField;
-				    if(sortDir != null){
-				        sql = sql + " " + sortDir;
-				    }
+				//过滤非数据字段和不需要显示的字段
+				if(!attributes.get(i).getBoolean("dataField")){
+					attributes.remove(i);
+					i--;
 				}
 			}
-			
+
+			//----------------生成SQL语句--------------
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
 	
 			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
 			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
@@ -964,22 +976,23 @@ public class DbDataObject {
 			//----------------生成SQL完毕--------------------
 	
 			//----------------执行查询-----------------------
-			if(pageInfo != null && (Integer) pageInfo.get("limit") != 0){
+			PageInfo pageInfo = queryConfig.getPageInfo();
+			if(pageInfo.getLimit() > 0){
 			    //有分页查询
 			    String dbType = (String) actionContext.get("dbType"); //dbType是有DataSource上下文设置的
 			    if(dbType != null &&  !"".equals(dbType)){
 			    	dbType = dbType.toLowerCase();
 			        if("oracle".equals(dbType) || dbType.startsWith("oracle")){
-			            self.doAction("iteratorOraclePage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes, "action", action}));
+			            self.doAction("iteratorOraclePage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "action", action));
 			            return;
 			        }else if("derby".equals(dbType)){
-			            self.doAction("iteratorDerbyPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes, "action", action}));
+			            self.doAction("iteratorDerbyPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "action", action));
 			            return;
 			        }else if("mysql".equals(dbType)){
-			            self.doAction("iteratorMysqlPage", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes, "action", action}));
+			            self.doAction("iteratorMysqlPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "action", action));
 			            return;
 			        }else if("sqlserver2005".equals(dbType)){
-			        	self.doAction("iteratorSqlServer2005Page", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "sql",sql, "attributes",attributes, "action", action}));
+			        	self.doAction("iteratorSqlServer2005Page", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "action", action));
 			        	return;
 			        }
 			    }
@@ -992,7 +1005,7 @@ public class DbDataObject {
 				ResultSet rs = null;
 			    try{
 			        //设置查询参数
-			        self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
+					setStatementParams(pst, 1, queryConfig, attributes);
 			        
 			        //执行sql
 			        UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared,  executing.....", sql);
@@ -1043,19 +1056,24 @@ public class DbDataObject {
 		Thing factory = new Thing("xworker.db.hibernate.hibernate_configuration/@session_factory");
 		cfg.addChild(factory);
 		factory.put("name", "factory");
-		String dbType = DataSourceActions.getDbType(dataSource);
-		if("derby".equals(dbType)){
-			factory.put("dialect", "org.hibernate.dialect.DerbyDialect");
-		}else if("mysql".equals(dbType)){
-			factory.put("dialect", "org.hibernate.dialect.MySQLDialect");
-		}else if("oracle".equals(dbType)){
-			factory.put("dialect", "org.hibernate.dialect.OracleDialect");
-		}else if("sqlserver2005".equals(dbType)){
-			factory.put("dialect", "org.hibernate.dialect.SQLServerDialect");
-		}else if("sqlite".equals(dbType)){
-			factory.put("dialect", "xworker.db.hibernate.dialects.SQLiteDialect");
+		String dialect = dataSource.getStringBlankAsNull("dialect");
+		if(dialect == null) {
+			String dbType = DataSourceActions.getDbType(dataSource);
+			if ("derby".equals(dbType)) {
+				factory.put("dialect", "org.hibernate.dialect.DerbyDialect");
+			} else if ("mysql".equals(dbType)) {
+				factory.put("dialect", "org.hibernate.dialect.MySQL5Dialect");
+			} else if ("oracle".equals(dbType)) {
+				factory.put("dialect", "org.hibernate.dialect.OracleDialect");
+			} else if ("sqlserver2005".equals(dbType)) {
+				factory.put("dialect", "org.hibernate.dialect.SQLServerDialect");
+			} else if ("sqlite".equals(dbType)) {
+				factory.put("dialect", "xworker.db.hibernate.dialects.SQLiteDialect");
+			} else {
+				factory.put("dialect", "org.hibernate.dialect." + dbType + "Dialect");
+			}
 		}else{
-			factory.put("dialect","org.hibernate.dialect." + dbType + "Dialect");
+			factory.put("dialect", dialect);
 		}
 		factory.put("show_sql", "true");
 		factory.put("format_sql", "true");
@@ -1084,8 +1102,6 @@ public class DbDataObject {
 	
 	/**
 	 * DbDataObject通过Hibernate的ddl同步到数据库。
-	 * 
-	 * @param actionContext
 	 */
 	public synchronized static void mapping2ddl(ActionContext actionContext) {
 		//数据对象和DataSource
@@ -1107,15 +1123,13 @@ public class DbDataObject {
 		Thing self = actionContext.getObject("self");
 		if(self.getBoolean("DDL")) {
 			mapping2ddl(actionContext);
+		}else{
+			Executor.info(TAG, "Does not do ddl, DDL attribute is false, ingore it, dataObject=" + self.getMetadata().getPath());
 		}
 	}
 	
 	/**
 	 * 从ResultSet中读取数据。
-	 * 
-	 * @param actionContext
-	 * @return
-	 * @throws SQLException
 	 */
 	public static List<DataObject> loadFromResultSet(ActionContext actionContext) throws SQLException{
 		Thing self = (Thing) actionContext.get("self");
@@ -1494,6 +1508,84 @@ public class DbDataObject {
 		}
 		
 		return sql;
+	}
+
+	public static String getQuerySql(Thing self, List<Thing> attributes, QueryConfig queryConfig, ActionContext actionContext){
+		StringBuilder sb = new StringBuilder();
+		String sortField = null;
+
+		String querySql= self.getStringBlankAsNull("querySql");
+		if(self.getBoolean("keepQuerySql") && querySql != null){
+			sb.append(querySql);
+		}else{
+			sb.append("select ");
+			int atrCount = 0;
+			//要选择的字段列表
+			boolean haveSortField = false;
+			for(int i=0; i<attributes.size(); i++){
+				if(atrCount > 0){
+					sb.append(",");
+				}
+
+				atrCount ++;
+				String fieldName = getFieldName(attributes.get(i));
+				sb.append(fieldName);
+			}
+
+			//表名或子查询
+			String tableName = UtilString.getString(self, "tableName", actionContext);//self.getString("tableName");
+
+			if(querySql != null && !"".equals(querySql)){
+				if(querySql.trim().startsWith("(")){
+					tableName = querySql;
+				}else{
+					tableName = "(" + querySql + ") t";
+				}
+			}
+			sb.append(" from ");
+			sb.append(tableName);
+		}
+
+		//查询条件
+		String clause = queryConfig.getConditionSql();
+		if(clause != null && !clause.isEmpty()){
+			int whereIndex = sb.indexOf("where");
+			if(whereIndex == -1) {
+				sb.append(" where ");
+				sb.append(clause);
+			}else {
+				int rightKuoHaoIndex = sb.indexOf(")");
+				if(rightKuoHaoIndex > whereIndex) {
+					//where在括号内
+					sb.append(" where ");
+					sb.append(clause);
+				}else {
+					//where末尾的情况
+					sb.append(" and ");
+					sb.append("clause");
+				}
+			}
+		}
+
+		String sqlAppend = self.getStringBlankAsNull("sqlAppend");
+		if(sqlAppend != null) {
+			sb.append(" ");
+			sb.append(sqlAppend);
+		}
+
+		String groups = queryConfig.getGroupsSql();
+		if(groups != null && !groups.isEmpty()){
+			sb.append(" group by ");
+			sb.append(groups);
+		}
+
+		String orders = queryConfig.getOrdersSql();
+		if(orders != null && !orders.isEmpty()){
+			sb.append(" order by ");
+			sb.append(orders);
+		}
+
+		return sb.toString();
 	}
 	
 	

@@ -1,13 +1,12 @@
 package xworker.io;
 
 import java.io.Console;
+import java.io.IOException;
 import java.util.List;
 
-import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
-import org.xmeta.Bindings;
-import org.xmeta.Thing;
+import org.xmeta.*;
 
+import xworker.util.UtilAction;
 import xworker.util.UtilData;
 
 public class ConsoleActions {
@@ -20,7 +19,7 @@ public class ConsoleActions {
 			throw new ActionException("Console is null, thing=" + self.getMetadata().getPath());
 		}
 		actionContext.peek().put("console", console);
-		actionContext.peek().put("consoleBindings", actionContext.peek()); //sonole节点执行的变量保存到这里
+		actionContext.peek().put("consoleBindings", actionContext.peek()); //console节点执行的变量保存到这里
 				
 		String welcomeMessage = self.doAction("getWelcomeMessage", actionContext);
 		if(welcomeMessage != null) {
@@ -381,5 +380,28 @@ public class ConsoleActions {
 		}else {
 			return new ConsoleNode(node, actionContext);
 		}
+	}
+
+	//xworker.io.Console/@actions/@getCommands
+	public static String getCommands(ActionContext actionContext) throws IOException, ClassNotFoundException {
+		Thing self = actionContext.getObject("self");
+
+		List<String> args = UtilAction.getFileStartupThingCommands(self, self.getMetadata().getPath(), "run");
+		StringBuilder sb = new StringBuilder();
+		for(String arg : args){
+			sb.append(arg);
+			sb.append(" ");
+		}
+
+		return sb.toString();
+	}
+
+	//xworker.io.Console/@actions/@startWindows
+	public static void startWindows(ActionContext actionContext) throws Exception{
+		//Windows下打开
+		String cmds = getCommands(actionContext);
+
+		Action action = actionContext.getObject("start");
+		action.run(actionContext, "cmds", new String[]{"cmd.exe", "/c", "" + cmds + ""});
 	}
 }

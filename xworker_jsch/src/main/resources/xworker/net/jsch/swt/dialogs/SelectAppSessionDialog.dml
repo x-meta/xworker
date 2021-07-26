@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="lang:d=选择APP会话&amp;en=Select App Session"
+     width="800" height="600" label="SelectAppSessionDialog">
+    <GridLayout name="GridLayout"></GridLayout>
+    <DataObjectEditCompoiste name="dataObjectEditor" dataObject="xworker.app.server.dataobjects.Server"
+         displayInfo="true">
+        <GridData name="GridData" style="FILL_BOTH"></GridData>
+        <Buttons>
+            <Button name="openTermButton" _xmeta_id_="openButton" text="lang:d=打开终端&amp;en=Open Term">
+                <RowData name="RowData" width="80"></RowData>
+                <Listeners>
+                    <Listener name="openTermButtonSelection" _xmeta_id_="openButtonSelection">
+                        <GroovyAction descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[if(actionContext.get("workbench") != null){
+    def editorContainer = workbench.getEditorContainer();
+    def session = dataObjectEditor.doAction("getSelection", actionContext).get(0);
+    def id = "" + session.get("id") + ":" + System.currentTimeMillis();
+    
+    openEditor(actionContext, "editorContainer", editorContainer, "session", session, "id", id);
+}
+
+shell.dispose();]]></code>
+                            <ActionDefined>
+                                <OpenEditor name="openEditor" descriptors="xworker.swt.app.AppActions/@OpenEditor"
+                                     editorContainer="var:editorContainer" id="var:id"
+                                     editor="xworker.net.jsch.swt.JCTermEditor">
+                                    <params><![CDATA[{
+    session:"var:session"
+}]]></params>
+                                </OpenEditor>
+                            </ActionDefined>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+            <Button name="openSftpButton" _xmeta_id_="openButton1" text="lang:d=打Sftp&amp;en=Open Sftp">
+                <RowData name="RowData" width="80"></RowData>
+                <Listeners>
+                    <Listener name="openSftpButtonSelection" _xmeta_id_="openButtonSelection">
+                        <GroovyAction descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[if(actionContext.get("workbench") != null){
+    def editorContainer = workbench.getEditorContainer();
+    def session = dataObjectEditor.doAction("getSelection", actionContext).get(0);
+    def id = "" + session.get("id") + ":" + System.currentTimeMillis();
+    
+    openEditor(actionContext, "editorContainer", editorContainer, "session", session, "id", id);
+}
+
+shell.dispose();]]></code>
+                            <ActionDefined>
+                                <OpenEditor name="openEditor" descriptors="xworker.swt.app.AppActions/@OpenEditor"
+                                     editorContainer="var:editorContainer" id="var:id"
+                                     editor="xworker.net.jsch.swt.JCSftpEditor">
+                                    <params><![CDATA[{
+    session:"var:session"
+}]]></params>
+                                </OpenEditor>
+                            </ActionDefined>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Buttons>
+    </DataObjectEditCompoiste>
+</Shell>

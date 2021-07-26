@@ -12,7 +12,7 @@ import xworker.lang.executor.ExecuteRequestSwtUtils;
 
 //对应的模型是：xworker.lang.executor.requests.RequestForm
 public class RequestForm {
-	public static Object createSWT(ActionContext actionContext) {
+	public static Object create(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		
 		//请求的变量上下文

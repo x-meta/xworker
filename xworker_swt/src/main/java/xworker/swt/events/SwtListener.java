@@ -28,11 +28,11 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.cache.ThingEntry;
+import org.xmeta.util.ThingLoader;
 import org.xmeta.util.UtilString;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
-import xworker.swt.util.SWTThingLoader;
 
 /**
  * <p>Swt的通用事件。</p>
@@ -59,7 +59,7 @@ public class SwtListener implements Listener{
 	private boolean isThingAction;
 
 	Object methodOwner;
-	Method handlerMehtod;
+	Method handlerMethod;
 	String methodName;
 	byte methodType = METHOD;
 	
@@ -71,11 +71,12 @@ public class SwtListener implements Listener{
 		if(athing == null){
 			throw new ActionException("SwtListener thing is null");
 		}
+
 		entry = new ThingEntry(athing.getMetadata().getPath(), athing);
 		this.actionContext = actionContext;
 		this.isThingAction = isThingAction;
 
-		this.methodOwner = SWTThingLoader.getObject();
+		this.methodOwner = ThingLoader.getObject();
 		this.methodName = athing.getStringBlankAsNull("methodName");
 	}
 	
@@ -84,56 +85,65 @@ public class SwtListener implements Listener{
 	}
 	
 	public void handleEvent(Event event) {
-		//long start = System.currentTimeMillis();
-		Thing swtListenerThing = entry.getThing();
-		
-		if(swtListenerThing == null){
-			if(Executor.isLogLevelEnabled(TAG, Executor.INFO)){
-				Executor.info(TAG, "action is null : " + entry.getPath());
-			}
-			return;
-		}else{			
-			Map<String, String> params = null;
-			String ref = swtListenerThing.getString("ref");
-			if(ref != null && !"".equals(ref)){
-				int index = ref.indexOf("?");
-				if(index != -1) {
-					String paramsStr = ref.substring(index + 1, ref.length());
-					ref = ref.substring(0, index);
-					params = UtilString.getParams(paramsStr);
+		if(methodOwner != null){
+			ThingLoader.push(methodOwner);
+		}
+		try {
+			//long start = System.currentTimeMillis();
+			Thing swtListenerThing = entry.getThing();
+
+			if (swtListenerThing == null) {
+				if (Executor.isLogLevelEnabled(TAG, Executor.INFO)) {
+					Executor.info(TAG, "action is null : " + entry.getPath());
 				}
-				Object refObj = actionContext.get(ref);
-				if(refObj == null){
-					Thing refThing = world.getThing(ref);
-					if(refThing != null){
-						handleEvent(event, refThing, false, params);
-					}else if(ref.indexOf(".") != -1 || ref.indexOf(":") != -1){
-						String refs[] = ref.split("[.:]");						
-						if(refs.length == 2){
-							refObj = actionContext.get(refs[0]);
-							if(refObj instanceof ActionContainer){
-								ActionContainer actionContainer = (ActionContainer) refObj;
-								Map<String, Object> parameters = new HashMap<String, Object>();
-								parameters.put("event", event);
-								actionContainer.doAction(refs[1], actionContext, parameters);
+				return;
+			} else {
+				Map<String, String> params = null;
+				String ref = swtListenerThing.getString("ref");
+				if (ref != null && !"".equals(ref)) {
+					int index = ref.indexOf("?");
+					if (index != -1) {
+						String paramsStr = ref.substring(index + 1, ref.length());
+						ref = ref.substring(0, index);
+						params = UtilString.getParams(paramsStr);
+					}
+					Object refObj = actionContext.get(ref);
+					if (refObj == null) {
+						Thing refThing = world.getThing(ref);
+						if (refThing != null) {
+							handleEvent(event, refThing, false, params);
+						} else if (ref.indexOf(".") != -1 || ref.indexOf(":") != -1) {
+							String refs[] = ref.split("[.:]");
+							if (refs.length == 2) {
+								refObj = actionContext.get(refs[0]);
+								if (refObj instanceof ActionContainer) {
+									ActionContainer actionContainer = (ActionContainer) refObj;
+									Map<String, Object> parameters = new HashMap<String, Object>();
+									parameters.put("event", event);
+									actionContainer.doAction(refs[1], actionContext, parameters);
+								}
 							}
 						}
-					}
-				}else{
-					if(refObj instanceof SwtListener){
-						((SwtListener) refObj).handleEvent(event);
-					}else if(refObj instanceof Thing){
-						handleEvent(event, (Thing) refObj, false, params);
-					}else{
-						Executor.warn(TAG, "swt listener " + ref + " is not valid");
+					} else {
+						if (refObj instanceof SwtListener) {
+							((SwtListener) refObj).handleEvent(event);
+						} else if (refObj instanceof Thing) {
+							handleEvent(event, (Thing) refObj, false, params);
+						} else {
+							Executor.warn(TAG, "swt listener " + ref + " is not valid");
+						}
 					}
 				}
+
+				if (this.isThingAction) {
+					handleEvent(event, swtListenerThing, false, params);
+				} else {
+					handleEvent(event, swtListenerThing, true, params);
+				}
 			}
-			
-			if(this.isThingAction){
-				handleEvent(event, swtListenerThing, false, params);
-			}else{
-				handleEvent(event, swtListenerThing, true, params);
+		}finally {
+			if(methodOwner != null){
+				ThingLoader.pop();
 			}
 		}
 		//log.info("事件处理事件：" + (System.currentTimeMillis() - start));
@@ -168,19 +178,19 @@ public class SwtListener implements Listener{
 		}
 
 		if(methodOwner != null && methodName != null) {
-			if (handlerMehtod == null) {
+			if (handlerMethod == null) {
 				try {
-					handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class, ActionContext.class);
-					if (handlerMehtod == null) {
-						handlerMehtod = getMethod(methodOwner.getClass(), methodName, Event.class);
+					handlerMethod = getMethod(methodOwner.getClass(), methodName, Event.class, ActionContext.class);
+					if (handlerMethod == null) {
+						handlerMethod = getMethod(methodOwner.getClass(), methodName, Event.class);
 
-						if (handlerMehtod == null) {
-							handlerMehtod = getMethod(methodOwner.getClass(), methodName, ActionContext.class);
+						if (handlerMethod == null) {
+							handlerMethod = getMethod(methodOwner.getClass(), methodName, ActionContext.class);
 
-							if (handlerMehtod == null) {
-								handlerMehtod = getMethod(methodOwner.getClass(), methodName);
+							if (handlerMethod == null) {
+								handlerMethod = getMethod(methodOwner.getClass(), methodName);
 
-								if (handlerMehtod != null) {
+								if (handlerMethod != null) {
 									methodType = METHOD;
 								}
 							} else {
@@ -198,19 +208,19 @@ public class SwtListener implements Listener{
 			}
 
 			try {
-				if (handlerMehtod != null) {
+				if (handlerMethod != null) {
 					switch (methodType) {
 						case METHOD_E_A:
-							handlerMehtod.invoke(methodOwner, event, actionContext);
+							handlerMethod.invoke(methodOwner, event, actionContext);
 							break;
 						case METHOD_E:
-							handlerMehtod.invoke(methodOwner, event);
+							handlerMethod.invoke(methodOwner, event);
 							break;
 						case METHOD_A:
-							handlerMehtod.invoke(methodOwner, actionContext);
+							handlerMethod.invoke(methodOwner, actionContext);
 							break;
 						case METHOD:
-							handlerMehtod.invoke(methodOwner);
+							handlerMethod.invoke(methodOwner);
 							break;
 					}
 				} else {

@@ -1,4 +1,4 @@
-^1614751319359
+^1626698473187
 @
 sname
 shell
@@ -312,9 +312,9 @@ false
         sname
         executePopItem
         slabel
-        执行Execute方法（通常是在IDE中打开）
+        在IDE中打开
         sen_label
-        Execute
+        Open in IDE
         sdescriptors
         xworker.lang.util.I18nResource/@resource/@resource
         sinheritDescription
@@ -3351,6 +3351,8 @@ false
       true
       sredraw
       true
+      spack
+      false
       svisible
       true
       sdescriptors
@@ -3975,6 +3977,10 @@ false
         contentComposie
         sextendWidgetPath
         xworker.swt.xworker.prototype.ThingRegistSelector/@mainTabFolder/@searchDesc1/@mainSashForm/@contentComposie
+        sactionContext
+        actionContext
+        screateActionContextIfNotExists
+        true
         snewActionContext
         false
         sdescriptors
@@ -4592,6 +4598,8 @@ false
     stext
     描述
     sCLOSE
+    false
+    sdelayReload
     false
     sdescriptors
     xworker.swt.custom.CTabFolder/@CTabItem
@@ -8525,7 +8533,9 @@ import xworker.util.ThingUtils;
 import xworker.swt.util.XWorkerTreeUtil;
 import xworker.util.XWorkerUtils;
 import org.xmeta.Thing;
+import xworker.swt.xworker.content.SwtQuickContentHandler;
 
+actionContext.g().put("contentHandler", new SwtQuickContentHandler());
 actionContext.getScope(0).put("thing", thing);
 actionContext.getScope(0).put("type", type);
 actionContext.getScope(0).put("keywords", actionContext.get("keywords"));
@@ -8789,6 +8799,7 @@ import xworker.swt.util.XWorkerTreeUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.custom.SashForm;
 
 def TAG = "xworker.swt.xworker.prototype.ThingRegistSelector.p182904628.thingTreeSelection";
 //设置菜单状态
@@ -10145,6 +10156,8 @@ def findItem(item, groups, index){
     false
     ssaveReturn
     false
+    sswitchResult
+    false
     sdebugLog
     false
     sdescriptors
@@ -10373,6 +10386,7 @@ if(actionContext.get("contentTabFolder") != null){
     def ac = new ActionContext();
     ac.put("parent", contentTabFolder);
     ac.put("parentContext", actionContext);
+    ac.put("contentHandler", contentHandler);
     
     def tabItemThing = world.getThing("xworker.swt.xworker.prototype.ThingRegistSelector/@mainTabFolder/@CTabItem");
     def tabItem = tabItemThing.doAction("create", ac);
@@ -10518,6 +10532,7 @@ if(actionContext.get("contentTabFolder") != null){
     ac.put("parent", contentTabFolder);
     ac.put("parentContext", acContext);
     ac.put("thing", thing);
+    ac.put("contentHandler", contentHandler);
     def composite = swtThing.doAction("create", ac);
     //log.info("" + swtThing);
     
@@ -10544,6 +10559,7 @@ if(actionContext.get("contentTabFolder") != null){
     ac.put("parent", conComposite);
     ac.put("parentContext", acContext);
     ac.put("thing", thing);
+    ac.put("contentHandler", contentHandler);
     swtThing.doAction("create", ac);
     conComposite.setData("actionContext", ac);
     conComposite.layout();
@@ -10569,6 +10585,8 @@ def isCompoisteThing(data){
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
     false
     sdebugLog
     false
@@ -11488,6 +11506,10 @@ actions.doAction("search", actionContext);
   false
   Scode
 #$@text#$@
+import xworker.swt.xworker.content.SwtQuickContentHandler;
+
+actionContext.g().put("contentHandler", new SwtQuickContentHandler());
+
 def thing = world.getThing("xworker.lang.function.Functions");
 actions.doAction("init", actionContext, ["thing":thing, "type":"child"]);
 #$@text#$@
@@ -11496,6 +11518,10 @@ actions.doAction("init", actionContext, ["thing":thing, "type":"child"]);
   screateLocalVarScope
   false
   ssaveReturn
+  false
+  sswitchResult
+  false
+  sdebugLog
   false
   sdescriptors
   xworker.swt.Widgets/@Code
@@ -12008,12 +12034,12 @@ if(controlThing.getBoolean("descritporChilds")){
         addThings(things, des);
     }
 }
-addThings(things, "xworker.swt.xworker.ThingRegistThing");
-addThings(things, "xworker.lang.util.ThingIndex");
+//addThings(things, "xworker.swt.xworker.ThingRegistThing");
+//addThings(things, "xworker.lang.util.ThingIndex");
 //addThings(things, "xworker.swt.xworker.thingregist.Browser");
 //addThings(things, "xworker.swt.xworker.thingregist.Composite");
-addThings(things, "xworker.swt.xworker.thingregist.ThingExampleAndTemplate");
-addThings(things, "xworker.swt.xworker.ThingRegistDynamicNode");
+//addThings(things, "xworker.swt.xworker.thingregist.ThingExampleAndTemplate");
+//addThings(things, "xworker.swt.xworker.ThingRegistDynamicNode");
 
 //println "getDescriptors type=" + _g.get("type")
 
@@ -12033,6 +12059,8 @@ def addThings(things, thing){
                   screateLocalVarScope
                   false
                   ssaveReturn
+                  false
+                  sswitchResult
                   false
                   sdebugLog
                   false
@@ -12918,6 +12946,7 @@ if(data instanceof String){
 #$@text#$@
 import org.xmeta.Thing;
 import org.xmeta.ActionContext;
+import xworker.util.XWorkerUtils;
 
 if(thingTree.getSelection().length <= 0){
     return;
@@ -12928,9 +12957,13 @@ def data = treeItem.getData();
 if(data instanceof String){
     return;
 }else{
+    XWorkerUtils.ideOpenComposite(data, ["contentHandler": contentHandler]);
+    //println data;
+    /*
     def ac = new ActionContext();
     ac.put("parentContext", actionContext);
     data.doAction("execute", ac);
+    */
     //println("xxxxxxxxxxxxxxx");
 //    actions.doAction("setClipboard", actionContext, ["content": data.getMetadata().getPath()]);
 }
@@ -12940,6 +12973,8 @@ if(data instanceof String){
           screateLocalVarScope
           false
           ssaveReturn
+          false
+          sswitchResult
           false
           sdebugLog
           false

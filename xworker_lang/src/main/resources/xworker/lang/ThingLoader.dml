@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ThingLoader" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>ThingLoader一般配合其它模型使用，比如SWT和Javafx等模型，用于在模型中调用单个Java对象。</p>
+
+<p><strong>单个Java对象和模型的互相调用</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如在一个界面里，控件和布局用模型编写可能会方便写，而控件的事件处理等可能用Java代码编写方便些，这个时候通过ThingLoader就可以方便代码和模型之间的调用。</p>
+
+<p><strong>在模型中调用单个Java对象</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;就是本模型了，可以通过属性objectForLoad获取已存在的Java对象，如果没有可以设置objectForLoadClass来实例化一个对象。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果objectForLoad对象存在，那么会执行子节点的create方法，最后如果对象的属性有注解ActionField，那么会从变量上下文中取对象并赋值。</p>
+
+<p><strong>在Java代码里调用模型</strong></p>
+
+<pre class="brush:groovy;">
+import xworker.util.ThingLoader;
+
+Object obj = ...;
+Object result = ThingLoader.load(obj, thing, actionContext);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 其中thing是要加载的模型，obj是最后要对字段赋值的对象。</p>
+
+<p><strong>如何在动作模型里调用Java对象的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 一般是有模型自行实现的，比如SWT的监听器模型。</p>
+]]></description>
+    <actions>
+        <GetObject name="getObjectForLoad" _xmeta_id_="8764" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="objectForLoad" usage="params"></GetObject>
+        <GetClass name="getObjectForLoadClass" _xmeta_id_="8765" descriptors="xworker.lang.actions.ActionUtil/@GetClass"
+             attributeName="objectForLoadClass" usage="params"></GetClass>
+        <JavaAction name="create" outerClassName="org.xmeta.util.ThingLoader" methodName="create"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="init" inputtype="truefalse">
+        <description><![CDATA[<p>如果为true，那么会执行对象的<strong>public void init()</strong>方法。</p>
+]]></description>
+    </attribute>
+    <attribute name="objectForLoad" _xmeta_id_="object">
+        <description><![CDATA[<p>ThingLoader是一个工具模型，用于执行模型的create方法，并从变量上下文中取值，对对象的标有ActionField的字段赋值。</p>
+
+<p>用途</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如一个界面模型，希望在Java代码里编写事件的处理等等，</p>
+
+<p>这个界面上有很多事件等想用Java代码编写，</p>
+]]></description>
+    </attribute>
+    <attribute name="objectForLoadClass" _xmeta_id_="objectClass" inputtype="openWindow"
+         size="60" inputattrs="xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

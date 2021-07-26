@@ -1,4 +1,4 @@
-%1618217710085
+%1623893369764
 @
 sname=QuickFunction
 slabel=快速功能
@@ -787,6 +787,14 @@ if(execute){
     def thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@groovyComposite");
     
     def composite = thing.doAction("create", actionContext);  
+    
+    def content = content;
+    def actions = content.getChilds("GroovyAction");
+    if(actions.size() > 0){
+        content = actions.get(0);
+        actionContext.g().put("content", content);
+    }
+    
     def code =  content.getString("code");
     if(code == null){
         code = "";
@@ -799,6 +807,7 @@ if(execute){
     sinterpretationType=Action
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
     sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@GroovyAction
     sinheritDescription=false
@@ -814,7 +823,8 @@ if(execute){
     sthrowException=true
     suseOtherAction=false
     suseOuterJava=true
-    souterClassName=xworker.actions.GroovyAction
+    suseInnerJava=false
+    souterClassName=xworker.groovy.GroovyAction
     sclassName=GroovyAction
     smethodName=run
     sdisableGlobalContext=false
@@ -823,6 +833,8 @@ if(execute){
     svarScope=Global
     screateLocalVarScope=false
     ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
     sdescriptors=xworker.lang.actions.Actions/@JavaAction
     sid=run
     @/@actions/@thingRegist
@@ -1235,6 +1247,43 @@ if(execute){
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=state
+    @/@actions/@groovySetCode
+    sname=groovySetCode
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+//type=groovy时如有多个示例，下拉菜单的事件
+def content = menuThing.get("content");;
+def code = content.getString("code");
+if(code != null){
+    codeText.setText(code);
+}else{
+    codeText.setText("");
+}
+
+actionContext.g().put("content", content);
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=groovySetCode
   @/@name
   sname=name
   sshowLabel=true
@@ -2773,16 +2822,61 @@ new Thread({
           sth_registDisabled=false
           sth_mark=false
           sid=codeCompositeGridLayout
+          @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@toolBar
+          sname=toolBar
+          stype=HORIZONTAL
+          sFLAT=false
+          sWRAP=false
+          sBORDER=false
+          sSHADOW_OUT=false
+          sRIGHT=false
+          sdescriptors=xworker.swt.Widgets/@QuickToolbar
+          sinheritDescription=false
+          sth_createIndex=false
+          sth_registMyChilds=false
+          sth_registDisabled=false
+          sth_noThingRegistViewer=false
+          sth_fileMonitor=false
+          sth_mark=false
+          sth_registQueryOnlySelf=false
+          snotXmlAttribute=false
+          sjson_isArray=false
+          sid=toolBar
+            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@toolBar/@GridData
+            sname=GridData
+            sstyle=FILL_HORIZONTAL
+            shorizontalIndent=0
+            swidth=-1
+            sheight=-1
+            shorizontalAlignment=BEGINNING
+            sverticalAlignment=CENTER
+            shorizontalSpan=1
+            sverticalSpan=1
+            sgrabExcessHorizontalSpace=false
+            sgrabExcessVerticalSpace=false
+            sdescriptors=xworker.swt.layout.LayoutDatas/@GridData
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            snotXmlAttribute=false
+            sjson_isArray=false
+            sid=GridData
           @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@codeText
           sname=codeText
           sstyle=MULTI
           sFULL_SELECTION=false
-          sREAD_ONLY=false
+          sREAD_ONLY=true
           sWRAP=false
           sH_SCROLL=true
           sV_SCROLL=true
           sBORDER=false
           salign=LEFT
+          slineNumber=false
           sNO_BACKGROUND=false
           sNO_FOCUS=false
           sNO_MERGE_PAINTS=false
@@ -2793,6 +2887,7 @@ new Thread({
           scapture=false
           senabled=true
           sredraw=true
+          spack=false
           svisible=true
           sdescriptors=xworker.swt.Widgets/@StyledText
           sinheritDescription=false
@@ -2921,15 +3016,23 @@ new Thread({
                   sdisableGlobalContext=false
                   Scode=
 #$@text#$@
-content.set("code", codeText.getText());
-//content.save();
+import xworker.lang.executor.Executor;
 
-def obj = content.getAction().run(actionContext);
-viewer.doAction("setObject", actionContext, ["object":obj]);
+//content.set("code", codeText.getText());
+//content.save();
+try{
+    Executor.push(executorService);
+    def obj = content.getAction().run(actionContext);
+    //viewer.doAction("setObject", actionContext, ["object":obj]);
+    Executor.info("Result", String.valueOf(obj));
+}finally{
+    Executor.pop();
+}
 #$@text#$@
                   sinterpretationType=Action
                   screateLocalVarScope=false
                   ssaveReturn=false
+                  sswitchResult=false
                   sdebugLog=false
                   sdescriptors=xworker.lang.actions.Actions/@GroovyAction
                   sinheritDescription=false
@@ -2938,80 +3041,86 @@ viewer.doAction("setObject", actionContext, ["object":obj]);
                   sth_registDisabled=false
                   sth_mark=false
                   sid=GroovyAction
-            @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591
-            sname=saveButton
-            stext=label:xworker.swt.xworker.ThingRegistThing/@composite/@resources/@I18nResource/@saveButton
-            stype=SWT.PUSH
-            sflat=false
-            sborder=false
-            sselected=false
-            scapture=false
-            senabled=true
-            sredraw=true
-            svisible=true
-            sdescriptors=xworker.swt.Widgets/@Button
-            sth_createIndex=false
-            sid=188591
-              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18860
-              sname=RowData
-              sexclude=false
-              swidth=80
-              sheight=-1
-              sdescriptors=xworker.swt.layout.LayoutDatas/@RowData
-              sth_createIndex=false
-              sid=18860
-              @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861
-              sname=Listeners
-              sdescriptors=xworker.swt.widgets.Widget/@Listeners
-              sth_createIndex=false
-              sid=18861
-                @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861/@18862
-                sname=executeButtonSelection
-                stype=Selection
-                sdescriptors=xworker.swt.events.Listeners/@listeners/@Listener
-                sth_createIndex=false
-                sid=18862
-                  @/@composite/@groovyComposite/@mainSashForm/@codeComposite/@18856/@188591/@18861/@18862/@GroovyAction
-                  sname=GroovyAction
-                  sisSynchronized=false
-                  sthrowException=true
-                  suseOtherAction=false
-                  svarScope=Local
-                  sdisableGlobalContext=false
-                  Scode=
-#$@text#$@
-content.set("code", codeText.getText());
-content.save();
-#$@text#$@
-                  sinterpretationType=Action
-                  screateLocalVarScope=false
-                  ssaveReturn=false
-                  sdebugLog=false
-                  sdescriptors=xworker.lang.actions.Actions/@GroovyAction
-                  sinheritDescription=false
-                  sth_createIndex=false
-                  sth_registMyChilds=false
-                  sth_registDisabled=false
-                  sth_mark=false
-                  sid=GroovyAction
-        @/@composite/@groovyComposite/@mainSashForm/@viewer
-        sname=viewer
-        sH_SCROLL=true
-        sV_SCROLL=true
-        sNO_BACKGROUND=false
-        sNO_FOCUS=false
-        sNO_MERGE_PAINTS=false
-        sNO_REDRAW_RESIZE=false
-        sNO_RADIO_GROUP=false
-        sEMBEDDED=false
-        sDOUBLE_BUFFERED=false
-        sdescriptors=xworker.swt.Widgets/@ObjectViewer
+        @/@composite/@groovyComposite/@mainSashForm/@executorService
+        sname=executorService
+        screateItemsOnCTabFodler=true
+        sdescriptors=xworker.swt.Widgets/@SWTExecutorService
         sinheritDescription=false
         sth_createIndex=false
         sth_registMyChilds=false
         sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
         sth_mark=false
-        sid=viewer
+        sth_registQueryOnlySelf=false
+        snotXmlAttribute=false
+        sjson_isArray=false
+        sid=executorService
+        @/@composite/@groovyComposite/@mainSashForm/@init
+        sname=init
+        sisSynchronized=false
+        sthrowException=true
+        suseOtherAction=false
+        svarScope=Local
+        sdisableGlobalContext=false
+        Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+def actions = content.getChilds("GroovyAction");
+if(actions.size() == 0){
+    toolBar.dispose();
+}else{
+    def item = new Thing("xworker.swt.xwidgets.QuickToolbar/@Item");
+    item.set("type", "PUSH");
+    item.set("showText", "true");
+    item.set("label", "选择脚本");
+    item.set("label_en", "Select Scrips");
+        
+    /*
+    def thing = new Thing("xworker.swt.xwidgets.QuickToolbar/@Item/@Menu");
+    thing.set("content", content);
+    thing.set("label", content.getMetadata().getLabel());
+    thing.set("actionThing", "xworker.swt.xworker.ThingRegistThing/@actions/@groovySetCode");
+    item.addChild(thing);
+
+    thing = new Thing("xworker.swt.xwidgets.QuickToolbar/@Item/@Menu");
+    thing.set("content", content);
+    thing.set("label", content.getMetadata().getLabel());
+    thing.set("seperator", "true");
+    item.addChild(thing);
+    */
+    
+    for(action in actions){
+        def thing = new Thing("xworker.swt.xwidgets.QuickToolbar/@Item/@Menu");
+        thing.set("content", action);
+        thing.set("label", action.getMetadata().getLabel());
+        thing.set("actionThing", "xworker.swt.xworker.ThingRegistThing/@actions/@groovySetCode");
+        thing.set("seperator", action.get("seperator"));
+        item.addChild(thing);
+    }
+    
+    actionContext.peek().put("parent", toolBar);
+    item.doAction("create", actionContext);
+}
+#$@text#$@
+        sinterpretationType=Action
+        screateLocalVarScope=false
+        ssaveReturn=false
+        sswitchResult=false
+        sdebugLog=false
+        sdescriptors=xworker.swt.Widgets/@Code1
+        sinheritDescription=false
+        sth_createIndex=false
+        sth_registMyChilds=false
+        sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
+        sth_mark=false
+        sth_registQueryOnlySelf=false
+        snotXmlAttribute=false
+        sjson_isArray=false
+        sid=init
     @/@composite/@thingRegist
     sname=thingRegist
     sthing=var:content
@@ -4021,3 +4130,49 @@ box.open();
   sth_mark=false
   sth_registQueryOnlySelf=false
   sid=State
+  @/@GroovyAction
+  sname=GroovyAction
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  sextends=xworker.lang.actions.GroovyAction
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  smodifier=public
+  sinheritDescription=false
+  Sdescription=
+#$@text#$@
+<p>当type=groovy时，用于设置多个实例脚本，这些脚本在演示界面里可以通过工具栏选择。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sid=GroovyAction
+    @/@GroovyAction/@seperator
+    sname=seperator
+    sinputtype=truefalse
+    sgroup=Menu
+    sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
+    smodifier=public
+    sreadOnly=false
+    sdefault=false
+    sinheritDescription=false
+    svalidateAllowBlank=true
+    LvalidateOnBlur=true
+    LallowDecimals=true
+    LallowNegative=true
+    snotXmlAttribute=false
+    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=seperator

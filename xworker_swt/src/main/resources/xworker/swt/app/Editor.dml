@@ -1,10 +1,11 @@
-%1575894751263
+%1626428109887
 @
 sname=Editor
 slabel=Editor
 sdescriptors=xworker.lang.MetaDescriptor3
 smany=true
 seditCols=2
+sformNoLabel=false
 sinitialization=false
 smodifier=public
 sinheritDescription=false
@@ -19,7 +20,8 @@ Sdescription=
 	<li><strong>菜单</strong>，见MenuConfig子节点。</li>
 	<li><strong>工具栏</strong>，见CoolBarConfig子节点。</li>
 	<li><strong>状态栏</strong>，见StatusBarConfig子节点。</li>
-	<li><strong>动作容器</strong>，见ActionContainer子节点。&nbsp;&nbsp;&nbsp;</li>
+	<li><strong>动作容器</strong>，见ActionContainer子节点。</li>
+	<li><strong>概要栏</strong>，见OutlineComposite子节点。&nbsp;&nbsp;&nbsp;</li>
 </ul>
 
 <p><strong>打开编辑器的方法</strong></p>
@@ -53,7 +55,7 @@ Sdescription=
 
 <p><strong>变量上下文</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 编辑器可以使用下面公共的变量，SWT控件和ActionContainer等等都使用同一个变量上下文。：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 编辑器使用独立的变量上下文，可以使用下面公共的变量，SWT控件和ActionContainer等等都使用同一个变量上下文。：</p>
 
 <ul>
 	<li><strong>parentContext: ActionContext</strong><br />
@@ -89,6 +91,19 @@ Sdescription=
 </ul>
 
 <p>&nbsp;&nbsp;&nbsp; 有时EditorContainer可能没有菜单、工具栏和状态栏，此时编辑器可以考虑在编辑器界面加入菜单、工具栏和状态栏等。</p>
+
+<p><strong>ThingLoader设置</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; ThingLoader用于把模型加载到Java对象上，比如编辑创建的变量可以赋值到Java对象的属性上，控件的监听器也可以直接调用Java对象的方法等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 获取Java对象的方法如下，如果Java对象为null，那么不使用ThingLoader加载。</p>
+
+<ol>
+	<li>通过getObjectForThingLoader()方法获取对象，如果为null，执行2，否则返回。</li>
+	<li>通过getObjectClassForThingLoader()方法获取类，如果不为null，那么使用模型的构造方法实例化一个对象。<br />
+	如果属性objectForThingLoader不为空和null，那么把实例化的对象以此名字放入到全局变量栈中。<br />
+	由于编辑器使用独立的变量上下文，因此在bojectForThingLoader设置一个属性，在objectClassForThingLoader设置要实例化的类来设置objectForThingLoader是一个好主意。</li>
+</ol>
 
 <p>&nbsp;</p>
 #$@text#$@
@@ -270,6 +285,65 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=getExampleParams
+    @/@actions/@7321
+    sname=getObjectForThingLoader
+    sattributeName=objectForThingLoader
+    snotNull=false
+    svariable=true
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    susage=params
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetData
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=7321
+    @/@actions/@7322
+    sname=getObjectClassForThingLoader
+    sattributeName=objectClassForThingLoader
+    snotNull=false
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    susage=params
+    sdescriptors=xworker.lang.actions.ActionUtil/@GetClass
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=7322
   @/@name
   sname=name
   sshowLabel=true
@@ -335,6 +409,56 @@ sth_mark=false
   sth_fileMonitor=false
   sth_mark=false
   sid=priority
+  @/@objectForThingLoader
+  sname=objectForThingLoader
+  ssize=40
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sjson_isArray=false
+  sid=objectForThingLoader
+  @/@objectClassForThingLoader
+  sname=objectClassForThingLoader
+  sinputtype=openWindow
+  ssize=60
+  sshowLabel=true
+  slabelAlign=right
+  slabelVAlign=baseline
+  smodifier=public
+  sinputattrs=xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|
+  sreadOnly=false
+  sinheritDescription=false
+  svalidateAllowBlank=true
+  LvalidateOnBlur=true
+  LallowDecimals=true
+  LallowNegative=true
+  snotXmlAttribute=false
+  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  sjson_isArray=false
+  sid=objectClassForThingLoader
   @/@exampleParams
   sname=exampleParams
   sinputtype=textarea
@@ -446,9 +570,10 @@ sth_mark=false
     @/@ActionContainer/@name
     sname=name
     sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
     smodifier=public
     sreadOnly=false
-    sdefault=actions
     sinheritDescription=false
     svalidateAllowBlank=true
     LvalidateOnBlur=true
@@ -459,11 +584,17 @@ sth_mark=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
+    sth_registQueryOnlySelf=false
+    sjson_isArray=false
     sid=name
     @/@ActionContainer/@label
     sname=label
     sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
     smodifier=public
     sreadOnly=false
     sinheritDescription=false
@@ -476,13 +607,19 @@ sth_mark=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
+    sth_registQueryOnlySelf=false
+    sjson_isArray=false
     sid=label
     @/@ActionContainer/@extends
     sname=extends
     sinputtype=dataSelector
     ssize=60
     sshowLabel=true
+    slabelAlign=right
+    slabelVAlign=baseline
     smodifier=public
     sreadOnly=false
     sdefault=xworker.swt.app.editors.NoopActionContainer
@@ -496,26 +633,12 @@ sth_mark=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
+    sth_registQueryOnlySelf=false
+    sjson_isArray=false
     sid=extends
-    @/@ActionContainer/@description
-    sname=description
-    sinputtype=html
-    sshowLabel=true
-    smodifier=public
-    sreadOnly=false
-    sinheritDescription=false
-    svalidateAllowBlank=true
-    LvalidateOnBlur=true
-    LallowDecimals=true
-    LallowNegative=true
-    snotXmlAttribute=false
-    sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=description
   @/@EditorComposite
   sname=EditorComposite
   sdescriptors=xworker.lang.MetaDescriptor3/@thing
@@ -573,6 +696,7 @@ sth_mark=false
   sdescriptors=xworker.lang.MetaDescriptor3/@thing
   smany=true
   seditCols=2
+  sformNoLabel=false
   sinitialization=false
   smodifier=public
   sinheritDescription=false
@@ -851,9 +975,11 @@ sth_mark=false
     sextends=xworker.swt.Menus
     smany=true
     seditCols=2
+    sformNoLabel=false
     sinitialization=false
     smodifier=public
     sinheritDescription=true
+    sdescription=<p>第一个子节点是菜单的设置。如果hasRoot=false，那么第一个子节点的子节点是菜单的设置。</p>
     snotXmlAttribute=false
     sjson_isArray=false
     sth_createIndex=false
@@ -1426,3 +1552,149 @@ sth_mark=false
     sth_fileMonitor=false
     sth_mark=false
     sid=shell
+    @/@VariablesDescs/@workbench
+    sname=workbench
+    svarName=workbench
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=xworker.swt.app.Workbench
+    sstaticClass=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=workbench
+    @/@VariablesDescs/@editorContianer
+    sname=editorContianer
+    svarName=editorContianer
+    spassive=false
+    sscope=0
+    stype=object
+    sclassName=xworker.swt.app.IEditorContainer
+    sstaticClass=false
+    sdescriptors=xworker.lang.MetaThing/@VariablesDesc/@Object
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=editorContianer
+  @/@MenuBar
+  sname=MenuBar
+  sdescriptors=xworker.lang.MetaDescriptor3/@MenuBar
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sid=MenuBar
+    @/@MenuBar/@Editor
+    sname=Editor
+    ssortWeight=0
+    sdescriptors=xworker.lang.ThingMenuBar/@Menu
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=Editor
+      @/@MenuBar/@Editor/@ActionsJavaCodeMenu
+      sname=ActionsJavaCodeMenu
+      slabel=Editor ThingLoader Java Code
+      scodeType=java
+      Stemplate=
+#$@text#$@
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionField;
+import org.xmeta.annotation.ActionParams;
+
+import java.util.Map;
+
+public class XXXEditor {
+    ${r"@"}ActionField
+    public ActionContext actionContext;
+
+    ${r"@"}ActionParams(names = "params")
+    public void setContent(Map<String, Object> params){
+
+    }
+
+    ${r"@"}ActionParams(names = "params")
+    public boolean isSameContent(Map<String, Object> params){
+        return false;
+    }
+
+    public void doSave(){
+
+    }
+
+    public boolean isDirty(){
+        return false;
+    }
+
+    public String getSimpleTitle(){
+        return null;
+    }
+
+    public String getTitle(){
+        return null;
+    }
+
+    public Image getIcon(){
+        return null;
+    }
+
+    public Composite getOutline(){
+        return null;
+    }
+
+    public void doDispose(){
+
+    }
+
+    public void onActive(){
+
+    }
+
+    public void onUnActive(){
+
+    }
+}
+#$@text#$@
+      sdescriptors=xworker.lang.thingmenus.Menus/@CodeWindow
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      snotXmlAttribute=false
+      sjson_isArray=false
+      sid=ActionsJavaCodeMenu

@@ -1,4 +1,4 @@
-^1614134769474
+^1626415870839
 @
 sname
 ActionUtil
@@ -10,14 +10,206 @@ smany
 true
 seditCols
 2
+sformNoLabel
+false
 sinitialization
 false
 smodifier
 public
 sinheritDescription
 false
-sdescription
-<p>动作相关的工具。</p>
+Sdescription
+#$@text#$@
+<p><strong>取值表达式</strong></p>
+
+<p><strong>作用</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 取值表达式常用于对象类动作模型的参数类动作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如一个读取文件的内容的动作模型，那么可以通过file属性里设置取值表达式，然后在getFile()使用取值表达式来取值。</p>
+
+<p><strong>语法规则</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 取值表达式的基本语法规则是&lt;prefix&gt;:&lt;value&gt;，其中前缀（prefix)用来表示操作类型，值(value)是要操作的值。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如：</p>
+
+<ul>
+	<li>var:name<br />
+	前缀var表示从变量上下文中取变量，name表示要去的变量的名字是&#39;name&#39;。</li>
+	<li>ognl:actionContext.get(&quot;name&quot;)<br />
+	前缀ognl表示要执行Ognl表达式，actionContext.get(&quot;nam&quot;)是要执行的表达式。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>可以把取值表达式理解成函数</strong>，比如var:name，可以理解成var(name)，即var是一个函数，name是它的参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>取值表达式支持嵌套</strong>，比如：</p>
+
+<ul>
+	<li>var:ognl:user.getVar()<br />
+	用函数来表示这个取值表达式就是var(ognl(user.getVar()))。</li>
+</ul>
+
+<p><strong>支持的前缀列表</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 取值表达式的前缀相当于函数，如var用函数表示就是var(Object value)。</p>
+
+<ul>
+	<li>
+	<p><strong>_c_.（&lt;value&gt;:&lt;path&gt;）</strong><br />
+	使用xworker.lang.Configuration取配置模型。其中value是配置的名字，path可选，如果存在使用配置模型取值thing.get(path)。<br />
+	_c_.不支持表达式的嵌套。</p>
+	</li>
+	<li>
+	<p><strong>boolean</strong><br />
+	返回boolean。如果value是Boolean直接返回；如果value是字符串，那么&#39;true&#39;、&#39;1&#39;返回true；如果value是Number，那么0返回false，其它返回true；其它如果不为null返回true，null返回false。</p>
+	</li>
+	<li>
+	<p><strong>bigDecimal</strong><br />
+	返回java.math.BigDecimal。支持String、Number和Boolean(true 1、false 0)的转换。</p>
+	</li>
+	<li>
+	<p><strong>bigInteger</strong><br />
+	返回java.math.BigInteger。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>byte</strong><br />
+	返回byte。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>bytes</strong><br />
+	返回byte[]。支持File、Reader、InputStream、URL的读取到byte[]，如果是字符串则String.getBytes()。其它类型返回null。</p>
+	</li>
+	<li>
+	<p><strong>char</strong><br />
+	返回char。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>double</strong><br />
+	返回double。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>int</strong><br />
+	返回int。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>long</strong><br />
+	返回long。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>float</strong><br />
+	返回float。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>short</strong><br />
+	返回short。支持String、Number和Boolean(true 1、false 0)的转转。</p>
+	</li>
+	<li>
+	<p><strong>class</strong><br />
+	返回java.lang.Class。如果是String则Class.forName()；如果是Class则直接返回。其它如果不为null，那么value.getClass()，否则返回null。</p>
+	</li>
+	<li>
+	<p><strong>classes</strong><br />
+	返回java.lang.Class[]。</p>
+	</li>
+	<li>
+	<p><strong>date</strong><br />
+	返回java.util.Date。如果是Date直接返回；如果是String，支持下列的格式dd、yyyy、MM-dd、HH:mm:ss、yyyy-MM-dd、yyyy-MM-dd HH:mm:ss；其它类型抛出不能转换的异常。</p>
+	</li>
+	<li>
+	<p><strong>enum</strong><br />
+	返回一个枚举值或其它。如果是String，取枚举的格式是&lt;ClassName&gt;#&lt;EnumName&gt;，如：java.util.Formatter.BigDecimalLayoutForm#DECIMAL_FLOAT；其它类型直接返回。</p>
+	</li>
+	<li>
+	<p><strong>file</strong><br />
+	返回java.io.File。如果是File直接返回。如果是String，那么返回new File((String) value)。</p>
+	</li>
+	<li>
+	<p><strong>jsonObj</strong><br />
+	返回Object。如果是String，那么使用Json解析，返回List或Map；其它直接类型直接返回。</p>
+	</li>
+	<li>
+	<p><strong>ognl</strong><br />
+	返回Object。如果是String那么作为Ognl表达式执行；其它类型直接返回。</p>
+	</li>
+	<li>
+	<pre>
+<strong>self</strong>
+如果value不为空，返回onwer.get(value)，否则返回owner。owner是调用动作的模型。
+</pre>
+	</li>
+	<li>
+	<p><strong>string</strong><br />
+	返回java.lang.String。如果是String直接返回；如果是对象那么返回value.toString()；如果为null则返回null。</p>
+	</li>
+	<li>
+	<p><strong>cstr</strong><br />
+	返回常量字符串。即value部分不解析直接返回。如cstr:long:1234返回的是字符串long:1234。</p>
+	</li>
+	<li>
+	<p><strong>string[]</strong><br />
+	返回java.lang.String[]。如果value是字符串，那么使用英文逗号分割；如果是String[]直接返回；如果是Collection或Iterator则把条目转成String[]；如果value不为null则返回new String[]{value.toString}；其它返回new String[0];</p>
+	</li>
+	<li>
+	<p><strong>stringList</strong><br />
+	返回java.util.List&lt;String&gt;。取条目的方法同string[]。</p>
+	</li>
+	<li>
+	<p><strong>thing</strong><br />
+	返回org.xmeta.Thing。如果是Thing则直接返回；如果是String那么当作模型的路径来获取路径；其它返回null。</p>
+	</li>
+	<li>
+	<p><strong>url</strong><br />
+	返回java.net.URL。支持URI、URL、String和File转URL；其它类型返回null。</p>
+	</li>
+	<li>
+	<p><strong>var</strong><br />
+	返回Object。如果是String那么作为变量名从变量上下文中取值；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>parentVar</strong><br />
+	同var，还支持从父变量上下文（parentContext)中取值。</p>
+	</li>
+	<li>
+	<p><strong>template</strong><br />
+	Freemarker模板。如果是字符串作为Freemarker模板来执行；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>action</strong><br />
+	执行动作。如果是String或Thing，转化为动作执行；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>label</strong><br />
+	返回模型的标签。如果是String或Thing，则获取对应模型的标签；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>desc</strong><br />
+	返回模型的描述文档。如果是String或Thing，则获取对应模型的描述文档；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>attr</strong><br />
+	如果是字符串，那么返回World.getInstance().get((String) value)；其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>xworker</strong><br />
+	如果是返回XWorker根目录下的路径，如xworker:work返回World.getInstance().getPath() + &quot;/work&quot;;其它直接返回。</p>
+	</li>
+	<li>
+	<p><strong>hex</strong><br />
+	使用Hex编码解码。如果是byte[]那么编码成字符串；如果是字符串那么解码成byte[]；其它返回null。</p>
+	</li>
+	<li>
+	<p><strong>base64</strong><br />
+	使用Base64编码解码。如果是byte[]那么编码成字符串；如果是字符串那么解码成byte[]；其它返回null。</p>
+	</li>
+	<li>
+	<p><strong>lang</strong><br />
+	多语言字符串。如lang:d=确定&amp;en=Ok，如果当前会话的语言是en那么返回Ok，其它则返回模型确定（d代表默认）。</p>
+	</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
 snotXmlAttribute
 false
 sjson_isArray
@@ -41,6 +233,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -51,7 +245,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性所指定的字符串。通过属性的值做以下操作：</p>
+<p>返回动作属性所指定的字符串。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil">取值表达式</a>取值。</p>
 
 <ul>
 	<li><strong>template:xxx</strong><br />
@@ -440,42 +634,89 @@ false
   false
   Sdescription
 #$@text#$@
-<p>获取动作属性所指定的对象。通过属性的值做以下操作：</p>
+<p>获取动作属性所指定的对象。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
+
+<p><strong>获取对象的步骤</strong></p>
+
+<ol>
+	<li>获取真实的对象的指定属性的值(result)。</li>
+	<li>如果result是字符串，且包含指定的前缀，则按照前缀的定义执行操作，并把结果赋值到result。其中前缀可以嵌套，如bytes:url:https://www.xworker.org。</li>
+	<li>通过步骤2后，如果result是字符串，那么判断属性variable=true，如果满足那么从变量上下文中取变量并赋值到值result。</li>
+	<li>返回result。</li>
+</ol>
+
+<p><strong>支持的前缀</strong></p>
 
 <ul>
+	<li><strong>_c_.xxx</strong><br />
+	获取配置xx。</li>
 	<li><strong>var:xxx</strong><br />
-	从变量上下文中获取xxx变量。<br />
-	&nbsp;</li>
+	从变量上下文中获取xxx变量。</li>
 	<li><strong>ognl:xxx</strong><br />
-	使用xxx表达式，其中root是变量上下文。<br />
-	&nbsp;</li>
+	使用xxx表达式，其中root是变量上下文。</li>
 	<li><strong>action:xxx</strong><br />
-	执行动作xxx，其中xxx是动作的路径，使用当前变量上下文。<br />
-	&nbsp;</li>
+	执行动作xxx，其中xxx是动作的路径，使用当前变量上下文。</li>
 	<li><strong>thing:xxx</strong><br />
-	返回xxx事物，其中xxx是事物的路径。<br />
-	&nbsp;</li>
+	返回xxx事物，其中xxx是事物的路径。</li>
 	<li><strong>template:xxx</strong><br />
-	执行Freemarker模板，其中模板代码是xxx。<br />
-	&nbsp;</li>
-	<li><strong>res:xxx</strong><br />
-	获取i18n资源。（现已很少用）。<br />
-	&nbsp;</li>
+	执行Freemarker模板，其中模板代码是xxx。</li>
 	<li><strong>label:xxx</strong><br />
-	获取一个xxx事物的标签，其中xxx是事物的路径。<br />
-	&nbsp;</li>
+	获取一个xxx事物的标签，其中xxx是事物的路径。</li>
 	<li><strong>desc:xxx</strong><br />
-	获取xxx事物的描述，其中xxx是事物的路径。<br />
-	&nbsp;</li>
+	获取xxx事物的描述，其中xxx是事物的路径。</li>
 	<li><strong>attr:xxx</strong><br />
-	返回world.get(xxx)的字符串类型，可以通过事物路径的表达式获取指定事物的属性等。<br />
-	&nbsp;</li>
+	返回world.get(xxx)的字符串类型，可以通过事物路径的表达式获取指定事物的属性等。</li>
 	<li><strong>xworker:xxx</strong><br />
-	获取xworker的相对路径，return wrold.getPath() + &quot;/&quot; + xxx。<br />
-	&nbsp;</li>
-	<li><strong>默认</strong><br />
-	如果没有以上前缀，如果variable=true那么从ActionContext取值，如果variable=false则返回字符串，如果字符串为空，那么返回null。&nbsp;&nbsp;</li>
+	获取xworker的相对路径，return wrold.getPath() + &quot;/&quot; + xxx。</li>
+	<li><strong>boolean:xxx</strong><br />
+	把xxx转成boolean。</li>
+	<li><strong>bigDecimal:xxx</strong><br />
+	把xxx转成BigDecimal。</li>
+	<li><strong>bigInteger:xxx</strong><br />
+	把xxx转成BigInteger。</li>
+	<li><strong>byte:xxx</strong><br />
+	把xxx转成byte。</li>
+	<li><strong>bytes:xxx</strong><br />
+	把xxx转成byte[]。如bytes:file:/a.txt，bytes:hex:FFEF，bytes:base64:xxx。</li>
+	<li><strong>char:xxx</strong><br />
+	把xxx转成char。</li>
+	<li><strong>class:xxx</strong><br />
+	把xxx转成java.lang.Class。</li>
+	<li><strong>classes:xxx</strong><br />
+	把xxx转成java.lang.Class[]。</li>
+	<li><strong>date:xxx</strong><br />
+	把xxx转成日期。支持dd，yyyy，MM-dd，yyyy-MM-dd，HH:mm:ss，yyyy-MM-dd HH:mm:ss等格式。</li>
+	<li><strong>double:xxx</strong><br />
+	把xxx转成double。</li>
+	<li><strong>enum:xxx</strong><br />
+	获取指定的枚举值。如：enum:javax.swing.SortOrder#ASCENDING</li>
+	<li><strong>file:xxx</strong><br />
+	根据xxx返回一个java.io.File.</li>
+	<li><strong>float:xxx</strong><br />
+	把xxx转成float。</li>
+	<li><strong>int:xxx</strong><br />
+	把xxx转成int。</li>
+	<li><strong>jsonObj:xxx</strong><br />
+	把xxx使用Json分析成对象。</li>
+	<li><strong>long:xxx</strong><br />
+	把xxx转成long。</li>
+	<li><strong>self:xxx</strong><br />
+	返回当前真实模型，或者是self.get(xxx)。</li>
+	<li><strong>short:xxx</strong><br />
+	把xxx转成short。</li>
+	<li><strong>string:xxx</strong><br />
+	把xxx转成String。</li>
+	<li><strong>string[]:xxx</strong><br />
+	把xxx转成String[]。</li>
+	<li><strong>stringList:xxx</strong><br />
+	把xxx转成java.util.List&lt;String&gt;。</li>
+	<li><strong>parentVar:xxx</strong><br />
+	从当前变量上下文以及parentContext中获取变量xxx。</li>
+	<li><strong>template:xxx</strong><br />
+	把xxx作为freemarker模板。</li>
 </ul>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;&nbsp;</p>
 #$@text#$@
@@ -738,11 +979,13 @@ false
     sreadOnly
     false
     sdefault
-    false
+    true
     sinheritDescription
     false
-    sdescription
-    <p>如果为true，那么如果第一次获取的对象是字符串，那么尝试从变量上下文中获取对象。</p>
+    Sdescription
+#$@text#$@
+<p>如果为true，那么如果第一次获取的对象是字符串，那么尝试从变量上下文中获取对象，如果获取不到返回null。</p>
+#$@text#$@
     svalidateAllowBlank
     true
     LvalidateOnBlur
@@ -869,6 +1112,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -879,7 +1124,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Integer值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Integer值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -1231,6 +1476,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -1241,7 +1488,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Long值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Long值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -1595,6 +1842,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -1605,7 +1854,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Double值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Double值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -1957,6 +2206,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -1967,7 +2218,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Float值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Float值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -2319,6 +2570,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -2329,7 +2582,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Short值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Short值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -2681,6 +2934,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -2691,7 +2946,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Byte值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Byte值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -3055,7 +3310,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的byte[]值，通过属性的值做以下操作：</p>
+<p>返回动作属性指定的byte[]值，先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>hex:xxx</strong><br />
@@ -3415,6 +3670,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -3425,7 +3682,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Boolean值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Boolean值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -3824,6 +4081,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -3834,7 +4093,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的BigInteger值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的BigInteger值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -4186,6 +4445,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -4196,7 +4457,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的BigDecimal值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的BigDecimal值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -4560,11 +4821,14 @@ false
   false
   Sdescription
 #$@text#$@
-<p>获取指定的事物，优先级如下：</p>
+<p>获取指定的事物，先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。优先级如下：</p>
 
 <ol>
 	<li><strong>从attributeName属性获取</strong><br />
 	支持var:、ognl:、action:等前缀。如果前缀是_c_.那么从Configuration中获取。<br />
+	&nbsp;</li>
+	<li><strong>获取realSelf的节点</strong><br />
+	如果是@开头的，那么路径会补上realSelf的根路径。这样可以获取realSelf模型下相对路径的其它子模型。<br />
 	&nbsp;</li>
 	<li><strong>从childThingName属性获取</strong><br />
 	childThingName是子节点的事物名，获取第一个子事物，如果childThingFirstChild=true那么返回第一个子事物的第一个子事物。<br />
@@ -5030,6 +5294,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -5040,7 +5306,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的File值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的File值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -5412,6 +5678,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -5422,7 +5690,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作的属性指定的类型的对象，如果对象不是指定的类型，那么返回null，否则返回该对象。</p>
+<p>返回动作的属性指定的类型的对象，如果对象不是指定的类型，那么返回null，否则返回该对象。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p>对象的获取方法如下：</p>
 
@@ -5829,6 +6097,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -5839,7 +6109,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>根据动作的属性返回Map&lt;String, Object&gt;数据。</p>
+<p>根据动作的属性返回Map&lt;String, Object&gt;数据。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p><strong>1.首先通过属性的值获取对象。</strong></p>
 
@@ -6195,7 +6465,7 @@ false
   sinheritDescription
   false
   sdescription
-  <p>把动作的属性的值当作Ognl表达式执行，并返回其结果。</p>
+  <p>把动作的属性的值当作Ognl表达式执行，并返回其结果。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -6549,6 +6819,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -6559,7 +6831,7 @@ false
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性指定的Char值。通过属性的值做以下操作：</p>
+<p>返回动作属性指定的Char值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -6921,6 +7193,8 @@ false
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -6930,7 +7204,7 @@ false
   sinheritDescription
   false
   sdescription
-  <p>通过事物创建Java对象。</p>
+  <p>通过事物创建Java对象。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -7677,6 +7951,8 @@ name</pre>
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -7686,7 +7962,7 @@ name</pre>
   sinheritDescription
   false
   sdescription
-  <p>通过指定的动作（actionName属性）获取值，如果值是String那么从enumClass中获取对应的值，否则直接返回动作获取的值。</p>
+  <p>通过指定的动作（actionName属性）获取值，如果值是String那么从enumClass中获取对应的值，否则直接返回动作获取的值。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -7929,11 +8205,9 @@ if(index != -1){
     false
     sid
     enumClass
-    @/@GetEnum/@enumNameAttribute
+    @/@GetEnum/@attributeName
     sname
-    actionName
-    ssize
-    40
+    attributeName
     sshowLabel
     true
     sreadOnly
@@ -7961,7 +8235,7 @@ if(index != -1){
     sth_mark
     false
     sid
-    enumNameAttribute
+    attributeName
     @/@GetEnum/@description
     sname
     description
@@ -8313,6 +8587,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -8323,7 +8599,7 @@ if(index != -1){
   false
   Sdescription
 #$@text#$@
-<p>返回动作的属性指定的Date对象。</p>
+<p>返回动作的属性指定的Date对象。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p><strong>1.首先获取属性指定的对象。</strong></p>
 
@@ -11284,6 +11560,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -11294,11 +11572,11 @@ if(index != -1){
   false
   Sdescription
 #$@text#$@
-<p>获取动作的属性或子节点指定的事物列表。执行方法如下：</p>
+<p>获取动作的属性或子节点指定的事物列表。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。执行方法如下：</p>
 
 <ol>
 	<li>从attributeName属性指定的动作属性上获取，支持var:、ognl:、action:等前缀。可以是String，Thing和List&lt;Thing&gt;等。<br />
-	如果是字符串，那么是事物的路径，支持英文逗号和换行分割。</li>
+	如果是字符串，那么是事物的路径，支持英文逗号和换行分割。路径支持_c_.前缀，_c_.是从配置中取模型。</li>
 	<li>从childThingName指定的子节点获取子节点下的事物列表。</li>
 	<li>attributeName获取的和childThingName获取的会合并到一起。</li>
 </ol>
@@ -11683,6 +11961,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -11693,7 +11973,7 @@ if(index != -1){
   false
   Sdescription
 #$@text#$@
-<p>返回URL， 支持String、URI和URL。通过属性的值做以下操作：</p>
+<p>返回URL， 支持String、URI和URL。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。通过属性的值做以下操作：</p>
 
 <ul>
 	<li><strong>var:xxx</strong><br />
@@ -12065,6 +12345,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -12075,7 +12357,7 @@ if(index != -1){
   false
   Sdescription
 #$@text#$@
-<p>返回List&lt;String&gt;。</p>
+<p>返回List&lt;String&gt;。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p>首先根据GetObject来获取值对象。根据对象类型做如下操作：</p>
 
@@ -12676,6 +12958,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -12685,7 +12969,7 @@ if(index != -1){
   sinheritDescription
   false
   sdescription
-  <p>执行自己行为。通常是为了调用其它行为，因此不要执行当前的行为，会造成递归。</p>
+  <p>执行自己行为。通常是为了调用其它行为，因此不要执行当前的行为，会造成递归。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
   snotXmlAttribute
   false
   sjson_isArray
@@ -13546,6 +13830,8 @@ if(index != -1){
   true
   seditCols
   2
+  sformNoLabel
+  false
   sinitialization
   false
   sgroup
@@ -13556,7 +13842,7 @@ if(index != -1){
   false
   Sdescription
 #$@text#$@
-<p>返回类。</p>
+<p>返回类。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p><strong>设置方法：</strong></p>
 
@@ -18419,13 +18705,13 @@ try{
   false
   Sdescription
 #$@text#$@
-<p>返回动作属性所指定的java.time.Dutratio，支持var: orgnl:等表达式。</p>
+<p>返回动作属性所指定的java.time.Dutratio，支持var: orgnl:等表达式。先通过<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil"><font color="#0066cc">取值表达式</font></a>取值。</p>
 
 <p><strong>根据第一步解析表达式后返回值的类型：&nbsp;&nbsp;</strong></p>
 
 <ul>
 	<li><strong>String</strong><br />
-	如果含有d（天）/h（（消息）/ms（分钟）/s（秒）/ms（毫秒）/n（纳秒）等字符，那么解析成Duration，如3d100ms，是3天+100毫秒，否则解析成Long（毫秒），最后生成Duration对象。<br />
+	如果含有d（天）/h（（小时）/ms（分钟）/s（秒）/ms（毫秒）/n（纳秒）等字符，那么解析成Duration，如3d100ms，是3天+100毫秒，否则解析成Long（毫秒），最后生成Duration对象。<br />
 	&nbsp;</li>
 	<li><strong>long</strong><br />
 	按照毫秒生成Duration对象。<br />
@@ -18708,6 +18994,346 @@ try{
       object
       sclassName
       java.time.Duration
+      sstaticClass
+      false
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc/@Object
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      sid
+      var
+  @/@getPropertiesMap
+  sname
+  GetPropertiesMap
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.lang.actions.SelfAction
+  smany
+  true
+  seditCols
+  2
+  sformNoLabel
+  false
+  sinitialization
+  false
+  sgroup
+  _actions.thingaction
+  smodifier
+  public
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>返回Map&lt;String, Object&gt;。</p>
+
+<p><strong>规则</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 首先使用<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ActionUtil/@GetData">getObject</a>获取第一次的值，如果是Map则返回，如果值是String，那么按照下面的规则转成Map&lt;String, Object&gt;，其它类型返回null。</p>
+
+<pre class="brush:plain;">
+# #开头的行是注解，不解析
+# 含有=号的，=号前是key，后面是value
+key=xxx
+# 三个双引号的是多行文本
+key=&quot;&quot;&quot;
+xxxxx
+&quot;&quot;&quot;
+# value支持getObject的前缀
+key=int:12345
+key=&quot;&quot;&quot;template:
+${name?if_exists}
+&quot;&quot;&quot;</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+  snotXmlAttribute
+  false
+  sjson_isArray
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  getPropertiesMap
+    @/@getPropertiesMap/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@actions
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    actions
+      @/@getPropertiesMap/@actions/@run
+      sname
+      run
+      sisSynchronized
+      false
+      sthrowException
+      true
+      suseOtherAction
+      false
+      suseOuterJava
+      true
+      suseInnerJava
+      false
+      souterClassName
+      xworker.lang.actions.ActionUtils
+      smethodName
+      getPropertiesMap
+      sdisableGlobalContext
+      false
+      sattributeTemplate
+      false
+      sinterpretationType
+      Action
+      svarScope
+      Global
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@JavaAction
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_mark
+      false
+      sid
+      run
+    @/@getPropertiesMap/@name
+    sname
+    name
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    name
+    @/@getPropertiesMap/@label
+    sname
+    label
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    label
+    @/@getPropertiesMap/@attributeName
+    sname
+    attributeName
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    attributeName
+    @/@getPropertiesMap/@notNull
+    sname
+    notNull
+    sinputtype
+    truefalse
+    sshowLabel
+    true
+    sreadOnly
+    false
+    sdefault
+    false
+    sinheritDescription
+    false
+    sdescription
+    <p>是否不能为null，如果是且获得的值为null，那么会抛出异常。</p>
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    notNull
+    @/@getPropertiesMap/@description
+    sname
+    description
+    sinputtype
+    html
+    sshowLabel
+    true
+    smodifier
+    public
+    sreadOnly
+    false
+    sinheritDescription
+    false
+    svalidateAllowBlank
+    true
+    LvalidateOnBlur
+    true
+    LallowDecimals
+    true
+    LallowNegative
+    true
+    snotXmlAttribute
+    false
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    description
+    @/@getPropertiesMap/@VariablesDescs
+    sname
+    VariablesDescs
+    sdescriptors
+    xworker.lang.MetaThing/@VariablesDesc
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    VariablesDescs
+      @/@getPropertiesMap/@VariablesDescs/@var
+      sname
+      var
+      svarName
+      _thingName_
+      spassive
+      true
+      sscope
+      2
+      stype
+      object
+      sclassName
+      java.util.Map
       sstaticClass
       false
       sdescriptors

@@ -4,6 +4,11 @@ import javafx.util.StringConverter;
 import org.xmeta.Thing;
 import xworker.util.UtilData;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class DataObjectAttributeStringConverter extends StringConverter<Object> {
     Thing attribute;
 
@@ -16,6 +21,17 @@ public class DataObjectAttributeStringConverter extends StringConverter<Object> 
         if(object == null){
             return "";
         }
+
+        String viewPattern = attribute.getStringBlankAsNull("viewPattern");
+        if(viewPattern != null){
+            if(object instanceof Number){
+                NumberFormat nf = new DecimalFormat(viewPattern);
+                return nf.format(object);
+            }else if(object instanceof Date){
+                SimpleDateFormat sf = new SimpleDateFormat(viewPattern);
+                return sf.format(object);
+            }
+        }
         return String.valueOf(object);
     }
 
@@ -26,6 +42,7 @@ public class DataObjectAttributeStringConverter extends StringConverter<Object> 
         }
 
         String type = attribute.getStringBlankAsNull("type");
+
         if("string".equals(type)){
             return string;
         }else if("byte".equals(type)){

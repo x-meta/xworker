@@ -1,4 +1,4 @@
-^1614680489415
+^1623205502092
 @
 sname
 shell
@@ -2279,7 +2279,7 @@ if(taskContentStackLayout.topControl != thingRegistComposite){
                       6099
                         @/@mainCompostie/@mainTabFolder/@runningTabItem/@mainCompostie/@mainSashForm/@taskComposite/@taskSashForm/@taskListComposite/@6094/@6097/@6099/@6100
                         sname
-                        refreshTreeButtonSelection
+                        cancelTaskButtonSelection
                         stype
                         Selection
                         sdescriptors
@@ -2312,7 +2312,7 @@ if(task == null){
     return;
 }
 
-confirm(actionContext);
+confirm(actionContext, "task", task);
 /*
 //提示要取消任务
 def box = new MessageBox(taskListTable.getShell(), SWT.ICON_WARNING | SWT.OK | SWT.CANCEL);
@@ -2447,6 +2447,11 @@ if(SWT.OK == box.open()){
                                 false
                                 Scode
 #$@text#$@
+def task = actions.doAction("getSelectedTask", actionContext);
+if(task == null){
+    return;
+}
+
 task.cancel(false)
 actions.doAction("refreshTasks", actionContext);
 #$@text#$@
@@ -4240,6 +4245,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
 import org.xmeta.util.UtilString;
+import org.xmeta.Thing;
+
+import xworker.lang.executor.Executor;
+
+def TAG = "xworker.ide.task.TaskManager.p1661341361.getSelectedTask";
 
 //表格选中的数据
 def item = taskListTable.getSelection()[0];
@@ -4250,10 +4260,14 @@ def id = data.id;
 def thing = thingTree.getSelection()[0].getData();
 def type = actions.doAction("getTaskType", actionContext);
 def tasks = [];
+if(thing == null){
+    Executor.warn(TAG, "Can not select task instance, thing is null");
+    return;
+}
 if(type == "normal"){
-    tasks = TaskManager.getTasks(thing);
+    tasks = TaskManager.getTasks((Thing) thing);
 }else{
-    def task = TaskManager.getScheduledTask(thing);
+    def task = TaskManager.getScheduledTask((Thing) thing);
     if(task != null){
         tasks = [task];
     }
@@ -4282,6 +4296,8 @@ return null;
       screateLocalVarScope
       false
       ssaveReturn
+      false
+      sswitchResult
       false
       sdebugLog
       false

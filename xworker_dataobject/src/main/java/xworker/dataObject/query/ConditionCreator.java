@@ -271,7 +271,9 @@ public class ConditionCreator {
 		                case UtilCondition.between:
 		                    sql = getSqlIn(condition, value, cds, operator);
 		                    break;
-		                
+						case UtilCondition.selfDefine:
+							sql = getSqlSelfDefine(condition, value, cds, operator);
+							break;
 		            }
 		        }
 		    }
@@ -341,7 +343,44 @@ public class ConditionCreator {
         }
         return sql + ")";
     }
-    
+
+	public static String getSqlSelfDefine(Thing condition, Object value, List<Map<String, Object>> cds, byte operator){
+    	String conditionSql = condition.getStringBlankAsNull("selfDefineSql");
+    	if(conditionSql == null){
+    		return null;
+		}
+
+		String sql = "";
+		if(condition.getBoolean("multiple")) {
+			Object vl = getMulityValues(value);
+			if (vl instanceof Object[] || vl instanceof List) {
+				sql = sql + "(";
+				for (Object v : UtilJava.getIterable(vl)) {
+					if (!"(".equals(sql)) {
+						if ("and".equals(condition.getString("multiValueJoin"))) {
+							sql = sql + " and ";
+						} else {
+							sql = sql + " or ";
+						}
+					}
+					sql = sql + conditionSql;
+					Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition});
+					cds.add(cd);
+				}
+				sql = sql + ")";
+			} else {
+				sql = conditionSql;
+				Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition});
+				cds.add(cd);
+			}
+		}else{
+			sql = conditionSql;
+			Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition});
+			cds.add(cd);
+		}
+		return sql;
+	}
+
     //返回普通sql的表达式
     @SuppressWarnings("unchecked")
 	public static String getSql(Thing condition, Object value, String operator, List<Map<String, Object>> cds){

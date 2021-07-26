@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DataObjectTreeModel" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.app.model.tree.AbstractTreeModel">
+    <description><![CDATA[<p>通过DataObject构造树模型，比如从有父子关系的数据表中构造书模型。</p>
+
+<p><strong>父子关系</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过rootId、idField和parentIdField三个属性设置。</p>
+
+<ul>
+	<li>idField，数据对象的表示字段名，用于加载根数据对象和获取子节点时作为子节点的父标识。</li>
+	<li>parentIdField，数据对象的属性名，查询子节点时父节点的属性名。</li>
+	<li>rootId，作为根节点的值，可以没有对应的数据，有也只取第一个，根据idField查找。</li>
+</ul>
+
+<p><strong>TreeItem的属性</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;只提供了text、icon、cls和isLeaf的属性，如要设置其他属性，可以重写init方法。&nbsp;&nbsp;&nbsp;</p>
+
+<p><strong>额外的查询条件</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据是通过查询获取的，可以重写initCondition方法来设置额外的查询条件。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>void init(TreeModelItem item, DataObject data)</strong><br />
+	创建item时会触发。&nbsp;&nbsp;<br />
+	&nbsp;</li>
+	<li><strong>void initCondition(TreeModel treeModel, TreeModelItem parentItem, Condition condition)</strong><br />
+	查询条件已设置idField和parentIdField等条件，可以初始化其它查询条件。如果是获取根节点，那么parentItem为null。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="getRoot" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.app.model.tree.implnew.DataObjectTreeModel"
+             methodName="getRoot"></JavaAction>
+        <JavaAction name="getChilds" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.app.model.tree.implnew.DataObjectTreeModel"
+             methodName="getChilds"></JavaAction>
+        <GetThing name="getDataObject" _xmeta_id_="9871" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataObject" childThingName="dataObjects" childThingFirstChild="true"
+             usage="params"></GetThing>
+        <NOOP name="init">
+            <ins>
+                <param name="item" type="xworker.app.model.tree.TreeModelItem"></param>
+                <param name="data" type="xworker.dataObject.DataObject"></param>
+            </ins>
+        </NOOP>
+        <NOOP name="initCondition">
+            <ins>
+                <param name="treeModel" type="xworker.app.model.tree.TreeModel"></param>
+                <param name="parentItem" type="xworker.app.model.tree.TreeModelItem"></param>
+                <param name="condition" type="xworker.dataObject.query.Condition"></param>
+            </ins>
+        </NOOP>
+        <JavaAction name="getItemById" outerClassName="xworker.app.model.tree.implnew.DataObjectTreeModel"
+             methodName="getItemById"></JavaAction>
+    </actions>
+    <attribute name="name" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="label" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="dataObject" label="数据对象" inputtype="dataSelector" size="60" colspan="2"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="rootId" description="&lt;p&gt;根节点标识。&lt;/p&gt;" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false"></attribute>
+    <attribute name="idField" inputtype="openWindow" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="parentIdField" inputtype="openWindow" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="textField" inputtype="openWindow" size="40" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="iconField" inputtype="openWindow" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="clsField" inputtype="openWindow" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="isLeafField" inputtype="openWindow" inputattrs="xworker.dataObject.swt.SelectAttributeDialog/@shell|dataObjectIndicator=dataObject"
+         description="&lt;p&gt;如果不为空指定是否是叶子节点的字段。&lt;/p&gt;"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="dataObjects" _xmeta_id_="DataObjects" extends="xworker.dataObject.DataObjects"></thing>
+</thing>

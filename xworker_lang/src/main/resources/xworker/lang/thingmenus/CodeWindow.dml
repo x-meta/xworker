@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="CodeWindow" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.thingmenus.Menu">
+    <description><![CDATA[<p>代码窗口。</p>
+
+<p>要显示的代码，可以通过下面的顺序获得。</p>
+
+<ul>
+	<li><strong>动作</strong><br />
+	如果指定了动作名字，那么执行动作。<br />
+	&nbsp;</li>
+	<li><strong>模板</strong><br />
+	如果设置了模板属性，把它当作freemarker模板。其中当前正在编辑的模型以变量名<strong>thing</strong>传入。</li>
+</ul>
+]]></description>
+    <actions>
+        <JavaAction name="doAction" outerClassName="xworker.lang.thingmenus.CodeWindow" methodName="doAction"></JavaAction>
+        <TextTemplate name="template" descriptors="xworker.lang.text.TextTemplate"></TextTemplate>
+        <GetString name="getTemplate" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="template"></GetString>
+        <GetString name="getCodeType" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="codeType"></GetString>
+        <GetString name="getActionName" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="actionName"></GetString>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="codeType"></attribute>
+    <attribute name="actionName" size="40"></attribute>
+    <attribute name="template" inputtype="textarea" inputattrs="codeName=ftl codeType=ftl wrap=false fillBoth=true cols= rows= textAssistor="></attribute>
+</thing>

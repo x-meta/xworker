@@ -105,21 +105,21 @@ public class NotificationExecutorActions {
 		}
 		ac.put("requestVariables", actionContext.get("requestVariables"));
 
-		ExecuteRequest request = actionContext.getObject("request");
-		request.createSWT(actionContext.get("mainComposite"), ac);
+		Request request = actionContext.getObject("request");
+		request.create(actionContext.get("mainComposite"), "swt");
 		//request.doAction("createSWT", ac);
 		//println actionContext.get("request");
 		actionContext.g().put("actions", ac.get("actions"));
 	}
 	
 	public static Object getTimeout(ActionContext actionContext) {
-		ExecuteRequest request = actionContext.getObject("request");
+		Request request = actionContext.getObject("request");
 		Thing requestThing = request.getThing();
 		return requestThing.doAction("getTimeout", actionContext);
 	}
 	
 	public static Object getLabel(ActionContext actionContext) {
-		ExecuteRequest request = actionContext.getObject("request");
+		Request request = actionContext.getObject("request");
 		Thing requestThing = request.getThing();
 		String label = requestThing.doAction("getLabel", actionContext);
 		if(label == null || "".equals(label)) {
@@ -159,7 +159,7 @@ public class NotificationExecutorActions {
 	}
 	
 	public static String getId(ActionContext actionContext) {
-		ExecuteRequest request = actionContext.getObject("request");
+		Request request = actionContext.getObject("request");
 		Thing requestThing = request.getThing();
 		String messageId =  requestThing.doAction("getMessageId", actionContext);
 		if(messageId == null || "".equals(messageId)) {

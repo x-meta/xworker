@@ -145,4 +145,12 @@ public interface IEditorContainer {
 	 * @param editor
 	 */
 	public void fireStateChanged(IEditor editor);
+
+	public MenuContainer getMenuContainer();
+
+	public CoolBarContainer getCoolBarContainer();
+
+	public void setWorkbench(Workbench workbench);
+
+	public Workbench getWorkbench();
 }

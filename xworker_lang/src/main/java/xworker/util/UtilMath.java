@@ -63,7 +63,7 @@ public class UtilMath {
 	}
 	
 	/**
-	 * 返回亮点形成的角度。
+	 * 返回两点形成的角度。
 	 * 
 	 * @param x1
 	 * @param y1

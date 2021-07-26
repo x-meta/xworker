@@ -18,16 +18,7 @@ import java.sql.Connection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.beanutils.ConstructorUtils;
 import org.apache.commons.beanutils.MethodUtils;
@@ -60,11 +51,12 @@ public class ActionUtils {
 	 * 执行一个事物模型的行为和名字为name的子节点。先执行动作，后执行名字为name的子节点，如果名字为name的子节点存在，
 	 * 那么把子节点转为动作执行，且返回执行结果，否则返回动作的结果。
 	 * 
-	 * @param thing
-	 * @param name
-	 * @param actionContext
-	 * @param params
-	 * @return
+	 * @param thing 模型
+	 * @param name 动作名称
+	 * @param actionContext 动作上下文
+	 * @param params 参数列表，参数是name, value,name,value..
+	 *
+	 * @return 返回动作的执行结果
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T executeActionAndChild(Thing thing, String name, ActionContext actionContext, Object ... params) {
@@ -77,14 +69,33 @@ public class ActionUtils {
 		
 		return (T) obj;
 	}
-	
-	public static Boolean getBoolean(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+
+	public static Object getStringData(Thing owner, Thing action, String attributeName, ActionContext actionContext) throws Exception {
+		if(attributeName == null || attributeName.isEmpty()){
+			return null;
+		}
+
+		Object value = owner.get(attributeName);
+
+		if(value instanceof  String){
+			String str = (String) value;
+			if(str.isEmpty()){
+				return null;
+			}
+			return StringDataFactory.getStringData(owner, action, str, actionContext);
+		}else{
+			return value;
+		}
+	}
+
+	public static Boolean getBoolean(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		boolean returnBoolean = self.getBoolean("Boolean");
 		String attributeName = self.getString("attributeName");
-		Object data = UtilData.getData(realSelf, attributeName, actionContext);
+		//Object data = UtilData.getData(realSelf, attributeName, actionContext);
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
 		if(returnBoolean && (data == null || "".equals(data)) && self.getStringBlankAsNull("defaultValue") == null) {
 			return null;
 		}
@@ -92,84 +103,94 @@ public class ActionUtils {
 		return UtilData.getBoolean(data, self.getBoolean("defaultValue"));
 	}
 	
-	public static BigInteger getBigInteger(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static BigInteger getBigInteger(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getBigInteger(UtilData.getData(realSelf, attributeName, actionContext), self.getBigInteger("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getBigInteger(data, self.getBigInteger("defaultValue"));
 	}
 	
-	public static BigDecimal getBigDecimal(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static BigDecimal getBigDecimal(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getBigDecimal(UtilData.getData(realSelf, attributeName, actionContext), self.getBigDecimal("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getBigDecimal(data, self.getBigDecimal("defaultValue"));
 	}
 		
-	public static byte[] getBytes(ActionContext actionContext) throws IOException, TemplateException, OgnlException, DecoderException{
+	public static byte[] getBytes(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getBytes(UtilData.getData(realSelf, attributeName, actionContext), self.getBytes("defaultValue"));
-	}
-	
-	public static byte getByte(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
-		Thing self = (Thing) actionContext.get("self");
-		Thing realSelf = getSelf(actionContext);
-		
-		String attributeName = self.getString("attributeName");
-		return UtilData.getByte(UtilData.getData(realSelf, attributeName, actionContext), self.getByte("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getBytes(data, self.getBytes("defaultValue"));
 	}
 	
-	public static short getShort(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static byte getByte(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getShort(UtilData.getData(realSelf, attributeName, actionContext), self.getShort("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getByte(data, self.getByte("defaultValue"));
 	}
 	
-	public static char getChar(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static short getShort(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getChar(UtilData.getData(realSelf, attributeName, actionContext), self.getChar("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getShort(data, self.getShort("defaultValue"));
 	}
 	
-	public static float getFloat(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static char getChar(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getFloat(UtilData.getData(realSelf, attributeName, actionContext), self.getFloat("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getChar(data, self.getChar("defaultValue"));
 	}
 	
-	public static double getDouble(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static float getFloat(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getDouble(UtilData.getData(realSelf, attributeName, actionContext), self.getDouble("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getFloat(data, self.getFloat("defaultValue"));
 	}
 	
-	public static long getLong(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static double getDouble(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getLong(UtilData.getData(realSelf, attributeName, actionContext), self.getLong("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getDouble(data, self.getDouble("defaultValue"));
 	}
 	
-	public static int getInt(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static long getLong(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		return UtilData.getInt(UtilData.getData(realSelf, attributeName, actionContext), self.getInt("defaultValue"));
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getLong(data, self.getLong("defaultValue"));
+	}
+	
+	public static int getInt(ActionContext actionContext) throws Exception {
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+		
+		String attributeName = self.getString("attributeName");
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
+		return UtilData.getInt(data, self.getInt("defaultValue"));
 	}
 	
 	public static Object getObject(ActionContext actionContext) throws Exception{
@@ -177,18 +198,16 @@ public class ActionUtils {
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
+		/*
 		String value = realSelf.getStringBlankAsNull(attributeName);
 		if(value == null) {
 			return null;
-		}
+		}*/
 		
-		Object obj = StringDataFactory.getStringData(realSelf, self, value, actionContext);
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
 		
 		if(obj instanceof String && self.getBoolean("variable")) {
-			Object var = actionContext.get((String) obj);
-			if(var != null) {
-				obj = var;
-			}
+			obj = actionContext.get((String) obj);
 		}
 		
 		if(obj == null && self.getBoolean("notNull")){
@@ -198,15 +217,17 @@ public class ActionUtils {
 		return obj;
 	}
 	
-	public static Object[] getObjectArray(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object[] getObjectArray(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		String values = realSelf.getString(attributeName);
-		List<Object> list = new ArrayList<Object>();
-		if(values != null &&  !"".equals(values)) {
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
+		List<Object> list = new ArrayList<>();
+		if(obj instanceof String){
+			String values = (String) obj;
 			for(String value : values.split("[,]")) {
+				/*
 				if(value != null && value.startsWith("template:")){
 					String template = value.substring(9, value.length());
 					try{
@@ -214,14 +235,21 @@ public class ActionUtils {
 					}catch(Exception e){
 						throw new ActionException("Get string from template error", e);
 					}
-				}
+				}*/
 				
-				Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+				//Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+				obj = getStringData(realSelf, self, attributeName, actionContext);
 				if(obj instanceof Collection) {
 					list.addAll((Collection<?>) obj);
 				}else {
 					list.add(obj);
 				}
+			}
+		}else{
+			if(obj instanceof Collection) {
+				list.addAll((Collection<?>) obj);
+			}else {
+				list.add(obj);
 			}
 		}
 		
@@ -230,12 +258,12 @@ public class ActionUtils {
 		return objs;
 	}
 	
-	public static Object getShell(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getShell(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
 		if(obj != null){
 			return obj; 
 		}
@@ -251,33 +279,44 @@ public class ActionUtils {
 		return null;
 	}
 	
-	public static Object getThing(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Object getThing(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		String value = realSelf.getStringBlankAsNull(attributeName);
-		if(value != null){
-			Thing thing = null;
-			World world = World.getInstance();
-			if(value.indexOf(":") != -1) {
-				Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
-				if(obj instanceof Thing){
-					return (Thing) obj;
-				}else if(obj instanceof String){
-					thing = world.getThing((String) obj);
-					if(thing != null){
-						return thing;
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
+		if(obj instanceof  Thing){
+			return obj;
+		}
+
+		if(obj instanceof String) {
+			String value = (String) obj;
+			if (value != null) {
+				Thing thing = null;
+				World world = World.getInstance();
+				if (value.startsWith("_c_.")) {
+					value = value.substring(4, value.length());
+					return Configuration.getConfiguration(value, realSelf, actionContext);
+				} else if (value.contains(":")) {
+					//Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
+					obj = getStringData(realSelf, self, attributeName, actionContext);
+					if (obj instanceof Thing) {
+						return (Thing) obj;
+					} else if (obj instanceof String) {
+						thing = world.getThing((String) obj);
+						if (thing != null) {
+							return thing;
+						}
 					}
+				} else if (value.startsWith("@")) {
+					value = realSelf.getRoot().getMetadata().getPath() + "/" + value;
+				}
+
+				thing = world.getThing(value);
+				if (thing != null) {
+					return thing;
 				}
 			}
-						
-			thing = world.getThing(value);
-			if(thing != null){
-				return thing;
-			}
-			
-			
 		}
 		
 		String childThingName = self.getStringBlankAsNull("childThingName");
@@ -311,7 +350,7 @@ public class ActionUtils {
 		return null;					
 	}
 	
-	public static Thing getThing(Thing self, Thing realSelf, String attributeName_, String childThingName_, boolean childThingFirstChild, boolean notnull, ActionContext actionContext) throws IOException,  OgnlException{
+	public static Thing getThing(Thing self, Thing realSelf, String attributeName_, String childThingName_, boolean childThingFirstChild, boolean notnull, ActionContext actionContext) throws Exception {
 		String attributeName = self.getString(attributeName_);
 		String value = realSelf.getStringBlankAsNull(attributeName);
 		if(value != null){
@@ -321,7 +360,8 @@ public class ActionUtils {
 				return thing;
 			}
 			
-			Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
+			//Object obj =  UtilData.getData(realSelf, attributeName, actionContext);
+			Object obj = getStringData(realSelf, self, attributeName, actionContext);
 			if(obj instanceof Thing){
 				return (Thing) obj;
 			}else if(obj instanceof String){
@@ -363,12 +403,13 @@ public class ActionUtils {
 		return thing;
 	}
 	
-	public static File getFile(ActionContext actionContext) throws OgnlException, IOException{
+	public static File getFile(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		String attributeName = self.getString("attributeName");
 		
-		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		//Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
 		if(obj instanceof File){
 			return (File) obj;
 		}else if(obj instanceof String){
@@ -381,12 +422,13 @@ public class ActionUtils {
 		}
 	}
 	
-	public static URL getURL(ActionContext actionContext) throws OgnlException, IOException{
+	public static URL getURL(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		String attributeName = self.getString("attributeName");
 		
-		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		//Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
 		if(obj instanceof URL){
 			return (URL) obj;
 		}else if(obj instanceof String){
@@ -401,15 +443,19 @@ public class ActionUtils {
 		}
 	}
 	
-	public static Object getObjectByClass(ActionContext actionContext) throws OgnlException, ClassNotFoundException{
+	public static Object getObjectByClass(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		String attributeName = self.getString("attributeName");
 		String className = self.getString("className");
 		
 		Class<?> cls = Class.forName(className);
-		
-		Object obj = UtilData.getObjectByType(realSelf, attributeName, cls, actionContext);		
+
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
+		if(cls != null && !cls.isInstance(obj)){
+			obj = null;
+		}
+		//Object obj = UtilData.getObjectByType(realSelf, attributeName, cls, actionContext);
 		
 		if(obj == null && self.getBoolean("notNull")){
 			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
@@ -418,13 +464,20 @@ public class ActionUtils {
 		return obj;
 	}
 	
-	public static String getString(ActionContext actionContext) throws IOException, TemplateException{
+	public static String getString(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
 		actionContext.peek().put("self", realSelf); //如果attributename是：ognl:self...的情形确定self正确
-		String str = StringUtils.getString(realSelf, attributeName, actionContext);
+
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
+		String str = null;
+		if(obj instanceof String){
+			str = (String) obj;
+		}else if(obj != null){
+			str = obj.toString();
+		}
 		if(str == null && self.getBoolean("notNull")){
 			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
 		}
@@ -433,13 +486,13 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Properties getProperties(ActionContext actionContext) throws IOException, OgnlException{
+	public static Properties getProperties(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
 		actionContext.peek().put("self", realSelf); //如果attributename是：ognl:self...的情形确定self正确
-		Object data = UtilData.getData(realSelf, attributeName, actionContext);
+		Object data = getStringData(realSelf, self, attributeName, actionContext);
 		if(data instanceof Properties) {
 			return (Properties) data;
 		}else if(data instanceof InputStream) {
@@ -628,12 +681,12 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> getParameters(ActionContext actionContext) throws OgnlException, IOException{
+	public static Map<String, Object> getParameters(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		Object params = UtilData.getData(realSelf, attributeName, actionContext);
+		Object params = getStringData(realSelf, self, attributeName, actionContext);
 		if(params instanceof Map){
 			return (Map<String, Object>) params;
 		}else if(params != null){
@@ -643,12 +696,13 @@ public class ActionUtils {
 		}
 	}
 	
-	public static Object getOgnl(ActionContext actionContext) throws OgnlException{
+	public static Object getOgnl(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getStringBlankAsNull("attributeName");
-		String express = realSelf.getStringBlankAsNull(attributeName);
+		Object expObject = getStringData(realSelf, self, attributeName, actionContext);
+		String express = expObject != null ? String.valueOf(expObject) : null;
 		Object obj = null;
 		if(express != null){
 			obj = OgnlUtil.getValue(express, actionContext);
@@ -672,13 +726,13 @@ public class ActionUtils {
 		return org.xmeta.util.UtilAction.parseClasses(classLoader, classNames);
 	}
 	
-	public static Object getClass_(ActionContext actionContext) throws ClassNotFoundException, OgnlException, IOException {
+	public static Object getClass_(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		ClassLoader classLoader = getClassLoader(realSelf, self);
 		String attributeName = self.getString("attributeName");
-		Object obj = UtilData.getData(realSelf, attributeName, actionContext);
+		Object obj = getStringData(realSelf, self, attributeName, actionContext);
 		if(obj == null) {
 			return null;
 		}else {
@@ -963,16 +1017,23 @@ public class ActionUtils {
 		return object;
 	}
 	
-	public static Object getEnum(ActionContext actionContext) throws ClassNotFoundException{
+	public static Object getEnum(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
-		
-		Object value = realSelf.doAction(self.getString("actionName"), actionContext);
-		if(value instanceof String){
-			Class<?> enumClass = Class.forName(self.getString("enumClass"));
-			return EnumUtils.getEnum(enumClass, (String) value);
+
+		String attributeName = self.getString("attributeName");
+		String value = realSelf.getStringBlankAsNull(attributeName);
+		if(value != null) {
+			Object obj = StringDataFactory.getStringData(realSelf, self, value, actionContext);
+
+			if (obj instanceof String) {
+				Class<?> enumClass = Class.forName(self.getString("enumClass"));
+				return EnumUtils.getEnum(enumClass, (String) obj);
+			} else {
+				return obj;
+			}
 		}else{
-			return value;
+			return null;
 		}
 	}
 	
@@ -991,7 +1052,7 @@ public class ActionUtils {
 		}
 	}
 	
-	public static Object getDate(ActionContext actionContext) throws OgnlException, ClassNotFoundException, ParseException, IOException{
+	public static Object getDate(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		String attributeName = self.getString("attributeName");
@@ -999,7 +1060,7 @@ public class ActionUtils {
 		String defaultValue = self.getStringBlankAsNull("defaultValue");
 		
 		//先看是否是Date类型
-		Object d = UtilData.getData(realSelf, attributeName, actionContext);
+		Object d = getStringData(realSelf, self, attributeName, actionContext);
 		if(d instanceof Date){
 			return (Date) d;
 		}
@@ -1013,7 +1074,7 @@ public class ActionUtils {
 		if(value == null || "".equals(value)) {
 			value = defaultValue;
 		}
-		if(value == null || "".equals(value)) {
+		if(value == null || "".equals(value) || "null".equals(value)) {
 			return null;
 		}
 		
@@ -1148,7 +1209,7 @@ public class ActionUtils {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<Thing> getThings(ActionContext actionContext) throws OgnlException, IOException{
+	public static List<Thing> getThings(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
@@ -1163,18 +1224,23 @@ public class ActionUtils {
 			list.addAll(getThingsFromCode(value));			
 			
 			if(list.size() == 0){
-				Object obj = UtilData.getData(value, actionContext);
+				Object obj = StringDataFactory.getStringData(realSelf, self, value, actionContext);
 				if(obj instanceof Thing){
 					list.add((Thing) obj);
 				}else if(obj instanceof List){
 					list.addAll((List<Thing>) obj);
 				}else if(obj instanceof Thing[]){
-					for(Thing thing : (Thing[]) obj){
-						list.add(thing);
-					}
+					list.addAll(Arrays.asList((Thing[]) obj));
 				}else if(obj instanceof String){
 					for(String path : ((String) obj).split("[,]")){
-						Thing thing = world.getThing(path);
+						Thing thing = null;
+						if(path.startsWith("_c_.")) {
+							path = path.substring(4, path.length());
+							thing  = Configuration.getConfiguration(path, realSelf, actionContext);
+						}else{
+							thing = world.getThing(path);
+						}
+
 						if(thing != null){
 							list.add(thing);
 						}
@@ -1199,14 +1265,14 @@ public class ActionUtils {
 		return list;
 	}
 	
-	public static SQLConnection getConnection(ActionContext actionContext) throws OgnlException, IOException {
+	public static SQLConnection getConnection(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
 		String value = realSelf.getStringBlankAsNull(attributeName);
 		if(value != null){
-			Object obj = UtilData.getData(value, actionContext);
+			Object obj = StringDataFactory.getStringData(realSelf, self, value, actionContext);
 			
 			Thing dataSource = null;
 			if(obj instanceof Connection) {
@@ -1537,12 +1603,12 @@ public class ActionUtils {
 		return config;
 	}
 	
-	public static Duration getDuration(ActionContext actionContext) throws IOException, TemplateException, OgnlException{
+	public static Duration getDuration(ActionContext actionContext) throws Exception {
 		Thing self = (Thing) actionContext.get("self");
 		Thing realSelf = getSelf(actionContext);
 		
 		String attributeName = self.getString("attributeName");
-		Object v = UtilData.getData(realSelf, attributeName, actionContext);
+		Object v = getStringData(realSelf, self, attributeName, actionContext);
 		if(v == null) {
 			v = self.getLong("defaultValue");
 		}
@@ -1632,5 +1698,67 @@ public class ActionUtils {
 	public static char getDelimiter(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		return getDelimiter(self.getStringBlankAsNull("delimiter"));
+	}
+	
+	public static Object getPropertiesMap(ActionContext actionContext)  throws Exception{
+		Thing self = (Thing) actionContext.get("self");
+		Thing realSelf = getSelf(actionContext);
+
+		Object value = getObject(actionContext);
+
+		if(value instanceof Map){
+			return value;
+		}else if(value instanceof String){
+			String str = (String) value;
+			Map<String, Object> map = new HashMap<>();
+			String key = null;
+			String strValue = null;
+			boolean multiLine = false;
+			for(String line : str.split("[\n]")){
+				if(multiLine){
+					int index = line.indexOf("\"\"\"");
+					if(index != -1){
+						strValue = strValue + "\n" + line.substring(0, index);
+						multiLine = false;
+					}else{
+						strValue = strValue + "\n" + line;
+					}
+				}else{
+					if(line.trim().startsWith("#")){
+						//注解
+						continue;
+					}
+
+					int index = line.indexOf("=");
+					if(index != -1){
+						key = line.substring(0, index).trim();
+						strValue = line.substring(index + 1, line.length());
+						if(strValue.trim().startsWith("\"\"\"")){
+							multiLine = true;
+							strValue = strValue.trim().substring(3, strValue.length());
+							if(strValue.endsWith("\"\"\"")){
+								strValue = strValue.substring(0, strValue.length() - 3);
+								multiLine = false;
+							}
+						}
+					}
+				}
+
+				if(!multiLine && key != null){
+					Object obj = StringDataFactory.getStringData(realSelf, self, strValue, actionContext);
+
+					map.put(key, obj);
+					key = null;
+				}
+			}
+
+			return map;
+		}
+
+		if(self.getBoolean("notNull")){
+			throw new ActionException(self.getMetadata().getName() + " return null, action=" + realSelf.getMetadata().getPath());
+		}
+
+		return null;
 	}
 }

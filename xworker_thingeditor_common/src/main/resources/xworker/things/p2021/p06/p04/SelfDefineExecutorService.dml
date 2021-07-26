@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SelfDefineExecutorService" descriptors="xworker.content.QuickContent" label="自定义服务"
+     type="thingDesc" group="xworker.-1000|lang.executor" icon="icons/html.png" simpleBrowser="true"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>自定义服务</h1>
+
+<h2>1.目的</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;如果想要自行处理日志和请求，那么可以自定义相关的服务。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 对于界面，如SWT和JavaFX，XWorker一般提供了相应的控件可以直接使用。</p>
+
+<h2>2.自定义服务</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 服务的接口是<strong>xworker.lang.executor.services.ExecutorService</strong>，也可以用下面的方法实现日志或请求的服务。</p>
+
+<h3>2.1.自定义日志服务</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 可以继承和实现抽象类<strong>xworker.lang.executor.services.AbstractLogService</strong>。</p>
+
+<h3>2.2.自定义请求服务</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 可以继承和实现抽象类<strong>xworker.lang.executor.services.AbstractRequestService</strong>，也可以使用<strong>xworker.lang.executor.services.DefaultRequestService</strong>。</p>
+
+<h2>3.使用自定义服务</h2>
+
+<h3>3.1.临时使用</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 是使用自定义服务的典型用法。</p>
+
+<pre class="brush:groovy;">
+import xworker.lang.executor.Executor;
+
+//自定义的服务对象
+ExecutorService myService = ...;
+
+//使用自定义的服务
+try{
+    //压入自己的服务
+    Executor.push(myService);
+
+    //执行其它代码，这些代码的日志和请求有自己的服务来处理
+    ...
+}finally{
+    //pop和push成对出现
+    Executor.pop();
+}
+</pre>
+
+<h3>3.2.全局服务</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如果想要自己的服务为系统全局使用的，那么可以用下面的方法。</p>
+
+<pre class="brush:groovy;">
+import xworker.lang.executor.Executor;
+
+//添加自己的服务到默认服务中
+Executor.addDefaultExecutorService(myService);
+
+//移除自己的服务
+Executor.removeDefaultExecutorService(myService);</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

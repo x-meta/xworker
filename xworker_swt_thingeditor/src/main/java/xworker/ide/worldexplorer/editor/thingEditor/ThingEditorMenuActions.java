@@ -79,6 +79,7 @@ public class ThingEditorMenuActions {
 		context.put("editorContext", actionContext);
 		context.put("editorActions", actions);
 		context.put("event", actionContext.get("event"));
+		context.put("parentContext", actionContext);
 
 		try{
 		    if(actionUrl != null){

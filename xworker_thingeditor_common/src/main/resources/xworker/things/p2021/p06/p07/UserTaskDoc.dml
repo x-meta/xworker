@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="UserTaskDoc" descriptors="xworker.content.QuickContent" label="任务进度" type="thingDesc"
+     group="xworker.-1000|lang" icon="icons/html.png" th_sortWeight="50" simpleBrowser="true"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>任务进度</h1>
+
+<h2>1.作用</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 任务进度用于后台任务，一般这个任务运行时间可能会比较长，并且想显示进度，也可以让用户终端执行。</p>
+
+<h2>2.使用任务进度</h2>
+
+<pre class="brush:groovy;">
+import xworker.task.UserTask;
+import xworker.task.UserTaskManager;
+
+//创建useTask
+//taskThing，用于描述任务的模型，也可以是String
+//progressAble，是否按照百分比显示进度
+UserTask userTask = UserTaskManager.createTask(taskThing, progressAble);
+
+//启动任务
+userTask.start();
+
+//设置当前进度
+//设置当前进度的标签和详细说明
+userTask.set(&quot;current task label&quot;, &quot;current task detail&quot;);
+//设置进度，范围0-100，调用此方法监控界面才会收到任务变更通知
+userTask.setProgress(50);
+
+//结束任务
+userTask.finished();
+</pre>
+
+<h2>3.查看任务进度</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在模型管理器的<strong>进度</strong>标签页查看， SWT也提供了相应的控件。</p>
+]]></description>
+</QuickContent>

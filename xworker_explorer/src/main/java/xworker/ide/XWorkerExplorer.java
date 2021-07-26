@@ -15,13 +15,46 @@
 ******************************************************************************/
 package xworker.ide;
 
+import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import xworker.dataObject.DataObject;
+import xworker.dataObject.DataObjectList;
+import xworker.dataObject.DataObjectListListener;
 import xworker.io.SystemIoRedirector;
+import xworker.lang.executor.DefaultRequestService;
 
 import java.io.File;
+import java.util.Collection;
 
 public class XWorkerExplorer {
+	org.eclipse.swt.widgets.ToolItem systemMessageItem;
+	public XWorkerExplorer(ActionContext actionContext){
+		systemMessageItem = actionContext.getObject("systemMessageItem");
+
+	}
+
+	public void setSystemMessageItemLabel(){
+		systemMessageItem.getParent().getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				int count = DefaultRequestService.getInstance().getUnreadCount();
+
+				World world = World.getInstance();
+				Thing  labelThing = world.getThing("xworker.ide.worldexplorer.swt.i18n.I18nResource/@SystemInfo/@systemMessageItem");
+
+				String label = labelThing.getMetadata().getLabel();//UtilString.getString("lang:d=系统消息&en=System Notification", actionContext);
+				if(count > 0){
+					systemMessageItem.setText(label + "（" + count + "）");
+				}else{
+					systemMessageItem.setText(label);
+				}
+
+			}
+		});
+
+	}
+
 	public static void main(String[] args){
 		try{
 			//首次从git上拉下来没有databases目录，会报数据库的错误

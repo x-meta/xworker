@@ -55,7 +55,13 @@ public class StageActions {
 		for(Thing child : self.getChilds()) {
 			child.doAction("create", actionContext);
 		}
-		
+
+		if(self.getBoolean("pack") && stage.getScene() != null){
+			stage.sizeToScene();
+		}
+		if(self.getBoolean("show")){
+			stage.show();
+		}
 		return stage;
 	}
 

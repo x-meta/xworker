@@ -4,8 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-import xworker.lang.executor.ExecuteRequest;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import xworker.lang.executor.Request;
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 import xworker.lang.executor.helpers.MessageFormatter;
@@ -28,7 +31,7 @@ public abstract class AbstractLogService implements ExecutorService{
 		return level;
 	}
 	
-	private void log(byte level, String TAG, String msg) {
+	protected void log(byte level, String TAG, String msg) {
 		StringBuilder sb = new StringBuilder();
 		synchronized(sf) {
 			sb.append(sf.format(new Date()));
@@ -47,8 +50,8 @@ public abstract class AbstractLogService implements ExecutorService{
 		
 		log(level, sb.toString());
 	}
-	
-	private void log(byte level, String TAG, String msg, Throwable t) {
+
+	protected void log(byte level, String TAG, String msg, Throwable t) {
 		StringBuilder sb = new StringBuilder();
 		synchronized(sf) {
 			sb.append(sf.format(new Date()));
@@ -87,7 +90,17 @@ public abstract class AbstractLogService implements ExecutorService{
 		
 		return "UNKNOWN";
 	}
-	
+
+	@Override
+	public List<Request> getRequests() {
+		return null;
+	}
+
+	@Override
+	public Thread getThread() {
+		return null;
+	}
+
 	@Override
 	public void trace(String TAG, String message) {
 		log(Executor.TRACE, TAG, message);
@@ -235,14 +248,22 @@ public abstract class AbstractLogService implements ExecutorService{
 	}
 
 	@Override
-	public void removeRequest(ExecuteRequest request) {
-		Executor.superRemoveRequest(this, request);
+	public void removeRequest(Request request) {
 	}
 
 	@Override
-	public void requestUI(ExecuteRequest request) {
-		Executor.superRequestUI(this, request);
+	public Request requestUI(Thing thing, ActionContext actionContext) {
+		return null;
 	}
-	
+
+	@Override
+	public boolean isSupportLog() {
+		return true;
+	}
+
+	@Override
+	public boolean isSupportRequest() {
+		return false;
+	}
 	
 }

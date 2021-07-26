@@ -2,6 +2,8 @@ package xworker.dataObject;
 
 import org.xmeta.Thing;
 
+import java.util.Map;
+
 public interface DataStoreListener {
     /**
      * 数据仓库重新设置了数据对象的事件。
@@ -24,4 +26,12 @@ public interface DataStoreListener {
      * @param dataStore
      */
     public void onChanged(DataStore dataStore);
+
+    /**
+     * 准备加载的事件。
+     * @param dataStore
+     * @param condition
+     * @param params
+     */
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params);
 }

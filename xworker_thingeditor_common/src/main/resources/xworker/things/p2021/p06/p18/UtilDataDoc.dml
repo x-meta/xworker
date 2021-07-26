@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="UtilDataDoc" descriptors="xworker.content.QuickContent" label="UtilData"
+     type="groovy" group="xworker.-1000|lang.commonclass" icon="icons/application_view_icons.png"
+     th_sortWeight="10" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+def TAG = "UtilData";
+
+//返回字节长度的可读字符串
+Executor.info(TAG, UtilData.getSizeInfo(123133333l));]]></code>
+    <description><![CDATA[<h1>UtilData</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 数据相关的工具类。</p>
+]]></description>
+    <GroovyAction name="stringToMap" label="字符串转Map" en_label="String to Map">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+def TAG = "UtilData";
+actionContext.peek().put("name", "xworker");
+
+//从下文中取变量到Map<String, Object>中
+Executor.info(TAG, "" + UtilData.getParams("name,name:name1", actionContext));
+
+//分析URL格式的参数到Map<String, String>
+def map = UtilData.getParams("name=var:name&age=10&label=template:${name}");
+Executor.info(TAG, "" + map);
+
+//把Map<String, String>转到Map<String, String>，含有':'的值转成对象
+def objMap = UtilData.convertMap(map, actionContext);
+Executor.info(TAG, "" + objMap);]]></code>
+    </GroovyAction>
+    <GroovyAction name="stringToArray" label="字符串转数组" en_label="String to Array">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+def TAG = "UtilData";
+Executor.info(TAG, "" + UtilData.getIntArray("1,2,3,4"));
+Executor.info(TAG, "" + UtilData.getDoulbeArray("1.1,2,3,4"));
+Executor.info(TAG, "" + UtilData.getFloatArray("0.1,2,3,4"));]]></code>
+    </GroovyAction>
+    <GroovyAction name="bytesToHex" _xmeta_id_="stringToHex" label="字节数组" en_label="byte[]">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+def TAG = "UtilData";
+def str = "hello world";
+def bytes = str.getBytes();
+
+Executor.info(TAG, "" + bytes);
+def hex = UtilData.bytesToHexString(bytes);
+Executor.info(TAG, hex);
+Executor.info(TAG, "" + UtilData.hexStringToByteArray(hex));
+
+def base64 = UtilData.bytesToBase64(bytes);
+Executor.info(TAG, base64);
+Executor.info(TAG, "" + UtilData.base64ToBytes(base64));]]></code>
+    </GroovyAction>
+    <GroovyAction name="getData" label="使用表达式获取对象" en_label="Get Object from expression">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+//可以通过表达式获取对象
+def TAG = "UtilData";
+actionContext.peek().put("name", "XWorker");
+
+//var: 从actionContext中获取变量
+Executor.info(TAG, "" + UtilData.getData("var:name", actionContext));
+
+//ognl: 执行Ognl表达式
+Executor.info(TAG, "" + UtilData.getData("ognl:name.length()", actionContext));
+
+//template: freemarker模板
+Executor.info(TAG, "" + UtilData.getData("template:hello ${name}", actionContext));
+
+//thing: 获取模型
+Executor.info(TAG, "" + UtilData.getData("thing:xworker.things.p2021.p06.p18.UtilDataDoc/@getData", actionContext));
+
+//lang: 根据当前会话的语言返回对用的
+Executor.info(TAG, "" + UtilData.getData("lang:d=确定&en=Ok", actionContext));
+
+//xxx: 获取基本类型
+Executor.info(TAG, "" + UtilData.getData("int:123123", actionContext));]]></code>
+    </GroovyAction>
+    <GroovyAction name="getTypedObject" label="获取指定类型的对象" en_label="Get Typed Object">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+//通过getXXX(Object, defaultValue)方法把对象转化为XXX类型
+def TAG = "UtilData";
+
+Executor.info(TAG, "" + UtilData.getDate("2020-02-02", null));
+Executor.info(TAG, "" + UtilData.getDate(new Date(), null));
+Executor.info(TAG, "" + UtilData.getInt("2323", 0));]]></code>
+    </GroovyAction>
+    <GroovyAction name="misc" label="杂项" en_label="Misc">
+        <code><![CDATA[import xworker.util.UtilData;
+import xworker.lang.executor.Executor;
+
+def TAG = "UtilData";
+
+//判断是否为true，1、“1“、true和非null的对象(非Boolean、数字和字符串）返回true。
+Executor.info(TAG, "" + UtilData.isTrue("1"));
+
+//判断x是否在列表里
+Executor.info(TAG, "" + UtilData.isIn("abc", ["abc", "cdef"] as String[]));
+
+//返回字节长度的可读字符串
+Executor.info(TAG, UtilData.getSizeInfo(123133333l));
+
+//首字母大写
+Executor.info(TAG, UtilData.capFirst("xworker"));
+
+//首字母改小写
+Executor.info(TAG, UtilData.uncapFirst("Xworker"));]]></code>
+    </GroovyAction>
+</QuickContent>

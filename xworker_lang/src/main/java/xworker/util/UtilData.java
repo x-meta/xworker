@@ -43,14 +43,12 @@ import org.apache.commons.io.IOUtils;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
-import org.xmeta.util.ActionContainer;
-import org.xmeta.util.OgnlUtil;
-import org.xmeta.util.UtilJava;
-import org.xmeta.util.UtilMap;
+import org.xmeta.util.*;
 
 import freemarker.template.TemplateException;
 import ognl.OgnlException;
 import xworker.lang.Configuration;
+import xworker.lang.actions.data.StringDataFactory;
 import xworker.lang.executor.Executor;
 
 /**
@@ -95,7 +93,21 @@ public class UtilData {
 		
 		return false;
 	}
-	
+
+	public static String capFirst(String str){
+		return UtilString.capFirst(str);
+	}
+
+	/**
+	 * 让字符串的第一个字母小写。
+	 *
+	 * @param str 字符串
+	 * @return 出理后的字符串
+	 */
+	public static String uncapFirst(String str){
+		return UtilString.uncapFirst(str);
+	}
+
 	/**
 	 * 如果proertiesFile不存在，那么返回参数thing，如果存在，那么先thing.detach()一个新的事物，然后
 	 * 在properties里的参数复制到新的事物上，并返回新的事物。
@@ -263,10 +275,85 @@ public class UtilData {
 		
 		return params;
 	}
-	
+
+	/**
+	 * 解码参数字符串，分隔符默认为&amp;，默认编码utf-8，过滤引号。
+	 *
+	 * @param str 参数字符串
+	 * @return 参数
+	 */
+	public static Map<String, String> getParams(String str) {
+		return UtilString.getParams(str);
+	}
+
+
+	/**
+	 * 解码参数字符串，默认编码utf-8，过滤引号。
+	 *
+	 * @param str    参数字符串
+	 * @param splitStr 分隔符
+	 * @return 参数
+	 */
+	public static Map<String, String> getParams(String str, String splitStr){
+		return UtilString.getParams(str, splitStr);
+	}
+
+	/**
+	 * 解码参数字符串，过滤引号。
+	 *
+	 * @param str    参数字符串
+	 * @param splitStr 分隔符
+	 * @param encoding 编码
+	 * @return 分析后的参数集
+	 */
+	public static Map<String, String> getParams(String str, String splitStr, String encoding){
+		return UtilString.getParams(str, splitStr, encoding);
+	}
+
+	/**
+	 * 分析传入的Map的每一个键的值，如果含有':'，则尝试解析成对象，并放到新的Map中并返回。
+	 *
+	 * @param map
+	 * @param actionContext
+	 * @return
+	 * @throws OgnlException
+	 * @throws IOException
+	 */
+	public static Map<String, Object> convertMap(Map<String, String> map, ActionContext actionContext) throws OgnlException, IOException {
+		Map<String, Object> newMap = new HashMap<>();
+
+		for(String key : map.keySet()){
+			String value = map.get(key);
+			if(value != null && !value.isEmpty()){
+				if(value.contains(":")){
+					newMap.put(key, getData(value, actionContext));
+				}else{
+					newMap.put(key, value);
+				}
+			}else{
+				newMap.put(key, value);
+			}
+		}
+
+		return newMap;
+	}
+
+	/**
+	 * 解码参数字符串。
+	 *
+	 * @param str    参数字符串
+	 * @param splitStr 分隔符
+	 * @param encoding 编码
+	 * @param trimQuotate  是否过滤参数值包围的引号
+	 * @return 参数集
+	 */
+	public static Map<String, String> getParams(String str, String splitStr, String encoding, boolean trimQuotate) {
+		return UtilString.getParams(str, splitStr, encoding, trimQuotate);
+	}
+
 	/**
 	 * 把值放入Map中，比如xx.xx就是放入到map的xx的map中。
-	 * 
+	 *
 	 * @param data
 	 * @param name
 	 * @param value
@@ -290,7 +377,19 @@ public class UtilData {
 			}
 		}
 	}
-	
+
+	public static String toUnicode(String theString, boolean escapeSpace) {
+		return UtilString.toUnicode(theString, escapeSpace);
+	}
+
+	public static String bytesToBase64(byte[] bytes){
+		return Base64.encodeBase64String(bytes);
+	}
+
+	public static byte[] base64ToBytes(String base64Str){
+		return Base64.decodeBase64(base64Str);
+	}
+
 	/**
 	 * 根据属性值类型的定义，把相对应的字符串的值转换为指定类型的值。
 	 * 
@@ -772,7 +871,10 @@ public class UtilData {
 		
 		return null;
 	}
-	
+
+	public static ActionContainer getParentContextActionContainer(ActionContext actionContext, String name, String thingPath){
+		return getParentCcontextActionContainer(actionContext, name, thingPath);
+	}
 	/**
 	 * 返回在当前上下文或parentContext中的ActionContainer变量，会递归的取，查找时回合thingPath比对。
 	 * 

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SwtLogService" descriptors="xworker.content.QuickContent" type="swtDemo"
+     path="xworker.thingeditor.things.p2021.p06.p04.SwtLogService/@Composite" group="xworker.-1000|lang.executor"
+     icon="icons/application.png" th_sortWeight="10" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p><strong>TextExecutorService控件演示</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有日志服务，本身不是一个控件，可以绑定到StyledText或Text上。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<strong>Send Log</strong>按钮，按钮的事件代码执行后，会把执行时产生的日志输出到文本框中。</p>
+]]></description>
+    <Composite label="LogService">
+        <GridLayout name="GridLayout"></GridLayout>
+        <StyledText name="logText" style="MULTI" H_SCROLL="true" V_SCROLL="true">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+            <TextExecutorService name="logService" descriptors="xworker.lang.executor.swt.TextExecutorService"></TextExecutorService>
+        </StyledText>
+        <Composite name="buttonComposite" _xmeta_id_="1088">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="1089" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="1090"></RowLayout>
+            <Button name="sendLogButton" _xmeta_id_="1091" text="lang:d=Send Log">
+                <RowData name="RowData" _xmeta_id_="1092" width="80"></RowData>
+                <Listeners _xmeta_id_="1093">
+                    <Listener name="sendLogButtonSelection" _xmeta_id_="1094">
+                        <GroovyAction name="GroovyAction" descriptors="xworker.lang.actions.GroovyAction">
+                            <code><![CDATA[import xworker.lang.executor.Executor;
+ 
+ def TAG = "Test";
+ 
+ try{
+     Executor.push(logService);
+     Executor.info(TAG, "Hello World!");
+     Executor.warn(TAG, "Exception", new Exception("Hello World!"));
+ }finally{
+     Executor.pop();
+ }]]></code>
+                        </GroovyAction>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+    </Composite>
+</QuickContent>

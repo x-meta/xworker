@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DatabaseData" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.db.ddlutils.DdlUtil">
+    <description><![CDATA[<p>Apache ddlutils的DatabaseDataIO。</p>
+
+<p><strong>作用</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用从XML文件里读取数据写入数据库，或从数据库里读取数据写入到XML文件里。需要配置database。</p>
+
+<p><strong>DDL</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只在<strong>create</strong>时执行从XML文件读取数据写入数据库的操作。<strong>drop</strong>和<strong>alter</strong>方法不做任何操作。</p>
+
+<p><strong>获取javax.sql.DataSource的优先级</strong></p>
+
+<ol>
+	<li>dataSource属性，用于设置javax.sql.DataSource对象。</li>
+	<li>dataSourceThing属性，用于设置DataSource模型。</li>
+	<li>DataSource子节点，用于设置DataSource模型。</li>
+</ol>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <GetThing name="getDatabase" _xmeta_id_="26105" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="database" childThingName="database" usage="params"></GetThing>
+        <GetString name="getOutputXMLFile" _xmeta_id_="26106" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="outputXMLFile" usage="params"></GetString>
+        <GetStringArray name="getInputXMLFiles" _xmeta_id_="26107" descriptors="xworker.lang.actions.ActionUtil/@getStringArray"
+             attributeName="inputXMLFiles" usage="params"></GetStringArray>
+        <JavaAction name="create" outerClassName="xworker.db.ddlutils.DatabaseDataActions"
+             methodName="writeDataToDatabase"></JavaAction>
+        <NOOP name="alter"></NOOP>
+        <NOOP name="drop"></NOOP>
+        <GetBoolean name="isUseBatchMode" _xmeta_id_="27006" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="useBatchMode" usage="params"></GetBoolean>
+        <GetInt name="getBatchSize" _xmeta_id_="27007" descriptors="xworker.lang.actions.ActionUtil/@GetInt"
+             attributeName="batchSize" usage="params"></GetInt>
+        <GetBoolean name="isEnsureFKOrder" _xmeta_id_="27008" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="ensureFKOrder" usage="params"></GetBoolean>
+        <GetBoolean name="isFailOnError" _xmeta_id_="27009" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="failOnError" usage="params"></GetBoolean>
+        <GetString name="getOutputXMLEncoding" _xmeta_id_="27568" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="outputXMLEncoding" usage="params"></GetString>
+        <JavaAction name="writeDataToXML" outerClassName="xworker.db.ddlutils.DatabaseDataActions"
+             methodName="writeDataToXML"></JavaAction>
+        <JavaAction name="writeDataToDatabase" outerClassName="xworker.db.ddlutils.DatabaseDataActions"
+             methodName="writeDataToDatabase"></JavaAction>
+        <GetString name="getXmlDatas" _xmeta_id_="7202" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="xmlDatas" usage="params"></GetString>
+        <GetObject name="getDataSource" _xmeta_id_="5791" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="dataSource" usage="params"></GetObject>
+        <GetThing name="getDataSourceThing" _xmeta_id_="6476" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataSourceThing" childThingName="DataSource" usage="params"></GetThing>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="useBatchMode" inputtype="truefalse" default="true"></attribute>
+    <attribute name="batchSize" default="2000"></attribute>
+    <attribute name="dataSource" size="40" default="var:dataSource">
+        <description><![CDATA[<p>用于设置javax.sql.DataSource对象。</p>
+]]></description>
+    </attribute>
+    <attribute name="dataSourceThing" inputtype="dataSelector" size="60">
+        <description><![CDATA[<p>用于设置DataSource模型。优先级低于dataSource属性。</p>
+]]></description>
+    </attribute>
+    <attribute name="ensureFKOrder" inputtype="truefalse" default="true"></attribute>
+    <attribute name="failOnError" inputtype="truefalse" default="true"></attribute>
+    <attribute name="database" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="outputXMLFile" inputtype="filePath" size="60"></attribute>
+    <attribute name="outputXMLEncoding" default="utf-8"></attribute>
+    <attribute name="inputXMLFiles" inputtype="textarea"></attribute>
+    <attribute name="xmlDatas" inputtype="textarea" group="Datas" inputattrs="codeName=xml codeType=xml wrap=false fillBoth=true cols= rows= textAssistor=">
+        <description><![CDATA[<p>可以把XML数据写在这里，执行时会保存成文件。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="database" _xmeta_id_="database1" extends="xworker.db.ddlutils.database"
+         inheritDescription="true"></thing>
+    <thing name="DataSource" extends="xworker.db.jdbc.DataSource" inheritDescription="true"></thing>
+    <MenuBar>
+        <Menu name="DatabaseData">
+            <ExecuteAction name="writeDataToXML" label="Write Data To XML" actionName="writeDataToXML"
+                 background="true"></ExecuteAction>
+            <ExecuteAction name="writeDataToDatabase" label="Write Data To Database" actionName="writeDataToDatabase"
+                 background="true"></ExecuteAction>
+        </Menu>
+    </MenuBar>
+</thing>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="ThingLoader" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.lang.actions.SelfAction"
+     modifier="private">
+    <description><![CDATA[<p>ThingLoader是方便使用Java代码来处理模型程序。</p>
+
+<p><strong>变量管理</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型程序的变量是放在ActionContext中，ActionContext是一个Map，在Java代码中要获取变量比较麻烦，使用ThingLoader则可以简化。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如下面的Java代码:</p>
+
+<pre class="brush:java;">
+public class Test{
+     @ActionField
+     String name;
+
+     @ActionField
+     ActionContext actionContext;
+
+     public void test(){
+          System.out.println(name);
+     }
+}</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 当使用ThingLoader加载后，会把含有ActionField注解的字段赋值，其中值是从变量上下文中获取的。</p>
+
+<p><strong>调用Java对象的方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;参看<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.lang.actions.ExecuteThingLoaderObjectMethod">ExecuteThingLoaderObjectMethod</a>。</p>
+
+<p><strong>子动作</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 把ChildActions下的模型当作动作来执行。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <actions>
+        <JavaAction name="run" outerClassName="xworker.lang.actions.ThingLoaderActions" methodName="executeThingLoader"></JavaAction>
+        <GetObject name="getObject" _xmeta_id_="10301" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="object" usage="params"></GetObject>
+        <GetClass name="getClass" _xmeta_id_="10302" descriptors="xworker.lang.actions.ActionUtil/@GetClass"
+             attributeName="class" usage="params"></GetClass>
+        <GetBoolean name="isInit" _xmeta_id_="11808" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="init" usage="params"></GetBoolean>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="init" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>是否执行对象的init方法。</p>
+]]></description>
+    </attribute>
+    <attribute name="object" size="40"></attribute>
+    <attribute name="class" inputtype="openWindow" size="60" inputattrs="xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="ChildActions" extends="xworker.lang.actions.Actions">
+        <attribute name="name"></attribute>
+        <attribute name="label"></attribute>
+        <attribute name="description" inputtype="html"></attribute>
+    </thing>
+</thing>

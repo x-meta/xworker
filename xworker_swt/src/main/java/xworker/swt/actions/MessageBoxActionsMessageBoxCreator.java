@@ -26,11 +26,13 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import org.xmeta.util.ThingLoader;
 import xworker.lang.actions.ActionUtils;
 import xworker.lang.executor.Executor;
 import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtDialog;
 import xworker.swt.util.SwtUtils;
+import xworker.util.ThreadHelper;
 
 public class MessageBoxActionsMessageBoxCreator {
 	private static final String TAG = MessageBoxActionsMessageBoxCreator.class.getName();
@@ -95,7 +97,8 @@ public class MessageBoxActionsMessageBoxCreator {
         	box.setText(title);
         }
         box.setMessage(message);
-        
+
+		ThreadHelper threadHelper = ThreadHelper.create();
         final Map<String, Object> vars = self.doAction("getVariables", actionContext);
         if(SwtUtils.isRWT()) {        	
         	Thing swt = World.getInstance().getThing("xworker.swt.SWT");
@@ -103,6 +106,7 @@ public class MessageBoxActionsMessageBoxCreator {
 				@Override
 				public void dialogClosed(int returnCode) {
 					try {
+						threadHelper.begin();
 						switch(returnCode){
 			            case SWT.OK:
 			            	ActionUtils.executeActionAndChild(self, "ok", actionContext, vars);
@@ -128,30 +132,37 @@ public class MessageBoxActionsMessageBoxCreator {
 						}
 					}catch(Exception e) {
 						Executor.error(TAG, "openMessageBoxRWT error, thing=" + self.getMetadata().getPath(), e);
+					}finally {
+						threadHelper.end();
 					}
 				}
         	});
         	return null;
         }else {
-	        int result = box.open();
-	        switch(result){
-	            case SWT.OK:
-	            	return ActionUtils.executeActionAndChild(self, "ok", actionContext, vars);
-	            case SWT.CANCEL:
-	            	return ActionUtils.executeActionAndChild(self, "cancel", actionContext, vars);
-	            case SWT.YES:
-	            	return ActionUtils.executeActionAndChild(self, "yes", actionContext, vars);
-	            case SWT.NO:
-	            	return ActionUtils.executeActionAndChild(self, "no", actionContext, vars);
-	            case SWT.RETRY:
-	            	return ActionUtils.executeActionAndChild(self, "retry", actionContext, vars);
-	            case SWT.ABORT:
-	            	return ActionUtils.executeActionAndChild(self, "abort", actionContext, vars);
-	            case SWT.IGNORE:
-	            	return ActionUtils.executeActionAndChild(self, "ignore", actionContext, vars);	            			
-	            default:
-	                return "OK";
-	        }
+			try {
+				threadHelper.begin();
+				int result = box.open();
+				switch (result) {
+					case SWT.OK:
+						return ActionUtils.executeActionAndChild(self, "ok", actionContext, vars);
+					case SWT.CANCEL:
+						return ActionUtils.executeActionAndChild(self, "cancel", actionContext, vars);
+					case SWT.YES:
+						return ActionUtils.executeActionAndChild(self, "yes", actionContext, vars);
+					case SWT.NO:
+						return ActionUtils.executeActionAndChild(self, "no", actionContext, vars);
+					case SWT.RETRY:
+						return ActionUtils.executeActionAndChild(self, "retry", actionContext, vars);
+					case SWT.ABORT:
+						return ActionUtils.executeActionAndChild(self, "abort", actionContext, vars);
+					case SWT.IGNORE:
+						return ActionUtils.executeActionAndChild(self, "ignore", actionContext, vars);
+					default:
+						return "OK";
+				}
+			}finally {
+				threadHelper.end();
+			}
         }
     }
  
@@ -175,6 +186,7 @@ public class MessageBoxActionsMessageBoxCreator {
         ac.put("context", actionContext);
         ac.put("title", title);
         ac.put("message", message);
+        ac.put("threadHelper", ThreadHelper.create());
         
         Shell dialogShell = (Shell) shellThing.doAction("create", ac);
         if(content != null) {

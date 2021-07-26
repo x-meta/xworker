@@ -31,7 +31,6 @@ public class RangeCallable implements Callable<Boolean>{
 	public static RangeCallable run(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		
-		RangeCallable call = new RangeCallable(self, actionContext);		
-		return call;
+		return new RangeCallable(self, actionContext);
 	}
 }

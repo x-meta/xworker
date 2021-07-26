@@ -101,18 +101,29 @@ public class UserTaskManager {
 		}
 		
 		UserTask task = new UserTask(taskThing, progressAble);
-		task.addListener(listener);
+		addTask(task);
+		
+		return task;
+	}
+
+	public static UserTask createTask(String label, boolean progressAble){
+		Thing thing = new Thing();
+		thing.set("label", label);
+
+		return createTask(thing, progressAble);
+	}
+
+	private static void addTask(UserTask userTask){
+		userTask.addListener(listener);
 		synchronized(tasks){
-			tasks.add(task);
-			
+			tasks.add(userTask);
+
 			synchronized(listeners){
 				for(UserTaskManagerListener lis : listeners){
-					lis.taskAdded(task);
+					lis.taskAdded(userTask);
 				}
 			}
 		}
-		
-		return task;
 	}
 	
 	/**

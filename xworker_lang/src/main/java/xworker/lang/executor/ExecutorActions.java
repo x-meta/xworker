@@ -19,10 +19,55 @@ public class ExecutorActions {
 			return null;
 		}
 	}
-	
-	public static void requestUI(ActionContext actionContext) {
+
+	public static boolean isSupport(ActionContext actionContext){
+		String platform = actionContext.getObject("platform");
+		Thing self = actionContext.getObject("self");
+
+		return true;
+	}
+
+	/**
+	 * Request模型自己的reqestUI。
+	 *
+	 * @param actionContext
+	 */
+	public static void request(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
 		Executor.requestUI(self, actionContext);
+	}
+
+	/**
+	 * RequestUI动作模型调用的RequestUI。
+	 * @param actionContext
+	 */
+	public static void requestUI(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+
+		Thing request = self.doAction("getRequest", actionContext);
+		ExecutorService executorService = self.doAction("getExecutorService", actionContext);
+		ActionContext ac = self.doAction("getActionContext", actionContext);
+		if(ac == null){
+			ac = actionContext;
+		}
+
+		try {
+			if (executorService != null) {
+				Executor.push(executorService);
+			}
+
+			if(request != null){
+				Executor.requestUI(request, ac);
+			}
+
+			for(Thing req : self.getChilds("Request")){
+				Executor.requestUI(req, ac);
+			}
+		}finally {
+			if(executorService != null){
+				Executor.pop();
+			}
+		}
 	}
 	
 	public static Object requestUICreateSWT(ActionContext actionContext) {

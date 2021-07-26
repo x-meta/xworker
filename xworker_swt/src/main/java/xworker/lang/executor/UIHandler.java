@@ -9,12 +9,12 @@ import java.util.List;
  *
  */
 public interface UIHandler {
-	public void handleUIRequest(ExecuteRequest request); 
+	public void handleUIRequest(Request request);
 	
-	public List<ExecuteRequest> getRequestUIs();
+	public List<Request> getRequests();
 	
-	public void removeRequest(ExecuteRequest request) ;
-	
+	public void removeRequest(Request request) ;
+
 	public Thread getThread();
 	
 	public void setExecutorService(ExecutorService executorService);

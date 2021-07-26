@@ -1,6 +1,7 @@
 package xworker.java.lang;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
@@ -9,13 +10,14 @@ import org.xmeta.Thing;
 
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
+import xworker.util.ThreadHelper;
 import xworker.util.UtilAction;
 
 public class ThreadActions implements Runnable{
 	Thing thing;
 	ActionContext actionContext;
 	Map<String, Object> params;
-	ExecutorService executorService = Executor.getExecutorService();
+	ThreadHelper threadHelper = ThreadHelper.create();
 	
 	public ThreadActions(Thing thing, ActionContext actionContext, Map<String, Object> params){
 		this.thing = thing;
@@ -25,10 +27,8 @@ public class ThreadActions implements Runnable{
 	
 	public void run(){
 		//复制启动该线程的线程的ExecutorService
-		if(executorService != null) {
-			Executor.push(executorService);
-		}
 		try {
+			threadHelper.begin();
 			Bindings bindings = actionContext.push();
 			
 			if(params != null){
@@ -38,11 +38,7 @@ public class ThreadActions implements Runnable{
 			thing.doAction("doAction", actionContext);
 			UtilAction.runChildActions(thing.getChilds(), actionContext, true);			
 		}finally {
-			actionContext.pop();
-			
-			if(executorService != null) {
-				Executor.pop();
-			}
+			threadHelper.end();
 		}
 	}
 	

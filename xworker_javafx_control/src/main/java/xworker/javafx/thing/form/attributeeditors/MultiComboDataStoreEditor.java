@@ -11,6 +11,8 @@ import xworker.javafx.thing.form.AttributeEditor;
 import xworker.javafx.thing.form.ThingForm;
 import xworker.javafx.util.DataObjectStringConverter;
 
+import java.util.Map;
+
 public class MultiComboDataStoreEditor extends AttributeEditor {
     CheckComboBox<DataObject> comboBox;
     DataStore dataStore;
@@ -46,6 +48,11 @@ public class MultiComboDataStoreEditor extends AttributeEditor {
             @Override
             public void onChanged(DataStore dataStore) {
                 onLoaded(dataStore);
+            }
+
+            @Override
+            public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
+
             }
         });
         if(dataStore.getDatas().size() == 0){

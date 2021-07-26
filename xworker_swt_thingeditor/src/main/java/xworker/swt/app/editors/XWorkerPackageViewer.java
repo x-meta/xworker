@@ -450,7 +450,7 @@ public class XWorkerPackageViewer {
 	            fdir = new File(((FileThingManager) thingManager).getFilePath());
 	        }
 	    }
-	    if(fdir != null){
+	    if(fdir != null && fdir.exists()){
 	        for(File f : fdir.listFiles()){
 	            if(f.isDirectory() || isThingFile(f.getName())) continue;    
 	            FileIndex fileIndex = new FileIndex(index, f);

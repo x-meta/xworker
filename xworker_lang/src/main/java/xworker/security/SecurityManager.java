@@ -32,6 +32,8 @@ public class SecurityManager {
 	
 	//----------------------常见环境------------------
 	public static final String RAP = "RAP";
+	public static final String WEB = "WEB";
+	public static final String DEFAULT = "DEFAULT";
 	
 	//---------------------常见权限-------------------
 	/** XWorker的管理权限，比如编辑事物的权限 */
@@ -39,8 +41,8 @@ public class SecurityManager {
 	
 	//初始化默认的权限处理。
 	static {
-		//初始化配置
-		Configuration.init();
+		//初始化配置，主要是激活执行Configuration.static{}部分的初始化代码
+		Configuration.getProfile();
 		
 		try{
 			Thing defaultSecurityManager = World.getInstance().getThing("xworker.lang.security.DefaultSecurityManager");
@@ -91,7 +93,20 @@ public class SecurityManager {
      * @param handler
      * @param actionContet
      */
-	public static void registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler, ActionContext actionContet){		
+	public static void registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler, ActionContext actionContet){
+		registSecurityHandler(env, permission, action, pathRegex, handler);
+	}
+
+	/**
+	 * 注册一个权限校验器。
+	 *
+	 * @param env 环境
+	 * @param permission 权限
+	 * @param action 动作
+	 * @param pathRegex 路径表达式
+	 * @param handler 处理器
+	 */
+	public static void registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler){
 		EnviromentChecker envc = getEnviromentChecker(env);
 		envc.setSecurityHandler(permission, action, pathRegex, handler);
 	}

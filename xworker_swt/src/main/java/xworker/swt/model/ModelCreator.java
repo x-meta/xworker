@@ -309,11 +309,14 @@ public class ModelCreator {
 		            if(actionContext.get("validateType") == null || "default" == actionContext.get("validateType")){
 		                Shell tempShell = ccontrol.getShell();
 		                MessageBox box = new MessageBox(tempShell, SWT.OK);
-		                box.setText("校验失败");
+		                box.setText(UtilString.getString("lang:d=校验失败&en=Validation failed", actionContext));
 		                if(validateMessage.get("message") != null){
 		                    box.setMessage((String) validateMessage.get("message"));
 		                }else{
-		                    box.setMessage("数据校验失败，请输入正确的数据！doValidate没有返回错误消息。");
+		                	String msg = UtilString.getString("lang:d=数据校验失败，请输入正确的数据！校验没有返回错误消息。" +
+									"&en=Data validation failed, please input correct data! Validation did not return an error message.",
+									actionContext);
+		                    box.setMessage(msg);
 		                }
 		                
 		                if(SwtUtils.isRWT()) {

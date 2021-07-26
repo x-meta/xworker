@@ -26,10 +26,7 @@ import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.*;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
@@ -38,6 +35,7 @@ import org.xmeta.World;
 import xworker.dataObject.DataObject;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
+import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class DataObjectEditCompoisteActions {
@@ -242,7 +240,12 @@ public class DataObjectEditCompoisteActions {
 	                bindings.put("parent", dataObjectContext.get("buttonComposite"));
 	                for(Thing child : self.getChilds("Buttons")){
 	                    for(Thing c : child.getChilds()){
-	                        c.doAction("create", parentContext);
+	                        Control button = c.doAction("create", parentContext);
+							boolean activeOnSelection = c.getBoolean("activeOnSelection");
+							if(activeOnSelection){
+								button.setEnabled(false);;
+							}
+							button.setData("activeOnSelection", activeOnSelection);
 	                    }
 	                }
 	                
@@ -319,5 +322,44 @@ public class DataObjectEditCompoisteActions {
         store.doAction("load", objActionContext, "params", params);
     }
 
+    public static void disableButtons(ActionContext actionContext){
+    	Composite buttonComposite = actionContext.getObject("buttonComposite");
+    	buttonComposite.getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				for(Control child : buttonComposite.getChildren()){
+					Object activeOnSelection = child.getData("activeOnSelection");
+					if(activeOnSelection != null){
+						if(UtilData.isTrue(activeOnSelection)){
+							child.setEnabled(false);
+						}
+					}
+				}
+			}
+		});
+
+	}
+
+	public static void enableButtons(ActionContext actionContext){
+		Composite buttonComposite = actionContext.getObject("buttonComposite");
+		buttonComposite.getDisplay().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					for (Control child : buttonComposite.getChildren()) {
+						Object activeOnSelection = child.getData("activeOnSelection");
+						if (activeOnSelection != null) {
+							if (UtilData.isTrue(activeOnSelection)) {
+								child.setEnabled(true);
+							}
+						}
+					}
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+		});
+
+	}
 }
     

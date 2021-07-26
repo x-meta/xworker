@@ -6,6 +6,8 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataStore;
 import xworker.dataObject.DataStoreListener;
 
+import java.util.Map;
+
 public class DataStoreChoiceBoxTableCell implements DataStoreListener {
     DataStore dataStore;
     ChoiceBoxTableCell<DataObject, Object> choiceBox;
@@ -32,6 +34,11 @@ public class DataStoreChoiceBoxTableCell implements DataStoreListener {
     public void onChanged(DataStore dataStore) {
         choiceBox.getItems().clear();
         choiceBox.getItems().addAll(dataStore.getDatas());
+    }
+
+    @Override
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
+
     }
 
 }

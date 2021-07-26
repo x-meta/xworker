@@ -1,4 +1,4 @@
-%1560232238054
+%1622692967052
 @
 sname=Problem
 slabel=Problem
@@ -215,14 +215,9 @@ if(self.getBoolean("notifyOnUnresolved")){
         sth_registDisabled=false
         sth_mark=false
         sid=setWebUrl
-        @/@actions/@notify/@actions/@onUnresolved
+        @/@actions/@notify/@actions/@doNotify
         sname=doNotify
-        slevel=warning
-        spersistent=false
-        ssync=false
-        stimeout=9600
-        sincludeActionContext=false
-        svariables=data,webUrl
+        sactionContext=var:actionContext
         sinterpretationType=Self
         sattributeTemplate=false
         schildsAttributeTemplate=false
@@ -232,82 +227,81 @@ if(self.getBoolean("notifyOnUnresolved")){
         suseOtherAction=false
         screateLocalVarScope=false
         ssaveReturn=false
+        sswitchResult=false
         sdisableGlobalContext=false
         sdebugLog=false
-        sdescriptors=xworker.notification.Notification
+        sdescriptors=xworker.lang.executor.ExecutorActions/@RequestUI
         sinheritDescription=false
         sth_createIndex=false
         sth_registMyChilds=false
         sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
         sth_mark=false
-        sid=onUnresolved
-          @/@actions/@notify/@actions/@onUnresolved/@actions
-          sname=actions
-          sdescriptors=xworker.message.Message/@actions1
+        sth_registQueryOnlySelf=false
+        snotXmlAttribute=false
+        sjson_isArray=false
+        sid=doNotify
+          @/@actions/@notify/@actions/@doNotify/@ThingDesc
+          sname=ThingDesc
+          sthing=var:data
+          sdescription=<p>问题的通知。</p>
+          spriority=normal
+          stimeout=360
+          srequestId=ognl:data.getMetadata().getPath()
+          Svariables=
+#$@text#$@
+{
+    data:"var:data"
+}
+#$@text#$@
+          sdescriptors=xworker.lang.executor.RequestIndex/@ThingDesc
           sinheritDescription=false
           sth_createIndex=false
           sth_registMyChilds=false
           sth_registDisabled=false
-          sth_mark=false
-          sid=actions
-            @/@actions/@notify/@actions/@onUnresolved/@actions/@getId
-            sname=getMessageId
-            sexpression=data.getMetadata().getPath()
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
-            sisSynchronized=false
-            sthrowException=true
-            suseOtherAction=false
-            screateLocalVarScope=false
-            ssaveReturn=false
-            sdisableGlobalContext=false
-            sdebugLog=false
-            sdescriptors=xworker.lang.actions.Actions/@Ongl
-            sinheritDescription=false
-            sth_createIndex=false
-            sth_registMyChilds=false
-            sth_registDisabled=false
-            sth_mark=false
-            sid=getId
-            @/@actions/@notify/@actions/@onUnresolved/@actions/@getLabel
-            sname=getLabel
-            sexpression=data.getMetadata().getLabel()
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
-            sisSynchronized=false
-            sthrowException=true
-            suseOtherAction=false
-            screateLocalVarScope=false
-            ssaveReturn=false
-            sdisableGlobalContext=false
-            sdebugLog=false
-            sdescriptors=xworker.lang.actions.Actions/@Ongl
-            sinheritDescription=false
-            sth_createIndex=false
-            sth_registMyChilds=false
-            sth_registDisabled=false
-            sth_mark=false
-            sid=getLabel
-          @/@actions/@notify/@actions/@onUnresolved/@QuickFunction
-          sname=QuickFunction
-          stype=thingDesc
-          spath=var:data
-          sicon=icons/folder_table.png
-          sstyledTextForInsert=parentContext.parentContext.codeText
-          suseTargetThingDoc=false
-          ssimpleBrowser=true
-          sdescriptors=xworker.lang.system.message.Message/@QuickFunction
-          sinheritDescription=false
-          sth_createIndex=false
-          sth_registMyChilds=false
-          sth_registDisabled=false
+          sth_noThingRegistViewer=false
           sth_fileMonitor=false
           sth_mark=false
-          sid=QuickFunction
+          sth_registQueryOnlySelf=false
+          snotXmlAttribute=false
+          sjson_isArray=false
+          sid=ThingDesc
+            @/@actions/@notify/@actions/@doNotify/@ThingDesc/@actions
+            sname=actions
+            sdescriptors=xworker.lang.executor.Request/@actions1
+            sinheritDescription=false
+            sth_createIndex=false
+            sth_registMyChilds=false
+            sth_registDisabled=false
+            sth_noThingRegistViewer=false
+            sth_fileMonitor=false
+            sth_mark=false
+            sth_registQueryOnlySelf=false
+            snotXmlAttribute=false
+            sjson_isArray=false
+            sid=actions
+              @/@actions/@notify/@actions/@doNotify/@ThingDesc/@actions/@getLabel
+              sname=getLabel
+              sexpression=data.getMetadata().getLabel()
+              sinterpretationType=Self
+              sattributeTemplate=false
+              schildsAttributeTemplate=false
+              svarScope=Local
+              sisSynchronized=false
+              sthrowException=true
+              suseOtherAction=false
+              screateLocalVarScope=false
+              ssaveReturn=false
+              sdisableGlobalContext=false
+              sdebugLog=false
+              sdescriptors=xworker.lang.actions.Actions/@Ongl
+              sinheritDescription=false
+              sth_createIndex=false
+              sth_registMyChilds=false
+              sth_registDisabled=false
+              sth_mark=false
+              sid=getLabel
     @/@actions/@doResolve
     sname=doResolve
     sunimplementedException=false

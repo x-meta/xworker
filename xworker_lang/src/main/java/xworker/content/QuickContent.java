@@ -8,6 +8,19 @@ import xworker.lang.executor.Executor;
 public class QuickContent {
     private final static String TAG = QuickContent.class.getName();
 
+    public static Object create(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Content<?> content = getContent(self, actionContext);
+        actionContext.g().put("thingSelf", self);
+        ContentHandler contentHandler = actionContext.getObject("contentHandler");
+        if(contentHandler != null && content != null){
+            return contentHandler.handle(self, content, actionContext);
+        }else{
+            Executor.warn(TAG, "Content or contentHanlder is null, can not handle.");
+            return null;
+        }
+    }
+
     public static Content<?> getContent(Thing self, ActionContext actionContext){
         String type = self.getString("type");
         String[] strings = new String[]{"url"};
@@ -66,6 +79,22 @@ public class QuickContent {
             if(content == null){
                 if(isType(type, nullself)){
                     content = self;
+                }else if("composite".equals(type) || "swtDemo".equals(type)){
+                    content = self.getThing("Composite@0");
+                }else if("uiFlow".equals(type)){
+                    content = self.getThing("UiFlow@0");
+                }else if("thingControl".equals(type)){
+                    content = self.getThing("SimpleControl@0");
+                }else if("shell".equals(type)){
+                    content = self.getThing("Shell@0");
+                }else if("swtGuide".equals(type)){
+                    content = self.getThing("SwtGuide@0");
+                }else if("action".equals(type)){
+                    content = self.getThing("ActionThing@0");
+                }else if("state".equals(type)){
+                    content = self.getThing("State@0");
+                }else if(self.getChilds().size() > 0){
+                    content = self.getChilds().get(0);
                 }
             }
 

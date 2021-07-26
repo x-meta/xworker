@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ActionThing name="HttpClientExamples" descriptors="xworker.lang.ActionThing">
+    <HttpGet descriptors="xworker.httpclient.HttpGet" uri="https://www.baidu.com/" uriParams="q=你好">
+        <OnSuccess>
+            <GroovyAction name="handleEntity" descriptors="xworker.lang.actions.GroovyAction">
+                <code><![CDATA[import org.apache.http.util.EntityUtils;
+
+println response.getStatusLine();
+println entity.getContentType();
+println entity.getContentLength();
+println EntityUtils.toString(entity);]]></code>
+            </GroovyAction>
+        </OnSuccess>
+    </HttpGet>
+    <HttpPost descriptors="xworker.httpclient.HttpPost" uri="https://www.baidu.com/">
+        <Entity>
+            <MultipartEntityBuilder>
+                <FormBodyPartBuilder bodyName="form">
+                    <fields><![CDATA[q=abc
+text=hello world]]></fields>
+                    <TextBody name="TextBody" contentType="text/plain" text="Hello World"></TextBody>
+                </FormBodyPartBuilder>
+                <BytesBody name="BytesBody" bodyName="body" contentType="text/plain" filename="afile"
+                     bytes="hello world"></BytesBody>
+            </MultipartEntityBuilder>
+        </Entity>
+        <OnSuccess>
+            <GroovyAction name="handleEntity" descriptors="xworker.lang.actions.GroovyAction">
+                <code><![CDATA[import org.apache.http.util.EntityUtils;
+
+println response.getStatusLine();
+println entity.getContentType();
+println entity.getContentLength();
+println entity.getContentEncoding();
+println EntityUtils.toString(entity);]]></code>
+            </GroovyAction>
+        </OnSuccess>
+        <OnException>
+            <HttpClientLog name="HttpClientLog"></HttpClientLog>
+        </OnException>
+    </HttpPost>
+    <HttpGet name="ExceptionExample" _xmeta_id_="exceptionExample" descriptors="xworker.httpclient.HttpGet"
+         uri="https://abcdxxxx.com/">
+        <OnSuccess>
+            <HttpClientLog name="HttpClientLog"></HttpClientLog>
+        </OnSuccess>
+        <OnException>
+            <HttpClientLog name="HttpClientLog"></HttpClientLog>
+            <ThrowException name="ThrowException"></ThrowException>
+        </OnException>
+    </HttpGet>
+</ActionThing>

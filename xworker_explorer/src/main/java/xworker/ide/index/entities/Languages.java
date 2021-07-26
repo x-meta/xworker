@@ -71,9 +71,9 @@ public class Languages extends DataObjectEntity<Languages> {
     
     public static Languages getLanguage(Thing thing, String attribute, String lang) {
     	Condition condition = new Condition();
-    	condition.add("thing", Condition.eq, thing.getMetadata().getPath());
-    	condition.add("attribute", Condition.eq, attribute);
-    	condition.add("lang", Condition.eq, lang);
+    	condition.eq("thing", thing.getMetadata().getPath());
+    	condition.eq("attribute", attribute);
+    	condition.eq("lang", lang);
     	
     	Languages l = new Languages();
     	return l.load(new ActionContext(), condition);    	

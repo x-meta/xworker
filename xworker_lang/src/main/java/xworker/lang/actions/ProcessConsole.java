@@ -6,6 +6,8 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
+import xworker.lang.system.IProcessManager;
+import xworker.service.ServiceManager;
 import xworker.util.XWorkerUtils;
 
 /**
@@ -15,11 +17,26 @@ import xworker.util.XWorkerUtils;
  *
  */
 public class ProcessConsole {
-	//Process process;	
-	
-	public static void startPrintThread(Thing thing, ActionContext actionContext, Process process){
+	/**
+	 * 打开进程的控制台。
+	 *
+	 * @param thing
+	 * @param actionContext
+	 * @param process
+	 */
+	public static void startProcessConsole(Thing thing, ActionContext actionContext, Process process){
 		//this.process = process;
 		String console = thing.doAction("getConsole", actionContext);
+		if("editor".equals(console)){
+			//是否添加到进程管理器中
+			IProcessManager manager = ServiceManager.getService(IProcessManager.class);
+			if(manager != null && !manager.isDisposed()) {
+				manager.addProcess("Thing: " + thing.getMetadata().getPath(), process);
+				return;
+			}
+		}
+
+		//打开一个shell窗口
 		if("shell".equals(console) && XWorkerUtils.getIDEShell() != null){
 			ActionContext ac = new ActionContext();
 			ac.put("shell", XWorkerUtils.getIDEShell());
@@ -28,10 +45,12 @@ public class ProcessConsole {
 			
 			Thing shellThing = World.getInstance().getThing("xworker.swt.xwidgets.prototypes.ProcessConsoleIns");
 			shellThing.doAction("run", ac);
-		}else{
-			new Thread(new PrintInputstreamRunnable(process.getErrorStream())).start();
-			new Thread(new PrintInputstreamRunnable(process.getInputStream())).start();
+			return;
 		}
+
+		//默认输出到到System.out
+		new Thread(new PrintInputstreamRunnable(process.getErrorStream())).start();
+		new Thread(new PrintInputstreamRunnable(process.getInputStream())).start();
 	}
 	
 	static class PrintInputstreamRunnable implements Runnable{

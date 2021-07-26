@@ -16,7 +16,7 @@ public class Range {
 	/** 执行时出现异常 */
 	public static final byte EXCEPTION = 5;
 	/** 失败之后处理又失败的, 在FailedRangeManager中最后段会分为1，如果尝试几次还出错，那么会记录为此状态 */
-	public static final byte FAILFAILE = 6;
+	public static final byte FINALFAIL = 6;
 	
 	/** 没有混合 */
 	public static final byte COMBINE_NONE = 0;
@@ -37,8 +37,13 @@ public class Range {
 	private byte combineStatus;
 	
 	public int runCount;
+
+	SegmentTask segmentTask;
+
+	public long lastExecutedTime;
 	
-	public Range(long start, long end){
+	public Range(SegmentTask segmentTask, long start, long end){
+		this.segmentTask = segmentTask;
 		this.start = start;
 		this.end = end;
 		if(this.end < 0){
@@ -59,12 +64,12 @@ public class Range {
 		combineStatus = Range.COMBINE_NONE;
 		
 		if(end + 1 - start <= size){
-			Range r = new Range(start, end);
+			Range r = new Range(segmentTask, start, end);
 			combineStatus = Range.COMBINE_DROP;
 			
 			return r;
 		}else{
-			Range r = new Range(start, start + size - 1);
+			Range r = new Range(segmentTask, start, start + size - 1);
 			start = r.end + 1;
 			combineStatus = Range.COMBINE_CHANGED;
 			
@@ -166,7 +171,8 @@ public class Range {
 
 	@Override
 	public String toString() {
-		return "Range [id=" + id + ", start=" + start + ", end=" + end
+		return "Range [id=" + id + ", start=" + segmentTask.getRangeGenerator().toObject(start)
+				+ ", end=" + segmentTask.getRangeGenerator().toObject(end)
 				+ ", status=" + status + ", combineStatus=" + combineStatus
 				+ "]";
 	}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SwtRequestService" descriptors="xworker.content.QuickContent" type="swtDemo"
+     path="xworker.thingeditor.things.p2021.p06.p04.SwtRequestService/@Composite" group="xworker.-1000|lang.executor"
+     icon="icons/application.png" th_sortWeight="20" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p><strong>SwtRequestService控件演示</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 只有请求处理的SWT控件，点击Send Request按钮发送请求。</p>
+]]></description>
+    <Composite label="SWT Request Service">
+        <GridLayout name="GridLayout"></GridLayout>
+        <SwtRequestService name="requestService">
+            <GridData name="GridData" style="FILL_BOTH"></GridData>
+        </SwtRequestService>
+        <Composite name="buttonComposite" _xmeta_id_="2867">
+            <GridData name="buttonCompositeGridData" _xmeta_id_="2868" style="FILL_HORIZONTAL"
+                 horizontalAlignment="END"></GridData>
+            <RowLayout name="buttonCompositeRowLayout" _xmeta_id_="2869"></RowLayout>
+            <Button name="sendRequestButton" _xmeta_id_="2870" text="Send Request">
+                <RowData name="RowData" _xmeta_id_="2871"></RowData>
+                <Listeners _xmeta_id_="2872">
+                    <Listener name="sendRequestButtonSelection" _xmeta_id_="2873">
+                        <RequestUI descriptors="xworker.lang.executor.ExecutorActions/@RequestUI"
+                             executorService="var:requestService">
+                            <ThingForm validate="true" priority="urgent" timeout="900000">
+                                <Thing>
+                                    <attribute name="name" validateAllowBlank="false"></attribute>
+                                    <attribute name="label"></attribute>
+                                </Thing>
+                                <actions>
+                                    <GroovyAction name="onOk" descriptors="xworker.lang.actions.GroovyAction"
+                                         code="println &quot;ok:&quot; + values;"></GroovyAction>
+                                    <GroovyAction name="onCancel" descriptors="xworker.lang.actions.GroovyAction"
+                                         code="println &quot;cancel&quot;;"></GroovyAction>
+                                    <GroovyAction name="onValidateFalse" descriptors="xworker.lang.actions.GroovyAction">
+                                        <code><![CDATA[println "validate false";
+
+return false;]]></code>
+                                    </GroovyAction>
+                                </actions>
+                            </ThingForm>
+                            <Url name="Url" url="https://www.xworker.org"></Url>
+                            <Html name="Html" html="&lt;h1&gt;Hello World!&lt;h1/&gt;"></Html>
+                            <ThingDesc name="ThingDesc">
+                                <description><![CDATA[<h1>Hello World ThingDesc.</h1>
+]]></description>
+                            </ThingDesc>
+                        </RequestUI>
+                    </Listener>
+                </Listeners>
+            </Button>
+        </Composite>
+    </Composite>
+</QuickContent>

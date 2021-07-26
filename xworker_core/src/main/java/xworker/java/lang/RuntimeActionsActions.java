@@ -28,6 +28,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 
+import xworker.lang.actions.ProcessConsole;
 import xworker.lang.executor.Executor;
 import xworker.lang.system.IProcessManager;
 import xworker.service.ServiceManager;
@@ -105,17 +106,7 @@ public class RuntimeActionsActions {
     	File dir = (File) self.doAction("getDir", actionContext);
     	
     	Process process = Runtime.getRuntime().exec(cmdarray, envp, dir);
-    	if(UtilData.isTrue(self.doAction("isProcessManager", actionContext))) {
-    		//是否添加到进程管理器中
-    		IProcessManager manager = ServiceManager.getService(IProcessManager.class);
-    		if(manager != null && !manager.isDisposed()) {
-    			String title = self.doAction("getTitle", actionContext);
-    			if(title == null || "".equals(title)) {
-    				title = self.getMetadata().getLabel();
-    			}
-    			manager.addProcess(title, process);
-    		}
-    	}
+		ProcessConsole.startProcessConsole(self, actionContext, process);
     	
     	ProcessExecThread pt = new ProcessExecThread(process, self, actionContext);
     	if(UtilData.isTrue(self.doAction("isLog", actionContext))) {
@@ -153,13 +144,7 @@ public class RuntimeActionsActions {
     	File dir = (File) self.doAction("getDir", actionContext);
     	
     	Process process = Runtime.getRuntime().exec(cmdarray, envp, dir);
-    	if(UtilData.isTrue(self.doAction("isProcessManager", actionContext))) {
-    		//是否添加到进程管理器中
-    		IProcessManager manager = ServiceManager.getService(IProcessManager.class);
-    		if(manager != null && !manager.isDisposed()) {
-    			manager.addProcess(self.getMetadata().getLabel(), process);
-    		}
-    	}
+		ProcessConsole.startProcessConsole(self, actionContext, process);
     	
     	return process;
     }

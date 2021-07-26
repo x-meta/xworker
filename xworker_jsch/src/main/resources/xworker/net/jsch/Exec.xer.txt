@@ -1,0 +1,678 @@
+^1502866876333
+@
+sname
+Exec
+slabel
+Exec
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.lang.actions.SelfAction
+smany
+true
+seditCols
+2
+sinitialization
+false
+sgroup
+net.ssh,com.jcraft.jsch
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>SSH的exec，执行command命令。</p>
+
+<p><strong>返回值</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 返回值是afterConnected方法决定的，afterConnected中如果outputStream为空将返回字符串，否则服务器返回的信息将导入到outputStream中。</p>
+
+<p><strong>后台执行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果runBackground=true，那么会话和连接建立后启动一个独立的线程指定afterConnected方法，此时会返回一个xworker.task.UserTask对象，用于监听执行的进度。</p>
+
+<p><strong>Session的获取顺序</strong></p>
+
+<ul>
+	<li>可以重写getSession方法。</li>
+	<li>通过sessionVar。</li>
+	<li>通过sessionPath。</li>
+	<li>通过session子节点。</li>
+	<li>通过AppSession子节点。</li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; 当有一个获取了session之后，下面的顺序就跳过。</p>
+
+<p><strong>可以重载的方法：</strong></p>
+
+<ul>
+	<li><strong>getSession</strong><br />
+	获取Jsch的Session（com.jcraft.jsch.Session）。<br />
+	&nbsp;</li>
+	<li><strong>getCommand</strong><br />
+	获取command命令的字符串。<br />
+	&nbsp;</li>
+	<li><strong>initIo</strong><br />
+	参数：self,session,channel<br />
+	初始化outputStream和errStream等，参数session（com.jcraft.jsch.Session）、channel(com.jcraft.jsch.Channel)。<br />
+	&nbsp;</li>
+	<li><strong>afterConnected</strong><br />
+	参数：session，channel，outputStream，self<br />
+	channel建立连接之后会调用本事物的afterConnected方法，在这里处理命令的执行，默认是返回InputStream中的字符串。</li>
+</ul>
+#$@text#$@
+snotXmlAttribute
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.lang.actions.Actions
+sth_registMyChilds
+false
+sth_mark
+false
+  @/@actions
+  sname
+  actions
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@actions
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  actions
+    @/@actions/@run
+    sname
+    run
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.net.jsch.Exec
+    smethodName
+    run
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    run
+    @/@actions/@getSession
+    sname
+    getSession
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.net.jsch.Exec
+    smethodName
+    getSession
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    getSession
+    @/@actions/@initIo
+    sname
+    initIo
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.net.jsch.Exec
+    smethodName
+    initIo
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    initIo
+    @/@actions/@afterConnected
+    sname
+    afterConnected
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    souterClassName
+    xworker.net.jsch.Exec
+    smethodName
+    afterConnected
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_mark
+    false
+    sid
+    afterConnected
+    @/@actions/@getCommand1
+    sname
+    getCommand
+    sattributeName
+    command
+    snotNull
+    false
+    sinterpretationType
+    Self
+    sattributeTemplate
+    false
+    schildsAttributeTemplate
+    false
+    svarScope
+    Local
+    sisSynchronized
+    false
+    sthrowException
+    true
+    suseOtherAction
+    false
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sdisableGlobalContext
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.ActionUtil/@GetString
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_mark
+    false
+    sid
+    getCommand1
+  @/@name
+  sname
+  name
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  name
+  @/@label
+  sname
+  label
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  label
+  @/@sessionVar
+  sname
+  sessionVar
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  sessionVar
+  @/@sessionPath
+  sname
+  sessionPath
+  sinputtype
+  dataSelector
+  sshowLabel
+  true
+  ssize
+  60
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  sessionPath
+  @/@outputStream
+  sname
+  outputStream
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>接收服务器输出信息的输出流，如果不为空，那么从服务器转发的消息将会输出到这个输出流里，否则服务器的信息将会接收并以字符串的形式返回。</p>
+
+<p>Ognl表达式，默认为null。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  outputStream
+  @/@errStream
+  sname
+  errStream
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>接收服务器返回错误信息的输出流。</p>
+
+<p>Ognl表达式，默认为null。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  errStream
+  @/@closeSession
+  sname
+  closeSession
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  true
+  sinheritDescription
+  false
+  sdescription
+  <p>是否在结束时也一起关闭Session，默认true。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  closeSession
+  @/@runBackground
+  sname
+  runBackground
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sdefault
+  false
+  sinheritDescription
+  false
+  sdescription
+  <p>如果为true将在后台启动一个线程执行，而当前会立刻返回true。</p>
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  runBackground
+  @/@command
+  sname
+  command
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>字符串。</p>
+
+<p>支持ognl: var: tempalte:等格式。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  command
+  @/@description
+  sname
+  description
+  sinputtype
+  html
+  sshowLabel
+  true
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  description
+  @/@Session
+  sname
+  Session
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.net.jsch.Session
+  smany
+  false
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  Session
+  @/@actions1
+  sname
+  actions
+  slabel
+  Actions
+  sdescriptors
+  xworker.lang.MetaDescriptor2/@thing
+  sextends
+  xworker.lang.actions.Actions
+  smany
+  true
+  seditCols
+  2
+  Sdescription
+#$@text#$@
+<p>动作集合，通过子节点可以添加各种动作，动作通常是一个可执行的程序。</p>
+<p>事物的第一个动作集合的子事物才可以作为事物的行为，第二个及其他动作集合就不能作为事物的行为使用了，事物的行为默认找第一个动作集合。</p>
+<p>事物的run方法一般是这个事物转化为动作之后执行的方法。</p>
+#$@text#$@
+  szh_label
+  动作
+  sth_createIndex
+  false
+  sid
+  actions1
+    @/@actions1/@name
+    sname
+    name
+    sdescriptors
+    xworker.lang.MetaDescriptor2/@attribute
+    sid
+    name
+  @/@AppSession
+  sname
+  AppSession
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@thing
+  sextends
+  xworker.net.jsch.AppSession
+  smany
+  true
+  seditCols
+  2
+  sinitialization
+  false
+  smodifier
+  public
+  sinheritDescription
+  true
+  snotXmlAttribute
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_mark
+  false
+  sid
+  AppSession

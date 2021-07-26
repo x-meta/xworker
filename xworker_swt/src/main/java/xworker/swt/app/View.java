@@ -49,6 +49,12 @@ public class View {
 			control = (Control) result;
 		}
 	}
+
+	public void showView(){
+		if(tabItem != null && !tabItem.isDisposed()){
+			tabItem.getParent().setSelection(tabItem);
+		}
+	}
 	
 	public void create(CTabFolder parent, boolean closeable, ActionContext parentContext) {
 		this.parent = parent;
@@ -83,6 +89,10 @@ public class View {
 				item.setImage(image);
 			}
 			item.setControl(control);
+		}
+
+		if(parent.getItemCount() == 1){
+			parent.setSelection(item);
 		}
 	}	
 	
@@ -120,6 +130,10 @@ public class View {
 				tabItem.setImage(image);
 			}
 			tabItem.setControl(control);
+		}
+
+		if(parent.getItemCount() == 1){
+			parent.setSelection(tabItem);
 		}
 	}
 

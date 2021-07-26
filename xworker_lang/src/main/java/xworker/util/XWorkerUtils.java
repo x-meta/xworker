@@ -267,6 +267,8 @@ public class XWorkerUtils {
 				params.put("title", compositeThing.getMetadata().getLabel());
 			}
 			params.put("params", parameters);
+			params.putAll(parameters);
+
 			ideDoAction("openTab", params);
 		}
 	}
@@ -460,7 +462,23 @@ public class XWorkerUtils {
 	public static void ideShowMessageBox(final String title, final String message, final int style){
 		IIde ide = getIde();
 		if(ide != null){
-			ide.ideShowMessageBox(title, message, style);
+			ide.ideShowMessageBox(title, message, style, null);
+		}else{
+			Executor.warn(TAG, "Ide is not setted");
+		}
+	}
+
+	/**
+	 * 通过XWorker的IDE显示一条提示信息。该方式是异步执行的。
+	 *
+	 * @param title
+	 * @param message
+	 * @param style
+	 */
+	public static void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback){
+		IIde ide = getIde();
+		if(ide != null){
+			ide.ideShowMessageBox(title, message, style, callback);
 		}else{
 			Executor.warn(TAG, "Ide is not setted");
 		}
@@ -488,7 +506,7 @@ public class XWorkerUtils {
 	 * 在工作台IDE上打开一个视图。
 	 * 
 	 * @param id
-	 * @param type 可选值left,right,top,button之一
+	 * @param type 可选值left,right,top,bottom之一
 	 * @param closeable
 	 * @param composite
 	 * @param params
@@ -725,7 +743,7 @@ public class XWorkerUtils {
 	
     public static boolean isThingExplorer(){
     	IIde ide = XWorkerUtils.getIde();
-    	if(ide == null || ide.isThingExplorer() == false || ide.getIDEShell() == null){
+    	if(ide == null || ide.isThingExplorer() == false){
     		return false;
     	}
     	
@@ -885,5 +903,29 @@ public class XWorkerUtils {
 		}
 
 		return config;
+	}
+
+	public static String getThingIcon(Thing thing){
+		if(thing == null){
+			return null;
+		}
+
+		String icon = thing.getStringBlankAsNull("icon");
+
+		if(icon == null){
+			for(Thing descriptor : thing.getAllDescriptors()){
+				//println descriptor.getMetadata().getPath();
+				icon = descriptor.getString("icon");
+				//println icon;
+				if(icon != null && !"".equals(icon)){
+					break;
+				}
+			}
+		}
+
+		if(icon == null){
+			icon = "icons/xworker/dataObjectChild.gif";
+		}
+		return icon;
 	}
 }

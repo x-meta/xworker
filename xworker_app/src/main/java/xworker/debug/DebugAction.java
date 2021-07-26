@@ -186,7 +186,7 @@ public class DebugAction {
 		byte loggerLevel = debuger.getActionDebugLoggerLevel(action.getThing(), actionContext);
 		if(loggerLevel > 0) {
 			byte currentLoggerLevel = Executor.getLogLevel();
-			ExecutorService executorService = Executor.getExecutorService();
+			ExecutorService executorService = Executor.getLogExecutorService();
 			executorService.setLogLevel(loggerLevel);
 			actionContext.g().put("loggerLevel", currentLoggerLevel);
 			actionContext.g().put("executorService", executorService);

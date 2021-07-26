@@ -22,8 +22,10 @@ import org.xmeta.util.UtilMap;
 
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
+import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilBrowser;
+import xworker.util.Callback;
 import xworker.util.IIde;
 
 public class IdeImpl implements IIde, Listener{
@@ -126,7 +128,7 @@ public class IdeImpl implements IIde, Listener{
 	}
 	
 	@Override
-	public void ideShowMessageBox(final String title, final String message,	final int style) {
+	public void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback) {
 		Display explorerDisplay = display;//Designer.getExplorerDisplay();
 		if(explorerDisplay != null){
 			explorerDisplay.asyncExec(new Runnable(){
@@ -134,7 +136,14 @@ public class IdeImpl implements IIde, Listener{
 					MessageBox box = new MessageBox(Designer.getExplorerDisplay().getShells()[0], style);
 					box.setText(title);
 					box.setMessage(message);
-					SwtUtils.openDialog(box, null, actionContext);
+					SwtUtils.openDialog(box, new DialogCallback() {
+						@Override
+						public void dialogClosed(int returnCode) {
+							if(callback != null){
+								callback.call(returnCode);
+							}
+						}
+					}, actionContext);
 					//box.open();
 				}
 			});

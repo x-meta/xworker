@@ -17,7 +17,9 @@ import org.xmeta.util.UtilMap;
 
 import xworker.swt.ActionContainer;
 import xworker.swt.app.editors.EditorImpl;
+import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtUtils;
+import xworker.util.Callback;
 import xworker.util.IIde;
 
 /**
@@ -111,13 +113,20 @@ public class SwtAppIde implements IIde, Listener{
 	}
 
 	@Override
-	public void ideShowMessageBox(final String title, final String message, final int style) {
+	public void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback) {
 		shell.getDisplay().asyncExec(new Runnable(){
 			public void run(){
 				MessageBox box = new MessageBox(shell, style);
 				box.setText(title);
 				box.setMessage(message);
-				SwtUtils.openDialog(box, null, actionContext);
+				SwtUtils.openDialog(box, new DialogCallback() {
+					@Override
+					public void dialogClosed(int returnCode) {
+						if(callback != null){
+							callback.call(returnCode);
+						}
+					}
+				}, actionContext);
 				//box.open();
 			}
 		});

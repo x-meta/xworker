@@ -8,6 +8,8 @@ import xworker.dataObject.DataStoreListener;
 import xworker.dataObject.DataStore;
 import xworker.javafx.util.DataObjectStringConverter;
 
+import java.util.Map;
+
 public class DataStoreChoiceBox implements DataStoreListener {
     DataStore dataStore;
     ChoiceBox<DataObject> choiceBox;
@@ -49,6 +51,11 @@ public class DataStoreChoiceBox implements DataStoreListener {
 
     @Override
     public void onChanged(DataStore dataStore) {
+
+    }
+
+    @Override
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
 
     }
 

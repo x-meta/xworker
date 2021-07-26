@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="DataTreeModelExample" descriptors="xworker.content.QuickContent" type="swtDemo"
+     path="xworker.thingeditor.things.p2021.p07.p13.DataTreeModelExample/@Composite"
+     group="xworker.dataobject.treeModel.swt" icon="icons/application.png" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">
+    <Composite>
+        <FillLayout name="FillLayout"></FillLayout>
+        <GroovyAction name="init" descriptors="xworker.swt.Widgets/@Code1">
+            <code><![CDATA[def data = [
+    text : "根节点",
+    id : "0", icon:"icons/folder.gif",
+    childs :[
+        [text : "子节点1", id:"1", icon:"icons/page.png"],
+        [text : "子节点2", id:"2", icon:"icons/folder.gif", childs:[
+            [text:"子节点3", id:"3", icon:"icons/page.png"]]
+        ]
+    ]
+];
+
+actionContext.g().put("data", data);]]></code>
+        </GroovyAction>
+        <Tree name="tree" FULL_SELECTION="false" HIDE_SELECTION="false" lineVisible="false"
+             multipleColumns="false" headerVisible="false" sortIndicator="false" moveableColumns="false">
+            <TreeModels>
+                <DataTreeModel name="DataTreeModel" descriptors="xworker.app.model.tree.TreeModels/@DataTreeModel1"
+                     varName="data" childsName="childs" idName="id" textName="text" iconName="icon"
+                     clsName="cls" loadBackground="true" delayLoad="false"></DataTreeModel>
+            </TreeModels>
+        </Tree>
+    </Composite>
+</QuickContent>

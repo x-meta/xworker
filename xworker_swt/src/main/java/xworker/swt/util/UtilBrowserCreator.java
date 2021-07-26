@@ -159,7 +159,7 @@ public class UtilBrowserCreator {
 
     public static void composite(ActionContext actionContext){    	
 		Thing compositeThing = World.getInstance().getThing((String) actionContext.get("path"));
-		ActionContainer actions = (ActionContainer) actionContext.get("actions");
+		ActionContainer actions = XWorkerUtils.getIdeActionContainer();
 		actions.doAction("openTab", UtilMap.toParams(new Object[]{"compositeThing", compositeThing})); 
 	}
 

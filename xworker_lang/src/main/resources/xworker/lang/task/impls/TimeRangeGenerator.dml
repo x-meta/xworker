@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="TimeRangeGenerator" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>按时间单位作为段的段生成器。</p>
+
+<p><strong>日期格式</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; start和end应该按照yyyy-MM-dd HH:mm:ss个格式输入。也可以只输入部分，比如单位时天那么可以输入yyyy-MM-dd，单位是年可以输入yyyy。</p>
+]]></description>
+    <actions>
+        <JavaAction name="create" outerClassName="xworker.task.segment.impl.TimeRangeGenerator"
+             methodName="create"></JavaAction>
+        <GetDate name="getStart" _xmeta_id_="5137" descriptors="xworker.lang.actions.ActionUtil/@GetDate"
+             attributeName="start" usage="params"></GetDate>
+        <GetDate name="getEnd" _xmeta_id_="5138" descriptors="xworker.lang.actions.ActionUtil/@GetDate"
+             attributeName="end" usage="params"></GetDate>
+        <GetLong name="getStep" _xmeta_id_="5139" descriptors="xworker.lang.actions.ActionUtil/@GetLong"
+             attributeName="step" usage="params"></GetLong>
+        <GetString name="getTimeUnit" _xmeta_id_="5140" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="timeUnit" usage="params"></GetString>
+        <GetBoolean name="isTrim" _xmeta_id_="7715" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="trim" usage="params"></GetBoolean>
+        <GetBoolean name="isWaitRealTime" _xmeta_id_="7716" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="waitRealTime" usage="params"></GetBoolean>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="start" inputtype="dateTime"></attribute>
+    <attribute name="end" inputtype="dateTime"></attribute>
+    <attribute name="step" default="1"></attribute>
+    <attribute name="timeUnit" inputtype="select" default="day">
+        <value name="year" value="year"></value>
+        <value name="month" value="month"></value>
+        <value name="week" value="week"></value>
+        <value name="day" value="day"></value>
+        <value name="hour" value="hour"></value>
+        <value name="minute" value="minute"></value>
+        <value name="second" value="second"></value>
+    </attribute>
+    <attribute name="trim" inputtype="truefalse" default="true">
+        <description><![CDATA[<p>如果为true，那么把小于单位时间的部分做成0。如时间单位是天，那么就把时分秒做成0。</p>
+]]></description>
+    </attribute>
+    <attribute name="waitRealTime" inputtype="truefalse" default="false">
+        <description><![CDATA[<p>如果为true，那么生成新的分段下一个分段的end小于当前时间才生成，否则返回null。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

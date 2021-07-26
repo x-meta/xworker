@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="database" descriptors="xworker.content.QuickContent" type="thingDemo" path="xworker.db.ddlutils.examples.database/@database"
+     group="xworker.ddlutils" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>database</h1>
+
+<h2>1.主要功能</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Apache的ddlutils，使用XML来编写数据库模型。</p>
+
+<ul>
+	<li><strong>从数据库中读取数据库模型</strong><br />
+	从数据库中读取已有的表结构和索引。<br />
+	&nbsp;</li>
+	<li><strong>创建、修改和删除表结构</strong><br />
+	可以根据数据库模型创建、修改和删除数据库的表结构和索引。<br />
+	&nbsp;</li>
+	<li><strong>数据导入和导出</strong><br />
+	根据数据库模型从XML中导入和导出数据。</li>
+</ul>
+
+<h2>2.使用方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过模型编辑器的databse菜单执行相关操作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注意：Apache的ddlutils没有原生支持Sqlite，Sqlite似乎也不支持字段类型的修改，因此执行修改（alter)表结构可能会不成功。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <database name="xworker_app" _xmeta_id_="database" descriptors="xworker.db.ddlutils.DatabaseDdlUtil/@database1,xworker.db.ddlutils.database"
+         dataSource="xworker.db.ddlutils.examples.DdlutilsExampleThing/@DataSource">
+        <table name="tblaiknowledgebase">
+            <column name="tid" primaryKey="true" required="true" type="INTEGER" size="10"
+                 autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="description" size="255"></column>
+            <column name="userId" size="255"></column>
+            <column name="nickName" size="255"></column>
+            <column name="type" type="INTEGER" size="10"></column>
+            <column name="status" type="INTEGER" size="10"></column>
+            <column name="downCount" type="INTEGER" size="10"></column>
+            <column name="keywords" size="255"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblaiknowledgebasesentence">
+            <column name="tid" primaryKey="true" required="true" type="INTEGER" size="10"
+                 autoIncrement="true"></column>
+            <column name="kbId" type="INTEGER" size="10"></column>
+            <column name="type" type="INTEGER" size="10"></column>
+            <column name="sentence" size="255"></column>
+        </table>
+        <table name="tblailearnlog">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="50"></column>
+            <column name="label" size="50"></column>
+            <column name="thingPath" size="250"></column>
+            <column name="networkType" size="50"></column>
+            <column name="inputsCount" type="INTEGER" size="10"></column>
+            <column name="outputsCount" type="INTEGER" size="10"></column>
+            <column name="hiddensCount" type="INTEGER" size="10"></column>
+            <column name="totalNetworkError" size="255"></column>
+            <column name="learnTime" type="BIGINT" size="19"></column>
+            <column name="status" type="INTEGER" size="10"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="learningRate" type="DOUBLE" size="22"></column>
+            <column name="maxIterations" type="INTEGER" size="10"></column>
+            <column name="batchMode" type="TINYINT" size="3"></column>
+            <column name="maxError" type="DOUBLE" size="22"></column>
+            <column name="minErrorChange" type="DOUBLE" size="22"></column>
+            <column name="minErrorChangeIterationsLimit" type="INTEGER" size="10"></column>
+            <column name="errorCorrection" type="DOUBLE" size="22"></column>
+            <column name="learningRateChange" type="DOUBLE" size="22"></column>
+            <column name="maxLearningRate" type="DOUBLE" size="22"></column>
+            <column name="maxMomentum" type="DOUBLE" size="22"></column>
+            <column name="minLearningRate" type="DOUBLE" size="22"></column>
+            <column name="minMomentum" type="DOUBLE" size="22"></column>
+            <column name="momentumChange" type="DOUBLE" size="22"></column>
+            <column name="useDynamicLearningRate" type="TINYINT" size="3"></column>
+            <column name="useDynamicMomentum" type="TINYINT" size="3"></column>
+            <column name="decreaseFactor" type="DOUBLE" size="22"></column>
+            <column name="increaseFactor" type="DOUBLE" size="22"></column>
+            <column name="initialDelta" type="DOUBLE" size="22"></column>
+            <column name="maxDelta" type="DOUBLE" size="22"></column>
+            <column name="minDelta" type="DOUBLE" size="22"></column>
+            <column name="learningRule" size="50"></column>
+            <column name="dataSetCount" type="INTEGER" size="10"></column>
+            <index name="idx_aiLearnLog_thingPath">
+                <index-column name="thingPath"></index-column>
+            </index>
+        </table>
+        <table name="tblailogicknowlegebase">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="type" type="INTEGER" size="10"></column>
+            <column name="name" size="56"></column>
+            <column name="description" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblailogicsentence">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="knowlegeBaseId" type="BIGINT" size="19"></column>
+            <column name="type" type="INTEGER" size="10"></column>
+            <column name="sentence" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblappresources">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="type" size="25"></column>
+            <column name="value" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="type2" size="25"></column>
+            <column name="type3" size="25"></column>
+            <column name="type4" size="25"></column>
+            <index name="idx_tblappresources_type">
+                <index-column name="type"></index-column>
+            </index>
+        </table>
+        <table name="tblappresourceskeys">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="resourceId" type="BIGINT" size="19"></column>
+            <column name="keyword" size="28"></column>
+            <index name="idx_appreskey_kwd">
+                <index-column name="keyword"></index-column>
+            </index>
+            <index name="idx_appreskey_resId">
+                <index-column name="resourceId"></index-column>
+            </index>
+        </table>
+        <table name="tblappresourcesview">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="parentId" type="BIGINT" size="19"></column>
+            <column name="resourceId" type="BIGINT" size="19"></column>
+            <column name="resourceName" size="25"></column>
+            <index name="idx_tblappresview_parentId">
+                <index-column name="parentId"></index-column>
+            </index>
+        </table>
+        <table name="tblappresourcetypes">
+            <column name="id" primaryKey="true" required="true" size="25"></column>
+            <column name="name" size="56"></column>
+            <column name="parentId" size="25"></column>
+        </table>
+        <table name="tblappuserflow">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="thingPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="status" type="INTEGER" size="10"></column>
+            <column name="finishedCount" type="INTEGER" size="10"></column>
+            <column name="lastStartTime" type="TIMESTAMP" size="19"></column>
+            <column name="lastFinishedTime" type="TIMESTAMP" size="19"></column>
+            <column name="daily" size="255"></column>
+            <column name="label" size="255"></column>
+        </table>
+        <table name="tblassisnote">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="128"></column>
+            <column name="label" size="250"></column>
+            <column name="agroup" size="250"></column>
+            <column name="content" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="updatedate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblbasedatacountrycode">
+            <column name="code" primaryKey="true" required="true" size="20"></column>
+            <column name="name" size="50"></column>
+        </table>
+        <table name="tblbasedatalangcountrycode">
+            <column name="code" primaryKey="true" required="true" size="20"></column>
+            <column name="name" size="50"></column>
+        </table>
+        <table name="tblbasedatalanguagecode">
+            <column name="code" primaryKey="true" required="true" size="20"></column>
+            <column name="name" size="50"></column>
+        </table>
+        <table name="tblcontentkeywords">
+            <column name="tid" primaryKey="true" required="true" type="INTEGER" size="10"
+                 autoIncrement="true"></column>
+            <column name="contentTreeId" size="255"></column>
+            <column name="keyword" size="255"></column>
+            <index name="idx_contentkeywords_key">
+                <index-column name="keyword"></index-column>
+            </index>
+        </table>
+        <table name="tblcontenttree">
+            <column name="tid" primaryKey="true" required="true" type="INTEGER" size="10"
+                 autoIncrement="true"></column>
+            <column name="parentId" type="INTEGER" size="10"></column>
+            <column name="label" size="255"></column>
+            <column name="label_en" size="255"></column>
+            <column name="orderWeight" type="INTEGER" size="10"></column>
+            <column name="status" type="INTEGER" size="10"></column>
+            <column name="url" size="255"></column>
+            <column name="iconPath" size="250"></column>
+            <column name="target" size="255"></column>
+            <column name="isRoot" type="BIT" size="1"></column>
+            <column name="isPage" type="TINYINT" size="3"></column>
+            <column name="template" size="250"></column>
+            <column name="topRightMenuId" type="BIGINT" size="19"></column>
+            <column name="indexPath" size="250"></column>
+            <column name="categoryId" type="INTEGER" size="10"></column>
+            <column name="searchKeys" size="120"></column>
+            <column name="description" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+            <column name="isCategoryContainer" type="BIT" size="1"></column>
+            <column name="type" type="INTEGER" size="10"></column>
+            <column name="refId" type="INTEGER" size="10"></column>
+            <index name="idx_tblcontenttree_ispage">
+                <index-column name="isPage"></index-column>
+            </index>
+        </table>
+        <table name="tbldatasourcegroupitems">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="dataSourceGroupId" type="BIGINT" size="19"></column>
+            <column name="dataSourceId" size="255"></column>
+        </table>
+        <table name="tbldatasourcergroup">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+        </table>
+        <table name="tbldbdatasource">
+            <column name="name" primaryKey="true" required="true" size="255"></column>
+            <column name="label" size="250"></column>
+            <column name="dialect" size="50"></column>
+            <column name="driver_class" size="255"></column>
+            <column name="url" size="255"></column>
+            <column name="userName" size="255"></column>
+            <column name="password" size="255"></column>
+            <column name="initPoolSize" type="SMALLINT" size="5"></column>
+            <column name="minPoolSize" size="255"></column>
+            <column name="maxPoolSize" size="255"></column>
+            <column name="maxIdleTime" type="INTEGER" size="10"></column>
+            <column name="acquireIncrement" type="INTEGER" size="10"></column>
+            <column name="checkoutTimeout" type="INTEGER" size="10"></column>
+            <column name="idleConnectionTestPeriod" type="INTEGER" size="10"></column>
+            <column name="testOnCheckOut" type="BIT" size="1"></column>
+            <column name="testOnCheckIn" type="BIT" size="1"></column>
+            <column name="testWhileIdle" type="BIT" size="1"></column>
+            <column name="testSql" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="acquireRetryAttempts" type="INTEGER" size="10"></column>
+            <column name="acquireRetryDelay" type="INTEGER" size="10"></column>
+            <column name="breakAfterAcquireFailure" type="BIT" size="1"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+            <column name="sgroup" size="250"></column>
+            <column name="serverId" type="BIGINT" size="19"></column>
+            <column name="properties" size="255"></column>
+            <column name="toolsRegistThing" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblidemessage">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="label" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="description" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="thingPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="descPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="compositePath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="type" size="20"></column>
+            <column name="cnt" size="255"></column>
+            <column name="senderId" size="128"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblinitlog">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="status" size="255"></column>
+            <column name="initThingPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="thingLastModified" type="BIGINT" size="19"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+            <column name="category" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblmonitordata">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="label" size="255"></column>
+            <column name="value" size="255"></column>
+            <column name="grabStartTime" type="TIMESTAMP" size="19"></column>
+            <column name="grabEndTime" type="TIMESTAMP" size="19"></column>
+            <column name="dataTypeName" size="255"></column>
+            <column name="resourceId" size="255"></column>
+            <column name="taskThingPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="dataId" size="100"></column>
+            <column name="dataTypeId" size="255"></column>
+            <column name="dataName" size="255"></column>
+            <column name="monitorId" type="BIGINT" size="19"></column>
+            <column name="monitorTaskId" type="BIGINT" size="19"></column>
+            <column name="monitorTaskResId" type="BIGINT" size="19"></column>
+            <index name="idx_tblmondata_monTkResId">
+                <index-column name="monitorTaskResId"></index-column>
+            </index>
+            <index name="idx_tblmonitordata_monitorId">
+                <index-column name="monitorId"></index-column>
+            </index>
+            <index name="idx_tblmonitordata_monitorTaskId">
+                <index-column name="monitorTaskId"></index-column>
+            </index>
+            <index name="idx_tblmonitordata_name">
+                <index-column name="name"></index-column>
+            </index>
+            <index name="idx_tblmonitordata_starttime">
+                <index-column name="grabStartTime"></index-column>
+            </index>
+        </table>
+        <table name="tblmonitordatacategorylog">
+            <column name="monitorDataCategory" primaryKey="true" required="true" size="250"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblmonitordatatype">
+            <column name="name" primaryKey="true" required="true" size="100"></column>
+            <column name="label" size="250"></column>
+            <column name="resourceDataObjectPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="taskThingPath" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblmonitordbitems">
+            <column name="id" primaryKey="true" required="true" type="REAL" size="12" autoIncrement="true"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="dbId" size="250"></column>
+            <column name="dbName" size="255"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="param1" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param2" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param3" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param4" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param5" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblmonitordbmonitor">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="sgroup" size="100"></column>
+            <column name="status" type="BIT" size="1"></column>
+            <column name="period" type="BIGINT" size="19"></column>
+            <column name="timeUnit" size="20"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+            <column name="executeType" size="255"></column>
+            <column name="timeout" type="BIGINT" size="19"></column>
+            <column name="maxTimeoutCount" type="INTEGER" size="10"></column>
+            <column name="mailSendUserId" type="BIGINT" size="19"></column>
+            <column name="mailReceiveUserGroupId" type="BIGINT" size="19"></column>
+            <column name="mailSessionThing" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblmonitordbmontortasks">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="taskName" size="255"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="monitorId" type="BIGINT" size="19"></column>
+        </table>
+        <table name="tblmonitordbtask">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="actionPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="aceeptDbType" size="255"></column>
+            <column name="acceptDialects" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblmonitormessage">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="handler" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblmonitormessagegroup">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="parentId" type="BIGINT" size="19"></column>
+            <column name="messageId" type="INTEGER" size="10"></column>
+        </table>
+        <table name="tblmonitormessagelog">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="messageId" type="BIGINT" size="19"></column>
+            <column name="subject" size="255"></column>
+            <column name="content" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="sendDate" type="TIMESTAMP" size="19"></column>
+            <index name="idx_messagelog_createDate">
+                <index-column name="createDate"></index-column>
+            </index>
+        </table>
+        <table name="tblmonitormessageusergroup">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="userGroupId" type="BIGINT" size="19"></column>
+        </table>
+        <table name="tblprjproject">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="startDate" type="TIMESTAMP" size="19"></column>
+            <column name="endDate" type="TIMESTAMP" size="19"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblprjtask">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="startDate" type="TIMESTAMP" size="19"></column>
+            <column name="endDate" type="TIMESTAMP" size="19"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="projectId" type="BIGINT" size="19"></column>
+        </table>
+        <table name="tblprjtaskuser">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="userId" type="BIGINT" size="19"></column>
+            <index name="id_prjtaskuser_userId">
+                <index-column name="userId"></index-column>
+            </index>
+            <index name="idx_prjtaskusr_taskId">
+                <index-column name="taskId"></index-column>
+            </index>
+        </table>
+        <table name="tblresmonitor">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="sgroup" size="100"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="period" type="BIGINT" size="19"></column>
+            <column name="timeUnit" size="20"></column>
+            <column name="timeout" type="BIGINT" size="19"></column>
+            <column name="maxTimeoutCount" type="INTEGER" size="10"></column>
+            <column name="mailSessionThing" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="mailReceiveUserGroupId" type="BIGINT" size="19"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="fixedRate" type="TINYINT" size="3"></column>
+            <column name="fixTime" type="TINYINT" size="3"></column>
+            <column name="fixTimeStr" size="50"></column>
+            <column name="fixedDelay" type="TINYINT" size="3"></column>
+        </table>
+        <table name="tblresmonitorlog">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="monitorId" type="BIGINT" size="19"></column>
+            <column name="startTime" type="TIMESTAMP" size="19"></column>
+            <column name="endTime" type="TIMESTAMP" size="19"></column>
+            <column name="content" type="LONGVARCHAR" size="2147483647"></column>
+            <index name="idx_tblresmonitorlog_monitorid">
+                <index-column name="monitorId"></index-column>
+            </index>
+            <index name="idx_tblresmonitorlog_starttime">
+                <index-column name="startTime"></index-column>
+            </index>
+        </table>
+        <table name="tblresmonitorresitems">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="resId" size="250"></column>
+            <column name="resName" size="255"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="param1" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param2" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param3" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param4" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param5" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param6" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param7" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param8" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param9" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param10" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresmonitortaskitems">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="monitorId" type="BIGINT" size="19"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="taskName" size="255"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="param1" size="2550"></column>
+            <column name="param2" size="255"></column>
+            <column name="param3" size="255"></column>
+            <column name="param4" size="255"></column>
+            <column name="param5" size="255"></column>
+            <column name="param6" size="255"></column>
+            <column name="param7" size="255"></column>
+            <column name="param8" size="255"></column>
+            <column name="param9" size="255"></column>
+            <column name="param10" size="255"></column>
+            <column name="parentId" type="BIGINT" size="19"></column>
+            <column name="preCondition" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="perRowExecute" type="TINYINT" size="3"></column>
+            <column name="childSameRes" type="TINYINT" size="3"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresmonitortasklog">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="monitorId" type="BIGINT" size="19"></column>
+            <column name="monitorTaskId" type="BIGINT" size="19"></column>
+            <column name="taskResourceId" type="BIGINT" size="19"></column>
+            <column name="resourceId" size="100"></column>
+            <column name="startTime" type="TIMESTAMP" size="19"></column>
+            <column name="endTime" type="TIMESTAMP" size="19"></column>
+            <column name="content" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="monitorStartTime" type="TIMESTAMP" size="19"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <index name="idx_tblresmonitortasklog_monitorid">
+                <index-column name="monitorId"></index-column>
+            </index>
+            <index name="idx_tblresmonitortasklog_starttime">
+                <index-column name="monitorStartTime"></index-column>
+            </index>
+            <index name="idx_tblresmonitortasklog_taskid">
+                <index-column name="monitorTaskId"></index-column>
+            </index>
+        </table>
+        <table name="tblresmonitortasks">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="sgoup" size="255"></column>
+            <column name="taskPath" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresmonitortriggers">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="parentId" type="BIGINT" size="19"></column>
+            <column name="name" size="120"></column>
+            <column name="taskID" type="BIGINT" size="19"></column>
+            <column name="taskName" size="100"></column>
+            <column name="conditionEpr" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param1" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param2" size="2"></column>
+            <column name="param3" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param4" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param5" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param6" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param7" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param8" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param9" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param10" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresmonitortriggertasks">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="250"></column>
+            <column name="sgoup" size="255"></column>
+            <column name="taskPath" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresmonitortrigresitems">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="taskId" type="BIGINT" size="19"></column>
+            <column name="resId" size="250"></column>
+            <column name="resName" size="255"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="param1" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param2" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param3" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param4" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param5" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param6" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param7" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param8" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param9" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param10" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblresourcestatus">
+            <column name="resourceId" primaryKey="true" required="true" size="128"></column>
+            <column name="name" size="128"></column>
+            <column name="level" size="20"></column>
+            <column name="resourceHandler" size="255"></column>
+            <column name="params" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="indexThing" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="source" size="255"></column>
+            <column name="info" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblsegmenttask">
+            <column name="taskId" primaryKey="true" required="true" size="128"></column>
+            <column name="offset" type="BIGINT" size="19"></column>
+        </table>
+        <table name="tblsegmenttaskranges">
+            <column name="rangeId" primaryKey="true" required="true" size="128"></column>
+            <column name="taskId" size="128"></column>
+            <column name="start" type="BIGINT" size="19"></column>
+            <column name="end" type="BIGINT" size="19"></column>
+            <column name="status" type="SMALLINT" size="5"></column>
+            <column name="runCount" type="INTEGER" size="10"></column>
+            <index name="IDX_RANGES_TASKID">
+                <index-column name="taskId"></index-column>
+            </index>
+        </table>
+        <table name="tblserver">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="innerIP" size="50"></column>
+            <column name="outerIP" size="50"></column>
+            <column name="adminIP" size="50"></column>
+            <column name="adminUserName" size="50"></column>
+            <column name="adminPassword" size="50"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+            <column name="system" size="255"></column>
+            <column name="adminPort" size="20"></column>
+            <column name="monitIt" type="INTEGER" size="10"></column>
+            <column name="sgroup" size="250"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="site" size="56"></column>
+        </table>
+        <table name="tblserverbackup">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="sgroup" size="250"></column>
+            <column name="system" size="255"></column>
+            <column name="innerIP" size="50"></column>
+            <column name="outerIP" size="50"></column>
+            <column name="monitIt" type="INTEGER" size="10"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="adminIP" size="50"></column>
+            <column name="adminPort" size="20"></column>
+            <column name="adminUserName" size="50"></column>
+            <column name="adminPassword" size="50"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblservergroup">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"
+                 description="标识"></column>
+            <column name="name" size="255" description="名称"></column>
+        </table>
+        <table name="tblservergroupitems">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="serverGroupId" type="BIGINT" size="19"></column>
+            <column name="serverId" type="BIGINT" size="19"></column>
+        </table>
+        <table name="tblserverlogs">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="serverId" type="BIGINT" size="19"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="tblstockcode">
+            <column name="code" primaryKey="true" required="true" size="10"></column>
+            <column name="name" size="250"></column>
+            <column name="tradeMarket" size="10"></column>
+        </table>
+        <table name="tblstockhistoryday">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="stockCode" size="255"></column>
+            <column name="tradeDate" type="DATE" size="10"></column>
+            <column name="open" type="DOUBLE" size="22"></column>
+            <column name="hight" type="DOUBLE" size="22"></column>
+            <column name="low" type="DOUBLE" size="22"></column>
+            <column name="close" type="DOUBLE" size="22"></column>
+            <column name="volume" type="BIGINT" size="19"></column>
+            <column name="adjClose" type="DOUBLE" size="22"></column>
+            <index name="idx_tblstockhisday_code">
+                <index-column name="stockCode"></index-column>
+            </index>
+            <index name="idx_tblstockhisday_tradedate">
+                <index-column name="tradeDate"></index-column>
+            </index>
+        </table>
+        <table name="tblstockrealdata">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="stockCode" size="20"></column>
+            <column name="open" type="DOUBLE" size="22"></column>
+            <column name="close" type="DOUBLE" size="22"></column>
+            <column name="price" type="DOUBLE" size="22"></column>
+            <column name="max" type="DOUBLE" size="22"></column>
+            <column name="low" type="DOUBLE" size="22"></column>
+            <column name="bidBuy" type="DOUBLE" size="22"></column>
+            <column name="bidSell" type="DOUBLE" size="22"></column>
+            <column name="exchangeCount" type="DOUBLE" size="22"></column>
+            <column name="exchangeMoney" size="255"></column>
+            <column name="buy1Count" type="BIGINT" size="19"></column>
+            <column name="buy1Price" type="DOUBLE" size="22"></column>
+            <column name="buy2Count" type="BIGINT" size="19"></column>
+            <column name="buy2Price" size="255"></column>
+            <column name="buy3Count" type="BIGINT" size="19"></column>
+            <column name="buy3Price" type="DOUBLE" size="22"></column>
+            <column name="buy4Count" type="DOUBLE" size="22"></column>
+            <column name="buy4Price" type="DOUBLE" size="22"></column>
+            <column name="buy5Count" type="BIGINT" size="19"></column>
+            <column name="buy5Price" type="DOUBLE" size="22"></column>
+            <column name="sell1Count" type="BIGINT" size="19"></column>
+            <column name="sell1Price" type="DOUBLE" size="22"></column>
+            <column name="sell2Count" type="BIGINT" size="19"></column>
+            <column name="sell2Price" type="DOUBLE" size="22"></column>
+            <column name="sell3Count" type="BIGINT" size="19"></column>
+            <column name="sell3Price" type="DOUBLE" size="22"></column>
+            <column name="sell4Count" type="BIGINT" size="19"></column>
+            <column name="sell4Price" type="DOUBLE" size="22"></column>
+            <column name="sell5Count" type="BIGINT" size="19"></column>
+            <column name="sell5Price" type="DOUBLE" size="22"></column>
+            <column name="dataDate" type="DATE" size="10"></column>
+            <column name="dataTime" type="TIME" size="8"></column>
+            <index name="idx_tblstckrd_code">
+                <index-column name="stockCode"></index-column>
+            </index>
+        </table>
+        <table name="tbltaskcalandar">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="runDate" type="TIMESTAMP" size="19"></column>
+            <column name="name" size="250"></column>
+            <column name="thingPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+        </table>
+        <table name="tbltaskreminders">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="56"></column>
+            <column name="content" size="255"></column>
+            <column name="action" type="INTEGER" size="10"></column>
+            <column name="delayTime" type="INTEGER" size="10"></column>
+            <column name="actionPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="remindeDate" size="255"></column>
+            <column name="nextTime" type="TIMESTAMP" size="19"></column>
+            <column name="level" size="255"></column>
+        </table>
+        <table name="tbltaskscheduledtask">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="status" type="BIT" size="1"></column>
+            <column name="delay" type="BIGINT" size="19"></column>
+            <column name="period" type="BIGINT" size="19"></column>
+            <column name="fixedRate" type="BIT" size="1"></column>
+            <column name="timeUnit" size="20"></column>
+            <column name="fixTime" type="BIT" size="1"></column>
+            <column name="fixTimeStr" size="50"></column>
+            <column name="executeCount" type="INTEGER" size="10"></column>
+            <column name="calculatePassCount" type="BIT" size="1"></column>
+            <column name="actionPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+            <column name="sgroup" size="100"></column>
+        </table>
+        <table name="tbltasksegmentranges">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="taskPath" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="startIndex" type="BIGINT" size="19"></column>
+            <column name="endIndex" type="BIGINT" size="19"></column>
+            <column name="status" type="TINYINT" size="3"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="updateDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tbltmprandomdata">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="data1" type="DOUBLE" size="22"></column>
+            <column name="data2" type="DOUBLE" size="22"></column>
+            <column name="data3" size="255"></column>
+            <column name="updateTime" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tbluser">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="name" size="30"></column>
+            <column name="sex" size="6"></column>
+            <column name="age" type="INTEGER" size="10"></column>
+            <column name="mobile1" size="20"></column>
+            <column name="mobile2" size="255"></column>
+            <column name="homePhone" size="15"></column>
+            <column name="companyPhone" size="15"></column>
+            <column name="email1" size="120"></column>
+            <column name="email2" size="120"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="loginName" size="50"></column>
+            <column name="password" size="128"></column>
+            <column name="randomKey" size="20"></column>
+            <column name="nickName" size="45"></column>
+            <column name="email" size="45"></column>
+            <column name="role" type="INTEGER" size="10" default="0"></column>
+            <index name="idx_user_loginIndex">
+                <index-column name="loginName"></index-column>
+            </index>
+            <index name="idx_user_nameIndex">
+                <index-column name="name"></index-column>
+            </index>
+        </table>
+        <table name="tbluserdailynote">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="usreId" type="BIGINT" size="19"></column>
+            <column name="content" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="userId" type="BIGINT" size="19"></column>
+            <index name="idx_tbluserdnote_date">
+                <index-column name="createDate"></index-column>
+            </index>
+            <index name="idx_tbluserdnote_userId">
+                <index-column name="usreId"></index-column>
+            </index>
+        </table>
+        <table name="tblusergroup">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="parentId" type="BIGINT" size="19"></column>
+            <column name="name" size="50"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+        </table>
+        <table name="tblusergroupmembers">
+            <column name="tid" primaryKey="true" required="true" type="BIGINT" size="19"
+                 autoIncrement="true"></column>
+            <column name="userGroupId" type="BIGINT" size="19"></column>
+            <column name="userId" type="BIGINT" size="19"></column>
+            <column name="param1" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param2" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="param3" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="memo" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="createDate" type="TIMESTAMP" size="19"></column>
+            <column name="userName" size="255"></column>
+        </table>
+        <table name="tblxwappdataobjects">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19" autoIncrement="true"></column>
+            <column name="name" size="255"></column>
+            <column name="label" size="255"></column>
+            <column name="groups" type="LONGVARCHAR" size="2147483647"></column>
+            <column name="path" type="LONGVARCHAR" size="2147483647"></column>
+        </table>
+        <table name="testxxx">
+            <column name="id" primaryKey="true" required="true" type="BIGINT" size="19"></column>
+            <column name="name" size="255"></column>
+        </table>
+    </database>
+</QuickContent>

@@ -1,0 +1,256 @@
+^1624260411079
+@
+sname
+CallObject
+slabel
+调用Java对象
+stype
+thingDemo
+spath
+xworker.doc.dynamicmodel.action.category.CallObject/@ActionThing/@callJavaObject
+sgroup
+dynamicModel.-990|Actions.commonactions.javaaction
+sgroupDescriptor
+false
+sicon
+icons/application.png
+sth_sortWeight
+20
+sstyledTextForInsert
+parentContext.parentContext.codeText
+suseTargetThingDoc
+false
+ssimpleBrowser
+false
+Sdescription
+#$@text#$@
+<h1>调用Java对象</h1>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction也可以调用Java对象的方法。参看下面几个注解。</p>
+
+<h2>1.@ActionClass</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;ActionClass注解用来说明动作模型可以调用它的非静态的方法。</p>
+
+<h3>1.1.creator参数</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 动作调用一个类的非静态方法时，默认总是会实例化一个对象。如果不想总是实例化新的对象，那么可以使用creator参数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; creator参数用于指定一个静态方法是用于获取对象实例的，其中获取对象的方法必须是静态的参数固定为ActionContext的方法。</p>
+
+<h2>2.@ActionField</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个字段设定为ActionField，那么每次执行方法是都会为该字段赋值，该字段最好是public以避免不能正确赋值。</p>
+
+<h2>3.调用对象的方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction需要指定要调用的方法，可以用参数的注解。</p>
+
+<h2>4.Java代码示例</h2>
+
+<pre class="brush:java;">
+package xworker.examples;
+
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionClass;
+import org.xmeta.annotation.ActionField;
+
+@ActionClass(creator=&quot;getUser&quot;)
+public class User {
+	@ActionField
+	public String name;
+	
+	int age;
+	
+	public void println() {
+		System.out.println(name + &quot; age is &quot; + age);
+	}
+	
+	public static User getUser(ActionContext actionContext) {
+		User user = new User();
+		user.age = 20;
+		return user;
+	}
+}
+</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sen_label
+Call Object
+sdescriptors
+xworker.content.QuickContent
+sinheritDescription
+false
+sth_createIndex
+true
+sth_registThing
+child|xworker.example.ExamplesIndex
+sth_registMyChilds
+false
+sth_registDisabled
+false
+sth_noThingRegistViewer
+false
+sth_fileMonitor
+false
+Sen_description
+#$@text#$@
+<h1>Calling Java objects</h1>
+
+<p>&nbsp;&nbsp;&nbsp;JavaAction can also call methods of Java objects. See the notes below.</p>
+
+<h2>1.@ActionClass</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Actionclass annotation is used to indicate that the action model can call its non static methods.</p>
+
+<h3>1.1.creator</h3>
+
+<p>&nbsp;&nbsp;&nbsp; When an action calls a non static method of a class, an object is always instantiated by default. If you don&#39;t want to always instantiate new objects, you can use the creator parameter.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The creator parameter is used to specify that a static method is used to obtain an object instance. The method to obtain an object must be a static method whose parameter is fixed to ActionContext.</p>
+
+<h2>2.@ActionField</h2>
+
+<p>&nbsp;&nbsp;&nbsp; If a field is set to ActionField, the field will be assigned a value every time the execution method is executed. It is better to make the field public to avoid incorrect assignment.</p>
+
+<h2>3.Call the method of the object</h2>
+
+<p>&nbsp;&nbsp;&nbsp; JavaAction needs to specify the method to be called, which can be annotated with parameters.</p>
+
+<h2>4.Java code</h2>
+
+<pre class="brush:java;">
+package xworker.examples;
+
+import org.xmeta.ActionContext;
+import org.xmeta.annotation.ActionClass;
+import org.xmeta.annotation.ActionField;
+
+@ActionClass(creator=&quot;getUser&quot;)
+public class User {
+	@ActionField
+	public String name;
+	
+	int age;
+	
+	public void println() {
+		System.out.println(name + &quot; age is &quot; + age);
+	}
+	
+	public static User getUser(ActionContext actionContext) {
+		User user = new User();
+		user.age = 20;
+		return user;
+	}
+}
+</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
+sth_mark
+false
+sth_registQueryOnlySelf
+false
+  @/@ActionThing
+  sname
+  ActionThing
+  smode
+  run
+  sdisabled
+  false
+  sinterpretationType
+  Self
+  sattributeTemplate
+  false
+  schildsAttributeTemplate
+  false
+  svarScope
+  Local
+  sisSynchronized
+  false
+  sthrowException
+  true
+  suseOtherAction
+  false
+  screateLocalVarScope
+  false
+  ssaveReturn
+  false
+  sswitchResult
+  false
+  sdisableGlobalContext
+  false
+  sdebugLog
+  false
+  sdescriptors
+  xworker.content.QuickContent/@ActionThing
+  sinheritDescription
+  false
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sid
+  ActionThing
+    @/@ActionThing/@callJavaObject
+    sname
+    callJavaObject
+    sthrowException
+    true
+    suseOtherAction
+    false
+    suseOuterJava
+    true
+    suseInnerJava
+    false
+    souterClassName
+    xworker.examples.User
+    smethodName
+    println
+    sdisableGlobalContext
+    false
+    sattributeTemplate
+    false
+    sinterpretationType
+    Action
+    svarScope
+    Global
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    sid
+    callJavaObject

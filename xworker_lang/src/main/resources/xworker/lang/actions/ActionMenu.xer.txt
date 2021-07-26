@@ -1,4 +1,4 @@
-^1597820598338
+^1626677856314
 @
 sname
 ActionMenu
@@ -383,7 +383,7 @@ if(acCfg != null){
     config.save();
 }
 
-def box = new MessageBox(parent.getShell(), SWT.ICON_INFORMATION | SWT.OK);
+def box = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 box.setText("移除断点");
 box.setMessage("断点已经移除！");
 box.open();
@@ -393,6 +393,10 @@ box.open();
     screateLocalVarScope
     false
     ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
     false
     sdescriptors
     xworker.lang.actions.Actions/@GroovyAction
@@ -850,10 +854,11 @@ if(className == null){
 #$@text#$@
 import org.xmeta.ActionContext;
 import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
 
 def ac = new ActionContext();
-ac.put("parent", coolBar.getShell());
-ac.put("editorShell", coolBar.getShell());
+ac.put("parent", parentContext.coolBar.shell);
+ac.put("editorShell", parentContext.coolBar.shell);
 ac.put("explorerActions", explorerActions);
 ac.put("explorerContext", explorerContext);
 ac.put("thingContext", actionContext);
@@ -940,8 +945,6 @@ new Thread({
         start
         slabel
         动作开始
-        stimeout
-        3600
         sdescription
         <p>动作正在执行...</p>
         sinterpretationType
@@ -1029,10 +1032,6 @@ new Thread({
         end
         slabel
         动作结束
-        stimeout
-        3600
-        svariables
-        object
         sinterpretationType
         Self
         sattributeTemplate

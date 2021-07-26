@@ -9,13 +9,15 @@ import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
 import org.slf4j.spi.LocationAwareLogger;
 
-import xworker.lang.executor.ExecuteRequest;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+import xworker.lang.executor.Request;
 import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 
 public class Log4jService implements ExecutorService{
 	static {
-		Executor.setDefaultExecutorService(new Log4jService());
+		Executor.addDefaultExecutorService(new Log4jService());
 	}
 	
 	byte level = Executor.INFO;
@@ -311,6 +313,16 @@ public class Log4jService implements ExecutorService{
 	}
 
 	@Override
+	public boolean isSupportLog() {
+		return true;
+	}
+
+	@Override
+	public boolean isSupportRequest() {
+		return false;
+	}
+
+	@Override
 	public void print(Object message) {
 		System.out.print(message);
 	}
@@ -331,13 +343,13 @@ public class Log4jService implements ExecutorService{
 	}
 
 	@Override
-	public void removeRequest(ExecuteRequest request) {
-		Executor.superRemoveRequest(this, request);
+	public void removeRequest(Request request) {
+
 	}
 
 	@Override
-	public void requestUI(ExecuteRequest request) {
-		Executor.superRequestUI(this, request);
+	public Request requestUI(Thing thing, ActionContext actionContext) {
+		return null;
 	}
 
 	@Override
@@ -351,7 +363,7 @@ public class Log4jService implements ExecutorService{
 	}
 
 	@Override
-	public List<ExecuteRequest> getRequestUIs() {
+	public List<Request> getRequests() {
 		return Collections.emptyList();
 	}
 

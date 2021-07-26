@@ -1,8 +1,6 @@
 package xworker.lang.executor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
@@ -24,30 +22,39 @@ public class Executor {
 	public final static byte ERROR = 5;
 	
 	/** 执行服务 */
-	private static ThreadLocal<Stack<ExecutorService>> executorServices = new ThreadLocal<Stack<ExecutorService>>();
+	private static final ThreadLocal<Stack<ExecutorService>> executorServices = new ThreadLocal<>();
 	
-	private static ExecutorService defaultExecutorService = new JavaLoggingService();
+	private static List<ExecutorService> defaultExecutorServices = new ArrayList<>();
 	
 	/** tag设置的日志级别 */
-	private static Map<String, Byte> tagLogLevels = new HashMap<String, Byte>();
+	private static final Map<String, Byte> tagLogLevels = new HashMap<>();
 	
 	/** 执行器监听器，监听所有的操作，外加一个notify。注意处理的性能不要影响其它程序。 */
 	private static ExecutorListener listener = null;
 	
 	static {
 		try {
+			defaultExecutorServices.add(DefaultRequestService.getInstance());
+
+			defaultExecutorServices.add(new JavaLoggingService());
 			Class.forName("xworker.lang.executor.services.Log4jService");
-		}catch(Exception e) {			
+		}catch(Throwable ignored) {
 		}
 	}
 	
 	/**
 	 * 设置默认的Executor服务。
-	 * 
-	 * @param defaultExecutorService
+	 *
+	 * @param defaultExecutorService 默认执行服务
 	 */
-	public static void setDefaultExecutorService(ExecutorService defaultExecutorService) {
-		Executor.defaultExecutorService = defaultExecutorService;
+	public static void addDefaultExecutorService(ExecutorService defaultExecutorService) {
+		if(defaultExecutorService != null && !Executor.defaultExecutorServices.contains(defaultExecutorService)) {
+			Executor.defaultExecutorServices.add(defaultExecutorService);
+		}
+	}
+
+	public static void removeDefaultExecutorService(ExecutorService executorService){
+		defaultExecutorServices.remove(executorService);
 	}
 	
 	public static void setTagLogLevel(String tag, byte level) {
@@ -84,13 +91,9 @@ public class Executor {
 		if(listener != null) {
 			listener.trace(TAG, message);
 		}
-		
-		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.TRACE)) {
 			service.trace(TAG, message);
 		}
 	}
@@ -100,12 +103,8 @@ public class Executor {
 			listener.trace(TAG, message, t);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.TRACE)) {
 			service.trace(TAG, message, t);
 		}
 	}
@@ -115,12 +114,8 @@ public class Executor {
 			listener.trace(TAG, format, arg);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.TRACE)) {
 			service.trace(TAG, format, arg);
 		}
 	}
@@ -130,12 +125,8 @@ public class Executor {
 			listener.trace(TAG, format, arg1, arg2);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.TRACE)) {
 			service.trace(TAG, format, arg1, arg2);
 		}
 	}
@@ -147,10 +138,10 @@ public class Executor {
 	 * 而是把低级的日志输入到高级中。比如Executor的日志级别是debug，而log4j是info，那么会把Executor的debug日志
 	 * 输出到Log4j的info级别中。
 	 * 
-	 * @param level
+	 * @param level 日志级别
 	 */
 	public static void setLogLevel(byte level) {
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.setLogLevel(level);
 		}
@@ -159,20 +150,24 @@ public class Executor {
 	/**
 	 * 返回是否指定的日志级别是激活的。
 	 * 
-	 * @param level
-	 * @return
+	 * @param level 日志级别
+	 * @return 是否会打印
 	 */
 	public static boolean isLogLevelEnabled(String TAG, byte level) {
 		return level >= getTagLogLevel(TAG, getLogLevel());
+	}
+
+	public static boolean isLogLevelEnabled(ExecutorService executorService, String TAG, byte level){
+		return level >= getTagLogLevel(TAG, executorService.getLogLevel());
 	}
 	
 	/**
 	 * 返回Executor当前的ExecutorService的日志级别。
 	 * 
-	 * @return
+	 * @return 当前日志级别
 	 */
 	public static byte getLogLevel() {
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			return service.getLogLevel();
 		}else {
@@ -185,12 +180,8 @@ public class Executor {
 			listener.trace(TAG, format, arguments);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.TRACE) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.TRACE)) {
 			service.trace(TAG, format, arguments);
 		}
 	}
@@ -199,13 +190,9 @@ public class Executor {
 		if(listener != null) {
 			listener.debug(TAG, message);
 		}
-		
-		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.DEBUG)) {
 			service.debug(TAG, message);
 		}
 	}
@@ -214,13 +201,9 @@ public class Executor {
 		if(listener != null) {
 			listener.debug(TAG, message, t);
 		}		
-		
-		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.DEBUG)) {
 			service.trace(TAG, message, t);
 		}
 	}
@@ -229,14 +212,9 @@ public class Executor {
 		if(listener != null) {
 			listener.debug(TAG, format, arg);
 		}
-		
-		
-		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.DEBUG)) {
 			service.debug(TAG, format, arg);
 		}
 	}
@@ -246,12 +224,8 @@ public class Executor {
 			listener.debug(TAG, format, arg1, arg2);
 		}		
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.DEBUG)) {
 			service.debug(TAG, format, arg1, arg2);
 		}
 	}
@@ -260,14 +234,9 @@ public class Executor {
 		if(listener != null) {
 			listener.debug(TAG, format, arguments);
 		}
-		
-		
-		if(Executor.isLogLevelEnabled(TAG, Executor.DEBUG) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.DEBUG)) {
 			service.debug(TAG, format, arguments);
 		}
 	}
@@ -277,12 +246,8 @@ public class Executor {
 			listener.info(TAG, message);
 		}		
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.INFO)) {
 			service.info(TAG, message);
 		}
 	}
@@ -292,12 +257,8 @@ public class Executor {
 			listener.info(TAG, message, t);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.INFO)) {
 			service.info(TAG, message, t);
 		}
 	}
@@ -307,12 +268,8 @@ public class Executor {
 			listener.info(TAG, format, arg);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.INFO)) {
 			service.info(TAG, format, arg);
 		}
 	}
@@ -322,12 +279,8 @@ public class Executor {
 			listener.info(TAG, format, arg1, arg2);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.INFO)) {
 			service.info(TAG, format, arg1, arg2);
 		}
 	}
@@ -337,12 +290,8 @@ public class Executor {
 			listener.info(TAG, format, arguments);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.INFO) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.INFO)) {
 			service.info(TAG, format, arguments);
 		}
 	}
@@ -352,12 +301,8 @@ public class Executor {
 			listener.warn(TAG, message);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.WARN)) {
 			service.warn(TAG, message);
 		}
 	}
@@ -367,12 +312,8 @@ public class Executor {
 			listener.warn(TAG, message, t);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.WARN)) {
 			service.warn(TAG, message, t);
 		}
 	}
@@ -382,12 +323,8 @@ public class Executor {
 			listener.warn(TAG, format, arg);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.WARN)) {
 			service.warn(TAG, format, arg);
 		}
 	}
@@ -397,12 +334,8 @@ public class Executor {
 			listener.warn(TAG, format, arg1, arg2);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.WARN)) {
 			service.warn(TAG, format, arg1, arg2);
 		}
 	}
@@ -412,12 +345,8 @@ public class Executor {
 			listener.warn(TAG, format, arguments);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.WARN) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.WARN)) {
 			service.warn(TAG, format, arguments);
 		}
 	}
@@ -427,12 +356,8 @@ public class Executor {
 			listener.error(TAG, message);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.ERROR)) {
 			service.error(TAG, message);
 		}
 	}
@@ -442,12 +367,8 @@ public class Executor {
 			listener.error(TAG, message, t);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.ERROR)) {
 			service.error(TAG, message, t);
 		}
 	}
@@ -457,12 +378,8 @@ public class Executor {
 			listener.error(TAG, format, arg);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.ERROR)) {
 			service.error(TAG, format, arg);
 		}
 	}
@@ -472,12 +389,8 @@ public class Executor {
 			listener.error(TAG, format, arg1, arg2);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.ERROR)) {
 			service.error(TAG, format, arg1, arg2);
 		}
 	}
@@ -487,12 +400,8 @@ public class Executor {
 			listener.error(TAG, format, arguments);
 		}
 		
-		if(Executor.isLogLevelEnabled(TAG, Executor.ERROR) == false) {
-			return;
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
+		ExecutorService service = getLogExecutorService();
+		if(service != null && Executor.isLogLevelEnabled(service, TAG, Executor.ERROR)) {
 			service.error(TAG, format, arguments);
 		}
 	}
@@ -504,70 +413,20 @@ public class Executor {
 	 * @param request
 	 * @param actionContext
 	 */
-	public static void requestUI(Thing request, ActionContext actionContext) {
-		ExecuteRequest rui = new ExecuteRequest(request, actionContext);
-		
+	public static Request requestUI(Thing request, ActionContext actionContext) {
 		if(listener != null) {
-			listener.requestUI(rui);
+			listener.requestUI(request, actionContext);
 		}
 		
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getRequestExecutorService();
 		if(service != null) {
-			service.requestUI(rui);
+			Request request1 = service.requestUI(request, actionContext);
+			if(request1 != null && listener != null){
+				listener.requestUI(request1);
+			}
 		}
-	}
-	
-	public static void requestUI(ExecuteRequest request) {
-		if(listener != null) {
-			listener.requestUI(request);
-		}
-		
-		ExecutorService service = getExecutorService();
-		if(service != null) {
-			service.requestUI(request);
-		}
-	}
-	
-	/**
-	 * 通常在ExecutorService中使用，当一个ExecutorService没有能力处理UI请求时，可以通过此方法
-	 * 调用其上层的ExecutorService执行UI请求。
-	 * 
-	 * @param service
-	 * @param request
-	 * @param actionContext
-	 */
-	public static void superRequestUI(ExecutorService service, Thing request, ActionContext actionContext) {
-		ExecutorService es = getParentExecutorService(service);
-		if(es != null) {
-			es.requestUI(new ExecuteRequest(request, actionContext));
-		} else {
-			service.info(TAG, "Can not request ui, parent service is null, current service not support request ui, currentService={}", service);
-		}
-	}
-	
-	public static void superRequestUI(ExecutorService service, ExecuteRequest request) {
-		ExecutorService es = getParentExecutorService(service);
-		if(es != null) {
-			es.requestUI(request);
-		} else {
-			service.info(TAG, "Can not request ui, parent service is null, current service not support request ui, currentService={}", service);
-		}
-	}
-	
-	/**
-	 * 通常在ExecutorService中使用，当一个ExecutorService没有能力处理UI请求时，可以通过此方法
-	 * 调用其上层的ExecutorService执行去除UI请求。
-	 * 
-	 * @param service
-	 * @param request
-	 */
-	public static void superRemoveRequest(ExecutorService service, ExecuteRequest request) {
-		ExecutorService es = getParentExecutorService(service);
-		if(es != null) {
-			es.removeRequest(request);
-		} else {
-			service.info(TAG, "Can not remove request, parent service is null, current service not support remove request, currentService={}", service);
-		}
+
+		return null;
 	}
 	
 	/**
@@ -577,25 +436,65 @@ public class Executor {
 	 * @return
 	 */
 	public static Thread getExecutorServiceThread() {
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getRequestExecutorService();
 		if(service != null) {
 			return service.getThread();
 		}else {
 			return null;
 		}
 	}
-	
-	/**
-	 * 返回当前线程的顶端的执行服务。
-	 * 
-	 * @return
-	 */
-	public static ExecutorService getExecutorService() {
+
+	public static ExecutorService getRequestExecutorService(){
 		Stack<ExecutorService> stack = getExecutorServiceStack();
-		
-		return stack.peek();
+		for(int i=stack.size()-1; i>=0; i--) {
+			ExecutorService es = stack.get(i);
+			if(es.isSupportRequest()){
+				return es;
+			}
+		}
+
+		for(int i=defaultExecutorServices.size() -1 ; i>=0; i--){
+			ExecutorService executorService = defaultExecutorServices.get(i);
+			if(executorService.isSupportRequest()){
+				return executorService;
+			}
+		}
+
+		return null;
 	}
-	
+
+	public static ExecutorService getLogExecutorService(){
+		Stack<ExecutorService> stack = getExecutorServiceStack();
+		for(int i=stack.size()-1; i>=0; i--) {
+			ExecutorService es = stack.get(i);
+			if(es.isSupportLog()){
+				return es;
+			}
+		}
+
+		for(int i=defaultExecutorServices.size() -1 ; i>=0; i--){
+			ExecutorService executorService = defaultExecutorServices.get(i);
+			if(executorService.isSupportLog()){
+				return executorService;
+			}
+		}
+		return null;
+	}
+
+	public static List<ExecutorService> getExecutorServices(){
+		Stack<ExecutorService> stack = getExecutorServiceStack();
+		return new ArrayList<>(stack);
+	}
+
+	public static void push(List<ExecutorService> executorServices){
+		Stack<ExecutorService> stack = getExecutorServiceStack();
+		stack.addAll(executorServices);
+	}
+
+	public static List<ExecutorService> getDefaultExecutorServices(){
+		return defaultExecutorServices;
+	}
+
 	/**
 	 * 获取紧邻current但比current更早压入栈的ExecutorService，如果不存在返回null。
 	 * 
@@ -620,8 +519,10 @@ public class Executor {
 	private static Stack<ExecutorService> getExecutorServiceStack() {
 		Stack<ExecutorService> stack = executorServices.get();
 		if(stack == null) {
-			stack = new Stack<ExecutorService>();
-			stack.push(defaultExecutorService);
+			stack = new Stack<>();
+			for(ExecutorService es : defaultExecutorServices) {
+				stack.push(es);
+			}
 			executorServices.set(stack);
 		}
 		
@@ -648,7 +549,7 @@ public class Executor {
 			listener.print(message);
 		}
 		
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.print(message);
 		}
@@ -659,7 +560,7 @@ public class Executor {
 			listener.println(message);
 		}
 		
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.println(message);
 		}
@@ -670,7 +571,7 @@ public class Executor {
 			listener.errPrint(message);
 		}
 		
-		ExecutorService service = getExecutorService();
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.errPrint(message);
 		}
@@ -680,15 +581,15 @@ public class Executor {
 		if(listener != null) {
 			listener.errPrintln(message);
 		}
-		
-		ExecutorService service = getExecutorService();
+
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.errPrintln(message);
 		}
 	}
 	
-	public static void removeRequest(ExecuteRequest request) {
-		ExecutorService service = getExecutorService();
+	public static void removeRequest(Request request) {
+		ExecutorService service = getLogExecutorService();
 		if(service != null) {
 			service.removeRequest(request);
 		}
@@ -697,14 +598,14 @@ public class Executor {
 	/**
 	 * 启动一个线程执行Runnable，并把当前的ExecutorService带过去。
 	 * 
-	 * @param runnable
+	 * @param runnable 要执行的任务
 	 */
 	public static void startThread(final Runnable runnable) {
-		final ExecutorService es = Executor.getExecutorService();
+		final List<ExecutorService> executorServices = Executor.getExecutorServices();
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					Executor.push(es);
+					Executor.push(executorServices);
 					
 					runnable.run();
 				}finally {

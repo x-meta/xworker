@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Workbench name="JCTermWorkbench" descriptors="xworker.swt.app.Workbench" rightCoolBar="false"
+     statusBar="false" editSelf="false" maximized="false">
+    <Menu style="BAR">
+        <MenuItem name="fileMenuBarItem" text="lang:d=文件&amp;en=File" style="CASCADE">
+            <Menu name="fileMenu">
+                <MenuItem name="exitMenuItem" text="lang:d=退出&amp;en=Exit" style="PUSH">
+                    <listeners>
+                        <Listener>
+                            <Ognl name="Ognl" expression="workbench.exit()"></Ognl>
+                        </Listener>
+                    </listeners>
+                </MenuItem>
+            </Menu>
+        </MenuItem>
+    </Menu>
+    <CoolBar>
+        <CoolItem name="mainCoolItem" _xmeta_id_="mainTooBar">
+            <ToolBar name="mainToolBar">
+                <ToolItem name="openThingSessionToolItem" _xmeta_id_="openAppSessionToolItem1"
+                     image="icons/folder.png">
+                    <listeners>
+                        <Listener name="openAppSessionToolItemSelection">
+                            <OpenShellDialog name="OpenShellDialog" descriptors="xworker.swt.actions.ShellActions/@ShellDialog"
+                                 parentShell="ognl:mainToolBar.getShell()" shellPath="xworker.net.jsch.swt.dialogs.SelectThingSessionDialog"
+                                 variables="workbench"></OpenShellDialog>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+                <ToolItem name="openAppSessionToolItem" image="icons/folder_database.png">
+                    <listeners>
+                        <Listener name="openAppSessionToolItemSelection">
+                            <OpenShellDialog name="OpenShellDialog" descriptors="xworker.swt.actions.ShellActions/@ShellDialog"
+                                 parentShell="ognl:mainToolBar.getShell()" shellPath="xworker.net.jsch.swt.dialogs.SelectAppSessionDialog"
+                                 variables="workbench"></OpenShellDialog>
+                        </Listener>
+                    </listeners>
+                </ToolItem>
+            </ToolBar>
+        </CoolItem>
+    </CoolBar>
+    <Views>
+        <View name="logView" id="logView" type="bottom" closeable="false">
+            <Composite label="日志" en_label="Log">
+                <FillLayout name="FillLayout"></FillLayout>
+                <StyledText name="logText" style="MULTI" READ_ONLY="true" H_SCROLL="true" V_SCROLL="true">
+                    <TextExecutorService name="executorService"></TextExecutorService>
+                </StyledText>
+                <JavaAction name="init" outerClassName="xworker.net.jsch.swt.JCTermWorkbench"
+                     methodName="logViewInit"></JavaAction>
+            </Composite>
+        </View>
+        <View name="progressView" id="progressView" type="bottom" closeable="false">
+            <Composite label="传输进度" en_label="Progress">
+                <FillLayout name="FillLayout"></FillLayout>
+                <Table name="progressTable">
+                    <DataStore name="progressDataStore">
+                        <dataObjects>
+                            <AbstractDataObject>
+                                <attribute name="type" label="类型" inputtype="select" editable="false"
+                                     en_label="Type">
+                                    <value name="upload" label="上传" value="upload" en_label="Upload"></value>
+                                    <value name="download" label="下载" value="download"
+                                         en_label="Download"></value>
+                                </attribute>
+                                <attribute name="srcFileName" _xmeta_id_="name" label="源文件"
+                                     gridWidth="300" en_label="Source File"></attribute>
+                                <attribute name="targetFile" label="目标文件" gridWidth="300"
+                                     en_label="Target File"></attribute>
+                                <attribute name="progress" label="进度" inputtype="progressBar"
+                                     en_label="Progress"></attribute>
+                            </AbstractDataObject>
+                        </dataObjects>
+                    </DataStore>
+                </Table>
+            </Composite>
+        </View>
+    </Views>
+</Workbench>

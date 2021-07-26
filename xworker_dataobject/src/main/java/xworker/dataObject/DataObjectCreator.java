@@ -15,27 +15,23 @@
 ******************************************************************************/
 package xworker.dataObject;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ognl.OgnlException;
 import org.xmeta.ActionContext;
 import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilJava;
-
-import ognl.OgnlException;
 import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.http.DataObjectHttpUtils;
+import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.JsonFormator;
 import xworker.dataObject.utils.UtilDate;
 import xworker.lang.executor.Executor;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class DataObjectCreator {
 	private static final String TAG = DataObjectCreator.class.getName();
@@ -152,14 +148,20 @@ public class DataObjectCreator {
     @SuppressWarnings("unchecked")
 	public static List<DataObject> query(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");    	
-    	
-    	//默认condtionData不为空
-    	Map<String, Object> conditionData = (Map<String, Object>) actionContext.get("conditionData");   
-    	if(conditionData == null) {
-    		conditionData = new HashMap<String, Object>();
-    		actionContext.peek().put("conditionData", conditionData);
-    	}
-    	
+
+    	Object config = actionContext.getObject("queryConfig");
+        if(!(config instanceof QueryConfig)){
+            //默认condtionData不为空
+            Map<String, Object> conditionData = (Map<String, Object>) actionContext.get("conditionData");
+            if (conditionData == null) {
+                conditionData = new HashMap<>();
+                actionContext.peek().put("conditionData", conditionData);
+            }
+
+            QueryConfig queryConfig = new QueryConfig((Thing) actionContext.get("conditionConfig"), conditionData, PageInfo.getPageInfo(actionContext), actionContext);
+            actionContext.peek().put("queryConfig", queryConfig);
+        }
+
     	if(self.getBoolean("beforeQuery")){
     		self.doAction("beforeQuery", actionContext);
     	}

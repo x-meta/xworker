@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DbRangeStore" descriptors="xworker.lang.MetaDescriptor3">
+    <description><![CDATA[<p>使用数据库来保存Range。</p>
+
+<p>需要tblSegmentTask和tblSegmentTaskRanges两张表。如果当前数据库中没有这两张表，使用apache的ddlutils来创建表。</p>
+
+<p>自动创建表需要引入xworker_core类库和org.apache.ddlutil类库。</p>
+
+<p>数据库定义是xworker.lang.task.impls.DbSegmentDatabase。</p>
+]]></description>
+    <actions>
+        <GetThing name="getDataSource" _xmeta_id_="27067" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataSource" usage="params"></GetThing>
+        <JavaAction name="create" outerClassName="xworker.task.segment.impl.DbRangeStore"
+             methodName="create"></JavaAction>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="dataSource" inputtype="dataSelector" size="60"></attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataSource" extends="xworker.db.jdbc.DataSource" inheritDescription="true"></thing>
+</thing>

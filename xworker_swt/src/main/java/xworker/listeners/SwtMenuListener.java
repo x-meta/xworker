@@ -66,6 +66,11 @@ public class SwtMenuListener implements ThingManagerListener{
     }
     
 	public void loaded(ThingManager thingManager, Thing thing) {
+    	if("xworker.ide.config.ProjectMenuSwt".equals(thing.getMetadata().getPath())){
+    		//使用新的菜单，就得模型公共菜单取消了
+    		return;
+		}
+
 		if("projectMenuSwt".equals(thing.getRoot().getMetadata().getName())){
         	menuCache.update(thing.getRoot());
         	menuCache.checkCache();

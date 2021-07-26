@@ -115,7 +115,7 @@ public class EnviromentChecker extends SecurityChecker{
 	 * @param actionContext
 	 * @return
 	 */
-	public boolean doCheck(String env, String permission, String action, String path, ActionContext actionContext) {
+	public boolean UtilBrowserCreatordoCheck(String env, String permission, String action, String path, ActionContext actionContext) {
 		//优先使用权限校验器来校验一个权限请求
 		PermissionChecker checker = permissions.get(permission);
 		if(checker != null) {

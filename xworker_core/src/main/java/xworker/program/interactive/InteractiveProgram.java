@@ -8,7 +8,7 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
-import xworker.lang.executor.ExecuteRequest;
+import xworker.lang.executor.Request;
 import xworker.lang.executor.Executor;
 
 public class InteractiveProgram {
@@ -36,7 +36,7 @@ public class InteractiveProgram {
 	byte resultType = RESULTTYPE_SELF;
 	Object result;  //执行的结果
 	
-	ExecuteRequest uiRequest = null;
+	Request uiRequest = null;
 	
 	public InteractiveProgram(Thing thing, ActionContext actionContext, InteractiveProgram parent) {
 		this.thing = thing;
@@ -342,15 +342,15 @@ public class InteractiveProgram {
 	
 	public void requestUI() {
 		InteractiveProgram root = getRoot();
-		if(root.uiRequest == null) {
+		if(root.uiRequest == null || root.uiRequest.isFinished()) {
 			Thing uiThing = World.getInstance().getThing("xworker.program.interactive.InteractiveUI").detach();
 			uiThing.putAll(root.thing.getAttributes());
-			root.uiRequest = new ExecuteRequest(uiThing, actionContext);
-			root.uiRequest.putVariable("interactiveProgram", root);			
+
+			root.uiRequest = Executor.requestUI(uiThing, actionContext);
+			root.uiRequest.putVariable("interactiveProgram", root);
 		}
 		
-		root.uiRequest.putVariable("interactiveNode", this);		
-		Executor.requestUI(root.uiRequest);
+		root.uiRequest.putVariable("interactiveNode", this);
 	}
 	
 	public InteractiveProgram getParent() {

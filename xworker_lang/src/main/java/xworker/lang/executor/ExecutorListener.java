@@ -12,4 +12,6 @@ public interface ExecutorListener extends ExecutorService {
 	 * @param actionContext
 	 */
 	public void notify(String message, Thing thing, ActionContext actionContext);
+
+	public void requestUI(Request request);
 }

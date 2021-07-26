@@ -47,7 +47,9 @@ public class AttributeEditorFactory {
             return new DatePickEditor(thingForm, attribute);
         }else if("colorpicker".equals(inputType)) {
             return new ColorEditor(thingForm, attribute);
-        }/*else if("radio".equals(inputType)) {
+        }else if("openWindow".equals(inputType)) {
+            return new OpenWindowEditor(thingForm, attribute);
+        /*else if("radio".equals(inputType)) {
             return new RadioAttributeEditor(formThing, attribute, gridData, actionContext);
         }else if("checkBox".equals(inputType)) {
             return new CheckBoxAttributeEditor(formThing, attribute, gridData, actionContext);
@@ -63,7 +65,8 @@ public class AttributeEditorFactory {
             return new ImageAttributeEditor(formThing, attribute, gridData, actionContext);
         }else if("__subGroup__editor__".equals(inputType)){
             return new SubGroupEditor(formThing, attribute, gridData, actionContext);
-        }*/else {
+        }*/
+        }else {
             return new TextFieldEditor(thingForm, attribute);
         }
     }

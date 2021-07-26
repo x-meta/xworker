@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="FileTreeModel" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.app.model.tree.AbstractTreeModel">
+    <description><![CDATA[<p>文件系统的树模型。</p>
+
+<p><strong>可以重写的方法</strong></p>
+
+<ul>
+	<li><strong>String getFilePath()</strong><br />
+	返回文件的根目录。</li>
+</ul>
+
+<p>&nbsp;</p>]]></description>
+    <actions _xmeta_id_="create">
+        <JavaAction name="getRoot" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.app.model.tree.implnew.FileTreeModel"
+             methodName="getRoot"></JavaAction>
+        <JavaAction name="getChilds" _xmeta_id_="getNodeById" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.app.model.tree.implnew.FileTreeModel" methodName="getChilds">
+            <ins>
+                <param name="id"></param>
+            </ins>
+        </JavaAction>
+        <GetString name="getFilePath" _xmeta_id_="getFilePath1" descriptors="xworker.lang.actions.ActionUtil/@GetString"
+             attributeName="filePath"></GetString>
+        <JavaAction name="getItemById" outerClassName="xworker.app.model.tree.implnew.FileTreeModel"
+             methodName="getItemById"></JavaAction>
+    </actions>
+    <attribute name="name" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="label" validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
+    <attribute name="showFile" label="显示文件" inputtype="truefalse" default="true" validateOnBlur="false"
+         allowDecimals="false" allowNegative="false" en_label="FileVisible"></attribute>
+    <attribute name="filePath" label="文件路径" size="60" colspan="2" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false" en_label="FilePath">
+        <description><![CDATA[<p>文件的路径字符串。</p>
+
+<p>&#39;.&#39;或空表示当前路径，&#39;:&#39;表示使用系统的根，即使用File.listRoots()获取子节点。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+</thing>

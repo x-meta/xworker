@@ -68,6 +68,11 @@ public class DataStore {
 
     boolean loading = true;
 
+    /**
+     * 加载序列，每次加载都会++，监听器可以根据它过滤重复。
+     */
+    int loadSeq = 0;
+
     public DataStore(Thing thing, ActionContext actionContext){
         this.thing = thing;
         dataObject = thing.doAction("getDataObject", actionContext);
@@ -174,40 +179,10 @@ public class DataStore {
 
     private void doLoad(){
         loading = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if(dataObject == null){
-                        return;
-                    }
-
-                    if (params == null) {
-                        params = new HashMap<>();
-                    }
-
-                    List<DataObject> dataObjects = dataObject.doAction("query", actionContext,
-                            "conditionConfig", condition, "conditionData", params, "pageInfo", pageInfo.getPageInfoData());
-                    if(pageInfo.getDataObject() != null && pageInfo.getDataObject() != resultDataObject){
-                        DataStore.this.resultDataObject = pageInfo.getDataObject();
-                        for(DataStoreListener listener : listeners){
-                            listener.onReconfig(DataStore.this, DataStore.this.resultDataObject);
-                        }
-                    }
-
-                    datas.clear();
-                    datas.addAll(dataObjects);
-
-                    for(DataStoreListener listener :listeners){
-                        listener.onLoaded(DataStore.this);
-                    }
-                }catch(Exception e){
-                    Executor.error(TAG, "Do dataobject query exception, dataObject=" + getDataObjectPath(), e);
-                }finally{
-                    loading = false;
-                }
-            }
-        }).start();
+        synchronized (this){
+            loadSeq++;
+            new Thread(new DataStoreLoader(this, loadSeq)).start();
+        }
     }
 
     private String getDataObjectPath(){
@@ -333,6 +308,69 @@ public class DataStore {
 
         for(DataStoreListener listener : listeners){
             listener.onReconfig(this, dataObject);
+        }
+    }
+
+    public static class DataStoreLoader implements  Runnable{
+        DataStore dataStore;
+        int loadSeq;
+
+        public DataStoreLoader(DataStore dataStore, int loadSeq){
+            this.dataStore = dataStore;
+            this.loadSeq = loadSeq;
+        }
+
+        public void run(){
+            try {
+                Thing dataObject = dataStore.dataObject;
+                ActionContext actionContext = dataStore.actionContext;
+                Map<String, Object> params = dataStore.params;
+                PageInfo pageInfo = dataStore.pageInfo;
+                Thing condition = dataStore.condition;
+                Thing resultDataObject = dataStore.resultDataObject;
+                List<DataStoreListener> listeners = dataStore.listeners;
+
+                if(loadSeq != dataStore.loadSeq){
+                    return;
+                }
+
+                if(dataObject == null){
+                    return;
+                }
+
+                if (params == null) {
+                    dataStore.params = new HashMap<>();
+                    params = dataStore.params;
+                }
+
+                for(DataStoreListener listener :dataStore.listeners){
+                    listener.beforeLoad(dataStore, dataStore.condition, dataStore.params);
+                }
+
+                List<DataObject> dataObjects = dataObject.doAction("query", actionContext,
+                        "conditionConfig", condition, "conditionData", params, "pageInfo", pageInfo.getPageInfoData());
+
+                if(loadSeq == dataStore.loadSeq) {
+                    //序列如果不匹配，那么丢弃本次加载
+                    if (pageInfo.getDataObject() != null && pageInfo.getDataObject() != resultDataObject) {
+                        dataStore.resultDataObject = pageInfo.getDataObject();
+                        for (DataStoreListener listener : listeners) {
+                            listener.onReconfig(dataStore, dataStore.resultDataObject);
+                        }
+                    }
+
+                    dataStore.datas.clear();
+                    dataStore.datas.addAll(dataObjects);
+
+                    for (DataStoreListener listener : listeners) {
+                        listener.onLoaded(dataStore);
+                    }
+                }
+            }catch(Exception e){
+                Executor.error(TAG, "Do dataobject query exception, dataObject=" + dataStore.getDataObjectPath(), e);
+            }finally{
+                dataStore.loading = false;
+            }
         }
     }
 }

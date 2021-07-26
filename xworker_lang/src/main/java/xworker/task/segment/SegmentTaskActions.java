@@ -85,9 +85,4 @@ public class SegmentTaskActions {
 		
 		Executor.info(TAG, self.getMetadata().getName() + ": is finished");
 	}
-	
-	public static Thing getRangeTaskThing(ActionContext actionContext){
-		Thing self = actionContext.getObject("self");
-		return self;
-	}
 }

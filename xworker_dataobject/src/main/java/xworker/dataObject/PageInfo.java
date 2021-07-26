@@ -34,14 +34,14 @@ public class PageInfo{
 	private Map<String, Object> data = null;
 	
 	public PageInfo(){
-		 data = new HashMap<String, Object>();
+		 data = new HashMap<>();
 		 setLimit(100);
 		 setPage(0);
 	}
 	
 	public PageInfo(Map<String, Object> data){
 		if(data == null) {
-			data = new HashMap<String, Object>();
+			data = new HashMap<>();
 			this.data = data;
 
 			setLimit(100);

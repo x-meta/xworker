@@ -8,7 +8,7 @@ import org.xmeta.util.UtilData;
 
 public class ExecuteRequestSwtUtils {
 	public static void okButtonSelection(ActionContext actionContext) {
-		ExecuteRequest request = actionContext.getObject("request");
+		Request request = actionContext.getObject("request");
 		Executor.push(request.getExecutorService());
 		try {
 			ActionContainer actions = actionContext.getObject("actions");
@@ -33,7 +33,7 @@ public class ExecuteRequestSwtUtils {
 	}
 	
 	public static void cancelButtonSelection(ActionContext actionContext) {
-		ExecuteRequest request = actionContext.getObject("request");
+		Request request = actionContext.getObject("request");
 		Executor.push(request.getExecutorService());
 		try {
 			request.doAction("cancel");

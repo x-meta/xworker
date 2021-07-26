@@ -146,6 +146,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 		editorContext.put("parentContext", containerContext);
 		editorContext.put("parent", tabFolder);
 		editorContext.put("editorContainer", this);
+		editorContext.put("workbench", this.getWorkbench());
 
 		if (UtilData.isTrue(editor.doAction("hasComposite", editorContext)) == false) {
 			editor.doAction("setContent", editorContext, "params", params);

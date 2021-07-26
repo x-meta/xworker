@@ -807,7 +807,7 @@ public class TableDataStoreListener {
 			            
 			            if("window".equals(editMethod)){
 			                //添加DefaultSelection事件，实现双击表格编辑
-			                Thing listenerThing = world.getThing("xworker.app.view.swt.data.events.TableDataStoreListener/@listeners/@tableDefaultSelection/@tableEditAction1");
+			                Thing listenerThing = world.getThing("xworker.app.view.swt.data.events.TableDataStoreListener/@listeners/@tableDefaultSelection");
 			                SwtListener listener = new SwtListener(listenerThing, actionContext, true);
 			                table.addListener(SWT.DefaultSelection, listener);
 			                self.put("defaultSelectionListener", listener);    
@@ -817,7 +817,7 @@ public class TableDataStoreListener {
 			            }
 			        }
 			        //添加选择事件
-			        Thing listenerThing = world.getThing("xworker.app.view.swt.data.events.TableDataStoreListener/@listeners/@tableSelection/@tabelSelectionAction");
+			        Thing listenerThing = world.getThing("xworker.app.view.swt.data.events.TableDataStoreListener/@listeners/@tableSelection");
 			        SwtListener listener = new SwtListener(listenerThing, actionContext, true);
 			        table.addListener(SWT.Selection, listener);
 			        self.put("selectionListener", listener);  

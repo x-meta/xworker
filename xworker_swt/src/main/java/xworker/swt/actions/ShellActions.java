@@ -23,9 +23,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.util.ThingLoader;
 import org.xmeta.util.UtilMap;
 
 import xworker.lang.actions.ActionUtils;
+import xworker.util.ThreadHelper;
 
 public class ShellActions {
     public static void okButtonSelection(ActionContext actionContext){
@@ -33,9 +35,16 @@ public class ShellActions {
         Text text = actionContext.getObject("text");
         Shell shell = actionContext.getObject("shell");
         ActionContext context = actionContext.getObject("context");
-        
-        actionContext.getScope(0).put("result", text.getText());
-        ActionUtils.executeActionAndChild(thing, "ok", context, "text", text.getText());
+		ThreadHelper threadHelper = actionContext.getObject("threadHelper");
+
+        try {
+        	threadHelper.begin();
+
+			actionContext.getScope(0).put("result", text.getText());
+			ActionUtils.executeActionAndChild(thing, "ok", context, "text", text.getText());
+		}finally {
+        	threadHelper.end();
+		}
         //thing.doAction("ok", context, "text", text.getText());
         shell.dispose();
     }
@@ -45,8 +54,15 @@ public class ShellActions {
         Text text = actionContext.getObject("text");
         Shell shell = actionContext.getObject("shell");
         ActionContext context = actionContext.getObject("context");
-        
-        ActionUtils.executeActionAndChild(thing, "cancel", context, "text", text.getText());
+		Object thingLoadObject = actionContext.get("thingLoadObject");
+		ThreadHelper threadHelper = actionContext.getObject("threadHelper");
+
+		try {
+			threadHelper.begin();
+        	ActionUtils.executeActionAndChild(thing, "cancel", context, "text", text.getText());
+		}finally {
+			threadHelper.end();
+		}
         //thing.doAction("cancel", context, "text", text.getText());
         shell.dispose();
     }

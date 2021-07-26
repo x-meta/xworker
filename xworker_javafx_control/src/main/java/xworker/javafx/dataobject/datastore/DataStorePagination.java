@@ -10,10 +10,11 @@ import xworker.dataObject.DataStore;
 import xworker.dataObject.DataStoreListener;
 import xworker.dataObject.PageInfo;
 
+import java.util.Map;
+
 public class DataStorePagination implements DataStoreListener {
     DataStore dataStore;
     Pagination pagination;
-    boolean onLoading = false;
     VBox blankNode = new VBox();
 
     public DataStorePagination(DataStore dataStore, Pagination pagination){
@@ -23,9 +24,7 @@ public class DataStorePagination implements DataStoreListener {
             @Override
             public Node call(Integer param) {
                 //加载新的页
-                if(onLoading == false) {
-                    dataStore.load(param + 1);
-                }
+                dataStore.load(param + 1);
                 //pagination.setCurrentPageIndex(param);
                 //return new Label("page:"+ param);
                 return blankNode;
@@ -36,8 +35,14 @@ public class DataStorePagination implements DataStoreListener {
 
     @Override
     public void onReconfig(DataStore dataStore, Thing dataObject) {
-        pagination.setPageCount(1);
-        pagination.setCurrentPageIndex(0);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                pagination.setPageCount(1);
+                pagination.setCurrentPageIndex(0);
+            }
+        });
+
     }
 
     @Override
@@ -45,12 +50,11 @@ public class DataStorePagination implements DataStoreListener {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                onLoading = true;
                 try {
                     PageInfo pageInfo = dataStore.getPageInfo();
                     pagination.setPageCount((int) pageInfo.getTotalPage());
-                }finally {
-                    onLoading = false;
+                }finally{
+                    pagination.setDisable(false);
                 }
             }
         });
@@ -60,5 +64,10 @@ public class DataStorePagination implements DataStoreListener {
     @Override
     public void onChanged(DataStore dataStore) {
 
+    }
+
+    @Override
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
+        pagination.setDisable(true);
     }
 }

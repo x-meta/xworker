@@ -38,6 +38,10 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 		this.actionContext = new ActionContext();
 		actionContext.put("parentContext", parentContext);
 		actionContext.put("editor", this);
+		actionContext.put("editorContainer", editorContainer);
+		if(editorContainer != null){
+			actionContext.put("workbench", editorContainer.getWorkbench());
+		}
 	}
 	
 	public EditorImpl(IEditorContainer editorContainer, Thing editor, String id, ActionContainer actions, ActionContext actionContext) {
@@ -46,7 +50,11 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 		this.actions = actions;
 		this.actionContext = actionContext;
 		this.id = id;
-		actionContext.put("editor", this);
+		actionContext.g().put("editor", this);
+		actionContext.g().put("editorContainer", editorContainer);
+		if(editorContainer != null){
+			actionContext.g().put("workbench", editorContainer.getWorkbench());
+		}
 	}
 	
 	/**
@@ -205,7 +213,12 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	@Override
 	public Image getIcon() {
 		if(actions != null) {
-			return actions.doAction("getIcon", actionContext);
+			Object object = actions.doAction("getIcon", actionContext);
+			if(object instanceof  Image){
+				return (Image) object;
+			}
+
+			return null;
 		}else {
 			return null;
 		}

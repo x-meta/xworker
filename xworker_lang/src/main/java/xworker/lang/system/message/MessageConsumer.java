@@ -21,7 +21,11 @@ public class MessageConsumer {
     Thing thing = null;
     ActionContext actionContext;
     List<String> topics;	
-    
+
+    public MessageConsumer(){
+
+	}
+
     public MessageConsumer(ActionContainer actions, String actionName) {
     	this.actions = actions;
     	this.actionName = actionName;
@@ -152,5 +156,17 @@ public class MessageConsumer {
 
 	public void setTopics(List<String> topics) {
 		this.topics = topics;
+	}
+
+	public static void test(){
+MessageConsumer messageConsumer = new MessageConsumer(){
+	@Override
+	public void handleMessage(Message message) {
+		//处理消息...
+
+	}
+};
+
+messageConsumer.subscribe("test.atopic");
 	}
 }

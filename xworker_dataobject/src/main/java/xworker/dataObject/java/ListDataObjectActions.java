@@ -39,6 +39,7 @@ import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectConstants;
 import xworker.dataObject.DataObjectList;
 import xworker.dataObject.PageInfo;
+import xworker.dataObject.query.QueryConfig;
 import xworker.lang.executor.Executor;
 
 public class ListDataObjectActions {
@@ -61,7 +62,7 @@ public class ListDataObjectActions {
         }
         
         //获取要管理的List数据
-        List<Object> datas = (List<Object>) self.doAction("getListData", actionContext);        
+        List<Object> datas = self.doAction("getListData", actionContext);
         if(datas == null){
             Executor.warn(TAG, "no thing datas setted, listDataObjectPath=" + descriptor.getMetadata().getPath());
             throw new ActionException("No thing datas setted");
@@ -109,93 +110,25 @@ public class ListDataObjectActions {
         Thing self = actionContext.getObject("self");
         
         //获取数据实例
-        List<Object> instance = (List<Object>) self.doAction("getListData", actionContext);
-        List<DataObject> matchedDatas = new ArrayList<DataObject>();
-        //log.info("listDataName=" + self.listData + ",instance=" + instance);
-        //从实例中查询匹配的数据
-        if(actionContext.get("conditionConfig") == null && instance != null){
-            //没有条件，返回全部
-            for(Object child : instance){        
-                Object dobj = child;
-                if(self.getString("extends") == null || "".equals(self.getString("extends"))){
-                    dobj = self.doAction("createDataObjectFromObject", actionContext, "data", child, "descriptor", self);
-                }
-                //log.info("dobj=" + dobj);
-                if(dobj != null){
-                    matchedDatas.add((DataObject) dobj);
+        List<Object> instance = self.doAction("getListData", actionContext);
+        List<DataObject> matchedDatas = new ArrayList<>();
+        QueryConfig queryConfig = actionContext.getObject("queryConfig");
+        for(Object child : instance){
+            Object dobj = child;
+            if(self.getString("extends") == null || "".equals(self.getString("extends"))){
+                dobj = self.doAction("createDataObjectFromObject", actionContext, "data", child, "descriptor", self);
+            }
+            if(dobj != null){
+                DataObject dataObject = (DataObject) dobj;
+                if(queryConfig.getCondition().matches((dataObject))){
+                    matchedDatas.add((DataObject) dataObject);
                 }
             }
-        }else{
-        	if(instance != null){
-	            for(Object child : instance){
-	                Object dobj = child;
-	                if(self.getString("extends") == null || "".equals(self.getString("extends"))){
-	                    dobj = self.doAction("createDataObjectFromObject", actionContext, "data", child, "descriptor", self);
-	                }
-	                if(dobj != null){
-	                	Thing conditionConfig = actionContext.getObject("conditionConfig");
-	                    Boolean matched = (Boolean) conditionConfig.doAction("isMatch", actionContext, "condition", actionContext.get("conditionData"), "data", dobj );        
-	                    //log.info("matched=" + matched);
-	                    if(matched){
-	                        matchedDatas.add((DataObject) dobj);
-	                    }        
-	                }
-	            }
-        	}
         }
         
         //分页，如果pageInfo存在则分页，否则是返回符合条件的全部记录
-        if(actionContext.get("pageInfo") != null){
-        	final PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
-            //是否排序
-            if(pageInfo.getSort() != null &&  !"".equals(pageInfo.getSort())){
-            	Collections.sort(matchedDatas, new Comparator<Object>(){
-					@Override
-					public int compare(Object o1, Object o2) {
-						DataObject a = (DataObject) o1;
-						DataObject b = (DataObject) o2;
-						
-						String av = (a == null ? null : a.getString((String) pageInfo.getSort()));
-	                    String bv = (b == null ? null : b.getString((String) pageInfo.getSort()));
-	                    if(av == null && bv == null){
-	                        return 0;
-	                    }else if(av == null && bv != null){
-	                        return  "DESC".equals(pageInfo.getDir()) ? 1 : -1;
-	                    }else if(av != null && bv == null){
-	                        return "DESC".equals(pageInfo.getDir()) ? -1 : 1;
-	                    }else{
-	                        return "DESC".equals(pageInfo.getDir()) ? -av.compareTo(bv) : av.compareTo(bv);
-	                    }            
-					}
-            	});
-            
-            }
-            pageInfo.setTotalCount( matchedDatas.size());
-            if(pageInfo.getLimit() > 0){
-                if(pageInfo.getStart() > matchedDatas.size()){
-                    pageInfo.setStart(matchedDatas.size());
-                }
-                long toIndex = pageInfo.getStart() + pageInfo.getLimit();
-                if(toIndex > matchedDatas.size()){ 
-                    toIndex = matchedDatas.size();
-                }
-                long startIndex = pageInfo.getStart();
-                if(startIndex < 0){
-                    startIndex = 0;
-                }    
-                pageInfo.setDatas(matchedDatas.subList((int) pageInfo.getStart(), (int) toIndex));
-            }else{
-                pageInfo.setDatas(matchedDatas);
-            }
-            return pageInfo.getDatas();
-        }else{
-            if(actionContext.get("pageInfo") != null){
-            	PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
-                pageInfo.setTotalCount(matchedDatas.size());
-                pageInfo.setDatas(matchedDatas);
-            }
-            return matchedDatas;
-        }
+        queryConfig.setQueryResults(matchedDatas);
+        return queryConfig.getPageInfo().getDatas();
     }
 
     @SuppressWarnings("unchecked")
@@ -206,7 +139,7 @@ public class ListDataObjectActions {
         DataObject theData = actionContext.getObject("theData");
         
         //根据主键查找对应的对象
-        List<Object> datas = (List<Object>) self.doAction("getListData", actionContext);
+        List<Object> datas = self.doAction("getListData", actionContext);
         Object[][] keyDatas = theData.getKeyAndDatas();
         boolean updated = false;
         if(datas == null) {
@@ -253,7 +186,7 @@ public class ListDataObjectActions {
         DataObject theData = actionContext.getObject("theData");
         
         //查找同主键的对象是否已经存在
-        List<Object> dataObjects = (List<Object>) self.doAction("getListData", actionContext);
+        List<Object> dataObjects = self.doAction("getListData", actionContext);
         if(dataObjects == null){
             Executor.warn(TAG, "ListDataObject: list data not exists, name=" + self.get("listData"));
             return null;
@@ -297,7 +230,7 @@ public class ListDataObjectActions {
         DataObject theData = actionContext.getObject("theData");
         
         //根据主键查找对象
-        List<Object> datas = (List<Object>) self.doAction("getListData", actionContext);        
+        List<Object> datas = self.doAction("getListData", actionContext);
         Object[][] keyDatas = theData.getKeyAndDatas();
         boolean deleted = false;
         for(Object child : datas){

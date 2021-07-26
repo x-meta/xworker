@@ -21,10 +21,15 @@ public class JavaClassCache {
 	private static final String TAG = JavaClassCache.class.getName();
 	
 	/**
-	 * Java的Pacakge和Class的缓存。
+	 * Java的Pacakge和Class的缓存，按照List存储。
 	 */
-	private static List<JavaCacheItem> items = new ArrayList<JavaCacheItem>();
+	private static List<JavaCacheItem> items = new ArrayList<>();
+	/**
+	 * Package和Class的缓存，按照包名存储。
+	 */
+	private static Map<String, JavaCacheItem> itemMap = new HashMap<>();
 	private static PackageTree packageTree = new PackageTree("");
+	private static JavaCacheItem rootItem = new JavaCacheItem("/", JavaCacheItem.ROOT);
 	
 	/**
 	 * 获取包的树形结构。
@@ -32,6 +37,12 @@ public class JavaClassCache {
 	 * @return
 	 */
 	public static PackageTree getPackageTree(){
+		checkInit();
+		
+		return packageTree;
+	}
+
+	private static void checkInit(){
 		if(items.size() == 0){
 			try {
 				init();
@@ -39,29 +50,20 @@ public class JavaClassCache {
 				Executor.error(TAG, "init class cache error", e);
 			}
 		}
-		
-		return packageTree;
 	}
-	
 	/**
 	 * 获取全部缓存。
 	 * 
 	 * @return
 	 */
 	public static List<JavaCacheItem> getAll(){
-		if(items.size() == 0){
-			try {
-				init();
-			} catch (IOException e) {
-				Executor.error(TAG, "init class cache error", e);
-			}
-		}
+		checkInit();
 		
 		return items;
 	}
 	
 	public static List<String> getAllPackages(){
-		List<String> pks = new ArrayList<String>();
+		List<String> pks = new ArrayList<>();
 		
 		List<JavaCacheItem> allItems = getAll();
 		for(JavaCacheItem item : allItems){
@@ -85,13 +87,13 @@ public class JavaClassCache {
 		String[] paths = path.split("[ ]");
 		
 		//过滤重复类，还不知为何重复，其实已经在早期处理过，但重复还在在
-		Map<String, String> context = new HashMap<String, String>();
-		List<JavaCacheItem> list = new ArrayList<JavaCacheItem>();
+		Map<String, String> context = new HashMap<>();
+		List<JavaCacheItem> list = new ArrayList<>();
 		for(JavaCacheItem item : allItems){
 			boolean ok = true;
 			String pth = item.path.toLowerCase(); 
 			for(String p : paths){
-				if(pth.indexOf(p) == -1){
+				if(!pth.contains(p)){
 					ok = false;
 					break;
 				}
@@ -111,8 +113,8 @@ public class JavaClassCache {
 	/**
 	 * 使用正则表达式搜索。
 	 * 
-	 * @param regex
-	 * @return
+	 * @param regex 正则表达式
+	 * @return 查询结果
 	 */
 	public static List<JavaCacheItem> matchs(String regex){
 		List<JavaCacheItem> allItems = getAll();
@@ -130,8 +132,8 @@ public class JavaClassCache {
 	
 	/**
 	 * 通过path查找类和包的缓存，使用startsWith，不区分大小写。
-	 * @param path
-	 * @return
+	 * @param path 路径
+	 * @return 匹配的结果
 	 */
 	public static List<JavaCacheItem> startsWith(String path){
 		List<JavaCacheItem> allItems = getAll();
@@ -146,13 +148,63 @@ public class JavaClassCache {
 		
 		return list;
 	}
-	
+
+	public static JavaCacheItem getJavaCacheItem(String path){
+		return itemMap.get(path);
+	}
+
+	public static JavaCacheItem getRootItem(){
+		checkInit();
+
+		return rootItem;
+	}
+
 	private static void addPackage(String packageName){
-		items.add(new JavaCacheItem(packageName, JavaCacheItem.PACKAGE));
+		JavaCacheItem item = itemMap.get(packageName);
+		if(item != null){
+			return;
+		}
+
+		item = new JavaCacheItem(packageName, JavaCacheItem.PACKAGE);
+		items.add(item);
+		itemMap.put(packageName, item);
+		addToParent(item);
 	}
 	
 	private static void addClass(String className){
-		items.add(new JavaCacheItem(className, JavaCacheItem.CLASS));
+		JavaCacheItem item = itemMap.get(className);
+		if(item != null){
+			return;
+		}
+
+		item = new JavaCacheItem(className, JavaCacheItem.CLASS);
+		items.add(item);
+		itemMap.put(className, item);
+		addToParent(item);
+	}
+
+	private static void addToParent(JavaCacheItem item){
+		String path = item.getName();
+		int index = path.lastIndexOf(".");
+		if(index == -1){
+			rootItem.addItem(item);
+			item.setParentItem(rootItem);
+		}else{
+			String parentPath = path.substring(0, index);
+			JavaCacheItem parentItem = itemMap.get(parentPath);
+			if(parentItem == null){
+				//parent的是包
+				parentItem = new JavaCacheItem(parentPath, JavaCacheItem.PACKAGE);
+				items.add(parentItem);
+				itemMap.put(parentPath, parentItem);
+
+				//由于父节点是新建的，因此也要加入到它的父节点中
+				addToParent(parentItem);
+			}
+
+			parentItem.addItem(item);
+			item.setParentItem(parentItem);
+		}
 	}
 	
 	/**
@@ -163,7 +215,7 @@ public class JavaClassCache {
 	 * @param parentPackage 父上下文
 	 * @param classContext 类上下文
 	 */
-	public static void getFormFile(File file, String parentPackage, Map<String, String> pkgContext, Map<String, String> classContext){
+	private static void getFormFile(File file, String parentPackage, Map<String, String> pkgContext, Map<String, String> classContext){
 		if(file.isDirectory()){						
 			String packageName = null;
 			if(parentPackage == null){
@@ -211,7 +263,7 @@ public class JavaClassCache {
 	 * 
 	 * @throws IOException IO异常 
 	 */
-	public static void getFromZip(File file, String parentPackage, Map<String, String> pkgContext, Map<String, String> classContext) throws IOException{
+	private static void getFromZip(File file, String parentPackage, Map<String, String> pkgContext, Map<String, String> classContext) throws IOException{
 		JarFile jarFile = new JarFile(file);   
         Enumeration<JarEntry> enumeration = jarFile.entries();   
         while (enumeration.hasMoreElements()) {   
@@ -334,6 +386,7 @@ public class JavaClassCache {
 			if(item.type == JavaCacheItem.PACKAGE){
 				packageTree.addPackage(item.path);
 			}
+			item.sort();
 		}
 	}	
 

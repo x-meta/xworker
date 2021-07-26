@@ -31,10 +31,16 @@ public class TaskManager {
 	private static Map<String, Task> scheduledTasks = new HashMap<String, Task>();
 	
 	/** 非定时任务的执行器 */
-	private static ThreadPoolExecutor executorService = new ThreadPoolExecutor(1, 500, 15, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(10), new NameThreadFactory("xworker-task-thread"), new ThreadPoolExecutor.AbortPolicy());
+	private static ThreadPoolExecutor executorService = new ThreadPoolExecutor(5, 500, 15, TimeUnit.SECONDS, new LinkedBlockingDeque<Runnable>(10), new NameThreadFactory("xworker-task-thread"), new ThreadPoolExecutor.AbortPolicy());
 	
 	/** 定时任务的执行器 */
-	private static ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(1, new NameThreadFactory("xworker-scheduled-task-thead"));
+	private static ScheduledThreadPoolExecutor scheduledExecutorService = new ScheduledThreadPoolExecutor(5, new NameThreadFactory("xworker-scheduled-task-thead"));
+
+	static{
+		executorService.allowCoreThreadTimeOut(true);
+		scheduledExecutorService.setKeepAliveTime(15, TimeUnit.SECONDS);
+		scheduledExecutorService.allowCoreThreadTimeOut(true);
+	}
 	
 	public static ScheduledThreadPoolExecutor getScheduledExecutorService() {
 		return scheduledExecutorService;

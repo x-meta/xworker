@@ -72,7 +72,7 @@ public class XmlUtils {
 	 * 1. 如果描述者只有一个，且描述者是父节点的第一个描述者的事物子节点，那么节点名是描述者的名字。
 	 * 
 	 * @param thing
-	 * @param descriptor
+	 * @param parentDescriptors
 	 * @param writer
 	 * @param ident
 	 * @throws XMLStreamException

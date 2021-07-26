@@ -6,34 +6,56 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 
+import org.xmeta.util.ThingLoader;
 import xworker.swt.design.Designer;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class EditorActions {
-	public static Object create(ActionContext actionContext) {
+	public static Object create(ActionContext actionContext) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 		Thing self = actionContext.getObject("self");
-		
+
+		Object objectForThingLoader = self.doAction("getObjectForThingLoader", actionContext);
+		if(objectForThingLoader != null && objectForThingLoader.equals(self.getString("objectForThingLoader"))){
+			objectForThingLoader = null;
+		}
+		if(objectForThingLoader == null){
+			Class<?> cls = self.doAction("getObjectClassForThingLoader", actionContext);
+			if(cls != null){
+				objectForThingLoader = cls.getConstructor(new Class<?>[]{}).newInstance(new Object[]{});
+			}
+		}
+
 		//保存编辑器事物
 		actionContext.g().put("editorThing", self);
-		
+
 			//创建编辑器
-		Thing editorThing = self.getThing("EditorComposite@0");		
+		Thing editorThing = self.getThing("EditorComposite@0");
 		Composite editorComposite = null;
-		if(editorThing != null) {		
-			editorComposite = editorThing.doAction("create", actionContext);
+		if(editorThing != null) {
+			if(objectForThingLoader == null) {
+				editorComposite = editorThing.doAction("create", actionContext);
+			}else{
+				editorComposite = ThingLoader.load(objectForThingLoader, editorThing, actionContext);
+			}
 		}
-		
+
 		//创建ActionContainer
 		Thing actionsThing = self.getThing("ActionContainer@0");
 		if(actionsThing != null) {
 			ActionContainer actions = actionContext.getObject("actions");
 			if(actions == null) {
-				actions = actionsThing.doAction("create", actionContext);
+				if(objectForThingLoader == null) {
+					actions = actionsThing.doAction("create", actionContext);
+				}else{
+					actions = ThingLoader.load(objectForThingLoader, actionsThing, actionContext);
+				}
 				actionContext.g().put("actions", actions);
 			}else {
 				actions.append(actionsThing);
 			}
 		}
-		
+
 		ActionContext parentContext = actionContext.getObject("parentContext");
 		if(parentContext != null) {
 			IEditorContainer editorContainer = parentContext.getObject("editorContainer");
@@ -43,11 +65,15 @@ public class EditorActions {
 				Thing outlineThing = self.getThing("OutlineComposite@0");
 				if(outlineThing != null) {
 					actionContext.peek().put("parent", outlineParent);
-					outlineThing.doAction("create", actionContext);
+					if(objectForThingLoader == null) {
+						outlineThing.doAction("create", actionContext);
+					}else{
+						ThingLoader.load(objectForThingLoader, outlineThing, actionContext);
+					}
 				}
 			}
 		}
-		
+
 		return editorComposite;
 	}
 		

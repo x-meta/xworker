@@ -50,8 +50,8 @@ public class ProjectCreator {
         //执行其他项目的初始化
         //World.getInstance().runActionAsync("xworker.lang.config.Project/@actions/@initBackground", null);
         
-        //设置默认的执行服务
-        Executor.setDefaultExecutorService(new NotificationExecutorService());
+        //设置默认的执行服务，已取消，Notification框架已取消，专门使用Executor
+        //Executor.addDefaultExecutorService(new NotificationExecutorService());
     }
 
     public static void initBackground(ActionContext actionContext){

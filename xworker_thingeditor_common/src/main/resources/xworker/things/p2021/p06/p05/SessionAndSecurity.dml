@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="SessionAndSecurity" descriptors="xworker.content.QuickContent" label="会话和安全"
+     type="thingDesc" group="xworker.-1000|lang.session" groupDescriptor="true" icon="icons/html.png"
+     th_sortWeight="30" simpleBrowser="true" en_label="Session &amp; Security" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>会话和安全</h1>
+
+<h2>1.前言</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用模型编写一些网络应用，客户端可以通过网络连接服务器，如WEB应用。此时可能同时有多个用户连接到服务器，这时就需要有会话管理。另外有些一个公共的API，如果不加限制可能会存在安全问题，如数据访问的公共服务等。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 会话和安全就是为了解决这些问题的。</p>
+
+<h2>2.会话</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 会话框架是由XMeta引擎提供的，具体会话是由服务器框架管理的，如WEB框架等。</p>
+
+<h3>2.1.获取一个会话</h3>
+
+<pre class="brush:groovy;">
+import org.xmeta.ui.session.Session;
+import org.xmeta.ui.session.SessionManager;
+
+//获取一个会话，总不为null
+Session session = SessionManager.getSession(actionContext);</pre>
+
+<h3>2.2.会话的常用方法</h3>
+
+<pre class="brush:java;">
+public interface Session {
+	public Object getAttribute(String name);
+
+	public void setAttribute(String name, Object value);
+
+	public UtilResource getI18nResource();
+
+	public void setI18nResource(UtilResource resource);
+
+	public Locale getLocale();
+
+	public void setLocale(Locale locale);
+}</pre>
+
+<h2>3.安全</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 安全框架是由xworker_lang模型库提供的。</p>
+
+<h3>3.1.SecurityManager</h3>
+
+<p>&nbsp;&nbsp;&nbsp; SecurityManager给需要安全校验的API提供的，用于校验当前会话是否有权限操作。</p>
+
+<pre class="brush:groovy;">
+import xworker.security.SecurityManager;
+
+//检验权限示例
+//第一个参数是环境，如WEB环境，RAP环境和默认（DEFAULT)等等
+//第二个参数是权限字符串，由需要校验的API提供，如thing_editor是模型编辑器的
+//第三个参数是操作，可选。
+//第四个参数是路径，可选，一般是资源等。
+//第五个参数是变量上下文，用于获取会话
+boolean result = SecurityManager.doCheck(&quot;WEB&quot;, &quot;thing_editor&quot;, &quot;openThing&quot;, &quot;xworker.lang.MetaThing&quot;, actionContext);
+</pre>
+
+<h3>3.2.SecurityHandler</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; xworker.security.SecurityHandler可以注册到SecurityManager，是具体执行doCheck()的。</p>
+
+<h4>3.2.1.注册SecurityHandler</h4>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; SecurityHandler是一个接口，实现后可以使用SecurityManager注册。</p>
+
+<pre class="brush:groovy;">
+import xworker.security.SecurityManager;
+
+//env 环境
+//permission 权限
+//action 动作
+//pathRegex 路径正则表达式
+//handler 安全处理器
+SecurityManager.registSecurityHandler(String env, String permission, String action, String pathRegex, SecurityHandler handler)</pre>
+
+<h4>3.2.2.使用模型注册SecurityHandler</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用xworker.lang.security.SecurityManager模型来编写权限校验器，模型执行后会生成一个或多个SecurityHandler并注册到SecurityManager上。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型<a href="javascript:invoke('thing:xworker.lang.security.DefaultSecurityManager')">xworker.lang.security.DefaultSecurityManager</a>是默认的权限校验。</p>
+
+<h4>3.2.3.SecurityHandler的优先级</h4>
+
+<p>&nbsp;&nbsp;&nbsp; SecurityManager根据env、permission、action和pathRegex四个参数寻找SecurityHandler，查找顺序如下，如果优先的满足了则忽略后续的。</p>
+
+<ol>
+	<li>env、permission、action和pathRegex。</li>
+	<li>env、permission和action。</li>
+	<li>env、permission</li>
+	<li>env</li>
+	<li>校验总是返回false&nbsp;&nbsp;&nbsp;</li>
+</ol>
+
+<h2>4.浏览安全管理</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 可以通过<a href="javascript:invoke('composite:xworker.lang.security.swt.SecurityManager/@cTabFolder')">安全管理</a>界面来查看当前已经注册到SecurityHandler以及已经注册的权限等，一般也可以模型管理器的主界面的工具栏中打开。</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

@@ -8,18 +8,17 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.widgets.*;
 import org.xmeta.ActionContext;
+import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilMap;
 
 import xworker.lang.executor.Executor;
+import xworker.lang.executor.ExecutorService;
 import xworker.swt.design.Designer;
 import xworker.swt.widgets.CoolBarCreator;
 
@@ -35,8 +34,14 @@ public class Workbench implements IEditorListener{
 	CTabFolder leftTabFolder;
 	CTabFolder rightTabFolder;
 	CTabFolder bottomTabFolder;
+	CTabFolder mainTabFolder;
 	Shell shell;
 	IEditor currentEditor;
+	SashForm topSashForm;
+	SashForm mainSashForm;
+	WorkbenchTablFolderListener tablFolderListener = new WorkbenchTablFolderListener(this);
+	ExecutorService logService;
+	ExecutorService requestService;
 	
 	public Workbench(Thing thing, ActionContainer actions, ActionContext actionContext) {
 		this.thing = thing;
@@ -46,10 +51,14 @@ public class Workbench implements IEditorListener{
 		this.leftTabFolder = actionContext.getObject("leftTabFolder");
 		this.rightTabFolder = actionContext.getObject("rightTabFolder");
 		this.bottomTabFolder = actionContext.getObject("bottomTabFolder");
+		this.mainTabFolder = actionContext.getObject("mainTabFolder");
 		this.shell = actionContext.getObject("shell");
+		this.topSashForm = actionContext.getObject("topSashForm");
+		this.mainSashForm = actionContext.getObject("mainSashForm");
 		
 		if(editorContainer != null) {
 			editorContainer.addIEditorListener(this);
+			editorContainer.setWorkbench(this);
 		}
 	}
 	
@@ -100,7 +109,35 @@ public class Workbench implements IEditorListener{
 	public CoolBar getStatusBar() {
 		return actionContext.getObject("mainStatusBar");
 	}
-	
+
+	public SashForm getTopSashForm() {
+		return topSashForm;
+	}
+
+	public SashForm getMainSashForm() {
+		return mainSashForm;
+	}
+
+	public CTabFolder getMainTabFolder() {
+		return mainTabFolder;
+	}
+
+	public ExecutorService getLogService() {
+		return logService;
+	}
+
+	public void setLogService(ExecutorService logService) {
+		this.logService = logService;
+	}
+
+	public ExecutorService getRequestService() {
+		return requestService;
+	}
+
+	public void setRequestService(ExecutorService requestService) {
+		this.requestService = requestService;
+	}
+
 	/**
 	 * 打开一个编辑器，如果编辑器已经存在则返回已有的编辑器。
 	 * 
@@ -164,6 +201,7 @@ public class Workbench implements IEditorListener{
 		
 		View v = getView(id);
 		if(v != null) {
+			v.showView();
 			return v;
 		}
 		final View vv = new View(id, view, params);
@@ -173,14 +211,11 @@ public class Workbench implements IEditorListener{
 		shell.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				try {
-					CTabFolder tabFolder = leftTabFolder;
-					if("right".equals(type) && rightTabFolder != null) {
-						tabFolder = rightTabFolder;
-					}else if("bottom".equals(type) && bottomTabFolder != null) {
-						tabFolder = bottomTabFolder;
+					CTabFolder tabFolder = getTabFolder(type);
+
+					if(tabFolder != null) {
+						vv.create(Workbench.this, tabFolder, closeable, actionContext);
 					}
-										
-					vv.create(Workbench.this, tabFolder, closeable, actionContext);
 				}catch(Exception e) {
 					Executor.warn(TAG, "Open view exception, id=" + iid + ", view=" + view.getMetadata().getPath(), e);
 				}
@@ -188,6 +223,61 @@ public class Workbench implements IEditorListener{
 		});		
 		
 		return vv;
+	}
+
+	private CTabFolder getTabFolder(String type){
+		if("left".equals(type)){
+			if(leftTabFolder == null || leftTabFolder.isDisposed()){
+				Thing thing = World.getInstance().getThing("xworker.swt.app.prototypes.WorkbenchShell/@topSashForm/@mainSashForm/@rightTabFolder");
+				Bindings bindings = actionContext.push();
+				try{
+					bindings.put("parent", mainSashForm);
+					leftTabFolder = thing.doAction("create", actionContext);
+					leftTabFolder.moveAbove(mainTabFolder);
+					leftTabFolder.addCTabFolder2Listener(tablFolderListener);
+					leftTabFolder.addMouseListener(tablFolderListener);
+					mainSashForm.layout();
+				}finally{
+					actionContext.pop();
+				}
+			}
+
+			return leftTabFolder;
+		}else if("right".equals(type)){
+			if(rightTabFolder == null || rightTabFolder.isDisposed()){
+				Thing thing = World.getInstance().getThing("xworker.swt.app.prototypes.WorkbenchShell/@topSashForm/@mainSashForm/@rightTabFolder1");
+				Bindings bindings = actionContext.push();
+				try{
+					bindings.put("parent", mainSashForm);
+					rightTabFolder = thing.doAction("create", actionContext);
+					rightTabFolder.addCTabFolder2Listener(tablFolderListener);
+					rightTabFolder.addMouseListener(tablFolderListener);
+					mainSashForm.layout();
+				}finally{
+					actionContext.pop();
+				}
+			}
+
+			return rightTabFolder;
+		}else if("bottom".equals(type)){
+			if(bottomTabFolder == null || bottomTabFolder.isDisposed()){
+				Thing thing = World.getInstance().getThing("xworker.swt.app.prototypes.WorkbenchShell/@topSashForm/@mainSashForm/@rightTabFolder1");
+				Bindings bindings = actionContext.push();
+				try{
+					bindings.put("parent", topSashForm);
+					bottomTabFolder = thing.doAction("create", actionContext);
+					bottomTabFolder.addCTabFolder2Listener(tablFolderListener);
+					bottomTabFolder.addMouseListener(tablFolderListener);
+					topSashForm.layout();
+				}finally{
+					actionContext.pop();
+				}
+			}
+
+			return bottomTabFolder;
+		}
+
+		return null;
 	}
 	
 	/**
@@ -453,6 +543,15 @@ public class Workbench implements IEditorListener{
 					
 					//执行初始化
 					self.doAction("init", ac);
+
+					//初始化CTabFolder
+					workbench.mainTabFolder.addMouseListener(workbench.tablFolderListener);
+					initTabFolder(workbench.leftTabFolder, workbench.tablFolderListener);
+					initTabFolder(workbench.rightTabFolder, workbench.tablFolderListener);
+					initTabFolder(workbench.bottomTabFolder, workbench.tablFolderListener);
+
+					workbench.mainSashForm.layout();
+					workbench.topSashForm.layout();
 				}catch(Exception e) {
 					Executor.error(TAG, "init error, workbench=" + self.getMetadata().getPath(),  e);
 				}
@@ -460,24 +559,34 @@ public class Workbench implements IEditorListener{
 		});
 		
 		//RAP下默认不显示，不应该不显示的，增加了下面的代码为了能够显示
+		shell.layout();
 		shell.setVisible(true);
 		shell.forceActive();
 		return shell;
 	}
 
+	private static void initTabFolder(CTabFolder cTabFolder, WorkbenchTablFolderListener listener){
+		if(cTabFolder.getItemCount() == 0){
+			cTabFolder.dispose();
+		}else{
+			cTabFolder.addCTabFolder2Listener(listener);
+			cTabFolder.addMouseListener(listener);
+		}
+	}
+
 	private static void createItems(Thing self, String attrName, String actionName, String parentVarName, ActionContext actionContext) {
-		if(attrName == null || self.getBoolean(attrName)) {
-			Thing thing = self.doAction(actionName, actionContext);
-			Object parent = actionContext.get(parentVarName);
-			if(thing != null && parent != null) {				
+		Thing thing = self.doAction(actionName, actionContext);
+		Object parent = actionContext.get(parentVarName);
+		if(parent instanceof Widget && !((Widget) parent).isDisposed()) {
+			if (thing != null && parent != null) {
 				actionContext.peek().put("parent", parent);
-				for(Thing child : thing.getChilds()) {
+				for (Thing child : thing.getChilds()) {
 					child.doAction("create", actionContext);
 				}
 			}
-			if(parent instanceof CTabFolder) {
+			if (parent instanceof CTabFolder) {
 				CTabFolder ctab = (CTabFolder) parent;
-				if(ctab.getItemCount() > 1) {
+				if (ctab.getItemCount() > 1) {
 					ctab.setSelection(0);
 				}
 			}

@@ -15,18 +15,10 @@
 ******************************************************************************/
 package xworker.util;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
@@ -445,7 +437,7 @@ public class UtilAction {
 	
 	/**
 	 * 基于thing1，合并thing2生成一个新的事物路径。
-	 * 主要是想生存一个唯一的路径，而路径没有特别的意义，仅是标识。
+	 * 主要是想生成一个唯一的路径，而路径没有特别的意义，仅是标识。
 	 * 
 	 * @param thing1
 	 * @param thing2
@@ -465,5 +457,165 @@ public class UtilAction {
 		public Object runGroovyAction(Thing thing, ActionContext actionContext) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, IOException;
 		
 		public Object runGroovy(String code, ActionContext actionContext);
+	}
+
+	/**
+	 * 返回生成的动作模型的代码文件路径。比如一个动作需要编辑模型中的代码，那么可以用此路径来保存代码。参看：getClassName();
+	 *
+	 * @param actionThing 动作模型
+	 * @param ext 代码文件后缀
+	 *
+	 * @return 代码文件路径
+	 */
+	public static String getCodeFilePath(Thing actionThing, String ext){
+		String className = getClassName(actionThing);
+		String fileName = className.replace('.', '/');
+		//fileName += ".java";
+
+		return World.getInstance().getPath() + "/actionSources/" + fileName + "." + ext;
+	}
+
+	/**
+	 * <p>返回动作模型的类名。</p>
+	 *
+	 * <p>有些动作需要编译代码，由于模型的路径通常都比较长，为了避免编译后的类名过长，可以用此方法生成一个较短的类名。</p>
+	 *
+	 * @param actionThing 动作模型
+	 *
+	 * @return 动作模型对应的类名
+	 */
+	public static String getClassName(Thing actionThing){
+		String className = "";
+
+		Thing parent = actionThing.getParent();
+		Thing rootParent = actionThing.getRoot();
+		if(parent == null){
+			parent = actionThing;
+		}
+
+		if(rootParent != null){
+			className = className + ".p" + rootParent.getMetadata().getPath().hashCode();
+		}
+
+		if(parent != rootParent){
+			className = className + ".p" + parent.getMetadata().getPath().hashCode();
+		}
+
+		String cName = actionThing.getString("className");
+		if(cName == null || "".equals(cName)){
+			className = className + "." + actionThing.getMetadata().getName();
+		}else{
+			className = className + "." + cName;
+		}
+
+		return Action.getClassName(className);
+	}
+
+	/**
+	 * <p>生成使用xworker.startup.FileStartup来运行模型的配置文件。</p>
+	 *
+	 * <p>有时需要启动一个进程来运行模型，而环境是当前应用的环境。这时可以把当前World加载的类库等保存到配置文件中，FileStartup可以根据
+	 * 配置文件来运行模型。</p>
+	 *
+	 * @param owner 运行者，用于生成配置的路径
+	 * @param thingPath 要运行的模型，可以是文件路径
+	 * @param actionName 要执行的而模型的动作
+	 * @param mainClass 要运行的类，如果没有设置thingPath生效
+	 * @param libDir 额外的类库（可以是目录）
+	 *
+	 * @return 配置文件
+	 */
+	public static File createFileStartupConfig(Thing owner, String thingPath, String actionName, String mainClass, File libDir) throws IOException{
+		File file = new File(getCodeFilePath(owner, "sconf"));
+		if(!file.getParentFile().exists()){
+			file.getParentFile().mkdirs();
+		}
+
+		FileOutputStream fout = new FileOutputStream(file);
+		try {
+			fout.write(("world=" + World.getInstance().getPath() + "\n").getBytes());
+			if(thingPath != null) {
+				if(actionName == null || actionName.isEmpty()){
+					actionName = "run";
+				}
+
+				fout.write(("thing=" + thingPath + "\n").getBytes());
+				fout.write(("action=" + actionName + "\n").getBytes());
+			}else if(mainClass != null){
+				fout.write(("mainclass=" + mainClass + "\n").getBytes());
+			}
+			String classPath = World.getInstance().getClassLoader().getCompileClassPath();
+			if (classPath != null) {
+				for (String path : classPath.split("[" + File.pathSeparator + "]")) {
+					fout.write(("classpath=" + path + "\n").getBytes());
+				}
+			}
+
+			if(libDir != null && libDir.exists()){
+				addLib(libDir, fout);
+			}
+		}finally {
+			fout.close();
+		}
+
+		return file;
+	}
+
+	private static void addLib(File libDir, FileOutputStream fout) throws IOException {
+		if(libDir == null || !libDir.exists()) {
+			return;
+		}
+
+		for(File file : Objects.requireNonNull(libDir.listFiles())) {
+			if(file.isFile()) {
+				String name = file.getName().toLowerCase();
+				if(name.endsWith(".jar") || name.endsWith(".zip")){
+					fout.write(("classpath=" + file.getAbsolutePath() + "\n").getBytes());
+				}
+			}else if(file.isDirectory()) {
+				addLib(file, fout);
+			}
+
+		}
+	}
+
+	public static List<String> getFileStartupClassCommands(Thing owner, String mainClass) throws ClassNotFoundException, IOException {
+		return getFileStartupCommands(owner, null, null, mainClass, null);
+	}
+
+	public static List<String> getFileStartupClassCommands(Thing owner, String mainClass, File libDir) throws ClassNotFoundException, IOException {
+		return getFileStartupCommands(owner, null, null, mainClass, libDir);
+	}
+
+	public static List<String> getFileStartupThingCommands(Thing owner, String thingPath, String actionName) throws ClassNotFoundException, IOException {
+		return getFileStartupCommands(owner, thingPath, actionName, null, null);
+	}
+
+	public static List<String> getFileStartupThingCommands(Thing owner, String thingPath, String actionName, File libDir) throws ClassNotFoundException, IOException {
+		return getFileStartupCommands(owner, thingPath, actionName, null, libDir);
+	}
+
+	private static List<String> getFileStartupCommands(Thing thing, String thingPath, String actionName, String mainClass, File libDir) throws ClassNotFoundException, IOException {
+		List<String> args = new ArrayList<String>();
+		String javaHome = System.getProperty("sun.boot.library.path");
+
+		//java命令，避免有空格，加上双引号
+		args.add("\"" + javaHome + "/java\"");
+
+		//classPath, 添加一个FileStartup的类库即可
+		args.add("-classpath"); //可能会造成路径太长，从而执行错误
+
+		Class<?> cls = World.getInstance().getClassLoader().loadClass("xworker.startup.FileStartup");
+		String loc = cls.getProtectionDomain().getCodeSource().getLocation().getFile();
+		args.add(loc);
+
+		//要运行的类
+		args.add(cls.getName());
+
+		File configFile = UtilAction.createFileStartupConfig(thing, thingPath, actionName, mainClass, libDir);
+
+		args.add(configFile.getAbsolutePath());
+
+		return args;
 	}
 }

@@ -19,18 +19,21 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
 public class ThrowCreator {
-	public static Object run(ActionContext actionContext) throws Exception{	    
-        Thing self = (Thing) actionContext.get("self");        
-        Object throwed = null;
-        for(Thing child : self.getChilds()) {
-        	if("value".equals(child.getMetadata().getName())) {
-        		throwed = child.getAction().run(actionContext, null, false);
-        		break;
-        	}
+	public static Object run(ActionContext actionContext) throws Throwable{
+        Thing self = (Thing) actionContext.get("self");
+
+        Object value = self.doAction("getValue", actionContext);
+        if(value != null){
+            actionContext.setThrowedObject(value);
+            actionContext.setStatus(ActionContext.EXCEPTION);
+            return value;
         }
-        actionContext.setThrowedObject(throwed);
-        actionContext.setStatus(ActionContext.EXCEPTION);
-        
-        return null;  
+
+        Throwable throwable = self.doAction("getThrowable", actionContext);
+        if(throwable != null){
+            throw throwable;
+        }
+
+        throw new Exception(self.getMetadata().getLabel() + ":" + self.getMetadata().getPath());
     }	  
 }

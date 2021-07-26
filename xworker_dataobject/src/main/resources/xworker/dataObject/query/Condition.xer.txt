@@ -1,4 +1,4 @@
-^1617873667363
+^1626833831185
 @
 sname
 Condition
@@ -1237,6 +1237,37 @@ false
     false
     sid
     none
+    @/@operator/@selfDefine
+    sname
+    selfDefine
+    slabel
+    自定义
+    svalue
+    100
+    sdescriptors
+    xworker.lang.MetaDescriptor3/@attribute/@value
+    sinheritDescription
+    false
+    sth_createIndex
+    false
+    sth_registMyChilds
+    false
+    sth_registDisabled
+    false
+    sth_noThingRegistViewer
+    false
+    sth_fileMonitor
+    false
+    sth_mark
+    false
+    sth_registQueryOnlySelf
+    false
+    snotXmlAttribute
+    false
+    sjson_isArray
+    false
+    sid
+    selfDefine
   @/@join
   sname
   join
@@ -1299,10 +1330,8 @@ false
   false
   sinheritDescription
   false
-  Sdescription
-#$@text#$@
-<p>如果为真，且传入的值为String，则会按照英文逗号和空格分割成多个值，如分成了多个值会有多个条件。</p>
-#$@text#$@
+  sdescription
+  <p>如果为真，且传入的值为String，则会按照英文逗号和空格分割成多个值，如分成了多个值会有多个条件。</p>
   svalidateAllowBlank
   true
   LvalidateOnBlur
@@ -1399,47 +1428,6 @@ false
   xworker.lang.MetaDescriptor3/@attribute
   sid
   value
-  @/@sqlColumn
-  sname
-  sqlColumn
-  slabel
-  SqlColumn
-  ssize
-  40
-  sgroup
-  SQL
-  sshowLabel
-  true
-  slabelAlign
-  right
-  slabelVAlign
-  baseline
-  smodifier
-  public
-  sreadOnly
-  false
-  sinheritDescription
-  false
-  Sdescription
-#$@text#$@
-<p>数据库的字段名，生成SQL语句时用，如果为空使用数据属性名称。</p>
-
-<p>由于SQL的where条件的语句是在Condition中生成的，而不是用数据对象的属性，所以在SQL里如果属性的名字和数据库表的字段不一致，那么应该在这里指定。</p>
-#$@text#$@
-  svalidateAllowBlank
-  true
-  LvalidateOnBlur
-  false
-  LallowDecimals
-  false
-  LallowNegative
-  false
-  snotXmlAttribute
-  false
-  sdescriptors
-  xworker.lang.MetaDescriptor3/@attribute
-  sid
-  sqlColumn
   @/@ignoreNull
   sname
   ignoreNull
@@ -1565,6 +1553,110 @@ false
   xworker.lang.MetaDescriptor3/@attribute
   sid
   pattern
+  @/@conditionSql
+  sname
+  selfDefineSql
+  slabel
+  自定义SQL
+  ssize
+  60
+  sgroup
+  SQL
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>自定义的条件sql，一般用于特殊的条件，比如Mysql的全文索引match(column) against (?)。如果不为空会忽略其它SQL相关的设置。</p>
+
+<p><strong>Sql中有且仅有一个？号</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 需要注意的是sql中必须要有一个?号，且只有一个。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sen_label
+  selfDefineSql
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_deprecated
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  conditionSql
+  @/@sqlColumn
+  sname
+  sqlColumn
+  slabel
+  SqlColumn
+  ssize
+  40
+  sgroup
+  SQL
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>数据库的字段名，生成SQL语句时用，如果为空使用数据属性名称。</p>
+
+<p>由于SQL的where条件的语句是在Condition中生成的，而不是用数据对象的属性，所以在SQL里如果属性的名字和数据库表的字段不一致，那么应该在这里指定。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  false
+  LallowDecimals
+  false
+  LallowNegative
+  false
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sid
+  sqlColumn
   @/@dumySql
   sname
   dummySql
@@ -1574,8 +1666,12 @@ false
   SQL
   sshowLabel
   true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
   smodifier
-  public
+  private
   sreadOnly
   false
   sdefault
@@ -1584,6 +1680,8 @@ false
   false
   Sdescription
 #$@text#$@
+<p>Deprecated</p>
+
 <p>如果为true那么总是附加到条件中，但不生成sql，适用于数据对象的表示querySql，并且querySql中含有必须要设置的参数。</p>
 
 <p><strong>注意：</strong></p>

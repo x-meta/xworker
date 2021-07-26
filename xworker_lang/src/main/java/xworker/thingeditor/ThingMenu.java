@@ -17,22 +17,45 @@ public class ThingMenu implements Comparable<ThingMenu>{
     Thing currentThing;
     Thing thing;
     int sortWeight;
+    ActionContext parentContext;
     ActionContext actionContext;
     List<ThingMenu> childs = new ArrayList<>();
     Object thingEditor;
     ThingMenu parent;
+    String editorPlatform;
 
     private ThingMenu(){
 
     }
-    public ThingMenu(Thing currentThing, Thing thing, ActionContext actionContext){
+    public ThingMenu(Thing currentThing, Thing thing, ActionContext parentContext){
         this.currentThing = currentThing;
         this.thing = thing;
-        this.actionContext = actionContext;
+        this.parentContext = parentContext;
+
+        actionContext = new ActionContext();
+        actionContext.put("parentContext", parentContext);
+        actionContext.put("currentThing", currentThing);
+        actionContext.put("thing", currentThing);
+        actionContext.put("rootThing", currentThing.getRoot());
+        actionContext.put("menu", this);
+    }
+
+    public String getEditorPlatform() {
+        return editorPlatform;
+    }
+
+    public void setEditorPlatform(String editorPlatform) {
+        this.editorPlatform = editorPlatform;
     }
 
     public void setThingEditor(Object thingEditor){
         this.thingEditor = thingEditor;
+
+        actionContext.g().put("thingEditor", thingEditor);
+    }
+
+    public Object getThingEditor() {
+        return thingEditor;
     }
 
     public String getLabel(){
@@ -55,8 +78,20 @@ public class ThingMenu implements Comparable<ThingMenu>{
         return actionContext;
     }
 
+    public ActionContext getParentContext() {
+        return parentContext;
+    }
+
     public List<ThingMenu> getChilds(){
         return childs;
+    }
+
+    public boolean isSeparator(){
+        return thing.getBoolean("separator");
+    }
+
+    public String getAccelerator(){
+        return null;
     }
 
     /**
@@ -64,13 +99,7 @@ public class ThingMenu implements Comparable<ThingMenu>{
      * @return
      */
     public Object execute(){
-        ActionContext ac = new ActionContext();
-        ac.put("parentContext", ac);
-        ac.put("currentThing", currentThing);
-        ac.put("menu", this);
-        ac.put("thingEditor", thingEditor);
-
-        Object result = thing.doAction("doAction", ac);
+        Object result = thing.doAction("doAction", actionContext);
 
         //执行动作，如果存在
         String action= thing.getStringBlankAsNull("action");
@@ -78,11 +107,11 @@ public class ThingMenu implements Comparable<ThingMenu>{
             if(action.startsWith("action:")){
                 //执行当前模型的动作
                 String actionName = action.substring(7, action.length());
-                result = currentThing.doAction(actionName, ac);
+                result = currentThing.doAction(actionName, actionContext);
             }else{
                 Action action1 = World.getInstance().getAction(action);
                 if(action1 != null){
-                    result = action1.run(ac);
+                    result = action1.run(actionContext);
                 }
             }
         }
@@ -101,9 +130,9 @@ public class ThingMenu implements Comparable<ThingMenu>{
             }
             Thing window = World.getInstance().getThing(windowPath);
             if(window != null){
-                ac.peek().put("result", result);
-                ac.peek().putAll(params);
-                result = window.doAction("run", ac);
+                actionContext.peek().put("result", result);
+                actionContext.peek().putAll(params);
+                result = window.doAction("run", actionContext);
             }
         }
 
@@ -137,6 +166,17 @@ public class ThingMenu implements Comparable<ThingMenu>{
         return parent;
     }
 
+    public ThingMenu getParent() {
+        return parent;
+    }
+
+    public void sort(){
+        Collections.sort(childs);
+
+        for(ThingMenu child : childs){
+            child.sort();
+        }
+    }
     /**
      * 根据描述者获取定义的菜单。
      *
@@ -149,6 +189,13 @@ public class ThingMenu implements Comparable<ThingMenu>{
         List<Thing> menuBars = descriptor.getChilds("MenuBar");
         for(Thing menuBar : menuBars){
             merge(currentThing, platform, menus, context, menuBar, actionContext);
+        }
+
+        for(Thing ext : descriptor.getAllExtends()){
+            menuBars = ext.getChilds("MenuBar");
+            for(Thing menuBar : menuBars){
+                merge(currentThing, platform, menus, context, menuBar, actionContext);
+            }
         }
 
         menuBars = XWorkerUtils.searchRegistThings(descriptor, "menu", Collections.emptyList(), actionContext);
@@ -164,6 +211,11 @@ public class ThingMenu implements Comparable<ThingMenu>{
         ThingMenu root = new ThingMenu();
         root.childs.addAll(menus);
         root.initParnets(null);
+
+        //对子节点进行排序
+        for(ThingMenu thingMenu : menus){
+            thingMenu.sort();
+        }
 
         return menus;
     }
@@ -198,10 +250,11 @@ public class ThingMenu implements Comparable<ThingMenu>{
             if(thingMenu == null){
                 thingMenu = new ThingMenu(currentThing, menu, actionContext);
                 thingMenu.sortWeight = menu.getInt("sortWeight", 0);
+                thingMenu.setEditorPlatform(platform);
+                menus.add(thingMenu);
             }else{
                 thingMenu.sortWeight = (menu.getInt("sortWeight", 0) + thingMenu.sortWeight) / 2;
             }
-            menus.add(thingMenu);
 
             //初始化子节点
             merge(currentThing, platform, thingMenu.childs, context, menu, actionContext);

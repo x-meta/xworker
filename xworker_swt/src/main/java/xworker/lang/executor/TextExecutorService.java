@@ -13,7 +13,7 @@ public class TextExecutorService {
 		if(text instanceof Text) {
 			logViewer = new TextLogViewer((Text) text);
 		} else if(text != null) {
-			logViewer = self.doAction("createStyledText", actionContext,"text", text);
+			logViewer = self.doAction("createStyledText", actionContext,"logText", text);
 		}
 		
 		if(logViewer != null) {

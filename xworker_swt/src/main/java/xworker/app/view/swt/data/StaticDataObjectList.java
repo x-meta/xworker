@@ -153,4 +153,10 @@ public class StaticDataObjectList {
 		
 		return dataStore.doAction("create", actionContext);
 	}
+
+	public static String getDataStoreVarName(ActionContext actionContext){
+		Thing thing = actionContext.getObject("thing");
+
+		return thing.getMetadata().getName() + "DataStore";
+	}
 }

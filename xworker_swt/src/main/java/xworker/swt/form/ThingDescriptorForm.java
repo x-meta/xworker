@@ -309,7 +309,15 @@ public class ThingDescriptorForm {
 		List<Thing> fs = new ArrayList<Thing>();
 				
 		//过滤相同名称的属性
+		Map<String, Thing> nameContext = new HashMap<>();
 		for(Thing f : descriptor.getAllChilds("attribute")){
+			String name = f.getMetadata().getName();
+			if(nameContext.get(name) != null){
+				continue;
+			}else{
+				nameContext.put(name, f);
+			}
+
 			if(!isPublic(f)) {
 				continue;
 			}
@@ -712,12 +720,20 @@ public class ThingDescriptorForm {
 		List<Thing> fs = new ArrayList<Thing>();
 				
 		//过滤相同名称的属性
+		Map<String, Thing> nameContext = new HashMap<String, Thing>();
 		for(Thing f : structObject.getAllChilds("attribute")){
 			//String inputType = f.getString("inputtype");
 			//if("hidden".equals(inputType)){ //Hidden使用HiddenInput,2012-01-01
 				//隐藏输入的等于不需要输入
 				//continue;
 			//}
+			String name = f.getMetadata().getName();
+			if(nameContext.get(name) != null){
+				continue;
+			}else{
+				nameContext.put(name, f);
+			}
+
 			if(!isPublic(f)) {
 				continue;
 			}

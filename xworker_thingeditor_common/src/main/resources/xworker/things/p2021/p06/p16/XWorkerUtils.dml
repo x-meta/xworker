@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="XWorkerUtils" descriptors="xworker.content.QuickContent" type="groovy" group="xworker.-1000|lang.commonclass"
+     icon="icons/application_view_icons.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <code><![CDATA[import xworker.util.XWorkerUtils;
+
+
+XWorkerUtils.
+println "hello world";]]></code>
+    <description><![CDATA[<h1>XWorker的主要工具类</h1>
+
+<p>包含了和模型编辑器相关的方法，比如打开并编辑一个模型，搜索注册的模型等。</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 选择相应的脚本，通过脚本示例查看XWorkerUtils的主要方法。</p>
+]]></description>
+    <GroovyAction name="ideOpenThing" _xmeta_id_="Test1">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//获取示例模型
+def thing = world.getThing("xworker.things.p2021.p06.p16.XWorkerUtils");
+
+//在模型编辑器中打开并编辑示例模型
+XWorkerUtils.ideOpenThing(thing);]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideOpenThingAndSelectCodeLine">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//获取示例模型
+def thing = world.getThing("xworker.things.p2021.p06.p16.XWorkerUtils/@ideOpenThingAndSelectCodeLine");
+
+//在模型管理器中打开示例模型，并且光标 定位到code属性的第7行
+XWorkerUtils.ideOpenThingAndSelectCodeLine(thing, "code", 7);
+
+//注意：可能有一些编辑器未实现该功能]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideOpenFile">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//打开并编辑一个文件
+def file = new File(world.getPath() + "/work/actionSources/xworker_swt/xworker/swt/SWT/p_211087288/isRWTWebClient.groovy");
+
+XWorkerUtils.ideOpenFile(file);
+
+//注意:XWorker模型管理器的文件编辑功能还不完善，如有问题，请使用其它编辑器编辑文件]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideOpenComposite">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//获取任务管理器模型
+def thing = world.getThing("xworker.ide.task.TaskManager/@mainCompostie");
+
+//在模型编辑器中打开任务管理器，title和params参数可选
+def params = [:];
+XWorkerUtils.ideOpenComposite(thing, "任务管理器",  params);
+
+//Composite模型可以理解为使用模型编写的应用
+//注意：不同的编辑器下的Composite可能是不同的，比如本示例的Composite模型是SWT的，
+//不能在JavaFX模型管理器下打开]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideOpenUrl">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//在IDE中的浏览器中打开一个网页
+XWorkerUtils.ideOpenUrl("https://www.xworker.org");]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideOpenWebControl">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//获取一个WEB模型
+def thing = world.getThing("xworker.example.web.helloworld.HttpDo");
+
+//在IDE的浏览器中打开这个WEB
+XWorkerUtils.ideOpenWebControl(thing);
+
+//获取当前应用使用的WEB服务器的根路径
+Executor.info("XWorkerUtils", XWorkerUtils.getWebUrl());]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideActions">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//返回ide的动作容器
+def actions = XWorkerUtils.getIdeActionContainer();
+
+//打印IDE的动作列表
+for(action in actions.getActionThings()){
+    Executor.info("XWorkerUtils", action.getMetadata().getName());
+}
+
+//执行IDE的动作
+actions.doAction("openUrl", actionContext, "url", "https://www.xworker.org");]]></code>
+    </GroovyAction>
+    <GroovyAction name="ideShowMessage">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.util.IIde;
+import xworker.util.Callback;
+import xworker.lang.executor.Executor;
+
+//打开一个消息框
+def executService = Executor.getLogExecutorService();
+def callback = [
+    call: {
+        code->
+        
+        Executor.push(executService);
+        try{
+            Executor.info("XWorkerUtils", "Pressed button is " + getButtonName(code));
+        }finally{
+            Executor.pop();
+        }
+    }
+] as Callback;
+XWorkerUtils.ideShowMessageBox("Alert", "Hello World", IIde.OK | IIde.CANCEL, callback);
+
+def getButtonName(code){
+    if(code == IIde.ABORT){
+        return "Abort";
+    }
+    
+    if(code == IIde.CANCEL){
+        return "Cancel";
+    }
+    if(code == IIde.IGNORE){
+        return "Ignore";
+    }
+    if(code == IIde.NO){
+        return "No";
+    }
+    if(code == IIde.OK){
+        return "Ok";
+    }    
+    if(code == IIde.OPEN){
+        return "Open";
+    }
+    if(code == IIde.RETRY){
+        return "Retry";
+    }
+    if(code == IIde.SAVE){
+        return "Save";
+    }
+    if(code == IIde.YES){
+        return "Yes";
+    }
+    
+    
+    return coce;
+    
+    return buttons.get(code);
+}]]></code>
+    </GroovyAction>
+    <GroovyAction name="openEditor">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+
+//获取编辑器模型
+def editor = world.getThing("xworker.swt.app.editors.CompositeEditor");
+
+//获取任务管理器模型
+def composite = world.getThing("xworker.ide.task.TaskManager/@mainCompostie");
+
+//编辑器的桉树
+def params = [
+    "composite": composite,
+    "title":"title:" + composite.getMetadata().getLabel(),
+    "simpleTitle":"simpleTitle:" + composite.getMetadata().getLabel()
+];
+
+//打开编辑器
+XWorkerUtils.openEditor("editor:" + composite.getMetadata().getPath(), editor, params);
+
+//注意：不同的编辑器下的Editor可能是不同的，比如本示例的Editor模型是SWT的，
+//不能在JavaFX模型管理器下打开]]></code>
+    </GroovyAction>
+    <GroovyAction name="sep1" seperator="true"></GroovyAction>
+    <GroovyAction name="searchRegistThings">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//查询注册事物，搜索注册到xworker.lang.actions.Actions上的模型
+def thingsIndex = world.getThing("xworker.lang.actions.Actions");
+def things = XWorkerUtils.searchRegistThings(thingsIndex, "child", [], actionContext);
+
+//如果显示到树控件上，可以使用ThingGroup来分组
+def thingGroups = XWorkerUtils.getThingGroups(things);
+
+for(thingGroup in thingGroups){
+    printThingGroup(thingGroup, "");
+}
+
+//输出thingGroup到日志
+def printThingGroup(thingGroup, ident){
+    Executor.info("XWorkerUtils", ident + getGroupLabel(thingGroup));
+    for(childGroup in thingGroup.getChilds()){
+        printThingGroup(childGroup, ident + "    ");
+    }
+}
+
+//获取thingGroup的标签
+def getGroupLabel(thingGroup){
+    if(thingGroup.getThing() != null){
+        return thingGroup.getThing().getMetadata().getLabel();        
+    }else{
+        return thingGroup.getGroup();
+    }
+}]]></code>
+    </GroovyAction>
+    <GroovyAction name="sep2" seperator="true"></GroovyAction>
+    <GroovyAction name="getPreference">
+        <code><![CDATA[import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//一些模型可能有配置，比如Maven相关的模型可能要设置系统中的Maven执行路径
+//这些配置可以用模型来保存，一般会保存到本地模型里，用户可以在这些模型里配置
+
+//获取Maven的配置模型，参数是配置模型的描述者，如果不存在会在_local项目下创建一个对应的模型
+def thing = XWorkerUtils.getPreference("xworker.org.apache.maven.MavenConfig");
+Executor.info("XWorkerUtils", "" + thing);]]></code>
+    </GroovyAction>
+</QuickContent>

@@ -19,6 +19,8 @@ public class DataObjectPlayer implements DataStoreListener {
     boolean autoPlay = false;
     boolean loop = false;
     long interval = 2000;
+    boolean keepLast = false;
+    boolean autoPlaying = false;
 
     public DataObjectPlayer(Thing dataObject, Thing condtion, Map<String, Object> params, ActionContext actionContext){
         dataStore = new DataStore(dataObject, condtion, actionContext);
@@ -43,11 +45,20 @@ public class DataObjectPlayer implements DataStoreListener {
             public void play(DataObjectPlayer player, DataObject dataObject) {
                 thing.doAction("play", actionContext, "player", this, "dataObject", dataObject);
             }
+
+            @Override
+            public void onNoData(DataObjectPlayer player) {
+                thing.doAction("onNoData", actionContext, "player", this);
+            }
         });
 
         dataStore = new DataStore(dataObject, condition, actionContext);
         dataStore.addListener(this);
         dataStore.load(conditionValues);
+    }
+
+    public void setParams(Map<String, Object> params){
+        dataStore.load(params);
     }
 
     public void addListener(DataObjectPlayerListener listener){
@@ -58,6 +69,18 @@ public class DataObjectPlayer implements DataStoreListener {
 
     public void removeListener(DataObjectPlayerListener listener){
         listeners.remove(listener);
+    }
+
+    public boolean isKeepLast() {
+        return keepLast;
+    }
+
+    public void setKeepLast(boolean keepLast) {
+        this.keepLast = keepLast;
+
+        if(keepLast) {
+            last();
+        }
     }
 
     public void next(){
@@ -91,21 +114,24 @@ public class DataObjectPlayer implements DataStoreListener {
 
     public void last(){
         long totalCount = dataStore.getPageInfo().getTotalCount();
+
         currentIndex = totalCount - 1;
         initCurrentIndex();
     }
 
     private void initCurrentIndex(){
-        System.out.println("initcurrentIndex: " + currentIndex);
+        //System.out.println("initcurrentIndex: " + currentIndex);
         long totalCount = dataStore.getPageInfo().getTotalCount();
         if(currentIndex >= totalCount){
             this.currentIndex = totalCount - 1;
             if(autoPlay && loop){
                 currentIndex = 0;
             }else {
-                return;
+                this.currentIndex = totalCount - 1;
             }
-        }else if(currentIndex < 0){
+        }
+
+        if(currentIndex < 0){
             currentIndex = 0;
         }
 
@@ -166,16 +192,9 @@ public class DataObjectPlayer implements DataStoreListener {
                     listener.play(this, dataObject);
                 }
             }
-
-            if(autoPlay){
-                TaskManager.getScheduledExecutorService().schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        next();
-                    }
-                }, interval, TimeUnit.MILLISECONDS);
-            }
         }
+
+        autoPlayNext();
     }
 
     @Override
@@ -184,11 +203,49 @@ public class DataObjectPlayer implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
-        this.playCurrentIndex();
+        if(dataStore.getPageInfo().getTotalCount() <= 0){
+            for(DataObjectPlayerListener listener : listeners){
+                listener.onNoData(this);
+            }
+
+            autoPlayNext();
+        }else {
+            this.playCurrentIndex();
+        }
+    }
+
+    private void autoPlayNext(){
+        if(autoPlay){
+            synchronized (this) {
+                if(autoPlaying){
+                    return;
+                }
+
+                autoPlaying = true;
+                //总是试图刷新
+                TaskManager.getScheduledExecutorService().schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        autoPlaying = false;
+                        if (keepLast) {
+                            last();
+                        } else {
+                            next();
+                        }
+
+                    }
+                }, interval, TimeUnit.MILLISECONDS);
+            }
+        }
     }
 
     @Override
     public void onChanged(DataStore dataStore) {
+    }
+
+    @Override
+    public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
+
     }
 
     public static void create(ActionContext actionContext){

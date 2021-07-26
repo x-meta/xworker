@@ -6,29 +6,31 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.enums.EnumUtils;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.World;
+import org.xmeta.ui.session.Session;
+import org.xmeta.ui.session.SessionManager;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilMap;
 
+import org.xmeta.util.UtilString;
 import xworker.lang.Configuration;
 import xworker.lang.actions.ActionUtils;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 import xworker.util.UtilTemplate;
 import xworker.util.XWorkerUtils;
 
 public class StringDataFactory {
+	private static final String TAG = StringDataFactory.class.getName();
+
 	public static Object getObjectData(Thing owner, Thing action, Object value, ActionContext actionContext) throws Exception {
 		if(value instanceof String) {
 			String v = (String) value;
@@ -37,7 +39,17 @@ public class StringDataFactory {
 		
 		return value;
 	}
-	
+
+	/**
+	 * 根据value参数的值返回指定的对象。
+	 *
+	 * @param owner
+	 * @param action
+	 * @param value
+	 * @param actionContext
+	 * @return
+	 * @throws Exception
+	 */
 	public static Object getStringData(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
 		if(value == null) {
 			return null;
@@ -46,65 +58,198 @@ public class StringDataFactory {
 		if(value.startsWith("_c_.")) {
 			Object data = getConfig(owner, value, actionContext);
 			return getObjectData(owner, action, data, actionContext);
-		}else if(value.startsWith("boolean:")) {
-			return getBoolean(owner, action, value, actionContext);
-		}else if(value.startsWith("bigDecimal:")) {
-			return getBigDecimal(owner, action, value, actionContext);
-		}else if(value.startsWith("bigInteger:")) {
-			return getBigInteger(owner, action, value, actionContext);
-		}else if(value.startsWith("byte:")) {
-			return getBigInteger(owner, action, value, actionContext);
-		}else if(value.startsWith("bytes:")) {
-			return getBytes(owner, action, value, actionContext);
-		}else if(value.startsWith("char:")) {
-			return getChar(owner, action, value, actionContext);
-		}else if(value.startsWith("class:")) {
-			return getClass(owner, action, value, actionContext);
-		}else if(value.startsWith("classes:")) {
-			return getClasses(owner, action, value, actionContext);
-		}else if(value.startsWith("date:")) {
-			return getDate(owner, action, value, actionContext);
-		}else if(value.startsWith("double:")) {
-			return getDouble(owner, action, value, actionContext);
-		}else if(value.startsWith("enum:")) {
-			return getEnum(owner, action, value, actionContext);
-		}else if(value.startsWith("file:")) {
-			return getFile(owner, action, value, actionContext);
-		}else if(value.startsWith("float:")) {
-			return getFloat(owner, action, value, actionContext);
-		}else if(value.startsWith("int:")) {
-			return getInt(owner, action, value, actionContext);
-		}else if(value.startsWith("jsonObj:")) {
-			return getJsonObj(owner, action, value, actionContext);
-		}else if(value.startsWith("long:")) {
-			return getLong(owner, action, value, actionContext);
-		}else if(value.startsWith("ognl:")) {
-			return getOgnl(owner, action, value, actionContext);
-		}else if(value.startsWith("self:")) {
-			return getSelf(owner, action, value, actionContext);
-		}else if(value.startsWith("short:")) {
-			return getShort(owner, action, value, actionContext);
-		}else if(value.startsWith("string:")) {
-			return getString(owner, action, value, actionContext);
-		}else if(value.startsWith("string[]:")) {
-			return getStringArray(owner, action, value, actionContext);
-		}else if(value.startsWith("stringList:")) {
-			return getStirngList(owner, action, value, actionContext);
-		}else if(value.startsWith("thing:")) {
-			return getThing(owner, action, value, actionContext);
-		}else if(value.startsWith("url:")) {
-			return getURL(owner, action, value, actionContext);
-		}else if(value.startsWith("var:")) {
-			return getVar(owner, action, value, actionContext);
-		}else if(value.startsWith("parentVar:")) {
-			return getParnetVar(owner, action, value, actionContext);
-		}else if(value.startsWith("template:")) {
-			return getTemplate(owner, action, value, actionContext);
-		} 
+		}else if(value.contains(":")) {
+			if (value.startsWith("boolean:")) {
+				return getBoolean(owner, action, value, actionContext);
+			} else if (value.startsWith("bigDecimal:")) {
+				return getBigDecimal(owner, action, value, actionContext);
+			} else if (value.startsWith("bigInteger:")) {
+				return getBigInteger(owner, action, value, actionContext);
+			} else if (value.startsWith("byte:")) {
+				return getBigInteger(owner, action, value, actionContext);
+			} else if (value.startsWith("bytes:")) {
+				return getBytes(owner, action, value, actionContext);
+			} else if (value.startsWith("char:")) {
+				return getChar(owner, action, value, actionContext);
+			} else if (value.startsWith("class:")) {
+				return getClass(owner, action, value, actionContext);
+			} else if (value.startsWith("classes:")) {
+				return getClasses(owner, action, value, actionContext);
+			} else if (value.startsWith("date:")) {
+				return getDate(owner, action, value, actionContext);
+			} else if (value.startsWith("double:")) {
+				return getDouble(owner, action, value, actionContext);
+			} else if (value.startsWith("enum:")) {
+				return getEnum(owner, action, value, actionContext);
+			} else if (value.startsWith("file:")) {
+				return getFile(owner, action, value, actionContext);
+			} else if (value.startsWith("float:")) {
+				return getFloat(owner, action, value, actionContext);
+			} else if (value.startsWith("int:")) {
+				return getInt(owner, action, value, actionContext);
+			} else if (value.startsWith("jsonObj:")) {
+				return getJsonObj(owner, action, value, actionContext);
+			} else if (value.startsWith("long:")) {
+				return getLong(owner, action, value, actionContext);
+			} else if (value.startsWith("ognl:")) {
+				return getOgnl(owner, action, value, actionContext);
+			} else if (value.startsWith("self:")) {
+				return getSelf(owner, action, value, actionContext);
+			} else if (value.startsWith("short:")) {
+				return getShort(owner, action, value, actionContext);
+			} else if (value.startsWith("string:")) {
+				return getString(owner, action, value, actionContext);
+			} else if(value.startsWith("cstr:")){
+				return getCString(owner, action, value, actionContext);
+			}else if (value.startsWith("string[]:")) {
+				return getStringArray(owner, action, value, actionContext);
+			} else if (value.startsWith("stringList:")) {
+				return getStirngList(owner, action, value, actionContext);
+			} else if (value.startsWith("thing:")) {
+				return getThing(owner, action, value, actionContext);
+			} else if (value.startsWith("url:")) {
+				return getURL(owner, action, value, actionContext);
+			} else if (value.startsWith("var:")) {
+				return getVar(owner, action, value, actionContext);
+			} else if (value.startsWith("parentVar:")) {
+				return getParnetVar(owner, action, value, actionContext);
+			} else if (value.startsWith("template:")) {
+				return getTemplate(owner, action, value, actionContext);
+			} else if (value.startsWith("action:")) {
+				return getAction(owner, action, value, actionContext);
+			} else if (value.startsWith("label:")) {
+				return getLabel(owner, action, value, actionContext);
+			} else if (value.startsWith("desc:")) {
+				return getDesc(owner, action, value, actionContext);
+			} else if (value.startsWith("attr:")) {
+				return getAttr(owner, action, value, actionContext);
+			} else if (value.startsWith("xworker:")) {
+				return getXWorker(owner, action, value, actionContext);
+			} else if (value.startsWith("hex:")) {
+				return getHex(owner, action, value, actionContext);
+			} else if (value .startsWith("base64:")){
+				return getBase64(owner, action, value, actionContext);
+			} else if (value.startsWith("lang:")){
+				return getLang(owner, action, value, actionContext);
+			}
+		}
 		
 		return value;
 	}
-	
+
+	public static Object getLang(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(5, value.length());
+
+		Map<String, String> params = UtilString.getParams(value);
+		Session session = SessionManager.getSession( actionContext);
+		Locale locale = session.getLocale();
+		String language = locale.getLanguage();
+		value = params.get(language);
+		if(value == null){
+			value = params.get("d");
+		}
+		if(value == null){
+			value = params.get("default");
+		}
+
+		return value;
+	}
+
+	public static Object getBase64(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(7, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+
+		if(obj instanceof byte[]){
+			return Base64.encodeBase64String((byte[]) obj);
+		}else if(obj instanceof  String){
+			return Base64.decodeBase64((String) obj);
+		}else{
+			Executor.debug(TAG, "Can not handle Base64, return null , object=" + obj + ", owner=" + owner.getMetadata().getPath()
+					+ ",action=" + action.getMetadata().getName());
+			return null;
+		}
+	}
+
+	public static Object getHex(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(4, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+
+		if(obj instanceof byte[]){
+			return Hex.encodeHexString((byte[]) obj);
+		}else if(obj instanceof  String){
+			return Hex.decodeHex((String) obj);
+		}else{
+			Executor.debug(TAG, "Can not handle HEX, return null , object=" + obj + ", owner=" + owner.getMetadata().getPath()
+					+ ",action=" + action.getMetadata().getName());
+			return null;
+		}
+	}
+
+	public static Object getXWorker(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(8, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			return World.getInstance().getPath() + "/" + value;
+		}
+		return obj;
+	}
+
+	public static Object getAttr(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(5, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			World.getInstance().get((String) obj);
+		}
+		return obj;
+	}
+
+	public static Object getDesc(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(5, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			Thing thing = World.getInstance().getThing((String) obj);
+			if(thing != null){
+				return thing.getMetadata().getDescription();
+			}
+		}else if(obj instanceof  Thing){
+			return ((Thing) obj).getMetadata().getDescription();
+		}
+
+		return obj;
+	}
+
+	public static Object getLabel(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(6, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			String thingPath = (String) obj;
+			Thing labelThing = World.getInstance().getThing(thingPath);
+			if(labelThing == null){
+				return thingPath;
+			}else{
+				return labelThing.getMetadata().getLabel(actionContext);
+			}
+		}else if(obj instanceof Thing){
+			return ((Thing) obj).getMetadata().getLabel(actionContext);
+		}
+
+		return obj;
+	}
+
+	public static Object getAction(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(7, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			try{
+				return owner.doAction((String) obj, actionContext);
+			}catch(Exception e){
+				throw new ActionException("Get object from action error, path=" + owner.getMetadata().getPath(), e);
+			}
+		}
+
+		return obj;
+	}
+
 	public static Object getTemplate(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
 		value = value.substring(9, value.length());
 		Object obj = getStringData(owner, action, value, actionContext);
@@ -112,7 +257,7 @@ public class StringDataFactory {
 			try{
 				return UtilTemplate.processString(actionContext, (String) obj);
 			}catch(Exception e){
-				throw new ActionException("Get string from template error", e);
+				throw new ActionException("Get string from template error, path=" + owner.getMetadata().getPath(), e);
 			}
 		}
 		
@@ -149,7 +294,9 @@ public class StringDataFactory {
 			return new URL((String) obj);
 		}else if(obj instanceof URI){
 			return ((URI) obj).toURL();
-		}else{			
+		}else if(obj instanceof  File) {
+			return ((File) obj).toURI().toURL();
+		}else{
 			return null;
 		}
 	}
@@ -268,7 +415,9 @@ public class StringDataFactory {
 			String[] array = new String[list.size()];
 			list.toArray(array);
 			return array;
-		}else {
+		}else if(data != null) {
+			return new String[]{data.toString()};
+		}else{
 			return new String[0];
 		}
 	}
@@ -276,9 +425,20 @@ public class StringDataFactory {
 	public static String getString(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
 		value = value.substring(7, value.length());
 		Object data = getStringData(owner, action, value, actionContext);
-		return String.valueOf(data);
+		if(data instanceof String){
+			return (String) data;
+		}else if(data != null){
+			return data.toString();
+		}else{
+			return null;
+		}
 	}
-	
+
+	public static String getCString(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(5, value.length());
+		return value;
+	}
+
 	public static short getShort(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
 		value = value.substring(6, value.length());
 		Object data = getStringData(owner, action, value, actionContext);
@@ -457,6 +617,8 @@ public class StringDataFactory {
 					}else {
 						if(obj instanceof String) {
 							clses[i] = ActionUtils.parseClass((String) obj);
+						}else if(obj instanceof Class<?>) {
+							clses[i] = (Class<?>) obj;
 						}else {
 							clses[i] = obj.getClass();
 						}

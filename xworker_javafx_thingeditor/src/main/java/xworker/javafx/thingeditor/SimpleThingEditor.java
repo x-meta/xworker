@@ -24,7 +24,6 @@ import xworker.io.SystemIoRedirector;
 import xworker.io.SystemIoRedirectorListener;
 import xworker.javafx.application.ThingApplication;
 import xworker.javafx.thing.editor.ThingEditor;
-import xworker.javafx.thing.model.IndexTableViewModelEvent;
 import xworker.javafx.thingeditor.dialog.CreateThingDialog;
 import xworker.javafx.thingeditor.editors.EditorFactory;
 import xworker.javafx.thingeditor.editors.PackageViewEditor;
@@ -127,7 +126,7 @@ public class SimpleThingEditor extends Application {
         });
 
         TextAreaExecutService logService = new TextAreaExecutService(consoleArea);
-        Executor.setDefaultExecutorService(logService);
+        Executor.addDefaultExecutorService(logService);
 
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),

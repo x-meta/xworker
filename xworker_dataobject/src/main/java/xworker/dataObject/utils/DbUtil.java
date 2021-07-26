@@ -1,18 +1,18 @@
-/*******************************************************************************
-* Copyright 2007-2013 See AUTHORS file.
- * 
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-* 
-*   http://www.apache.org/licenses/LICENSE-2.0
-* 
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-******************************************************************************/
+/*****************************************************************************
+ Copyright 2007-2013 See AUTHORS file.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
 package xworker.dataObject.utils;
 
 import java.sql.Connection;
@@ -48,7 +48,7 @@ public class DbUtil {
 		if(pst != null){
 			try{
 				pst.close();
-			}catch(Exception e){				
+			}catch(Exception ignored){
 			}
 		}
 	}
@@ -57,7 +57,7 @@ public class DbUtil {
 		if(rs != null){
 			try{
 				rs.close();
-			}catch(Exception e){				
+			}catch(Exception ignored){
 			}
 		}
 	}
@@ -66,25 +66,19 @@ public class DbUtil {
 		if(con != null){
 			try{
 				con.close();
-			}catch(Exception e){				
+			}catch(Exception ignored){
 			}
 		}
 	}
 	
 	/**
 	 * 返回条件表达式sql.
-	 * 
-	 * @param condition
-	 * @param actionContext
-	 * @param datas
-	 * @param cds
-	 * @return
 	 */
 	public static String getConditionSql(Object condition, ActionContext actionContext, Object datas, Object cds){
 		if(actionContext == null){
 			actionContext = new ActionContext();
 		}
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("datas", datas);
 		params.put("cds", cds);
 		
@@ -94,7 +88,7 @@ public class DbUtil {
 		bindings.put("self", condition);
 		
 		try{
-			return (String) action.run(actionContext, params, false);
+			return action.run(actionContext, params, false);
 		}finally{
 			actionContext.pop();
 			//log.info("run action time " + actionThing.getMetadata().getPath() + " : " + (System.currentTimeMillis() - start));
@@ -103,14 +97,15 @@ public class DbUtil {
 	
 	/**
 	 * 从结果集中读取数据。
-	 * 
-	 * @param rs
-	 * @param descriptor
-	 * @return
-	 * @throws SQLException
 	 */
 	public static Object getValue(ResultSet rs, Thing descriptor) throws SQLException{
 		String name = descriptor.getString("fieldName");
+		if(name != null) {
+			int index = name.toLowerCase().lastIndexOf(" as ");
+			if (index != -1) {
+				name = name.substring(index + 2).trim();
+			}
+		}
 		String type = descriptor.getString("type");
 		Object object = null;
 		try{
@@ -147,71 +142,55 @@ public class DbUtil {
 		case Types.BIGINT:
 			return rs.getBigDecimal(columnIndex).toBigInteger();
 		case Types.BINARY:
-			return rs.getBinaryStream(columnIndex);
+			case Types.VARBINARY:
+				return rs.getBinaryStream(columnIndex);
 		case Types.BIT:
-			return rs.getByte(columnIndex);
+			case Types.SMALLINT:
+			case Types.TINYINT:
+				return rs.getByte(columnIndex);
 		case Types.BLOB:
 			return rs.getBlob(columnIndex);
 		case Types.BOOLEAN:
 			return rs.getBoolean(columnIndex);
 		case Types.CHAR:
-			return rs.getShort(columnIndex);
+			case Types.REAL:
+				return rs.getShort(columnIndex);
 		case Types.CLOB:
 			return rs.getClob(columnIndex);
 		case Types.DATALINK:
-			return rs.getString(columnIndex);
+			case Types.LONGNVARCHAR:
+			case Types.LONGVARBINARY:
+			case Types.LONGVARCHAR:
+			case Types.NVARCHAR:
+			case Types.REF:
+			case Types.ROWID:
+			case Types.SQLXML:
+			case Types.STRUCT:
+			case Types.VARCHAR:
+				return rs.getString(columnIndex);
 		case Types.DATE:
 			return rs.getDate(columnIndex);
 		case Types.DECIMAL:
-			return rs.getDouble(columnIndex);
-		case Types.DOUBLE:
-			return rs.getDouble(columnIndex);
-		case Types.FLOAT:
+			case Types.DOUBLE:
+			case Types.NUMERIC:
+				return rs.getDouble(columnIndex);
+				case Types.FLOAT:
 			return rs.getFloat(columnIndex);
 		case Types.INTEGER:
 			return rs.getInt(columnIndex);
 		case Types.JAVA_OBJECT:
-			return rs.getObject(columnIndex);
-		case Types.LONGNVARCHAR:
-			return rs.getString(columnIndex);
-		case Types.LONGVARBINARY:
-			return rs.getString(columnIndex);
-		case Types.LONGVARCHAR:
-			return rs.getString(columnIndex);
-		case Types.NCHAR:
+			case Types.OTHER:
+				return rs.getObject(columnIndex);
+			case Types.NCHAR:
 			return rs.getStatement();
 		case Types.NCLOB:
 			return rs.getNClob(columnIndex);
 		case Types.NULL:
 			return null;
-		case Types.NUMERIC:
-			return rs.getDouble(columnIndex);
-		case Types.NVARCHAR:			
-			return rs.getString(columnIndex);
-		case Types.OTHER:
-			return rs.getObject(columnIndex);
-		case Types.REAL:
-			return rs.getShort(columnIndex);
-		case Types.REF:
-			return rs.getString(columnIndex);
-		case Types.ROWID:
-			return rs.getString(columnIndex);
-		case Types.SMALLINT:
-			return rs.getByte(columnIndex);
-		case Types.SQLXML:
-			return rs.getString(columnIndex);
-		case Types.STRUCT:
-			return rs.getString(columnIndex);
-		case Types.TIME:
+			case Types.TIME:
 			return rs.getTime(columnIndex);
 		case Types.TIMESTAMP:
 			return rs.getTimestamp(columnIndex);
-		case Types.TINYINT:
-			return rs.getByte(columnIndex);
-		case Types.VARBINARY:
-			return rs.getBinaryStream(columnIndex);
-		case Types.VARCHAR:
-			return rs.getString(columnIndex);
 		}		
 		return rs.getString(columnIndex);
 	}
@@ -221,7 +200,7 @@ public class DbUtil {
 	 * 
 	 * @param sqlType sql类型
 	 * @param scale 小数的右边位数
-	 * @return
+	 * @return 类型字符串
 	 */
 	public static String getXWorkerType(int sqlType, int scale){
 		switch(sqlType){
@@ -283,12 +262,6 @@ public class DbUtil {
 	
 	/**
 	 * 通过名称和类型获取结果集的值。
-	 * 
-	 * @param rs
-	 * @param name
-	 * @param type
-	 * @return
-	 * @throws SQLException
 	 */
 	public static Object getValue(ResultSet rs, String name, String type) throws SQLException{
 		if("string".equals(type)){
@@ -325,12 +298,6 @@ public class DbUtil {
 	
 	/**
 	 * 设置参数。
-	 * 
-	 * @param pst
-	 * @param index
-	 * @param key
-	 * @param obj
-	 * @throws SQLException 
 	 */
 	public static void setParameter(PreparedStatement pst, int index, String key, DataObject obj) throws SQLException{
 		Thing descriptor = obj.getMetadata().getDefinition(key);
@@ -339,7 +306,7 @@ public class DbUtil {
 		}
 		
 		String type = descriptor.getString("type");
-		Object value = null;
+		Object value;
 		if("attribute".equals(descriptor.getThingName())){
 			value = obj.get(key);
 		}else{
@@ -355,11 +322,6 @@ public class DbUtil {
 	/**
 	 * 设置参数值。
 	 * 
-	 * @param pst
-	 * @param index
-	 * @param type
-	 * @param value
-	 * @throws SQLException
 	 */
 	public static void setParameterValue(PreparedStatement pst, int index, String type, Object value) throws SQLException{
 		if(type == null || "string".equals(type) || "".equals(type)){
@@ -414,89 +376,4 @@ public class DbUtil {
 			throw new XMetaException("not implemented type " + type);
 		}
 	}
-	
-	/**
-	 * 设置参数值。
-	 * 
-	 * @param pst
-	 * @param index
-	 * @param type
-	 * @param value
-	 * @throws SQLException
-	 */
-	/*
-	public static void setParameterValue(Query pst, int index, String type, Object value) throws SQLException{
-		if("string".equals(type)){
-			pst.setString(index, UtilData.getString(value, null));
-		}else if("byte".equals(type)){
-			pst.setByte(index, UtilData.getByte(value, (byte) 0));
-		}else if("char".equals(type)){			
-			pst.setCharacter(index, UtilData.getChar(value, (char) 0));
-		}else if("short".equals(type)){
-			pst.setShort(index, UtilData.getShort(value, (short) 0));
-		}else if("int".equals(type)){
-			pst.setInteger(index, (int) UtilData.getLong(value, 0));
-		}else if("long".equals(type)){
-			pst.setLong(index, UtilData.getLong(value, 0));
-		}else if("byte[]".equals(type)){
-			pst.setBinary(index, UtilData.getBytes(value, null));
-		}else if("float".equals(type)){
-			pst.setFloat(index, UtilData.getFloat(value, 0));
-		}else if("double".equals(type)){
-			pst.setDouble(index, UtilData.getDouble(value, 0));
-		}else if("date".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				pst.setDate(index, new java.sql.Date(date.getTime()));
-			}else{
-				pst.setDate(index, null);
-			}
-		}else if("datetime".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				pst.setTimestamp(index, new java.sql.Timestamp(date.getTime()));
-			}else{
-				pst.setTimestamp(index, null);
-			}
-		}else if("time".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				pst.setTime(index, new java.sql.Time(date.getTime()));
-			}else{
-				pst.setTime(index, null);
-			}
-		}else{
-			throw new XMetaException("not implemented type " + type);
-		}
-	}*/
-	/**
-	 * 设置参数。
-	 * 
-	 * @param pst
-	 * @param index
-	 * @param key
-	 * @param obj
-	 * @throws SQLException 
-	 *//*
-	public static void setParameter(Query pst, int index, String key, DataObject obj) throws SQLException{
-		Thing descriptor = obj.getMetadata().getDefinition(key);
-		if(descriptor == null){
-			throw new XMetaException("attribute " + key + " is not defined in " + obj.getMetadata().getDescriptor().getMetadata().getPath());
-		}
-		
-		String type = descriptor.getString("type");
-		Object value = null;
-		if("attribute".equals(descriptor.getThingName())){
-			value = obj.get(key);
-		}else{
-			value = obj.get(key);
-			if(value != null){
-				DataObject v = (DataObject) value;
-				value = v.get(descriptor.getString("refAttributeName"));
-			}
-		}
-		setParameterValue(pst, index, type, value);
-	}
-	*/
-	
 }

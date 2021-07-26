@@ -1,4 +1,4 @@
-^1600243562376
+^1625021729869
 @
 sname
 ThingDoc
@@ -1074,14 +1074,16 @@ return "success";
 <#list actions as action>
 <p>
 <b>定义在：</b><a href="javascript:invoke('thing:${action.thing.metadata.path}')">${action.thing.getParent().getParent().metadata.label}</a><br/>
-${action.description?if_exists}
-<b>用途：</b>${action.thing.usage?if_exists}<br/>
+<#if action.thing.usage?exists><b>用途：</b>${action.thing.usage?if_exists}<br/></#if>
 <b>返回值：</b>${action.returnType}<br/>
+<#if 0 < action.params?size >
 <b>参数列表：</b><br/>
 <#list action.params as param>
 <b>&nbsp;&nbsp;${param.name} </b>: ${param.type}<br/>
 ${param.description?if_exists}
 </#list>
+</#if>
+${action.description?if_exists}
 </p>
 </#list>
 #$@text#$@

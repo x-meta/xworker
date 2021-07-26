@@ -18,7 +18,7 @@ package xworker.dataObject.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,6 +43,9 @@ import com.csvreader.CsvWriter;
 
 import xworker.dataObject.DataObject;
 import xworker.dataObject.PageInfo;
+import xworker.dataObject.db.DbDataObjectIterator;
+import xworker.dataObject.db.DbDataObject;
+import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.query.UtilCondition;
 import xworker.lang.executor.Executor;
 import xworker.task.UserTask;
@@ -157,21 +160,19 @@ public class DataObjectUtil {
 	public static Thing createConditionThing(String attrName, String dataName, byte operator, String join){
 		Thing condition = new Thing("xworker.dataObject.query.Condition");
 		condition.initDefaultValue();
+		condition.put("name", attrName);
 		condition.put("attributeName", attrName);
 		condition.put("dataName", dataName);
 		condition.put("operator", String.valueOf(operator));
-		condition.put("join", join);
+		if(join != null) {
+			condition.put("join", join);
+		}
 		
 		return condition;
 	}
 	
 	/**
 	 * 创建一个查询配置事物，连接方式是and。
-	 * 
-	 * @param attrName
-	 * @param dataName
-	 * @param operator
-	 * @return
 	 */
 	public static Thing createConditionThing(String attrName, String dataName, byte operator){
 		return createConditionThing(attrName, dataName, operator, UtilCondition.AND);
@@ -179,9 +180,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 创建一个查询配置事物，连接方式是and，匹配方式是eq。
-	 * @param attrName
-	 * @param dataName
-	 * @return
 	 */
 	public static Thing createConditionThing(String attrName, String dataName){
 		return createConditionThing(attrName, dataName, UtilCondition.eq, UtilCondition.AND);
@@ -189,12 +187,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 查询数据对象。
-	 * 
-	 * @param dataObject 
-	 * @param conditionConfig
-	 * @param conditionData
-	 * @param pageInfo
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<DataObject> query(Thing dataObject, Thing conditionConfig, Map<String, Object> conditionData, PageInfo pageInfo, ActionContext actionContext){
@@ -204,12 +196,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 查询数据对象。
-	 * 
-	 * @param dataObject
-	 * @param conditionConfig
-	 * @param conditionData
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> query(Thing dataObject, Thing conditionConfig, Map<String, Object> conditionData, ActionContext actionContext){
 		return query(dataObject, conditionConfig, conditionData, null, actionContext);
@@ -218,11 +204,6 @@ public class DataObjectUtil {
 	/**
 	 * 查询数据对象，使用Map&lt;String, Object&gt;生成查询条件和查询的参数值。
 	 * 其中key为op_开头的为条件的操作类型，是UtilCondition的常量。
-	 * 
-	 * @param dataObjectPath
-	 * @param conditions
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> query(String dataObjectPath, Map<String, Object> conditions, ActionContext actionContext){
 		if(conditions == null){
@@ -257,10 +238,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 从一组DataObject中按照查询条件过滤数据，如果有分页也进行分页处理。
-	 * 
-	 * @param dataObjects
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> query(List<DataObject> dataObjects, ActionContext actionContext){
 		List<DataObject> matchedDatas = null;
@@ -286,10 +263,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 执行分页操作如果actionContext.get("pageInfo")不为null的话。
-	 * 		
-	 * @param dataObjects
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> doPage(List<DataObject> dataObjects, ActionContext actionContext){
 		if(actionContext.get("pageInfo") != null){
@@ -347,11 +320,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 批量删除数据。
-	 * 
-	 * @param dataObjectPath
-	 * @param conditions
-	 * @param actionContext
-	 * @return
 	 */
 	public static int deleteBatch(String dataObjectPath, Map<String, Object> conditions, ActionContext actionContext){
 		if(conditions == null){
@@ -375,11 +343,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 删除数据。
-	 * 
-	 * @param dataObjectPath
-	 * @param conditions
-	 * @param actionContext
-	 * @return
 	 */
 	public static int delete(String dataObjectPath, Map<String, Object> conditions, ActionContext actionContext){
 		if(conditions == null){
@@ -403,11 +366,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 使用标识读取一个数据对象。
-	 * 
-	 * @param dataObject
-	 * @param id
-	 * @param actionContext
-	 * @return
 	 */
 	public static DataObject load(Thing dataObject, Object id, ActionContext actionContext){
 		DataObject theData = new DataObject(dataObject);
@@ -431,9 +389,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 相当于dataObject.toString()，返回数据对象的labelField设定的字段的值的toString()。
-	 * 
-	 * @param dataObject
-	 * @return
 	 */
 	public static String getDisplayString(DataObject dataObject) {
 		if(dataObject == null) {
@@ -535,10 +490,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 根据属性的类型定义返回具体类型的值。
-	 * 
-	 * @param value
-	 * @param type
-	 * @return
 	 */
 	public static Object getAttributeValue(Object value, String type){
 		if(type == null || "".equals(type)){
@@ -641,7 +592,7 @@ public class DataObjectUtil {
                 }catch(Exception e){
                 }
             }
-            if(numberStr != null && numberStr != ""){
+            if(numberStr != ""){
                 try{
                     double d = (Double) OgnlUtil.getValue(numberStr, actionContext);
                     //log.info("d=" + d);
@@ -655,18 +606,15 @@ public class DataObjectUtil {
             return defaultValue;
         }
 	}
-	
+
+	public static List<DataObject> dbResultsToDataObjects(Thing dataObject, ResultSet rs) throws SQLException {
+		return dbResultsToDataObjects(dataObject, dataObject.getChilds("attribute"), rs);
+	}
 	/**
 	 * 数据库结果集到数据对象的转换。
-	 * 
-	 * @param rs
-	 * @param dataObject
-	 * @return
-	 * @throws SQLException
 	 */
-	public static List<DataObject> dbResultsToDataObjects(Thing dataObject, ResultSet rs) throws SQLException {
-		List<DataObject> ds = new ArrayList<DataObject>();
-		List<Thing> attributes = dataObject.getChilds("attribute");
+	public static List<DataObject> dbResultsToDataObjects(Thing dataObject, List<Thing> attributes, ResultSet rs) throws SQLException {
+		List<DataObject> ds = new ArrayList<>();
 		UserTask userTask = DataObject.getUserTask(dataObject, null);
 		
 		DataObject.beginThreadCache();
@@ -708,11 +656,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 用指定的字段对一个DataObject列表排序。
-	 * 
-	 * @param datas
-	 * @param field
-	 * @param asc
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<DataObject> sort(List<DataObject> datas, String field, boolean asc){
@@ -728,11 +671,6 @@ public class DataObjectUtil {
 	
 	/**
 	 * 把一个数据对象数据转化为csv。
-	 * 
-	 * @param data
-	 * @param hasHeader
-	 * @return
-	 * @throws IOException
 	 */
 	public static String toCsv(DataObject data, boolean hasHeader) throws IOException{
 		if(data == null){
@@ -752,7 +690,6 @@ public class DataObjectUtil {
 	 * @param hasHeader 是否包含头
 	 * 
 	 * @return 如果数据不为空返回csv字符串，否则返回null
-	 * @throws IOException 
 	 */
 	public static String toCsv(List<DataObject> datas, boolean hasHeader) throws IOException{
 		if(datas == null || datas.size() == 0){
@@ -762,7 +699,7 @@ public class DataObjectUtil {
 		//创建csv
 		OutputStream output = new ByteArrayOutputStream();
 		
-		CsvWriter writer = new CsvWriter(output, ',', Charset.forName("utf-8"));
+		CsvWriter writer = new CsvWriter(output, ',', StandardCharsets.UTF_8);
 		Thing dataObject = datas.get(0).getMetadata().getDescriptor();
 		
 		//写入标题
@@ -776,28 +713,26 @@ public class DataObjectUtil {
 		//写入行数据
 		for(DataObject data : datas){
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			if(writer != null){
-				writer.endRecord();
-				for(Thing attr : dataObject.getChilds("attribute")){
-					String type = attr.getString("type");
-					String svalue = "";
-					if("date".equals(type) || "datetime".equals(type)){
-						Date value = data.getDate(attr.getMetadata().getName());
-						if(value != null){
-							svalue = sf.format(value);
-						}
-					}else{
-						svalue = data.getString(attr.getMetadata().getName());					
+			writer.endRecord();
+			for(Thing attr : dataObject.getChilds("attribute")){
+				String type = attr.getString("type");
+				String svalue = "";
+				if("date".equals(type) || "datetime".equals(type)){
+					Date value = data.getDate(attr.getMetadata().getName());
+					if(value != null){
+						svalue = sf.format(value);
 					}
-					if(svalue == null){
-						svalue = "";
-					}
-
-					writer.write(svalue);
+				}else{
+					svalue = data.getString(attr.getMetadata().getName());
 				}
-				
-				writer.flush();
-			}	
+				if(svalue == null){
+					svalue = "";
+				}
+
+				writer.write(svalue);
+			}
+
+			writer.flush();
 		}
 		
 		writer.flush();
@@ -806,84 +741,89 @@ public class DataObjectUtil {
 		return output.toString();
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static List<DataObject> dbQueryPage(Thing dataObjectSelf, Connection con, Object cds, PageInfo pageInfo, int pageType, String countSql, String querySql, ActionContext actionContext) throws Exception{
-    	Thing self = dataObjectSelf ;
-        List<Thing> attributes = actionContext.getObject("attributes");
-        UserTask userTask = DataObject.getUserTask(self, actionContext);
-        
-        PreparedStatement pst = null;
-        ResultSet rs = null;
-        try{
-            //查询总数
-        	if(countSql != null && !"".equals(countSql)){
-        		if(self.getBoolean("showSql")){
-                    Executor.info(TAG, countSql);
-                }
-        		
-        		UserTaskManager.setUserTaskLabelDetail(userTask, "Query total count", countSql);
-	            pst = con.prepareStatement(countSql);
-	            UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
-	            UserTaskManager.setUserTaskData(userTask, "pst", pst);
-	            
-	            //设置查询参数
-	            self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);
-	            rs = pst.executeQuery();
-	            rs.next();
-	            pageInfo.setTotalCount(rs.getInt(1));
-	            rs.close();
-	            pst.close();
-        	}else{
-        		if(self.getBoolean("showSql")){
-                    Executor.info(TAG, "No count sql, use page count totalCount");
-                }
-        		
-        		//不知道总数的情况下，设置比当前总数大一
-        		//pageInfo.setTotalCount((pageInfo.getPage() + 1) * pageInfo.getLimit());
-        	}
-            
-            //分页查询
-        	String sql = querySql;            
-            if(self.getBoolean("showSql")){
-                Executor.info(TAG, sql);
-            }
-            pst = con.prepareStatement(sql);
-            self.doAction("setStatementParams", actionContext, "cds", cds, "pst", pst, "attributes", attributes, "index", 1);
-            if(pageInfo != null && pageInfo.getLimit() != 0){
-                int index = ((List) cds).size() + 1;
-                long start = pageInfo.getStart() + 1;
-                
-                switch(pageType){
-                case DataObjectUtil.PAGE_BETWEEN:
-                	 pst.setLong(index, start);
-                     pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
-                     break;
-                case DataObjectUtil.PAGE_LIMIT:
-                	pst.setLong(index, start-1);
-                    pst.setLong(index + 1, pageInfo.getLimit());
-                     break;
-                     default:
-                    	 throw new ActionException("Unknown page type " + pageType + ", dataObject=" + self.getMetadata().getPath());
-                }
-            }
-            
-            //执行sql
-            UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
-            UserTaskManager.setUserTaskData(userTask, "pst", pst);            
-            rs = pst.executeQuery();
-           
-            //读取记录
-            List<DataObject> ds = DataObjectUtil.dbResultsToDataObjects(self, rs); 
-            pageInfo.setDatas(ds);
-            
-            return ds;
-        }finally{
-            if(rs != null){
-                rs.close();
-            }
-            if(pst != null){
-                pst.close();
-            }
-        }
+	@SuppressWarnings({"unchecked"})
+	public static List<DataObject> dbQueryPage(Thing dataObjectSelf, List<Thing> attributes, Connection con, QueryConfig queryConfig, PageInfo pageInfo, int pageType, String countSql, String querySql, ActionContext actionContext) throws Exception{
+        return (List<DataObject>) doDbQueryPage(false, dataObjectSelf, attributes, con, queryConfig, pageInfo, pageType, countSql, querySql, actionContext);
     }
+
+	public static Object doDbQueryPage(Boolean createIterator, Thing dataObjectSelf, List<Thing> attributes, Connection con, QueryConfig queryConfig, PageInfo pageInfo, int pageType, String countSql, String querySql, ActionContext actionContext) throws Exception{
+		UserTask userTask = DataObject.getUserTask(dataObjectSelf, actionContext);
+
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		try{
+			//查询总数
+			if(countSql != null && !"".equals(countSql)){
+				if(dataObjectSelf.getBoolean("showSql")){
+					Executor.info(TAG, countSql);
+				}
+
+				UserTaskManager.setUserTaskLabelDetail(userTask, "Query total count", countSql);
+				pst = con.prepareStatement(countSql);
+				UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
+				UserTaskManager.setUserTaskData(userTask, "pst", pst);
+
+				//设置查询参数
+				DbDataObject.setStatementParams(pst, 1, queryConfig, attributes);
+				rs = pst.executeQuery();
+				rs.next();
+				pageInfo.setTotalCount(rs.getInt(1));
+				rs.close();
+				pst.close();
+			}else{
+				if(dataObjectSelf.getBoolean("showSql")){
+					Executor.info(TAG, "No count sql, use page count totalCount");
+				}
+
+				//不知道总数的情况下，设置比当前总数大一
+				//pageInfo.setTotalCount((pageInfo.getPage() + 1) * pageInfo.getLimit());
+			}
+
+			//分页查询
+			String sql = querySql;
+			if(dataObjectSelf.getBoolean("showSql")){
+				Executor.info(TAG, sql);
+			}
+			pst = con.prepareStatement(sql);
+			int index = DbDataObject.setStatementParams(pst, 1, queryConfig, attributes);
+			if(pageInfo != null && pageInfo.getLimit() != 0){
+				long start = pageInfo.getStart() + 1;
+
+				switch(pageType){
+					case DataObjectUtil.PAGE_BETWEEN:
+						pst.setLong(index, start);
+						pst.setLong(index + 1, start + pageInfo.getLimit() - 1);
+						break;
+					case DataObjectUtil.PAGE_LIMIT:
+						pst.setLong(index, start-1);
+						pst.setLong(index + 1, pageInfo.getLimit());
+						break;
+					default:
+						throw new ActionException("Unknown page type " + pageType + ", dataObject=" + dataObjectSelf.getMetadata().getPath());
+				}
+			}
+
+			//执行sql
+			UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
+			UserTaskManager.setUserTaskData(userTask, "pst", pst);
+			rs = pst.executeQuery();
+
+			//读取记录
+			if(createIterator != null && createIterator){
+				return new DbDataObjectIterator(dataObjectSelf, attributes, pageInfo, con, pst, rs, actionContext);
+			}else {
+				List<DataObject> ds = DataObjectUtil.dbResultsToDataObjects(dataObjectSelf, rs);
+				pageInfo.setDatas(ds);
+
+				return ds;
+			}
+		}finally{
+			if(rs != null){
+				rs.close();
+			}
+			if(pst != null){
+				pst.close();
+			}
+		}
+	}
 }

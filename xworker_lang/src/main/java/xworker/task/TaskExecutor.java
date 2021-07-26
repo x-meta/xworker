@@ -9,7 +9,7 @@ import org.xmeta.Bindings;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 
-import xworker.lang.executor.ExecuteRequest;
+import xworker.lang.executor.Request;
 import xworker.lang.executor.Executor;
 
 public class TaskExecutor {
@@ -29,7 +29,7 @@ public class TaskExecutor {
     
     String id = null;
     
-    ExecuteRequest request;
+    Request request;
     
     public TaskExecutor(Thing thing, ActionContext actionContext) {
     	this.thing = thing;

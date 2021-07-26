@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="ConsoleExample" descriptors="xworker.content.QuickContent" label="Console"
+     type="thingDemo" path="xworker.things.p2021.p06.p29.ConsoleExample/@TestConsole"
+     group="xworker.core.io" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>Console</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 对java.io.Console的封装，可以用于编写命令行的交互程序。</p>
+
+<p><strong>运行</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;要想获得java.io.Console对象，需要在系统的命令行终端里执行。方法是在模型编辑器中执行菜单Console-&gt;Start，在弹出窗口里拷贝执行命令到系统的命令行终端里执行。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    <Console name="TestConsole" descriptors="xworker.io.Console" welcomeMessage="这是一条测试信息。">
+        <NodeSelector message="这是NodeSelector，是Console的测试。">
+            <Println name="println" _xmeta_id_="1" label="Test Println" message="This messge is print by Println."
+                 node="xworker.things.p2021.p06.p29.ConsoleExample/@TestConsole/@NodeSelector"></Println>
+            <DoAction name="doAction" label="Test DoAction">
+                <actions>
+                    <GroovyAction name="doAction">
+                        <code><![CDATA[println "This is print by doAction groovy script, while reselect now";
+return "goto";]]></code>
+                    </GroovyAction>
+                </actions>
+                <Result>
+                    <Goto name="goto" node="xworker.things.p2021.p06.p29.ConsoleExample/@TestConsole/@NodeSelector"></Goto>
+                </Result>
+            </DoAction>
+            <NodeExecutor name="read" _xmeta_id_="readXXX" label="Test NodeExecutor &amp; ReadXXX">
+                <ReadByte name="ReadByte" _xmeta_id_="readByte" message="请输入Byte："></ReadByte>
+                <ReadChar name="ReadChar" message="请输入Char："></ReadChar>
+                <ReadDouble name="ReadDouble" message="请输入Double："></ReadDouble>
+                <ReadFloat name="ReadFloat" message="请输入Float："></ReadFloat>
+                <ReadInt name="ReadInt" message="请输入Int："></ReadInt>
+                <ReadLine name="ReadLine" message="请输入Line："></ReadLine>
+                <ReadLong name="ReadLong" message="请输入Long："></ReadLong>
+                <ReadPassword name="ReadPassword" message="请输入密码Password："></ReadPassword>
+                <ReadText name="ReadText" message="请输入多行文字。要退出输入多行文本，输入':exit':"></ReadText>
+                <DoAction label="Test DoAction">
+                    <actions>
+                        <GroovyAction name="doAction">
+                            <code><![CDATA[println "ReadByte: " + ReadByte;
+println "ReadChar: " + ReadChar;
+println "ReadDouble: " + ReadDouble;
+println "ReadFloat: " + ReadFloat;
+println "ReadInt: " + ReadInt;
+println "ReadLine: " + ReadLine;
+println "ReadLong: " + ReadLong;
+println "ReadPassword: " + ReadPassword;
+println "ReadText: " + ReadText;
+
+return "goto";]]></code>
+                        </GroovyAction>
+                    </actions>
+                    <Result>
+                        <Goto name="goto" node="xworker.things.p2021.p06.p29.ConsoleExample/@TestConsole/@NodeSelector"></Goto>
+                    </Result>
+                </DoAction>
+            </NodeExecutor>
+            <Exit name="exit"></Exit>
+        </NodeSelector>
+    </Console>
+</QuickContent>

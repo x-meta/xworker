@@ -1,5 +1,8 @@
 package xworker.lang.executor;
 
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
 import java.util.List;
 
 /**
@@ -52,32 +55,45 @@ public interface ExecutorService {
 	public void errPrintln(Object message);
 	
 	/**
-	 * 请求UI。
+	 * 发出一个请求UI。
 	 * 
-	 * @param request
 	 */
-	public void requestUI(ExecuteRequest request);
+	public Request requestUI(Thing thing, ActionContext actionContext);
 
 	/**
-	 * 返回当前所有未处理的UI请求。
+	 * 返回当前所有UI请求列表。
 	 * 
-	 * @return
+	 * @return UI请求列表
 	 */
-	public List<ExecuteRequest> getRequestUIs();
+	public List<Request> getRequests();
 	
 	/**
 	 * 移除UI请求。
 	 * 
-	 * @param request
+	 * @param request 要溢出UI请求
 	 */
-	public void removeRequest(ExecuteRequest request);
+	public void removeRequest(Request request);
 	
 	/**
 	 * 返回ExecutorService所在的线程。
 	 * 
 	 * 像SWT等UI在一个线程里是才需要返回，其它无线程限制的返回null。
 	 * 
-	 * @return
+	 * @return 返回线程
 	 */
 	public Thread getThread();
+
+	/**
+	 * 是否支持打印日志。
+	 *
+	 * @return 是否支持打印日志，包括print相关
+	 */
+	public boolean isSupportLog();
+
+	/**
+	 * 是否支持UI请求。
+	 *
+	 * @return 是否支持UI请求
+	 */
+	public boolean isSupportRequest();
 }

@@ -26,16 +26,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
-import org.xmeta.Bindings;
-import org.xmeta.Thing;
-import org.xmeta.World;
+import org.xmeta.*;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.query.Condition;
+import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.query.UtilCondition;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.lang.executor.Executor;
@@ -76,7 +73,7 @@ public class DataObject extends HashMap<String, Object> {
 	public static final String CHECKED_ATTRIBUTE_NAME = "__dataobject__checked__";
 	
 	/** 用户可跟踪的任务状态，由具体数据对象调用和实现 */
-	private static final ThreadLocal<UserTask> userTasks =new ThreadLocal<UserTask>(); 
+	private static final ThreadLocal<UserTask> userTasks =new ThreadLocal<>();
 			
 	/**
 	 * 元数据。
@@ -125,7 +122,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 使用描述者的路径构造一个数据对象。
 	 * 
-	 * @param descriptorPath
+	 * @param descriptorPath 模型的路径
 	 */
 	public DataObject(String descriptorPath) {
 		Thing descriptor = World.getInstance().getThing(descriptorPath);
@@ -147,7 +144,7 @@ public class DataObject extends HashMap<String, Object> {
 
 	/**
 	 * 返回第一个主键的值。
-	 * @return
+	 * @return 第一个主键的值，不存在返回null
 	 */
 	public Object getKeyValue(){
 		Object[][] keyDatas = getKeyAndDatas();
@@ -208,8 +205,8 @@ public class DataObject extends HashMap<String, Object> {
 	 * 三个连续的引号（""")是具有换行的文本，结尾也是三个连续的引号
 	 * 支持var:、ognl:等表达式
 	 * 
-	 * @param attributes
-	 * @param actionContext
+	 * @param attributes 属性文本
+	 * @param actionContext 变量上下文
 	 */
 	public void setAttributes(String attributes, ActionContext actionContext) {
 		if(attributes == null || "".equals(attributes)) {
@@ -232,10 +229,10 @@ public class DataObject extends HashMap<String, Object> {
 					continue;
 				}			
 				String name = line.substring(0, index).trim();
-				String value = line.substring(index + 1, line.length()).trim();
+				String value = line.substring(index + 1).trim();
 				if(value.startsWith("\"\"\"")){
 					//多行文本
-					value = value.substring(3, value.length());
+					value = value.substring(3);
 					if(value.endsWith("\"\"\"")) {
 						//单行文本，就结束了
 						value = value.substring(0, value.length() - 3);
@@ -256,7 +253,7 @@ public class DataObject extends HashMap<String, Object> {
 				}
 				
 				Object v = value;
-				if(value.indexOf("\n") == -1 && value.indexOf(":") != -1) {
+				if(!value.contains("\n") && value.contains(":")) {
 					//有可能是var: ognl: 等表达式
 					v = UtilData.getData(value, actionContext);
 				}
@@ -430,11 +427,22 @@ public class DataObject extends HashMap<String, Object> {
 		Stack<Object> stack = modifiyStack.get();
 		stack.pop();
 		
-		if(stack == null || stack.size() == 0) {
+		if(stack.size() == 0) {
 			if(listeners != null) {
 				for(DataObjectListener listener : listeners) {
 					listener.changed(this);
 				}
+			}
+		}
+	}
+
+	/**
+	 * 通知监听器数据对象已经改变了。
+	 */
+	public void fireChanged(){
+		if(listeners != null) {
+			for(DataObjectListener listener : listeners) {
+				listener.changed(this);
 			}
 		}
 	}
@@ -454,7 +462,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 设置是否已初始化，如果未初始化，那么字段变动时不会记录到脏数据中。
 	 * 
-	 * @param inited
+	 * @param inited 初始化状态
 	 */
 	public void setInited(boolean inited) {
 		if(metadata != null){
@@ -486,8 +494,6 @@ public class DataObject extends HashMap<String, Object> {
 	
 	/**
 	 * 返回数据对象的标记是否是新数据对象，即还未保存到存储的数据对象。
-	 * 
-	 * @return
 	 */
 	public boolean isNew() {
 		return flag == DataObject.FLAG_NEW;
@@ -495,8 +501,6 @@ public class DataObject extends HashMap<String, Object> {
 
 	/**
 	 * 返回数据对象是否标记为删除。
-	 * 
-	 * @return
 	 */
 	public boolean isDeleted() {
 		return flag == DataObject.FLAG_DELETED;
@@ -538,7 +542,12 @@ public class DataObject extends HashMap<String, Object> {
 	 * @return 查询结果
 	 */
 	public List<DataObject> query(Map<String, Object> conditions, ActionContext actionContext){
-		return DataObjectUtil.query(getMetadata().getDescriptor().getMetadata().getPath(), conditions, actionContext);
+		Condition condition = new Condition();
+		for(String key : conditions.keySet()){
+			condition.eq(key, conditions.get(key));
+		}
+
+		return query(actionContext, new QueryConfig(condition));
 	}
 	
 	@Override
@@ -609,31 +618,29 @@ public class DataObject extends HashMap<String, Object> {
 	 */
 	public DataObject load(ActionContext actionContext) {
 		setInited(true);
-		if(metadata == null) {
-			return this;
-		}else {
-			DataObject dataObj = (DataObject) doAction("load", actionContext);
-			if(dataObj == null) {
+		if (metadata != null) {
+			DataObject dataObj = doAction("load", actionContext);
+			if (dataObj == null) {
 				return null;
 			}
-			
-			if(dataObj != this) {
+
+			if (dataObj != this) {
 				this.putAll(dataObj);
 			}
-			
-			return this;
+
 		}
+
+		return this;
 	}
 
 	/**
 	 * 后台加载数据对象。加载后一般会触发监听器的加载和修改事件。
 	 *
-	 * @param actionContext
+	 * @param actionContext 变量上下文
 	 */
 	public void loadBackground(final ActionContext actionContext){
-		TaskManager.getExecutorService().execute(new Runnable() {
-			@Override
-			public void run() {
+		TaskManager.getExecutorService().execute(() ->
+			{
 				try {
 					synchronized (DataObject.this) {
 						if (DataObject.this.isInited()) {
@@ -648,7 +655,7 @@ public class DataObject extends HashMap<String, Object> {
 					Executor.warn(TAG, "Load dataobject error, path=" + getMetadata().getDescriptor().getMetadata().getPath(), e);
 				}
 			}
-		});
+		);
 	}
 	
 	/**
@@ -656,9 +663,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * <p>如果加载的数据对象不为null，那么把数据对象的所有属性放到当前数据对象中，并返回当前数据对象。</p>
 	 * 
-	 * @param actionContext
-	 * @param condition
-	 * @return
+	 * @param actionContext 变量上下文
+	 * @param condition 条件
+	 * @return 符合条件的第一个数据
 	 */
 	public DataObject load(ActionContext actionContext, Condition condition) {
 		List<DataObject> datas = query(actionContext, condition);
@@ -672,16 +679,42 @@ public class DataObject extends HashMap<String, Object> {
 			return null;
 		}
 	}
+
+	public int update(ActionContext actionContext, QueryConfig queryConfig){
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+			//查询条件的变量
+			Thing condition = queryConfig.getCondition().getConditionThing();
+			Map<String, Object> queryDatas = queryConfig.getConditionValueMap();
+
+			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
+			bindings.put("datas", queryDatas);
+			bindings.put("conditionData", queryDatas);
+
+			bindings.put("queryConfig", queryConfig);
+			return doAction("updateBatch", actionContext);
+		} finally {
+			actionContext.pop();
+
+			this.getMetadata().cleanDirty();
+		}
+	}
 	
 	/**
 	 * 根据条件批量更新数据，其中要更新的内容是当前数据对象的脏字段。
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 * @return 更新的数量
 	 */
 	public int update(ActionContext actionContext, Condition condition){
-		return update(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+		return update(actionContext, new QueryConfig(condition));
 	}
 	
 	/**
@@ -691,10 +724,11 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
 	 * 
-	 * @return
+	 * @return 更新的数量
 	 */
+	@SuppressWarnings("unchecked")
 	public int update(ActionContext actionContext, Object condition,
-			Object queryDatas) {
+					  Object queryDatas) {
 		if (actionContext == null) {
 			actionContext = new ActionContext();
 		}
@@ -707,13 +741,42 @@ public class DataObject extends HashMap<String, Object> {
 			//查询条件对应的值
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
+			bindings.put("queryConfig", new QueryConfig((Thing) condition, (Map<String, Object>) queryDatas, actionContext));
 
-			return (Integer) doAction("updateBatch", actionContext);
+			return doAction("updateBatch", actionContext);
+		} finally {
+			actionContext.pop();
+
+			this.getMetadata().cleanDirty();
+		}
+	}
+
+	public int delete(ActionContext actionContext, QueryConfig queryConfig){
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+
+			//查询条件的变量
+			bindings.put("theData", this);
+			Thing condition = queryConfig.getCondition().getConditionThing();
+			Map<String, Object> queryDatas = queryConfig.getConditionValueMap();
+			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
+			bindings.put("datas", queryDatas);
+			bindings.put("conditionData", queryDatas);
+
+			bindings.put("queryConfig", queryConfig);
+
+			return (Integer) doAction("deleteBatch", actionContext);
 		} finally {
 			actionContext.pop();
 		}
 	}
-	
+
 	/**
 	 * 根据条件批量删除数据。
 	 * 
@@ -733,14 +796,16 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
 	 * @return 删除的数量
 	 */
+	@SuppressWarnings("unchecked")
 	public int delete(ActionContext actionContext, Object condition,
-			Object queryDatas) {
+					  Object queryDatas) {
 		if (actionContext == null) {
 			actionContext = new ActionContext();
 		}
 
 		try {
 			Bindings bindings = actionContext.push(null);
+
 			//查询条件的变量
 			bindings.put("theData", this);
 			bindings.put("condition", condition);
@@ -749,18 +814,67 @@ public class DataObject extends HashMap<String, Object> {
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
 
+			bindings.put("queryConfig", new QueryConfig((Thing) condition, (Map<String, Object>) queryDatas, actionContext));
+
 			return (Integer) doAction("deleteBatch", actionContext);
 		} finally {
 			actionContext.pop();
 		}
 	}
-	
+
+	/**
+	 * 数据对象迭代器。有可能为null。需要调用close()方法关闭。
+	 */
+	public DataObjectIterator iterator(ActionContext actionContext, QueryConfig queryConfig){
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+
+			//查询条件的变量
+			bindings.put("queryConfig", queryConfig);
+
+			return doAction("createIterator", actionContext);
+		} finally {
+			actionContext.pop();
+		}
+	}
+
+	public List<DataObject> query(ActionContext actionContext, QueryConfig queryConfig){
+		if (actionContext == null) {
+			actionContext = new ActionContext();
+		}
+
+		try {
+			Bindings bindings = actionContext.push(null);
+			//查询条件的变量
+			Thing condition = queryConfig.getCondition().getConditionThing();
+			Map<String, Object> queryDatas = queryConfig.getConditionValueMap();
+
+			bindings.put("queryConfig", queryConfig);
+
+			//未兼容旧版本的数据对象
+			bindings.put("condition", condition);
+			bindings.put("conditionConfig", condition);
+			//查询条件对应的值
+			bindings.put("datas", queryDatas);
+			bindings.put("conditionData", queryDatas);
+
+			return doAction("query", actionContext);
+		} finally {
+			actionContext.pop();
+		}
+	}
+
 	/**
 	 * 通过查询条件查询。
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 *
+	 * @return 查询结果列表
 	 */
 	public List<DataObject> query(ActionContext actionContext, Condition condition){
 		return query(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
@@ -772,7 +886,8 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
-	 * @return
+	 *
+	 * @return 查询结果列表
 	 */
 	@SuppressWarnings("unchecked")
 	public List<DataObject> query(ActionContext actionContext, Object condition, Object queryDatas) {
@@ -788,6 +903,8 @@ public class DataObject extends HashMap<String, Object> {
 			//查询条件对应的值
 			bindings.put("datas", queryDatas);
 			bindings.put("conditionData", queryDatas);
+
+			bindings.put("queryConfig", new QueryConfig((Thing) condition, (Map<String, Object>) queryDatas, actionContext));
 
 			return (List<DataObject>) doAction("query", actionContext);
 		} finally {
@@ -807,8 +924,9 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 比较是否与另一个数据对象是相同的。比较描述者和主键。
 	 * 
-	 * @param dataObject
-	 * @return
+	 * @param dataObject 目标数据对象
+	 *
+	 * @return 是否相等
 	 */
 	public boolean equals(DataObject dataObject) {
 		if(dataObject == this) {
@@ -850,8 +968,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * 根据主键的值比较是否匹配。和equals(Object ... keys)方法不同，本方法不传主键的名字，
 	 * 因此匹配时传入的数组的主键顺序应该和数据对象定义的主键顺序一致，否则可能会不能正确匹配。
 	 *
-	 * @param keys
-	 * @return
+	 * @param keys 主键列表
+	 *
+	 * @return 是否相等
 	 */
 	public boolean equalsByKey(Object ... keys){
 		if(keys == null) {
@@ -885,8 +1004,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * 
 	 * keys是name1, value1, name2, value2...成对出现的。name是主键的名字，value是主键的值。
 	 * 
-	 * @param keys
-	 * @return
+	 * @param keys 主键列表
+	 *
+	 * @return 是否相等
 	 */
 	public boolean equals(Object ... keys) {
 		if(keys == null) {
@@ -962,7 +1082,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 创建或更新。先按主键加载，如果存在则更新，否则创建。
 	 *
-	 * @param actionContext
+	 * @param actionContext 变量上下文
 	 *
 	 * @return　返回DataObject是创建，返回int是更新
 	 */
@@ -1094,8 +1214,9 @@ public class DataObject extends HashMap<String, Object> {
 	 * @param actionContext 变量上下文
 	 * @return 结果
 	 */
-	public Object doAction(String name, ActionContext actionContext) {
-		return doAction(name, actionContext, (Map<String, Object>) null);
+	@SuppressWarnings("unchecked")
+	public <T>  T doAction(String name, ActionContext actionContext) {
+		return (T) doAction(name, actionContext, (Map<String, Object>) null);
 	}
 
 	/**
@@ -1276,7 +1397,7 @@ public class DataObject extends HashMap<String, Object> {
 
 	/**
 	 * 返回包装过的Java对象。
-	 * @return
+	 * @return 包装的对象
 	 */
 	public Object getWrappedObject() {
 		return wrappedObject;
@@ -1285,7 +1406,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 获取源Java对象。
 	 * 
-	 * @return
+	 * @return 源对象
 	 */
 	public Object getSource() {
 		return source;
@@ -1294,7 +1415,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 设置源Java对象。
 	 * 
-	 * @param source
+	 * @param source 源对象
 	 */
 	public void setSource(Object source) {
 		this.source = source;

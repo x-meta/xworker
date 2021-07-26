@@ -2,7 +2,7 @@ package xworker.javafx.thingeditor;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;
-import xworker.lang.executor.ExecuteRequest;
+import xworker.lang.executor.Request;
 import xworker.lang.executor.services.AbstractLogService;
 
 import java.util.Collections;
@@ -16,7 +16,7 @@ public class TextAreaExecutService extends AbstractLogService{
     }
 
     @Override
-    public List<ExecuteRequest> getRequestUIs() {
+    public List<Request> getRequests() {
         return Collections.emptyList();
     }
 

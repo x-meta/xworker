@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="FileAlterationMonitor" descriptors="xworker.content.QuickContent" type="thingDemo"
+     path="xworker.things.p2021.p07.p02.FileAlterationMonitor/@ActionThing/@FileAlterationMonitor"
+     group="xworker.core.io" icon="icons/application.png" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<p><strong>FileAlterationMonitor</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 对Apache的FileAlterationMonitor的封装，可以用于监控目录或文件的改变。</p>
+]]></description>
+    <ActionThing>
+        <FileAlterationMonitor descriptors="xworker.io.FileUtilActions/@FileAlterationMonitor" interval="5000">
+            <FileAlterationObserver directory="xworker:work/temp">
+                <actions>
+                    <GroovyAction name="onFileChange" descriptors="xworker.lang.actions.GroovyAction"
+                         code="println file.getPath() + &quot; is changed!&quot;;"></GroovyAction>
+                </actions>
+            </FileAlterationObserver>
+        </FileAlterationMonitor>
+    </ActionThing>
+</QuickContent>

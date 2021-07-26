@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="DataObjectTutorials" descriptors="xworker.content.QuickContent" label="dataobject"
+     type="swtGuide" group="xworker.dataobject" groupDescriptor="true" icon="icons/application.png"
+     th_sortWeight="-8000" hideOutline="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>数据对象教程</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 介绍数据对象的基本知识。</p>
+]]></description>
+    <SwtGuide showHeader="true">
+        <SimpleBrowser name="introduce" _xmeta_id_="SimpleBrowser" label="数据对象简介">
+            <description><![CDATA[<p>&nbsp;&nbsp;&nbsp; 数据对象（DataObject)是一个基于关系模型的二维表数据框架。它有下面几个主要特点。</p>
+
+<ul>
+	<li><strong>统一API</strong><br />
+	数据库、CSV和Excel等等都使用统一的增删改查的API，相互之间也可以关联，用户也可以很容易的实现自己数据对象。<br />
+	&nbsp;</li>
+	<li><strong>数据管理界面</strong><br />
+	可以用数据对象快速编写和数据相关的各种界面，如表单、表格、数据的增删改查界面和图表等等。</li>
+</ul>
+
+<p>&nbsp;&nbsp; 点击<strong>下一步</strong>按钮进一步了解数据对象。</p>
+]]></description>
+            <Buttons>
+                <NextButton name="nextButton"></NextButton>
+            </Buttons>
+        </SimpleBrowser>
+        <BrowserComposite name="createDataObject" label="创建数据对象" browserLocation="top">
+            <description><![CDATA[<p>数据对象有很多种，可以根据需要选择创建。</p>
+]]></description>
+            <Composite>
+                <FillLayout name="FillLayout"></FillLayout>
+                <ThingRegistor name="thingRegist" thing="xworker.dataObject.DataObjects" registType="child"
+                     showContent="true" contentDisplayType="Composite" contentDefaultOpenMethod="thingDesc"
+                     autoLoad="true"></ThingRegistor>
+            </Composite>
+            <Buttons>
+                <PreButton name="nextButton"></PreButton>
+                <NextButton name="nextButton" _xmeta_id_="nextButton1"></NextButton>
+            </Buttons>
+        </BrowserComposite>
+        <BrowserComposite name="editDataObject" label="编辑数据对象" browserLocation="top">
+            <description><![CDATA[<p>数据对象相当于数据的映射。这里简单介绍各种数据对象都有的配置，其它可以参看具体的数据对象。</p>
+
+<ul>
+	<li><strong>属性(attribute)</strong><br />
+	一个数据对象至少要有一个属性。属性是用来映射字段的。如要实现增删改，那么只要要有一个主键字段。由于界面控件的需要，通常最好只有一个主键字段。</li>
+	<li><strong>QueryFormDataObject(可选）</strong><br />
+	查询表单的定义。也是使用数据对象编写的，任意数据对象都可以，只是用于生成表单。</li>
+	<li><strong>Condition（可选）</strong><br />
+	查询、批量更新和批量删除时会用到。用于生成查询的条件语句，或用来判断一个Java对象是否符合条件等。</li>
+</ul>
+
+<p>下面的数据对象模型是一个数据库数据对象的例子。</p>
+]]></description>
+            <Composite>
+                <FillLayout name="FillLayout"></FillLayout>
+                <ThingEditor name="ThingEditor" thingPath="xworker.app.monitor.dataobjects.MonitorData"></ThingEditor>
+            </Composite>
+            <Buttons>
+                <PreButton name="nextButton"></PreButton>
+                <NextButton name="nextButton" _xmeta_id_="nextButton1"></NextButton>
+            </Buttons>
+        </BrowserComposite>
+        <BrowserComposite name="dataObjectUI" label="数据对象和界面" browserLocation="top">
+            <description><![CDATA[<p>数据对象一般用于界面中，通过数据对象可以快速生成各种界面。如下面的列子。</p>
+
+<ul>
+	<li><strong>表单</strong><br />
+	通过数据对象可以快速生成各种表单。可以设置表单的校验等。</li>
+	<li><strong>表格</strong><br />
+	数据对象可以通过数据仓库（DataStore)绑定到表格等控件上，可以实现在表格中列出和编辑数据，也可以绑定到分页控件上实现分页。</li>
+	<li><strong>图表</strong><br />
+	利用数据对象的数据展示图表，一般也是使用数据仓库（DataStore)绑定。</li>
+	<li><strong>编辑器</strong><br />
+	有多种编辑器控件。比如常用的增删改查的数据对象编辑器。</li>
+	<li><strong>其它</strong><br />
+	其它各种和数据对象相关的界面控件。下面列举了DataObjectContainer控件。</li>
+</ul>
+]]></description>
+            <Composite>
+                <FillLayout name="FillLayout"></FillLayout>
+                <CTabFolder name="mainTabFolder">
+                    <CTabItem name="formTabItem" text="lang:d=表单&amp;en=Form" delayReload="true">
+                        <DemoSWT name="formDemo" composite="xworker.example.swt.xworker.dataobject.DataObjectForm/@group"></DemoSWT>
+                    </CTabItem>
+                    <CTabItem name="tableTableItem" text="lang:d=表格&amp;en=Table" delayReload="true">
+                        <DemoSWT name="tableDemo" composite="xworker.example.swt.xworker.dataobject.PagingToolBar/@group"></DemoSWT>
+                    </CTabItem>
+                    <CTabItem name="chartTabItem" text="lang:d=图表&amp;en=Chart" delayReload="true">
+                        <DemoSWT name="chartDemo" composite="xworker.things.p2019.p07.p23.ECharts/@Composite"></DemoSWT>
+                    </CTabItem>
+                    <CTabItem name="editorTabItem" text="lang:d=数据编辑器&amp;en=DataObjectEditor"
+                         delayReload="true">
+                        <DemoSWT name="editorDemo" composite="xworker.example.swt.xworker.dataobject.DataObjectEditCompoiste/@group"></DemoSWT>
+                    </CTabItem>
+                    <CTabItem name="otherItem" text="lang:d=其它&amp;en=Other" delayReload="true">
+                        <DemoSWT name="otherDemo" composite="xworker.example.things.p2019.p07.p22.DataObjectContainer/@Composite"></DemoSWT>
+                    </CTabItem>
+                </CTabFolder>
+            </Composite>
+            <Buttons>
+                <PreButton name="nextButton"></PreButton>
+                <NextButton name="nextButton" _xmeta_id_="nextButton1"></NextButton>
+            </Buttons>
+        </BrowserComposite>
+        <SimpleBrowser name="code" label="在代码中使用数据对象">
+            <description><![CDATA[<h2>1.基本操作</h2>
+
+<h3>1.1.增删改操作</h3>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+import xworker.dataObject.DataObject;
+
+//数据对象的各种操作一般需要一个动作上下文
+def ac = new ActionContext();
+
+//创建数据对象，需要指定数据对象的模型
+DataObject dataObject = new DataObject(&quot;xworker.app.monitor.dataobjects.MonitorData&quot;);
+
+//脏数据，数据对象是一个Map，当执行put()时会把put的值作为脏数据
+//在创建和更新数据时，一般只会插入和更新脏数据
+data.put(&quot;name&quot;, &quot;test&quot;);
+
+//创建数据，如插入数据到数据，通过返回值是否为null判断创建成功。自增长的主键等此时也会赋值。
+dataObject = dataObject.create(ac);
+
+//根据主键更新数据，返回更新的数量
+int updatedCount  = dataObject.update(ac);
+
+//根据主键删除数据，返回删除的数量
+int deletedCount = dataObject.delete(ac);
+</pre>
+
+<h3>1.2.DataObjectEntitiy</h3>
+
+<p>&nbsp;&nbsp;&nbsp; DataObject是一个Map，操作时对代码不友好，DataObjecEntity可以解决这个问题。Entity代码可以在编辑数据对象时通过菜单生成。</p>
+
+<pre class="brush:java;">
+public class MonitorData extends DataObjectEntity&lt;MonitorData&gt; {
+    public MonitorData(){
+        super(new DataObject(&quot;xworker.app.monitor.dataobjects.MonitorData&quot;));
+    }
+      
+    public MonitorData(DataObject data){
+        super(data);
+    }  
+      
+    public void setId(long value){
+        this.put(&quot;id&quot;, value);
+    }
+    
+    public long getId(){
+        return this.getLong(&quot;id&quot;);
+    }
+    public void setMonitorId(long value){
+        this.put(&quot;monitorId&quot;, value);
+    }
+
+    ...
+}</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+            <Buttons>
+                <PreButton name="nextButton"></PreButton>
+            </Buttons>
+        </SimpleBrowser>
+    </SwtGuide>
+</QuickContent>

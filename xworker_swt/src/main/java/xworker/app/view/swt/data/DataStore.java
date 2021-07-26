@@ -122,7 +122,11 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 	public Object getQueryParams() {		
 		return store.get("params");
 	}
-	
+
+	/**
+	 * 粘贴到一个或者多个控件上，当所有的控件都销毁时，释放相关资源。比如从源数据对象列表移除本监听器。
+	 * @param widget
+	 */
 	public void attach(Widget widget) {
 		widget.addDisposeListener(this);
 		widgets.put(widget, widget);
@@ -1506,6 +1510,9 @@ public class DataStore implements DataObjectListener, DataObjectListListener, Di
 		
 	}
 
+	public DataObjectList getDatas(){
+		return datas;
+	}
 	@Override
 	public void onAdded(DataObjectList list, int index, DataObject dataObject) {
 		dataObject.addListener(this);

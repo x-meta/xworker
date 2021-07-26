@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<thing name="DdlUtils" descriptors="xworker.lang.MetaDescriptor3" group="xworker.core.db"
+     th_createIndex="true" th_registThing="child|xworker.lang.util.ThingIndex">
+    <description><![CDATA[<p>数据库的DDL框架，各种DDL模型可以注册到这里。</p>
+
+<p><strong>DDL</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 执行ddl时会遍历继承了<strong>xworker.db.ddlutils.DdlUtil</strong>的子节点，会根据操作调用子节点的下面的相关方法：</p>
+
+<ul>
+	<li><strong>create</strong><br />
+	执行创建创建。<br />
+	&nbsp;</li>
+	<li><strong>alter</strong><br />
+	执行修改操作。<br />
+	&nbsp;</li>
+	<li><strong>drop</strong><br />
+	执行删除操作。</li>
+</ul>
+
+<p><strong>数据源</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 子节点的数据源可以设置为<strong>var:dataSource</strong>，这样会使用DdlUtils根设置的数据源。</p>
+
+<p><strong>编写和注册新的DDL模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 新的DDL模型需要继承<strong>xworker.db.ddlutils.DdlUtil</strong>，可以以child的方式注册到本模型（<strong>xworker.db.ddlutils.DdlUtils</strong>）下。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 需要实现create、alter或drop方法，可以只实现部分方法。</p>
+
+<p>&nbsp; &nbsp;</p>
+]]></description>
+    <actions>
+        <GetBoolean name="isContinueOnError" _xmeta_id_="16157" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
+             attributeName="continueOnError" usage="params"></GetBoolean>
+        <JavaAction name="create" outerClassName="xworker.db.ddlutils.DdlUtils" methodName="create"></JavaAction>
+        <JavaAction name="alter" outerClassName="xworker.db.ddlutils.DdlUtils" methodName="alter"></JavaAction>
+        <JavaAction name="drop" outerClassName="xworker.db.ddlutils.DdlUtils" methodName="drop"></JavaAction>
+        <GetObject name="getDataSource" _xmeta_id_="5791" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="dataSource" usage="params"></GetObject>
+        <GetThing name="getDataSourceThing" _xmeta_id_="6476" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="dataSourceThing" childThingName="DataSource" usage="params"></GetThing>
+    </actions>
+    <attribute name="name"></attribute>
+    <attribute name="label"></attribute>
+    <attribute name="continueOnError" inputtype="truefalse" default="false"></attribute>
+    <attribute name="dataSource" _xmeta_id_="datasource" size="40"></attribute>
+    <attribute name="dataSourceThing" inputtype="dataSelector" size="60">
+        <description><![CDATA[<p>用于设置DataSource模型。优先级低于dataSource属性。</p>
+]]></description>
+    </attribute>
+    <attribute name="description" inputtype="html"></attribute>
+    <thing name="DataSource" extends="xworker.db.jdbc.DataSource" inheritDescription="true"></thing>
+    <thing name="DatabaseDdlUtil" extends="xworker.db.ddlutils.DatabaseDdlUtil" inheritDescription="true"></thing>
+    <thing name="DatabaseData" extends="xworker.db.ddlutils.DatabaseData" inheritDescription="true"></thing>
+    <MenuBar>
+        <Menu name="DDLUtils" _xmeta_id_="DdlUtils">
+            <ExecuteAction name="create" label="Create" actionName="create" background="true"></ExecuteAction>
+            <ExecuteAction name="alter" label="Alter" actionName="alter" background="true"></ExecuteAction>
+            <ExecuteAction name="drop" label="Drop" actionName="drop" background="true" confirm="true"
+                 confirmMessage="lang:d=确定要执行Drop，可能会删除数据库中的表和数据！&amp;en=If you are sure to execute drop, the tables and data in the database may be deleted!"></ExecuteAction>
+        </Menu>
+    </MenuBar>
+</thing>

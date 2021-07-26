@@ -15,6 +15,7 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
 
 public class AppActions {
 	private static final String TAG = AppActions.class.getName();
@@ -55,16 +56,20 @@ public class AppActions {
 		}
 		final Map<String, Object> ps = params;
 		final Thing editor = self.doAction("getEditor", actionContext);
-		
-		editorContainer.getComposite().getDisplay().syncExec(new Runnable() {
-			public void run() {
-				try {
-					editorContainer.openEditor(id, editor, ps);
-				}catch(Exception e) {
-					Executor.error(AppActions.class.getSimpleName(), "open editor error", e);
+
+		if(editorContainer == null){
+			XWorkerUtils.openEditor(id, editor, params);
+		}else {
+			editorContainer.getComposite().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					try {
+						editorContainer.openEditor(id, editor, ps);
+					} catch (Exception e) {
+						Executor.error(AppActions.class.getSimpleName(), "open editor error", e);
+					}
 				}
-			}
-		});
+			});
+		}
 		
 		return editorContainer.getEditor(id);
 		

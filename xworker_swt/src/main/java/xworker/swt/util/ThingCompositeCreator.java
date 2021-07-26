@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import org.xmeta.util.ThingLoader;
 import xworker.swt.design.Designer;
 
 /**
@@ -84,9 +85,8 @@ public class ThingCompositeCreator {
 		
 		return false;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public <T> T create() {
+
+	public <T> T create(Object objectForThingLoader){
 		Object obj = null;
 		Designer.pushCreator(self);
 		try {
@@ -96,34 +96,43 @@ public class ThingCompositeCreator {
 				thing = replaceComposite.detach();
 				thing.put("name", compositeThing.getMetadata().getName());
 				thing.getMetadata().setPath(compositeThing.getMetadata().getPath());
-				
+
 				//复制子节点，但不改变子节点的所属
 				for(Thing child : compositeThing.getChilds()) {
 					thing.addChild(child, false);
 				}
 			}
-			
-			obj = thing.doAction("create", newActionContext);
+
+			if(objectForThingLoader != null){
+				obj = ThingLoader.load(objectForThingLoader, thing, newActionContext);
+			}else {
+				obj = thing.doAction("create", newActionContext);
+			}
 			if(obj instanceof Control) {
 				Designer.attachCreator((Control) obj, self.getMetadata().getPath(), actionContext);
 			}
 		}finally {
 			Designer.popCreator();
 		}
-		
+
 		beforeCreateChilds(obj, actionContext, newActionContext);
-		
+
 		//创建子节点
 		actionContext.peek().put("parent", obj);
 		for(Thing child : self.getChilds()){
 			if(isFiltered(child)) {
 				continue;
 			}
-						
+
 			child.doAction("create", actionContext);
 		}
-		
+
 		return (T) obj;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T create() {
+		return create(null);
 	}
 	
 	/**

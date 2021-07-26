@@ -11,12 +11,7 @@ import org.xmeta.Thing;
 import org.xmeta.util.ActionContainer;
 
 import xworker.lang.executor.Executor;
-import xworker.swt.app.CoolBarContainer;
-import xworker.swt.app.IEditor;
-import xworker.swt.app.IEditorContainer;
-import xworker.swt.app.IEditorListener;
-import xworker.swt.app.MenuContainer;
-import xworker.swt.app.OutlineContainer;
+import xworker.swt.app.*;
 
 public abstract class AbstractEditorContianer implements IEditorContainer, IEditorListener{
 	private static final String TAG = AbstractEditorContianer.class.getName();
@@ -29,6 +24,7 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	protected OutlineContainer outlineContainer;
 	protected CoolBarContainer coolBarContainer;
 	protected CoolBarContainer statusBarContainer;
+	protected Workbench workbench;
 	private List<IEditorListener> editorListeners = new ArrayList<IEditorListener>();
 	
 	public AbstractEditorContianer(ActionContext actionContext) {
@@ -76,6 +72,16 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 
 	public CoolBarContainer getCoolBarContainer() {
 		return coolBarContainer;
+	}
+
+	@Override
+	public void setWorkbench(Workbench workbench) {
+		this.workbench = workbench;
+	}
+
+	@Override
+	public Workbench getWorkbench() {
+		return workbench;
 	}
 
 	public void setCoolBarContainer(CoolBarContainer coolBarContainer) {
