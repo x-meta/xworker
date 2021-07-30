@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
@@ -176,8 +178,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public List<IEditor> getEditors() {
-		List<IEditor> items = new ArrayList<IEditor>();
+	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors() {
+		List<xworker.thingeditor.IEditor<Composite, Control, Image>> items = new ArrayList<>();
 		for(EditorImpl editorImpl : editors) {
 			items.add(editorImpl);
 		}
@@ -185,8 +187,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public List<IEditor> getEditors(boolean dirty) {
-		List<IEditor> items = new ArrayList<IEditor>();
+	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors(boolean dirty) {
+		List<xworker.thingeditor.IEditor<Composite, Control, Image>> items = new ArrayList<>();
 		for(EditorImpl editorImpl : editors) {
 			if(editorImpl.isDirty() == dirty) {
 				items.add(editorImpl);
@@ -196,7 +198,7 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public void close(IEditor editor) {
+	public void close(xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		EditorImpl impl = (EditorImpl) editor;
 		impl.doDispose();
 		editors.remove(impl);

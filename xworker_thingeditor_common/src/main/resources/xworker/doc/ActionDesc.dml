@@ -5,9 +5,189 @@
      simpleBrowser="true" en_label="Action" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
     <description><![CDATA[<h1>动作</h1>
 
-<p>&nbsp;&nbsp;&nbsp; 动作是可以当作方法和函数来执行的模型，对象的行为也是使用动作来定义的。</p>
+<h2>1.简介</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 能够把一个模型当作函数和对象的方法来执行，是动态模型作为一种编程方法的基础。</p>
+<p>&nbsp;&nbsp;&nbsp; 模型是像XML这样的数据，数据本身不能直接运行，而动作就是让模型变成可执行的方法，从而让动态模型真正成为一种编程方法。</p>
+
+<h2>2.让模型可执行的原理</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 模型的执行原理在<a href="javascript:invoke('action:xworker.swt.xworker.prototype.ThingRegistSelector/@actions/@utilBrowserSelectThing?thing=xworker.doc.dyanmicmodel.DynamicModel')">动态模型</a>的文档里已经介绍过了，这里再详细解释一下。</p>
+
+<h3>2.1.模型是解释执行的</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 模型本身是数据，说执行一个模型，实际上在执行一个解释程序，这个程序可以处理模型数据。比如要执行代码：&quot;return x + y；&quot;，代码本身是数据，可以用模型来表示，要让它执行，就是要编写一个程序来解释执行&quot;return x + y;&quot;这段代码。当解释程序执行后就相当于&quot;return x&nbsp;+ y;&quot;这段代码执行了。</p>
+
+<h3>2.2.循环解释执行</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如果认识到代码可以是数据，解释执行代码数据可以等同为代码的执行，那么就可以设计一个任意模型的执行方法了。</p>
+
+<ol>
+	<li>首先假设任意模型都是可执行的，要运行是一个模型，可以把它转化为动作，动作实际上是模型的名字为run的方法(模型也是对象，有自己的行为）。</li>
+	<li>而模型名字为run的方法也是一个模型，要运行run方法这个模型，同样运行它的run方法。</li>
+	<li>以上是一个迭代的过程，要想让迭代能够终止，那么存在一些模型是不需要执行它的run方法，而是由引擎直接解释执行。</li>
+</ol>
+
+<p>&nbsp;&nbsp;&nbsp; 以上就是让模型可执行的原理，实际上就是要让任何模型的执行迭代到元系统（实现动态模型的系统）执行上。如XWorker的动态模型是使用Java编写的，意思就是它是一个Java程序，最终的执行都是Java代码的执行。</p>
+
+<h3>2.3.解决动作模型的局限性</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 由于模型都是最终由元系统（实现动态模型的系统）解释执行的，那么就存在一个问题，即现有的元系统上的解释程序是否可以解释执行任意的模型？要解决这个问题，一般可以采用下面方法。</p>
+
+<h4>2.3.1.编写语法类的动作模型</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 可以编写各种语法类的动作模型。Java的各种语法都可以封装为相应的动作模型，如try/catch、while等等动作模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以编写语法类的动作模型，是在说用模型可以构建新的编程语言，当有了使用模型编写的编程语言时，理论上就可以用模型解释执行任意模型了。不过实际编程中还是建议使用Java编写动作模型，这样便于调试执行性能也高。</p>
+
+<h4>2.3.2.使用脚本类的动作模型</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 可以使用脚本类的动作模型，通过脚本类模型可以运行脚本，而脚本是可以随时编写和运行的。如Groovy、Js、BeanShell、Lua等等脚本模型。</p>
+
+<h3>2.4.行为的获取顺序</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 由于模型对象的行为可以在模型对象自身定义，也可以继承于它的类和其它对象，那么如果自身和类等都定义的同名的动作，那么对象该使用具体的哪一个呢？</p>
+
+<p>&nbsp;&nbsp;&nbsp; 对象行为的获取顺序如下，如果获取到了则后面的不再获取。</p>
+
+<ol>
+	<li>从自身定义的行为中获取。</li>
+	<li>从它的描述者（类）自身定义的行为中获取。</li>
+	<li>从它继承的其它对象自身定义的行为中获取。</li>
+	<li>从它的描述者（类）继承的行为上获取。</li>
+	<li>从它继承的其它对象继承的行为上获取。</li>
+</ol>
+
+<h2>3.动作的实现</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 用示意代码来解释动作是如何实现的。</p>
+
+<h3>3.1.转化为动作</h3>
+
+<pre class="brush:java;">
+import org.xmeta.Action;
+import org.xmeta.Thing;
+
+//Thing是模型
+Thing thing = ......;
+
+//Action是动作，模型可以转化为动作
+Action action = thing.getAction();</pre>
+
+<p>&nbsp;&nbsp;&nbsp; getAction()的示意代码。</p>
+
+<pre class="brush:java;">
+package org.xmeta;
+
+public class Thing{
+     public Action getAction(){
+         return new Action(this);
+     }
+}</pre>
+
+<h3>3.2.执行动作</h3>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+
+Object result = action.run(new ActionContext());</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 可以调用动作的run()方法来执行，其中需要参数ActionContext，ActionContext是动作执行的上下文，用来管理变量栈和线程状态等。&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp; run()方法的实现代码代码大意如下。</p>
+
+<pre class="brush:java;">
+package org.xmeta;
+
+public class Action{
+    public Object run(ActionContext actionContext){
+        //转化为动作时的模型
+        Thing thing = getThing();
+        
+        //thingName是模型的类型名
+        if(&quot;JavaAction&quot;.equlas(thing.getThingName()){
+             //执行模型指定的Java方法。这里是迭代的终止
+             return javaMethod.invoke(actionContext);
+        }else{
+             //获取模型的run方法
+             Thing runThing = thing.getActionThing(&quot;run&quot;);
+             //把run方法转化为动作执行。这里形成迭代
+             return runThing.getAction().run(actionContext);
+        }
+    }
+}</pre>
+
+<h2>4.动作的用途</h2>
+
+<h3>4.1.可以作为函数和方法来使用</h3>
+
+<pre class="brush:java;">
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+//从模型获取动作
+Thing thing = ...;
+Action action = thing.getAction();
+
+//执行动作
+ActionContext actionContext = new ActionContext();
+Object result = actionContext.run(actionContext);
+
+//传参执行，参数是通过名字传入的
+Object result = actionContext.run(actionContext, &quot;x&quot;, 1, &quot;y&quot;, 2);
+</pre>
+
+<h3>4.2.可以作为对象的行为来执行</h3>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+//获取模型
+Thing thing = ...;
+
+ActionContext actionContext = new ActionContext();
+
+//执行它的行为
+Object result = thing.doAction(&quot;run&quot;, actionContext);
+
+//执行它的行为，传入参数
+Object result = thing.doAction(&quot;run&quot;, actionContext, &quot;x&quot;, 1, &quot;y&quot;, 2);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 执行对象行为的原理，示意代码如下。</p>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+public class Thing{
+     public Object doActin(String name, ActionContext actionContext, Object ... params){
+         //获取动作模型的定义
+         Thing actionThing = getActionThing(name);
+         //转化为动作
+         Action action = actionThing.getAction();
+
+         //把参数转化为Map
+         Map&lt;String, Object&gt; paramsMap = UtilMap.toMap(params);
+         
+         //创建要给变量栈
+         Bindings bindings = actionContext.push();
+         try{
+              //放入参数
+              bindings.putAll(paramsMap);
+              //放入自己
+              bindings.put(&quot;self&quot;, this);
+
+              //执行
+              return action.run(actionContext);
+         }finally{
+             //弹出变量栈，和push()成对出现
+             actionContext.pop();
+         }
+     }
+}</pre>
+
+<p>&nbsp;</p>
 ]]></description>
     <en_description><![CDATA[<h1>Action</h1>
 

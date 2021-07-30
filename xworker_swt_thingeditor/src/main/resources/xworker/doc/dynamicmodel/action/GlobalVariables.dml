@@ -1,4 +1,4 @@
-^1624260405196
+^1627628043708
 @
 sname
 GlobalVariables
@@ -20,15 +20,15 @@ suseTargetThingDoc
 false
 ssimpleBrowser
 true
+shideOutline
+false
 Sdescription
 #$@text#$@
 <h1>全局变量</h1>
 
-<p>&nbsp;&nbsp;&nbsp; 全局变量是指动作上下文中所保存的一些变量，这些变量时在任何线程里都可以访问的，并且这些变量如果没有被主动删除，那么这些变量也总是存在。</p>
+<p>&nbsp;&nbsp;&nbsp; 全局变量是指保存在动作上下文里最底层的栈层中的变量，由于最底层的栈层是所有线程共享的，且通常不会被弹出，因此只要动作上下文存在，这些变量就是存在的，因此把这些变量称为全局的。</p>
 
-<h2>1.直接设置全局变量</h2>
-
-<p>&nbsp;&nbsp;&nbsp; 在创建动作上下文时，可以直接设置全局变量。</p>
+<h2>1.设置全局变量</h2>
 
 <pre class="brush:groovy;">
 import org.xmeta.ActionContext;
@@ -36,37 +36,26 @@ import org.xmeta.ActionContext;
 //创建动作上下文
 ActionContext actionContext = new ActionContext();
 
-//设置全局变量，key变量名，类型是String，object变量值，类型是Object
-actionContext.put(key, object);
+//1.动作上下文刚创建时，put的变量时全局的。如果不能确保动作上下文刚创建的，
+//即未执行过push()方法的，建议不要使用此方法设置变量
+actionContext.put((String) key,(Objet) object);
+
+//2.常规方法，可以通过g()函数返回最底层的栈层设置全局变量
+actionContext.g().put((String) key, (Object ) object);
 </pre>
 
-<h3>1.1.注意下面的代码不是设置全局变量</h3>
+<h2>2.使用全局变量</h2>
 
 <pre class="brush:groovy;">
-actionContext.push(null);
+//如果要明确的使用全局变量，那么使用g()函数返回最底层的栈层
+Object obj = actionContext.g().get((String) key);
 
-//如上面已执行过push方法，那么再执行put方法设置的变量就不是全局的了
-actionContext.put(key, object);
+//一般情况下，可以通过变量名直接获取，但也有可能获取的是局部变量或参数等
+Object obj = actionContext.get((String) key);</pre>
 
-</pre>
+<h2>&nbsp;&nbsp;&nbsp;</h2>
 
-<h2>2.通过获取全局变量栈来设置全局变量</h2>
-
-<p>&nbsp;&nbsp;&nbsp; 通过动作上下文的g()方法来返回全局变量栈。</p>
-
-<pre class="brush:groovy;">
-import org.xmeta.ActionContext;
-import org.xmeta.Bindings;
-
-//创建动作上下文
-ActionContext actionContext = new ActionContext();
-
-//获取全局变量栈
-Bindings g = actionContext.g();
-
-//设置全局变量
-g.put(key, object);
-</pre>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 #$@text#$@

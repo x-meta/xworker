@@ -12,8 +12,9 @@ import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
 import xworker.swt.widgets.CoolBarCreator;
+import xworker.thingeditor.ICoolBarContainer;
 
-public class CoolBarContainer {
+public class CoolBarContainer implements ICoolBarContainer {
 	private static final String TAG = CoolBarContainer.class.getName();
 	private static final String ID = "__CoolbarContainer_id__";
 	

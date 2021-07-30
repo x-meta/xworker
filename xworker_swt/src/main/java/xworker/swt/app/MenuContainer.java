@@ -14,7 +14,7 @@ import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
 
 @ActionClass(creator="getMenuContainer")
-public class MenuContainer {
+public class MenuContainer implements xworker.thingeditor.IMenuContainer{
 	private static final String TAG = MenuContainer.class.getName();
 	private static final String ID = "__MenuContainer_id__";
 	

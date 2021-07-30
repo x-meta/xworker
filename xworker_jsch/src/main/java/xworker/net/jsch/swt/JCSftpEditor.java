@@ -57,7 +57,7 @@ public class JCSftpEditor {
     @ActionParams(names = "params")
     public void setContent(Map<String, Object> params){
         if(workbench != null){
-            View progressView = workbench.getView("progressView");
+            View progressView = (View) workbench.getView("progressView");
             if(progressView != null){
                 progressDataStore = progressView.getActionContext().getObject("progressDataStore");
             }

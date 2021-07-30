@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ShellGuide name="CreateModelTutorials" descriptors="xworker.swt.guide.ShellGuide" label="创建模型"
+     en_label="Create Model" en_group="-20000|Dynamic Model" th_createIndex="true" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
+     group="-20000|动态模型" th_sortWeight="-10000">
+    <actions>
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
+    </actions>
+    <Guide name="principle" label="原则">
+        <description><![CDATA[<h2>创建模型</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 要创建一个模型，可以通过代码创建，也可以在模型管理器中创建。本教程讲述的是如何在模型管理器中创建一个模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在模型管理器中创建模型需要打开<strong>新建模型对话框</strong>，打开新建模型对话框的常用方法有下面几种。</p>
+
+<ol>
+	<li>使用XWorker导航的右键菜单。</li>
+	<li>使用目录浏览的菜单。</li>
+	<li>使用模型管理器器的工具栏按钮。</li>
+</ol>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<strong>下一步</strong>按钮开始本教程。&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide label="XWorker导航" activeControlThing="xworker.swt.app.views.ProjectTree/@tree">
+        <description><![CDATA[<h2>XWorker导航</h2>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker导航界面是一个树，树的结构如如下:</p>
+
+<table border="0" cellpadding="0" cellspacing="0" style="width: 500px;">
+	<tbody>
+		<tr>
+			<td><br />
+			工作组<input alt="" src="icons/xworker/project1.gif" style="width: 16px; height: 16px;" type="image" />&nbsp;&nbsp;&nbsp;</td>
+			<td><br />
+			用于对项目分组。</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--项目<input alt="" src="icons/xworker/factory.gif" style="width: 16px; height: 16px;" type="image" />&nbsp;&nbsp;</td>
+			<td>也叫模型管理器，用于读取和存储模型，可以把模型存在文件系统或数据库系统等地方。</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --目录<input alt="" src="icons/xworker/package.gif" style="width: 16px; height: 16px;" type="image" />&nbsp;&nbsp;&nbsp;</td>
+			<td>和Java的包作用一致，用于通过目录分组模型。</td>
+		</tr>
+		<tr>
+			<td style="white-space: nowrap;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --子目录<input alt="" src="icons/xworker/package.gif" style="width: 16px; height: 16px;" type="image" />&nbsp;&nbsp;</td>
+			<td>子目录。</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>右键菜单</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 选择一个节点，点击鼠标右键，可以打开右键菜单。如果节点是目录<input alt="" src="icons/xworker/package.gif" style="width: 16px; height: 16px;" type="image" />或子目录<input alt="" src="icons/xworker/package.gif" style="width: 16px; height: 16px;" type="image" />，那么在右键菜单中有一个<strong>新建模型</strong>菜单可以打开新建模型对话框。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以自行试试打开右键菜单，找到新建模型菜单。</p>
+
+<h3>下一步</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 如下一步按钮是灰色不能使用，请在导航栏选中一个条目。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="canNext">
+                <code><![CDATA[import xworker.util.XWorkerUtils;
+
+if(workbench != null){
+    def editor = workbench.getEditor("xworker_xworker.swt.app.editors.XWorkerPackageViewer");
+    return editor != null;
+}else{
+    return false;
+}
+return false;]]></code>
+                <Variables>
+                    <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
+                </Variables>
+            </GroovyAction>
+        </actions>
+    </Guide>
+    <Guide name="Guide" _xmeta_id_="Guide1" label="目录浏览" activeControlThing="xworker.swt.app.editors.XWorkerPackageViewer/@EditorComposite/@packageCompoiste/@menuBarCompoiste/@buttonCOolbar/@buttonCoolITem/@buttonToolbAr">
+        <description><![CDATA[<h2>目录浏览</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 目录浏览是和XWorker导航相关的界面控件，当在XWorker导航上选择一个条目时，目录浏览会自动打开并显示和条目相关的内容。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 当XWorker导航选中一个<strong>目录</strong>时，在目录浏览的工具栏中就会有一个新建模型的条目，通过它可以打开新建模型对话框。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="Guide" _xmeta_id_="Guide2" label="工具栏" activeControlThing="xworker.ide.worldexplorer.swt.SimpleExplorer/@CoolBar/@mainCollItem/@mainToolBar">
+        <description><![CDATA[<h2>模型管理器工具栏</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在模型管理器工具栏中也可以找到新建模型的条目<input alt="" src="icons/xworker/new.gif" style="width: 16px; height: 16px;" type="image" />，点击它也可以打开新建模型对话框。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide _xmeta_id_="Guide3" label="打开新建模型对话框">
+        <description><![CDATA[<h2>打开新建模型对话框</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 现在请打开新建模型对话框，如果还没有打开也可以<a href="javascript:invoke('createThing:')">点击这里</a>打开新建模型对话框。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="canNext" _xmeta_id_="finished">
+                <code><![CDATA[import xworker.ide.worldexplorer.dialogs.NewThingDialog;
+
+return NewThingDialog.instance != null && NewThingDialog.instance.shell.isDisposed() == false;]]></code>
+            </GroovyAction>
+            <RefAction name="finished" _xmeta_id_="finished1" refActionPath="xworker.things.p2020.p06.p28.CreateModelTutorials/@Guide3/@actions/@finished"></RefAction>
+        </actions>
+    </Guide>
+    <Guide name="thingName" label="事物名" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@dataObjectNameText">
+        <description><![CDATA[<p>模型名也就是模型的名字，不能为空。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="getMaskComposite">
+                <code><![CDATA[import xworker.ide.worldexplorer.dialogs.NewThingDialog;
+
+return NewThingDialog.instance.shell;]]></code>
+            </GroovyAction>
+            <GroovyAction name="afterInited" code="dataObjectNameText.setText(&quot;HelloWorld&quot;);"></GroovyAction>
+        </actions>
+    </Guide>
+    <Guide name="class" label="类" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@descriptorText">
+        <description><![CDATA[<p><strong>类</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型实现了面向对象的编程方法，其中类也是模型，类模型定义了一个模型有哪些属性和子节点，一般使用类模型来创建对象模型。</p>
+
+<p><strong>描述者</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;在动态模型里，类有时也称为描述者。</p>
+]]></description>
+        <actions>
+            <GroovyAction name="afterInited" code="descriptorText.setText(&quot;xworker.swt.widgets.Shell&quot;);"></GroovyAction>
+        </actions>
+    </Guide>
+    <Guide name="path" label="路径" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@pathText">
+        <description><![CDATA[<p><strong>路径</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 路径是模型的标识，通过路径可以在系统中找到唯一对应的模型。</p>
+
+<p><strong>模型管理器</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型是像XML这样的数据，因此可以保存在文件或数据库等系统里，模型管理器就是存储和读取模型的方法。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型管理器有时也起到项目的作用，用于方便管理模型。项目并不是相互隔离的，它们是一个整体，如果不同项目下存在路径一样的模型，那么其中一个会被忽略。</p>
+
+<p><strong>存储在内存中的模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个模型没有设置路径，那么它会保存到内存中。内存中的模型作为Java对象会被系统自动回收，系统关闭后也不会存在了。</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="codeType" label="编码" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@codecTypeCombo">
+        <description><![CDATA[<h2>编码</h2>
+
+<p>&nbsp;&nbsp; 模型的编码格式和文件后缀名。如果编码是xx_yy的形式，那么xx是文件后缀名，yy是编码格式。</p>
+
+<h3>编码格式</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 常用的是xml和properties两种格式，其它如js(json)等格式已经用的比较少了。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 使用xml格式需要注意，由于xml格式不保存值为默认值的属性，在极特殊情况下可能会出错，此时可以使用dml_properties格式。</p>
+
+<h3>文件后缀名</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 主要是dml和dmw，其中dmw是为了在windows下编写窗口应用的，默认在系统执行时使用javaw来执行，是为了隐藏控制台。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+    </Guide>
+    <Guide name="modesl" label="选择模型" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@historyComposite">
+        <description><![CDATA[<p><strong>选择模型的类</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以在这里选择模型的类，常用的模型或最近使用过的模型可以在这里选择。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 第三方的模型也可以添加到这里，在定义模型的教程里会讲述。</p>
+]]></description>
+    </Guide>
+    <Guide name="create" label="创建模型" activeControlThing="xworker.ide.worldexplorer.swt.dialogs.NewThingDialog/@shell/@mainComposite/@buttonCell/@okButton">
+        <description><![CDATA[<p><strong>创建模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 可以点击确定按钮来创建模型，模型创建后一般会在模型管理器中打开。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注：请先退出本教程再点击确定按钮。如果点击了<strong>确定</strong>按钮，弹出了提示框而无法操作，可以按<strong>Esc</strong>键取消提示框。</p>
+
+<p><strong>退出</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 本次教程到这里就结束了，可以点击<strong>结束按钮</strong>退出本教程。</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+]]></description>
+    </Guide>
+</ShellGuide>

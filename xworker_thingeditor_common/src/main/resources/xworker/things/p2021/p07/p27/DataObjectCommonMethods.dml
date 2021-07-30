@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="DataObjectCommonMethods" descriptors="xworker.content.QuickContent" label="数据对象需要实现的方法"
+     type="thingDesc" group="xworker.dataobject" icon="icons/html.png" th_sortWeight="-9990"
+     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>数据对象需要实现的方法</h1>
+
+<p>&nbsp;&nbsp;&nbsp; 是指数据模型需要实现的方法，可以根据需要实现相关方法。</p>
+
+<h2>1.可能会用到变量</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 在数据对象的方法里可能会用到的变量。</p>
+
+<h3>1.1.theData</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 在执行create、update和delete等方法时，theData对象代表当前的数据对象。</p>
+
+<ul>
+	<li><strong>主键及其值</strong><br />
+	Object[][] keys = theData.getMetadata().getKeyAndDatas();<br />
+	主键有多个，对于第n个主键，keys[n][0]的类型是Thing，是该主键的属性定义，keys[n][1]是主键的值，类型是Object。<br />
+	如果keys=null或keys.length=0，那么可能是全表更新或删除等，这是一个有风险的操作，数据对象应该提示或抛出异常。<br />
+	&nbsp;&nbsp;</li>
+	<li><strong>脏字段</strong><br />
+	String[] dirtyFields = theData.getMetadata().getDirtyFields();<br />
+	脏字段的名字列表。脏字段是修改过的字段。&nbsp;</li>
+</ul>
+
+<h3>1.2.queryConfig</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 查询配置，queryConfig常用的属性如下。</p>
+
+<ul>
+	<li><strong>condition: Condition</strong><br />
+	查询条件，包含查询条件的值。可以生成SQL的条件语句，或判断一个数据对象是否符合该条件。<br />
+	&nbsp;</li>
+	<li><strong>pageInfo: PageInfo</strong><br />
+	分页信息。总是有分页，默认分页大小是100，如果不想有分页，那么应该设置limit(分页大小）为0或-1。<br />
+	&nbsp;</li>
+	<li><strong>orders: List&lt;Order&gt;</strong><br />
+	排序列表。<br />
+	&nbsp;</li>
+	<li><strong>groups: List&lt;Group&gt;</strong><br />
+	分组列表。<br />
+	&nbsp;</li>
+	<li><strong>projections: List&lt;Projection&gt;</strong><br />
+	聚合列表。目前还未使用。</li>
+</ul>
+
+<h2>2.数据对象需要实现的方法</h2>
+
+<h3>2.1.DataObject doLoad(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 加载数据对象，一般是根据传入和数据对象(theData)的主键的值加载数据对象。</p>
+
+<h3>2.2.DataObject doCreate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 插入数据。如数据库数据对象对应的是insert语句。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;应该只插入脏字段的值，返回的数据对象是插入后数据对象最新的值。如主键是自增长的，插入前主键的值一般为null，插入后返回的数据对象就要包含最新的主键的值。</p>
+
+<h3>2.3.int doUpdate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 修改数据，返回修改的行数。如数据库数据对象对应的是update语句，返回修改的实际行数。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 更新时，条件是主键，要修改的字段是脏字段。</p>
+
+<h3>2.4.int doDelete(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 根据主键的值删除数据，返回删除的行数。如数据库数据对象对应的是delete语句。</p>
+
+<h3>2.5.List&lt;DataObject&gt; doQuery(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;查询数据对象，返回符合条件的数据对象列表，如有分页信息需要设置pageInfo的相关属性值。&nbsp;&nbsp;</p>
+
+<h3>2.5.int updateBatch(DataObject theData, QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 批量更新数据，theData的脏字段是要更新的字段，queryConfig提供查询条件。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注意应避免异常的全表更新。</p>
+
+<h3>2.6.int deleteBatch(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 批量删除，queryConfig提供查询条件。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 注意应避免全表的异常删除。</p>
+
+<h3>2.7 DataObjectIterator iterator(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 根据查询条件返回迭代器。可以避免一次性的加载全部查询结果，适合大批量数据的遍历操作。执行完毕后应该调用close()方法关闭资源。</p>
+
+<h2>3.和编辑器相关的方法</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;一般用于数据映射的工具。如快速映射数据库表的字段等。</p>
+
+<h3>3.1. boolean isMappingAble()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 是否支持映射。</p>
+
+<h3>3.2. List&lt;Map&lt;String, Object&gt;) getMappingFields()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 返回可以映射的字段列表。Map一般包含下面的字段。</p>
+
+<ul>
+	<li><strong>colName</strong><br />
+	字段名。</li>
+	<li><strong>colTitle</strong><br />
+	字段的标签。</li>
+	<li><strong>size</strong><br />
+	字段的大小。</li>
+	<li><strong>type</strong><br />
+	字段的类型。</li>
+</ul>
+
+<h3>3.3. String getMappingAttributeName()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 用来存放映射的字段名的属性模型里的属性名。比如DbDataObject用于映射数据库的表，数据库表中的字段名是放在DbDataObject的属性模型的filedName属性中的。</p>
+
+<h3>3.4. String getAttributeDescriptor()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 属性模型的类模型的路径。</p>
+
+<h2>4.其它方法</h2>
+
+<h3>4.1. ValidateResult validate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 校验数据。一般用于表单的校验，如某个字段是否能为空等。ValidateResult包含字段列表，如果ValidateResult中的字段列表为空，表明校验成功，如果有字段，表明该字段校验失败。对于校验失败的字段，需要把字段名和提示信息加入到ValidateResult中。</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

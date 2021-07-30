@@ -1,4 +1,4 @@
-^1624260410951
+^1627351773999
 @
 sname
 MetaThingDoc
@@ -18,37 +18,153 @@ suseTargetThingDoc
 false
 ssimpleBrowser
 true
+shideOutline
+false
 Sdescription
 #$@text#$@
 <h1>定义模型</h1>
 
-<h2>1.面向对象</h2>
+<h2>1.基本知识</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 动态模型实现了面向对象的编程方法，定义模型就相当于定义类。</p>
+<h3>1.1.模型的结构</h3>
 
-<h3>1.1.描述者</h3>
+<p>&nbsp;&nbsp;&nbsp; 动态模型是面向对象的，一个模型可以看成一个对象，一个对象是由属性、子模型（子对象）和行为组成的。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 在动态模型里类模型也称为描述者。</p>
+<h3>1.2.定义模型相当于定义模型的类</h3>
 
-<h3>1.2.类和对象都是模型</h3>
+<p>&nbsp;&nbsp;&nbsp; 由于模型是对象，因此定义模型就相当于定义它的类，即定义一个模型有哪些属性、子模型和行为等。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 在动态模型里，类和对象都是模型。一个模型可以根据用途把它当作类或对象，因此动态模型中没有专门定义类的概念，而是使用描述者代替了类。</p>
+<p>&nbsp;&nbsp;&nbsp; 模型的类也是模型，类模型使用它的各种子节点来定义模型的属性、子模型和行为等。</p>
+
+<h3>1.3.动态模型中的面向对象的基本知识</h3>
+
+<h4>1.3.1.模型的每一个节点都是独立的对象</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 在动态模型里一个模型的每一个节点都可以看作是独立的对象。</p>
+
+<h4>1.3.2.模型的属性</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 在运行时一个模型可以设置任意属性，属性是保存在Map&lt;String, Object&gt;中的，属性的值类型没有限制。但在持久化保存时只有定义过的属性才会被保存，并且值要能够被序列化（最好只使用基本类型的数据）。</p>
+
+<h4>1.3.3.模型的行为</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 一个模型的第一个名字为actions的子节点下是它的行为的定义，另外模型的行为也可以继承于它的类，也可以是继承于被继承的模型。寻找一个模型的行为，首先从自身查找，其次是类，然后是继承上查找。</p>
+
+<h4>1.3.4.模型的继承</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 当一个模型继承另一个模型时，只继承行为，不继承属性和子节点。但是当这两个模型都当作类模型使用时，它们所定义的属性和子节点会继承下来的。比如动物有名字属性，人继承动物，那么人也有名字这个属性，此时人的实例张三就有名字属性，名字属性是从动物上继承下来的。</p>
+
+<h4>1.3.5.模型的类</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 一个模型可以以任意模型和任意多个模型作为自己的类，模型继承类模型的行为，并且在持久化保存模型时会保存类模型定义的属性。</p>
 
 <h2>2.定义模型的方法</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 定义一个模型，一般是要定义这个模型有哪些属性、子模型和方法。</p>
+<h3>2.1.使用xworker.lang.MetaDescriptor3来编写类模型</h3>
 
-<h3>2.1.元事物</h3>
+<p>&nbsp;&nbsp;&nbsp; 在动态模型里，理论上任何模型都可以使用已有的模型编辑出来，并且类模型也是模型，所以类模型也可以使用已有的模型编辑出来。在XWorker里一般使用模型xworker.lang.MetaDescriptor3来编写类模型。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 元事物是一类模型，一般用来编写类模型。</p>
+<h3>2.2.类模型示例</h3>
 
-<h3>2.2.xworker.lang.MetaDescriptor3</h3>
+<p>&nbsp;&nbsp;&nbsp; 下面的Person模型是一个类模型，它是使用MetaDescriptor3模型编写的。它的actions子节点下是行为的定义，attribute节点是属性的定义，thing节点是子模型的定义，MenuBar是模型菜单的定义。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;xworker.lang.MetaDescriptor3模型是XWorker中最常用的元事物，一般使用它来定义新的模型。</p>
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 
-<h2>3.xworker.lang.MetaThing</h2>
+&lt;thing name=&quot;Person&quot; descriptors=&quot;xworker.lang.MetaDescriptor3&quot;&gt;
+    &lt;actions&gt;
+        &lt;GroovyAction name=&quot;sayHello&quot; descriptors=&quot;xworker.lang.actions.GroovyAction&quot; code=&quot;println self.name + &amp;quot; say hello world&amp;quot;;&quot;&gt;&lt;/GroovyAction&gt;
+    &lt;/actions&gt;
+    &lt;attribute name=&quot;name&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;age&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;sex&quot; inputtype=&quot;select&quot;&gt;
+        &lt;value name=&quot;男&quot; value=&quot;0&quot;&gt;&lt;/value&gt;
+        &lt;value name=&quot;女&quot; value=&quot;1&quot;&gt;&lt;/value&gt;
+    &lt;/attribute&gt;
+    &lt;attribute name=&quot;description&quot; inputtype=&quot;html&quot;&gt;&lt;/attribute&gt;
+    &lt;thing name=&quot;Child&quot; extends=&quot;xworker.doc.dyanmicmodel.examples.Person&quot;&gt;&lt;/thing&gt;
+    &lt;MenuBar&gt;
+        &lt;Menu name=&quot;Person&quot;&gt;
+            &lt;ExecuteAction name=&quot;ExecuteAction&quot; label=&quot;Run&quot; actionName=&quot;sayHello&quot;&gt;&lt;/ExecuteAction&gt;
+        &lt;/Menu&gt;
+    &lt;/MenuBar&gt;
+&lt;/thing&gt;</pre>
 
-<p>&nbsp;&nbsp;&nbsp; xworker.lang.MetaThing是XWorker定义的基类模型，任何模型都把它当作自己的基类，因此xworker.lang.MetaThing定义了所有模型都共有的属性和方法。</p>
+<h2>3.定义模型的技巧</h2>
+
+<h3>3.1.使用继承定义复杂的模型</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;继承在定义模型时非常有用，可以用来定义复杂的模型。如在上面的模型里Child继承Person模型，所以Child也是一个Person。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 在实际定义模型时，比如在包装Java的API时，可以按照Java实际的类和接口来定义模型，并且也可以按照Java的继承关系定义模型的继承关系，其中Java的接口在模型里也是继承关系。</p>
+
+<h3>3.2.模型编辑器</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 定义模型时，同时可以设置模型的编辑器，主要是设置属性的编辑方式。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 下面是和属性编辑器相关的几个常用属性。</p>
+
+<ul>
+	<li><strong>inputtype</strong><br />
+	输入方式。XWorker预置一些属性的编辑器，如文本框、HTML编辑器、下拉列表等等。<br />
+	&nbsp;</li>
+	<li><strong>inputattrs</strong><br />
+	输入扩展属性。可以设置和输入方式相关的额外属性。另外它一般还可以提供帮助，当选择一个输入方式后，点击输入扩展属性的*按钮可以弹出帮助或设置界面等。<br />
+	&nbsp;</li>
+	<li><strong>size</strong><br />
+	尺寸。输入控件的大小，一般是宽度。是一个估计值，如60，不是像素值。<br />
+	&nbsp;</li>
+	<li><strong>group</strong><br />
+	分组。同名的属性分到相同的标签页中。<br />
+	&nbsp;</li>
+	<li><strong>其它</strong><br />
+	其它如跨行、跨列等等可以参看它们的文档。</li>
+</ul>
+
+<h3>3.3.使用注册</h3>
+
+<h4>3.3.1.模型注册简介</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 模型注册是把一个模型注册到另一个模型下面，注册时可以指定注册的类型。比如把B模型以child(注册类型）方式注册到模型A下，那么通过模型A搜索child的注册时，就可以找到B模型。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 模型注册是一个实用的功能。比如模型注册常用于框架和帮助系统。</p>
+
+<ul>
+	<li><strong>框架</strong><br />
+	比如第三方可以提供界面控件模型，第三方的控件模型可以以child的方式注册到界面的容器控件下，这样在编写界面添加容器的子控件时，就可以看到并使用第三方的控件了。<br />
+	&nbsp;</li>
+	<li><strong>文档和示例</strong><br />
+	比如可以为某个模型编写文档和示例等，然后注册到该模型下，这样就可以通过这个模型就获取已注册的文档和示例了。</li>
+</ul>
+
+<h4>3.3.2.使用模型注册</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 模型注册的本质是一个索引。比如B模型以child的方式注册到A模型，是指在B模型中存在一个注册相关的属性，这个属性的值是&ldquo;child|A&rdquo;。那么通过A如何获取B模型呢？其实就是搜索所有模型，找到注册相关的属性，看看它的值是否有A，比如&ldquo;child|A&rdquo;就表示这个模型是以child的方式注册到A了，那么符合条件。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 要设置模型的注册相关属性，可以在模型编辑器里选择描述者（类）MetaThing来编辑，在Regist标签页中可以看到相关属性。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 由于搜索所有模型是耗时耗内存的任务，所以注册索引通常是缓存到内存中或数据库中的。</p>
+
+<h4>3.3.3.如何搜索注册</h4>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;如下面的示例代码。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+
+import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//查询注册事物，搜索注册到xworker.lang.actions.Actions上的模型
+Thing thingsIndex = world.getThing(&quot;xworker.lang.actions.Actions&quot;);
+List&lt;Thing&gt; things = XWorkerUtils.searchRegistThings(thingsIndex, &quot;child&quot;, [], actionContext);
+</pre>
+
+<h2>&nbsp;</h2>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
 #$@text#$@
 sen_label
 Define Model

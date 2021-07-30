@@ -26,6 +26,8 @@ import org.xmeta.util.UtilString;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
+import xworker.swt.util.SwtUtils;
+import xworker.util.XWorkerUtils;
 
 public class ShellGuide implements DisposeListener, ControlListener{
 	/**
@@ -151,9 +153,6 @@ public class ShellGuide implements DisposeListener, ControlListener{
 	
 	/**
 	 * 切换到新的Composite上，即遮罩到新的Composite上。
-	 * 
-	 * @param maskComposite
-	 * @param maskActionContext
 	 */
 	public synchronized void setMaskComposite(Composite maskComposite, ActionContext maskActionContext) {
 		init = true;
@@ -254,7 +253,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 		
 		if(guideIndex >= 0 && guideIndex < guideNodes.size()) {
 			Thing guideNode = guideNodes.get(guideIndex);
-			if(guideNode.getBoolean("disableNextButton") == false) {
+			if(!guideNode.getBoolean("disableNextButton")) {
 				Boolean finished = doAction(guideNode, "canNext");
 				if(finished == null || UtilData.isTrue(finished)) {
 					nextButton.setEnabled(true);
@@ -365,7 +364,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 				Thing guideNode = guideNodes.get(guideIndex);
 				//是否设置新的遮罩
 				Composite maskCompoiste = doAction(guideNode, "getMaskComposite");
-				if(maskCompoiste != null && maskCompoiste != this.maskComposite && maskComposite.isDisposed() == false) {
+				if(maskCompoiste != null && maskCompoiste != this.maskComposite && !maskComposite.isDisposed()) {
 					ActionContext maskActionContext = doAction(guideNode, "getMaskCompositeActionContext");
 					if(maskActionContext == null) {
 						maskActionContext = Designer.getActionContext(maskCompoiste);
@@ -376,67 +375,71 @@ public class ShellGuide implements DisposeListener, ControlListener{
 				//执行初始化方法
 				doAction(guideNode, "init");
 				
-				maskComposite.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						//放到display中执行，解决init方法中aysncExec后执行的问题
-						try {
-							//tooltip
-							
-							Boolean tipVisible = guideNode.doAction("isTipVisible", actionContext);
-							if(tipVisible == null || tipVisible == true) {
-								//tipShell再设置了网页后在网页ready事件里被打开，见xworker.swt.guide.prototypes.ShellGuideTipShell/@browser/@BrowserFunction/@actions/@doFunction
-								Shell tipShell = getTipShell();
-								tipShell.setSize(640,480);
-								String url = Designer.getUrlRoot() 
+				maskComposite.getDisplay().asyncExec(() -> {
+					//放到display中执行，解决init方法中aysncExec后执行的问题
+					try {
+						//tooltip
+
+						Boolean tipVisible = guideNode.doAction("isTipVisible", actionContext);
+						if(tipVisible == null || tipVisible == true) {
+							//tipShell再设置了网页后在网页ready事件里被打开，见xworker.swt.guide.prototypes.ShellGuideTipShell/@browser/@BrowserFunction/@actions/@doFunction
+							Shell tipShell = getTipShell();
+							tipShell.setSize(640,480);
+							Browser browser =((Browser) ShellGuide.this.actionContext.get("browser"));
+							if(XWorkerUtils.hasWebServer()) {
+								String url = Designer.getUrlRoot()
 										+ "do?sc=xworker.swt.guide.prototypes.ShellGuideTipWeb&thing=" + guideNode.getMetadata().getPath();
 								//System.out.println(url);
-								((Browser) ShellGuide.this.actionContext.get("browser")).setUrl(url);
-							}
-													
-							activeControl = getActiveControl(guideNode);
-							ShellGuide.this.setData("activeControl", activeControl);
-							actionContext.g().put("control", activeControl);
-							if(activeControl != null) {
-								//使控件可见
-								Designer.setVisible(activeControl);
-								
-								Point controlLocation  = null;
-								if(maskComposite instanceof Shell) {
-									//Shell shell = (Shell) maskComposite;
-									//Point location = control.getLocation();
-									//controlLocation = control.getParent().toDisplay(location);
-									//Rectangle rec = shell.getClientArea();
-									controlLocation = activeControl.getDisplay().map(activeControl, maskShell, new Point(0, 0));
-								}else {
-									controlLocation = activeControl.getDisplay().map(activeControl, maskComposite, new Point(0, 0));								
-								}
-								
-								Region region = new Region();
-								region.add(0, 0, maskShell.getSize().x, maskShell.getSize().y);
-								Point controlSize = activeControl.getSize();
-								region.subtract(controlLocation.x, controlLocation.y, controlSize.x, controlSize.y);
-								maskShell.setRegion(region);
-								
-								Designer.attachTo(tipShell, activeControl);
+								browser.setUrl(url);
 							}else{
-								maskShell.setRegion(null);
-								Point loc = maskShell.getLocation();
-								loc.x = loc.x + (maskShell.getSize().x - tipShell.getSize().x) / 2;
-								loc.y = loc.y + (maskShell.getSize().y - tipShell.getSize().y) / 2;
-								tipShell.setLocation(loc);
+								tipShell.setVisible(true);
+								SwtUtils.setThingDesc(guideNode, browser);
 							}
-							
-							maskShell.setFocus();
-							tipShell.setFocus();
-							
-							doAction(guideNode, "afterInited");
-						}catch(Exception e) {
-							e.printStackTrace();
-						}finally {
-							initGuideNode = false;
 						}
+
+						activeControl = getActiveControl(guideNode);
+						ShellGuide.this.setData("activeControl", activeControl);
+						actionContext.g().put("control", activeControl);
+						if(activeControl != null) {
+							//使控件可见
+							Designer.setVisible(activeControl);
+
+							Point controlLocation  = null;
+							if(maskComposite instanceof Shell) {
+								//Shell shell = (Shell) maskComposite;
+								//Point location = control.getLocation();
+								//controlLocation = control.getParent().toDisplay(location);
+								//Rectangle rec = shell.getClientArea();
+								controlLocation = activeControl.getDisplay().map(activeControl, maskShell, new Point(0, 0));
+							}else {
+								controlLocation = activeControl.getDisplay().map(activeControl, maskComposite, new Point(0, 0));
+							}
+
+							Region region = new Region();
+							region.add(0, 0, maskShell.getSize().x, maskShell.getSize().y);
+							Point controlSize = activeControl.getSize();
+							region.subtract(controlLocation.x, controlLocation.y, controlSize.x, controlSize.y);
+							maskShell.setRegion(region);
+
+							Designer.attachTo(tipShell, activeControl);
+						}else{
+							maskShell.setRegion(null);
+							Point loc = maskShell.getLocation();
+							loc.x = loc.x + (maskShell.getSize().x - tipShell.getSize().x) / 2;
+							loc.y = loc.y + (maskShell.getSize().y - tipShell.getSize().y) / 2;
+							tipShell.setLocation(loc);
+						}
+
+						maskShell.setFocus();
+						tipShell.setFocus();
+
+						doAction(guideNode, "afterInited");
+					}catch(Exception e) {
+						e.printStackTrace();
+					}finally {
+						initGuideNode = false;
 					}
-				});			
+				});
 			}else {
 				initGuideNode = false;
 			}
@@ -507,7 +510,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 			if(shellThing != null) {
 				ac = new ActionContext();
 				ac.put("parentContext", actionContext);
-				ac.put("parent", Display.getCurrent().getActiveShell());
+				//ac.put("parent", Display.getCurrent().getActiveShell());
 				Shell shell = shellThing.doAction("create", ac);
 				maskComposite = shell;
 				shell.setVisible(true);

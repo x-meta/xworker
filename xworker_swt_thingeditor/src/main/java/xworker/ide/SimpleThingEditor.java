@@ -194,7 +194,7 @@ public class SimpleThingEditor {
     }    
         
     public void refreshProjectTree(ActionContext actionContext) {    	
-    	View view = workbench.getView("SimpleThingEditor_XWokerExplorer");
+    	View view = (View) workbench.getView("SimpleThingEditor_XWokerExplorer");
     	view.doAction("refreshProjectTree");
     }
 

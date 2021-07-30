@@ -1,4 +1,4 @@
-^1624260405206
+^1627630030965
 @
 sname
 LocalVariables
@@ -20,15 +20,17 @@ suseTargetThingDoc
 false
 ssimpleBrowser
 true
+shideOutline
+false
 Sdescription
 #$@text#$@
 <h1>局部变量</h1>
 
-<p>&nbsp;&nbsp;&nbsp; 局部变量是指只有当前线程可以访问到的，并以可以通过ActionContext的pop()移除的变量。</p>
+<p>&nbsp;&nbsp;&nbsp; 局部变量是指保存在非最底层栈层中的变量。由于动作上下文的栈是线程独立的，且非最底层的栈层是线程独有的，线程可以push和pop这些栈层，因此这些变量是临时的，在需要时入栈，使用完毕后就会出栈。</p>
 
-<h2>1.通过压入栈设置局部变量</h2>
+<h2>1.动作上下文的栈的操作</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 通过ActionConext的push()方法可以压入一个变量栈，通过该变量栈设置的变量是相对局部的。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动作上下文的栈的push()和pop()是成对出现的，必须放在try/finally里。压入的栈层是org.xmeta.Bindings，Bindings相当于一个Map&lt;String, Object&gt;。</p>
 
 <pre class="brush:groovy;">
 import org.xmeta.ActionContext;
@@ -36,12 +38,12 @@ import org.xmeta.Bindings;
 
 ActionContext actionContext = new ActionContext();
 
-//压入并返回一个变量栈
+//压入并返回一个栈层
 Bindings bindings = actionContext.push();
 
 try{
-    //在压入的变量栈里设置的变量是局部的
-    bindings.put(key, object);
+    //在压入的栈层里设置的变量是局部的
+    bindings.put((String) key, (Object) object);
 }finally{
     //pop()方法必须和push()是成对的，并且要放在finally里确保能够被执行
     actionContext.pop();
@@ -49,13 +51,18 @@ try{
      //执行pop()后，设置的局部变量就被移除了
 }</pre>
 
-<h2>2.通过l()方法返回局部变量栈</h2>
+<h2>2.使用局部变量</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 一些动作模型，尤其是语法类的模型，肯能会把一个变量栈标记为局部变量栈，标记过的布局变量栈可以通过l()方法获取。</p>
+<p>&nbsp;&nbsp;&nbsp; 直接使用动作上下文获取。</p>
 
-<h3>2.1.标记布局变量栈</h3>
+<pre class="brush:groovy;">
+Object obj = actionContext.get((String) key);</pre>
 
-<p>&nbsp;&nbsp;&nbsp; 通常在语法类模型里设置。比如Begin模型，Begin模型的是实现代码块{}的作用，Begin模型的实现代码示意如下。</p>
+<h2>3.使用l()函数</h2>
+
+<h3>3.1.标记局部变量栈层和使用l()函数</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 为了能够精确的控制局部变量，我们可以把一个栈层标记为局部变量栈，从而能够使用l()函数获取该栈层。</p>
 
 <pre class="brush:groovy;">
 //压入一个栈
@@ -65,23 +72,81 @@ try{
     //设置为局部变量栈
     bindings.setVarScopeFlag();
 
-    //具备变量一般是为子动作使用的，Thing是模型，self是当前Begin模型
-    for(Thing child in self.getChilds()){
-         //遍历子节点执行
-         child.getAction().run(actionContext);
-    }
+    ......
 }finally{
     actionContext.pop();
-}</pre>
+}
+</pre>
 
-<h3>2.2.获取局部遍历栈</h3>
-
-<p>&nbsp;&nbsp;&nbsp; 通过actionContext.l()方法获取局部变量栈，如果没有变量栈是设置为局部，那么返回null。</p>
+<p>&nbsp;&nbsp;&nbsp; 通过actionContext.l()方法获取局部变量栈层，如果没有栈标记为局部的，那么返回null。自上向下获取，返回第一个标记为局部变量栈层的。</p>
 
 <pre class="brush:groovy;">
 import org.xmeta.Bindings;
 
-Bindings localBindings = actionContext.l();</pre>
+//获取第一个标记为局部变量的栈层
+Bindings localBindings = actionContext.l();
+
+//获取第n个标记为局部变量的栈层，获取顺序从栈的顶层往下层获取
+Bindings localBindings = actionContext.l(n);
+</pre>
+
+<h3>3.2.l()函数的作用</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 比如一个for循环的示例代码，这个代码打印0-100的偶数，即0、2、4...100。</p>
+
+<pre class="brush:java;">
+for(int i=0; i&lt;=100; i++){     
+     System.out.println(i);
+     i++;
+}</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 在上面的代码里，括号里的i++的作用是过滤奇数的。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果要使用动作模型来实现for语句，那么for语句这个动作就可以设置一个栈层为局部变量栈，它把i这样的变量放到该栈层，这样循环内部的其它动作通过l()函数就可以获取for语句设置的局部变量栈层了，从而能够准确的拿到和设置相关变量。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 需要注意的是，使用l()函数时，最好确认是否是自己需要的局部变量栈。</p>
+
+<h2>4.参数</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 局部变量也可以用于传参。</p>
+
+<h3>4.1.传参</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 参数一般是指调用动作时传入的变量。调用动作传参的典型方法如下面的示例代码。</p>
+
+<pre class="brush:groovy;">
+//通过数组传参
+action.run(actionContext, &quot;key1&quot;, keyValue1, &quot;key2&quot;, keyValue2...);
+
+//通过Map&lt;String, Object&gt;传参
+Map&lt;String, Object&gt; params = new HashMap&lt;String, Object&gt;();
+action.run(actionContext, params);</pre>
+
+<h3>4.2.参数的实现原理</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 本质上是在run()方法里压入了一个栈，参数是放到该方法中的，当动作执行完毕后该栈就弹出了。</p>
+
+<pre class="brush:java;">
+public Object run(ActionContext actionContext, Object ... params){
+     Map&lt;String, Object&gt; paramsMap = UtilMap.toMap(params);
+     return run(actionContext, paramsMap);
+}
+
+public Object run(ActionContext actionContext, Map&lt;String, Object&gt; params){
+    Bindings bindings = actionContext.push(null);    
+
+    try{
+         //放入参数
+         bindings.putAll(params);
+
+         //执行动作
+         ....
+    }finally{
+        actionContext.pop();
+    }     
+}</pre>
+
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 #$@text#$@

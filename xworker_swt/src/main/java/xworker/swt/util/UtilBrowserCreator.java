@@ -68,7 +68,7 @@ public class UtilBrowserCreator {
 		Shell shell = Display.getCurrent().getActiveShell();
 		ActionContext ac = new ActionContext(actionContext);
 		ac.put("parent", shell);
-		Shell newShell = (Shell) thing.doAction("create", ac);
+		Shell newShell = thing.doAction("create", ac);
 		newShell.open();       
 	}
 
@@ -77,15 +77,11 @@ public class UtilBrowserCreator {
         World world = World.getInstance();
 		
         String key = "utilbrowser_shell_" + actionContext.get("path");
-        WeakReference<Shell> shellref = (WeakReference<Shell>) world.getData(key); 
+        WeakReference<Shell> shellref =  world.getData(key);
 		if(shellref != null && shellref.get() != null && !shellref.get().isDisposed()){
 		    final Shell shell = shellref.get();
 		    
-		    shell.getDisplay().asyncExec(new Runnable(){
-		    	public void run(){
-		    		shell.setVisible(true);
-		    	}
-		    });                
+		    shell.getDisplay().asyncExec(() -> shell.setVisible(true));
 		    return;
 		}
 		    
@@ -93,8 +89,8 @@ public class UtilBrowserCreator {
 		Shell shell = Display.getCurrent().getActiveShell();
 		ActionContext ac = new ActionContext(actionContext);
 		ac.put("parent", shell);
-		Shell newShell = (Shell) thing.doAction("create", ac);
-		WeakReference<Shell> wr = new WeakReference<Shell>(newShell);
+		Shell newShell = thing.doAction("create", ac);
+		WeakReference<Shell> wr = new WeakReference<>(newShell);
 		world.setData(key, wr); 
 		newShell.open();        
 	}
@@ -104,20 +100,18 @@ public class UtilBrowserCreator {
 		final ActionContainer actions = (ActionContainer) actionContext.get("actions");
 		final World world = World.getInstance();
 		
-		new Thread(new Runnable(){
-	        public void run(){
-	            ActionContext ac = new ActionContext(actions.getActionContext());
-	            Display display = new Display ();
-	            ac.put("parent", display);
-	            Thing viewObject = world.getThing(path);
-	            Shell shell = (Shell) viewObject.doAction("create", ac);
-	            shell.open ();
-	    	    while (!shell.isDisposed ()) {
-	    	        if (!display.readAndDispatch ()) display.sleep ();
-	    	    }
-	    	    display.dispose ();
-	        }
-	    }).start();        
+		new Thread(() -> {
+			ActionContext ac = new ActionContext(actions.getActionContext());
+			Display display = new Display ();
+			ac.put("parent", display);
+			Thing viewObject = world.getThing(path);
+			Shell shell = (Shell) viewObject.doAction("create", ac);
+			shell.open ();
+			while (!shell.isDisposed ()) {
+				if (!display.readAndDispatch ()) display.sleep ();
+			}
+			display.dispose ();
+		}).start();
 	}
 
     @SuppressWarnings("unchecked")
@@ -125,35 +119,29 @@ public class UtilBrowserCreator {
         final World world = World.getInstance();
         final String path = (String) actionContext.get("path");
         final String key = "utilbrowser_th_shell_" + path;
-    	WeakReference<Shell> shellref = (WeakReference<Shell>) world.getData(key); 
+    	WeakReference<Shell> shellref = world.getData(key);
 		if(shellref != null && shellref.get() != null && !shellref.get().isDisposed()){
 		    final Shell shell = shellref.get();
 		    
-		    shell.getDisplay().asyncExec(new Runnable(){
-		    	public void run(){
-		    		shell.setVisible(true);
-		    	}
-		    });                
+		    shell.getDisplay().asyncExec(() -> shell.setVisible(true));
 		    return;
 		}
 		
 		final ActionContainer actions = (ActionContainer) actionContext.get("actions");
 		
-		new Thread(new Runnable(){
-			public void run(){
-				ActionContext ac = new ActionContext(actions.getActionContext());
-	            Display display = new Display ();
-	            ac.put("parent", display);
-	            Thing viewObject = world.getThing(path);
-	            Shell shell = (Shell) viewObject.doAction("create", ac);
-	            WeakReference<Shell> wr = new WeakReference<Shell>(shell);
-	            world.setData(key, wr); 
-	            shell.open ();
-	    	    while (!shell.isDisposed ()) {
-	    	        if (!display.readAndDispatch ()) display.sleep ();
-	    	    }
-	    	    display.dispose ();
+		new Thread(() -> {
+			ActionContext ac = new ActionContext(actions.getActionContext());
+			Display display = new Display ();
+			ac.put("parent", display);
+			Thing viewObject = world.getThing(path);
+			Shell shell = viewObject.doAction("create", ac);
+			WeakReference<Shell> wr = new WeakReference<>(shell);
+			world.setData(key, wr);
+			shell.open ();
+			while (!shell.isDisposed ()) {
+				if (!display.readAndDispatch ()) display.sleep ();
 			}
+			display.dispose ();
 		});
 	}
 
@@ -170,7 +158,7 @@ public class UtilBrowserCreator {
 		Shell shell = Display.getCurrent().getActiveShell();
 		
 		actionContext.put("parent", shell);
-		Shell newShell = (Shell) thing.doAction("create", actionContext);
+		Shell newShell = thing.doAction("create", actionContext);
 		Text productText = (Text) actionContext.get("productText");
 		productText.setText((String) actionContext.get("path"));
 		newShell.open();        

@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ValidateResult {
 	DataObject dataObject;
-	List<FieldInfo> infos = new ArrayList<FieldInfo>();
+	List<FieldInfo> infos = new ArrayList<>();
 	
 	public ValidateResult(DataObject dataObject){
 		this.dataObject = dataObject;

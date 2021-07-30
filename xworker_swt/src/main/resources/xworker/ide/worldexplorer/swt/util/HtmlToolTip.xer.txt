@@ -1,0 +1,398 @@
+^1627446161651
+@
+sname
+HtmlToolTip
+slabel
+HtmlToolTip
+sdescriptors
+xworker.swt.widgets.Display
+  @/@shell
+  sname
+  shell
+  stext
+  "提示窗体"
+  sNO_TRIM
+  false
+  sCLOSE
+  false
+  sTITLE
+  false
+  sMIN
+  false
+  sMAX
+  false
+  sBORDER
+  false
+  sRESIZE
+  false
+  sON_TOP
+  true
+  sTOOL
+  true
+  sNO_FOCUS
+  true
+  swidth
+  400
+  sheight
+  300
+  scenterScreen
+  true
+  spack
+  false
+  smaximized
+  false
+  sfullScreen
+  false
+  sdesign
+  true
+  sisIde
+  false
+  sdesignDefaultOpen
+  false
+  sexitOnDispose
+  false
+  sH_SCROLL
+  false
+  sV_SCROLL
+  false
+  sNO_BACKGROUND
+  false
+  sNO_MERGE_PAINTS
+  false
+  sNO_REDRAW_RESIZE
+  false
+  sNO_RADIO_GROUP
+  false
+  sEMBEDDED
+  false
+  sDOUBLE_BUFFERED
+  false
+  slabel
+  shell
+  scapture
+  false
+  senabled
+  true
+  sredraw
+  true
+  svisible
+  true
+  sdescriptors
+  xworker.swt.widgets.Display/@Shell
+  sid
+  shell
+    @/@shell/@shellFillLayout
+    sname
+    shellFillLayout
+    stype
+    SWT.HORIZONTAL
+    slabel
+    shellFillLayout
+    sdescriptors
+    xworker.swt.Layouts/@FillLayout
+    sid
+    shellFillLayout
+    @/@shell/@browser
+    sname
+    browser
+    sMOZILLA
+    false
+    slabel
+    browser
+    sdescriptors
+    xworker.swt.Widgets/@Browser
+    sid
+    browser
+    @/@shell/@actions
+    sname
+    actions
+    sdescriptors
+    xworker.swt.Widgets/@actions
+    sid
+    actions
+      @/@shell/@actions/@setContent
+      sname
+      setContent
+      sisSynchronized
+      true
+      sthrowException
+      true
+      suseOtherAction
+      false
+      svarScope
+      Global
+      sdisableGlobalContext
+      false
+      Scode
+#$@text#$@
+import xworker.swt.util.SwtUtils;
+import xworker.util.XWorkerUtils;
+import java.net.URLEncoder;
+
+if(XWorkerUtils.hasWebServer()){
+    shell.setSize(640,480);
+    //shell.setVisible(true);
+    def headers = [
+         "Accept: */*",
+         "Accept-Language: zh-cn",
+         "Content-Type: application/x-www-form-urlencoded", // 建议要有
+         "Accept-Encoding: gzip, deflate", "Cache-Control: no-cache"
+       ] as String[];
+    def postData = "message=" + URLEncoder.encode(message, "UTF-8");  
+    def url = XWorkerUtils.getWebControlUrl(world.getThing("xworker.ide.worldexplorer.swt.util.HtmlToolTipWeb"));
+    browser.setUrl(url, postData, headers);
+    //println "set content...............";
+    //browser.setText(html);
+}else{
+    //println "xxxxxxxxxx=" + message;
+    if(message.startsWith("thing=")){
+        def thing = message.substring(6);
+        SwtUtils.setThingDesc(thing, browser);        
+    }else{
+        if(message != null){
+             browser.setText(message);
+        }
+    }
+    
+    shell.setSize(400, 300);
+    shell.setVisible(true);
+}
+#$@text#$@
+      sinterpretationType
+      Action
+      screateLocalVarScope
+      false
+      ssaveReturn
+      false
+      sswitchResult
+      false
+      sdebugLog
+      false
+      sdescriptors
+      xworker.lang.actions.Actions/@GroovyAction
+      sid
+      setContent
+    @/@shell/@init
+    sname
+    init
+    slabel
+    init
+    sisSynchronized
+    false
+    sthrowException
+    false
+    suseOtherAction
+    false
+    svarScope
+    Global
+    sdisableGlobalContext
+    false
+    Scode
+#$@text#$@
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.widgets.Shell;
+
+import xworker.swt.editor.ToolTipStatusListener;
+import xworker.swt.util.UtilBrowser;
+
+import xworker.util.XWorkerUtils;
+
+def jquery = XWorkerUtils.getWebUrl() + "js/jquery/jquery-1.4.2.min.js";
+
+//String message = "dddddddddddddddddddddddddd<br/>ddddddddddddddd";
+String html = """<html>
+<head>
+<title>ToolTip</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="${jquery}"></script>
+<style type="text/css">
+<!--
+body {
+	overflow: hidden;
+    background-color: #ffffee;
+    margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+-->
+</style>
+<script  type="text/javascript">
+//用于触发和事物管理器交互的事件
+function invoke(status){  
+    if (typeof(utilBrowserFunction) == "undefined"){
+        window.status = status;
+        window.status = "";        
+    }else{
+        utilBrowserFunction(status);
+    }
+}
+
+function getContents(){	
+    //alert("tt");
+    var div = document.getElementById("all");
+    var content = "html_edit_content1:" + \$( document ).height() + ":" + div.offsetWidth;
+    invoke(content);
+    //content = "html_edit_content:" + div.clientHeight + ":" + div.offsetWidth;
+    //invoke(content);
+    window.status = "";
+}
+
+/*
+function getContents(){	
+    //alert("tt");
+    var div = document.getElementById("body");
+    window.status = "html_edit_content" + div.offsetHeight + ":" + div.offsetWidth;
+    window.status = "";
+}
+*/
+</script>
+</head>
+<body >
+<div id="all" style="width:100%;height:0px">
+<div id="messageDiv" style='background-color: #ffffee;width:400px;color:#000000;border: 0px #000000 solid; font-size: 12px;overflow: auto;'>
+${message}
+</div>
+<hr/>
+<div align="right">Press 'F2' for focus.</div>
+</div>
+</body>
+</html>
+""";
+
+ToolTipStatusListener listener = new ToolTipStatusListener(shell);
+browser.addStatusTextListener(listener);
+browser.addProgressListener(listener);
+//browser.setText(html);
+browser.setUrl(XWorkerUtils.getWebUrl() + "do?sc=xworker.ide.worldexplorer.swt.util.HtmlToolTipWeb");
+shell.setData("actions", actions);
+shell.setData("browser", browser);
+def ub = UtilBrowser.attach(browser, actions, shell.display);
+ub.setListener(listener);
+#$@text#$@
+    sinterpretationType
+    Action
+    screateLocalVarScope
+    false
+    ssaveReturn
+    false
+    sswitchResult
+    false
+    sdebugLog
+    false
+    sdescriptors
+    xworker.swt.Widgets/@Code
+    sid
+    init
+    @/@shell/@Listeners
+    sname
+    Listeners
+    sdescriptors
+    xworker.swt.widgets.Widget/@Listeners
+    sid
+    Listeners
+      @/@shell/@Listeners/@shellKeyListener
+      sname
+      shellKeyListener
+      stype
+      FocusIn
+      sdescriptors
+      xworker.swt.events.Listeners/@listeners/@Listener
+      sid
+      shellKeyListener
+        @/@shell/@Listeners/@shellKeyListener/@GroovyAction
+        sname
+        GroovyAction
+        sisSynchronized
+        false
+        sthrowException
+        true
+        suseOtherAction
+        false
+        svarScope
+        Global
+        sdisableGlobalContext
+        false
+        Scode
+#$@text#$@
+import xworker.swt.editor.LabelToolTipListener;
+
+def listener = shell.getData("listener");
+if(listener != null){
+    listener.openToolTipBrowser();
+}else{
+    shell.dispose();
+    log.info("tool tip listener is null");
+}
+#$@text#$@
+        sdescriptors
+        xworker.lang.actions.Actions/@GroovyAction
+        sid
+        GroovyAction
+          @/@shell/@Listeners/@shellKeyListener/@GroovyAction/@Variables
+          sname
+          Variables
+          sdescriptors
+          xworker.lang.actions.Inout/@Variables
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sid
+          Variables
+            @/@shell/@Listeners/@shellKeyListener/@GroovyAction/@Variables/@log
+            sname
+            log
+            stagName
+            xworker.ide.worldexplorer.swt.util.HtmlToolTip/@shell/@Listeners/@shellKeyListener/@GroovyAction
+            saction
+            true
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Local
+            sisSynchronized
+            false
+            sthrowException
+            true
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sdisableGlobalContext
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.lang.actions.log.LoggerActions/@Sl4jLogger
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sid
+            log

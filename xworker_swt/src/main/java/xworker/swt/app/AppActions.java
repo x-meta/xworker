@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.xmeta.Action;
@@ -15,16 +16,17 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
+import xworker.thingeditor.IView;
 import xworker.util.XWorkerUtils;
 
 public class AppActions {
 	private static final String TAG = AppActions.class.getName();
 	
-	public static IEditor getEditor(ActionContext actionContext) {
+	public static xworker.thingeditor.IEditor<Composite, Control, Image> getEditor(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		String editorId = self.doAction("getEditorId", actionContext);
 		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
-		for(IEditor editor : editorContainer.getEditors()) {
+		for(xworker.thingeditor.IEditor<Composite, Control, Image> editor : editorContainer.getEditors()) {
 			if(editor.getId().equals(editorId)) {
 				return editor;
 			}
@@ -33,7 +35,7 @@ public class AppActions {
 		return null;
 	}
 	
-	public static View getView(ActionContext actionContext) {
+	public static IView<Composite, Control> getView(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		String viewId = self.doAction("getViewId", actionContext);
 		Workbench workbench = self.doAction("getWorkbench", actionContext);
@@ -44,7 +46,7 @@ public class AppActions {
 		return workbench.getView(viewId);
 	}
 	
-	public static IEditor openEditor(final ActionContext actionContext) {
+	public static xworker.thingeditor.IEditor<Composite, Control, Image> openEditor(final ActionContext actionContext) {
 		final Thing self = actionContext.getObject("self");
 		
 		final String id = self.doAction("getId", actionContext);
@@ -194,7 +196,7 @@ public class AppActions {
 		}
 	}
 	
-	public static View openView(ActionContext actionContext) {
+	public static IView<Composite, Control> openView(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		Workbench workbench = self.doAction("getWorkbench", actionContext);
 		String id = self.doAction("getId", actionContext);

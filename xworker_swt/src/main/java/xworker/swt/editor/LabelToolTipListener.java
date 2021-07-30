@@ -133,10 +133,22 @@ public class LabelToolTipListener implements MouseTrackListener, MouseListener{
 		}
 		
 		Browser browser = actionContext.getObject("browser");
-		String url = XWorkerUtils.getWebControlUrl(World.getInstance().getThing("xworker.ide.worldexplorer.swt.util.HtmlToolTipWeb"));
+
 		String content = (String) lastControl.getData("toolTip");
-		url = url + "&overflow=false&message=" + content;
-		browser.setUrl(url);
+		if(XWorkerUtils.hasWebServer()) {
+			String url = XWorkerUtils.getWebControlUrl(World.getInstance().getThing("xworker.ide.worldexplorer.swt.util.HtmlToolTipWeb"));
+			url = url + "&overflow=false&message=" + content;
+			browser.setUrl(url);
+		}else{
+			if(content.startsWith("thing=")){
+				String thing = content.substring(6);
+				SwtUtils.setThingDesc(thing, browser);
+			}else{
+				if(content != null){
+					browser.setText(content);
+				}
+			}
+		}
 		/*
 		ActionContainer actions = (ActionContainer) toolTipBrowser.getData("actions");
 		Map<String, Object> param = new HashMap<String, Object>();

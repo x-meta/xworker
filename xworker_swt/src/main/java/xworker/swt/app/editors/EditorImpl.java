@@ -252,7 +252,7 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	}
 
 	@Override
-	public IEditorContainer getEditorContainer() {
+	public xworker.thingeditor.IEditorContainer<Composite, Control, Image> getEditorContainer() {
 		return editorContainer;
 	}
 

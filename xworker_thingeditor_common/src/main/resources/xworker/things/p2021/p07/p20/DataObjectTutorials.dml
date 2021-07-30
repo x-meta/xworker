@@ -9,7 +9,9 @@
 ]]></description>
     <SwtGuide showHeader="true">
         <SimpleBrowser name="introduce" _xmeta_id_="SimpleBrowser" label="数据对象简介">
-            <description><![CDATA[<p>&nbsp;&nbsp;&nbsp; 数据对象（DataObject)是一个基于关系模型的二维表数据框架。它有下面几个主要特点。</p>
+            <description><![CDATA[<p>&nbsp;&nbsp;&nbsp; 本教程介绍数据对象的基本知识，通过本教程能够对数据对象有一个基本了解。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 数据对象（DataObject)是一个基于关系模型的二维表数据框架。它有下面几个主要特点。</p>
 
 <ul>
 	<li><strong>统一API</strong><br />
@@ -105,9 +107,7 @@
             </Buttons>
         </BrowserComposite>
         <SimpleBrowser name="code" label="在代码中使用数据对象">
-            <description><![CDATA[<h2>1.基本操作</h2>
-
-<h3>1.1.增删改操作</h3>
+            <description><![CDATA[<p>可以在代码中使用数据对象，如下面的示例。</p>
 
 <pre class="brush:groovy;">
 import org.xmeta.ActionContext;
@@ -123,7 +123,7 @@ DataObject dataObject = new DataObject(&quot;xworker.app.monitor.dataobjects.Mon
 //在创建和更新数据时，一般只会插入和更新脏数据
 data.put(&quot;name&quot;, &quot;test&quot;);
 
-//创建数据，如插入数据到数据，通过返回值是否为null判断创建成功。自增长的主键等此时也会赋值。
+//创建数据，如插入数据到数据库，通过返回值是否为null判断创建成功。自增长的主键等此时也会赋值。
 dataObject = dataObject.create(ac);
 
 //根据主键更新数据，返回更新的数量
@@ -133,37 +133,26 @@ int updatedCount  = dataObject.update(ac);
 int deletedCount = dataObject.delete(ac);
 </pre>
 
-<h3>1.2.DataObjectEntitiy</h3>
-
-<p>&nbsp;&nbsp;&nbsp; DataObject是一个Map，操作时对代码不友好，DataObjecEntity可以解决这个问题。Entity代码可以在编辑数据对象时通过菜单生成。</p>
-
-<pre class="brush:java;">
-public class MonitorData extends DataObjectEntity&lt;MonitorData&gt; {
-    public MonitorData(){
-        super(new DataObject(&quot;xworker.app.monitor.dataobjects.MonitorData&quot;));
-    }
-      
-    public MonitorData(DataObject data){
-        super(data);
-    }  
-      
-    public void setId(long value){
-        this.put(&quot;id&quot;, value);
-    }
-    
-    public long getId(){
-        return this.getLong(&quot;id&quot;);
-    }
-    public void setMonitorId(long value){
-        this.put(&quot;monitorId&quot;, value);
-    }
-
-    ...
-}</pre>
-
 <p>&nbsp;</p>
+]]></description>
+            <Buttons>
+                <PreButton name="nextButton"></PreButton>
+                <NextButton name="nextButton" _xmeta_id_="nextButton1"></NextButton>
+            </Buttons>
+        </SimpleBrowser>
+        <SimpleBrowser name="summary" label="总结">
+            <description><![CDATA[<p>总结一下数据对象的基本知识。</p>
 
-<p>&nbsp;</p>
+<ul>
+	<li><strong>数据对象模型相当于数据的映射</strong><br />
+	数据对象模型本身相当于数据的映射模型。<br />
+	&nbsp;</li>
+	<li><strong>数据对象可以应用于界面</strong><br />
+	结合界面控件，可以快速生成各种和数据相关的界面。<br />
+	&nbsp;</li>
+	<li><strong>数据对象也可以在代码中使用</strong><br />
+	也可以在在代码中调用数据对象，使用数据对象的增删改查。</li>
+</ul>
 ]]></description>
             <Buttons>
                 <PreButton name="nextButton"></PreButton>

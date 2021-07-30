@@ -310,7 +310,7 @@ public abstract class AttributeEditor {
 	}
 	
 	public Label createLabel(Composite composite, boolean formNoLabel) {
-		if(formNoLabel == false && attribute.getBoolean("showLabel", true) != false){		    	
+		if(!formNoLabel && attribute.getBoolean("showLabel", true)){
 		    int textLabelStyle = SWT.NONE;
 		    textLabelStyle |= SWT.HORIZONTAL;
 		    textLabelStyle |= SWT.RIGHT;

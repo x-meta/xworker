@@ -3,7 +3,9 @@ package xworker.swt.app.editorContainers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.xmeta.ActionContext;
@@ -12,6 +14,8 @@ import org.xmeta.util.ActionContainer;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.*;
+import xworker.swt.app.MenuContainer;
+import xworker.thingeditor.IWorkbench;
 
 public abstract class AbstractEditorContianer implements IEditorContainer, IEditorListener{
 	private static final String TAG = AbstractEditorContianer.class.getName();
@@ -25,7 +29,7 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	protected CoolBarContainer coolBarContainer;
 	protected CoolBarContainer statusBarContainer;
 	protected Workbench workbench;
-	private List<IEditorListener> editorListeners = new ArrayList<IEditorListener>();
+	private List<xworker.thingeditor.IEditorListener<Composite, Control, Image>> editorListeners = new ArrayList<>();
 	
 	public AbstractEditorContianer(ActionContext actionContext) {
 		this.thing = actionContext.getObject("self");
@@ -75,8 +79,8 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	}
 
 	@Override
-	public void setWorkbench(Workbench workbench) {
-		this.workbench = workbench;
+	public void setWorkbench(IWorkbench<Composite, Control, Image> workbench) {
+		this.workbench = (Workbench) workbench;
 	}
 
 	@Override
@@ -149,21 +153,21 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	}
 
 	@Override
-	public void addIEditorListener(IEditorListener editorListener) {
-		if(editorListener != null && editorListeners.contains(editorListener) == false) {
+	public void addIEditorListener(xworker.thingeditor.IEditorListener<Composite, Control, Image> editorListener) {
+		if(editorListener != null && !editorListeners.contains(editorListener)) {
 			editorListeners.add(editorListener);
 		}		
 	}
 
 	@Override
-	public void removeIEditorListener(IEditorListener editorListener) {
+	public void removeIEditorListener(xworker.thingeditor.IEditorListener<Composite, Control, Image> editorListener) {
 		editorListeners.remove(editorListener);
 	}
 
 	@Override
-	public void fireStateChanged(IEditor editor) {
+	public void fireStateChanged(xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		try {
-			for(IEditorListener listener : editorListeners) {
+			for(xworker.thingeditor.IEditorListener<Composite, Control, Image> listener : editorListeners) {
 				listener.stateChanged(this, editor);
 			}
 		}catch(Exception e) {
@@ -173,7 +177,7 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	
 	public void fireOnCreated(IEditor editor) {
 		try {
-			for(IEditorListener listener : editorListeners) {
+			for(xworker.thingeditor.IEditorListener<Composite, Control, Image> listener : editorListeners) {
 				listener.onCreated(this, editor);
 			}
 		}catch(Exception e) {
@@ -183,7 +187,7 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	
 	public void fireOnActive(IEditor editor) {
 		try {
-			for(IEditorListener listener : editorListeners) {
+			for(xworker.thingeditor.IEditorListener<Composite, Control, Image> listener : editorListeners) {
 				listener.onActive(this, editor);
 			}
 		}catch(Exception e) {
@@ -191,9 +195,9 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 		}
 	}
 	
-	public void fireOnDisposed(IEditor editor) {
+	public void fireOnDisposed(xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		try {
-			for(IEditorListener listener : editorListeners) {
+			for(xworker.thingeditor.IEditorListener<Composite, Control, Image> listener : editorListeners) {
 				listener.onDisposed(this, editor);
 			}
 		}catch(Exception e) {
@@ -202,24 +206,22 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	}
 
 	@Override
-	public void onCreated(IEditorContainer editorContainer, IEditor editor) {
+	public void onCreated(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		thing.doAction("onEditorCreated", actionContext, "editorContainer", editorContainer, "editor", editor);
 	}
 
 	@Override
-	public void onActive(IEditorContainer editorContainer, IEditor editor) {
+	public void onActive(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		thing.doAction("onEditorActive", actionContext, "editorContainer", editorContainer, "editor", editor);
 	}
 
 	@Override
-	public void onDisposed(IEditorContainer editorContainer, IEditor editor) {
+	public void onDisposed(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		thing.doAction("onEditorDisposed", actionContext, "editorContainer", editorContainer, "editor", editor);
 	}
 
 	@Override
-	public void stateChanged(IEditorContainer editorContainer, IEditor editor) {
+	public void stateChanged(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
 		thing.doAction("stateEditorChanged", actionContext, "editorContainer", editorContainer, "editor", editor);
 	}
-	
-	
 }

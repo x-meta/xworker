@@ -36,6 +36,10 @@ public class TestCondition {
             print(condition);
 
             condition = new Condition();
+            condition.eq("name", "test").and().sql("sex", "(sex=? or sex=?)", "male", "fmale");
+            print(condition);
+
+            condition = new Condition();
             condition.eq("name", null).and().eq("sex", null).oreq("sex", "fmale");
             print(condition);
 
@@ -55,17 +59,17 @@ public class TestCondition {
 
             condition = new Condition();
             condition.in("name", "a", "b", "c").and().eq("sex", null).oreq("sex", "fmale");
-            condition.claus("name", Condition.in, "select id from user").eq("name", "test");
+            condition.clause("name", Condition.in, "select id from user").eq("name", "test");
             print(condition);
 
             condition = new Condition();
             condition.in("name", "a", "b", "c").and().eq("sex", null).oreq("sex", "fmale");
-            condition.orclausTemplate("name", Condition.in, "select id from user where %%SQL%% t").eq("name", "test");
+            condition.orclauseTemplate("name", Condition.in, "select id from user where %%SQL%% t").eq("name", "test");
             print(condition);
 
             condition = new Condition();
             condition.in("name", "a", "b", "c").and().eq("sex", null).oreq("sex", "fmale");
-            condition.orclausTemplate("name", Condition.in, "select id from user where %%SQL%% t").eq("name", null);
+            condition.orclauseTemplate("name", Condition.in, "select id from user where %%SQL%% t").eq("name", null);
             print(condition);
 
         }catch(Exception e){

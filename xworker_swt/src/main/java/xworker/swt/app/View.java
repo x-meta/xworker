@@ -15,7 +15,7 @@ import org.xmeta.util.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
-public class View {
+public class View implements xworker.thingeditor.IView<Composite, Control>{
 	String id;
 	Thing thing;
 	ActionContext actionContext;

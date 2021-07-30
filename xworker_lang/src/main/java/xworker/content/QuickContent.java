@@ -42,8 +42,9 @@ public class QuickContent {
             if(ps.length < 2){
                 return null;
             }
-            Thing registThing = World.getInstance().getThing(ps[0]);
+            Thing registThing = World.getInstance().getThing(ps[1]);
             ThingRegistContent registTContent = new ThingRegistContent(type, registThing);
+            registTContent.setRegistType(ps[0]);
             if(registThing == null){
                 Executor.warn(TAG, "RegistThing is null, path=" + self.getMetadata().getPath());
                 return null;

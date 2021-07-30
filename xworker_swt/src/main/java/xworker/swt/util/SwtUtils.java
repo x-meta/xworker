@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.xmeta.*;
 import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
+import org.xmeta.util.UtilMap;
 import xworker.app.view.swt.data.DataStore;
 import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
@@ -44,6 +45,7 @@ import xworker.swt.style.StyleSetStyleCreator;
 import xworker.swt.widgets.ControlActions;
 import xworker.swt.widgets.ControlCreator;
 import xworker.util.StringUtils;
+import xworker.util.UtilTemplate;
 import xworker.util.XWorkerUtils;
 
 import java.awt.image.*;
@@ -1378,7 +1380,14 @@ public class SwtUtils {
 			
 			String description = realThing.getStringBlankAsNull("description");
 			if(description != null) {
-				browser.setText(description);
+				try {
+					Map<String, Object> context = UtilMap.toMap("html", description, "path", thing.getMetadata().getPath(),
+							"realPath", realThing.getMetadata().getPath());
+					String html = UtilTemplate.process(context, "/xworker/swt/ftl/ThingDesc.ftl", "freemarker");
+					browser.setText(html);
+				}catch(Throwable e) {
+					browser.setText(description);
+				}
 			}else {
 				browser.setText("");
 			}

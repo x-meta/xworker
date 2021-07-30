@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="QueryConfigDoc" descriptors="xworker.content.QuickContent" label="查询配置"
+     type="thingDesc" group="xworker.dataobject.queryConfig" groupDescriptor="true" icon="icons/html.png"
+     th_sortWeight="-9980" simpleBrowser="true" hideOutline="true" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>查询配置</h1>
+
+<h2>1.简介</h2>
+
+<p>&nbsp;&nbsp;&nbsp; QueryConfig是查询相关的配置，包含查询条件、分页、排序和聚合等设置。</p>
+
+<h2>2.Condition</h2>
+
+<h3>2.1.基本知识</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Condition是查询条件的配置，可以用来生成SQL的条件部分语句，也可以用来判断一个数据对象是否符合条件。</p>
+
+<p>&nbsp;&nbsp;&nbsp; Condition包含条件配置和条件的值两个部分。其中条件的配置可以用模型来编写，条件的值可以放到Map&lt;String, Object&gt;。</p>
+
+<p>&nbsp;&nbsp;&nbsp; Condition可以包含子节点，子节点也是Condition。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果一个节点没有配置查询条件的值，或查询条件的值为null，且不是is null或not null，那么该条件一般会被忽略。</p>
+
+<h3>2.2.使用方法</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Condition可以用代码编写，也可以用模型定义。代码和模型可以参看下面的示例。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 通过下面的方法可以把条件模型和条件的值生成Condition对象。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+import xworker.dataObject.query.Condition;
+
+//条件模型
+Thing condtionThing = ...;
+//条件的值
+Map&lt;String, Object&gt; conditionValues = ...;
+
+//生成Condition
+Condition condition = Condition.parse(conditionThing, conditionValues, actionContext);</pre>
+
+<h3>2.3.SQL相关示例</h3>
+
+<h4>2.3.1.简单条件示例</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 代码。</p>
+
+<pre class="brush:groovy;">
+import xworker.dataObjct.query.Condition;
+
+Condition condition = new Condition();
+condition.eq(&quot;name&quot;, &quot;test&quot;).and().eq(&quot;sex&quot;, &quot;male&quot;).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+</pre>
+
+<h4>&nbsp;&nbsp;&nbsp; 以上代码生成的条件模型等价于下面的模型。</h4>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Condition descriptors=&quot;xworker.dataObject.query.Condition&quot;&gt;
+    &lt;Condition name=&quot;name&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+         attributeName=&quot;name&quot; dataName=&quot;data_1&quot;&gt;&lt;/Condition&gt;
+    &lt;Condition  descriptors=&quot;xworker.dataObject.query.Condition&quot;&gt;
+        &lt;Condition name=&quot;sex&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+             attributeName=&quot;sex&quot; dataName=&quot;data_2&quot;&gt;&lt;/Condition&gt;
+        &lt;Condition name=&quot;sex&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+             attributeName=&quot;sex&quot; dataName=&quot;data_3&quot; join=&quot;or&quot;&gt;&lt;/Condition&gt;
+    &lt;/Condition&gt;
+&lt;/Condition&gt;</pre>
+
+<h4>&nbsp;&nbsp;&nbsp; 生成的SQL语句如下。</h4>
+
+<pre class="brush:plain;">
+name = ? and (sex = ? or sex = ?)</pre>
+
+<h4>2.3.2.包含子查询条件</h4>
+
+<p>&nbsp;&nbsp;&nbsp; 代码。</p>
+
+<pre class="brush:groovy;">
+import xworker.dataObject.query;
+
+Condition condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+condition.clause(&quot;name&quot;, Condition.in, &quot;select id from user&quot;).eq(&quot;name&quot;, &quot;test&quot;);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 以上代码生成的条件模型等价于下面的模型。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Condition descriptors=&quot;xworker.dataObject.query.Condition&quot;&gt;
+    &lt;Condition name=&quot;name&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+         attributeName=&quot;name&quot; dataName=&quot;data_1&quot; operator=&quot;11&quot;&gt;&lt;/Condition&gt;
+    &lt;Condition descriptors=&quot;xworker.dataObject.query.Condition&quot;&gt;
+        &lt;Condition name=&quot;sex&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+             attributeName=&quot;sex&quot; dataName=&quot;data_2&quot;&gt;&lt;/Condition&gt;
+        &lt;Condition name=&quot;sex&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+             attributeName=&quot;sex&quot; dataName=&quot;data_3&quot; join=&quot;or&quot;&gt;&lt;/Condition&gt;
+    &lt;/Condition&gt;
+    &lt;Condition name=&quot;name&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+         attributeName=&quot;name&quot; dataName=&quot;data_4&quot; operator=&quot;11&quot; isClause=&quot;true&quot; clauseSQL=&quot;select id from user&quot;&gt;
+        &lt;Condition name=&quot;name&quot; descriptors=&quot;xworker.dataObject.query.Condition&quot;
+             attributeName=&quot;name&quot; dataName=&quot;data_5&quot;&gt;&lt;/Condition&gt;
+    &lt;/Condition&gt;
+&lt;/Condition&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 生成的SQL如下。</p>
+
+<pre class="brush:plain;">
+name in (?,?,?) and sex = ? and name in (select id from user where name = ?)</pre>
+
+<h3>2.4.判断一个数据对象是否否和条件</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 对于非SQL的数据对象，需要判断一个数据对象是否符合条件，那么可以参考下面的代码。</p>
+
+<pre class="brush:groovy;">
+import xworker.dataObject.DataObject;
+import xworker.dataObjct.query.Condition;
+
+//查询条件
+Condition condition = new Condition();
+condition.eq(&quot;name&quot;, &quot;test&quot;).and().eq(&quot;sex&quot;, &quot;male&quot;).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+
+//数据对象
+DataObject dataObjet = new DataObject(...);
+dataObject.put(&quot;name&quot;, &quot;test&quot;);
+dataObject.put(&quot;sex&quot;, &quot;male&quot;);
+
+//判断是否符合条件，下面应该打印出true
+println condition.matchs(dataObject);
+</pre>
+
+<h2>3. PageInfo</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 分页设置。支持两种方法的设置，一种是start、limit，另一种是page和pageSize，其中pageSize=limit。为避免混淆，一次使用中最好用同一种方法设置。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 如果limit大于0表示分页，小于等于0表示不分页。如果分页，那么就要设置数据总数（totalCount)和结果集。</p>
+
+<h2>4. Orders</h2>
+
+<p>&nbsp;&nbsp;&nbsp;排序字段列表。 一个Order包含字段名和排序方式(ASC或DESC)。</p>
+
+<h2>5. Groups</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 分组字段列表。一个Group包含要分组的字段名字。应该可以包含函数的，还在计划实现中。</p>
+
+<h2>6.SQL和非SQL场景</h2>
+
+<p>&nbsp;&nbsp;&nbsp; QueryConfig可以用于SQL，也可以用于非SQL。其中一些是两者不兼容的，比如非SQL在查询条件中设置cluase子条件是无效的。</p>
+
+<h3>6.1. 非SQL的查询、分页和排序</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 非SQL的数据对象，比如Excel数据对象，可以先把数据包装成DataObject放到列表里，然后使用查询条件过滤，最后使用queryConfig的setQueryResults分页和排序。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;如下面的代码。</p>
+
+<pre class="brush:java;">
+public static List&lt;DataObject&gt; doQuery(ActionContext actionContext){   
+    QueryConfig queryConfig = actionContext.getObject(&quot;queryConfig&quot;);
+
+    //原始数据列表
+    List&lt;DataObject&gt; sourceDatas = ...;
+    //符合条件的数据列表
+    List&lt;DataObject&gt; matchedDatas = new ArrayList&lt;&gt;();
+    for(DataObject data : sourceDatas){
+        if(queryConfig.condition().matchs(data)){
+            matchedDatas.add(data);
+        }
+    }
+
+    //设置分页信息和返回结果
+    return queryConfig.setQueryResults(matchedDatas);
+}</pre>
+
+<p>&nbsp;</p>
+]]></description>
+</QuickContent>

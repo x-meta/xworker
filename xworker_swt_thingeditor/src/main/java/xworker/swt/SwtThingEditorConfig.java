@@ -5,6 +5,8 @@ import org.xmeta.Thing;
 import xworker.swt.app.CoolBarContainer;
 import xworker.swt.app.MenuContainer;
 import xworker.swt.app.Workbench;
+import xworker.thingeditor.ICoolBarContainer;
+import xworker.thingeditor.IMenuContainer;
 
 import java.util.Map;
 
@@ -16,7 +18,7 @@ public class SwtThingEditorConfig {
         Workbench workbench = actionContext.getObject("workbench");
 
         //菜单
-        MenuContainer menuContainer = workbench.getEditorContainer().getMenuContainer();
+        IMenuContainer menuContainer = workbench.getEditorContainer().getMenuContainer();
         if(menuContainer != null) {
             for (Thing menuConfig : self.getChilds("MenuConfig")) {
                 menuContainer.setEditorMenu(menuConfig, actionContext);
@@ -24,7 +26,7 @@ public class SwtThingEditorConfig {
         }
 
         //工具栏
-        CoolBarContainer coolBarContainer = workbench.getEditorContainer().getCoolBarContainer();
+        ICoolBarContainer coolBarContainer = workbench.getEditorContainer().getCoolBarContainer();
         if(coolBarContainer != null){
             for(Thing coolbarConfig : self.getChilds("CoolBarConfig")){
                 coolBarContainer.setEditorCoolBar(coolbarConfig, actionContext);

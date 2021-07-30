@@ -17,7 +17,7 @@ import xworker.util.UtilData;
 import xworker.util.XWorkerUtils;
 
 public class Guide {
-	Stack<GuideEntry> guideStack = new Stack<GuideEntry>();
+	Stack<GuideEntry> guideStack = new Stack<>();
 	///** 向导展示过的历史节点 */
 	//List<Thing> historyNodes = new ArrayList<Thing>();
 	/** 父变量上下文 */
@@ -32,7 +32,7 @@ public class Guide {
 	boolean showHeader = false;
 	/** 标题的标签 */
 	Label headerLabel = null;	
-	Map<String, Object> datas = new HashMap<String, Object>();
+	Map<String, Object> datas = new HashMap<>();
 	
 	public Guide(Composite contentComposite, Composite buttonComposite, Thing thing, ActionContext parentContext){
 		guideStack.push(new GuideEntry(thing));

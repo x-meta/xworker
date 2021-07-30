@@ -330,7 +330,7 @@ public class Condition {
 		return this;
 	}
 
-	public Condition claus(String name, byte operator, String clauseSql, Object ... value){
+	public Condition clause(String name, byte operator, String clauseSql, Object ... value){
 		Condition con = this.sadd(name, operator, value);
 		con.setJoin(AND);
 		con.set("isClause", "true");
@@ -339,7 +339,7 @@ public class Condition {
 		return con;
 	}
 
-	public Condition orclaus(String name, byte operator, String clauseSql, Object ... value){
+	public Condition orclause(String name, byte operator, String clauseSql, Object ... value){
 		Condition con = this.sadd(name, operator, value);
 		con.setJoin(OR);
 		con.set("isClause", "true");
@@ -348,7 +348,7 @@ public class Condition {
 		return con;
 	}
 
-	public Condition clausTemplate(String name, byte operator, String clauseSql, Object ... value){
+	public Condition clauseTemplate(String name, byte operator, String clauseSql, Object ... value){
 		Condition con = this.sadd(name, operator, value);
 		con.setJoin(AND);
 		con.set("isClause", "true");
@@ -358,7 +358,7 @@ public class Condition {
 		return con;
 	}
 
-	public Condition orclausTemplate(String name, byte operator, String clauseSql, Object ... value){
+	public Condition orclauseTemplate(String name, byte operator, String clauseSql, Object ... value){
 		Condition con = this.sadd(name, operator, value);
 		con.setJoin(OR);
 		con.set("isClause", "true");

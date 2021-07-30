@@ -121,6 +121,8 @@ public class StringDataFactory {
 				return getLabel(owner, action, value, actionContext);
 			} else if (value.startsWith("desc:")) {
 				return getDesc(owner, action, value, actionContext);
+			} else if (value.startsWith("descurl:")) {
+				return getDescUrl(owner, action, value, actionContext);
 			} else if (value.startsWith("attr:")) {
 				return getAttr(owner, action, value, actionContext);
 			} else if (value.startsWith("xworker:")) {
@@ -213,6 +215,18 @@ public class StringDataFactory {
 			}
 		}else if(obj instanceof  Thing){
 			return ((Thing) obj).getMetadata().getDescription();
+		}
+
+		return obj;
+	}
+
+	public static Object getDescUrl(Thing owner, Thing action, String value, ActionContext actionContext) throws Exception {
+		value = value.substring(8, value.length());
+		Object obj = getStringData(owner, action, value, actionContext);
+		if(obj instanceof String) {
+			return XWorkerUtils.getThingDescUrl((String) obj);
+		}else if(obj instanceof  Thing){
+			return XWorkerUtils.getThingDescUrl((Thing) obj);
 		}
 
 		return obj;

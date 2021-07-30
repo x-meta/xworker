@@ -11,33 +11,47 @@
     <Guide name="realtimeProgramming" label="简介">
         <description><![CDATA[<h2>动态模型</h2>
 
-<p>&nbsp;&nbsp;&nbsp; XWorker是动态模型的编程平台，动态模型实现了面向对象编程方法，它使用模型来编程，模型则可以用XML来表示。</p>
+<p>&nbsp; &nbsp; 动态模型是一种基于模型的面向对象的编程方法，其中模型可以用XML等来表示。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 比如下面的XML代码就是一个模型，还可以<a href="javascript:invoke('shell:xworker.example.swt.SWTHelloWorld')">点击这里</a>来运行它。</p>
+<p>&nbsp; &nbsp; 比如下面的XML就是一个模型程序，这个XML的每一个节点都是一个对象。可以<a href="javascript:invoke('shell:xworker.example.swt.shell.HelloWorld')">点击这里</a>运行模型， 运行后会打开一个窗口，窗口中有一个显示XWorker主页的浏览器。</p>
 
 <pre class="brush:xml;">
 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
 
-&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;Hello World&quot; width=&quot;400&quot;
-     height=&quot;300&quot; label=&quot;SWTHelloWorld&quot;&gt;
-    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
-    &lt;Composite name=&quot;buttonComposite&quot; _xmeta_id_=&quot;8074&quot;&gt;
-        &lt;GridData name=&quot;buttonCompositeGridData&quot; _xmeta_id_=&quot;8075&quot; style=&quot;FILL_HORIZONTAL&quot;
-             horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
-        &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot; _xmeta_id_=&quot;8076&quot;&gt;&lt;/RowLayout&gt;
-        &lt;Button name=&quot;closeButton&quot; _xmeta_id_=&quot;8077&quot; text=&quot;lang:d=关闭&amp;amp;en=Close&quot;&gt;
-            &lt;RowData name=&quot;RowData&quot; _xmeta_id_=&quot;8078&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
-            &lt;Listeners _xmeta_id_=&quot;8079&quot;&gt;
-                &lt;Listener name=&quot;closeButtonSelection&quot; _xmeta_id_=&quot;8080&quot;&gt;
-                    &lt;Dispose name=&quot;Dispose&quot; descriptors=&quot;xworker.swt.actions.ControlActions/@Dispose&quot;
-                         controlList=&quot;shell&quot;&gt;&lt;/Dispose&gt;
-                &lt;/Listener&gt;
-            &lt;/Listeners&gt;
-        &lt;/Button&gt;
-    &lt;/Composite&gt;
+&lt;Shell name=&quot;shell&quot; text=&quot;Hello World!&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot;
+&nbsp;              width=&quot;800&quot; height=&quot;600&quot;&gt;
+    &lt;FillLayout name=&quot;FillLayout&quot;&gt;&lt;/FillLayout&gt;
+    &lt;Browser name=&quot;Browser&quot; url=&quot;https://www.xworker.org&quot;&gt;&lt;/Browser&gt;
 &lt;/Shell&gt;</pre>
 
-<p>&nbsp;</p>
+<h3>动态模型的特点</h3>
+
+<ul>
+	<li><strong>动态编程</strong><br />
+	模型是数据可以随时添加和修改，模型是被引擎实时解释执行的，因此使用动态模型可以实现动态编程，即在系统运行时实时编程，从而动态修改系统的功能。<br />
+	&nbsp;</li>
+	<li><b>快速编程</b><br />
+	模型一般是对各种API的使用接口的封装，通过模型可以快速的使用这些API，并且使用动态模型也可以很容易的把不同的API整合在一起，从而更容易地开发出复杂的应用。<br />
+	&nbsp;</li>
+	<li><strong>无限积累和迭代</strong><br />
+	动态模型的抽象层次比较低，它使用事物和动作等更低级的概念来描述类和对象，并且认为类和对象也是可以随时创建和改变的，这样提高了描述对象的能力，使得系统中的不同的对象可以共存，并总是能使用已有的模型编写新的模型，从而在理论上可以实现系统功能的无限积累和迭代。</li>
+</ul>
 ]]></description>
     </Guide>
+    <ThingEditorGuideInitor name="initThingEditor" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditorGuide"
+         label="打开编辑器">
+        <actions>
+            <GroovyAction name="getThing" descriptors="xworker.lang.actions.GroovyAction">
+                <code><![CDATA[def thing = world.getThing("xworker.example.swt.shell.HelloWorld");
+return thing.detach();]]></code>
+            </GroovyAction>
+        </actions>
+    </ThingEditorGuideInitor>
+    <ThingEditor name="ThingEditor" descriptors="xworker.swt.guide.shellguidenodes.ThingEditorNodes/@ThingEditor"
+         label="选中编辑器" disablePreButton="true">
+        <description><![CDATA[<p>动态模型的特点体现在模型是数据，模型是实时解释执行的，并且模型解释引擎和当前的编辑器是同一个程序，所以可以随时修改和运行模型。</p>
+
+<p>比如当前打开了前面的示例模型，你可以修改它，并通过模型编辑器的菜单&lsquo;<strong>SWT</strong>-&gt;<strong>运行&rsquo;</strong>随时运行。</p>
+]]></description>
+    </ThingEditor>
 </ShellGuide>

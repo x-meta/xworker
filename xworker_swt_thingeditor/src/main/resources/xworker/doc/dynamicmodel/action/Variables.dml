@@ -1,4 +1,4 @@
-^1624260405245
+^1627626942255
 @
 sname
 Variables
@@ -20,25 +20,93 @@ suseTargetThingDoc
 false
 ssimpleBrowser
 true
+shideOutline
+false
 Sdescription
 #$@text#$@
 <h1>动作上下文</h1>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;动作上下文用于管理变量和线程的执行状态。动作上下文有时也叫做变量上下文。动作上下文是动作执行的环境，执行一个动作必须要有动作上下文。</p>
+<h2>1.简介</h2>
 
-<h2>1.管理变量</h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;动作上下文是动作执行的环境，执行一个动作必须要有动作上下文。</p>
 
-<h3>1.1.管理变量</h3>
+<p>&nbsp;&nbsp;&nbsp; 动作的执行环境主要包含两个，一个是变量，一个是线程状态。由于动态上下文大多时候用于管理变量，所以动作上下文有时也叫做变量上下文。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 一个动作能够访问的变量都是从动作上下文中获取的，动作上下文用于管理这些变量。</p>
+<h2>2.管理变量</h2>
 
-<h3>1.2.变量范围和传递参数</h3>
+<h3>2.1.基本概念</h3>
 
-<p>&nbsp;&nbsp;&nbsp; 动作上下文也是一个栈，可以用来实现变量范围和传递参数等等功能。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 动作上下文是一个栈，栈的每一层相当于一个Map&lt;String, Object&gt;，动作上下文整体也可以看作是一个Map&lt;String, Object&gt;。可以通过变量上下文设置和获取变量，也可以通过栈直接设置和获取某一个栈层的变量。</p>
 
-<h2>2.线程状态</h2>
+<p>&nbsp;&nbsp;&nbsp; 需要主意的是，<strong>线程不共用栈</strong>。即同一个变量上下文，在不同的线程里，线程使用各自的栈，在线程中push()或pop()不影响其它线程。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 动作上下文的线程状态是动作的执行状态，可以用来实现语法类的模型，比如实现return、break、continue和循环等等语法类动作模型。&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; 尽管不同的线程使用不同的栈，但是<strong>最底层的栈层是线程共用</strong>的。</p>
+
+<h3>2.2.变量的获取顺序</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 通过变量上下文获取变量时，是从栈的上层向下层依次获取的，如果某一个栈层有这个变量则返回，其中上层的栈是最新压入的栈层。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 获取变量的示意代码如下。</p>
+
+<pre class="brush:as3;">
+                Object value = null;
+		Stack&lt;Bindings&gt; bindingsStack = getBindingStack();
+		for (int i = bindingsStack.size() - 1; i &gt;= 0; i--) {
+		       Map&lt;String, Object&gt; map = bindingsStack.get(i);
+			value = map.get(key);
+
+			if (value != null) {
+				break;
+			} else if (map.containsKey(key)) {
+				break;
+			}
+		}
+
+		return value;</pre>
+
+<h3>2.3.变量范围</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 可以根据动态上下文的栈来实现相对的全局变量和局部变量的概念。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>局部变量，</strong>可以理解成临时加入的变量，当使用时就压入一个栈层，在这个栈层中设置变量，当使用完毕后就弹出该栈层，这样变量就消失了。需要注意的是，使用局部变量时push和pop必须是成对出现的，并放到try/finally里。</p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>全局变量</strong>，由于动作上下文最底层的栈层是所有线程共享的，并且日常使用中也不会被弹出，所以这个栈层的变量可以当成全局变量。</p>
+
+<h2>3.线程状态</h2>
+
+<p>&nbsp;&nbsp;&nbsp; 线程状态用来指示动作的行为的，线程状态和语法类的动作相关。线程状态主要有RUNNING、RETURN、BREAK、BREAK、CONTINUE和EXCEPTION几种。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如有一个动作是while循环，示意代码如下。</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+import org.xmtea.ActionContext;
+
+//while动作模型自己
+Thing self = ...;
+
+Object result = null;
+List&lt;Thing&gt; childs = self.getChilds();
+while(self.doAction(&quot;condition&quot;, actionContext){
+    for(Thing child : childs){
+        result = child.getAction().run(actionContext);
+
+        int status = actionContext.getStatus();
+        if(status == ActionContext.RETURN){
+            //子节点执行的return方法
+            return result;
+        }else if(status == ActionContext.BREAK){
+           //子节点要求break
+            break;
+        }else if(status == ActionContext.CONTINUE){
+           //子节点要求continue;
+           continue;
+        }
+    }
+}
+
+return result;
+</pre>
 #$@text#$@
 sen_label
 ActionContext

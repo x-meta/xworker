@@ -1,5 +1,6 @@
 package xworker.swt;
 
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -190,21 +191,31 @@ public class SwtThingEditor {
             if (downloaded) {
                 //执行了下载，那么需要重启
                 System.out.println("Please restart ThingEditor");
+                System.exit(0);
                 return;
             }
         }
 
         World world = World.getInstance();
-        //World.getInstance().getClassLoader().addClassPath(new File(world.getPath() + "/config/").toURI().toURL());
-
-        //公共的模型菜单
-        Thing menuThing = world.getThing("xworker.ide.config.ProjectMenuSwt");
-        SwtMenuListener.getInstance().updateMenu(menuThing);
 
         Thing simpleEditor = World.getInstance().getThing("xworker.swt.xwidgets.prototypes.SimpleThingEditor");
         ActionContext actionContext = new ActionContext();
         actionContext.put("simpleThingEditorConfig", editorConfig);
         simpleEditor.doAction("run", actionContext);
+    }
+
+    //xworker.thingeditor.SwtThingEditor/@run1
+    public static void actionRun(ActionContext actionContext) throws MalformedURLException {
+        Action startWebServer = actionContext.getObject("startWebServer");
+
+        if(startWebServer != null){
+            try{
+                startWebServer.run(actionContext);
+            }catch (Exception ignore){
+            }
+        }
+
+        run();
     }
 
     public static void main(String[] args) {

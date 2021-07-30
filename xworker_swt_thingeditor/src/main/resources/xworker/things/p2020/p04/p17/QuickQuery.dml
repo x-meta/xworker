@@ -1,70 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<QuickContent name="QuickQuery" descriptors="xworker.content.QuickContent" label="在代码中使用Condition"
-     type="thingDesc" group="xworker.dataobject.-1000|查询" icon="icons/html.png" simpleBrowser="true"
+<QuickContent name="QuickQuery" descriptors="xworker.content.QuickContent" label="Condition的SQL特殊用法"
+     type="thingDesc" group="xworker.dataobject.queryConfig" icon="icons/html.png" simpleBrowser="true"
      en_group="xworker.dataobject.200|Query" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
-    <description><![CDATA[<h1 class="brush:as3;">在代码中使用Condition</h1>
+    <description><![CDATA[<h1>Condition的SQL特殊用法</h1>
 
-<h2>1.用途</h2>
+<p>&nbsp;&nbsp;&nbsp; Condition在SQL下的特殊用法，这些用法对非SQL的条件一般是无效的。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;有的时候想要在代码中自定义查询条件，这个时候可以使用使用Condition。</p>
+<h2>1.总是附加的SQL语句</h2>
 
-<p>&nbsp;&nbsp;&nbsp; Condition可以用在数据对象的load、update、delete和query上。</p>
-
-<h2>2.使用Condition</h2>
-
-<h3>2.1.创建Condition对象</h3>
+<p>&nbsp;&nbsp;&nbsp; 如下面的代码。</p>
 
 <pre class="brush:groovy;">
-import xworker.dataObject.query.Condition;
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+condition.sql(&quot;test&quot;, &quot;(name=&#39;test&#39; and sex=&#39;male&#39;)&quot;);
+condition.orsql(&quot;test&quot;, &quot;(name=? and sex=?)&quot;, &quot;test&quot;, &quot;male&quot;);
+print(condition);</pre>
 
-//创建条件
-def condition = new Condition();</pre>
+<p>&nbsp;&nbsp;&nbsp; 生成的SQL语句如下。</p>
 
-<h3>2.1.增加子条件</h3>
+<pre class="brush:plain;">
+name in (?,?,?) and sex = ? and (name=&#39;test&#39; and sex=&#39;male&#39;) or (name=? and sex=?)</pre>
 
-<pre class="brush:groovy;">
-//例子用sql可以表示为name like %abcd%
-Condition childCondition = condition.add(&quot;name&quot;, Condition.lrlike, &quot;abcd&quot;);</pre>
+<h2>2.带select的子条件</h2>
 
-<h3>2.2.连续添加条件</h3>
-
-<pre class="brush:groovy;">
-//使用sadd方法例子用sql可以表示为name like %abcd% and age = 19 or sex=1
-condition.sadd(&quot;name&quot;, Condition.lrlike, &quot;abcd&quot;)
-               .sadd(&quot;age&quot;, Condition.eq, 10)
-               .sadd(&quot;sex&quot;, Condition.eq, 1, &quot;int&quot;, &quot;or&quot;);</pre>
-
-<h2>3.结合数据对象的例子</h2>
-
-<p>&nbsp;&nbsp;&nbsp; 使用xworker.dataObject.DataObject和xworker.dataObject.query.Condition可以实现快捷查询，如下面的代码。</p>
+<p>&nbsp;&nbsp;&nbsp; 一般用于in或not in等。</p>
 
 <pre class="brush:groovy;">
-import xworker.dataObject.DataObject;
-import xworker.dataObject.query.Condition;
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+condition.clause(&quot;name&quot;, Condition.in, &quot;select id from user&quot;).eq(&quot;name&quot;, &quot;test&quot;);
+</pre>
 
-//通过数据对象的模型创建数据对象实例
-def dataObject = new DataObject(&quot;xworker.ide.db.dbindex.dataObject.Things&quot;);
+<p>&nbsp;&nbsp;&nbsp; 生成的SQL如下。</p>
 
-//创建条件
-def condition = new Condition();
-//增加模糊匹配的条件，lrlike等价于sql的%xworker.example%
-condition.add(&quot;path&quot;, Condition.lrlike, &quot;xworker.example&quot;);
+<pre class="brush:plain;">
+name in (?,?,?) and sex = ? and name in (select id from user where name = ?)</pre>
 
-/*
-//使用()来的查询条件，如or (name=? and label=?)
-def childCon = condition.add();
-childCon.add(&quot;name&quot;, Condition.eq, &quot;DataObject&quot;);
-childCon.add(&quot;label&quot;, Condition.eq, &quot;DataObject&quot;);
-*/
+<p>&nbsp;&nbsp;&nbsp; 使用代码模板，%%SQL%%是要替换的部分。如下面的代码。</p>
 
-//查询和打印结果
-def datas = dataObject.query(actionContext, condition);
-for(data in datas){
-    println data;
-}</pre>
+<pre class="brush:groovy;">
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot;);
+condition.orclauseTemplate(&quot;name&quot;, Condition.in, &quot;select id from user where %%SQL%% t&quot;).eq(&quot;name&quot;, &quot;test&quot;);</pre>
 
-<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp; 生成的SQL如下。</p>
+
+<pre class="brush:plain;">
+name in (?,?,?) and sex = ? or name in (select id from user where name = ? t)</pre>
 
 <p>&nbsp;</p>
 ]]></description>

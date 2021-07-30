@@ -25,8 +25,8 @@ public class QueryConfig {
         pageInfo = new PageInfo();
     }
 
-    public QueryConfig(Thing queryConfig, Map<String, Object> queryValues, PageInfo pageInfo, ActionContext actionContext){
-        condition = Condition.parse(queryConfig, queryValues, actionContext);
+    public QueryConfig(Thing queryCondition, Map<String, Object> queryValues, PageInfo pageInfo, ActionContext actionContext){
+        condition = Condition.parse(queryCondition, queryValues, actionContext);
         if(pageInfo != null) {
             this.pageInfo = pageInfo;
             if (pageInfo.getSort() != null && !pageInfo.getSort().isEmpty()) {
@@ -37,8 +37,8 @@ public class QueryConfig {
         }
     }
 
-    public QueryConfig(Thing queryConfig, Map<String, Object> queryValues, ActionContext actionContext){
-        condition = Condition.parse(queryConfig, queryValues, actionContext);
+    public QueryConfig(Thing queryCondition, Map<String, Object> queryValues, ActionContext actionContext){
+        condition = Condition.parse(queryCondition, queryValues, actionContext);
         pageInfo = new PageInfo();
     }
 

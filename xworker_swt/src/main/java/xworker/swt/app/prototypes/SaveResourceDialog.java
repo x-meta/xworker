@@ -1,6 +1,9 @@
 package xworker.swt.app.prototypes;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.xmeta.ActionContext;
 import org.xmeta.World;
@@ -51,7 +54,7 @@ public class SaveResourceDialog {
     	ActionContext parentContext = actionContext.getObject("parentContext");
     	IEditorContainer editorContainer = parentContext.getObject("editorContainer");
     	
-        for(IEditor editor : editorContainer.getEditors(true)){
+        for(xworker.thingeditor.IEditor<Composite, Control, Image> editor : editorContainer.getEditors(true)){
             TableItem item = new TableItem(editorsTable, SWT.NONE);
             item.setData(editor);
             item.setText(new String[] {editor.getSimpleTitle(), editor.getTitle()});
