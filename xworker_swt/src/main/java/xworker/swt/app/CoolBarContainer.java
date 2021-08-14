@@ -12,7 +12,7 @@ import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
 import xworker.swt.widgets.CoolBarCreator;
-import xworker.thingeditor.ICoolBarContainer;
+import xworker.workbench.ICoolBarContainer;
 
 public class CoolBarContainer implements ICoolBarContainer {
 	private static final String TAG = CoolBarContainer.class.getName();

@@ -7,15 +7,27 @@
 
 <h2>1.作用</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;ThingLoader用于Java代码和模型的相互调用。比如一些模型运行后会创建一个或者多个Java对象，需要在Java代码里处理这些对象时可以使用ThingLoader，如SWT、JavaFX等界面模型。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;ThingLoader用于Java代码和模型的相互调用。</p>
 
-<p>&nbsp;&nbsp;&nbsp; ThingLoader的功能主要是：</p>
+<h3>1.1.Java代码调用模型的困难和解决方法</h3>
 
-<ol>
-	<li><strong>执行模型的create方法</strong>，通常模型在create方法中创建Java对象，这些Java对象一般是保存到全局变量栈中的</li>
-	<li><strong>指定一个Java对象，对这个对象的有@ActionField注解的字段赋值</strong>，值从变量上下文文中取</li>
-	<li><strong>模型调用对象的方法</strong>，需要模型支持，比如下面的示例模型的<strong>closeButton</strong>的的监听器调用了对象的<strong>close()</strong>方法</li>
-</ol>
+<p>&nbsp;&nbsp;&nbsp; Java代码调用模型的困难是指调用一类特殊的模型，比如SWT和JavaFX这样的界面类的模型，这些模型通常约定有一个create方法，当执行create方法后界面模型会创建大量的Java对象，而由于在编写代码时不能通过动作上下文知道有哪些变量，因此在编写Java代码时比较困难。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 为了解决这个问题，可以使用ThingLoader。</p>
+
+<ul>
+	<li><strong>使用可用变量工具生成Java代码</strong><br />
+	通过模型的代码辅助工具，这里特指模型编辑器中的菜单<strong>工具-&gt;可用变量</strong>，使用这个工具可以选择变量，并生成带有@ActionField注解的和变量相关的代码。<br />
+	&nbsp;</li>
+	<li><strong>使用ThingLoader加载模型</strong><br />
+	ThingLoader执行模型的create方法，并寻找Java对象中含有@ActionField注解的字段，然后自动从变量上下文取值并赋值到该字段。</li>
+</ul>
+
+<h3>1.2.模型调用Java的麻烦</h3>
+
+<p>&nbsp;&nbsp;&nbsp; 模型一般只支持调用Java的静态方法，那么如何在模型里调用具体对象实例的方法呢？通过ThingLoader也可以实现，不过需要相应模型的实现。</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;原理是ThingLoader在加载模型时，会传入一个对象，它会放到ThreadLocal中，然后在模型的create方法里可以获取该对象，从而可以让模型使用该对象。</p>
 
 <h2>2.示例</h2>
 

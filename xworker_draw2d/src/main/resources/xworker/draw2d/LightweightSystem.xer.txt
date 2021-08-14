@@ -1,0 +1,138 @@
+@xworker.draw2d.LightweightSystem
+sname
+LightweightSystem
+slabel
+LightweightSystem
+sdescriptors
+xworker.lang.MetaDescriptor3
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>The LightweightSystem is the link between SWT and Draw2d. It is the component that provides the ability for <a title="class in org.eclipse.draw2d" href="http://help.eclipse.org/galileo/topic/org.eclipse.draw2d.doc.isv/reference/api/org/eclipse/draw2d/LightweightSystem.RootFigure.html"><code>Figures</code></a> to be hosted on an SWT Canvas.</p>
+<p>Normal procedure for using a LightweightSystem:</p>
+<ol>
+    <li>Create an SWT Canvas.</li>
+    <li>Create a LightweightSystem passing it that Canvas.</li>
+    <li>Create a Draw2d Figure and call setContents(IFigure). This Figure will be the top-level Figure of the Draw2d application.</li>
+</ol>
+<p>&nbsp;</p>
+#$@text#$@
+sth_createIndex
+false
+@xworker.draw2d.LightweightSystem/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.draw2d.LightweightSystem/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.draw2d.LightweightSystem;
+
+def lightweightSystem = null;
+if(actionContext.get("parent") != null){
+    lightweightSystem = new LightweightSystem(parent);
+}else{
+    lightweightSystem = new LightweightSystem();
+}
+
+def content = self.get("Contents@0");
+if(content != null && content.getChilds().size() > 0){
+    def figure = content.getChilds().get(0).doAction("create", actionContext);
+    if(figure != null){
+        lightweightSystem.setContents(figure);
+    }
+}
+
+actionContext.getScope(0).put(self.metadata.name, lightweightSystem);
+return lightweightSystem;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.draw2d.LightweightSystem/@name
+sname
+name
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.LightweightSystem/@label
+sname
+label
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.LightweightSystem/@Contents
+sname
+Contents
+sdescriptors
+xworker.lang.MetaDescriptor3/@thing
+sextends
+xworker.draw2d.figures.Figures
+smany
+false
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+Sdescription
+#$@text#$@
+<p>Sets the contents of the LightweightSystem to the passed figure. This figure should be the top-level Figure in a Draw2d application.</p>
+<p>只有第一个子节点生效。</p>
+#$@text#$@
+sth_createIndex
+false

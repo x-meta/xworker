@@ -1,32 +1,22 @@
 package xworker.ide;
 
-import java.io.File;
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xmeta.Action;
-import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
-import org.xmeta.Thing;
-import org.xmeta.World;
+import org.xmeta.*;
 import org.xmeta.util.UtilFile;
 import org.xmeta.util.UtilMap;
-
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
-import xworker.swt.util.DialogCallback;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.UtilBrowser;
 import xworker.util.Callback;
 import xworker.util.IIde;
+
+import java.io.File;
+import java.util.Map;
 
 public class IdeImpl implements IIde, Listener{
 	private static Logger logger = LoggerFactory.getLogger(IdeImpl.class);
@@ -42,26 +32,20 @@ public class IdeImpl implements IIde, Listener{
 		
 		//增加键盘事件的过滤器，如实现快捷点打开帮助小精灵
 		final IdeImpl ide = this;
-		display.asyncExec(new Runnable(){
-			public void run(){
-				display.addFilter(SWT.KeyDown, ide);
-			}
-		});
+		display.asyncExec(() -> display.addFilter(SWT.KeyDown, ide));
 		
 	}
 	
 	@Override
 	public void ideOpenThing(final Thing thing) {
-		display.asyncExec(new Runnable(){
-			public void run(){
-				ActionContainer actions = actionContext.getObject("actions");
-				if(actions != null){
-					actions.doAction("openThing", actionContext, "thing", thing);
-				}
-				
-				if(shell != null){
-					shell.forceActive();
-				}
+		display.asyncExec(() -> {
+			ActionContainer actions = actionContext.getObject("actions");
+			if(actions != null){
+				actions.doAction("openThing", actionContext, "thing", thing);
+			}
+
+			if(shell != null){
+				shell.forceActive();
 			}
 		});
 	}
@@ -74,30 +58,28 @@ public class IdeImpl implements IIde, Listener{
 	@Override
 	public void ideOpenThingAndSelectCodeLine(final Thing thing,
 			final String codeAttrName, final int line) {
-		display.asyncExec(new Runnable(){
-			public void run(){
-				ActionContainer actions = actionContext.getObject("actions");
-				ActionContext ac = actions.getActionContext();
-				Shell shell = (Shell) ac.get("shell");
-				if(shell != null){
-					shell.forceActive();
-				}
-				ActionContext bin = (ActionContext)actions.doAction("openThing", UtilMap.toMap(new Object[]{"thing", thing}));
-				
-				if(bin != null){
-					ActionContext modelBin = (ActionContext) bin.get("currentModelContext");
-					StyledText input = (StyledText) modelBin.get(codeAttrName + "Input");
-	                if(input != null){
-	                	try{
-		                	int start = input.getOffsetAtLine(line);
-		                	int end = start + input.getLine(line).length();
-	                        input.setCaretOffset(start);
-	                        input.setSelection(start, end);
-	                        input.showSelection();
-	                	}catch(Exception e){
-	                		
-	                	}
-	                }
+		display.asyncExec(() -> {
+			ActionContainer actions = actionContext.getObject("actions");
+			ActionContext ac = actions.getActionContext();
+			Shell shell = (Shell) ac.get("shell");
+			if(shell != null){
+				shell.forceActive();
+			}
+			ActionContext bin = actions.doAction("openThing", UtilMap.toMap("thing", thing));
+
+			if(bin != null){
+				ActionContext modelBin = (ActionContext) bin.get("currentModelContext");
+				StyledText input = (StyledText) modelBin.get(codeAttrName + "Input");
+				if(input != null){
+					try{
+						int start = input.getOffsetAtLine(line);
+						int end = start + input.getLine(line).length();
+						input.setCaretOffset(start);
+						input.setSelection(start, end);
+						input.showSelection();
+					}catch(Exception ignored){
+
+					}
 				}
 			}
 		});
@@ -131,21 +113,16 @@ public class IdeImpl implements IIde, Listener{
 	public void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback) {
 		Display explorerDisplay = display;//Designer.getExplorerDisplay();
 		if(explorerDisplay != null){
-			explorerDisplay.asyncExec(new Runnable(){
-				public void run(){					
-					MessageBox box = new MessageBox(Designer.getExplorerDisplay().getShells()[0], style);
-					box.setText(title);
-					box.setMessage(message);
-					SwtUtils.openDialog(box, new DialogCallback() {
-						@Override
-						public void dialogClosed(int returnCode) {
-							if(callback != null){
-								callback.call(returnCode);
-							}
-						}
-					}, actionContext);
-					//box.open();
-				}
+			explorerDisplay.asyncExec(() -> {
+				MessageBox box = new MessageBox(Designer.getExplorerDisplay().getShells()[0], style);
+				box.setText(title);
+				box.setMessage(message);
+				SwtUtils.openDialog(box, returnCode -> {
+					if(callback != null){
+						callback.call(returnCode);
+					}
+				}, actionContext);
+				//box.open();
 			});
 		}else{
 			throw new ActionException("Explorer display not exists");
@@ -154,26 +131,24 @@ public class IdeImpl implements IIde, Listener{
 
 	@Override
 	public void ideOpenFile(final File file){
-		display.asyncExec(new Runnable(){
-			public void run(){
-				try{
-					ActionContainer actions = actionContext.getObject("actions");
-					if(actions != null){
-						String thingPath = UtilFile.getThingPathByFile(file);
-						if(thingPath != null){
-							Thing thing = World.getInstance().getThing(thingPath);
-							actions.doAction("openThing", actionContext, "thing", thing);
-						}else{
-							actions.doAction("openTextFile", actionContext, "file", file);
-						}
+		display.asyncExec(() -> {
+			try{
+				ActionContainer actions = actionContext.getObject("actions");
+				if(actions != null){
+					String thingPath = UtilFile.getThingPathByFile(file);
+					if(thingPath != null){
+						Thing thing = World.getInstance().getThing(thingPath);
+						actions.doAction("openThing", actionContext, "thing", thing);
+					}else{
+						actions.doAction("openTextFile", actionContext, "file", file);
 					}
-					
-					if(shell != null){
-						shell.forceActive();
-					}
-				}catch(Exception e){
-					logger.error("Open file error, file=" + file.getAbsolutePath(), e);
 				}
+
+				if(shell != null){
+					shell.forceActive();
+				}
+			}catch(Exception e){
+				logger.error("Open file error, file=" + file.getAbsolutePath(), e);
 			}
 		});
 	}

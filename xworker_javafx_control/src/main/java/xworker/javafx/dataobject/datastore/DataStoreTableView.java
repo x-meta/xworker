@@ -1,20 +1,15 @@
 package xworker.javafx.dataobject.datastore;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataStore;
 import xworker.dataObject.DataStoreListener;
 import xworker.javafx.thing.form.AttributeDataStore;
+import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
 import java.util.HashMap;
@@ -23,6 +18,8 @@ import java.util.Map;
 
 
 public class DataStoreTableView implements DataStoreListener {
+    private static final String TAG = DataStoreTableView.class.getName();
+
     public static final String DATASTORE = "dataStore";
     public static final String VALUES = "values";
 
@@ -36,8 +33,20 @@ public class DataStoreTableView implements DataStoreListener {
         this.tableView.getProperties().put(DATASTORE, dataStore);
         this.check = UtilData.isTrue(dataStore.getThing().doAction("isCheck", dataStore.getActionContext()));
 
+        tableView.getProperties().put(TAG + "_dataStore", dataStore);
+        tableView.setRowFactory(DataStoreTableViewRowFactory.getInstance());
+
         //tableView.itemsProperty().bind(dataStore.datasProperty());
         dataStore.addListener(this);
+
+        try{
+            if(dataStore.getThing().getBoolean("tableViewToolsMenu")){
+                dataStore.getThing().doAction("createTableViewToolsMenu", dataStore.getActionContext(),
+                        "dataStore", dataStore, "tableView", tableView);
+            }
+        }catch (Exception e){
+            Executor.warn(TAG, "Can not create tools menu, may be need import xworker_poi", e);
+        }
     }
 
     @Override
@@ -167,7 +176,7 @@ public class DataStoreTableView implements DataStoreListener {
 
     @Override
     public void onLoaded(DataStore dataStore) {
-        tableView.setItems(FXCollections.observableList(dataStore.getDatas()));
+        Platform.runLater(() -> tableView.setItems(FXCollections.observableList(dataStore.getDatas())));
     }
 
     @Override
@@ -177,12 +186,11 @@ public class DataStoreTableView implements DataStoreListener {
 
     @Override
     public void beforeLoad(DataStore dataStore, Thing condition, Map<String, Object> params) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                tableView.getItems().clear();
-            }
-        });
+        Platform.runLater(() -> tableView.getItems().clear());
 
+    }
+
+    public static DataStore getDataStore(TableView<?> tableView){
+        return (DataStore) tableView.getProperties().get(TAG + "_dataStore");
     }
 }

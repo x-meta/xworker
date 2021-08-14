@@ -1,0 +1,184 @@
+@xworker.draw2d.borders.TitleBarBorder
+sname
+TitleBarBorder
+slabel
+TitleBarBorder
+sdescriptors
+xworker.lang.MetaDescriptor3
+sextends
+xworker.draw2d.borders.AbstractLabeledBorder
+smany
+true
+seditCols
+2
+sinitialization
+false
+smodifier
+public
+sinheritDescription
+false
+sdescription
+<p>Border provides a title bar on the Figure for which this is the border of. Generally used in conjunction with other borders to create window-like effects. Also provides for alignment of the text in the bar.</p>
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@actions
+sname
+actions
+sdescriptors
+xworker.lang.MetaDescriptor3/@actions
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@actions/@create
+sname
+create
+sisSynchronized
+false
+sthrowException
+true
+suseOtherAction
+false
+svarScope
+Local
+sdisableGlobalContext
+false
+Scode
+#$@text#$@
+import org.eclipse.draw2d.TitleBarBorder;
+import org.eclipse.draw2d.PositionConstants;
+
+import org.xmeta.util.UtilString;
+
+TitleBarBorder border = new TitleBarBorder();
+
+def backgroundColor = UtilString.createObjectFromParams(self.backgroundColor, "xworker.swt.graphics.Color", actionContext);
+if(backgroundColor != null){
+    border.setBackgroundColor(backgroundColor);
+}
+
+def padding = UtilString.createObjectFromParams(self.padding, "xworker.draw2d.geometry.Insets", actionContext);
+if(padding != null){
+    border.setPadding(padding);
+}
+
+if(self.textAlignment != null && self.textAlignment != ""){
+    switch(self.textAlignment){
+        case "LEFT":
+            border.setTextAlignment(PositionConstants.LEFT);
+            break;
+        case "CENTER":
+            border.setTextAlignment(PositionConstants.CENTER);
+            break;
+        case "RIGHT":
+            border.setTextAlignment(PositionConstants.RIGHT);
+            break;   
+    }
+}
+
+try{
+    def bindings = actionContext.push(null);
+    bindings.put("border", border);
+    self.doAction("initAbstractLabeledBorder", actionContext);
+}finally{
+    actionContext.pop();
+}
+
+return border;
+#$@text#$@
+sdescriptors
+xworker.lang.actions.Actions/@GroovyAction
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@backgroundColor
+sname
+backgroundColor
+sinputtype
+openWindow
+sinputattrs
+xworker.lang.attributeEditors.openWins.ParamsEditor/@shell|thingPath=xworker.swt.graphics.Color
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@padding
+sname
+padding
+sinputtype
+openWindow
+sinputattrs
+xworker.lang.attributeEditors.openWins.ParamsEditor/@shell|thingPath=xworker.draw2d.geometry.Insets
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@textAlignment
+sname
+textAlignment
+sinputtype
+select
+sreadOnly
+false
+sinheritDescription
+false
+svalidateAllowBlank
+true
+LvalidateOnBlur
+true
+LallowDecimals
+true
+LallowNegative
+true
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@textAlignment/@LEFT
+sname
+LEFT
+svalue
+LEFT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@textAlignment/@CENTER
+sname
+CENTER
+svalue
+CENTER
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false
+@xworker.draw2d.borders.TitleBarBorder/@textAlignment/@RIGHT
+sname
+RIGHT
+svalue
+RIGHT
+sdescriptors
+xworker.lang.MetaDescriptor3/@attribute/@value
+sth_createIndex
+false

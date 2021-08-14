@@ -12,9 +12,10 @@ import org.xmeta.util.ThingLoader;
 import xworker.lang.executor.Executor;
 import xworker.swt.design.Designer;
 import xworker.swt.util.ItemIndex;
+import xworker.workbench.IMenuContainer;
 
 @ActionClass(creator="getMenuContainer")
-public class MenuContainer implements xworker.thingeditor.IMenuContainer{
+public class MenuContainer implements IMenuContainer {
 	private static final String TAG = MenuContainer.class.getName();
 	private static final String ID = "__MenuContainer_id__";
 	

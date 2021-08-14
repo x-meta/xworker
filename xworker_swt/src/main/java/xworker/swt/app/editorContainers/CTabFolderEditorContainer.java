@@ -27,8 +27,8 @@ import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
-import xworker.swt.app.IEditorContainer;
 import xworker.swt.app.editors.EditorImpl;
+import xworker.workbench.IEditorContainer;
 
 public class CTabFolderEditorContainer extends AbstractEditorContianer
 		implements CTabFolder2Listener, SelectionListener {
@@ -411,8 +411,8 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors() {
-		List<xworker.thingeditor.IEditor<Composite, Control, Image>> editors = new ArrayList<>();
+	public List<xworker.workbench.IEditor<Composite, Control, Image>> getEditors() {
+		List<xworker.workbench.IEditor<Composite, Control, Image>> editors = new ArrayList<>();
 		for (CTabItem item : tabFolder.getItems()) {
 			editors.add(getEditorUtils(item));
 		}
@@ -420,8 +420,8 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors(boolean dirty) {
-		List<xworker.thingeditor.IEditor<Composite, Control, Image>> editors = new ArrayList<>();
+	public List<xworker.workbench.IEditor<Composite, Control, Image>> getEditors(boolean dirty) {
+		List<xworker.workbench.IEditor<Composite, Control, Image>> editors = new ArrayList<>();
 		for (CTabItem item : tabFolder.getItems()) {
 			EditorImpl editor = getEditorUtils(item);
 			if (dirty && editor.isDirty()) {
@@ -435,7 +435,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public void close(xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void close(xworker.workbench.IEditor<Composite, Control, Image> editor) {
 		if (editor == null) {
 			return;
 		}
@@ -448,7 +448,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public void stateChanged(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void stateChanged(IEditorContainer<Composite, Control, Image> editorContainer, xworker.workbench.IEditor<Composite, Control, Image> editor) {
 		super.stateChanged(editorContainer, editor);
 
 		for (CTabItem item : tabFolder.getItems()) {
@@ -462,7 +462,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public xworker.thingeditor.IEditor<Composite, Control, Image> getActiveEditor() {
+	public xworker.workbench.IEditor<Composite, Control, Image> getActiveEditor() {
 		if (tabFolder.getSelection() != null) {
 			return getEditorUtils(tabFolder.getSelection());
 		}
@@ -471,8 +471,8 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	}
 
 	@Override
-	public xworker.thingeditor.IEditor<Composite, Control, Image> getEditor(String id) {
-		for (xworker.thingeditor.IEditor<Composite, Control, Image> editor : getEditors()) {
+	public xworker.workbench.IEditor<Composite, Control, Image> getEditor(String id) {
+		for (xworker.workbench.IEditor<Composite, Control, Image> editor : getEditors()) {
 			if (editor.getId().equals(id)) {
 				return editor;
 			}

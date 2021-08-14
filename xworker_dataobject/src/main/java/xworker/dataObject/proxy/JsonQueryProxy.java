@@ -186,7 +186,7 @@ public class JsonQueryProxy {
 	 * @throws Exception
 	 */
 	public static String formatParams(String dataObjectPath, String queryConfigPath, Map<String, Object> params, PageInfo pageInfo) throws Exception {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put("dataObjectPath", dataObjectPath);
 		Thing queryConfig = World.getInstance().getThing(queryConfigPath);
 		if(queryConfig != null) {
@@ -198,7 +198,7 @@ public class JsonQueryProxy {
 		}
 		data.put("params", params);
 		
-		Map<String, Object> page = new HashMap<String, Object>();
+		Map<String, Object> page = new HashMap<>();
 		if(pageInfo != null){
 			page.putAll(pageInfo.getPageInfoData());
 		}else {

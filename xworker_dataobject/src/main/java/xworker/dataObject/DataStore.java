@@ -2,6 +2,7 @@ package xworker.dataObject;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import xworker.dataObject.query.QueryConfig;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilData;
 
@@ -66,7 +67,7 @@ public class DataStore {
 
     boolean loading = true;
 
-    /**
+   /**
      * 加载序列，每次加载都会++，监听器可以根据它过滤重复。
      */
     int loadSeq = 0;
@@ -120,6 +121,10 @@ public class DataStore {
         if(this.condition == null){
             this.condition = dataObject.doAction("getQueryCondition", actionContext);
         }
+    }
+
+    public QueryConfig createQueryConfig(){
+        return new QueryConfig(condition, params, new PageInfo(), actionContext);
     }
 
     public boolean isAutoSave(){
@@ -217,8 +222,6 @@ public class DataStore {
 
     /**
      * 返回数据仓库的定义模型。
-     *
-     * @return
      */
     public Thing getThing(){
         return thing;

@@ -54,7 +54,7 @@ public class SaveResourceDialog {
     	ActionContext parentContext = actionContext.getObject("parentContext");
     	IEditorContainer editorContainer = parentContext.getObject("editorContainer");
     	
-        for(xworker.thingeditor.IEditor<Composite, Control, Image> editor : editorContainer.getEditors(true)){
+        for(xworker.workbench.IEditor<Composite, Control, Image> editor : editorContainer.getEditors(true)){
             TableItem item = new TableItem(editorsTable, SWT.NONE);
             item.setData(editor);
             item.setText(new String[] {editor.getSimpleTitle(), editor.getTitle()});

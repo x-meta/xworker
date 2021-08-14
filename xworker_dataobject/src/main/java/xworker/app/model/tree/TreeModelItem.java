@@ -436,9 +436,6 @@ public class TreeModelItem {
         }else {
             this.childInited = true;
             this.items = items;
-            if (items == null) {
-                this.items = Collections.emptyList();
-            }
         }
     }
 

@@ -30,13 +30,29 @@ public class ThingTreeModel {
     }
 
     public static List<TreeModelItem> getChilds(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
         TreeModel treeModel = actionContext.getObject("treeModel");
         TreeModelItem parentItem = actionContext.getObject("parentItem");
         Object obj = parentItem.getSource();
+
+        List<String> nodeThingNames = self.doAction("getNodeThingNames", actionContext);
         List<TreeModelItem> items = new ArrayList<>();
 
         if(obj instanceof  Thing){
             for(Thing child : ((Thing) obj).getChilds()){
+                boolean ok = false;
+                if(nodeThingNames.size() > 0){
+                    for(String thingName : nodeThingNames){
+                        if(child.isThingByName(thingName)){
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+                if(!ok){
+                    continue;
+                }
+
                 TreeModelItem item = new TreeModelItem(treeModel, parentItem);
                 item.setSource(child);
                 item.setText(child.getMetadata().getLabel());
@@ -53,7 +69,13 @@ public class ThingTreeModel {
 
     public static TreeModelItem getItemById(ActionContext actionContext){
         TreeModel treeModel = actionContext.getObject("treeMode");
-        Thing thing = World.getInstance().getThing(actionContext.getObject("id"));
+        String path = actionContext.getObject("id");
+        int index = path.indexOf("|");
+        if(index != -1){
+            path = path.substring(index + 1);
+        }
+
+        Thing thing = World.getInstance().getThing(path);
         if(thing != null){
             TreeModelItem item = new TreeModelItem(treeModel, null);
             item.setSource(thing);

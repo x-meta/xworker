@@ -3,12 +3,11 @@ package xworker.lang.flow.uiflow;
 import java.util.Map;
 
 import org.eclipse.swt.widgets.Composite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilThing;
+import xworker.lang.executor.Executor;
 
 /**
  * 动作流，简单化的UiFlow，它执行动作并根据返回值执行下一个动作。
@@ -17,7 +16,7 @@ import org.xmeta.util.UtilThing;
  *
  */
 public class ActionFlow extends AbstractUiFlow{
-	private static Logger logger = LoggerFactory.getLogger(ActionFlow.class);
+	private static final String TAG = ActionFlow.class.getName();
 	
 	ActionFlow parent;
 	
@@ -74,12 +73,12 @@ public class ActionFlow extends AbstractUiFlow{
 	
 	@Override
 	public void log(String message) {
-		logger.info(message);
+		Executor.info(TAG, message);
 	}
 
 	@Override
 	public void log(Throwable e) {
-		logger.error("Error flow=" + thing.getMetadata().getPath(), e);
+		Executor.error(TAG, "Error flow=" + thing.getMetadata().getPath(), e);
 	}
 
 	@Override
@@ -111,7 +110,7 @@ public class ActionFlow extends AbstractUiFlow{
 	@Override
 	public void start(Thing nextNode) {
 		if(nextNode == null){
-			logger.warn("start node is null, flow=" + thing.getMetadata().getPath());
+			Executor.warn(TAG, "start node is null, flow=" + thing.getMetadata().getPath());
 		}else{
 			nextNode.doAction(UiFlow.NODE_ACTION, actionContext, "uiFlow", this, "flowNode", nextNode);
 		}

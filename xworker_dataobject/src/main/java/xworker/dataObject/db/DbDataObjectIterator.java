@@ -5,6 +5,7 @@ import org.xmeta.Thing;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectIterator;
 import xworker.dataObject.PageInfo;
+import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.utils.DbUtil;
 import xworker.lang.executor.Executor;
 
@@ -22,17 +23,17 @@ public class DbDataObjectIterator implements DataObjectIterator {
     PreparedStatement pst;
     ResultSet rs;
     ActionContext actionContext;
-    PageInfo pageInfo;
+    QueryConfig queryConfig;
     int count = 0;
 
-    public DbDataObjectIterator(Thing self, List<Thing> attributes, PageInfo pageInfo, Connection con, PreparedStatement pst, ResultSet rs, ActionContext actionContext) {
+    public DbDataObjectIterator(Thing self, List<Thing> attributes, QueryConfig queryConfig, Connection con, PreparedStatement pst, ResultSet rs, ActionContext actionContext) {
         this.self = self;
         this.attributes = attributes;
         this.con = con;
         this.pst = pst;
         this.rs = rs;
         this.actionContext = actionContext;
-        this.pageInfo = pageInfo;
+        this.queryConfig = queryConfig;
     }
 
     @Override
@@ -60,13 +61,9 @@ public class DbDataObjectIterator implements DataObjectIterator {
     @Override
     public boolean hasNext() {
         try {
-            if(pageInfo != null && pageInfo.getLimit() > 0 && count > pageInfo.getLimit()){
-                //超出了分页限制
-                return false;
-            }
-
             return rs.next();
         }catch(Exception e){
+            Executor.warn(TAG, "do hasNext() error", e);
             return false;
         }
     }
@@ -77,11 +74,11 @@ public class DbDataObjectIterator implements DataObjectIterator {
         DataObject data = new DataObject(self);
         data.setInited(false);
         //设置属性值
-        for(int i=0; i<attributes.size(); i++){
+        for (Thing attribute : attributes) {
             try {
-                data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
-            }catch(Exception e){
-                Executor.warn(TAG, "Get valueError, attribute=" + attributes.get(i).getMetadata().getPath(), e);
+                data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
+            } catch (Exception e) {
+                Executor.warn(TAG, "Get valueError, attribute=" + attribute.getMetadata().getPath(), e);
             }
         }
 
@@ -111,13 +108,18 @@ public class DbDataObjectIterator implements DataObjectIterator {
         return rs;
     }
 
-    public ActionContext getActionContext() {
-        return actionContext;
+    @Override
+    public Thing getDataObject() {
+        return self;
     }
 
     @Override
-    public PageInfo getPageInfo() {
-        return pageInfo;
+    public QueryConfig getQueryConfig() {
+        return null;
+    }
+
+    public ActionContext getActionContext() {
+        return actionContext;
     }
 
     public int getCount() {

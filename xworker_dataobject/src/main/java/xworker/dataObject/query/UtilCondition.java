@@ -695,16 +695,23 @@ public class UtilCondition {
 	public static boolean check(DataObject dataObject, byte operator, String name, Object value, String multiJoin){
 		Thing attribute = dataObject.getMetadata().getDefinition(name);
 
-		Object dataValue = dataObject.get("name");
+		Object dataValue = dataObject.get(name);
 
 		if(operator == Condition.in || operator == Condition.notin || operator == Condition.between || operator == Condition.notbetween){
-			List<?> values;
+			List<Object> values;
 			if(value instanceof Object[]){
-				values = Arrays.asList((Object[]) value);
+				Object[] array = (Object[]) value;
+				for(int i=0; i<array.length; i++){
+					array[i] = DataObjectUtil.getValue(array[i], attribute);
+				}
+				values = Arrays.asList(array);
 			}else if(value instanceof List<?>){
-				values = (List<?>) value;
+				values = new ArrayList<>();
+				for(Object v : (List<?>) value){
+					values.add(DataObjectUtil.getValue(v, attribute));
+				}
 			}else{
-				values = Collections.singletonList(value);
+				values = Collections.singletonList(DataObjectUtil.getValue(value, attribute));
 			}
 
 			return check(operator, dataValue, values);
@@ -741,8 +748,8 @@ public class UtilCondition {
 				}
 			}
 		}else{
-			dataValue = DataObjectUtil.getValue(dataValue, attribute);
-			return check(operator, dataValue, value);
+			//dataValue = DataObjectUtil.getValue(dataValue, attribute);
+			return check(operator, dataValue, DataObjectUtil.getValue(value, attribute));
 		}
 
 		return false;

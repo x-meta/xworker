@@ -902,7 +902,11 @@ public class Condition {
 				multiValueJoin = "and";
 			}
 			if (value instanceof Object[]) {
+				sb.append("(");
 				Object[] values = (Object[]) value;
+				if(values.length == 0){
+					return;
+				}
 				for (int i = 0; i < values.length; i++) {
 					if (i > 0) {
 						sb.append(" ");
@@ -913,8 +917,13 @@ public class Condition {
 					addOperator(sb, operator);
 					sb.append("?");
 				}
+				sb.append(")");
 			} else if (value instanceof List<?>) {
 				List<?> values = (List<?>) value;
+				if(values.size() == 0){
+					return;
+				}
+				sb.append("(");
 				for (int i = 0; i < values.size(); i++) {
 					if (i > 0) {
 						sb.append(" ");
@@ -925,6 +934,7 @@ public class Condition {
 					addOperator(sb, operator);
 					sb.append("?");
 				}
+				sb.append(")");
 			} else {
 				sb.append(column);
 				addOperator(sb, operator);

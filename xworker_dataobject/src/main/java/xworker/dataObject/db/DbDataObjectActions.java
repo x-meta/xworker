@@ -399,7 +399,7 @@ public class DbDataObjectActions {
 
 
             if(createIterator != null && createIterator){
-                return new DbDataObjectIterator(self, attributes, pageInfo, con, pst, rs, actionContext);
+                return new DbDataObjectIterator(self, attributes, queryConfig, con, pst, rs, actionContext);
             }else {
                 while (count < pageInfo.getLimit()) {
                     if (supportScroll) {

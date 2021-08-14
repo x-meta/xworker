@@ -24,6 +24,7 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilJava;
 import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.http.DataObjectHttpUtils;
+import xworker.dataObject.iterators.PageDataObjectIterator;
 import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.dataObject.utils.JsonFormator;
@@ -297,6 +298,13 @@ public class DataObjectCreator {
 
     public static Object toDataObject(ActionContext actionContext){
         return createDataObject((Thing) actionContext.get("self"));
+    }
+
+    public static Object createIterator(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        QueryConfig queryConfig = actionContext.getObject("queryConfig");
+
+        return new PageDataObjectIterator(new DataObject(self), queryConfig, actionContext);
     }
 
     public static Object parseJsonData(ActionContext actionContext) throws Exception{        

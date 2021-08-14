@@ -149,7 +149,15 @@ public class ThingEditor {
         	((Control) thingContext.get("OutlineComposite")).dispose();
         }
     }
-    
+
+    public void doAction(ActionContext actionContext){
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("actionName", actionContext.getObject("actionName"));
+        params.put("params", actionContext.getObject("params"));
+        params.put("callback", actionContext.getObject("callback"));
+
+	    thingEditor.doAction("doAction", actionContext, params);
+    }
 
     public static ThingEditor createInstance(ActionContext actionContext){
         //return new MyClass();    
@@ -177,3 +185,4 @@ public class ThingEditor {
     @ActionField
     public org.xmeta.util.ActionContainer thingEditor;
 }
+

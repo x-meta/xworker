@@ -161,8 +161,8 @@ public class XWorkerPackageViewer {
 	        //println data.path;
 	        Thing thing = world.getThing(data.getPath());
 	        Action openThingEditor = actionContext.getObject("openThingEditor");
-	        openThingEditor.run(actionContext, "params", UtilMap.toMap(Index.TYPE_THING, thing, "id", data.getPath()),
-	             "id", data.getPath());
+	        openThingEditor.run(actionContext, "params", UtilMap.toMap(Index.TYPE_THING, thing, "id", "thing:" + data.getPath()),
+					"id", "thing:" + data.getPath());
 	    }
 	}
 	

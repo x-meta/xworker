@@ -1,21 +1,16 @@
 package xworker.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilThing;
-
 import xworker.lang.actions.ActionContainer;
 import xworker.lang.executor.Executor;
+import xworker.workbench.IWorkbench;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 集中零散的一些常用的静态方法以便容易找到和使用。
@@ -36,15 +31,13 @@ public class XWorkerUtils {
 	static{
 		try {
 			Class<?> cls = Class.forName("xworker.util.ThingUtilsImpl");
-			thingUtils = (IThingUtils) cls.getConstructor(new Class<?>[0]).newInstance(new Object[0]);
-		}catch(Exception e) {			
+			thingUtils = (IThingUtils) cls.getConstructor().newInstance();
+		}catch(Exception ignored) {
 		}
 	}
 	
 	/**
 	 * 返回是否运行在Eclpise的RWT环境下。
-	 * 
-	 * @return
 	 */
 	public static boolean isRWT() {
 		if(isRWT == null) {
@@ -103,24 +96,17 @@ public class XWorkerUtils {
 	
 	/**
 	 * 对一个事物列表进行排序。
-	 * 
-	 * @param things
-	 * @param attributeName
 	 */
 	public static void sortThings(final List<Thing> things, final String attributeName){
-		Collections.sort(things, new Comparator<Thing>(){
-
-			@Override
-			public int compare(Thing o1, Thing o2) {
-				String str1 = o1.getStringBlankAsNull(attributeName);
-				String str2 = o2.getStringBlankAsNull(attributeName);				
-				if(str1 == null && str2 == null){
-					return 0;
-				}else if(str1 != null){
-					return str1.compareTo(str2);
-				}else{
-					return -1;
-				}
+		things.sort((o1, o2) -> {
+			String str1 = o1.getStringBlankAsNull(attributeName);
+			String str2 = o2.getStringBlankAsNull(attributeName);
+			if (str1 == null && str2 == null) {
+				return 0;
+			} else if (str1 != null) {
+				return str1.compareTo(str2);
+			} else {
+				return -1;
 			}
 		});
 	}
@@ -131,8 +117,6 @@ public class XWorkerUtils {
 
 	/**
 	 * 返回系统是否包含了XWorker的环境，主要是判断编辑器等是否存在。
-	 * 
-	 * @return
 	 */
 	public static boolean hasXWorker() {
 		return World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry2") != null;
@@ -140,8 +124,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 在XWorker的事物管理器中打开并编辑一个事物。
-	 * 
-	 * @param thing
 	 */
 	public static void ideOpenThing(Thing thing){
 		if(thing == null) {
@@ -161,10 +143,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * IDE的权限校验。使用DEFAULT环境。
-	 * 
-	 * @param action
-	 * @param path
-	 * @return
 	 */
 	private static boolean checkIDEPermission(String action, String path) {
 		IIde ide = getIde();
@@ -176,11 +154,22 @@ public class XWorkerUtils {
 					IDE_PERMISSION, action, path, new ActionContext());
 		}
 	}
+
+	/**
+	 * 返回IDE的工作台，如果存在。
+	 */
+	public static IWorkbench<?, ?, ?> getWorkbench(){
+		IIde ide = getIde();
+		if(ide != null){
+			return ide.getActionContainer().doAction("getWorkbench", ide.getActionContext());
+		}else{
+			Executor.warn(TAG, "Can not return workbench, Ide is not setted!");
+			return null;
+		}
+	}
 	
 	/**
 	 * 事物管理器打开一个文件。
-	 * 
-	 * @param file
 	 */
 	public static void ideOpenFile(File file){
 		IIde ide = getIde();
@@ -196,10 +185,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 打开事物并选择事物的代码的某一行
-	 * 
-	 * @param thing
-	 * @param codeAttrName
-	 * @param line
 	 */
 	public static void ideOpenThingAndSelectCodeLine(final Thing thing, final String codeAttrName, final int line){
 		IIde ide = getIde();
@@ -223,12 +208,10 @@ public class XWorkerUtils {
 	 * 初始化编辑器：    
 	 *     如果编辑器创建后，在编辑器自身的上下文中有名为ations的类型为ActionContainer的变量，
 	 *     那么会执行actions的doInit方法。
-	 * 
-	 * @param compositeThing
 	 */
 	public static void ideOpenComposite(Thing compositeThing){
 		if(checkIDEPermission("openComposite", compositeThing.getMetadata().getPath())) {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			params.put("compositeThing", compositeThing);			
 			params.put("path", "composite/" + compositeThing.getMetadata().getPath());
 			params.put("title", compositeThing.getMetadata().getLabel());
@@ -246,13 +229,10 @@ public class XWorkerUtils {
 	 * 初始化编辑器：    
 	 *     如果编辑器创建后，在编辑器自身的上下文中有名为ations的类型为ActionContainer的变量，
 	 * 那么会执行actions的doInit方法，会把parameters参数作为params变量传入。
-	 * 
-	 * @param compositeThing
-	 * @param parameters
 	 */
 	public static void ideOpenComposite(Thing compositeThing, Map<String, Object> parameters){
 		if(checkIDEPermission("openComposite", compositeThing.getMetadata().getPath())) {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			params.put("compositeThing", compositeThing);	
 			Object path = parameters.get("path");
 			if(path != null) {
@@ -282,11 +262,7 @@ public class XWorkerUtils {
 	 *     
 	 * 初始化编辑器：    
 	 *     如果编辑器创建后，在编辑器自身的上下文中有名为ations的类型为ActionContainer的变量，
-	 * 那么会执行actions的doInit方法，会把parameters参数作为params变量传入。
-	 * 
-	 * @param compositeThing
-	 * @param title 编辑器的标识
-	 * @param parameters
+	 *     那么会执行actions的doInit方法，会把parameters参数作为params变量传入。
 	 */
 	public static void ideOpenComposite(Thing compositeThing, String title, Map<String, Object> parameters){
 		if(checkIDEPermission("openComposite", compositeThing.getMetadata().getPath())) {
@@ -314,11 +290,10 @@ public class XWorkerUtils {
 	
 	/**
 	 * 在XWorker事物管理器中内置的浏览器上打开一个URL。
-	 * @param url
 	 */
 	public static void ideOpenUrl(String url){
 		if(checkIDEPermission("openUrl", url)) {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			params.put("url", url);
 			params.put("name", url);
 			ideDoAction("openUrl", params);
@@ -327,7 +302,7 @@ public class XWorkerUtils {
 	
 	public static void ideOpenThingTab(Thing thing){
 		if(checkIDEPermission("openThingTab", thing.getMetadata().getPath())) {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			params.put("thing", thing);
 			ideDoAction("thingTab", params);	
 		}
@@ -335,8 +310,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 在XWorker事物管理器中内置的浏览器上打开一个WebControl。
-	 * 
-	 * @param control
 	 */
 	public static void ideOpenWebControl(Thing control){
 		ideOpenUrl(getWebControlUrl(control));
@@ -344,9 +317,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 返回在XWorker事物管理器内置的WEB服务器上一个WebControl的地址。
-	 * 
-	 * @param control
-	 * @return
 	 */
 	public static String getWebControlUrl(Thing control){
 		return GlobalConfig.getWebUrl() + "do?sc=" + control.getMetadata().getPath();
@@ -355,13 +325,9 @@ public class XWorkerUtils {
 	/**
 	 * 从父变量上下文中(parentActionContext或parentContext)中获取变量，是递归获取的，如果父变量上下返回null
 	 * ，那么取父的父...。
-	 * 
-	 * @param actionContext
-	 * @param name
-	 * @return
 	 */
 	public static <T> T getParentVar(ActionContext actionContext, String name){
-		Map<ActionContext, ActionContext> context = new HashMap<ActionContext, ActionContext>();
+		Map<ActionContext, ActionContext> context = new HashMap<>();
 		return getParentVar(actionContext, name, context);
 	}
 	
@@ -394,8 +360,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 获取XWorker的网站根目录。
-	 * 
-	 * @return
 	 */
 	public static String getWebUrl(){
 		return GlobalConfig.getWebUrl();
@@ -403,9 +367,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 执行XWorker事物管理器的指定的动作。
-	 * 
-	 * @param name
-	 * @param parameters
 	 */
 	public static void ideDoAction(String name, Map<String, Object> parameters){
 		IIde ide = getIde();
@@ -421,8 +382,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 返回IDE的动作容器。
-	 * 
-	 * @return
 	 */
 	public static ActionContainer getIdeActionContainer(){
 		IIde ide = getIde();
@@ -438,8 +397,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 返回编辑器的主界面的Shell对象。
-	 * 
-	 * @return
 	 */
 	public static Object getIDEShell(){
 		IIde ide = getIde();
@@ -454,10 +411,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 通过XWorker的IDE显示一条提示信息。该方式是异步执行的。
-	 * 
-	 * @param title
-	 * @param message
-	 * @param style
 	 */
 	public static void ideShowMessageBox(final String title, final String message, final int style){
 		IIde ide = getIde();
@@ -470,10 +423,6 @@ public class XWorkerUtils {
 
 	/**
 	 * 通过XWorker的IDE显示一条提示信息。该方式是异步执行的。
-	 *
-	 * @param title
-	 * @param message
-	 * @param style
 	 */
 	public static void ideShowMessageBox(final String title, final String message, final int style, final Callback<Integer, Void> callback){
 		IIde ide = getIde();
@@ -486,10 +435,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 打开一个Editor，如果Editor已经打开那么是设置参数。
-	 * 
-	 * @param id
-	 * @param editor
-	 * @param params
 	 */
 	public static Object openEditor(String id, Thing editor, Map<String, Object> params) {
 		IIde ide = getIde();
@@ -505,11 +450,11 @@ public class XWorkerUtils {
 	/**
 	 * 在工作台IDE上打开一个视图。
 	 * 
-	 * @param id
+	 * @param id 视图标识
 	 * @param type 可选值left,right,top,bottom之一
-	 * @param closeable
-	 * @param composite
-	 * @param params
+	 * @param closeable 是否可关闭
+	 * @param composite 容器模型
+	 * @param params 参数
 	 */
 	public static Object openView(String id, String type, boolean closeable, Thing composite, Map<String, Object> params) {
 		IIde ide = getIde();
@@ -544,9 +489,6 @@ public class XWorkerUtils {
 
 	/**
 	 * 返回模型的描述文档。
-	 *
-	 * @param thing
-	 * @return
 	 */
 	public static String getThingDesc(Thing thing){
 		Thing realThing = thing;
@@ -590,14 +532,6 @@ public class XWorkerUtils {
     
     /**
      * 发送一条系统信息。
-     * 
-     * @param label
-     * @param desc
-     * @param type
-     * @param descPath
-     * @param thingPath
-     * @param compositePath
-     * @param actionContext
      */
     public static void sendMessage(String senderId, String label, String desc, String type, String descPath, String thingPath, String compositePath, ActionContext actionContext){
     	/*
@@ -650,11 +584,6 @@ public class XWorkerUtils {
     
     /**
      * 发送一条打开Composite的系统信息。
-     * 
-     * @param label
-     * @param desc
-     * @param compositePath
-     * @param actionContext
      */
     public static void sendCompositeMessage(String senderId, String label, String desc, String compositePath, ActionContext actionContext){
     	sendMessage(senderId, label, desc, "composite", null, null, compositePath, actionContext);
@@ -723,10 +652,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 返回目标文件目录是否是XWorker的HOME目录。
-	 * 
-	 * @param file
-	 * @return
-	 * @throws IOException 
 	 */
 	public static boolean isXWorkerHome(File file) throws IOException{
 		if(file.isFile()){
@@ -734,21 +659,13 @@ public class XWorkerUtils {
 		}
 		
 		File xfile = new File(World.getInstance().getPath());
-		if(xfile.getCanonicalFile().equals(file.getCanonicalFile())){
-			return true;
-		}else{
-			return false;
-		}
+		return xfile.getCanonicalFile().equals(file.getCanonicalFile());
 	}
 	
     public static boolean isThingExplorer(){
     	IIde ide = XWorkerUtils.getIde();
-    	if(ide == null || ide.isThingExplorer() == false){
-    		return false;
-    	}
-    	
-    	return true;
-    }
+		return ide != null && ide.isThingExplorer();
+	}
     
     public static void addOuterProject(String projectName, String projectDir){
     	World world = World.getInstance();
@@ -765,13 +682,10 @@ public class XWorkerUtils {
     
     /**
      * 获取一组事物的分组。
-     * 
-     * @param things
-     * @return
      */
     public static List<ThingGroup> getThingGroups(List<Thing> things){
     	//获取分组并排序
-		List<ThingGroup> groups = new ArrayList<ThingGroup>();
+		List<ThingGroup> groups = new ArrayList<>();
 		for(Thing thing : things){	
 			String group = thing.getMetadata().getGroup();//thing.getStringBlankAsNull("group");
 			if(group == null){
@@ -797,34 +711,34 @@ public class XWorkerUtils {
     	}else{
     		String[] gs = groupStr.split("[.]");
     		ThingGroup parent = null;
-    		for(int i=0 ;i<gs.length; i++){
-    			String g = gs[i];  
-    			int index = g.indexOf("|");
-    			if(index != -1){
-    				g = g.substring(index + 1, g.length());
-    			}
-    			List<ThingGroup> gps = null;
-    			if(parent == null){
-    				gps = groups;
-    			}else{
-    				gps = parent.childs;    				
-    			}
-    			
-    			boolean ok = false;
-    			for(ThingGroup tg : gps){
-    				if(tg.group.equals(g)){
-    					parent = tg;
-    					tg.addWeight(gs[i]);
-    					ok = true;
-    					break;
-    				}
-    			}
-    			
-    			if(!ok){
-   					parent = new ThingGroup(null, gs[i]);
-    				gps.add(parent);
-    			}
-    		}
+			for (String s : gs) {
+				String g = s;
+				int index = g.indexOf("|");
+				if (index != -1) {
+					g = g.substring(index + 1);
+				}
+				List<ThingGroup> gps;
+				if (parent == null) {
+					gps = groups;
+				} else {
+					gps = parent.childs;
+				}
+
+				boolean ok = false;
+				for (ThingGroup tg : gps) {
+					if (tg.group.equals(g)) {
+						parent = tg;
+						tg.addWeight(s);
+						ok = true;
+						break;
+					}
+				}
+
+				if (!ok) {
+					parent = new ThingGroup(null, s);
+					gps.add(parent);
+				}
+			}
     		
     		if(parent != null){
     			parent.childs.add(new ThingGroup(thing, ""));
@@ -872,9 +786,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 根据默认首选项返回对应的首选项实例模型。
-	 * 
-	 * @param configDesc
-	 * @return
 	 */
 	public static Thing getPreference(String configDesc) {
 		return getPreference(World.getInstance().getThing(configDesc));
@@ -882,9 +793,6 @@ public class XWorkerUtils {
 	
 	/**
 	 * 根据默认首选项返回对应的首选项实例模型。
-	 * 
-	 * @param configDesc
-	 * @return
 	 */
 	public static Thing getPreference(Thing configDesc) {		
 		String path = configDesc.getRoot().getMetadata().getPath();
@@ -927,5 +835,17 @@ public class XWorkerUtils {
 			icon = "icons/xworker/dataObjectChild.gif";
 		}
 		return icon;
+	}
+
+	public static <T> T requireNonNull(T obj, Thing thing){
+		if (obj == null)
+			throw new NullPointerException(thing != null ? "thing: " + thing.getMetadata().getPath() : "");
+		return obj;
+	}
+
+	public static <T> T requireNonNull(T obj, Thing thing, String message){
+		if (obj == null)
+			throw new NullPointerException(message + (thing != null ? ", thing: " + thing.getMetadata().getPath() : ""));
+		return obj;
 	}
 }

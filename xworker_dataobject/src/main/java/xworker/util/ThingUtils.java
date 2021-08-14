@@ -233,21 +233,16 @@ public class ThingUtils {
 						Thing registThing = World.getInstance().getThing(rs[1]);
 						if(registThing != null){
 							String key = rs[0] + "_" + rs[1];
-							List<Thing> things = registThingCache.get(key);
-							if(things == null){
-								things = new ArrayList<Thing>();
-								registThingCache.put(key, things);
-							}
-							
+							List<Thing> things = registThingCache.computeIfAbsent(key, k -> new ArrayList<>());
+
 							things.add(thing);
 						}
 					}
 				}				
 			}
-		}else{
-			//logger.info("not checked : " + thing.getMetadata().getPath());
-		}
-		
+		}//logger.info("not checked : " + thing.getMetadata().getPath());
+
+
 		for(Thing child : thing.getChilds()){
 			initRegistThingCache(child);
 		}
@@ -309,12 +304,6 @@ public class ThingUtils {
 	
 	/**
 	 * 返回注册到指定事物的所有注册类型，它所有的描述者和继承事物也作为注册者。
-	 * 
-	 * @param registorThing
-	 * @param keywords
-	 * @param actionContext
-	 * @return
-	 * @throws SQLException
 	 */
 	public static List<String> getRegistTypes(Thing registorThing, List<String> keywords, boolean parent, ActionContext actionContext) throws SQLException{
 		if(registorThing == null){
@@ -368,8 +357,6 @@ public class ThingUtils {
 	
 	/**
 	 * 下一次searchRegistThings的额外加入的事物列表，只对当前线程起效，只作用一次。
-	 * 
-	 * @param things
 	 */
 	public static void setSearchRegistLocal(List<String> things) {
 		searchRegistLocal.set(things);
@@ -403,7 +390,7 @@ public class ThingUtils {
 			
 			for(Thing ext : registorThing.getExtends()){
 				for(Thing child : ext.getChilds()){
-					if(child.getBoolean("th_registDisabled") == false) {
+					if(!child.getBoolean("th_registDisabled")) {
 						thingList.add(child);
 					}
 				}
@@ -411,7 +398,7 @@ public class ThingUtils {
 		}else if("childThing".equals(registType) && !"xworker.lang.util.ThingIndex".equals(registorThing.getMetadata().getPath())){
 			//如果是子节点，优先添加事物自身的以及继承的子节点，
 			for(Thing child : registorThing.getAllChilds("thing")){
-				if(child.getBoolean("th_registDisabled") == false) {
+				if(!child.getBoolean("th_registDisabled")) {
 					thingList.add(child);
 				}
 			}
@@ -441,8 +428,8 @@ public class ThingUtils {
 		if(registByThing != null) {
 			try {
 				results = (List<DataObject>) registByThing.doAction("query", actionContext, UtilMap.toMap(
-					new Object[]{"thing", registorThing, "keywords", keyStr, "registType", registType, 
-							"noDescriptor", noDescriptor, "parent", parent}));
+						"thing", registorThing, "keywords", keyStr, "registType", registType,
+						"noDescriptor", noDescriptor, "parent", parent));
 			}catch(Exception e) {
 				Executor.warn(TAG, "query index form db exception", e);
 				//return thingList;
@@ -508,7 +495,6 @@ public class ThingUtils {
 			
 			String childPath = child.getMetadata().getPath();
 			if(context.get(childPath) != null){
-				continue;
 			}else{
 				context.put(childPath, child);
 				thingList.add(child);
@@ -520,12 +506,6 @@ public class ThingUtils {
 	 * <p>根据注册类型（registType）查找注册到被注册事物（registorThing)下的事物。</p>
 	 * 
 	 * 可以输入关键字查找注册的事物。
-	 * 
-	 * @param registorThing
-	 * @param registType
-	 * @param keywords
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, ActionContext actionContext){
 		return searchRegistThings(registorThing, registType, keywords, false, actionContext);
@@ -533,9 +513,6 @@ public class ThingUtils {
 	
 	/**
      * 获取显示事物Description的URL地址。
-     * 
-     * @param thing
-     * @return
      */
     public static String getThingDescUrl(Thing thing){
     	return XWorkerUtils.getThingDescUrl(thing);
@@ -543,12 +520,6 @@ public class ThingUtils {
     
     /**
      * 分析XML的结构获取描述者。
-     * 
-     * @param xml
-     * @return
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
      */
     public static Thing parseXMLStrucutre(String xml) throws ParserConfigurationException, SAXException, IOException{
     	Thing thing = createEmptyThing();
@@ -559,12 +530,6 @@ public class ThingUtils {
     
     /**
      * 分析JSON的结构获取描述者。
-     * 
-     * @param json
-     * @return
-     * @throws IOException 
-     * @throws JsonMappingException 
-     * @throws JsonParseException 
      */
     public static Thing parseJSONStructure(String json) throws JsonParseException, JsonMappingException, IOException{
     	Thing thing = parseJson(json);
@@ -610,9 +575,6 @@ public class ThingUtils {
     
     /**
      * 把事物转化成JSON字符串。
-     * 
-     * @param thing
-     * @return
      */
     public static String toJson(Thing thing){
     	ObjectMapper mapper = new ObjectMapper();
@@ -634,7 +596,7 @@ public class ThingUtils {
     		ObjectNode node = mapper.createObjectNode();
     		List<Thing> attributes = thing.getAttributesDescriptors();
     		for(Thing attr : attributes){
-    			if(attr.getBoolean("notXmlAttribute") == false){
+    			if(!attr.getBoolean("notXmlAttribute")){
     				String name = attr.getMetadata().getName();
     				Object value = thing.get(name);
     				if(value != null){
@@ -679,12 +641,6 @@ public class ThingUtils {
     
     /**
      * 把一个JSON字符串转化为一个事物。
-     * 
-     * @param jsonString
-     * @return
-     * @throws IOException 
-     * @throws JsonMappingException 
-     * @throws JsonParseException 
      */
     @SuppressWarnings("unchecked")
 	public static Thing parseJson(String jsonString) throws JsonParseException, JsonMappingException, IOException{

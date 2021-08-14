@@ -15,28 +15,23 @@
 ******************************************************************************/
 package xworker.listeners;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.Thing;
 
 public class DataMenuCache {
 	/** 菜单定义缓存 */
-	private List<Thing> menuConfigCache = new ArrayList<Thing>();
+	private final List<Thing> menuConfigCache = new ArrayList<>();
 	/** 用来存储数据菜单的缓存 */
-	private Map<String, List<Thing>> dataCache = new HashMap<String, List<Thing>>();
+	private final Map<String, List<Thing>> dataCache = new HashMap<>();
 	/** 用来存储包菜单的缓存 */	
-	private Map<String, List<Thing>> packageCache = new HashMap<String, List<Thing>>();
+	private final Map<String, List<Thing>> packageCache = new HashMap<>();
 	/** 用来存储结构包菜单的缓存 */
-	private Map<String, List<Thing>> structurePackageCache = new HashMap<String, List<Thing>>();
+	private final Map<String, List<Thing>> structurePackageCache = new HashMap<>();
 	/** 用来存储数据包菜单的缓存 */
-	private Map<String, List<Thing>> dataPackageCache = new HashMap<String, List<Thing>>();
+	private final Map<String, List<Thing>> dataPackageCache = new HashMap<>();
 	/** 用来存储配置包菜单的缓存 */
-	private Map<String, List<Thing>> configPackageCache = new HashMap<String, List<Thing>>();
+	private final Map<String, List<Thing>> configPackageCache = new HashMap<>();
 	/** 数据对象自身所携带的菜单的名称 */
 	public String thingMenuName = "menus";
 	
@@ -48,31 +43,37 @@ public class DataMenuCache {
 	 * @param type 类型
 	 */	
 	@SuppressWarnings("unchecked")
-	public List<Thing> getMenu(Thing thing, String dataNames[], String type){
-		List<Thing> menuList = new ArrayList<Thing>();
+	public List<Thing> getMenu(Thing thing, String[] dataNames, String type){
+		List<Thing> menuList = new ArrayList<>();
 		if(dataNames == null || type == null){
 			return menuList;
 		}
 		
-		Map<String, List<Thing>> caches[] = null;
-		if("data".equals(type)){
-			caches = new Map[1];
-			caches[0] = dataCache;
-		}else if("package".equals(type)){
-			caches = new Map[1];
-			caches[0] = packageCache;
-		}else if("dataPackage".equals(type)){
-			caches = new Map[2];
-			caches[0] = packageCache;
-			caches[1] = dataPackageCache; 
-		}else if("structurePackage".equals(type)){
-			caches = new Map[2];
-			caches[0] = packageCache;
-			caches[1] = structurePackageCache;
-		}else if("configPackage".equals(type)){
-			caches = new Map[2];
-			caches[0] = packageCache;
-			caches[1] = configPackageCache;
+		Map<String, List<Thing>>[] caches = null;
+		switch (type) {
+			case "data":
+				caches = new Map[1];
+				caches[0] = dataCache;
+				break;
+			case "package":
+				caches = new Map[1];
+				caches[0] = packageCache;
+				break;
+			case "dataPackage":
+				caches = new Map[2];
+				caches[0] = packageCache;
+				caches[1] = dataPackageCache;
+				break;
+			case "structurePackage":
+				caches = new Map[2];
+				caches[0] = packageCache;
+				caches[1] = structurePackageCache;
+				break;
+			case "configPackage":
+				caches = new Map[2];
+				caches[0] = packageCache;
+				caches[1] = configPackageCache;
+				break;
 		}
 		
 		//获取数据对象结构本身定义的菜单
@@ -84,52 +85,51 @@ public class DataMenuCache {
 		}
 		
 		//获得描述者定义的菜单并把它们放入一个Map中
-		Map<String, List<Thing>> descriptMenus = new HashMap<String, List<Thing>>();
-		List<Thing> menuConfigs = new ArrayList<Thing>();
-		Map<String, String> context = new HashMap<String, String>();//过滤重复菜单
-		for(Iterator<Thing> iter = descriptors.iterator(); iter.hasNext();){			
-			Thing descriptor = iter.next();
+		Map<String, List<Thing>> descriptMenus = new HashMap<>();
+		List<Thing> menuConfigs = new ArrayList<>();
+		Map<String, String> context = new HashMap<>();//过滤重复菜单
+		for (Thing descriptor : descriptors) {
 			//System.out.println(descriptor.getMetadata().getPath());
-			
-			Thing menus = descriptor.getThing(thingMenuName + "@0");
-			if(menus == null) continue;
 
-			if(context.get(menus.getMetadata().getPath()) != null){
+			Thing menus = descriptor.getThing(thingMenuName + "@0");
+			if (menus == null) continue;
+
+			if (context.get(menus.getMetadata().getPath()) != null) {
 				continue;
-			}else{
+			} else {
 				context.put(menus.getMetadata().getPath(), menus.getMetadata().getPath());
 			}
-            //取主菜单定义
+			//取主菜单定义
 			List<Thing> mainMenus = (List<Thing>) menus.get("menuDefine@0/menu@");
 			joinMenuDefines(menuConfigs, mainMenus);
 			//Collections.(menuConfigs, mainMenus);
-			
-			List<Thing> menuSettings = (List<Thing>) menus.get("menuSetting@");			
-			for(Iterator<Thing> miter = menuSettings.iterator(); miter.hasNext();){
+
+			List<Thing> menuSettings = (List<Thing>) menus.get("menuSetting@");
+			for (Iterator<Thing> miter = menuSettings.iterator(); miter.hasNext(); ) {
 				//取菜单定义
-				Thing menuSetting = miter.next();				
+				Thing menuSetting = miter.next();
 				List<Thing> childs = menuSetting.getAllChilds("menu");
-				if(childs.size() == 0){
+				if (childs.size() == 0) {
 					//如果菜单定义的菜单详细没有，返回继续
 					continue;
 				}
-				
+
 				String menuType = menuSetting.getString("menuType");
 				List<Thing> dmenus = (List<Thing>) descriptMenus.get(menuType);
-				if(dmenus == null){
+				if (dmenus == null) {
 					dmenus = new ArrayList<Thing>();
 					descriptMenus.put(menuType, dmenus);
 				}
-				
-				if(dmenus.size() != 0){
+
+				if (dmenus.size() != 0) {
 					//添加split
 					Thing object = new Thing();
-		    		object.put("isSplit", "true");
-		    		dmenus.add(object);
+					object.put("isSplit", "true");
+					dmenus.add(object);
 				}
-				
+
 				//添加每个子菜单
-				for(Iterator<Thing> cmiter = childs.iterator(); cmiter.hasNext();){
+				for (Iterator<Thing> cmiter = childs.iterator(); cmiter.hasNext(); ) {
 					addToList(dmenus, cmiter.next());
 				}
 			}
@@ -138,43 +138,42 @@ public class DataMenuCache {
 		joinMenuDefines(menuConfigs, menuConfigCache);	
 		
 		//按照菜单定义的顺序取得菜单
-		Map<String, String> contextTemp = new HashMap<String, String>();  //上下文，用于过滤菜单
-		for(Iterator<Thing> iter = menuConfigs.iterator(); iter.hasNext();){
-			Thing menuConfig = (Thing) iter.next();
+		Map<String, String> contextTemp = new HashMap<>();  //上下文，用于过滤菜单
+		for (Thing menuConfig : menuConfigs) {
 			String path = menuConfig.getMetadata().getPath();
-			if(contextTemp.get(path) != null){
+			if (contextTemp.get(path) != null) {
 				continue;
-			}else{
+			} else {
 				contextTemp.put(path, path);
 			}
-			
+
 			//添加注册到项目菜单定义的子菜单
-			List<Thing> subMenuList = new ArrayList<Thing>();
-			for(int i=0; i<caches.length; i++){
+			List<Thing> subMenuList = new ArrayList<>();
+			for (int i = 0; i < Objects.requireNonNull(caches).length; i++) {
 				setMenu(caches[i].get(menuConfig.getMetadata().getName()), subMenuList, dataNames);
 			}
-			
+
 			//添加直接从结构定义的菜单
 			List<Thing> dmenus = descriptMenus.get(menuConfig.getMetadata().getName());
-			if(dmenus != null && dmenus.size() != 0){
-				if(subMenuList.size() != 0){
+			if (dmenus != null && dmenus.size() != 0) {
+				if (subMenuList.size() != 0) {
 					Thing object = new Thing();
-		    		object.put("isSplit", "true");
-		    		subMenuList.add(object);
-		    		
-		    		for(Iterator<Thing> cmiter = dmenus.iterator(); cmiter.hasNext();){
-						addToList(subMenuList, cmiter.next());
+					object.put("isSplit", "true");
+					subMenuList.add(object);
+
+					for (Thing dmenu : dmenus) {
+						addToList(subMenuList, dmenu);
 					}
-				}else{
+				} else {
 					subMenuList = dmenus;
 				}
 			}
-			
-			if(subMenuList.size() != 0){
+
+			if (subMenuList.size() != 0) {
 				Thing menu = new Thing();
 				menu.put("name", menuConfig.getMetadata().getName());
-				menu.put("label", menuConfig.getMetadata().getLabel());		
-				for(Thing child : subMenuList){
+				menu.put("label", menuConfig.getMetadata().getLabel());
+				for (Thing child : subMenuList) {
 					menu.addChild(child, false);
 				}
 
@@ -187,10 +186,6 @@ public class DataMenuCache {
 	
 	/**
 	 * 设置和合并菜单。
-	 * 
-	 * @param cacheList
-	 * @param menuList
-	 * @param names
 	 */
 	private void setMenu(List<Thing> cacheList, List<Thing> menuList, String[] names){
 		if(cacheList == null || names == null){
@@ -198,61 +193,58 @@ public class DataMenuCache {
 		}
 		
 		//遍历菜单的定义	
-		for(Iterator iter = cacheList.iterator(); iter.hasNext();){
-			Thing menu = (Thing) iter.next();
-			
+		for (Thing menu : cacheList) {
 			//是否匹配
 			String dataName = menu.getString("dataName");
 			boolean isOk = false;
-			if(dataName == null || "".equals(dataName)){
+			if (dataName == null || "".equals(dataName)) {
 				isOk = true;
-			}else if(dataName.startsWith("*") && dataName.endsWith("*")){
-				if("*".equals(dataName)){
+			} else if (dataName.startsWith("*") && dataName.endsWith("*")) {
+				if ("*".equals(dataName)) {
 					isOk = true;
-				}else{
+				} else {
 					String name = dataName.substring(1, dataName.length() - 1);
-					for(int i=0; i<names.length; i++){
-						if(names[i].indexOf(name) != -1){
+					for (String s : names) {
+						if (s.contains(name)) {
 							isOk = true;
 							break;
 						}
 					}
 				}
-			}else if(dataName.startsWith("*")){
+			} else if (dataName.startsWith("*")) {
 				String name = dataName.substring(1, dataName.length());
-				for(int i=0; i<names.length; i++){
-					if(names[i].endsWith(name)){
+				for (String s : names) {
+					if (s.endsWith(name)) {
 						isOk = true;
 						break;
 					}
 				}
-			}else if(dataName.endsWith("*")){
+			} else if (dataName.endsWith("*")) {
 				String name = dataName.substring(0, dataName.length() - 1);
-				for(int i=0; i<names.length; i++){
-					if(names[i].startsWith(name)){
+				for (String s : names) {
+					if (s.startsWith(name)) {
 						isOk = true;
 						break;
 					}
 				}
-			}else{
-				for(int i=0; i<names.length; i++){
-					if(names[i].equals(dataName)){
+			} else {
+				for (String name : names) {
+					if (name.equals(dataName)) {
 						isOk = true;
 						break;
 					}
 				}
 			}
-			
+
 			//如果匹配则增加菜单
-			if(isOk){
-				if(!isAllntList(menuList, menu.getAllChilds()) && menuList.size() != 0){
+			if (isOk) {
+				if (!isAllntList(menuList, menu.getAllChilds()) && menuList.size() != 0) {
 					Thing object = new Thing();
-		    		object.put("isSplit", "true");
-		    		menuList.add(object);
+					object.put("isSplit", "true");
+					menuList.add(object);
 				}
-				
-				for(Iterator citer = menu.getAllChilds().iterator(); citer.hasNext();){
-					Thing target = (Thing) citer.next();
+
+				for (Thing target : menu.getAllChilds()) {
 					addToList(menuList, target);
 				}
 			}
@@ -260,28 +252,26 @@ public class DataMenuCache {
 	}
 	
 	private void joinMenuDefines(List<Thing> menuConfigs, List<Thing> mainMenus){
-		for(Iterator<Thing> iter = mainMenus.iterator(); iter.hasNext();){
-			Thing s = iter.next();
-			
-			if(menuConfigs.size() == 0){
+		for (Thing s : mainMenus) {
+			if (menuConfigs.size() == 0) {
 				menuConfigs.add(s);
-			}else{
+			} else {
 				boolean inserted = false;
-				for(int i=0; i<menuConfigs.size(); i++){
+				for (int i = 0; i < menuConfigs.size(); i++) {
 					Thing d = menuConfigs.get(i);
-					if(d.getString("name") != null && d.getString("name").equals(s.getString("name"))) break;
-					
-					if(d.getInt("index") > s.getInt("index")){
-						if(i == 0)
-						    menuConfigs.add(0, s);
+					if (d.getString("name") != null && d.getString("name").equals(s.getString("name"))) break;
+
+					if (d.getInt("index") > s.getInt("index")) {
+						if (i == 0)
+							menuConfigs.add(0, s);
 						else
-							menuConfigs.add(i-1, s);
+							menuConfigs.add(i - 1, s);
 						inserted = true;
 						break;
 					}
 				}
-				
-				if(!inserted){
+
+				if (!inserted) {
 					menuConfigs.add(s);
 				}
 			}
@@ -290,17 +280,15 @@ public class DataMenuCache {
 	
 	private boolean isAllntList(List<Thing> soruce, List<Thing> target){
 		boolean allHave = true;
-		for(Iterator citer = target.iterator(); citer.hasNext();){
-			Thing cChild = (Thing) citer.next();
+		for (Thing cChild : target) {
 			boolean cHave = false;
-			for(int i=0; i<soruce.size(); i++){
-				Thing obj = (Thing) soruce.get(i);
-				if((obj.getMetadata().getName() == null && cChild.getMetadata().getName() == null) || (obj.getMetadata().getName() != null && cChild.getMetadata().getName() != null && obj.getMetadata().getName().equals(cChild.getMetadata().getName()))){
+			for (Thing thing : soruce) {
+				if ((thing.getMetadata().getName() == null && cChild.getMetadata().getName() == null) || (thing.getMetadata().getName() != null && cChild.getMetadata().getName() != null && thing.getMetadata().getName().equals(cChild.getMetadata().getName()))) {
 					cHave = true;
 					break;
 				}
 			}
-			if(!cHave){
+			if (!cHave) {
 				allHave = false;
 				break;
 			}

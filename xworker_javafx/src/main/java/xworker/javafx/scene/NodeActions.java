@@ -11,6 +11,7 @@ import javafx.scene.Cursor;
 import javafx.scene.DepthTest;
 import javafx.scene.Node;
 import javafx.scene.effect.BlendMode;
+import xworker.javafx.design.Designer;
 import xworker.javafx.util.JavaFXUtils;
 
 public class NodeActions {
@@ -112,5 +113,6 @@ public class NodeActions {
             node.setVisible(thing.getBoolean("visible"));
         }
 
+        Designer.attach(thing, node, actionContext);
 	}
 }

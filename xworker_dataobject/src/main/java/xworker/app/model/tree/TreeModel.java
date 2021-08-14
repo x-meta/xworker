@@ -23,6 +23,7 @@ public class TreeModel {
 	List<String> parentControls;
 	TreeModelItem rootItem;
 	List<TreeModelListener> listeners = new ArrayList<>();
+	Object bindObjet;
 
 	public TreeModel(Thing thing, ActionContext actionContext){
 		this.thing = thing;
@@ -65,6 +66,14 @@ public class TreeModel {
 		}
 
 		return null;
+	}
+
+	public Object getBindObjet() {
+		return bindObjet;
+	}
+
+	public void setBindObjet(Object bindObjet) {
+		this.bindObjet = bindObjet;
 	}
 
 	public void addListener(TreeModelListener listener){

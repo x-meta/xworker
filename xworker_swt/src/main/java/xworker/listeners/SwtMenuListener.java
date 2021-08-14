@@ -24,7 +24,7 @@ import org.xmeta.ThingManagerListener;
 public class SwtMenuListener implements ThingManagerListener{
 	private static SwtMenuListener instance;
     //菜单缓存
-    private DataMenuCache menuCache = new DataMenuCache();
+    private final DataMenuCache menuCache = new DataMenuCache();
 
 	private SwtMenuListener(){				
 		menuCache.thingMenuName = "sswtMenus";
@@ -40,9 +40,6 @@ public class SwtMenuListener implements ThingManagerListener{
 
 	/**
      * 取得菜单。
-     * @param type
-     * @param name
-     * @return
      */
 	public List<Thing> getMenu(Thing thing, String[] name, String type){    	
     	return menuCache.getMenu(thing, name, type);
@@ -51,17 +48,20 @@ public class SwtMenuListener implements ThingManagerListener{
 	public List<Thing> getMenu(Thing thing, List<String> names, String type){
     	String[] strs = new String[names.size()];
     	for(int i=0; i<names.size(); i++){
-    		strs[i] = (String) names.get(i);
+    		strs[i] = names.get(i);
     	}
     	return getMenu(thing, strs, type);
     }
 
     /**
      * 使用菜单事物主动更新缓存。
-     * 
-     * @param menuThing
      */
     public void updateMenu(Thing menuThing){
+		if("xworker.ide.config.ProjectMenuSwt".equals(menuThing.getMetadata().getPath())){
+			//使用新的菜单，就得模型公共菜单取消了
+			return;
+		}
+
     	menuCache.update(menuThing);
     }
     

@@ -25,7 +25,9 @@ import xworker.lang.executor.Executor;
 import xworker.lang.executor.ExecutorService;
 import xworker.swt.design.Designer;
 import xworker.swt.widgets.CoolBarCreator;
-import xworker.thingeditor.IWorkbench;
+import xworker.workbench.IWorkbench;
+import xworker.workbench.IEditor;
+import xworker.workbench.IView;
 
 public class Workbench implements IWorkbench<Composite, Control, Image>, IEditorListener{
 	//private static Logger logger = LoggerFactory.getLogger(Workbench.class);
@@ -41,7 +43,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	CTabFolder bottomTabFolder;
 	CTabFolder mainTabFolder;
 	Shell shell;
-	xworker.thingeditor.IEditor<Composite, Control, Image> currentEditor;
+	IEditor<Composite, Control, Image> currentEditor;
 	SashForm topSashForm;
 	SashForm mainSashForm;
 	WorkbenchTablFolderListener tablFolderListener = new WorkbenchTablFolderListener(this);
@@ -79,7 +81,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 		return actionContext;
 	}
 
-	public xworker.thingeditor.IEditorContainer<Composite, Control, Image> getEditorContainer() {
+	public xworker.workbench.IEditorContainer<Composite, Control, Image> getEditorContainer() {
 		return editorContainer;
 	}
 
@@ -150,7 +152,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * @param editor 编辑器事物
 	 * @param params 参数，参数的内容有编辑器自定义
 	 */
-	public xworker.thingeditor.IEditor<Composite, Control, Image> openEditor(String id, Thing editor, Map<String, Object> params) {
+	public IEditor<Composite, Control, Image> openEditor(String id, Thing editor, Map<String, Object> params) {
 		params.put("editorThing", editor);
 		return actions.doAction("openEditor", actionContext, "id", id, "editor", editor, "params", params);
 	}
@@ -162,7 +164,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * @param view
 	 * @param type
 	 */
-	public xworker.thingeditor.IView<Composite, Control> openView(String id, final Thing view, final String type) {
+	public IView<Composite, Control> openView(String id, final Thing view, final String type) {
 		Map<String, Object> params = view.doAction("getParams", actionContext);
 		return openView(id, view, type, true, params);
 	}
@@ -176,7 +178,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * @param closeable 是否可以关闭
 	 * @param params 参数
 	 */
-	public xworker.thingeditor.IView<Composite, Control> openView(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
+	public IView<Composite, Control> openView(String id, final Thing view, final String type, final boolean closeable, final Map<String, Object> params) {
 		if(view == null) {
 			Executor.warn(TAG, "Viewer is null, id=" + id);
 			return null;
@@ -203,7 +205,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 			id = view.getMetadata().getPath();
 		}
 
-		xworker.thingeditor.IView<Composite, Control> v = getView(id);
+		IView<Composite, Control> v = getView(id);
 		if(v != null) {
 			v.showView();
 			return v;
@@ -315,7 +317,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * @param id
 	 * @return
 	 */
-	public xworker.thingeditor.IView<Composite, Control> getView(String id) {
+	public IView<Composite, Control> getView(String id) {
 		CTabItem item = getViewItem(id, leftTabFolder); 
 		if(item != null) {
 			return (View) item.getData();
@@ -340,8 +342,8 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * @param id
 	 * @return
 	 */
-	public xworker.thingeditor.IEditor<Composite, Control, Image> getEditor(String id) {
-		for(xworker.thingeditor.IEditor<Composite, Control, Image> editor : editorContainer.getEditors()) {
+	public IEditor<Composite, Control, Image> getEditor(String id) {
+		for(IEditor<Composite, Control, Image> editor : editorContainer.getEditors()) {
 			if(editor == null) {
 				Executor.warn(TAG, "editor is null");
 				continue;
@@ -626,7 +628,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * 
 	 * @return 如果没有返回null
 	 */
-	public xworker.thingeditor.IEditor<Composite, Control, Image> getActiveEditor() {
+	public IEditor<Composite, Control, Image> getActiveEditor() {
 		return editorContainer.getActiveEditor();
 	}
 	
@@ -635,7 +637,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * 
 	 * @return
 	 */
-	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors(){
+	public List<IEditor<Composite, Control, Image>> getEditors(){
 		return editorContainer.getEditors();
 	}
 	
@@ -644,15 +646,20 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	 * 
 	 * @return
 	 */
-	public List<xworker.thingeditor.IView<Composite, Control>> getViews(){
-		List<xworker.thingeditor.IView<Composite, Control>> views = new ArrayList<>();
+	public List<IView<Composite, Control>> getViews(){
+		List<IView<Composite, Control>> views = new ArrayList<>();
 		initViews(leftTabFolder, views);
 		initViews(rightTabFolder, views);
 		initViews(bottomTabFolder, views);
 		return views;
 	}
-	
-	private void initViews(CTabFolder tab, List<xworker.thingeditor.IView<Composite, Control>> views) {
+
+	@Override
+	public String getPlatform() {
+		return IWorkbench.PLATFORM_SWT;
+	}
+
+	private void initViews(CTabFolder tab, List<IView<Composite, Control>> views) {
 		if(tab == null) {
 			return;
 		}
@@ -665,11 +672,11 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	}
 
 	@Override
-	public void onCreated(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void onCreated(xworker.workbench.IEditorContainer<Composite, Control, Image> editorContainer, IEditor<Composite, Control, Image> editor) {
 	}
 
 	@Override
-	public void onActive(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void onActive(xworker.workbench.IEditorContainer<Composite, Control, Image> editorContainer, IEditor<Composite, Control, Image> editor) {
 		this.currentEditor = editor;
 		
 		setTitle();
@@ -698,7 +705,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	}
 
 	@Override
-	public void onDisposed(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void onDisposed(xworker.workbench.IEditorContainer<Composite, Control, Image> editorContainer, IEditor<Composite, Control, Image> editor) {
 		if(currentEditor == editor) {
 			currentEditor = null;
 			
@@ -707,7 +714,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 	}
 
 	@Override
-	public void stateChanged(xworker.thingeditor.IEditorContainer<Composite, Control, Image> editorContainer, xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void stateChanged(xworker.workbench.IEditorContainer<Composite, Control, Image> editorContainer, IEditor<Composite, Control, Image> editor) {
 		if(currentEditor == editor) {
 			setTitle();
 		}

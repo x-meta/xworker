@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Editor name="ThingTabEditor" descriptors="xworker.swt.app.Editor" description="&lt;p&gt;事物编辑器，参数thing: Thing。&lt;/p&gt;"
+     th_createIndex="true" th_registThing="child|xworker.workbench.Editors" group="swt.null">
+    <exampleParams><![CDATA[{
+    thing:thing
+}]]></exampleParams>
+    <actions>
+        <JavaAction name="createDataParams" descriptors="xworker.lang.actions.JavaAction"
+             outerClassName="xworker.swt.app.editors.ThingTabEditor" methodName="createDataParams"
+             varScope="Local"></JavaAction>
+    </actions>
+    <EditorComposite name="editorComposite" _xmeta_id_="EditorComposite">
+        <FillLayout name="FillLayout"></FillLayout>
+        <Resource name="resources">
+            <Image name="editorIcon" imageFile="icons/xworker/dataObject.gif"></Image>
+        </Resource>
+    </EditorComposite>
+    <OutlineComposite name="outlineComposite" _xmeta_id_="OutlineComposite">
+        <FillLayout name="FillLayout"></FillLayout>
+    </OutlineComposite>
+    <ActionContainer name="actions" _xmeta_id_="ActionContainer">
+        <JavaAction name="setContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="setContent" varScope="Local">
+            <code><![CDATA[import java.io.File;
+
+//判断参数是否存在
+if(params == null){    
+    noParams(actionContext);
+    return;
+}
+
+def thing = params.thing;
+if(thing instanceof String){
+    thing = world.getThing(thing);
+}
+
+if(!isSame(actionContext.g().get("thing"), thing)){
+    actionContext.g().put("thing", thing);
+    thingEditor.doAction("setThing", actionContext, "thing", thing);
+}
+    
+thingEditor.doAction("selectThing", actionContext, "thing", thing);
+//EditorComposite.layout();
+//println thingEditor;
+
+def isSame(oldThing, newThing){
+    if(oldThing == null || newThing == null){
+        return false;
+    }
+    
+    def oldPath = oldThing.getRoot().getMetadata().getPath();
+    def newPath = newThing.getRoot().getMetadata().getPath();
+    
+    return oldPath.equals(newPath);
+}]]></code>
+            <ActionDefined>
+                <MessageBox name="noParams" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
+                     shell="ognl:EditorComposite.getShell()" icon="ICON_WARNING" buttons="OK"
+                     title="lang:d=文件文本编辑器&amp;FileTextEditor" message="lang:d=参数不存在，不能编辑文件！&amp;en=Can not edit file, params not exists!"></MessageBox>
+            </ActionDefined>
+        </JavaAction>
+        <JavaAction name="isSameContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="isSameContent" varScope="Local">
+            <code><![CDATA[return false;
+/*
+if(actionContext.get("thing") == null){
+    return false;
+}
+
+if(actionContext.get("params") == null){
+    return false;
+}    
+
+def t = params.thing;
+if(t instanceof String){
+    t = world.getThing(t);
+}
+if(t != null && thing.getRoot() == t.getRoot()){
+    return true;
+}else{
+    return false;
+}*/]]></code>
+        </JavaAction>
+        <JavaAction name="getSimpleTitle" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="getSimpleTitle" varScope="Local">
+            <code><![CDATA[if(actionContext.get("thing") != null){
+    return thing.getRoot().getMetadata().getLabel();
+}else{
+    return "ThingEditor";
+}]]></code>
+        </JavaAction>
+        <JavaAction name="getTitle" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="getTitle" varScope="Local">
+            <code><![CDATA[if(actionContext.get("thing") != null){
+    def thingManager = thing.getMetadata().getThingManager();
+    if(thingManager != null){
+        return thingManager.getName() + "/" + thing.getRoot().getMetadata().getPath();
+    }else{
+            return thing.getRoot().getMetadata().getPath();
+    }
+}else{
+    return "null/ThingEditor";
+}]]></code>
+        </JavaAction>
+        <JavaAction name="doDispose" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="doDispose" varScope="Local">
+            <code><![CDATA[if(EditorComposite.isDisposed() == false){
+    EditorComposite.dispose();
+}
+
+if(thingEditor.actionContext.thingContext != null &&
+        thingEditor.actionContext.thingContext.OutlineComposite != null){
+    thingEditor.actionContext.thingContext.OutlineComposite.dispose();
+}]]></code>
+        </JavaAction>
+        <Ognl name="getOutline" expression="outlineComposite"></Ognl>
+        <NOOP name="onUnActive"></NOOP>
+        <NOOP name="onActive"></NOOP>
+        <GetVariable name="getIcon" varName="editorIcon"></GetVariable>
+        <JavaAction name="doAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="doAction"></JavaAction>
+    </ActionContainer>
+</Editor>

@@ -178,8 +178,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors() {
-		List<xworker.thingeditor.IEditor<Composite, Control, Image>> items = new ArrayList<>();
+	public List<xworker.workbench.IEditor<Composite, Control, Image>> getEditors() {
+		List<xworker.workbench.IEditor<Composite, Control, Image>> items = new ArrayList<>();
 		for(EditorImpl editorImpl : editors) {
 			items.add(editorImpl);
 		}
@@ -187,8 +187,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public List<xworker.thingeditor.IEditor<Composite, Control, Image>> getEditors(boolean dirty) {
-		List<xworker.thingeditor.IEditor<Composite, Control, Image>> items = new ArrayList<>();
+	public List<xworker.workbench.IEditor<Composite, Control, Image>> getEditors(boolean dirty) {
+		List<xworker.workbench.IEditor<Composite, Control, Image>> items = new ArrayList<>();
 		for(EditorImpl editorImpl : editors) {
 			if(editorImpl.isDirty() == dirty) {
 				items.add(editorImpl);
@@ -198,7 +198,7 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 	}
 
 	@Override
-	public void close(xworker.thingeditor.IEditor<Composite, Control, Image> editor) {
+	public void close(xworker.workbench.IEditor<Composite, Control, Image> editor) {
 		EditorImpl impl = (EditorImpl) editor;
 		impl.doDispose();
 		editors.remove(impl);

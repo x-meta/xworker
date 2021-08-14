@@ -397,13 +397,13 @@ public class DataObjectUtil {
 		
 		Thing config = dataObject.getMetadata().getDescriptor();
 		String labelField = config.getStringBlankAsNull("labelField");
-        if(labelField == null || labelField == ""){
+        if(labelField == null || labelField.equals("")){
             labelField = dataObject.getString("displayName");
         }
         String text = "no label field";
-        if(labelField != null && labelField != ""){
+        if(labelField != null && !labelField.equals("")){
             text = dataObject.getString(labelField);
-            if(text == null || text == ""){
+            if(text == null || text.equals("")){
                 text = "";
             }else{
                 text = String.valueOf(text);
@@ -414,6 +414,10 @@ public class DataObjectUtil {
 	}
 	
 	public static Object getValue(Object value, Thing attribute){
+		if(attribute == null){
+			return value;
+		}
+
 		String type = attribute.getString("type");
 		if(type == null || "".equals(type)){
 			type = "string";
@@ -495,50 +499,54 @@ public class DataObjectUtil {
 		if(type == null || "".equals(type)){
 			type = "string";
 		}
-		
-		if("string".equals(type)){
-			return UtilData.getString(value, null);
-		}else if("byte".equals(type)){
-			return UtilData.getByte(value, (byte) 0);
-		}else if("char".equals(type)){
-			return UtilData.getChar(value, (char) 0);
-		}else if("short".equals(type)){
-			return UtilData.getShort(value, (short) 0);
-		}else if("int".equals(type)){
-			return (int) UtilData.getLong(value, 0);
-		}else if("long".equals(type)){
-			return UtilData.getLong(value, 0);
-		}else if("byte[]".equals(type)){
-			return UtilData.getBytes(value, null);
-		}else if("float".equals(type)){
-			return UtilData.getFloat(value, 0);
-		}else if("double".equals(type)){
-			return UtilData.getDouble(value, 0);
-		}else if("boolean".equals(type)){
-			return UtilData.getBoolean(value, false);
-		}else if("date".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				return new java.sql.Date(date.getTime());
-			}else{
-				return  null;
+
+		switch (type) {
+			case "string":
+				return UtilData.getString(value, null);
+			case "byte":
+				return UtilData.getByte(value, (byte) 0);
+			case "char":
+				return UtilData.getChar(value, (char) 0);
+			case "short":
+				return UtilData.getShort(value, (short) 0);
+			case "int":
+				return (int) UtilData.getLong(value, 0);
+			case "long":
+				return UtilData.getLong(value, 0);
+			case "byte[]":
+				return UtilData.getBytes(value, null);
+			case "float":
+				return UtilData.getFloat(value, 0);
+			case "double":
+				return UtilData.getDouble(value, 0);
+			case "boolean":
+				return UtilData.getBoolean(value, false);
+			case "date": {
+				Date date = UtilData.getDate(value, null);
+				if (date != null) {
+					return new java.sql.Date(date.getTime());
+				} else {
+					return null;
+				}
 			}
-		}else if("datetime".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				return new java.sql.Timestamp(date.getTime());
-			}else{
-				return null;
+			case "datetime": {
+				Date date = UtilData.getDate(value, null);
+				if (date != null) {
+					return new java.sql.Timestamp(date.getTime());
+				} else {
+					return null;
+				}
 			}
-		}else if("time".equals(type)){
-			Date date = UtilData.getDate(value, null);
-			if(date != null){
-				return new java.sql.Time(date.getTime());
-			}else{
-				return null;
+			case "time": {
+				Date date = UtilData.getDate(value, null);
+				if (date != null) {
+					return new java.sql.Time(date.getTime());
+				} else {
+					return null;
+				}
 			}
-		}else{
-			return UtilData.getString(value, null);
+			default:
+				return UtilData.getString(value, null);
 			//throw new XWorkerException("not implemented type " + type);
 		}
 	}
@@ -566,32 +574,44 @@ public class DataObjectUtil {
             }
      
             Date date = null;
-            if("now".equals(dateStr) || "sysdate".equals(dateStr)){
-                date = new Date();
-            }else if("tomorrow".equals(dateStr)){
-                date = UtilDate.getTomorrow();
-            }else if("yesterday".equals(dateStr)){
-                date = UtilDate.getYesterday();
-            }else if("weekstart".equals(dateStr)){
-                date = UtilDate.getWeekStart();
-            }else if("weekend".equals(dateStr)){
-                date = UtilDate.getWeekEnd();
-            }else if("monthstart".equals(dateStr)){
-                date = UtilDate.getMonthStart();
-            }else if("monthend".equals(dateStr)){
-                date = UtilDate.getMonthEnd();
-            }else if("yearstart".equals(dateStr)){
-                date = UtilDate.getYearStart();
-            }else if("yearend".equals(dateStr)){
-                date = UtilDate.getYearEnd();
-            }else{
-                date = new Date();
-                try{
-                    double d = (Double) OgnlUtil.getValue(dateStr, actionContext);
-                    date = UtilDate.getDate(date, d);
-                }catch(Exception e){
-                }
-            }
+			switch (dateStr) {
+				case "now":
+				case "sysdate":
+					date = new Date();
+					break;
+				case "tomorrow":
+					date = UtilDate.getTomorrow();
+					break;
+				case "yesterday":
+					date = UtilDate.getYesterday();
+					break;
+				case "weekstart":
+					date = UtilDate.getWeekStart();
+					break;
+				case "weekend":
+					date = UtilDate.getWeekEnd();
+					break;
+				case "monthstart":
+					date = UtilDate.getMonthStart();
+					break;
+				case "monthend":
+					date = UtilDate.getMonthEnd();
+					break;
+				case "yearstart":
+					date = UtilDate.getYearStart();
+					break;
+				case "yearend":
+					date = UtilDate.getYearEnd();
+					break;
+				default:
+					date = new Date();
+					try {
+						double d = (Double) OgnlUtil.getValue(dateStr, actionContext);
+						date = UtilDate.getDate(date, d);
+					} catch (Exception e) {
+					}
+					break;
+			}
             if(numberStr != ""){
                 try{
                     double d = (Double) OgnlUtil.getValue(numberStr, actionContext);
@@ -626,17 +646,17 @@ public class DataObjectUtil {
 				data.setInited(false);
 	
 				// 设置属性值
-				for (int i = 0; i < attributes.size(); i++) {
-					if (!attributes.get(i).getBoolean("dataField")) {
+				for (Thing attribute : attributes) {
+					if (!attribute.getBoolean("dataField")) {
 						continue;
 					}
-					
-					try{
-                        data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
-                    }catch(SQLException e){
-                        Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
-                        throw e;
-                    }
+
+					try {
+						data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
+					} catch (SQLException e) {
+						Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attribute);
+						throw e;
+					}
 				}
 	
 				data.setInited(true);
@@ -810,7 +830,7 @@ public class DataObjectUtil {
 
 			//读取记录
 			if(createIterator != null && createIterator){
-				return new DbDataObjectIterator(dataObjectSelf, attributes, pageInfo, con, pst, rs, actionContext);
+				return new DbDataObjectIterator(dataObjectSelf, attributes, queryConfig, con, pst, rs, actionContext);
 			}else {
 				List<DataObject> ds = DataObjectUtil.dbResultsToDataObjects(dataObjectSelf, rs);
 				pageInfo.setDatas(ds);
@@ -818,11 +838,13 @@ public class DataObjectUtil {
 				return ds;
 			}
 		}finally{
-			if(rs != null){
-				rs.close();
-			}
-			if(pst != null){
-				pst.close();
+			if(createIterator == null || !createIterator) {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pst != null) {
+					pst.close();
+				}
 			}
 		}
 	}

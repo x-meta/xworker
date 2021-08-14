@@ -16,17 +16,17 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
-import xworker.thingeditor.IView;
+import xworker.workbench.IView;
 import xworker.util.XWorkerUtils;
 
 public class AppActions {
 	private static final String TAG = AppActions.class.getName();
 	
-	public static xworker.thingeditor.IEditor<Composite, Control, Image> getEditor(ActionContext actionContext) {
+	public static xworker.workbench.IEditor<Composite, Control, Image> getEditor(ActionContext actionContext) {
 		Thing self = actionContext.getObject("self");
 		String editorId = self.doAction("getEditorId", actionContext);
 		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
-		for(xworker.thingeditor.IEditor<Composite, Control, Image> editor : editorContainer.getEditors()) {
+		for(xworker.workbench.IEditor<Composite, Control, Image> editor : editorContainer.getEditors()) {
 			if(editor.getId().equals(editorId)) {
 				return editor;
 			}
@@ -46,7 +46,7 @@ public class AppActions {
 		return workbench.getView(viewId);
 	}
 	
-	public static xworker.thingeditor.IEditor<Composite, Control, Image> openEditor(final ActionContext actionContext) {
+	public static xworker.workbench.IEditor<Composite, Control, Image> openEditor(final ActionContext actionContext) {
 		final Thing self = actionContext.getObject("self");
 		
 		final String id = self.doAction("getId", actionContext);

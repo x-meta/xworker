@@ -1,4 +1,4 @@
-^1626177857648
+^1628046007936
 @
 sname
 GroovyScriptDialog
@@ -133,7 +133,7 @@ xworker.swt.widgets.Display
     sth_createIndex
     true
     sth_registThing
-    child|xworker.swt.app.Views
+    child|xworker.workbench.Views
     sth_registMyChilds
     false
     sth_registDisabled
@@ -141,7 +141,7 @@ xworker.swt.widgets.Display
     sth_noThingRegistViewer
     false
     sgroup
-    xworker.ide
+    swt.xworker.ide
     sicon
     icons/file/groovy.gif
     sth_fileMonitor
@@ -846,8 +846,21 @@ if(text != null){
     false
     Scode
 #$@text#$@
-def thing = world.getThing("tempxxx");
-println thing.getMetadata().getThingManager();
+import xworker.util.XWorkerUtils;
+
+def registorThing = world.getThing("xworker.swt.app.Views");
+def things = XWorkerUtils.searchRegistThings(registorThing, "child", [], actionContext);
+for(thing in things){
+    println thing.get("th_registThing");
+    thing.put("th_registThing", "child|xworker.workbench.Views");
+    String group = thing.get("group");
+    if(group == null || group == ""){
+        thing.put("group", "swt");
+    }else if(!group.startsWith("swt.")){
+        thing.put("group", "swt." + group);
+    }
+    thing.save();
+}
 #$@text#$@
     sdescriptors
     xworker.lang.actions.Actions/@GroovyAction

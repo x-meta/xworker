@@ -39,6 +39,7 @@ public class SwtTreeModelUtils {
     }
 
     public static void bindTreeItem(final TreeModel treeModel, final TreeItem parentItem, ActionContext actionContext){
+        treeModel.setBindObjet(parentItem);
         TreeModelItem rootItem = treeModel.getRoot();
         if(rootItem == null){
             Executor.warn(TAG, "Root item is null, path=" + treeModel.getThing().getMetadata().getPath());
@@ -60,6 +61,7 @@ public class SwtTreeModelUtils {
     }
 
     public static void bindTree(final TreeModel treeModel, final Tree tree, final ActionContext actionContext){
+        treeModel.setBindObjet(tree);
         TreeModelItem rootItem = treeModel.getRoot();
         if(rootItem == null){
             Executor.warn(TAG, "Root item is null, path=" + treeModel.getThing().getMetadata().getPath());

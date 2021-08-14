@@ -3,12 +3,11 @@ package xworker.lang.flow.uiflow.nodes.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilData;
 
+import xworker.lang.executor.Executor;
 import xworker.lang.flow.uiflow.ActionFlow;
 import xworker.lang.flow.uiflow.FlowUtils;
 import xworker.lang.flow.uiflow.IFlow;
@@ -16,7 +15,7 @@ import xworker.task.Task;
 import xworker.task.TaskManager;
 
 public class ScheduleTaskActions {
-	private static final Logger logger = LoggerFactory.getLogger(ScheduleTaskActions.class);
+	private static final String TAG = ScheduleTaskActions.class.getName();
 	
 	public static void runTask(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
@@ -36,7 +35,7 @@ public class ScheduleTaskActions {
 			ActionFlow acFlow = new ActionFlow(task, actionContext);
 			acFlow.start(task);
 		}else{
-			logger.info("Task not setted, flowNode=" + self.getMetadata().getPath());
+			Executor.info(TAG, "Task not setted, flowNode=" + self.getMetadata().getPath());
 		}
 	}
 	

@@ -22,20 +22,19 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.lang.actions.ActionContainer;
+import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.xwidgets.ThrowableStackTraceText;
 import xworker.util.XWorkerUtils;
 
 public class UiFlow extends AbstractUiFlow{
-	private static Logger logger = LoggerFactory.getLogger(UiFlow.class);
+	private static final String TAG = UiFlow.class.getName();
 	/** 运行节点时的动作 */
 	public static final String NODE_ACTION = "flowRun";
 	/** 调用动作是的动作 */
@@ -308,12 +307,12 @@ public class UiFlow extends AbstractUiFlow{
 			SwtTextUtils.setSelection(logText, 0, SwtTextUtils.getText(logText).length());
 			SwtTextUtils.showSelection(logText);
 		}else{
-			logger.info(sf.format(new Date()) + ":" + message );
+			Executor.info(TAG, sf.format(new Date()) + ":" + message );
 		}
 	}
 	
 	public void log(Throwable e){
-		logger.info("error", e);
+		Executor.info(TAG, "error", e);
 		Control logText = (Control) actionContext.getObject("logText");
 		if(logText != null && !logText.isDisposed()){
 			if(logText instanceof Text) {

@@ -28,6 +28,7 @@ import ognl.OgnlException;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
+import xworker.ui.swt.SwtBorder;
 import xworker.util.XWorkerUtils;
 
 public class ThingEditorCreator {
@@ -117,7 +118,9 @@ public class ThingEditorCreator {
 		}finally{
 			actionContext.pop();
 		}
-		
+
+		ActionContext thingContext = (ActionContext) ac.get("thingContext");
+		ActionContainer actions = ac.getObject("editorActions");
 		//System.out.println("ThingEditor child create time: " + (System.currentTimeMillis() - start));
 		//start = System.currentTimeMillis();
 		Object obj = self.doAction("getThing", actionContext);//UtilData.getData(self, "thingPath", actionContext);
@@ -129,32 +132,26 @@ public class ThingEditorCreator {
 		}
 		if(thing != null){
 			if(UtilData.isTrue(self.doAction("isUseRootThing", actionContext))){
-				final ActionContainer acs = (ActionContainer) ac.get("editorActions");
-				acs.doAction("setThing", UtilMap.toMap("thing", thing.getRoot()));
+				actions.doAction("setThing", UtilMap.toMap("thing", thing.getRoot()));
 				final Thing selectThing = thing;
-				composite.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						try {
-							acs.doAction("selectThing", UtilMap.toMap("thing", selectThing));
-						}catch(Exception e) {							
-						}
+				composite.getDisplay().asyncExec(() -> {
+					try {
+						actions.doAction("selectThing", UtilMap.toMap("thing", selectThing));
+					}catch(Exception ignored) {
 					}
 				});
 				
 			}else{
-				((ActionContainer) ac.get("editorActions")).doAction("setThing", UtilMap.toMap("thing", thing));
+				actions.doAction("setThing", UtilMap.toMap("thing", thing));
 			}
 		}
 		
-		if(self.getString("title") != null && self.getBoolean("title") == false){
-			ActionContext thingContext = (ActionContext) ac.get("thingContext");
-			if(thingContext != null){
-				((Widget) thingContext.get("titleComposite")).dispose();
-			}
+		if(self.getString("title") != null && !self.getBoolean("title")){
+			((Widget) thingContext.get("titleComposite")).dispose();
 		}
 		
 		if(self.getBoolean("saveActionContainer")){
-			actionContext.getScope(0).put(self.getString("name"), ac.get("editorActions"));
+			actionContext.getScope(0).put(self.getString("name"), actions);
 		}else{
 			actionContext.getScope(0).put(self.getString("name"), ac);
 		}
@@ -165,5 +162,55 @@ public class ThingEditorCreator {
 		//start = System.currentTimeMillis();
 		return composite;        
 	}
+
+	//动作：xworker.ide.worldexplorer.ThingEditor/@shell/@mainComposite/@init
+	public static Object init(ActionContext actionContext){
+        //找到要创建的编辑各组件
+        //def treeThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@outlineTree");
+        //def childThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@propertiesComposite");
+		World world = World.getInstance();
+		Thing contentThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite");
+		Thing scriptThing = world.getThing("xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions");
+
+        //创建编辑器的个组件
+		ActionContext newContext = new ActionContext();
+		newContext.setLabel("Thing Editor Shell");
+		newContext.put("parentContext", actionContext);
+		if(actionContext.get("explorerActions") != null){
+			newContext.put("explorerActions", actionContext.get("explorerActions"));
+		}else{
+			newContext.put("explorerActions", new ActionContainer(new Thing(), newContext));
+		}
+		if(actionContext.get("explorerContext") != null){
+			newContext.put("explorerContext", actionContext.get("explorerContext"));
+		}else{
+			newContext.put("explorerContext", newContext);
+		}
+		if(actionContext.get("utilBrowser") != null){
+			newContext.put("utilBrowser", actionContext.get("utilBrowser"));
+		}else{
+			newContext.put("utilBrowser", null);
+		}
+
+		Object scripts = scriptThing.doAction("create", newContext);
+        //newContext.put("actions", scripts);
+        //actionContext.put("actions", scripts);
+
+		newContext.put("parent", actionContext.get("contentComposite"));
+		Composite contentComposite = contentThing.doAction("create", newContext);
+
+		SwtBorder.attach(newContext.getObject("titleComposite"));
+		SwtBorder.attach(newContext.getObject("childTitleComposite"));
+
+        //设置编辑器事物和其所在变量上下文，编辑器触发事件时会调用到他们
+		newContext.put("editorThing", actionContext.getObject("editorThing"));
+		newContext.put("editorThingContext", actionContext.get("parentContext"));
+
+		actionContext.g().put("thingContext", newContext);
+
+        //mainSash.pack();
+		return newContext;
+	}
+
 
 }

@@ -16,6 +16,7 @@ public class DataStorePagination implements DataStoreListener {
     DataStore dataStore;
     Pagination pagination;
     VBox blankNode = new VBox();
+    boolean loadable = false;
 
     public DataStorePagination(DataStore dataStore, Pagination pagination){
         this.dataStore = dataStore;
@@ -24,7 +25,9 @@ public class DataStorePagination implements DataStoreListener {
             @Override
             public Node call(Integer param) {
                 //加载新的页
-                dataStore.load(param + 1);
+                if(loadable) {
+                    dataStore.load(param + 1);
+                }
                 //pagination.setCurrentPageIndex(param);
                 //return new Label("page:"+ param);
                 return blankNode;
@@ -35,12 +38,11 @@ public class DataStorePagination implements DataStoreListener {
 
     @Override
     public void onReconfig(DataStore dataStore, Thing dataObject) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                pagination.setPageCount(1);
-                pagination.setCurrentPageIndex(0);
-            }
+        Platform.runLater(() -> {
+            //此时不需要加载数据仓库，因为不是分页自己触发的，是别人触发的
+            loadable = false;
+            pagination.setPageCount(1);
+            pagination.setCurrentPageIndex(0);
         });
 
     }
@@ -51,9 +53,11 @@ public class DataStorePagination implements DataStoreListener {
             @Override
             public void run() {
                 try {
+                    loadable = false;
                     PageInfo pageInfo = dataStore.getPageInfo();
                     pagination.setPageCount((int) pageInfo.getTotalPage());
                 }finally{
+                    loadable = true;
                     pagination.setDisable(false);
                 }
             }

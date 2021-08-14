@@ -15,12 +15,13 @@ public class SwtRequestService {
         Thing self = actionContext.getObject("self");
 
         Designer.pushCreator(self);
-        Composite composite = null;
+        Composite composite;
         try{
             DefaultRequestService defaultRequestService = new DefaultRequestService();
             SwtDefaultRequestService swtDefaultRequestService = new SwtDefaultRequestService(defaultRequestService);
             actionContext.g().put(self.getMetadata().getName(), defaultRequestService);
-            Thing prototype = World.getInstance().getThing("xworker.lang.executor.swt.DefaultRequestService/@mainComposite1");
+            Thing prototype;
+            prototype = World.getInstance().getThing("xworker.lang.executor.swt.DefaultRequestService/@mainComposite1");
 
             composite = ThingLoader.load(swtDefaultRequestService, prototype, actionContext);
             swtDefaultRequestService.init();

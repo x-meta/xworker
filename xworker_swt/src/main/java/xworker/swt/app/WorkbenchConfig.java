@@ -2,8 +2,8 @@ package xworker.swt.app;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
-import xworker.thingeditor.ICoolBarContainer;
-import xworker.thingeditor.IMenuContainer;
+import xworker.workbench.ICoolBarContainer;
+import xworker.workbench.IMenuContainer;
 
 import java.util.Map;
 

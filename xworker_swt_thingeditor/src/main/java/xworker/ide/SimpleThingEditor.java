@@ -157,7 +157,7 @@ public class SimpleThingEditor {
 
 		            String thName = thingManager.getName();             
 		            for(Thing thingManagerThing : thing.getChilds("ThingManager")){
-		                if(thName == thingManagerThing.getMetadata().getName()){
+		                if(thName.equals(thingManagerThing.getMetadata().getName())){
 		                    ((FileThingManager) thingManager).setMonitor(true);
 		                }             
 		            }

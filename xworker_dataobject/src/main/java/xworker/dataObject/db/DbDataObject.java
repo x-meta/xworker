@@ -748,48 +748,34 @@ public class DbDataObject {
 			UserTaskManager.setUserTaskLabelDetail(userTask, "Sql setted", sql);
 
 			//----------------生成SQL完毕--------------------
+			//连接池是手工管理的
+			Thing dataSource = self.doAction("getDataSource", actionContext);
+			if(dataSource == null){
+				throw new ActionException("Can not create Iterator, DataSource is null, thing=" + self.getMetadata().getPath());
+			}
+			Connection con = dataSource.doAction("getConnection", actionContext);
+			if(con == null) {
+				throw new ActionException("Can not create Iterator, can not get connection, thing=" + self.getMetadata().getPath());
+			}
+			actionContext.peek().put("con", con);
 
 			//----------------执行查询-----------------------
-			PageInfo pageInfo1 = queryConfig.getPageInfo();
-			if(pageInfo1.getLimit() > 0){
-				//有分页查询
-				String dbType = (String) actionContext.get("dbType"); //dbType是有DataSource上下文设置的
-				if(dbType != null &&  !"".equals(dbType) && !self.getBoolean("pagineByCursor")){
-					dbType = dbType.toLowerCase();
-					if("oracle".equals(dbType) || dbType.startsWith("oracle")){
-						return self.doAction("queryOraclePage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-					}else if("derby".equals(dbType)){
-						return self.doAction("queryDerbyPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-					}else if("mysql".equals(dbType)){
-						return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-					}else if("sqlserver2005".equals(dbType)){
-						return self.doAction("querySqlServer2005Page", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-					}else if("sqlite".equals(dbType)){
-						return self.doAction("queryMysqlPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-					}
-				}
 
-				//其他使用游标分页查询
-				return self.doAction("queryCursorPage", actionContext, UtilMap.toMap("sql",sql, "attributes",attributes, "createIterator", true));
-				//throw new Exception("dbType=" + dbType + ", not supported page query now");
-			}else{
-				//没有分页查询
-				//设置参数值和查询
-				Connection con = (Connection) actionContext.get("con");
-				PreparedStatement pst = con.prepareStatement(sql);
-				UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
-				UserTaskManager.setUserTaskData(userTask, "pst", pst);
+			//没有分页查询
+			//设置参数值和查询
+			PreparedStatement pst = con.prepareStatement(sql);
+			UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
+			UserTaskManager.setUserTaskData(userTask, "pst", pst);
 
-				//设置查询参数
-				setStatementParams(pst, 1, queryConfig, attributes);
-				//self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
+			//设置查询参数
+			setStatementParams(pst, 1, queryConfig, attributes);
+			//self.doAction("setStatementParams", actionContext, UtilMap.toMap(new Object[]{"cds",cds, "pst",pst, "attributes",attributes, "index",1}));
 
-				//执行sql
-				ResultSet rs = pst.executeQuery();
-				UserTaskManager.setUserTaskLabelDetail(userTask, "Statement executed", null);
+			//执行sql
+			ResultSet rs = pst.executeQuery();
+			UserTaskManager.setUserTaskLabelDetail(userTask, "Statement executed", null);
 
-				return new DbDataObjectIterator(self, attributes, pageInfo1, con, pst, rs, actionContext);
-			}
+			return new DbDataObjectIterator(self, attributes, queryConfig, con, pst, rs, actionContext);
 		}finally{
 			DataObject.userTaskFinished();
 		}
