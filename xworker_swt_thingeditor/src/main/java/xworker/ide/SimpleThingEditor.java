@@ -68,10 +68,12 @@ public class SimpleThingEditor {
 
 		//保存语言，下一次启动会保持设置
 		Thing config = world.getThing("_local.xworker.config.GlobalConfig");
-		if(config != null){
-			config.put("language", lang);
-			config.save();
+		if(config == null){
+			config = new Thing("xworker.ide.config.decriptors.GlobalConfig");
+			config.saveAs("_local", "_local.xworker.config.GlobalConfig");
 		}
+		config.put("language", lang);
+		config.save();
 
 		//设置IDE为null，以便新的IDE可以设置成功
 		XWorkerUtils.setIde(null, true);
