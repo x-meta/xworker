@@ -320,6 +320,20 @@ public class SimpleThingEditor extends Application {
         Application.launch(SimpleThingEditor.class);
     }
 
+    //xworker.javafx.thingeditor.JavaFXThingEditor/@run1
+    public static void runByAction(ActionContext actionContext){
+        Action startWebServer = actionContext.getObject("startWebServer");
+
+        if(startWebServer != null){
+            try{
+                startWebServer.run(actionContext);
+            }catch (Exception ignore){
+            }
+        }
+
+        run();
+    }
+
     /**
      * 作为在已经启动的JavaFX的应用中启动。
      */

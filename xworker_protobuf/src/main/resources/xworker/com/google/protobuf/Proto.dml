@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
-<thing name="Proto" descriptors="xworker.lang.MetaDescriptor3" icon="icons/comments.png">
+<thing name="Proto" descriptors="xworker.lang.MetaDescriptor3" icon="icons/comments.png">&#xd;
     <description><![CDATA[<p>Protobuf的消息定义。</p>
-]]></description>
-    <actions>
-        <GroovyAction name="httpDo">
+]]></description>&#xd;
+    <actions>&#xd;
+        <GroovyAction name="httpDo">&#xd;
             <code><![CDATA[import org.xmeta.Thing;
 import org.xmeta.cache.ThingEntry;
 
@@ -27,7 +27,7 @@ if(lastTime != null && lastTime == self.getMetadata().getLastModified()){
 //把当前模型转化为OrgDocument，通过OrgDocument输出文档
 //生成OrgDocument
 def doc = new Thing("xworker.app.web.docorg.OrgDocument");
-doc.putAll(self.getAttributes());
+doc.set("description", self.get("description"));
 doc.set("title", self.getMetadata().getLabel());
 doc.set("editable", "false");
 
@@ -106,12 +106,12 @@ def addGroupItems(menu, group, things){
             addContentThing(cat, thing);
         }
     }
-}]]></code>
-        </GroovyAction>
-        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="proto">
+}]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <Begin name="toHtml" _xmeta_id_="toString" changeSelf="true" selfVarName="proto">&#xd;
             <description><![CDATA[<p>用于生成proto文件的html。</p>
-]]></description>
-            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+]]></description>&#xd;
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                 <templateCode><![CDATA[<a onClick="window.clipboardData.setData('text',$('#protoContent').html());alert('已拷贝到剪贴板。')"  href="javascript:void(0)">copy</a>
 <pre id="protoContent">
 syntax="${proto.syntax?default("proto2")}";
@@ -137,10 +137,10 @@ ${enu.doAction("toProto", actionContext)}
 ${msg.doAction("toProto", actionContext)}
 
 </#list>
-</pre>]]></templateCode>
-            </TextTemplate>
-        </Begin>
-        <GroovyAction name="getMessages">
+</pre>]]></templateCode>&#xd;
+            </TextTemplate>&#xd;
+        </Begin>&#xd;
+        <GroovyAction name="getMessages">&#xd;
             <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
 def msgs = self.getChilds("message");
 
@@ -152,9 +152,9 @@ for(child in self.getChilds()){
     }
 }
 
-return msgs;]]></code>
-        </GroovyAction>
-        <GroovyAction name="getEnums">
+return msgs;]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <GroovyAction name="getEnums">&#xd;
             <code><![CDATA[//返回所有的message，包括messages和RequestResponse等等下的
 def msgs = self.getChilds("enum");
 
@@ -166,12 +166,12 @@ for(child in self.getChilds()){
     }
 }
 
-return msgs;]]></code>
-        </GroovyAction>
-        <Begin name="toClientTestCode" _xmeta_id_="toString1" changeSelf="true" selfVarName="data">
+return msgs;]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <Begin name="toClientTestCode" _xmeta_id_="toString1" changeSelf="true" selfVarName="data">&#xd;
             <description><![CDATA[<p>用于生成proto文件的html。</p>
-]]></description>
-            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+]]></description>&#xd;
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                 <templateCode><![CDATA[import java.util.HashMap;
 import java.util.Map;
 
@@ -347,10 +347,10 @@ public class TestProtocolTools {
 			this.info = info;
 		}
 	}	
-}]]></templateCode>
-            </TextTemplate>
-        </Begin>
-        <GroovyAction name="getToServerMessages">
+}]]></templateCode>&#xd;
+            </TextTemplate>&#xd;
+        </Begin>&#xd;
+        <GroovyAction name="getToServerMessages">&#xd;
             <code><![CDATA[//获取所有消息
 def messages = self.doAction("getMessages", actionContext);
 
@@ -361,9 +361,9 @@ for(msg in messages){
     }
 }
 
-return msgs;]]></code>
-        </GroovyAction>
-        <GroovyAction name="getToClientMessages">
+return msgs;]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <GroovyAction name="getToClientMessages">&#xd;
             <code><![CDATA[//获取所有消息
 def messages = self.doAction("getMessages", actionContext);
 
@@ -374,16 +374,16 @@ for(msg in messages){
     }
 }
 
-return msgs;]]></code>
-        </GroovyAction>
-        <GroovyAction name="clearCache">
+return msgs;]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <GroovyAction name="clearCache">&#xd;
             <code><![CDATA[self.setData("__docThing__", null);
-self.setData("__docEntry__", null);]]></code>
-        </GroovyAction>
-        <Begin name="toProto" _xmeta_id_="toString2" changeSelf="true" selfVarName="proto">
+self.setData("__docEntry__", null);]]></code>&#xd;
+        </GroovyAction>&#xd;
+        <Begin name="toProto" _xmeta_id_="toString2" changeSelf="true" selfVarName="proto">&#xd;
             <description><![CDATA[<p>用于生成proto代码。</p>
-]]></description>
-            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+]]></description>&#xd;
+            <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                 <templateCode><![CDATA[syntax="${proto.syntax?default("proto2")}";
 <#if proto.import?exists && proto.import != "">
 import ${proto.import};
@@ -406,10 +406,10 @@ ${enu.doAction("toProto", actionContext)}
 <#list proto.doAction("getMessages", actionContext) as msg>
 ${msg.doAction("toProto", actionContext)}
 
-</#list>]]></templateCode>
-            </TextTemplate>
-        </Begin>
-        <GroovyAction name="compile">
+</#list>]]></templateCode>&#xd;
+            </TextTemplate>&#xd;
+        </Begin>&#xd;
+        <GroovyAction name="compile">&#xd;
             <code><![CDATA[import xworker.util.XWorkerUtils;
 import org.xmeta.ActionException;
 import xworker.lang.executor.Executor;
@@ -454,63 +454,63 @@ process.waitFor();
 compileJava(actionContext, "target", world.getPath() + "/work/actionClasses/" + self.getMetadata().getThingManager().getName() + "/",
     "javaFile", javaFile);
     
-Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished");]]></code>
-            <ActionDefined>
+Executor.info(self.getMetadata().getPath(), "Compile proto to classes finished");]]></code>&#xd;
+            <ActionDefined>&#xd;
                 <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
-                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
-                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"></GetPreference>
+                     title="Compile Proto" cmdarray="var:cmdArray"/>&#xd;
+                <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"/>&#xd;
                 <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
-                     action="var:thing"></GetActionClassName>
+                     action="var:thing"/>&#xd;
                 <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
-                     file="var:file" data="var:content"></WriteStringToFile>
+                     file="var:file" data="var:content"/>&#xd;
                 <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
-                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
-            </ActionDefined>
-        </GroovyAction>
+                     targetDir="var:target" javaFiles="var:javaFile"/>&#xd;
+            </ActionDefined>&#xd;
+        </GroovyAction>&#xd;
         <JavaAction name="getMessageFactory" outerClassName="xworker.com.google.proto.ProtoActions"
-             methodName="getMessageFactory"></JavaAction>
+             methodName="getMessageFactory"/>&#xd;
         <JavaAction name="clearMessageFactory" outerClassName="xworker.com.google.proto.ProtobufMessages"
-             methodName="clearMessageFactory"></JavaAction>
+             methodName="clearMessageFactory"/>&#xd;
         <JavaAction name="decodeBytes" outerClassName="xworker.com.google.proto.ProtoActions"
-             methodName="decodeBytes">
-            <ins>
-                <param name="name" type="java.lang.String">
+             methodName="decodeBytes">&#xd;
+            <ins>&#xd;
+                <param name="name" type="java.lang.String">&#xd;
                     <description><![CDATA[<p>类的全名或简单名。</p>
-]]></description>
-                </param>
-                <param name="message" type="byte[]"></param>
-                <param name="offset" type="java.lang.Integer"></param>
-                <param name="length" type="java.lang.Integer"></param>
-            </ins>
-        </JavaAction>
+]]></description>&#xd;
+                </param>&#xd;
+                <param name="message" type="byte[]"/>&#xd;
+                <param name="offset" type="java.lang.Integer"/>&#xd;
+                <param name="length" type="java.lang.Integer"/>&#xd;
+            </ins>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="decodeJson" outerClassName="xworker.com.google.proto.ProtoActions"
-             methodName="decodeJson">
-            <ins>
-                <param name="name" type="java.lang.String">
+             methodName="decodeJson">&#xd;
+            <ins>&#xd;
+                <param name="name" type="java.lang.String">&#xd;
                     <description><![CDATA[<p>类的全名或简单名。</p>
-]]></description>
-                </param>
-                <param name="message" type="java.lang.String"></param>
-            </ins>
-        </JavaAction>
+]]></description>&#xd;
+                </param>&#xd;
+                <param name="message" type="java.lang.String"/>&#xd;
+            </ins>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="newBuilder" outerClassName="xworker.com.google.proto.ProtoActions"
-             methodName="newBuilder">
-            <ins>
-                <param name="name" type="java.lang.String">
+             methodName="newBuilder">&#xd;
+            <ins>&#xd;
+                <param name="name" type="java.lang.String">&#xd;
                     <description><![CDATA[<p>类的全名或简单名。</p>
-]]></description>
-                </param>
-            </ins>
-        </JavaAction>
+]]></description>&#xd;
+                </param>&#xd;
+            </ins>&#xd;
+        </JavaAction>&#xd;
         <Begin name="menu_generateJava" _xmeta_id_="generateJava1" changeSelf="true"
-             selfVarName="data">
+             selfVarName="data">&#xd;
             <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成Java到该目录下。</p>
-]]></description>
-            <actions>
+]]></description>&#xd;
+            <actions>&#xd;
                 <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
-                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
-                    <actions>
-                        <GroovyAction name="open">
+                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">&#xd;
+                    <actions>&#xd;
+                        <GroovyAction name="open">&#xd;
                             <code><![CDATA[import xworker.util.XWorkerUtils;
 import org.xmeta.ActionException;
 import xworker.lang.executor.Executor;
@@ -518,31 +518,31 @@ import xworker.lang.executor.Executor;
 if(fileName == null){    
     return;
 }
-data.doAction("generateJava", actionContext);]]></code>
-                        </GroovyAction>
-                    </actions>
-                </DirectoryDialog>
-            </actions>
-        </Begin>
+data.doAction("generateJava", actionContext);]]></code>&#xd;
+                        </GroovyAction>&#xd;
+                    </actions>&#xd;
+                </DirectoryDialog>&#xd;
+            </actions>&#xd;
+        </Begin>&#xd;
         <Begin name="menu_generateJs" _xmeta_id_="generateJava11" changeSelf="true"
-             selfVarName="data">
+             selfVarName="data">&#xd;
             <description><![CDATA[<p>供菜单使用。执行后打开选择目录的窗口，选中目录有生成JS到该目录下。</p>
-]]></description>
-            <actions>
+]]></description>&#xd;
+            <actions>&#xd;
                 <DirectoryDialog name="generateJava" descriptors="xworker.swt.actions.DialogActions/@DirectoryDialog"
-                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">
-                    <actions>
-                        <GroovyAction name="open">
+                     text="lang:d=选择目录&amp;en=Select Directory" message="lang:d=选择生成Java代码的目录。&amp;en=Select the directory where the Java code will be generated.">&#xd;
+                    <actions>&#xd;
+                        <GroovyAction name="open">&#xd;
                             <code><![CDATA[if(fileName == null){    
     return;
 }
-data.doAction("generateJs", actionContext);]]></code>
-                        </GroovyAction>
-                    </actions>
-                </DirectoryDialog>
-            </actions>
-        </Begin>
-        <GroovyAction name="generateJs">
+data.doAction("generateJs", actionContext);]]></code>&#xd;
+                        </GroovyAction>&#xd;
+                    </actions>&#xd;
+                </DirectoryDialog>&#xd;
+            </actions>&#xd;
+        </Begin>&#xd;
+        <GroovyAction name="generateJs">&#xd;
             <code><![CDATA[import xworker.util.XWorkerUtils;
 import org.xmeta.ActionException;
 import xworker.lang.executor.Executor;
@@ -579,24 +579,24 @@ def cmdArray = [
 def process = startProcess(actionContext, "cmdArray", cmdArray);
 process.waitFor();
 
-Executor.info(TAG, "Javascript code has generated to " + javaDir);]]></code>
-            <ActionDefined>
+Executor.info(TAG, "Javascript code has generated to " + javaDir);]]></code>&#xd;
+            <ActionDefined>&#xd;
                 <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
-                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                     title="Compile Proto" cmdarray="var:cmdArray"/>&#xd;
                 <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
-                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                     config="xworker.com.google.protobuf.ProtoConfig"/>&#xd;
                 <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
-                     action="var:thing"></GetActionClassName>
+                     action="var:thing"/>&#xd;
                 <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
-                     file="var:file" data="var:content"></WriteStringToFile>
+                     file="var:file" data="var:content"/>&#xd;
                 <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
-                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
-            </ActionDefined>
-            <ins>
-                <param name="fileName" type="java.lang.String"></param>
-            </ins>
-        </GroovyAction>
-        <GroovyAction name="generateJava">
+                     targetDir="var:target" javaFiles="var:javaFile"/>&#xd;
+            </ActionDefined>&#xd;
+            <ins>&#xd;
+                <param name="fileName" type="java.lang.String"/>&#xd;
+            </ins>&#xd;
+        </GroovyAction>&#xd;
+        <GroovyAction name="generateJava">&#xd;
             <code><![CDATA[import xworker.util.XWorkerUtils;
 import org.xmeta.ActionException;
 import xworker.lang.executor.Executor;
@@ -644,100 +644,100 @@ def cmdArray = [
 def process = startProcess(actionContext, "cmdArray", cmdArray);
 process.waitFor();
 
-Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>
-            <ActionDefined>
+Executor.info(TAG, "Java code has generated to " + javaDir);]]></code>&#xd;
+            <ActionDefined>&#xd;
                 <StartProcess name="startProcess" descriptors="xworker.java.lang.RuntimeActions/@ExecSimple"
-                     title="Compile Proto" cmdarray="var:cmdArray"></StartProcess>
+                     title="Compile Proto" cmdarray="var:cmdArray"/>&#xd;
                 <GetPreference name="getConfig" descriptors="xworker.lang.actions.utils.XWorkerActions/@GetPreference"
-                     config="xworker.com.google.protobuf.ProtoConfig"></GetPreference>
+                     config="xworker.com.google.protobuf.ProtoConfig"/>&#xd;
                 <GetActionClassName name="getActionClassName" descriptors="xworker.lang.actions.log.LoggerActions/@getActionClassName"
-                     action="var:thing"></GetActionClassName>
+                     action="var:thing"/>&#xd;
                 <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
-                     file="var:file" data="var:content"></WriteStringToFile>
+                     file="var:file" data="var:content"/>&#xd;
                 <CompileJavaFiles name="compileJava" descriptors="xworker.lang.actions.utils.XWorkerActions/@CompleJavaFiles"
-                     targetDir="var:target" javaFiles="var:javaFile"></CompileJavaFiles>
-            </ActionDefined>
-            <ins>
-                <param name="fileName" type="java.lang.String"></param>
-            </ins>
-        </GroovyAction>
-    </actions>
-    <attribute name="name"></attribute>
-    <attribute name="label"></attribute>
-    <attribute name="syntax" inputtype="inputSelect" default="proto2">
-        <value name="proto1" value="proto1"></value>
-        <value name="proto2" value="proto2"></value>
-        <value name="proto3" value="proto3"></value>
-    </attribute>
-    <attribute name="import" size="60"></attribute>
-    <attribute name="package" size="50"></attribute>
-    <attribute name="java_package" size="60"></attribute>
-    <attribute name="java_outer_classname" size="60"></attribute>
-    <attribute name="receiver" inputtype="select" default="server">
+                     targetDir="var:target" javaFiles="var:javaFile"/>&#xd;
+            </ActionDefined>&#xd;
+            <ins>&#xd;
+                <param name="fileName" type="java.lang.String"/>&#xd;
+            </ins>&#xd;
+        </GroovyAction>&#xd;
+    </actions>&#xd;
+    <attribute name="name"/>&#xd;
+    <attribute name="label"/>&#xd;
+    <attribute name="syntax" inputtype="inputSelect" default="proto2">&#xd;
+        <value name="proto1" value="proto1"/>&#xd;
+        <value name="proto2" value="proto2"/>&#xd;
+        <value name="proto3" value="proto3"/>&#xd;
+    </attribute>&#xd;
+    <attribute name="import" size="60"/>&#xd;
+    <attribute name="package" size="50"/>&#xd;
+    <attribute name="java_package" size="60"/>&#xd;
+    <attribute name="java_outer_classname" size="60"/>&#xd;
+    <attribute name="receiver" inputtype="select" default="server">&#xd;
         <description><![CDATA[<p>用于生成Java，是生成服务器端还是客户端的代码。</p>
-]]></description>
-        <value name="server" value="server"></value>
-        <value name="client" value="client"></value>
-    </attribute>
-    <attribute name="handlerDir" _xmeta_id_="handlerClassName" size="60">
+]]></description>&#xd;
+        <value name="server" value="server"/>&#xd;
+        <value name="client" value="client"/>&#xd;
+    </attribute>&#xd;
+    <attribute name="handlerDir" _xmeta_id_="handlerClassName" size="60">&#xd;
         <description><![CDATA[<p>生成Java代码时，要生成的handler要生成到那个目录下。</p>
-]]></description>
-    </attribute>
-    <attribute name="properties" inputtype="textarea">
+]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="properties" inputtype="textarea">&#xd;
         <description><![CDATA[<p>可用于编写额外的属性。</p>
-]]></description>
-    </attribute>
-    <attribute name="description" inputtype="html"></attribute>
-    <sswtMenus extends="xworker.http.ControlSet/@swtMenus1">
-        <menuDefine>
-            <menu name="Proto"></menu>
-        </menuDefine>
-        <menuSetting name="proto" menuType="Proto">
+]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="description" inputtype="html"/>&#xd;
+    <sswtMenus extends="xworker.http.ControlSet/@swtMenus1">&#xd;
+        <menuDefine>&#xd;
+            <menu name="Proto"/>&#xd;
+        </menuDefine>&#xd;
+        <menuSetting name="proto" menuType="Proto">&#xd;
             <menu name="runWebAction" label="在浏览器中打开文档" url="xworker.http.ControlSet/@actions/@httpExecute"
-                 en_label="Run Web Action"></menu>
-            <menu name="split1" isSplit="true"></menu>
-            <menu name="generateClientTestCode" label="生成客户端测试代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toClientTestCode"></menu>
-            <menu name="generateProtoCode" label="生成Proto代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=proto&amp;actionName=toProto"></menu>
-            <menu name="saveAs" label="Proto另存为..." en_label="Save proto as ...">
-                <actions>
+                 en_label="Run Web Action"/>&#xd;
+            <menu name="split1" isSplit="true"/>&#xd;
+            <menu name="generateClientTestCode" label="生成客户端测试代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toClientTestCode"/>&#xd;
+            <menu name="generateProtoCode" label="生成Proto代码" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=proto&amp;actionName=toProto"/>&#xd;
+            <menu name="saveAs" label="Proto另存为..." en_label="Save proto as ...">&#xd;
+                <actions>&#xd;
                     <FileDialog descriptors="xworker.swt.actions.DialogActions/@FileDialog"
-                         style="SAVE" fileName="Message.proto">
-                        <actions>
-                            <GroovyAction name="getFileName" code="return currentThing.getMetadata().getName() + &quot;.proto&quot;;"></GroovyAction>
-                            <GroovyAction name="onSelected">
+                         style="SAVE" fileName="Message.proto">&#xd;
+                        <actions>&#xd;
+                            <GroovyAction name="getFileName" code="return currentThing.getMetadata().getName() + &quot;.proto&quot;;"/>&#xd;
+                            <GroovyAction name="onSelected">&#xd;
                                 <code><![CDATA[if(fileName != null){    
     def data = currentThing.doAction("toProto", actionContext);
     write(actionContext, "file", new File(fileName), "data", data);
-}]]></code>
-                                <ActionDefined>
+}]]></code>&#xd;
+                                <ActionDefined>&#xd;
                                     <WriteStringToFile name="write" descriptors="xworker.io.FileUtilActions/@WriteStringToFile"
-                                         file="var:file" data="var:data"></WriteStringToFile>
-                                </ActionDefined>
-                            </GroovyAction>
-                        </actions>
-                    </FileDialog>
-                </actions>
-            </menu>
-            <menu name="GenreateJava" label="Generate Java Code to..." url="action:menu_generateJava"></menu>
+                                         file="var:file" data="var:data"/>&#xd;
+                                </ActionDefined>&#xd;
+                            </GroovyAction>&#xd;
+                        </actions>&#xd;
+                    </FileDialog>&#xd;
+                </actions>&#xd;
+            </menu>&#xd;
+            <menu name="GenreateJava" label="Generate Java Code to..." url="action:menu_generateJava"/>&#xd;
             <menu name="GenreateJs" _xmeta_id_="GenreateJava1" label="Generate JavaScript to..."
-                 url="action:menu_generateJs"></menu>
-            <menu name="split2" isSplit="true"></menu>
-            <menu name="compile" label="Compile To Class" url="action:compile"></menu>
-            <menu name="ClearMessageFactory" url="action:clearMessageFactory"></menu>
-        </menuSetting>
-    </sswtMenus>
-    <thing name="enums" icon="icons/folder_feed.png">
-        <actions>
-            <NOOP name="getMessages"></NOOP>
-            <RefAction name="getEnums" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getEnums"></RefAction>
-        </actions>
-        <attribute name="name"></attribute>
-        <attribute name="label"></attribute>
-        <attribute name="description" inputtype="html"></attribute>
-        <thing name="enum" icon="icons/contrast.png">
-            <actions>
-                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+                 url="action:menu_generateJs"/>&#xd;
+            <menu name="split2" isSplit="true"/>&#xd;
+            <menu name="compile" label="Compile To Class" url="action:compile"/>&#xd;
+            <menu name="ClearMessageFactory" url="action:clearMessageFactory"/>&#xd;
+        </menuSetting>&#xd;
+    </sswtMenus>&#xd;
+    <thing name="enums" icon="icons/folder_feed.png">&#xd;
+        <actions>&#xd;
+            <NOOP name="getMessages"/>&#xd;
+            <RefAction name="getEnums" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getEnums"/>&#xd;
+        </actions>&#xd;
+        <attribute name="name"/>&#xd;
+        <attribute name="label"/>&#xd;
+        <attribute name="description" inputtype="html"/>&#xd;
+        <thing name="enum" icon="icons/contrast.png">&#xd;
+            <actions>&#xd;
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-enum</h2>
 <p/>
 ${data.getMetadata().getDescription()?if_exists}
@@ -763,38 +763,38 @@ ${data.getMetadata().getDescription()?if_exists}
     </#list>
   </tbody>
 </table>
-</div>]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-                <Begin name="toProto" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+</div>]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+                <Begin name="toProto" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[//${data.getMetadata().getLabel()}
 enum ${data.getMetadata().getName()}{
     <#list data.getChilds("Value") as v>
     ${v.getMetadata().getName()} = ${v.value?if_exists};    //${v.getMetadata().getLabel()}
     </#list>
-}]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-                <NOOP name="getMessages"></NOOP>
-                <NOOP name="getEnums"></NOOP>
-            </actions>
-            <attribute name="name"></attribute>
-            <attribute name="label"></attribute>
-            <attribute name="description" inputtype="html"></attribute>
-            <thing name="Value">
-                <attribute name="name"></attribute>
-                <attribute name="label"></attribute>
-                <attribute name="value"></attribute>
-                <attribute name="description" inputtype="html"></attribute>
-            </thing>
-        </thing>
-    </thing>
-    <thing name="messages" icon="icons/folder_page.png">
-        <actions>
-            <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
-            <NOOP name="getEnums"></NOOP>
-            <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+}]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+                <NOOP name="getMessages"/>&#xd;
+                <NOOP name="getEnums"/>&#xd;
+            </actions>&#xd;
+            <attribute name="name"/>&#xd;
+            <attribute name="label"/>&#xd;
+            <attribute name="description" inputtype="html"/>&#xd;
+            <thing name="Value">&#xd;
+                <attribute name="name"/>&#xd;
+                <attribute name="label"/>&#xd;
+                <attribute name="value"/>&#xd;
+                <attribute name="description" inputtype="html"/>&#xd;
+            </thing>&#xd;
+        </thing>&#xd;
+    </thing>&#xd;
+    <thing name="messages" icon="icons/folder_page.png">&#xd;
+        <actions>&#xd;
+            <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"/>&#xd;
+            <NOOP name="getEnums"/>&#xd;
+            <GroovyAction name="toDocThing" _xmeta_id_="toDoc">&#xd;
                 <code><![CDATA[import org.xmeta.Thing;
 
 //转化为orgDocument的模型
@@ -809,10 +809,10 @@ for(child in self.getChilds()){
     }
 }
 
-return content;]]></code>
-            </GroovyAction>
-            <Begin name="toJavaCode" _xmeta_id_="toHtml11" changeSelf="true" selfVarName="data">
-                <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+return content;]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <Begin name="toJavaCode" _xmeta_id_="toHtml11" changeSelf="true" selfVarName="data">&#xd;
+                <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                     <templateCode><![CDATA[/**
  * <h2>服务器端代码</h2>
  */
@@ -886,20 +886,20 @@ public class ${data.handlerClassName?if_exists} {
     
 </#if>
 </#list>
-</#list>]]></templateCode>
-                </TextTemplate>
-            </Begin>
-        </actions>
-        <attribute name="name"></attribute>
-        <attribute name="label"></attribute>
-        <attribute name="handlerClassName" size="60">
+</#list>]]></templateCode>&#xd;
+                </TextTemplate>&#xd;
+            </Begin>&#xd;
+        </actions>&#xd;
+        <attribute name="name"/>&#xd;
+        <attribute name="label"/>&#xd;
+        <attribute name="handlerClassName" size="60">&#xd;
             <description><![CDATA[<p>生产Java代码时的Handler的类的名称。</p>
 
 <p>子节点下的所有message的handler代码，都会生成到这下面。</p>
-]]></description>
-        </attribute>
-        <attribute name="description" inputtype="html"></attribute>
-        <thing name="message" icon="icons/email.png">
+]]></description>&#xd;
+        </attribute>&#xd;
+        <attribute name="description" inputtype="html"/>&#xd;
+        <thing name="message" icon="icons/email.png">&#xd;
             <description><![CDATA[<p>double:&nbsp;浮点数</p>
 
 <p>float:&nbsp;单精度浮点</p>
@@ -929,10 +929,10 @@ public class ${data.handlerClassName?if_exists} {
 <p>string: 一个字符串必须是UTF-8编码或者7-bit ASCII编码的文本。</p>
 
 <p>bytes:&nbsp;可能包含任意顺序的字节数据。类似java的ByteString以及&nbsp;c++ string;</p>
-]]></description>
-            <actions>
-                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+]]></description>&#xd;
+            <actions>&#xd;
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[<h2>${data.getMetadata().getLabel()}(${data.getMetadata().getName()})-message</h2>
 <p/>
 ${data.getMetadata().getDescription()?if_exists}
@@ -968,11 +968,11 @@ ${enu.doAction("toHtml", actionContext)?if_exists}
 </div>
 <#list data.getChilds("message") as msg>
 ${msg.doAction("toHtml", actionContext)?if_exists}
-</#list>]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-                <Begin name="toProto" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+</#list>]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+                <Begin name="toProto" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[//${data.getMetadata().getLabel()}<#if data.getMetadata().getDescription()?exists><#list data.getMetadata().getDescription()?split("\n") as line><#assign line = line?trim/><#if line != "">
 //${line}</#if></#list></#if>
 //接收方：${data.receiver?if_exists}
@@ -992,12 +992,12 @@ message ${data.getMetadata().getName()}{
     ${line}
     </#list>
     </#list>
-}]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-                <NOOP name="getMessages"></NOOP>
-                <NOOP name="getEnums"></NOOP>
-                <GroovyAction name="toDocThing">
+}]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+                <NOOP name="getMessages"/>&#xd;
+                <NOOP name="getEnums"/>&#xd;
+                <GroovyAction name="toDocThing">&#xd;
                     <code><![CDATA[import org.xmeta.Thing;
 
 //转化为orgDocument的模型
@@ -1005,9 +1005,9 @@ def content = new Thing("xworker.app.web.docorg.OrgDocument/@Category/@CategoryI
 content.set("contentThing", self.getMetadata().getPath());
 content.set("label", self.getMetadata().getLabel());
 
-return content;]]></code>
-                </GroovyAction>
-                <GroovyAction name="toJsonData">
+return content;]]></code>&#xd;
+                </GroovyAction>&#xd;
+                <GroovyAction name="toJsonData">&#xd;
                     <code><![CDATA[//类型定义
 def typeD = world.getThing("xworker.com.google.protobuf.Proto/@messages/@message/@Field/@type");
 def types = typeD.getChilds();
@@ -1090,57 +1090,57 @@ def isBaseType(type, types){
     }
     
     return false;
-}]]></code>
-                </GroovyAction>
-            </actions>
-            <attribute name="name"></attribute>
-            <attribute name="label"></attribute>
-            <attribute name="receiver" _xmeta_id_="handler" inputtype="select">
+}]]></code>&#xd;
+                </GroovyAction>&#xd;
+            </actions>&#xd;
+            <attribute name="name"/>&#xd;
+            <attribute name="label"/>&#xd;
+            <attribute name="receiver" _xmeta_id_="handler" inputtype="select">&#xd;
                 <description><![CDATA[<p>服务器还是客户端在接收该协议，也可以是相互接收的。</p>
-]]></description>
-                <value name="server" value="server"></value>
-                <value name="client" value="client"></value>
-                <value name="all" value="all"></value>
-            </attribute>
-            <attribute name="responseMessage" size="50"></attribute>
-            <attribute name="description" inputtype="textarea"></attribute>
-            <thing name="Field">
-                <attribute name="name"></attribute>
-                <attribute name="label"></attribute>
-                <attribute name="modifier" inputtype="select" default="required">
-                    <value name="required" value="required"></value>
-                    <value name="optional" value="optional"></value>
-                    <value name="repeated" value="repeated"></value>
-                </attribute>
-                <attribute name="type" inputtype="inputSelect">
-                    <value name="double" value="double"></value>
-                    <value name="float" value="float"></value>
-                    <value name="int32" value="int32"></value>
-                    <value name="sint32" value="sint32"></value>
-                    <value name="uint32" value="uint32"></value>
-                    <value name="int64" value="int64"></value>
-                    <value name="sint64" value="sint64"></value>
-                    <value name="uint64" value="uint64"></value>
-                    <value name="fixed32" value="fixed32"></value>
-                    <value name="fixed64" value="fixed64"></value>
-                    <value name="sfixed32" value="sfixed32"></value>
-                    <value name="sfixed64" value="sfixed64"></value>
-                    <value name="bool" value="bool"></value>
-                    <value name="string" value="string"></value>
-                    <value name="bytes" value="bytes"></value>
-                </attribute>
-                <attribute name="index"></attribute>
-                <attribute name="defaultValue" inputtype="textarea"></attribute>
-                <attribute name="description" inputtype="html"></attribute>
-            </thing>
-            <sswtMenus>
-                <menuDefine>
-                    <menu name="Message"></menu>
-                </menuDefine>
-                <menuSetting menuType="Message">
-                    <menu name="autoSetIndexMenuItem" label="自动设置Index">
-                        <actions>
-                            <GroovyAction name="doAction">
+]]></description>&#xd;
+                <value name="server" value="server"/>&#xd;
+                <value name="client" value="client"/>&#xd;
+                <value name="all" value="all"/>&#xd;
+            </attribute>&#xd;
+            <attribute name="responseMessage" size="50"/>&#xd;
+            <attribute name="description" inputtype="textarea"/>&#xd;
+            <thing name="Field">&#xd;
+                <attribute name="name"/>&#xd;
+                <attribute name="label"/>&#xd;
+                <attribute name="modifier" inputtype="select" default="required">&#xd;
+                    <value name="required" value="required"/>&#xd;
+                    <value name="optional" value="optional"/>&#xd;
+                    <value name="repeated" value="repeated"/>&#xd;
+                </attribute>&#xd;
+                <attribute name="type" inputtype="inputSelect">&#xd;
+                    <value name="double" value="double"/>&#xd;
+                    <value name="float" value="float"/>&#xd;
+                    <value name="int32" value="int32"/>&#xd;
+                    <value name="sint32" value="sint32"/>&#xd;
+                    <value name="uint32" value="uint32"/>&#xd;
+                    <value name="int64" value="int64"/>&#xd;
+                    <value name="sint64" value="sint64"/>&#xd;
+                    <value name="uint64" value="uint64"/>&#xd;
+                    <value name="fixed32" value="fixed32"/>&#xd;
+                    <value name="fixed64" value="fixed64"/>&#xd;
+                    <value name="sfixed32" value="sfixed32"/>&#xd;
+                    <value name="sfixed64" value="sfixed64"/>&#xd;
+                    <value name="bool" value="bool"/>&#xd;
+                    <value name="string" value="string"/>&#xd;
+                    <value name="bytes" value="bytes"/>&#xd;
+                </attribute>&#xd;
+                <attribute name="index"/>&#xd;
+                <attribute name="defaultValue" inputtype="textarea"/>&#xd;
+                <attribute name="description" inputtype="html"/>&#xd;
+            </thing>&#xd;
+            <sswtMenus>&#xd;
+                <menuDefine>&#xd;
+                    <menu name="Message"/>&#xd;
+                </menuDefine>&#xd;
+                <menuSetting menuType="Message">&#xd;
+                    <menu name="autoSetIndexMenuItem" label="自动设置Index">&#xd;
+                        <actions>&#xd;
+                            <GroovyAction name="doAction">&#xd;
                                 <code><![CDATA[actions.doAction("save", actionContext);
 
 def index = 1;
@@ -1149,24 +1149,24 @@ for(field in currentThing.getChilds("Field")){
     index++;
 }
 
-actions.doAction("save", actionContext);]]></code>
-                            </GroovyAction>
-                        </actions>
-                    </menu>
-                </menuSetting>
-            </sswtMenus>
+actions.doAction("save", actionContext);]]></code>&#xd;
+                            </GroovyAction>&#xd;
+                        </actions>&#xd;
+                    </menu>&#xd;
+                </menuSetting>&#xd;
+            </sswtMenus>&#xd;
             <thing name="enum" extends="xworker.com.google.protobuf.Proto/@enums/@enum"
-                 inheritDescription="true" icon="icons/contrast.png"></thing>
+                 inheritDescription="true" icon="icons/contrast.png"/>&#xd;
             <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
-                 inheritDescription="true" icon="icons/email.png"></thing>
-        </thing>
-        <thing name="messageGroup" _xmeta_id_="RequestResponse" icon="icons/folder_go.png">
+                 inheritDescription="true" icon="icons/email.png"/>&#xd;
+        </thing>&#xd;
+        <thing name="messageGroup" _xmeta_id_="RequestResponse" icon="icons/folder_go.png">&#xd;
             <description><![CDATA[<p>消息子分组。</p>
-]]></description>
-            <actions>
-                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
-                <NOOP name="getEnums"></NOOP>
-                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+]]></description>&#xd;
+            <actions>&#xd;
+                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"/>&#xd;
+                <NOOP name="getEnums"/>&#xd;
+                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">&#xd;
                     <code><![CDATA[import org.xmeta.Thing;
 
 //转化为orgDocument的模型
@@ -1182,10 +1182,10 @@ for(child in self.getChilds("message")){
     }
 }*/
 
-return content;]]></code>
-                </GroovyAction>
-                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+return content;]]></code>&#xd;
+                </GroovyAction>&#xd;
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[<h1>${data.getMetadata().getLabel()}</h1>
 ${data.getMetadata().getDescription()?if_exists}
 <#list data.getChilds("message") as msg>
@@ -1228,31 +1228,31 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
     
 </#if>
 </#list>
-</pre>]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-            </actions>
-            <attribute name="name"></attribute>
-            <attribute name="label"></attribute>
-            <attribute name="description" inputtype="html"></attribute>
+</pre>]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+            </actions>&#xd;
+            <attribute name="name"/>&#xd;
+            <attribute name="label"/>&#xd;
+            <attribute name="description" inputtype="html"/>&#xd;
             <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
-                 inheritDescription="true"></thing>
-        </thing>
-        <sswtMenus>
-            <menuDefine>
-                <menu name="Messages"></menu>
-            </menuDefine>
-            <menuSetting menuType="Messages">
-                <menu name="toJavaCode" label="ToJavaCode" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toJavaCode"></menu>
-            </menuSetting>
-        </sswtMenus>
-        <thing name="RequestResponse" _xmeta_id_="RequestResponse1" icon="icons/folder_go.png">
+                 inheritDescription="true"/>&#xd;
+        </thing>&#xd;
+        <sswtMenus>&#xd;
+            <menuDefine>&#xd;
+                <menu name="Messages"/>&#xd;
+            </menuDefine>&#xd;
+            <menuSetting menuType="Messages">&#xd;
+                <menu name="toJavaCode" label="ToJavaCode" shell="xworker.swt.xworker.dialogs.thingMenu.ThingCodeViewer?codeType=java&amp;actionName=toJavaCode"/>&#xd;
+            </menuSetting>&#xd;
+        </sswtMenus>&#xd;
+        <thing name="RequestResponse" _xmeta_id_="RequestResponse1" icon="icons/folder_go.png">&#xd;
             <description><![CDATA[<p>消息子分组。</p>
-]]></description>
-            <actions>
-                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"></RefAction>
-                <NOOP name="getEnums"></NOOP>
-                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">
+]]></description>&#xd;
+            <actions>&#xd;
+                <RefAction name="getMessages" refActionPath="xworker.com.google.protobuf.Proto/@actions/@getMessages"/>&#xd;
+                <NOOP name="getEnums"/>&#xd;
+                <GroovyAction name="toDocThing" _xmeta_id_="toDoc">&#xd;
                     <code><![CDATA[import org.xmeta.Thing;
 
 //转化为orgDocument的模型
@@ -1268,10 +1268,10 @@ for(child in self.getChilds("message")){
     }
 }*/
 
-return content;]]></code>
-                </GroovyAction>
-                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">
-                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">
+return content;]]></code>&#xd;
+                </GroovyAction>&#xd;
+                <Begin name="toHtml" _xmeta_id_="toHtml1" changeSelf="true" selfVarName="data">&#xd;
+                    <TextTemplate name="TextTemplate" descriptors="xworker.lang.text.TextTemplate">&#xd;
                         <templateCode><![CDATA[<h1>${data.getMetadata().getLabel()}</h1>
 ${data.getMetadata().getDescription()?if_exists}
 <#list data.getChilds("message") as msg>
@@ -1314,15 +1314,15 @@ ${msg.doAction("toHtml", actionContext)?if_exists}
     
 </#if>
 </#list>
-</pre>]]></templateCode>
-                    </TextTemplate>
-                </Begin>
-            </actions>
-            <attribute name="name"></attribute>
-            <attribute name="label"></attribute>
-            <attribute name="description" inputtype="html"></attribute>
+</pre>]]></templateCode>&#xd;
+                    </TextTemplate>&#xd;
+                </Begin>&#xd;
+            </actions>&#xd;
+            <attribute name="name"/>&#xd;
+            <attribute name="label"/>&#xd;
+            <attribute name="description" inputtype="html"/>&#xd;
             <thing name="message" extends="xworker.com.google.protobuf.Proto/@messages/@message"
-                 inheritDescription="true"></thing>
-        </thing>
-    </thing>
+                 inheritDescription="true"/>&#xd;
+        </thing>&#xd;
+    </thing>&#xd;
 </thing>

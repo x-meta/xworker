@@ -155,18 +155,12 @@ public class ConditionCreator {
 	                        	sql = column + " <= " + sql;
 	                            break;
 	                        case UtilCondition.like:
-	                        	sql = column + " like " + sql;
+							case UtilCondition.lrlike:
+							case UtilCondition.rlike:
+							case UtilCondition.llike:
+								sql = column + " like " + sql;
 	                            break;
-	                        case UtilCondition.llike:
-	                        	sql = column + " like " + sql;
-	                            break;
-	                        case UtilCondition.rlike:
-	                        	sql = column + " like " + sql;
-	                            break;
-	                        case UtilCondition.lrlike:
-	                        	sql = column + " like " + sql;
-	                            break;
-	                        case UtilCondition.in:
+							case UtilCondition.in:
 	                        	sql = column + " in " + sql;
 	                            break;
 	                        case UtilCondition.notin:
@@ -301,14 +295,14 @@ public class ConditionCreator {
                     sql = sql + ",";
                 }
                 sql = sql + "?";
-                Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",v, "operator",operator});
+                Map<String, Object> cd = UtilMap.toMap("name",condition.getString("attributeName"), "value",v, "operator",operator);
                 cds.add(cd);
                 
                 index++;
             }
         }else{
             sql = sql + "?";
-            Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",value, "operator",operator});
+            Map<String, Object> cd = UtilMap.toMap("name",condition.getString("attributeName"), "value",value, "operator",operator);
             cds.add(cd);
         }
         return sql + ")";
@@ -331,14 +325,14 @@ public class ConditionCreator {
                     sql = sql + ",";
                 }
                 sql = sql + "?";
-                Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",v, "operator",operator});
+                Map<String, Object> cd = UtilMap.toMap("name",condition.getString("attributeName"), "value",v, "operator",operator);
                 cds.add(cd);
                 
                 index++;
             }
         }else{
             sql = sql + "?";
-            Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value",value, "operator",operator});
+            Map<String, Object> cd = UtilMap.toMap("name",condition.getString("attributeName"), "value",value, "operator",operator);
             cds.add(cd);
         }
         return sql + ")";
@@ -364,18 +358,18 @@ public class ConditionCreator {
 						}
 					}
 					sql = sql + conditionSql;
-					Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition});
+					Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition);
 					cds.add(cd);
 				}
 				sql = sql + ")";
 			} else {
 				sql = conditionSql;
-				Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition});
+				Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition);
 				cds.add(cd);
 			}
 		}else{
 			sql = conditionSql;
-			Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition});
+			Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition);
 			cds.add(cd);
 		}
 		return sql;
@@ -385,7 +379,7 @@ public class ConditionCreator {
     @SuppressWarnings("unchecked")
 	public static String getSql(Thing condition, Object value, String operator, List<Map<String, Object>> cds){
     	if(condition.getBoolean("dummySql")){
-    		Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",condition.getString("attributeName"), "value", value, "operator",operator, "condition", condition});
+    		Map<String, Object> cd = UtilMap.toMap("name",condition.getString("attributeName"), "value", value, "operator",operator, "condition", condition);
             cds.add(cd);
             return null;
     	}
@@ -408,18 +402,18 @@ public class ConditionCreator {
 						}
 					}
 					sql = sql + column + " " + operator + " ?";
-					Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition});
+					Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value", v, "operator", operator, "condition", condition);
 					cds.add(cd);
 				}
 				sql = sql + ")";
 			} else {
 				sql = column + " " + operator + " ?";
-				Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition});
+				Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value", vl, "operator", operator, "condition", condition);
 				cds.add(cd);
 			}
 		}else{
 			sql = column + " " + operator + " ?";
-			Map<String, Object> cd = UtilMap.toMap(new Object[]{"name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition});
+			Map<String, Object> cd = UtilMap.toMap("name", condition.getString("attributeName"), "value",value, "operator", operator, "condition", condition);
 			cds.add(cd);
 		}
         return sql;
@@ -511,7 +505,7 @@ public class ConditionCreator {
         	}        	        	
         }
         
-        if(cValue instanceof String && "".equals(cValue)){
+        if("".equals(cValue)){
         	cValue = null;
         }
         
@@ -559,7 +553,7 @@ public class ConditionCreator {
             //log.info("conditionPath:" + self.metadata.path);
             //log.info("operator:" + self.getByte("operator"));
             //比较
-            if(cValue instanceof String && cValue != null){
+            if(cValue instanceof String){
                 result = false;
                 if("and".equals(self.getStringBlankAsNull("multiValueJoin"))){
                 	List<String> values = (List<String>) getMulityValues(cValue);
@@ -587,7 +581,7 @@ public class ConditionCreator {
             //log.info("isMatch " + result + ",operator=" + self.operator + "v1=" + value + ",v2=" + cValue);
         }
         
-        if(result == false){
+        if(!result){
             return false;
         }else{
             //判断子条件
@@ -628,8 +622,7 @@ public class ConditionCreator {
     	//List<Map<String, Object>> cds = (List<Map<String, Object>>) actionContext.get("cds");
     	
         //String sql = "";
-        Thing condition = self;
-        return getConditionValue(condition, condition.getString("dataName"), datas, actionContext);
+		return getConditionValue(self, self.getString("dataName"), datas, actionContext);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -639,7 +632,7 @@ public class ConditionCreator {
 		String name = actionContext.getObject("name");
 		String value = actionContext.getObject("value");
 		String operator = actionContext.getObject("operator");
-		Map<String, Object> cd = UtilMap.toMap(new Object[]{"name",name, "value",value, "operator",operator, "condition", condition});
+		Map<String, Object> cd = UtilMap.toMap("name",name, "value",value, "operator",operator, "condition", condition);
 		cds.add(cd);
 	}
 }

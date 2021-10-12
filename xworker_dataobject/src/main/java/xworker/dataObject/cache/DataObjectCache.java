@@ -24,31 +24,22 @@ import xworker.dataObject.DataObject;
 
 public class DataObjectCache {
 	/** 
-	 * 缓存设置使用Map。
+	 * 缓存设置使用Map，全局性的缓存。
 	 */
-	private static Map<String, Map<Object, DataObjectCacheEntry>> caches = new HashMap<String, Map<Object, DataObjectCacheEntry>>();
+	private static final Map<String, Map<Object, DataObjectCacheEntry>> caches = new HashMap<>();
 	
 	/**
-	 * 线程操作的缓存。
+	 * 线程操作的缓存，一般用于一级缓存。一般和begin()和finsh()一起使用。
 	 */
-	private static ThreadLocal<ThreadLocalCache> threadLocalCaches = new ThreadLocal<ThreadLocalCache>();
+	private static final ThreadLocal<ThreadLocalCache> threadLocalCaches = new ThreadLocal<>();
 	
 	/**
 	 * 获取数据对象缓存。
-	 * 
-	 * @param dataObjectDescriptor
-	 * @param keyName
-	 * @param key
-	 * @return
 	 */
 	public synchronized static DataObject getDataObject(Thing dataObjectDescriptor, String keyName, Object key){
 		String descriptorPath = dataObjectDescriptor.getMetadata().getPath();
-		Map<Object, DataObjectCacheEntry> dataObjectCache = caches.get(descriptorPath);
-		if(dataObjectCache == null){
-			dataObjectCache = new HashMap<Object, DataObjectCacheEntry>();
-			caches.put(descriptorPath, dataObjectCache);
-		}
-		
+		Map<Object, DataObjectCacheEntry> dataObjectCache = caches.computeIfAbsent(descriptorPath, k -> new HashMap<>());
+
 		DataObjectCacheEntry entry = dataObjectCache.get(key);
 		if(entry != null){
 			long timeout = dataObjectDescriptor.getLong("cacheRelationTimeout") ;
@@ -81,8 +72,6 @@ public class DataObjectCache {
 	
 	/**
 	 * 清除指定数据对象的缓存。
-	 * 
-	 * @param descriptor
 	 */
 	public synchronized static void clearCache(String descriptor){
 		Map<Object, DataObjectCacheEntry> dataObjectCache = caches.get(descriptor);
@@ -94,9 +83,6 @@ public class DataObjectCache {
 	
 	/**
 	 * 清除指定数据对象的缓存。
-	 * 
-	 * @param descriptor
-	 * @param key
 	 */
 	public synchronized static void clearCache(String descriptor, Object key){
 		Map<Object, DataObjectCacheEntry> dataObjectCache = caches.get(descriptor);
@@ -109,10 +95,9 @@ public class DataObjectCache {
 	 * 临时开始线程缓存。
 	 */
 	public static void begin(){
-		ThreadLocalCache cache = threadLocalCaches.get();
-		if(cache == null){
-			cache = new ThreadLocalCache();
-			threadLocalCaches.set(cache);
+		ThreadLocalCache cache = getThreadLocalCache();
+		if(cache.count == 0) {
+			cache.clearCache();
 		}
 		cache.count++;
 	}
@@ -121,24 +106,26 @@ public class DataObjectCache {
 	 * 线程缓存结束。
 	 */
 	public static void finish(){
-		ThreadLocalCache cache = threadLocalCaches.get();
-		if(cache == null){
-			cache = new ThreadLocalCache();
-			threadLocalCaches.set(cache);
-		}
+		ThreadLocalCache cache = getThreadLocalCache();
 		cache.count--;
 		if(cache.count == 0){
 			cache.clearCache();
 		}
 	}
-	
-	public synchronized static DataObject getDataObjectThreadCache(Thing dataObjectDescriptor, String keyName, Object key){
+
+	public static ThreadLocalCache getThreadLocalCache(){
 		ThreadLocalCache cache = threadLocalCaches.get();
 		if(cache == null){
 			cache = new ThreadLocalCache();
 			threadLocalCaches.set(cache);
 		}
-		
+
+		return cache;
+	}
+
+	public  static DataObject getDataObjectThreadCache(Thing dataObjectDescriptor, String keyName, Object key){
+		ThreadLocalCache cache = getThreadLocalCache();
+
 		return cache.getDataObject(dataObjectDescriptor, keyName, key);
 	}
 }

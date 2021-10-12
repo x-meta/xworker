@@ -28,13 +28,95 @@ import xworker.swt.util.SwtTextUtils;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.xworker.Colorer;
 import xworker.util.UtilFileIcon;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class FileEditor {
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        //Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        if(content instanceof File){
+            File file = (File) content;
+            if(file.isFile()){
+                String subfix = file.getName();
+                int index = subfix.lastIndexOf(".");
+                if(index != -1) {
+                    subfix = subfix.substring(index + 1, subfix.length()).toLowerCase();
+                }else {
+                    return new EditorParams<Object>(World.getInstance().getThing("xworker.swt.app.editors.SystemFileEditor"),
+                            "File:" + file.getAbsolutePath(), file) {
+                        @Override
+                        public Map<String, Object> getParams() {
+                            Map<String, Object> params = new HashMap<>();
+                            params.put("fileName", file.getAbsolutePath());
+                            return params;
+                        }
+                    };
+                }
+
+                //是否是文本文件
+                boolean isText = false;
+                if("txt".equals(subfix)) {
+                    isText = true;
+
+                }else {
+                    for(String type : Colorer.getSupportCodeTypes()){
+                        if(type.toLowerCase().equals(subfix)) {
+                            isText = true;
+                            break;
+                        }
+                    }
+                }
+
+                if(isText) {
+                    return new EditorParams<Object>(World.getInstance().getThing("xworker.swt.app.editors.FileTextEditor"),
+                            "File:" + file.getAbsolutePath(), file) {
+                        @Override
+                        public Map<String, Object> getParams() {
+                            Map<String, Object> params = new HashMap<>();
+                            params.put("file", file);
+                            return params;
+                        }
+                    };
+                }
+
+                //是否是事物模型
+                if(World.getInstance().isThingFile(file.getName())) {
+                    String path = UtilFile.getFilePath(file.getAbsolutePath());
+                    Thing thing = World.getInstance().getThing(path);
+                    if(thing != null) {
+                        return new EditorParams<Object>(World.getInstance().getThing("xworker.swt.app.editors.ThingEditor"),
+                                "thing:" + file.getAbsolutePath(), file) {
+                            @Override
+                            public Map<String, Object> getParams() {
+                                Map<String, Object> params = new HashMap<>();
+                                params.put("thing", path);
+                                return params;
+                            }
+                        };
+                    }
+                }
+
+                //默认使用系统编辑器打开
+                return new EditorParams<Object>(World.getInstance().getThing("xworker.swt.app.editors.SystemFileEditor"),
+                        "File:" + file.getAbsolutePath(), file) {
+                    @Override
+                    public Map<String, Object> getParams() {
+                        Map<String, Object> params = new HashMap<>();
+                        params.put("fileName", file.getAbsolutePath());
+                        return params;
+                    }
+                };
+            }
+        }
+        return null;
+    }
+
 	public static Map<String, Object> createDataParams(ActionContext actionContext) throws IOException{
 		Object data = actionContext.get("data");
 		if(data instanceof File) {
-			Map<String, Object> params = new HashMap<String, Object>();
+			Map<String, Object> params = new HashMap<>();
 			File file = (File) data;
 			if(file.isDirectory()) {
 				return null;

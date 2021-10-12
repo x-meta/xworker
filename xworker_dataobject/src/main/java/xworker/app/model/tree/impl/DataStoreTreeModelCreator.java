@@ -27,7 +27,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 
 public class DataStoreTreeModelCreator {
     @SuppressWarnings("unchecked")
@@ -121,7 +121,7 @@ public class DataStoreTreeModelCreator {
         Object data = actionContext.get("data");
         
         Map<String, Object> node = new HashMap<String, Object>();
-        TreeModelUtil.setAttributes(self, OgnlUtil.getValue(self, "idField", data), node);
+        TreeModelUtils.setAttributes(self, OgnlUtil.getValue(self, "idField", data), node);
         node.put("text", OgnlUtil.getValue(self.getString("textField"), data));
         String iconField = self.getString("iconField");
         if(iconField != null && !"".equals(iconField)){

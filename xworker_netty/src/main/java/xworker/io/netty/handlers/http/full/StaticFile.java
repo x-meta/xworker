@@ -18,6 +18,7 @@
 package xworker.io.netty.handlers.http.full;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
+import static io.netty.handler.codec.http.HttpMethod.HEAD;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpResponseStatus.FOUND;
@@ -36,6 +37,7 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -480,89 +482,106 @@ public class StaticFile {
 
         //获取Range，下载范围
         String range = request.headers().get("range");
+        boolean hasRange = true;
         if(range != null){
             //剖解range
             range = range.split("=")[1];
             String[] rs=range.split("-");
             try {
-                since = Integer.parseInt(rs[0]);
+                since = Long.parseLong(rs[0]);
             }catch(Exception e) {
                 since = 0;
             }
             if(rs.length > 1){
                 try {
-                    until=Integer.parseInt(rs[1]);
+                    until=Long.parseLong(rs[1]);
                 }catch(Exception e) {
                 }
             }
+        }else{
+            hasRange = false;
         }
-        if(until > fileLength) {
+        if(until >= fileLength) {
             until = fileLength - 1;
         }
 
-        boolean hasRange = true;
         String browser=request.headers().get("user-agent");
         if((until - since + 1) == fileLength) {
             //下载全部时，不需要设置206
             hasRange = false;
-        }else {
-            if(browser != null && browser.contains("MSIE")) {
-                //200 响应头，不支持断点续传
-                since = 0;
-                until = fileLength - 1;
-                hasRange = false;
-            }else{
-                response.setStatus(HttpResponseStatus.PARTIAL_CONTENT);
-            }
         }
-        String cd = "attachment; filename*=utf-8''" + URLEncoder.encode(file.getName(), "utf-8");
-        response.headers().set("Content-Disposition", cd);
+        if(browser != null && browser.contains("MSIE")) {
+            //200 响应头，不支持断点续传
+            since = 0;
+            until = fileLength - 1;
+            hasRange = false;
+        }
+
+        if(hasRange){
+            response.setStatus(HttpResponseStatus.PARTIAL_CONTENT);
+        }
+
+        //String cd = "attachment; filename*=UTF-8''" + URLEncoder.encode(file.getName(), "utf-8");
+        //response.headers().set("Content-Disposition", cd);
         response.headers().set("Content-Length", "" + (until - since + 1));
         response.headers().set("Accept-Ranges", "bytes");
-        response.headers().set("Content-Range", "bytes " + since+"-" + until + "/"	+ fileLength);
+        if(hasRange) {
+            response.headers().set("Content-Range", "bytes " + since + "-" + until + "/" + fileLength);
+        }
+        response.headers().set("Server", "Netty");
 
         // Write the initial line and the header.
-        ctx.write(response);
+        ctx.writeAndFlush(response);
 
-        // Write the content.
-        ChannelFuture sendFileFuture;
         ChannelFuture lastContentFuture;
-        if (ctx.pipeline().get(SslHandler.class) == null) {
+        if(GET.equals(request.method())) {
+            // Write the content.
+            ChannelFuture sendFileFuture;
+
             sendFileFuture =
-                    ctx.write(new DefaultFileRegion(raf.getChannel(), since, until), ctx.newProgressivePromise());
-            // Write the end marker.
-            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
-        } else {
-            sendFileFuture =
-                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, since, until, 8192)),
+                    ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, since, until - since + 1, 8192)),
                             ctx.newProgressivePromise());
             // HttpChunkedInput will write the end marker (LastHttpContent) for us.
             lastContentFuture = sendFileFuture;
-        }
+            /*
+            if (ctx.pipeline().get(SslHandler.class) == null) {
+                sendFileFuture =
+                        ctx.write(new DefaultFileRegion(raf.getChannel(), since, until -since + 1), ctx.newProgressivePromise());
+                // Write the end marker.
+                lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            } else {
+                sendFileFuture =
+                        ctx.writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, since, until - since + 1, 8192)),
+                                ctx.newProgressivePromise());
+                // HttpChunkedInput will write the end marker (LastHttpContent) for us.
+                lastContentFuture = sendFileFuture;
+            }*/
 
-        /*
-        sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
-            @Override
-            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
-                if (total < 0) { // total unknown
-                    System.err.println(future.channel() + " Transfer progress: " + progress);
-                } else {
-                    System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
+            /*
+            sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
+                @Override
+                public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
+                    if (total < 0) { // total unknown
+                        System.err.println(future.channel() + " Transfer progress: " + progress);
+                    } else {
+                        System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
+                    }
                 }
-            }
 
-            @Override
-            public void operationComplete(ChannelProgressiveFuture future) {
-                System.err.println(future.channel() + " Transfer complete.");
-            }
-        });*/
+                @Override
+                public void operationComplete(ChannelProgressiveFuture future) {
+                    System.err.println(future.channel() + " Transfer complete.");
+                }
+            });*/
+        }else{
+            lastContentFuture = ctx.writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        }
 
         // Decide whether to close the connection or not.
         if (!keepAlive) {
             // Close the connection when the whole content is written out.
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
-
         return null;
     }
 
@@ -570,12 +589,13 @@ public class StaticFile {
     	Thing self = actionContext.getObject("self");
     	ChannelHandlerContext ctx = actionContext.getObject("ctx");
     	FullHttpRequest request = actionContext.getObject("request");
-    	
+
+    	//System.out.println(request);
         if (!request.decoderResult().isSuccess()) {
             return sendError(ctx, BAD_REQUEST);
         }
 
-        if (!GET.equals(request.method())) {
+        if (!GET.equals(request.method()) && !HEAD.equals(request.method())) {
             return sendError(ctx, METHOD_NOT_ALLOWED);
         }
 

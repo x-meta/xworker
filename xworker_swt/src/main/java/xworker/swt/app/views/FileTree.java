@@ -13,15 +13,16 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.UtilFile;
+import xworker.app.model.tree.TreeModel;
+import xworker.app.model.tree.TreeModelItem;
 
 public class FileTree {
 	@SuppressWarnings("unchecked")
 	public static Object treeDefaultSelectionCondition(ActionContext actionContext) {
 		Event event = actionContext.getObject("event");
-		
-		Map<String, Object> data = (Map<String, Object>) event.item.getData();
-		String dataId = (String) data.get("dataId");
-		File file = new File(dataId);
+
+		TreeModelItem data = (TreeModelItem) event.item.getData();
+		File file = data.getSource();
 		if(file.isFile()){
 		    actionContext.l().put("file", file);
 		    return true;
@@ -58,9 +59,8 @@ public class FileTree {
 		File dir = null;
 		TreeItem[] s = menuTree.getSelection();
 		if(s != null && s.length > 0){
-			Map<String, Object> data = (Map<String, Object>) s[0].getData();
-			String dataId = (String) data.get("dataId");
-		    dir = new File(dataId);
+			TreeModelItem data = (TreeModelItem) s[0].getData();
+		    dir = data.getSource();
 		    if(dir.isFile()){
 		        dir = dir.getParentFile();
 		    }
@@ -78,9 +78,8 @@ public class FileTree {
 		TreeItem[] s = menuTree.getSelection();
 		TreeItem treeItem = null;
 		if(s != null && s.length > 0){
-		    Map<String, Object> data = (Map<String, Object>) s[0].getData();
-			String dataId = (String) data.get("dataId");
-		    dir = new File(dataId);
+			TreeModelItem data = (TreeModelItem) s[0].getData();
+			dir = data.getSource();
 		    treeItem = s[0];
 		}
 
@@ -156,14 +155,35 @@ public class FileTree {
 		        return false;
 		    }
 		}else{
-		    return false;
+		    return true;
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	private static File getFile(TreeItem item) {
-		Map<String, Object> data = (Map<String, Object>) item.getData();
-		String dataId = (String) data.get("dataId");
-		return new File(dataId);
+		TreeModelItem data = (TreeModelItem) item.getData();
+		return data.getSource();
+	}
+
+	public static void refresh(ActionContext actionContext){
+		Tree menuTree = actionContext.getObject("menuTree");
+		TreeModel treeModel = actionContext.getObject("treeModel");
+		TreeItem[] items = menuTree.getSelection();
+		if(items != null && items.length > 0){
+			TreeModelItem item = (TreeModelItem) items[0].getData();
+			File file = (File) item.getSource();
+			if(file.isFile()){
+				if(items[0].getParentItem() == null){
+					treeModel.reload(null);
+					return;
+				}else{
+					item = (TreeModelItem) items[0].getParentItem().getData();
+				}
+			}
+			treeModel.reload(item);
+		}else{
+			treeModel.reload(null);
+		}
+
 	}
 }

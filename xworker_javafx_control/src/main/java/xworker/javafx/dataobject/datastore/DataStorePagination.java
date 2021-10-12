@@ -55,7 +55,11 @@ public class DataStorePagination implements DataStoreListener {
                 try {
                     loadable = false;
                     PageInfo pageInfo = dataStore.getPageInfo();
-                    pagination.setPageCount((int) pageInfo.getTotalPage());
+                    int pages = (int) pageInfo.getTotalPage();
+                    if(pages <= 0){
+                        pages = 1;
+                    }
+                    pagination.setPageCount(pages);
                 }finally{
                     loadable = true;
                     pagination.setDisable(false);

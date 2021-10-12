@@ -1,7 +1,14 @@
 package xworker.content;
 
-public interface Content <T>{
-    public String getType();
+import org.xmeta.Thing;
 
-    public T getContent();
+public interface Content <T>{
+    String getType();
+
+    T getContent();
+
+    /**
+     * 返回用于定义内容的模型。
+     */
+    Thing getThing();
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="DynamicPrinciple" descriptors="xworker.content.QuickContent" label="动态模型的原理"
+     type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="200" simpleBrowser="true"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+    <description><![CDATA[<h1>动态模型原理</h1>
+
+<h2>1.概要</h2>
+
+<p>&nbsp; &nbsp; 动态模型使用结构化的数据编程，它有两个核心问题。</p>
+
+<ol>
+	<li><strong>如何用数据表示各种东西</strong><br />
+	动态模型采用的是面向对象的方法。<br />
+	&nbsp;</li>
+	<li><strong>如何让数据变成可执行的程序</strong><br />
+	动态模型采取的是迭代解释执行的方法。</li>
+</ol>
+
+<h2>2.面向对象</h2>
+
+<h3>2.1.基本思想</h3>
+
+<p>&nbsp; &nbsp; 想要把数据解释成对象，我们可以根据需要赋予数据不同的角色。</p>
+
+<h3>2.2.模型和事物</h3>
+
+<p>&nbsp; &nbsp; 动态模型首先假设数据能够表示各种东西，所以此时我们用事物（Thing)和模型来称呼它。事物是指数据所表示的东西，模型是指数据本身。</p>
+
+<p>&nbsp; &nbsp; 在动态模型里数据是树形结构的，动态模型把每一个树节点都当作独立的模型，而一个树节点和可以包含属性和子节点，因此一个模型就是由属性和子节点（子模型）组成的了。</p>
+
+<h3>2.3.动作</h3>
+
+<p>&nbsp; &nbsp; 因为我们最终要实现用数据编程，即最后数据要能当程序来运行，为了这个目标我们可以先假设任何数据都是可执行的。此时我们把数据称为动作，同样的任何模型和事物都可以转化为动作。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 实际实现里，动作相当于方法和函数。</p>
+
+<h3>2.4.对象</h3>
+
+<p>&nbsp; &nbsp; 由于一个模型可以含有属性和子模型（2.2的定义），而任何模型都可以执行（2.3的假设），因此可以把一个模型的某些子节点当成它的行为，从而可以把一个模型看作是对象。</p>
+
+<p>&nbsp; &nbsp; 动作相当于方法和函数，当一个动作属于某个对象，并且对象可以调用该动作的时候，这个动作可以看作是对象的行为。</p>
+
+<h3>2.5.描述者</h3>
+
+<p>&nbsp; &nbsp; 描述者是用于描述模型的模型，描述者也可以看作是模型的类，用于描述模型的结构和行为。在动态模型里，一个模型的描述者可以是任意模型，并且模型继承描述者的行为。</p>
+
+<h3>2.6.继承</h3>
+
+<p>&nbsp; &nbsp; 在动态模型里，一个模型可以继承除了自身之外的其它任意模型，从而继承被继承模型的行为。</p>
+
+<h3>2.7.面向对象</h3>
+
+<p>&nbsp; &nbsp; 以上，实际上就实现了面向对象的方法。</p>
+
+<h2>3.动态模型的实现</h2>
+
+<p>&nbsp; &nbsp; 实现动态模型编程的核心是如何解释执行一个模型的方法。</p>
+
+<ol>
+	<li>在上面的2.2.中假设了任意模型都可以转化为动作来执行。具体的执行方法是把模型作为对象，去执行对象的为run的方法。</li>
+	<li>模型的run方法还是模型（见2.4，使用模型的子节点来定义模型的行为），因此执行run方法回到步骤1.</li>
+	<li>以上是一个递归的方法，如要让递归能够终止，那么一些模型是由引擎直接执行的。</li>
+</ol>
+
+<p>&nbsp; &nbsp; 以上是如何执行一个模型的方法。比如XWorker的动态模型引擎是使用Java实现的，模型名为JavaAction的模型是由引擎直接执行的，即执行JavaAction并不需要执行它的run方法，而是由引擎直接解释执行。</p>
+
+<pre class="brush:xml;">
+&lt;JavaAction name=&quot;run&quot; useOuterJava=&quot;true&quot; outerClassName=&quot;test.HelloWorld&quot; methodName=&quot;run&quot;/&gt;</pre>
+
+<p>&nbsp; &nbsp; 比如上面的模型（XML）执行时并不需要执行它的run方法，它是由引擎直接执行的，引擎会根据它的属性定义执行Java类test.HelloWorld的run()方法。</p>
+]]></description>
+</QuickContent>

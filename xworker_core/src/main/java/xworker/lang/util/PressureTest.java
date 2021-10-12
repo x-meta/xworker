@@ -160,7 +160,8 @@ public class PressureTest {
 				test.successed(System.currentTimeMillis() - start);
 			}catch(Throwable e){
 				test.exception(System.currentTimeMillis() - start);
-				e.printStackTrace();
+				//e.printStackTrace();
+				Executor.info(TAG, "Execute task error", e);
 			}
 		}
 	}

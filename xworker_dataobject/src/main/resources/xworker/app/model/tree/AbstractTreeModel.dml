@@ -1,13 +1,44 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
-<thing name="AbstractTreeModel" descriptors="xworker.lang.MetaDescriptor3">
-    <description><![CDATA[<p><strong>抽象的树模型</strong></p>
+<thing name="AbstractTreeModel" descriptors="xworker.lang.MetaDescriptor3">&#xd;
+    <description><![CDATA[<p><strong>树模型</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 可以通过重写getRoot()和getChilds()方法来实现的树模型。本文档也适合所有树模型的文档。</p>
+<p>&nbsp;&nbsp;&nbsp; 树形结构的数据模型，通常可以用于控件的树控件等。</p>
 
-<p><strong>使用方法</strong></p>
+<p><strong>使用树模型</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 一般封装成xworker.app.model.tree.TreeModel对象来使用。如：TreeModel treeModel = new TreeModel(treeModelThing, actionContext);</p>
+<p>&nbsp;&nbsp;&nbsp; 树模型一般在界面模型里使用，可以参看相关的界面模型。树模型一般会封装为Java对象xworker.app.model.tree.TreeModel，可以通过它实现插入、删除、更新和刷新节点等操作。</p>
+
+<p><strong>&nbsp;&nbsp;&nbsp; </strong>可以重写的方法：</p>
+
+<ul>
+	<li><strong>void initItems(TreeModel treeModel, TreeModelItem parentItem, List&lt;TreeModelItem&gt; items)</strong><br />
+	加载的根节点或子节点时触发，如果想自定义TreeModelItem，那么可以通过该方法实现。</li>
+</ul>
+
+<p><strong>定义树模型</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 新的树模型需要继承本模型，并需要实现下面的方法。</p>
+
+<ul>
+	<li><strong>TreeModelItem getRoot(TreeModel treeModel)</strong><br />
+	返回树节点的根节点。<br />
+	&nbsp;</li>
+	<li><strong>List&lt;TreeModelItem&gt; getChilds(TreeModel treeModel, TreeModelItem parentItem, String id)</strong><br />
+	根据父节点返回父节点包含的子节点列表, id是父节点的标识。<br />
+	&nbsp;</li>
+	<li><strong>TreeModelItem getItemById(TreeModel treeModel, String id)</strong><br />
+	根据节点的标识来获取一个树节点，<br />
+	&nbsp;</li>
+	<li><strong>List&lt;TreeModelItem&gt; createBySources(TreeModel treeModel, TreeModelItem parentItem, Object[] sources)</strong><br />
+	根据源对象创建树模型节点。常用于包装对象的树模型，比如FileTreeModel。</li>
+</ul>
+
+<p><strong>&nbsp;&nbsp;&nbsp; 注册，</strong>新的树模型可以以<strong>child</strong>注册到<strong>xworker.app.model.tree.TreeModels</strong>下。</p>
+
+<p><strong>把树模型绑定到界面控件上</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 树模型一般封装成xworker.app.model.tree.TreeModel对象来使用。如：TreeModel treeModel = new TreeModel(treeModelThing, actionContext);</p>
 
 <p>&nbsp;&nbsp;&nbsp; <strong>TreeModel的基本方法：</strong></p>
 
@@ -25,20 +56,7 @@
 	根据标识获取一个TreeModelItem。对于获取到的条目，即使是子条目，那么它的父条目允许为null。</li>
 </ul>
 
-<p><strong>模型需要实现的方法</strong></p>
-
-<ul>
-	<li><strong>TreeModelItem getRoot(TreeModel treeModel)</strong><br />
-	返回树节点的根节点。<br />
-	&nbsp;</li>
-	<li><strong>List&lt;TreeModelItem&gt; getChilds(TreeModel treeModel, TreeModelItem parentItem, String id)</strong><br />
-	根据父节点返回父节点包含的子节点列表, id是父节点的标识。<br />
-	&nbsp;</li>
-	<li><strong>TreeModelItem getItemById(TreeModel treeModel, String id)</strong><br />
-	根据节点的标识来获取一个树节点，</li>
-</ul>
-
-<p><strong>TreeModelItem的主要属性</strong></p>
+<p><strong>&nbsp;&nbsp;&nbsp; TreeModelItem的主要属性</strong></p>
 
 <p>&nbsp;&nbsp;&nbsp; TreeModelItem有多个属性，可以自行选择是否要使用，下面是一些常用的属性。</p>
 
@@ -59,84 +77,97 @@
 	TreeModelItem可能是对其它对象的封装，如文件，此时sourc应该是被封装的文件对象。</li>
 </ul>
 
-<p><strong>注册</strong></p>
+<p><strong>&nbsp;&nbsp;&nbsp;&nbsp;TreeModelListener</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 可以服用的树模型可以以<strong>child</strong>注册到<strong>xworker.app.model.tree.TreeModels</strong>下。</p>
+<p>&nbsp;&nbsp;&nbsp; 可以实现TreeModelistener，可以监听树模型的修改、插入、删除和刷新等操作，从而及时把更新同步到界面控件上。</p>
 
-<p><strong>可以重写的方法</strong></p>
-
-<ul>
-	<li><strong>void initItems(TreeModel treeModel, TreeModelItem parentItem, List&lt;TreeModelItem&gt; items)</strong><br />
-	加载的根节点或子节点时触发，如果是根节点那么parentItem为null。&nbsp;&nbsp;</li>
-</ul>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
-]]></description>
-    <actions>
-        <NOOP name="getRoot">
-            <ins>
-                <param name="treeModel" _xmeta_id_="parentItem" type="xworker.app.model.tree.TreeModel"></param>
-            </ins>
-        </NOOP>
-        <NOOP name="getChilds">
-            <ins>
-                <param name="parentItem" type="xworker.app.model.tree.TreeModelItem"></param>
-                <param name="treeModel" _xmeta_id_="parentItem1" type="xworker.app.model.tree.TreeModel"></param>
-            </ins>
-        </NOOP>
+]]></description>&#xd;
+    <actions>&#xd;
+        <NOOP name="getRoot">&#xd;
+            <ins>&#xd;
+                <param name="treeModel" _xmeta_id_="parentItem" type="xworker.app.model.tree.TreeModel"/>&#xd;
+            </ins>&#xd;
+        </NOOP>&#xd;
+        <NOOP name="getChilds">&#xd;
+            <ins>&#xd;
+                <param name="parentItem" type="xworker.app.model.tree.TreeModelItem"/>&#xd;
+                <param name="treeModel" _xmeta_id_="parentItem1" type="xworker.app.model.tree.TreeModel"/>&#xd;
+            </ins>&#xd;
+        </NOOP>&#xd;
         <GetBoolean name="isRootVisible" _xmeta_id_="19460" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
-             attributeName="rootVisible" usage="params"></GetBoolean>
+             attributeName="rootVisible" usage="params"/>&#xd;
         <GetBoolean name="isBindToParent" _xmeta_id_="19461" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
-             attributeName="bindToParent" usage="params"></GetBoolean>
+             attributeName="bindToParent" usage="params"/>&#xd;
         <GetStringList name="getParentControls" _xmeta_id_="19462" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
-             attributeName="parentControls" usage="params"></GetStringList>
+             attributeName="parentControls" usage="params"/>&#xd;
         <GetThing name="getTreeModelRef" _xmeta_id_="19463" descriptors="xworker.lang.actions.ActionUtil/@getThing"
-             attributeName="treeModelRef" usage="params"></GetThing>
-        <JavaAction name="create" outerClassName="xworker.app.model.tree.TreeModel" methodName="create"></JavaAction>
+             attributeName="treeModelRef" usage="params"/>&#xd;
+        <JavaAction name="create" outerClassName="xworker.app.model.tree.TreeModel" methodName="create"/>&#xd;
         <GetBoolean name="isLoadBackground" _xmeta_id_="27557" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
-             attributeName="loadBackground" usage="params"></GetBoolean>
+             attributeName="loadBackground" usage="params"/>&#xd;
         <GetBoolean name="isDelayLoad" _xmeta_id_="27558" descriptors="xworker.lang.actions.ActionUtil/@GetBoolean"
-             attributeName="delayLoad" usage="params"></GetBoolean>
-        <NOOP name="initItems">
-            <ins>
-                <param name="items" type="java.util.List"></param>
-            </ins>
-        </NOOP>
-        <NOOP name="getItemById">
-            <ins>
-                <param name="id" type="java.lang.String"></param>
-                <param name="treeModel" _xmeta_id_="parentItem1" type="xworker.app.model.tree.TreeModel"></param>
-            </ins>
-        </NOOP>
-    </actions>
-    <attribute name="name"></attribute>
-    <attribute name="label"></attribute>
+             attributeName="delayLoad" usage="params"/>&#xd;
+        <NOOP name="initItems">&#xd;
+            <ins>&#xd;
+                <param name="items" type="java.util.List"/>&#xd;
+            </ins>&#xd;
+        </NOOP>&#xd;
+        <NOOP name="getItemById">&#xd;
+            <ins>&#xd;
+                <param name="id" type="java.lang.String"/>&#xd;
+                <param name="treeModel" _xmeta_id_="parentItem1" type="xworker.app.model.tree.TreeModel"/>&#xd;
+            </ins>&#xd;
+        </NOOP>&#xd;
+        <NOOP name="createBySources">&#xd;
+            <ins>&#xd;
+                <param name="sources" type="java.lang.Object[]"/>&#xd;
+                <param name="parentItem" type="xworker.app.model.tree.TreeModelItem"/>&#xd;
+                <param name="treeModel" _xmeta_id_="parentItem1" type="xworker.app.model.tree.TreeModel"/>&#xd;
+            </ins>&#xd;
+            <outs>&#xd;
+                <param name="treeModelItems" type="java.util.List&lt;TreeModelItem>"/>&#xd;
+            </outs>&#xd;
+        </NOOP>&#xd;
+    </actions>&#xd;
+    <attribute name="name"/>&#xd;
+    <attribute name="label"/>&#xd;
     <attribute name="rootVisible" _xmeta_id_="rootVisiable" label="根节点是否可见" inputtype="truefalse"
          group="TreeModel" default="true" validateOnBlur="false" allowDecimals="false"
-         allowNegative="false"></attribute>
+         allowNegative="false"/>&#xd;
     <attribute name="bindToParent" label="绑定父控件" inputtype="truefalse" group="TreeModel" default="true"
-         description="&lt;p&gt;在SWT里是否绑定的父控件，SWT一般绑定到Tree控件。&lt;/p&gt;" validateOnBlur="false" allowDecimals="false"
-         allowNegative="false"></attribute>
-    <attribute name="parentControls" label="父控件列表" size="60" group="TreeModel" description="&lt;p&gt;父控件列表，如有多个使用英文逗号分隔。&lt;/p&gt;"></attribute>
+         description="&lt;p>在SWT里是否绑定的父控件，SWT一般绑定到Tree控件。&lt;/p>" validateOnBlur="false" allowDecimals="false"
+         allowNegative="false"/>&#xd;
+    <attribute name="parentControls" label="父控件列表" size="60" group="TreeModel" description="&lt;p>父控件列表，如有多个使用英文逗号分隔。&lt;/p>"/>&#xd;
     <attribute name="treeModelRef" label="引用" inputtype="dataSelector" size="60" colspan="2"
-         group="TreeModel" validateOnBlur="false" allowDecimals="false" allowNegative="false">
+         group="TreeModel" validateOnBlur="false" allowDecimals="false" allowNegative="false">&#xd;
         <description><![CDATA[<p>应用变量上下文中的树模型或者树模型的事物路径。</p>
-<p>如果引用成功，那么本事物只起引用作用，其他效果无。</p>]]></description>
-    </attribute>
-    <attribute name="loadBackground" label="后台装载" inputtype="truefalse" group="TreeModel" default="false">
+<p>如果引用成功，那么本事物只起引用作用，其他效果无。</p>]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="loadBackground" label="后台装载" inputtype="truefalse" group="TreeModel" default="false">&#xd;
         <description><![CDATA[<p>是否要启动一个线程来加载数据。</p>
-]]></description>
-    </attribute>
+]]></description>&#xd;
+    </attribute>&#xd;
     <attribute name="delayLoad" label="延迟加载" inputtype="truefalse" group="TreeModel" default="true"
-         en_label="Delay Load">
+         en_label="Delay Load">&#xd;
         <description><![CDATA[<p>如果为true，那么一般只会初始化第一级子节点，当点击一个节点后才会加载后续子节点。</p>
-]]></description>
-    </attribute>
+]]></description>&#xd;
+    </attribute>&#xd;
     <attribute name="description" label="描述" inputtype="html" colspan="2" group="TreeModel"
-         validateOnBlur="false" allowDecimals="false" allowNegative="false"></attribute>
-    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
-        <Variable name="var" varName="_thingName_" className="xworker.app.model.tree.TreeModel"></Variable>
-    </VariablesDescs>
+         validateOnBlur="false" allowDecimals="false" allowNegative="false"/>&#xd;
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">&#xd;
+        <Variable name="var" varName="_thingName_" className="xworker.app.model.tree.TreeModel"/>&#xd;
+    </VariablesDescs>&#xd;
+    <thing name="actions" _xmeta_id_="actions1" descriptors="xworker.lang.MetaDescriptor2/@thing"
+         label="Actions" extends="xworker.lang.actions.Actions" many="true" editCols="2"
+         modifier="" zh_label="动作" inheritDescription="true">&#xd;
+        <description><![CDATA[<p>用于定义动作行为，通过子节点添加具体的动作行为。</p>
+
+<p>只有第一个动作模型（本节点类型）生效，会忽略后面添加的动作模型。</p>]]></description>&#xd;
+        <attribute name="name"/>&#xd;
+    </thing>&#xd;
 </thing>

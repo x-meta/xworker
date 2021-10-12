@@ -22,6 +22,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 
+import xworker.swt.design.Designer;
 import xworker.swt.util.SwtUtils;
 
 public class ViewFormCreator {
@@ -47,6 +48,7 @@ public class ViewFormCreator {
 		//保存变量和创建子事物
 		actionContext.getScope(0).put(self.getString("name"), viewForm);
 		actionContext.peek().put("parent", viewForm);
+		Designer.attach(viewForm, self.getMetadata().getPath(), actionContext);
 		try{
 			for(Thing child : self.getAllChilds()){
 			    child.doAction("create", actionContext);

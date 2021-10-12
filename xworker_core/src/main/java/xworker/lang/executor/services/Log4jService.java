@@ -160,18 +160,26 @@ public class Log4jService implements ExecutorService{
 		case Executor.TRACE:
 			if(logger.isTraceEnabled()) {
 				return Executor.TRACE;
+			}else{
+				return getLevel(logger, TAG, (byte) (level + 1));
 			}
 		case Executor.DEBUG:
 			if(logger.isDebugEnabled()) {
 				return Executor.DEBUG;
+			}else{
+				return getLevel(logger, TAG, (byte) (level + 1));
 			}
 		case Executor.INFO:
 			if(logger.isInfoEnabled()) {
 				return Executor.INFO;
+			}else{
+				return getLevel(logger, TAG, (byte) (level + 1));
 			}
 		case Executor.WARN:
 			if(logger.isWarnEnabled()) {
 				return Executor.WARN;
+			}else{
+				return getLevel(logger, TAG, (byte) (level + 1));
 			}
 		case Executor.ERROR:
 			if(logger.isErrorEnabled()) {
@@ -179,7 +187,7 @@ public class Log4jService implements ExecutorService{
 			}
 		}
 
-		return -1;		
+		return Executor.ERROR;
 	}
 	
 	@Override

@@ -92,7 +92,7 @@ public class SwtTreeModelUtils {
         }
 
         if(!have){
-            Listener selectionListener = new TreeSelectionListener(treeModel, tree, actionContext);
+            Listener selectionListener = new TreeSelectionListener(treeModel, tree, tree, actionContext);
 
             tree.addListener(SWT.Selection, selectionListener);
             tree.addListener(SWT.DefaultSelection, selectionListener);
@@ -149,12 +149,16 @@ public class SwtTreeModelUtils {
     static class TreeSelectionListener implements Listener, TreeModelListener, DisposeListener {
         TreeModel treeModel;
         Tree tree;
+        Object rootItem;
         ActionContext actionContext;
 
-        public TreeSelectionListener(TreeModel treeModel, Tree tree, ActionContext actionContext){
+        public TreeSelectionListener(TreeModel treeModel, Tree tree, Object rootItem, ActionContext actionContext){
             this.treeModel = treeModel;
             this.tree = tree;
             this.actionContext = actionContext;
+            this.rootItem = rootItem;
+
+            treeModel.addListener(this);
         }
 
         @Override
@@ -205,8 +209,40 @@ public class SwtTreeModelUtils {
             }
 
             tree.getDisplay().asyncExec(() ->{
-                for(TreeItem treeItem : tree.getItems()){
-                    refreshItem(treeItem, treeModelItem);
+                if(!treeModel.isRootVisible() && treeModelItem == treeModel.getRootItem()){
+                    //刷新整个根节点
+                    if(rootItem instanceof Tree){
+                        Tree tree = (Tree) rootItem;
+                        for(TreeItem item : tree.getItems()){
+                            Object data = item.getData();
+                            if(data instanceof TreeModelItem && ((TreeModelItem) data).getParent() == treeModelItem){
+                                item.dispose();
+                            }
+                        }
+
+                        for(TreeModelItem item : treeModelItem.getItems()){
+                            TreeItem newItem = new TreeItem(tree,  SWT.NONE);
+                            initTreeItem(item, newItem, actionContext);
+                        }
+                    }else if(rootItem instanceof TreeItem){
+                        TreeItem treeItem = (TreeItem) rootItem;
+                        for(TreeItem item : treeItem.getItems()){
+                            Object data = item.getData();
+                            if(data instanceof TreeModelItem && ((TreeModelItem) data).getParent() == treeModelItem){
+                                item.dispose();
+                            }
+                        }
+
+                        for(TreeModelItem item : treeModelItem.getItems()){
+                            TreeItem newItem = new TreeItem(treeItem,  SWT.NONE);
+                            initTreeItem(item, newItem, actionContext);
+                        }
+                    }
+
+                }else {
+                    for (TreeItem treeItem : tree.getItems()) {
+                        refreshItem(treeItem, treeModelItem);
+                    }
                 }
             });
         }
@@ -226,12 +262,14 @@ public class SwtTreeModelUtils {
                     //加载子节点
                     TreeModel treeModel = treeModelItem.getTreeModel();
                     treeModelItem.setExpanded(true);
-                    treeModelItem.getTreeModel().loadChilds(treeModelItem, new TreeCallback(treeModelItem, treeItem, actionContext));
+                    treeModel.loadChilds(treeModelItem, new TreeCallback(treeModelItem, treeItem, actionContext));
+
+                    return;
                 }
             }
 
             for(TreeItem childItem : treeItem.getItems()){
-                updateItem(childItem, treeModelItem);
+                refreshItem(childItem, treeModelItem);
             }
         }
 

@@ -11,52 +11,48 @@ import org.xmeta.World;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
+import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.app.model.tree.impl.ThingTreeModelActions;
 
 public class AppTreeModel {
 	/**
 	 * 树模型的返回子节点列表的实现。
-	 * 
-	 * @param actionContext
-	 * @return
-	 * @throws IOException
-	 * @throws OgnlException
 	 */
 	public static Object getChilds(ActionContext actionContext) throws IOException, OgnlException {
 		Thing self = (Thing) actionContext.get("self");
+		TreeModel treeModel = actionContext.getObject("treeModel");
+		TreeModelItem parentItem = actionContext.getObject("parentItem");
 
-		//返回当前节点
-		String id = (String) actionContext.get("id");
-		if (id == null || "".equals(id) || TreeModel.ROOT_ID.equals(id)) {
-			List<Object> childs = new ArrayList<Object>();
-			childs.add(ThingTreeModelActions.getThingRoot(actionContext));
-			return childs;
-		}
-
-		//获取当前节点下的子节点
-		Thing thing = World.getInstance().getThing(id);
-		if (thing != null) {
-			List<Thing> childs = thing.doAction("getMenuChilds", actionContext);
-			List<Map<String, Object>> childNodes = new ArrayList<Map<String, Object>>();
-			if (childs != null) {
-				for (Thing child : childs) {
-					childNodes.add(ThingTreeModelActions.toTreeNode(child, self, null, null, actionContext));
+		if(parentItem.getSource() == self) {
+			List<TreeModelItem> items = new ArrayList<>();
+			for(Thing child : self.getChilds()){
+				if(child.isThing("xworker.swt.app.AppTreeMenuNode")){
+					items.add(TreeModelUtils.toItem(treeModel, parentItem, child));
 				}
 			}
-			
-			return childNodes;
-		} else {
-			return null;
+
+			return items;
+
+		}else{
+			Thing node = parentItem.getSource();
+			return node.doAction("getChilds", actionContext);
 		}
 	}
 	
-	public static List<Thing> getMenuChilds(ActionContext actionContext){
+	public static List<TreeModelItem> getMenuChilds(ActionContext actionContext){
 		Thing self  = actionContext.getObject("self");
-		return self.getChilds("AppTreeMenuNode");
+		TreeModel treeModel = actionContext.getObject("treeModel");
+		TreeModelItem parentItem = actionContext.getObject("parentItem");
+
+		List<TreeModelItem> items = new ArrayList<>();
+		for(Thing child : self.getChilds()){
+			if(child.isThing("xworker.swt.app.AppTreeMenuNode")){
+				items.add(TreeModelUtils.toItem(treeModel, parentItem, child));
+			}
+		}
+
+		return items;
 	}
-	
-	public static Object getRoot(ActionContext actionContext) {
-		Thing self = actionContext.getObject("self");
-		return ThingTreeModelActions.toTreeNode(self, self, null, null, actionContext);
-	}
+
 }

@@ -1,4 +1,4 @@
-%1624260408779
+%1632792032806
 @
 sname=FFmpegTools
 slabel=FFmpeg
@@ -183,129 +183,34 @@ sth_mark=false
       sth_mark=false
       sth_registQueryOnlySelf=false
       sid=onSelection
-        @/@Composite/@setPathButton/@onSelection/@complete
-        sname=complete
+        @/@Composite/@setPathButton/@onSelection/@setFfmpegDir1
+        sname=setFfmpegDir
+        stext=lang:d=选择FFmpeg目录&en=Select FFmpeg Directory
+        smessage=lang:d=请选择FFmpeg的安装目录。&en=Please select the installation directory of ffmpeg.
+        sinterpretationType=Self
+        sattributeTemplate=false
+        schildsAttributeTemplate=false
+        svarScope=Local
         sisSynchronized=false
         sthrowException=true
-        suseOtherAction=false
-        svarScope=Local
-        sdisableGlobalContext=false
-        Scode=
-#$@text#$@
-import org.eclipse.swt.custom.CTabItem;
-import java.lang.ProcessBuilder;
-import org.xmeta.ActionContext;
-import org.xmeta.util.ExceptionUtil;
-import xworker.tools.ToolsConfig;
-
-//检查ffmpeg的目录是否存在，如果不存在设置
-def ffmpegDir = guide.getEditThing().doAction("getFFmepgPath", actionContext);
-if(ffmpegDir == null || ffmpegDir == ""){
-   ffmpegDir = ToolsConfig.getAttribute("ffmpegDir");   
-   if(ffmpegDir == null || ffmpegDir == ""){
-       setFfmpegDir(actionContext);
-       return;
-   }
-   def file = new File(ffmpegDir);
-   if(file.exists() == false){
-       setFfmpegDir(actionContext);
-       return;
-   }
-}
-
-def cmd = guide.getEditThing().doAction("getCmdArrayString", actionContext);
-//println "cmdis:" + cmd;
-//println guide.getEditThing();
-def cmdarray = cmd.split("[\n]");
-for(i=0; i<cmdarray.length; i++){
-    cmdarray[i] = cmdarray[i].trim();
-}
-if(cmdarray.length > 0){
-    def file = new File(cmdarray[0]);
-    def name = file.getName();
-    
-    def pb = new ProcessBuilder(cmdarray);
-    
-    def ac = new ActionContext();
-    ac.put("parent", processTabFodler);
-    def thing = world.getThing("xworker.tools.process.ProcessExecutor/@PreparedWidgets/@processTabFodler/@item");
-    thing.doAction("create", ac);
-    ac.item.setText(name);
-    processTabFodler.setSelection(ac.item);
-    
-    try{
-        def process =  pb.start();
-        ac.processConsole.doAction("setProcess", ac, "process", process);
-    }catch(Exception e){
-        def message = ExceptionUtil.toString(e);
-        ac.processConsole.doAction("setMessage", ac, "message", message);
-    }
-}
-#$@text#$@
-        sinterpretationType=Action
         screateLocalVarScope=false
         ssaveReturn=false
         sswitchResult=false
+        sdisableGlobalContext=false
         sdebugLog=false
-        sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+        sdescriptors=xworker.swt.actions.DialogActions/@DirectoryDialog
         sinheritDescription=false
         sth_createIndex=false
         sth_registMyChilds=false
         sth_registDisabled=false
+        sth_noThingRegistViewer=false
+        sth_fileMonitor=false
         sth_mark=false
-        sid=complete
-          @/@Composite/@setPathButton/@onSelection/@complete/@Variables
-          sname=Variables
-          sdescriptors=xworker.lang.actions.Inout/@Variables
-          sinheritDescription=false
-          sth_createIndex=false
-          sth_registMyChilds=false
-          sth_registDisabled=false
-          sth_mark=false
-          sid=Variables
-            @/@Composite/@setPathButton/@onSelection/@complete/@Variables/@codeText
-            sname=codeText
-            svarName=codeText
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
-            sisSynchronized=false
-            sthrowException=true
-            screateLocalVarScope=false
-            ssaveReturn=false
-            sdisableGlobalContext=false
-            sdebugLog=false
-            sdescriptors=xworker.lang.actions.Actions/@GetParentContextValue
-            sinheritDescription=false
-            sth_createIndex=false
-            sth_registMyChilds=false
-            sth_registDisabled=false
-            sth_mark=false
-            sid=codeText
-            @/@Composite/@setPathButton/@onSelection/@complete/@Variables/@shell
-            sname=shell
-            svarName=shell
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
-            sisSynchronized=false
-            sthrowException=true
-            screateLocalVarScope=false
-            ssaveReturn=false
-            sdisableGlobalContext=false
-            sdebugLog=false
-            sdescriptors=xworker.lang.actions.Actions/@GetParentContextValue
-            sinheritDescription=false
-            sth_createIndex=false
-            sth_registMyChilds=false
-            sth_registDisabled=false
-            sth_mark=false
-            sid=shell
-          @/@Composite/@setPathButton/@onSelection/@complete/@ActionDefined
-          sname=ActionDefined
-          sdescriptors=xworker.lang.actions.Inout/@ActionDefined
+        sth_registQueryOnlySelf=false
+        sid=setFfmpegDir1
+          @/@Composite/@setPathButton/@onSelection/@setFfmpegDir1/@actions
+          sname=actions
+          sdescriptors=xworker.swt.actions.DialogActions/@DirectoryDialog/@actions1
           sinheritDescription=false
           sth_createIndex=false
           sth_registMyChilds=false
@@ -314,23 +219,29 @@ if(cmdarray.length > 0){
           sth_fileMonitor=false
           sth_mark=false
           sth_registQueryOnlySelf=false
-          sid=ActionDefined
-            @/@Composite/@setPathButton/@onSelection/@complete/@ActionDefined/@setFfmpegDir1
-            sname=setFfmpegDir
-            stext=lang:d=选择FFmpeg目录&en=Select FFmpeg Directory
-            smessage=lang:d=请选择FFmpeg的安装目录。&en=Please select the installation directory of ffmpeg.
-            sinterpretationType=Self
-            sattributeTemplate=false
-            schildsAttributeTemplate=false
-            svarScope=Local
+          sid=actions
+            @/@Composite/@setPathButton/@onSelection/@setFfmpegDir1/@actions/@open
+            sname=open
             sisSynchronized=false
             sthrowException=true
+            suseOtherAction=false
+            svarScope=Local
+            sdisableGlobalContext=false
+            Scode=
+#$@text#$@
+import xworker.tools.ffmpeg.FFmpeg;
+
+if(fileName != null){
+    FFmpeg.setFFmpegPath(fileName);
+    pathText.setText(fileName);
+}
+#$@text#$@
+            sinterpretationType=Action
             screateLocalVarScope=false
             ssaveReturn=false
             sswitchResult=false
-            sdisableGlobalContext=false
             sdebugLog=false
-            sdescriptors=xworker.swt.actions.DialogActions/@DirectoryDialog
+            sdescriptors=xworker.lang.actions.Actions/@GroovyAction
             sinheritDescription=false
             sth_createIndex=false
             sth_registMyChilds=false
@@ -339,49 +250,7 @@ if(cmdarray.length > 0){
             sth_fileMonitor=false
             sth_mark=false
             sth_registQueryOnlySelf=false
-            sid=setFfmpegDir1
-              @/@Composite/@setPathButton/@onSelection/@complete/@ActionDefined/@setFfmpegDir1/@actions
-              sname=actions
-              sdescriptors=xworker.swt.actions.DialogActions/@DirectoryDialog/@actions1
-              sinheritDescription=false
-              sth_createIndex=false
-              sth_registMyChilds=false
-              sth_registDisabled=false
-              sth_noThingRegistViewer=false
-              sth_fileMonitor=false
-              sth_mark=false
-              sth_registQueryOnlySelf=false
-              sid=actions
-                @/@Composite/@setPathButton/@onSelection/@complete/@ActionDefined/@setFfmpegDir1/@actions/@open
-                sname=open
-                sisSynchronized=false
-                sthrowException=true
-                suseOtherAction=false
-                svarScope=Local
-                sdisableGlobalContext=false
-                Scode=
-#$@text#$@
-if(fileName != null){
-    def thing = world.getThing("_local.xworker.config.tools.ToolsConfig");
-    thing.set("ffmpegDir", fileName);
-    thing.save();
-}
-#$@text#$@
-                sinterpretationType=Action
-                screateLocalVarScope=false
-                ssaveReturn=false
-                sswitchResult=false
-                sdebugLog=false
-                sdescriptors=xworker.lang.actions.Actions/@GroovyAction
-                sinheritDescription=false
-                sth_createIndex=false
-                sth_registMyChilds=false
-                sth_registDisabled=false
-                sth_noThingRegistViewer=false
-                sth_fileMonitor=false
-                sth_mark=false
-                sth_registQueryOnlySelf=false
-                sid=open
+            sid=open
     @/@Composite/@mainSashForm
     sname=mainSashForm
     sstyle=VERTICAL
@@ -748,23 +617,17 @@ import org.eclipse.swt.custom.CTabItem;
 import java.lang.ProcessBuilder;
 import org.xmeta.ActionContext;
 import org.xmeta.util.ExceptionUtil;
-import xworker.tools.ToolsConfig;
 import org.xmeta.Thing;
+import xworker.tools.ffmpeg.FFmpeg;
+
 
 def ffmpeg = new Thing("xworker.tools.ffmpeg.FFmpeg");
+ffmpeg.set("ffmpegPath", FFmpeg.getFFmpegPath());
 //检查ffmpeg的目录是否存在，如果不存在设置
 def ffmpegDir = ffmpeg.doAction("getFFmepgPath", actionContext);
 if(ffmpegDir == null || ffmpegDir == ""){
-   ffmpegDir = ToolsConfig.getAttribute("ffmpegDir");   
-   if(ffmpegDir == null || ffmpegDir == ""){
-       setFfmpegDir(actionContext);
-       return;
-   }
-   def file = new File(ffmpegDir);
-   if(file.exists() == false){
-       setFfmpegDir(actionContext);
-       return;
-   }
+    setFfmpegDir(actionContext);
+    return;
 }
 
 //表单事物
@@ -925,10 +788,11 @@ if(cmdarray.length > 0){
                           sdisableGlobalContext=false
                           Scode=
 #$@text#$@
+import xworker.tools.ffmpeg.FFmpeg;
+
 if(fileName != null){
-    def thing = world.getThing("_local.xworker.config.tools.ToolsConfig");
-    thing.set("ffmpegDir", fileName);
-    thing.save();
+    FFmpeg.setFFmpegPath(fileName);
+    pathText.setText(fileName);
 }
 #$@text#$@
                           sinterpretationType=Action
@@ -1045,8 +909,15 @@ if(fileName != null){
     sdisableGlobalContext=false
     Scode=
 #$@text#$@
+import xworker.tools.ffmpeg.FFmpeg;
+
+def ffmpegPath = FFmpeg.getFFmpegPath();
+if(ffmpegPath != null){
+    pathText.setText(ffmpegPath);
+}
+
 def editorContainer = actionContext.parentContext.get("editorContainer");
-println editorContainer;
+//println editorContainer;
 if(editorContainer != null){
     def outlineParent = editorContainer.getOutlineParent();
     if(outlineParent != null){

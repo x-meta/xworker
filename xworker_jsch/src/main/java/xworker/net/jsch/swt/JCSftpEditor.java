@@ -11,18 +11,23 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.annotation.ActionField;
 import org.xmeta.annotation.ActionParams;
 import xworker.dataObject.DataObject;
 import xworker.io.FileLike;
 import xworker.lang.executor.Executor;
 import xworker.swt.app.View;
+import xworker.swt.xwidgets.io.FileListExplorer;
+import xworker.swt.xwidgets.io.FileListExplorerListener;
+import xworker.workbench.EditorParams;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JCSftpEditor {
+public class JCSftpEditor implements FileListExplorerListener {
     private static final String TAG = JCSftpEditor.class.getName();
 
     private boolean closeSession = false;
@@ -54,8 +59,47 @@ public class JCSftpEditor {
     @ActionField
     public xworker.swt.app.Workbench workbench;
 
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Object session = null;
+        String path = null;
+        if(content instanceof Thing){
+            Thing thing = (Thing) content;
+            if(thing.isThing("xworker.net.jsch.Session")){
+                session = thing;
+                path = "jcsftp:" + path;
+            }
+        }else if(content instanceof  DataObject){
+            DataObject dataObject = (DataObject) content;
+            if(dataObject.getMetadata().getDescriptor().isThing("xworker.app.server.dataobjects.Server")){
+                session = dataObject;
+                path = "jcsftp:" + dataObject.getString("id");
+            }
+        }else if(content instanceof Session){
+            session = content;
+            path = "jcsftp:" + session;
+        }
+        if(session != null){
+            return new EditorParams<Object>(self, path, session) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("session", this.getContent());
+
+                    return params;
+                }
+            };
+        }
+
+        return null;
+    }
+
     @ActionParams(names = "params")
     public void setContent(Map<String, Object> params){
+        localFileExplorer.addListener(this);
+        remoteFileExplorer.addListener(this);
+
         if(workbench != null){
             View progressView = (View) workbench.getView("progressView");
             if(progressView != null){
@@ -134,8 +178,19 @@ public class JCSftpEditor {
         channelSftp.connect();
         actionContext.g().put("channelSftp", channelSftp);
 
-        rootDir = new LsEntryFileLike(channelSftp, null, "/");
+        rootDir = new LsEntryFileLike(this, null, "/");
         remoteFileExplorer.setDir(rootDir);
+    }
+
+    public ChannelSftp getChannelSftp() throws JSchException{
+        if(channelSftp == null || channelSftp.isClosed()){
+            //重新连接
+            if(!session.isConnected()){
+                restart();
+            }
+        }
+
+        return channelSftp;
     }
 
     @ActionParams(names = "params")
@@ -149,7 +204,7 @@ public class JCSftpEditor {
             if (channelSftp != null) {
                 channelSftp.disconnect();
             }
-        }catch (Exception e){
+        }catch (Exception ignored){
 
         }
 
@@ -157,7 +212,7 @@ public class JCSftpEditor {
             if(session != null && closeSession){
                 session.disconnect();
             }
-        }catch(Exception e){
+        }catch(Exception ignored){
 
         }
     }
@@ -373,18 +428,36 @@ public class JCSftpEditor {
         }
     }
 
+    @Override
+    public void onSetDir(FileListExplorer fileListExplorer, FileLike<?> fileLike) {
+        localPathText.getDisplay().asyncExec(() ->{
+
+            if(fileListExplorer == this.localFileExplorer){
+                localPathText.setText(fileLike.getPath());
+            }else{
+                remotePathText.setText(fileLike.getPath());
+            }
+        });
+    }
+
     static class ProgressMonitor implements SftpProgressMonitor{
         xworker.app.view.swt.data.DataStore dataStore;
         DataObject data = null;
 
+        String src;
+        String dest;
         long max;
         int lastProgress = 0;
         public ProgressMonitor(Thing dataStore){
-            this.dataStore = xworker.app.view.swt.data.DataStore.getDataStore(dataStore);
+            if(dataStore != null) {
+                this.dataStore = xworker.app.view.swt.data.DataStore.getDataStore(dataStore);
+            }
         }
 
         @Override
         public void init(int op, String src, String dest, long max) {
+            this.src = src;
+            this.dest = dest;
             if(dataStore != null) {
                 data = new DataObject("xworker.net.jsch.swt.JCTermWorkbench/@Views/@progressView/@Composite/@progressTable/@progressDataStore/@dataObjects/@AbstractDataObject");
                 this.max = max;
@@ -407,15 +480,17 @@ public class JCSftpEditor {
 
         @Override
         public boolean count(long count) {
-            if(data != null) {
-                int progress = (int) (100d * count / max);
-                if(progress != lastProgress) {
+            int progress = (int) (100d * count / max);
+            if(progress != lastProgress) {
+                if(data != null) {
                     data.put("progress", progress);
-                    lastProgress = progress;
                 }
+                lastProgress = progress;
+            }
+            if(data != null) {
                 return true;
             }else{
-                Executor.info(TAG, "Count : " + count);
+                Executor.info(TAG, "copy : " + src + " " + progress + "%");
                 return true;
             }
         }
@@ -425,7 +500,7 @@ public class JCSftpEditor {
             if(data != null) {
                 data.put("progress", 100);
             }else{
-                Executor.info(TAG, "Copy end");
+                Executor.info(TAG, "Copy " + src + " end");
             }
         }
     }

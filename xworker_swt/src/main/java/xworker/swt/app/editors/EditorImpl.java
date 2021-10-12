@@ -30,6 +30,7 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	String id;
 	Control control;
 	IEditorContainer editorContainer;
+	boolean outlineCreated = false;
 	
 	public EditorImpl(IEditorContainer editorContainer, Thing editor, String id, ActionContext parentContext) {
 		this.editorContainer = editorContainer;
@@ -59,19 +60,32 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 创建编辑器自己。
-	 * 
-	 * @param parent
 	 */
 	public Control create(Composite parent) {
 		 control = editor.doAction("create", actionContext, "parent", parent);
 		 actions = actionContext.getObject("actions");
+
+
 		 return control;
 	}
-	
+
+	public boolean isOutlineCreated(){
+		return outlineCreated;
+	}
+
+	public void setOutlineCreated(boolean outlineCreated){
+		this.outlineCreated = outlineCreated;
+	}
+
+	public void createOutline(){
+		if(editorContainer.hasOutline()){
+			editor.doAction("createOutline", actionContext);
+			outlineCreated = true;
+		}
+	}
+
 	/**
 	 * 设置编辑器要编辑的内容。参数有编辑器自行定义。
-	 * 
-	 * @param params
 	 */
 	public void setContent(Map<String, Object> params) {
 		if(actions != null) {
@@ -81,9 +95,6 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 是否和当前正在编辑的内容一致。如果一致返回true，否则返回false。
-	 * 
-	 * @param params
-	 * @return
 	 */
 	public boolean isSameContent(Map<String, Object> params) {
 		if(actions == null) {
@@ -109,7 +120,6 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 数据是否已经被修改了。
-	 * @return
 	 */
 	public boolean isDirty() {
 		if(actions == null) {
@@ -126,8 +136,6 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 返回编辑器的短标题。
-	 * 
-	 * @return
 	 */
 	public String getSimpleTitle() {
 		if(actions == null) {
@@ -138,8 +146,6 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 返回编辑器的长标题。长标题通常显示在Shell的标题上。
-	 * 
-	 * @return
 	 */
 	public String getTitle() {
 		if(actions == null) {
@@ -151,8 +157,6 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 	
 	/**
 	 * 返回编辑器的概要组建。不存在返回null。
-	 * 
-	 * @return
 	 */
 	public Composite getOutline() {
 		if(actions != null) {
@@ -161,7 +165,14 @@ public class EditorImpl implements IEditor, Comparable<EditorImpl>{
 			return null;
 		}
 	}
-	
+
+	@Override
+	public void onOutlineCreated() {
+		if(actions != null) {
+			actions.doAction("onOutlineCreated", actionContext);
+		}
+	}
+
 	public void doDispose() {
 		if(actions != null) {
 			actions.doAction("doDispose", actionContext);

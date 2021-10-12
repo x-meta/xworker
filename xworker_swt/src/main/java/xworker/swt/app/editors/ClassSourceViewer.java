@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xmeta.ActionContext;
+import org.xmeta.Thing;
 import org.xmeta.World;
 import org.xmeta.util.ActionContainer;
 
 import xworker.swt.app.IEditor;
+import xworker.workbench.EditorParams;
 
 public class ClassSourceViewer {
 	public static void setContent(ActionContext actionContext) {
@@ -29,6 +31,43 @@ public class ClassSourceViewer {
 			ActionContainer classViewer = actionContext.getObject("classViewer");
 		    classViewer.doAction("setClass", actionContext, "cls", className);
 		}
+	}
+
+	public static void onOutlineCreated(ActionContext actionContext){
+		//概要
+		if(actionContext.get("classViewer") != null){
+			ActionContainer classViewer = actionContext.getObject("classViewer");
+			classViewer.doAction("setClass", actionContext, "cls", actionContext.get("className"));
+		}
+	}
+
+	public static EditorParams<Class<?>> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		Class<?> cls = null;
+		if(content instanceof  String){
+			try{
+				cls = Class.forName((String) content);
+			}catch(Exception ignore){
+			}
+		}else if(content instanceof Class){
+			cls = (Class<?>) content;
+		}
+
+		if(cls != null) {
+			final Class<?> c = cls;
+			return new EditorParams<Class<?>>(self, "DemoWeb:" + cls.getName(), cls) {
+				@Override
+				public Map<String, Object> getParams() {
+					Map<String, Object> params = new HashMap<>();
+					params.put("className", c.getName());
+
+					return params;
+				}
+			};
+		}
+
+		return null;
 	}
 	
 	public static String getSimpleTitle(ActionContext actionContext) {

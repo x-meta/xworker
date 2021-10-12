@@ -6,11 +6,14 @@ import org.xmeta.World;
 import org.xmeta.util.UtilThing;
 import xworker.lang.actions.ActionContainer;
 import xworker.lang.executor.Executor;
+import xworker.lang.util.Config;
 import xworker.workbench.IWorkbench;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * 集中零散的一些常用的静态方法以便容易找到和使用。
@@ -25,17 +28,9 @@ public class XWorkerUtils {
 	private static final String KEY_IDE = "__xworker_xworkerUtils_IDE__";
 	private static final String IDE_PERMISSION = "XWorker_Thing_IDE";
 	private static IIde ide = null;	
-	private static IThingUtils thingUtils = null;
+
 	private static Boolean isRWT = null;
 
-	static{
-		try {
-			Class<?> cls = Class.forName("xworker.util.ThingUtilsImpl");
-			thingUtils = (IThingUtils) cls.getConstructor().newInstance();
-		}catch(Exception ignored) {
-		}
-	}
-	
 	/**
 	 * 返回是否运行在Eclpise的RWT环境下。
 	 */
@@ -73,14 +68,18 @@ public class XWorkerUtils {
 	}
 	
 	public static void setIde(IIde ide){
+		setIde(ide, false);
+	}
+
+	public static void setIde(IIde ide, boolean force){
 		//只能存在一个IDE
 		if(isRWT()) {
 			IIde oldIde = (IIde) getRWTAttribute(KEY_IDE, null);
-			if(oldIde == null) {
+			if(oldIde == null || force) {
 				setRWTAttribute(KEY_IDE, ide, null);
 			}
 		}else {
-			if(XWorkerUtils.ide == null || XWorkerUtils.ide.isDisposed()){
+			if(XWorkerUtils.ide == null || XWorkerUtils.ide.isDisposed() || force){
 				XWorkerUtils.ide = ide;
 			}
 		}
@@ -747,41 +746,25 @@ public class XWorkerUtils {
     }   
     
     public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, ActionContext actionContext){
-    	if(thingUtils == null) {
-    		Executor.warn(TAG, "thingUtils not inited");
-    		return Collections.emptyList();
-    	}
-    	
     	if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}
-    	return thingUtils.searchRegistThings(registorThing, registType, keywords, actionContext);
+    	return ThingUtils.searchRegistThings(registorThing, registType, keywords, actionContext);
     }
 	
 	public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, boolean parent,  ActionContext actionContext){
-		if(thingUtils == null) {
-			Executor.warn(TAG, "thingUtils not inited");
-    		return Collections.emptyList();
-    	}
-    	
-		
 		if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}
-		return thingUtils.searchRegistThings(registorThing, registType, keywords, parent, actionContext);
+		return ThingUtils.searchRegistThings(registorThing, registType, keywords, parent, actionContext);
 	}
 	
 	public static List<Thing> searchRegistThings(Thing registorThing, String registType, List<String> keywords, boolean parent,  boolean noDescriptor, ActionContext actionContext){
-		if(thingUtils == null) {
-			Executor.warn(TAG, "thingUtils not inited");
-    		return Collections.emptyList();
-    	}
-    	
-		
+
 		if(keywords == null) {
     		keywords = Collections.emptyList();    		
     	}
-		return thingUtils.searchRegistThings(registorThing, registType, keywords, parent, noDescriptor, actionContext);
+		return ThingUtils.searchRegistThings(registorThing, registType, keywords, parent, noDescriptor, actionContext);
 	}
 	
 	/**
@@ -847,5 +830,154 @@ public class XWorkerUtils {
 		if (obj == null)
 			throw new NullPointerException(message + (thing != null ? ", thing: " + thing.getMetadata().getPath() : ""));
 		return obj;
+	}
+
+	/**
+	 * 解压一个ZipInputStream中的文件到XWorker的目录下。
+	 */
+	public static void unzipToXWorker(ZipInputStream zipInputStream, boolean verbose) throws IOException {
+		ZipEntry entry = null;
+		String webroot = World.getInstance().getPath() + "/";
+		while ((entry = zipInputStream.getNextEntry()) != null) {
+			if(entry.isDirectory()){
+				continue;
+			}
+
+			File outFile = new File(webroot + entry.getName());
+			if (!outFile.getParentFile().exists()) {
+				if(!outFile.getParentFile().mkdirs()){
+					throw new IOException("Can not create directory " + outFile.getParentFile());
+				}
+			}
+
+			try (FileOutputStream fout = new FileOutputStream(outFile)) {
+				byte[] bytes = new byte[4096];
+				int length = -1;
+				while ((length = zipInputStream.read(bytes)) != -1) {
+					fout.write(bytes, 0, length);
+				}
+			}
+			if(verbose){
+				Executor.info(TAG, "Unzip file to " + outFile.getPath());
+			}
+
+			zipInputStream.closeEntry();
+		}
+	}
+
+	/**
+	 * 遍历系统类库下的jar文件。
+	 * 查找jar根目录下的/xworker_resources.zip，如果存在则解压到xworker的目录下。
+	 * 查找jar根目录下的/xworker_init.conf，如果存在则遍历每一行，一行是一个模型的路径，如果模型存在，则执行它的run方法。
+	 */
+	public static void setup(){
+		//启动扫描模型注册，放到内存缓存中
+		ThingRegistUtils.startRegistThingCache();
+
+		//解压jar中的资源
+		World world = World.getInstance();
+		try {
+			for(String path : world.getClassLoader().getClassPath().split("[" + File.pathSeparator + "]")){
+				if(path.toLowerCase().endsWith(".jar")){
+					try {
+						URL url = null;
+						if(!hasProtocol(path)) {
+							url = new URL("jar:file:" + path + "!/xworker_resources.zip");
+						} else {
+							url = new URL("jar:" + path + "!/xworker_resources.zip");
+						}
+
+						try {
+							InputStream in = url.openStream();
+							if(in != null) {
+								Executor.info(TAG, "Unzip resources " + url);
+								ZipInputStream zin = new ZipInputStream(in);
+								unzipToXWorker(zin, false);
+								zin.close();
+								in.close();
+							}
+						}catch(Exception ignored) {
+							//Executor.info(TAG, "Extract zip " + url + " exception", e);
+						}
+					}catch(Exception ignored) {
+					}
+				}
+			}
+		}catch(Exception e) {
+			Executor.warn(TAG, "Extract xworker resources error", e);
+		}
+
+		//执行模型的run方法
+		try {
+			try {
+				while (!ThingUtils.isFirstCacheFinised()) {
+					Thread.sleep(100);
+				}
+			}catch(Exception ignore){
+			}
+
+			for(String path : world.getClassLoader().getClassPath().split("[" + File.pathSeparator + "]")){
+				if(path.toLowerCase().endsWith(".jar")){
+					try {
+						URL url = null;
+						if(!hasProtocol(path)) {
+							url = new URL("jar:file:" + path + "!/xworker_init.conf");
+						} else {
+							url = new URL("jar:" + path + "!/xworker_init.conf");
+						}
+
+						try {
+							InputStream in = url.openStream();
+							if(in != null) {
+								Executor.info(TAG, "Execute init conf file " + url);
+								BufferedReader br = new BufferedReader(new InputStreamReader(in));
+								String line = null;
+								while((line = br.readLine()) != null){
+									line = line.trim();
+									Thing thing = world.getThing(line);
+									if(thing != null){
+										Executor.info(TAG, "Execute " + line + " run action");
+										thing.doAction("run", new ActionContext());
+									}
+								}
+								br.close();
+								in.close();
+							}
+						}catch(Exception ignored) {
+							//Executor.info(TAG, "Extract zip " + url + " exception", e);
+						}
+					}catch(Exception ignored) {
+					}
+				}
+			}
+		}catch(Exception e) {
+			Executor.warn(TAG, "Execute xworker init error", e);
+		}
+
+		String OS = world.getOS();
+		String worldPath = world.getPath();
+		String PROCESSOR_ARCHITECTURE = world.getJVMBit();
+		Executor.info(TAG, "If this program starts from a java project:");
+		String library = worldPath + "/os/library/"	+ OS;
+		Executor.info(TAG, "    Add JVM options -Djava.library.path=" + library + "_" + PROCESSOR_ARCHITECTURE +"/ to Run/Debug Configuration");
+		Executor.info(TAG, "    Add jars in "  + worldPath + "/lib/; "  + worldPath + "/os/lib/lib_"
+				+ OS + "_" + PROCESSOR_ARCHITECTURE +"/ to java project");
+	}
+
+	private static boolean hasProtocol(String path) {
+		try {
+			URL purl = new URL(path);
+			return purl.getProtocol() != null;
+		}catch(Exception e) {
+			return false;
+		}
+	}
+
+	public static String getConfigValue(String configName, String path){
+		return Config.getConfig(configName, path);
+	}
+
+	public static void setConfigValue(String configName, String path, String value){
+		Config.setConfig(configName, path, value);
 	}
 }

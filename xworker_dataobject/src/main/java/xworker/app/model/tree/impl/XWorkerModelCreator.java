@@ -26,7 +26,7 @@ import org.xmeta.Thing;
 import org.xmeta.ThingIndex;
 
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 
 public class XWorkerModelCreator {
     public static Object getRoot(ActionContext actionContext){
@@ -45,7 +45,7 @@ public class XWorkerModelCreator {
         }
         
         Map<String, Object> node = new HashMap<String, Object>();
-        TreeModelUtil.setAttributes(self, Index.getIndexId(index), node);
+        TreeModelUtils.setAttributes(self, Index.getIndexId(index), node);
         node.put("text", index.getLabel());
         node.put("icon",  getIcon(index));
         node.put("index", index);
@@ -103,7 +103,7 @@ public class XWorkerModelCreator {
         	}
         	
         	 Map<String, Object> node = new HashMap<String, Object>();             
-             TreeModelUtil.setAttributes(self, Index.getIndexId(index), node);
+             TreeModelUtils.setAttributes(self, Index.getIndexId(index), node);
              node.put("text", index.getLabel());
              node.put("icon",  getIcon(index));
              node.put("index", index);

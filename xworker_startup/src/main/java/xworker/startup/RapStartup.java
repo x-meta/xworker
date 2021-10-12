@@ -124,7 +124,7 @@ public class RapStartup {
 			//过滤参数中的引号
 			for(int i=0; i<args.length; i++){				
 				String arg = args[i];
-				if(arg.length() >= 2 && arg.charAt(0) == '"' && arg.charAt(arg.length()) == '"'){
+				if(arg.startsWith("\"") && arg.endsWith("\"")){
 					args[i] = arg.substring(1, arg.length() - 1);
 				}
 			}

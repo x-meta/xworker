@@ -33,7 +33,7 @@ public class CommandExecutor extends MapData{
 	//private static Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 	//private static final String TAG = CommandExecutor.class.getName();
 	
-	Stack<CommandDomain>  domainStack = new Stack<CommandDomain>();
+	Stack<CommandDomain>  domainStack = new Stack<>();
 	
 	/** 动作上下文，包含窗口等的动作上下文 */
 	ActionContext actionContext;
@@ -90,9 +90,6 @@ public class CommandExecutor extends MapData{
 	
 	/**
 	 * 获取可选择的内容。
-	 * 
-	 * @param text
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public List<SelectContent> getContents(String text){
@@ -100,9 +97,9 @@ public class CommandExecutor extends MapData{
 		if(rootCmd == null || currentCmd.getCommandThing() == null){
 			CommandDomain domain = this.getDomain();
 			List<Thing> list = domain.getCommands();
-			List<SelectContent> cmds = new ArrayList<SelectContent>();
+			List<SelectContent> cmds = new ArrayList<>();
 			
-			String texts[] = text.split("[ ]");
+			String[] texts = text.split("[ ]");
 			for(int i=0; i<texts.length; i++) {
 				texts[i] = texts[i].trim();
 			}
@@ -116,7 +113,7 @@ public class CommandExecutor extends MapData{
 				
 				boolean ok = true;
 				for(String txt : texts) {
-					if(name.indexOf(txt) != -1) {
+					if(name.contains(txt)) {
 						continue;
 					}
 					
@@ -150,12 +147,12 @@ public class CommandExecutor extends MapData{
 				return Collections.emptyList();
 			}else{
 				//过滤条件
-				if(text != null || !"".equals(text)) {
+				if(!"".equals(text)) {
 					text = text.toLowerCase();
-					List<SelectContent> list = new ArrayList<SelectContent>();
+					List<SelectContent> list = new ArrayList<>();
 					for(SelectContent sc : contents) {
-						if((sc.label != null && sc.label.toLowerCase().indexOf(text) != -1) || 
-								(sc.value != null && sc.value.toLowerCase().indexOf(text) != -1)) {
+						if((sc.label != null && sc.label.toLowerCase().contains(text)) ||
+								(sc.value != null && sc.value.toLowerCase().contains(text))) {
 							list.add(sc);
 						}
 					}
@@ -198,8 +195,6 @@ public class CommandExecutor extends MapData{
 	
 	/**
 	 * 设置执行器中的浏览器中的网页地址。
-	 * 
-	 * @param url
 	 */
 	public void setUrl(String url) {
 		Browser browser = actionContext.getObject("browser");
@@ -210,8 +205,6 @@ public class CommandExecutor extends MapData{
 	
 	/**
 	 * 设置执行器中的浏览器中网页内容。
-	 * 
-	 * @param html
 	 */
 	public void setHtml(String html) {
 		Browser browser = actionContext.getObject("browser");
@@ -282,8 +275,6 @@ public class CommandExecutor extends MapData{
 	
 	/**
 	 * 刷新树。
-	 * 
-	 * @param command
 	 */
 	public void refresh(Command command){
 		Tree tree = (Tree) actionContext.get("tree");
@@ -322,7 +313,7 @@ public class CommandExecutor extends MapData{
 	}
 	
 	public void createCommandTreeItem(Object parentItem, Command command){
-		TreeItem item = null;
+		TreeItem item;
 		if(parentItem instanceof Tree){
 			item = new TreeItem((Tree) parentItem, SWT.None);
 		}else{
@@ -336,12 +327,12 @@ public class CommandExecutor extends MapData{
 	}
 	
 	private void initTreeItem(TreeItem item, Command command){
-		String label = null;
+		String label;
 		if(command.getParamThing() != null) {
 			label = command.getParamThing().getMetadata().getName() + ": ";
 			
 			if(command.isExecuted()) {
-				label = label + String.valueOf(command.getResult());
+				label = label + command.getResult();
 			}else {
 				if(command.getCommandThing() != null) {
 					label = label + command.getCommandThing().getMetadata().getLabel() + "()";
@@ -388,7 +379,7 @@ public class CommandExecutor extends MapData{
 			doSearch("");
 		}else{
 			for(TreeItem item : tree.getItems()){
-				if(checkStatus(tree, item) == false){
+				if(!checkStatus(tree, item)){
 					return;
 				}
 			}
@@ -424,7 +415,7 @@ public class CommandExecutor extends MapData{
 		initTreeItem(item, command);
 		if(command.isReady()){		
 			for(TreeItem child : item.getItems()){
-				if(checkStatus(tree, child) == false){
+				if(!checkStatus(tree, child)){
 					return false;
 				}
 			}
@@ -476,7 +467,7 @@ public class CommandExecutor extends MapData{
 		ActionContext ac = new ActionContext();
 		ac.put("parent", parentShell);		
 		Thing shellThing = World.getInstance().getThing("xworker.lang.command.CommandExecutor");
-		Shell shell = (Shell) shellThing.doAction("create", ac);
+		Shell shell = shellThing.doAction("create", ac);
 		shell.setText(self.getMetadata().getLabel());
 		
 		CommandExecutor executor = new CommandExecutor(self, ac, actionContext);
@@ -508,28 +499,28 @@ public class CommandExecutor extends MapData{
 		doSearch("");
 		
 		
-		String domainPath = null;
+		StringBuilder domainPath = null;
 		for(CommandDomain domain : domainStack) {
 			if(domainPath == null) {
-				domainPath = domain.getLabel();
+				domainPath = new StringBuilder(domain.getLabel());
 			}else {
-				domainPath = domainPath + " / " + domain.getLabel();
+				domainPath.append(" / ").append(domain.getLabel());
 			}
 		}
 		
 		Button editDomainButton = actionContext.getObject("editDomainButton");
 		if(domainPath == null) {
-			domainPath = UtilString.getString("lang:d=未设置命令域&en=Command domain not setted", actionContext);
-			if(editDomainButton != null && editDomainButton.isDisposed() == false) {
+			domainPath = new StringBuilder(UtilString.getString("lang:d=未设置命令域&en=Command domain not setted", actionContext));
+			if(editDomainButton != null && !editDomainButton.isDisposed()) {
 				editDomainButton.setEnabled(false);
 			}
 		}else {
-			if(editDomainButton != null && editDomainButton.isDisposed() == false) {
+			if(editDomainButton != null && !editDomainButton.isDisposed()) {
 				editDomainButton.setEnabled(true);
 			}
 		}
 		
-		setDomainPathLabel(domainPath);
+		setDomainPathLabel(domainPath.toString());
 	}
 
 	public ActionContext getActionContext() {

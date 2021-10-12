@@ -9,6 +9,7 @@ public class TestCondition {
     public static void print(Condition condition){
         System.out.println("-------------------------------");
         System.out.println(condition.toSql());
+        System.out.println(condition.toSql(true));
         List<ConditionValue> values = condition.getConditionValueList();
         System.out.println("value size: " + values.size());
         int index = 1;
@@ -72,6 +73,10 @@ public class TestCondition {
             condition.orclauseTemplate("name", Condition.in, "select id from user where %%SQL%% t").eq("name", null);
             print(condition);
 
+            condition = new Condition();
+            condition.in("name", "a", "b", "c").and().eq("sex", null).oreq("sex", "fmale");
+            condition.sql("age", "age=10");
+            print(condition);
         }catch(Exception e){
             e.printStackTrace();
         }

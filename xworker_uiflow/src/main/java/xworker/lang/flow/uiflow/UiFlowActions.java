@@ -1,5 +1,6 @@
 package xworker.lang.flow.uiflow;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,8 @@ import org.xmeta.util.UtilThing;
 
 import xworker.lang.flow.uiflow.widgets.ResizeableGraphNode;
 import xworker.swt.util.XWorkerTreeUtil;
+import xworker.util.ThingUtils;
+import xworker.util.XWorkerUtils;
 
 public class UiFlowActions {
 	public static GraphNode createZestGraphNode(ActionContext actionContext){
@@ -217,6 +220,17 @@ public class UiFlowActions {
 	
 	public static ActionFlow runAsAction(ActionContext actionContext){
 		Thing self = actionContext.getObject("self");
+
+		if(!XWorkerUtils.hasWebServer()){
+			try {
+				ThingUtils.startRegistThingCache();
+
+				Class<?> webServer = Class.forName("xworker.webserver.XWorkerWebServer");
+				Method run = webServer.getMethod("run");
+				run.invoke(null);
+			}catch(Exception ignored){
+			}
+		}
 		
 		String runMethod = self.getStringBlankAsNull("runMethod");
 		if("shell".equals(runMethod)){

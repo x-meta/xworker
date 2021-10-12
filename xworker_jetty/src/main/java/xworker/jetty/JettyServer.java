@@ -65,17 +65,11 @@ public class JettyServer {
 	        
 	        // create connector for https
 	        ServerConnector httpsConnector = new ServerConnector(server, sslContextFactory);
-	        int sslPort = self.doAction("getSslPort", actionContext);
-	        if(sslPort <= 0) {
-	        	sslPort = 443;
-	        }
-	        httpsConnector.setPort(443);
+	        httpsConnector.setPort(port);
 	        
 	        // Set connector
 	        server.addConnector(httpsConnector);
-		}
-		
-		if(port > 0) {
+		}else{
 	        ServerConnector httpConnector = new ServerConnector(server);
 	        httpConnector.setPort(port);
 	        server.addConnector(httpConnector);

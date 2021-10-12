@@ -14,6 +14,7 @@ import org.xmeta.util.UtilMap;
 import org.xmeta.util.UtilString;
 
 import freemarker.template.TemplateException;
+import xworker.content.ContentHandler;
 import xworker.swt.ActionContainer;
 import xworker.swt.design.Designer;
 import xworker.swt.xwidgets.SplitButton;
@@ -81,11 +82,15 @@ public class ThingRegistSelector {
 			//autoLoad = true;
 		}
 		Thing actionsThing = world.getThing("xworker.swt.xworker.prototype.ThingRegistSelector/@actions");
-		
+		Object contentHandler = self.doAction("getContentHandler", actionContext);
+
 		ActionContext ac = new ActionContext();
 		ac.put("parent", actionContext.get("parent"));
 		ac.put("controlThing", self);
 		ac.put("parentContext", actionContext);
+		if(contentHandler instanceof ContentHandler){
+			ac.put("contentHandler", contentHandler);
+		}
 		Designer.pushCreator(self);
 		try{
 			control = (Control) controlThing.doAction("create", ac);

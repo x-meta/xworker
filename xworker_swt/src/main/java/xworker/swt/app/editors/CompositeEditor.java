@@ -1,5 +1,6 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Image;
@@ -15,8 +16,37 @@ import org.xmeta.util.UtilMap;
 import xworker.swt.app.IEditor;
 import xworker.swt.util.SwtUtils;
 import xworker.util.UtilData;
+import xworker.workbench.EditorParams;
 
 public class CompositeEditor {
+
+	public static EditorParams<Thing> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		Thing thing = null;
+		if(content instanceof  String){
+			thing = World.getInstance().getThing((String) content);
+		}else if(content instanceof Thing){
+			thing = (Thing) content;
+		}
+		if(thing != null){
+			if(thing.isThing("xworker.swt.widgets.Composite")){
+				String path = thing.getMetadata().getPath();
+				return new EditorParams<Thing>(self, "Composite:" + path, thing) {
+					@Override
+					public Map<String, Object> getParams() {
+						Map<String, Object> params = new HashMap<>();
+						params.put("composite", this.getContent().getMetadata().getPath());
+
+						return params;
+					}
+				};
+			}
+		}
+
+		return null;
+	}
+
 	public static void setContent(ActionContext actionContext) {
 		Map<String, Object> params = actionContext.getObject("params");
 		
@@ -59,7 +89,15 @@ public class CompositeEditor {
 		    //System.out.println(actions);
 		}
 	}
-		
+
+	public static void onOutlineCreated(ActionContext actionContext){
+		invokeEditorActions("onOutlineCreated", actionContext);
+	}
+
+	public static Object createOutline(ActionContext actionContext){
+		return invokeEditorActions("createOutline", actionContext);
+	}
+
 	private static <T> T invokeEditorActions(String name, ActionContext actionContext) {
 		ActionContext editorContext = actionContext.getObject("editorContext");
 		if(editorContext == null) {

@@ -30,7 +30,7 @@ public class QuickContent {
 
         if(isType(type, strings)){
             //String类型
-            return new StringContent(type, self.doAction("getString", actionContext));
+            return new StringContent(self, type, self.doAction("getString", actionContext));
         }else if(isType(type, regists)){
             String content = self.doAction("getString", actionContext);
             if(content == null){
@@ -43,7 +43,7 @@ public class QuickContent {
                 return null;
             }
             Thing registThing = World.getInstance().getThing(ps[1]);
-            ThingRegistContent registTContent = new ThingRegistContent(type, registThing);
+            ThingRegistContent registTContent = new ThingRegistContent(self, type, registThing);
             registTContent.setRegistType(ps[0]);
             if(registThing == null){
                 Executor.warn(TAG, "RegistThing is null, path=" + self.getMetadata().getPath());
@@ -104,7 +104,7 @@ public class QuickContent {
                 return null;
             }
 
-            return new ThingContent(type, content);
+            return new ThingContent(self, type, content);
         }
     }
 

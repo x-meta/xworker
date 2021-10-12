@@ -30,7 +30,10 @@ import xworker.ui.function.FunctionRequestUIFactory;
 import xworker.ui.function.FunctionRequestUtil;
 import xworker.ui.function.uiimpls.DesignUI;
 import xworker.ui.function.uiimpls.DialogUI;
+import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
+
+import java.lang.reflect.Method;
 
 public class FunctionActions {
 	private static Logger logger = LoggerFactory.getLogger(FunctionActions.class);
@@ -195,7 +198,18 @@ public class FunctionActions {
 	 */
 	public static Object runFunctionAction(ActionContext actionContext){
 		Thing self = (Thing) actionContext.get("self");
-		
+
+		if(!XWorkerUtils.hasWebServer()){
+			try {
+				ThingUtils.startRegistThingCache();
+
+				Class<?> webServer = Class.forName("xworker.webserver.XWorkerWebServer");
+				Method run = webServer.getMethod("run");
+				run.invoke(null);
+			}catch(Exception ignored){
+			}
+		}
+
 		Thing function = self.doAction("getFunction", actionContext);
 		String uiMode = self.doAction("getUI", actionContext);
 		
@@ -220,7 +234,7 @@ public class FunctionActions {
 			FunctionRequest request = new FunctionRequest(function, null, false, actionContext);
 			FunctionRequestUI ui = null;
 			if(XWorkerUtils.getIde() == null){
-				ui = new DialogUI();	
+				ui = new DialogUI();
 			}else{
 				ui = new DesignUI();
 			}

@@ -2,6 +2,7 @@ package xworker.swt.app.editors;
 
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,12 +23,40 @@ import org.xmeta.util.UtilMap;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.xworker.content.SwtQuickContentHandler;
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class RegistThingEditor {
 	private static final String TAG = RegistThingEditor.class.getName();
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Thing thing = null;
+        if (content instanceof String) {
+            thing = World.getInstance().getThing((String) content);
+        }else  if(content instanceof Thing){
+            thing = (Thing) content;
+        }
+        if(thing != null && (thing.isThing("xworker.swt.xworker.ThingRegistThing") || thing.isThing("xworker.lang.util.ThingIndex"))){
+            return new EditorParams<Object>(self, "thingregistorresgistor:" + thing.getMetadata().getPath(), thing) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("thing", this.getContent());
+
+                    return params;
+                }
+            };
+        }
+
+        return null;
+    }
+
     public Object createDataParams(){
         //xworker.swt.app.editors.RegistThingEditor/@actions1/@createDataParams
         Object data = actionContext.getObject("data");
@@ -78,7 +107,22 @@ public class RegistThingEditor {
             registTypeCombo.setText((String) actionContext.getObject("type"));
         }
     }
-    
+
+    public void onOutlineCreated(){
+        Thing thing = actionContext.getObject("thing");
+        Browser browser = actionContext.getObject("topicBrowser");
+        if(browser != null && !browser.isDisposed()){
+            if(thing != null){
+                SwtUtils.setThingDesc(thing, browser);
+            }
+
+            SwtQuickContentHandler contentHandler = actions.doAction("getContentHandler", actionContext);
+            if(contentHandler != null){
+                contentHandler.setBrowser(browser);
+            }
+        }
+    }
+
     public void setContent(){
         //xworker.swt.app.editors.RegistThingEditor/@actions/@setContent
         //事物参数
@@ -102,7 +146,7 @@ public class RegistThingEditor {
         }
         //log.info("thing=" + data);  
         Thing viewer = (Thing) thing;
-        if(UtilData.isTrue(actionContext.get("forceUseDefaultOpenMethod")) == false){
+        if(!UtilData.isTrue(actionContext.get("forceUseDefaultOpenMethod"))){
             viewer = getViewer((Thing) thing);
         }
         //log.info("viewer = " + viewer);
@@ -117,7 +161,8 @@ public class RegistThingEditor {
             //显示事物的文档
             actions.doAction("openBrowserTab", actionContext, "thing", thing, "acContext", actionContext);            
         }
-        
+
+        onOutlineCreated();
         
     }
     

@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<thing name="Editor" descriptors="xworker.lang.MetaDescriptor3">&#xd;
+    <description><![CDATA[<p>编辑器，用来编辑内容的。</p>
+
+<p>编辑器的打开方式</p>
+
+<ul>
+	<li><strong>直接打开</strong><br />
+	通过代码或动作模型，指定编辑器和参数打开。<br />
+	&nbsp;</li>
+	<li><strong>通过内容打开</strong><br />
+	首先编辑器要注册可以编辑的内容（通过Contents子节点），其次是要实现EditorParams createParams(Object content)方法，如果createParams()返回不为null，表示可以编辑该内容。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>&#xd;
+    <actions>&#xd;
+        <NOOP name="createParams" _xmeta_id_="createDataParams">&#xd;
+            <ins>&#xd;
+                <param name="content" type="java.lang.Object"/>&#xd;
+            </ins>&#xd;
+        </NOOP>&#xd;
+        <GetJsonObject name="getExampleParams" descriptors="xworker.lang.actions.ActionUtil/@GetJsonObject"
+             attributeName="exampleParams"/>&#xd;
+        <GetObject name="getObjectForThingLoader" _xmeta_id_="7321" descriptors="xworker.lang.actions.ActionUtil/@GetData"
+             attributeName="objectForThingLoader" usage="params"/>&#xd;
+        <GetClass name="getObjectClassForThingLoader" _xmeta_id_="7322" descriptors="xworker.lang.actions.ActionUtil/@GetClass"
+             attributeName="objectClassForThingLoader" usage="params"/>&#xd;
+        <GetStringList name="getPlatforms" _xmeta_id_="36084" descriptors="xworker.lang.actions.ActionUtil/@GetStringList"
+             attributeName="platforms" usage="params"/>&#xd;
+    </actions>&#xd;
+    <attribute name="name"/>&#xd;
+    <attribute name="label"/>&#xd;
+    <attribute name="platforms" _xmeta_id_="platform" inputtype="inputSelect">&#xd;
+        <description><![CDATA[<p>支持的平台列表。</p>
+
+<p>如果不填表示支持所有。</p>
+]]></description>&#xd;
+        <value name="swt" value="swt"/>&#xd;
+        <value name="javafx" value="javafx"/>&#xd;
+        <value name="html" value="html"/>&#xd;
+    </attribute>&#xd;
+    <attribute name="objectForThingLoader" size="40">&#xd;
+        <description><![CDATA[<p>用于使用Java代码实现编辑器相关的方法，可以参看<strong>帮助和示例-&gt;动态模型-&gt;ThingLoader</strong>。</p>
+
+<p>&nbsp;</p>
+]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="objectClassForThingLoader" inputtype="openWindow" size="60" inputattrs="xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|">&#xd;
+        <description><![CDATA[<p>用于使用Java代码实现编辑器相关的方法，可以参看<strong>帮助和示例-&gt;动态模型-&gt;ThingLoader</strong>。</p>
+
+<p>当objectForThingLoader不存在时，才使用本属性通过类实例化对象。</p>
+]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="exampleParams" inputtype="textarea">&#xd;
+        <default><![CDATA[{
+}]]></default>&#xd;
+        <description><![CDATA[<p>示例参数，在注册浏览器中查看一个Editor时会生成示例，会用到这个参数。</p>
+
+<p>JSON格式字符串。</p>]]></description>&#xd;
+    </attribute>&#xd;
+    <attribute name="description" inputtype="html"/>&#xd;
+</thing>

@@ -32,19 +32,41 @@ import xworker.lang.executor.Executor;
 public class DataSouceActionContextActions {
 	//private static Logger log = LoggerFactory.getLogger(DataSouceActionContextActions.class);
 	private static final String TAG = DataSouceActionContextActions.class.getName();
-	
+	/*
+	public static int successCount = 0;
+	public static int doInitCount= 0;
+	public static int doSuccessCount= 0;
+	public static int doExceptionCount= 0;
+	public static int failureCount = 0;
+
+	public static void debug(){
+		System.out.println("Do init count: " + doInitCount);
+		System.out.println("Do success count: " + doSuccessCount);
+		System.out.println("Do exception count: " + doExceptionCount);
+		System.out.println("Success count: " + successCount);
+		System.out.println("Failure count: " + failureCount);
+	}
+
+	public static void clear(){
+		doInitCount = 0;
+		doSuccessCount = 0;
+		doExceptionCount = 0;
+		successCount = 0;
+		failureCount = 0;
+	}
+	*/
 	public static Thing getDataSource(Thing self, String dsPath, ActionContext acContext){
 		World world = World.getInstance();
 		Object dataSourceThing = null;
 		Thing realSelf = null;
 		if(dsPath.startsWith("self.")){
-		    dsPath = dsPath.substring(5, dsPath.length());
+		    dsPath = dsPath.substring(5);
 		    realSelf= (Thing) acContext.get("self");
 		    dsPath = realSelf.getString(dsPath);
 		}
 		
 		if(dsPath.startsWith("action.")){
-			String action = dsPath.substring(7, dsPath.length());
+			String action = dsPath.substring(7);
 			Object obj = ((Thing) acContext.get("self")).doAction(action);
 			if(obj instanceof Thing){
 				dataSourceThing = (Thing) obj;
@@ -54,32 +76,32 @@ public class DataSouceActionContextActions {
 			}
 		}
 
-		if(dsPath.startsWith("action:")){
-			String action = dsPath.substring(7, dsPath.length());
+		if(dataSourceThing == null && dsPath.startsWith("action:")){
+			String action = dsPath.substring(7);
 			Action ac = World.getInstance().getAction(action);
 			Object obj = ac.run(acContext);
 			if(obj instanceof Thing){
-				dataSourceThing = (Thing) obj;
+				dataSourceThing = obj;
 				dsPath = null;
 			}else if(obj != null){
 				dsPath = obj.toString();
 			}
 		}
 		
-		if(dsPath.startsWith("var:")){
-		    dsPath = dsPath.substring(4, dsPath.length());
+		if(dataSourceThing == null && dsPath.startsWith("var:")){
+		    dsPath = dsPath.substring(4);
 		    dataSourceThing = acContext.get(dsPath);
 		    if(dataSourceThing instanceof String){
 		        dataSourceThing = world.getThing((String) dataSourceThing);
 		    }
-		}else if(dsPath.startsWith("ognl:")){
-			dsPath = dsPath.substring(5, dsPath.length());
+		}else if(dataSourceThing == null && dsPath.startsWith("ognl:")){
+			dsPath = dsPath.substring(5);
 			dataSourceThing = OgnlUtil.getValue(dsPath, acContext);
 		    if(dataSourceThing instanceof String){
 		        dataSourceThing = world.getThing((String) dataSourceThing);
 		    }
-		}else if(dsPath.startsWith("parent:")){
-			dsPath = dsPath.substring(7, dsPath.length());
+		}else if(dataSourceThing == null && dsPath.startsWith("parent:")){
+			dsPath = dsPath.substring(7);
 			ActionContext ac = acContext;
 			while(ac != null){
 				dataSourceThing = ac.get(dsPath);
@@ -99,21 +121,18 @@ public class DataSouceActionContextActions {
 				acParent = ac.getObject("parentContext");
 				if(acParent instanceof ActionContext){
 					ac = (ActionContext) acParent;
-					continue;
 				}
 			}
 			
-		}else if(dsPath.startsWith("_c_.")) {
-			dsPath = dsPath.substring(4, dsPath.length());
+		}else if(dataSourceThing == null && dsPath.startsWith("_c_.")) {
+			dsPath = dsPath.substring(4);
 			dataSourceThing = Configuration.getConfiguration(dsPath, realSelf != null ? realSelf : self, acContext);
 		}
 
 		if(dataSourceThing == null){
 		    dataSourceThing = world.getThing(dsPath);
 		}
-		
-		
-		
+
 		return getDataSourceRef((Thing) dataSourceThing);
 	}
 	
@@ -136,10 +155,7 @@ public class DataSouceActionContextActions {
 		ActionContext acContext = (ActionContext) actionContext.get("acContext");
 		
 		//数据源事物		
-		Object dataSourceThing = null;
-		if(self == null){
-			System.out.println("self is null");actionContext.getScopes();
-		}
+		Thing dataSourceThing;
 		String dsPath = self.getString("dataSourcePath");
 		
 		dataSourceThing = getDataSource(self, dsPath, acContext);
@@ -160,24 +176,22 @@ public class DataSouceActionContextActions {
 		    boolean startByMe = false;
 		    Connection con = null;
 		    if(dsContext != null){
-		        startByMe = false; //不是本上下文启动的
-		        con = (Connection) dsContext.get("con");
+				//不是本上下文启动的
+				con = (Connection) dsContext.get("con");
 		        //log.info(self.metadata.path + " connection inherited");
 		        try{
-		        if(con.getAutoCommit() && self.getBoolean("transaction")){
-		            con.setAutoCommit(false);
-		            transaction = true; //标记本事物开始了事物            
-		            //log.info(self.metadata.path + " transaction started");
-		        }else{
-		            transaction = false;
-		        }
-		        }catch(SQLException e){
+					if(con.getAutoCommit() && self.getBoolean("transaction")){
+						con.setAutoCommit(false);
+						transaction = true; //标记本事物开始了事物
+						//log.info(self.metadata.path + " transaction started");
+					}
+				}catch(SQLException e){
 		        	//log.info("" + dataSourceThing);
 		        	//acContext.printStackTrace();
-		        	throw e;
+					throw e;
 		        }
 		    }else{
-		        con = (Connection) ((Thing) dataSourceThing).doAction("getConnection", actionContext);
+		        con = dataSourceThing.doAction("getConnection", actionContext);
 		        //log.info(self.metadata.path + " connection getted,autoCommit=" + con.getAutoCommit() + ",transaction=" + self.getBoolean("transaction") );
 		        startByMe = true; //是本上下文启动的
 		        if(self.getBoolean("transaction")){
@@ -187,15 +201,14 @@ public class DataSouceActionContextActions {
 		        }else{
 		            //log.info("setaautocommit=true");
 		            con.setAutoCommit(true);
-		            transaction = false;
-		        }
+				}
 		        //把本上下文放入到动作上下文的上下文中，已被子动作判断继承
-		        acContext.peek().getContexts().put((Thing) dataSourceThing, actionContext);
+		        acContext.peek().getContexts().put(dataSourceThing, actionContext);
 		        actionContext.getScope(0).put("con", con);
 		    }
 		    Bindings scope = acContext.peek();
 		    scope.put(self.getString("connectionName"), con);    
-		    scope.put("dbType", DataSourceActions.getDbType((Thing) dataSourceThing));
+		    scope.put("dbType", DataSourceActions.getDbType(dataSourceThing));
 		    actionContext.getScope(0).put("transaction", transaction);
 		    actionContext.getScope(0).put("startByMe", startByMe);
 		}else{
@@ -205,7 +218,7 @@ public class DataSouceActionContextActions {
 	
 	public static void success(ActionContext actionContext) throws SQLException{
 		//如果连接是自己启动的或者自己启动了新事务
-		if(actionContext.get("con") != null && ((Boolean) actionContext.get("startByMe") || (Boolean) actionContext.get("transaction") == true)){
+		if(actionContext.get("con") != null && ((Boolean) actionContext.get("startByMe") || (Boolean) actionContext.get("transaction"))){
 			Connection con = (Connection) actionContext.get("con");
 		    try{
 		        //本上下文取的连接
@@ -224,7 +237,7 @@ public class DataSouceActionContextActions {
 	
 	public static void exception(ActionContext actionContext) throws SQLException{
 		//如果连接是自己启动的或者自己启动了新事务
-		if(actionContext.get("con") != null && ((Boolean) actionContext.get("startByMe") || (Boolean) actionContext.get("transaction") == true)){
+		if(actionContext.get("con") != null && ((Boolean) actionContext.get("startByMe") || (Boolean) actionContext.get("transaction"))){
 			Connection con = (Connection) actionContext.get("con");
 		    try{
 		        //本上下文取的连接

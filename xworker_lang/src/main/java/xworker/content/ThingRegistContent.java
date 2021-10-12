@@ -3,6 +3,7 @@ package xworker.content;
 import org.xmeta.Thing;
 
 public class ThingRegistContent implements Content<Thing>{
+    Thing thing;
     String type;
     Thing content;
     String descriptor;
@@ -10,7 +11,8 @@ public class ThingRegistContent implements Content<Thing>{
     String contentDisplayType;
     String registType;
 
-    public ThingRegistContent(String type, Thing content){
+    public ThingRegistContent(Thing thing, String type, Thing content){
+        this.thing = thing;
         this.type = type;
         this.content = content;
     }
@@ -23,6 +25,11 @@ public class ThingRegistContent implements Content<Thing>{
     @Override
     public Thing getContent() {
         return content;
+    }
+
+    @Override
+    public Thing getThing() {
+        return thing;
     }
 
     public String getDescriptor() {

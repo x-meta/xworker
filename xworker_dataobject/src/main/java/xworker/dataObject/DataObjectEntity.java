@@ -13,7 +13,10 @@ import org.xmeta.Thing;
 
 import xworker.dataObject.cache.DataObjectCache;
 import xworker.dataObject.query.Condition;
+import xworker.dataObject.query.QueryConfig;
 import xworker.task.UserTask;
+
+import javax.management.Query;
 
 public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	public abstract T createInstance() ;
@@ -213,8 +216,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 
 	/**
 	 * 设置是否已初始化，如果未初始化，那么字段变动时不会记录到脏数据中。
-	 * 
-	 * @param inited
 	 */
 	public void setInited(boolean inited) {
 		if(data != null) {
@@ -250,8 +251,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	
 	/**
 	 * 返回数据对象的标记是否是新数据对象，即还未保存到存储的数据对象。
-	 * 
-	 * @return
 	 */
 	public boolean isNew() {
 		if(data != null) {
@@ -263,8 +262,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 
 	/**
 	 * 返回数据对象是否标记为删除。
-	 * 
-	 * @return
 	 */
 	public boolean isDeleted() {
 		if(data != null) {
@@ -338,9 +335,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 装载数据，并设置状态为已初始化。
 	 * 
 	 * 如果数据存在返回本事物，否则返回null或者抛出异常。
-	 * 
-	 * @param actionContext 变量上下文
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public T load(ActionContext actionContext) {
@@ -354,15 +348,24 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 		
 		return null;
 	}
+
+	@SuppressWarnings("unchecked")
+	public T load(ActionContext actionContext, QueryConfig queryConfig){
+		if(data != null) {
+			DataObject dataObject = data.load(actionContext, queryConfig);
+			if(dataObject != null) {
+				this.data = dataObject;
+				return (T) this;
+			}
+		}
+
+		return null;
+	}
 	
 	/**
 	 * <p>根据条件查询，如果返回的数据对象的列表不为空，那么把第一个数据对象作为加载的数据对象。</p>
 	 * 
 	 * <p>如果加载的数据对象不为null，那么把数据对象的所有属性放到当前数据对象中，并返回当前数据对象。</p>
-	 * 
-	 * @param actionContext
-	 * @param condition
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public T load(ActionContext actionContext, Condition condition) {
@@ -382,31 +385,48 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 *
+	 * @return int值，更新的记录数
 	 */
-	public Object update(ActionContext actionContext, Condition condition){
+	public int update(ActionContext actionContext, Condition condition){
 		if(data != null) {
 			return data.update(actionContext, condition);
 		}
 		
-		return null; 
+		return 0;
 	}
-	
+
+	public int update(ActionContext actionContext, QueryConfig queryConfig){
+		if(data != null){
+			return data.update(actionContext, queryConfig);
+		}
+
+		return 0;
+	}
+
 	/**
 	 * 根据条件批量更新数据，其中要更新的内容是当前数据对象的脏字段。
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
-	 * @return
+	 * @return 更新的数量
 	 */
-	public Object update(ActionContext actionContext, Object condition,
+	public int update(ActionContext actionContext, Object condition,
 			Object queryDatas) {
 		if(data != null) {
 			return data.update(actionContext, condition, queryDatas);
 		}
 		
-		return null;
+		return 0;
+	}
+
+	public int delete(ActionContext actionContext, QueryConfig queryConfig){
+		if(data != null){
+			return data.delete(actionContext, queryConfig);
+		}
+
+		return 0;
 	}
 	
 	/**
@@ -414,14 +434,14 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 * @return 删除的数量
 	 */
-	public Object delete(ActionContext actionContext, Condition condition){
+	public int delete(ActionContext actionContext, Condition condition){
 		if(data != null) {
 			return data.delete(actionContext, condition);
 		}
 		
-		return null; 
+		return 0;
 	}
 	
 	/**
@@ -430,24 +450,32 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
-	 * @return
+	 * @return 删除的数量
 	 * 
 	 */
-	public Object delete(ActionContext actionContext, Object condition,
+	public int delete(ActionContext actionContext, Object condition,
 			Object queryDatas) {
 		if(data != null) {
 			return data.delete(actionContext, condition, queryDatas);
 		}
 		
-		return null;
+		return 0;
 	}
-	
+
+	public List<T> query(ActionContext actionContext, QueryConfig queryConfig){
+		if(data != null){
+			return toTList(data.query(actionContext, queryConfig));
+		}
+
+		return Collections.emptyList();
+	}
+
 	/**
 	 * 通过查询条件查询。
 	 * 
 	 * @param actionContext 变量上下文
 	 * @param condition 查询条件
-	 * @return
+	 * @return 查询结果列表
 	 */
 	public List<T> query(ActionContext actionContext, Condition condition){
 		if(data != null) {
@@ -478,7 +506,7 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * @param actionContext 变量上下文
 	 * @param condition 条件，一般是条件模型
 	 * @param queryDatas 查询条件，一般是Map&lt;String, Object&gt;
-	 * @return
+	 * @return 查询结果列表
 	 */
 	public List<T> query(ActionContext actionContext, Object condition,
 			Object queryDatas) {
@@ -500,9 +528,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 
 	/**
 	 * 比较是否与另一个数据对象是相同的。比较描述者和主键。
-	 * 
-	 * @param dataObject
-	 * @return
 	 */
 	public boolean equals(DataObject dataObject) {
 		if(data != null) {
@@ -516,9 +541,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	 * 通过主键比对是否和本数据对象相同。
 	 * 
 	 * keys是name1, value1, name2, value2...成对出现的。name是主键的名字，value是主键的值。
-	 * 
-	 * @param keys
-	 * @return
 	 */
 	public boolean equals(Object ... keys) {
 		if(data != null) {
@@ -784,8 +806,8 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	/**
 	 * 返回用户任务，通过用户任务在界面上可以查看执行的进度，或者取消执行等。
 	 * 
-	 * @param dataObject
-	 * @return
+	 * @param dataObject 数据对象
+	 * @return 用户任务
 	 */
 	public static UserTask getUserTask(Thing dataObject, ActionContext actionContext){
 		return DataObject.getUserTask(dataObject, actionContext);
@@ -800,7 +822,8 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 
 	/**
 	 * 返回包装过的Java对象。
-	 * @return
+	 *
+	 * @return 包装的Java对象，不存在返回null
 	 */
 	public Object getWrappedObject() {
 		if(data != null) {
@@ -812,8 +835,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 
 	/**
 	 * 获取源Java对象。
-	 * 
-	 * @return
 	 */
 	public Object getSource() {
 		if(data != null) {
@@ -826,7 +847,6 @@ public abstract class DataObjectEntity<T extends DataObjectEntity<?>> {
 	/**
 	 * 设置源Java对象。
 	 * 
-	 * @param source
 	 */
 	public void setSource(Object source) {
 		if(data != null) {

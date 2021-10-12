@@ -16,6 +16,7 @@ import xworker.dataObject.DataObjectConstants;
 import xworker.dataObject.DataObjectList;
 import xworker.dataObject.PageInfo;
 import xworker.dataObject.cache.DataObjectCache;
+import xworker.dataObject.query.QueryConfig;
 import xworker.util.JacksonFormator;
 
 /**
@@ -26,7 +27,7 @@ import xworker.util.JacksonFormator;
  */
 public class JsonQueryProxy {
 	public static String formatBatchAction(String action, String dataObjectPath, String conditionPath, Object conditionData) throws Exception {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put("action", action);
 		data.put("dataObjectPath", dataObjectPath);
 		Thing condition = World.getInstance().getThing(conditionPath);
@@ -43,11 +44,6 @@ public class JsonQueryProxy {
 
 	/**
 	 * 执行批量的操作。支持deleteBatch和updateBatch两个方法。
-	 *
-	 * @param json
-	 * @param actionContext
-	 * @return
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public static String doBatchAction(String json, ActionContext actionContext) throws Exception {
@@ -150,10 +146,6 @@ public class JsonQueryProxy {
 	 * action是create、load、update或delete。
 	 * data如果是load、create那么是加载和创建的数据对象，否则是null。对于update和delete是传入的值。
 	 * result是结果，load和create是boolean，update和delete是数量(int)。
-	 * 
-	 * @param result
-	 * @return
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object parseDataObjectActionResult(String result) throws Exception {
@@ -177,13 +169,6 @@ public class JsonQueryProxy {
 	
 	/**
 	 * 把查询条件包装成JSON。
-	 * 
-	 * @param dataObjectPath
-	 * @param queryConfigPath
-	 * @param params
-	 * @param pageInfo
-	 * @return
-	 * @throws Exception
 	 */
 	public static String formatParams(String dataObjectPath, String queryConfigPath, Map<String, Object> params, PageInfo pageInfo) throws Exception {
 		Map<String, Object> data = new HashMap<>();
@@ -213,6 +198,17 @@ public class JsonQueryProxy {
 		String json =JacksonFormator.formatObject(data);
 		return json;
 	}
+
+	public static String formatQUeryConfig(QueryConfig queryConfig) throws Exception{
+		return JacksonFormator.formatObject(queryConfig);
+	}
+
+	public static String query(Thing dataObject, QueryConfig queryConfig, ActionContext actionContext ) throws  Exception{
+		Map<String, Object> data = new HashMap<>();
+		data.put("queryConfig", queryConfig);
+
+		return query(dataObject, queryConfig, data, actionContext);
+	}
 	
 	public static String query(String dataObjectPath, String queryConfigPath, Map<String, Object> params, Map<String, Object> pageInfo, ActionContext actionContext) throws Exception {
 		World world = World.getInstance();
@@ -220,7 +216,7 @@ public class JsonQueryProxy {
 	}
 	
 	public static String query(Thing dataObject, Thing queryConfig, Map<String, Object> params, Map<String, Object> pageInfo, ActionContext actionContext) throws Exception {
-		Map<String, Object> data = new HashMap<String, Object>();
+		Map<String, Object> data = new HashMap<>();
 		data.put("dataObjectPath", dataObject.getMetadata().getPath());
 		if(queryConfig != null) {
 			if(queryConfig.isTransient()) {
@@ -234,9 +230,35 @@ public class JsonQueryProxy {
 		
 		return query(dataObject, queryConfig, params, pageInfo, data, actionContext);
 	}
+
+	private static String query(Thing dataObject, QueryConfig queryConfig, Map<String, Object> data, ActionContext actionContext) throws Exception{
+		List<Map<String, Object>> datas = new ArrayList<>();
+		if(dataObject != null) {
+			List<DataObject> ds = dataObject.doAction("query", actionContext, "queryConfig", queryConfig);
+			for(DataObject d : ds) {
+				Map<String, Object> theData = new HashMap<String, Object>();
+				for(Thing attribute : dataObject.getChilds("attribute")) {
+					String name = attribute.getMetadata().getName();
+					if(name.contains(".")){
+						//关联字段属性不设置
+						continue;
+					}
+					Object object = d.get(name);
+					if(object instanceof DataObject || object instanceof DataObjectList){
+						//关联的数据对象和数据对象列表也不格式化
+						continue;
+					}
+					theData.put(name, d.get(name));
+				}
+				datas.add(theData);
+			}
+		}
+		data.put("datas", datas);
+		return JacksonFormator.formatObject(data);
+	}
 	
 	private static String query(Thing dataObject, Thing queryConfig, Map<String, Object> params, Map<String, Object> pageInfo, Map<String, Object> data, ActionContext actionContext) throws Exception {
-		List<Map<String, Object>> datas = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> datas = new ArrayList<>();
 		if(dataObject != null) {
 			List<DataObject> ds = dataObject.doAction("query", actionContext, 
 					"conditionData", params, "conditionConfig", queryConfig, "pageInfo", pageInfo);

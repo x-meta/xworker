@@ -10,7 +10,9 @@ import org.xmeta.annotation.ActionParams;
 import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
 import xworker.swt.util.SwtUtils;
+import xworker.workbench.EditorParams;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class JCTermActionContainer {
@@ -119,5 +121,41 @@ public class JCTermActionContainer {
 
     public void onUnActive(){
 
+    }
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Object session = null;
+        String path = null;
+        if(content instanceof Thing){
+            Thing thing = (Thing) content;
+            if(thing.isThing("xworker.net.jsch.Session")){
+                session = thing;
+                path = "jcterm:" + path;
+            }
+        }else if(content instanceof  DataObject){
+            DataObject dataObject = (DataObject) content;
+            if(dataObject.getMetadata().getDescriptor().isThing("xworker.app.server.dataobjects.Server")){
+                session = dataObject;
+                path = "jcterm:" + dataObject.getString("id");
+            }
+        }else if(content instanceof Session){
+            session = content;
+            path = "jcterm:" + session;
+        }
+        if(session != null){
+            return new EditorParams<Object>(self, path, session) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("session", this.getContent());
+
+                    return params;
+                }
+            };
+        }
+
+        return null;
     }
 }

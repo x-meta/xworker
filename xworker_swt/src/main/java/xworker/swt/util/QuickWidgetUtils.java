@@ -3,6 +3,7 @@ package xworker.swt.util;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
+import xworker.lang.actions.data.StringDataFactory;
 import xworker.lang.executor.Executor;
 import xworker.swt.ActionContainer;
 
@@ -14,7 +15,12 @@ public class QuickWidgetUtils {
 			String actionContainer = thing.getStringBlankAsNull("actionContainer");
 			String actionName = thing.getStringBlankAsNull("actionName");
 			if(actionName != null && actionContainer != null){
-				ActionContainer ac = (ActionContainer) actionContext.get(actionContainer);
+				ActionContainer ac;
+				if(actionContainer.contains(":")){
+					ac = (ActionContainer) StringDataFactory.getStringData(thing, null, actionContainer, actionContext);
+				}else {
+					ac = (ActionContainer) actionContext.get(actionContainer);
+				}
 				if(ac != null){
 					ac.doAction(actionName, actionContext, "event", event, "widgetThing", thing, "menuThing", thing);
 				}

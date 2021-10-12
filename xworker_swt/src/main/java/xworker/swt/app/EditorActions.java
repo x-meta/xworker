@@ -12,9 +12,7 @@ import xworker.swt.design.Designer;
 import java.lang.reflect.InvocationTargetException;
 
 public class EditorActions {
-	public static Object create(ActionContext actionContext) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-		Thing self = actionContext.getObject("self");
-
+	public static Object getObjectForThingLoader(Thing self, ActionContext actionContext) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 		Object objectForThingLoader = self.doAction("getObjectForThingLoader", actionContext);
 		if(objectForThingLoader != null && objectForThingLoader.equals(self.getString("objectForThingLoader"))){
 			objectForThingLoader = null;
@@ -22,9 +20,21 @@ public class EditorActions {
 		if(objectForThingLoader == null){
 			Class<?> cls = self.doAction("getObjectClassForThingLoader", actionContext);
 			if(cls != null){
-				objectForThingLoader = cls.getConstructor(new Class<?>[]{}).newInstance(new Object[]{});
+				objectForThingLoader = cls.getConstructor(new Class<?>[]{}).newInstance();
+				String objName = self.getString("objectForThingLoader");
+				if(objName != null && !"".equals(objName)) {
+					actionContext.g().put(objName, objectForThingLoader);
+				}
 			}
 		}
+
+		return objectForThingLoader;
+	}
+
+	public static Object create(ActionContext actionContext) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+		Thing self = actionContext.getObject("self");
+
+		Object objectForThingLoader = getObjectForThingLoader(self, actionContext);
 
 		//保存编辑器事物
 		actionContext.g().put("editorThing", self);
@@ -56,6 +66,14 @@ public class EditorActions {
 			}
 		}
 
+		return editorComposite;
+	}
+
+	public static Object createOutline(ActionContext actionContext) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+		Thing self = actionContext.getObject("self");
+
+		Object objectForThingLoader = getObjectForThingLoader(self, actionContext);
+
 		ActionContext parentContext = actionContext.getObject("parentContext");
 		if(parentContext != null) {
 			IEditorContainer editorContainer = parentContext.getObject("editorContainer");
@@ -66,17 +84,17 @@ public class EditorActions {
 				if(outlineThing != null) {
 					actionContext.peek().put("parent", outlineParent);
 					if(objectForThingLoader == null) {
-						outlineThing.doAction("create", actionContext);
+						return outlineThing.doAction("create", actionContext);
 					}else{
-						ThingLoader.load(objectForThingLoader, outlineThing, actionContext);
+						return ThingLoader.load(objectForThingLoader, outlineThing, actionContext);
 					}
 				}
 			}
 		}
 
-		return editorComposite;
+		return null;
 	}
-		
+
 	public static void editorChanged(ActionContext actionContext) {
 		ActionContext parentContext = actionContext.getObject("parentContext");
 		if(parentContext != null) {

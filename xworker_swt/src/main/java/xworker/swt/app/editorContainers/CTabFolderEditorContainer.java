@@ -45,7 +45,7 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 	CTabItem lastItem;
 
 	/** 由于在监听到CTabItem.close的事件里，item已经disposed，这样就取不出IEditor了 */
-	Map<CTabItem, IEditor> editors = new HashMap<CTabItem, IEditor>();
+	Map<CTabItem, IEditor> editors = new HashMap<>();
 
 	public CTabFolderEditorContainer(CTabFolder tabFolder, ActionContext actionContext) {
 		super(actionContext);
@@ -248,6 +248,8 @@ public class CTabFolderEditorContainer extends AbstractEditorContianer
 		EditorImpl editor = getEditorUtils(item);
 		// 概要
 		if (outlineContainer != null) {
+			checkOutline(editor);
+
 			Composite outline = editor.getOutline();
 			outlineContainer.setComposite(outline);
 		}

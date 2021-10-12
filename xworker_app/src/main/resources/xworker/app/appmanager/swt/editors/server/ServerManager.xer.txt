@@ -1,4 +1,4 @@
-^1626505600443
+^1630323926627
 @
 sname
 ServerManager
@@ -330,13 +330,13 @@ false
             sname
             run
             sid
-            var:id
+            ognl:parentContext.id
             seditor
             xworker.net.jsch.swt.JCTermEditor
             Sparams
 #$@text#$@
 {
-    session:"var:server"
+    session:"ognl:parentContext.server"
 }
 #$@text#$@
             sinterpretationType
@@ -455,13 +455,13 @@ false
             sname
             run
             sid
-            var:id
+            ognl:parentContext.id
             seditor
-            xworker.net.jsch.swt.JCTermEditor
+            xworker.net.jsch.swt.JCSftpEditor
             Sparams
 #$@text#$@
 {
-    session:"var:server"
+    session:"ognl:parentContext.server"
 }
 #$@text#$@
             sinterpretationType
@@ -510,6 +510,225 @@ false
             false
             sjson_isArray
             false
+        @/@Control/@DataObjectEditor/@ToolItems/@penPutty
+        sname
+        penPutty
+        slabel
+        打开Putty
+        stype
+        PUSH
+        sshowText
+        true
+        senabled
+        false
+        senableOnSelect
+        true
+        sactionContainer
+        editorThing
+        sdescriptors
+        xworker.app.view.swt.widgets.DataObjectEditor/@ToolItems/@Item
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        penPutty
+          @/@Control/@DataObjectEditor/@ToolItems/@penPutty/@actions
+          sname
+          actions
+          sdescriptors
+          xworker.app.view.swt.widgets.DataObjectEditor/@ToolItems/@Item/@actions1
+          sinheritDescription
+          false
+          sth_createIndex
+          false
+          sth_registMyChilds
+          false
+          sth_registDisabled
+          false
+          sth_noThingRegistViewer
+          false
+          sth_fileMonitor
+          false
+          sth_mark
+          false
+          sth_registQueryOnlySelf
+          false
+          snotXmlAttribute
+          false
+          sjson_isArray
+          false
+          sid
+          actions
+            @/@Control/@DataObjectEditor/@ToolItems/@penPutty/@actions/@run
+            sname
+            run
+            Scmdarray
+#$@text#$@
+putty.exe
+-ssh
+-l
+root
+-pw
+123456
+-i 
+"yuanchengserver1" 
+-P 
+22 
+142.16.187.129
+#$@text#$@
+            sinterpretationType
+            Self
+            sattributeTemplate
+            false
+            schildsAttributeTemplate
+            false
+            svarScope
+            Local
+            sisSynchronized
+            false
+            sthrowException
+            true
+            suseOtherAction
+            false
+            screateLocalVarScope
+            false
+            ssaveReturn
+            false
+            sswitchResult
+            false
+            sdisableGlobalContext
+            false
+            sdebugLog
+            false
+            sdescriptors
+            xworker.java.lang.RuntimeActions/@ExecSimple
+            sinheritDescription
+            false
+            sth_createIndex
+            false
+            sth_registMyChilds
+            false
+            sth_registDisabled
+            false
+            sth_noThingRegistViewer
+            false
+            sth_fileMonitor
+            false
+            sth_mark
+            false
+            sth_registQueryOnlySelf
+            false
+            snotXmlAttribute
+            false
+            sjson_isArray
+            false
+            sid
+            run
+              @/@Control/@DataObjectEditor/@ToolItems/@penPutty/@actions/@run/@actions
+              sname
+              actions
+              sdescriptors
+              xworker.lang.actions.SelfAction/@actions1
+              sinheritDescription
+              false
+              sth_createIndex
+              false
+              sth_registMyChilds
+              false
+              sth_registDisabled
+              false
+              sth_noThingRegistViewer
+              false
+              sth_fileMonitor
+              false
+              sth_mark
+              false
+              sth_registQueryOnlySelf
+              false
+              snotXmlAttribute
+              false
+              sjson_isArray
+              false
+              sid
+              actions
+                @/@Control/@DataObjectEditor/@ToolItems/@penPutty/@actions/@run/@actions/@getCmdarray
+                sname
+                getCmdarray
+                sisSynchronized
+                false
+                sthrowException
+                true
+                suseOtherAction
+                false
+                svarScope
+                Local
+                sdisableGlobalContext
+                false
+                Scode
+#$@text#$@
+def server = parentContext.server;
+return [
+    "d:\\Program Files\\PuTTY\\putty.exe",
+    "-ssh",
+    "-l",
+    server.getString("adminUserName"),
+    "-pw",
+    server.getString("adminPassword"),
+//    "-L",
+    server.getString("adminIP") + ":" + server.getString("adminPort"),    
+] as String[];
+#$@text#$@
+                sinterpretationType
+                Action
+                screateLocalVarScope
+                false
+                ssaveReturn
+                false
+                sswitchResult
+                false
+                sdebugLog
+                false
+                sdescriptors
+                xworker.lang.actions.GroovyAction
+                sinheritDescription
+                false
+                sth_createIndex
+                false
+                sth_registMyChilds
+                false
+                sth_registDisabled
+                false
+                sth_noThingRegistViewer
+                false
+                sth_fileMonitor
+                false
+                sth_mark
+                false
+                sth_registQueryOnlySelf
+                false
+                snotXmlAttribute
+                false
+                sjson_isArray
+                false
+                sid
+                getCmdarray
       @/@Control/@DataObjectEditor/@actions
       sname
       actions
@@ -550,8 +769,11 @@ false
         Local
         sdisableGlobalContext
         false
-        scode
-        actionContext.g().put("server", event.item.getData());
+        Scode
+#$@text#$@
+actionContext.g().put("server", event.item.getData());
+actionContext.g().put("id", "server:" + event.item.getData().get("id"));
+#$@text#$@
         sinterpretationType
         Action
         screateLocalVarScope

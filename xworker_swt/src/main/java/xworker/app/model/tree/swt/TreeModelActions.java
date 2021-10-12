@@ -64,27 +64,30 @@ public class TreeModelActions {
         Tree tree = self.doAction("getTree", actionContext);
         TreeItem[] items = tree.getSelection();
         //获取treeModel
-        Thing treeModel = self.doAction("getTreeModel", actionContext);
-        if(items != null){
+        Object treeModel = self.doAction("getTreeModel", actionContext);
+        if(items != null && items.length > 0){
             for(TreeItem item : items){
                 Object data = item.getData();
                 if(data instanceof TreeModelItem){
                     TreeModelItem treeModelItem = (TreeModelItem) data;
-                    treeModelItem.setItems(null);
-                    treeModelItem.getTreeModel().fireItemRefreshed(treeModelItem);
+                    treeModelItem.getTreeModel().reload(treeModelItem);
                 }else{
+                    Thing thingTreeModel = (Thing) treeModel;
                     Object node = item.getData();
 
                     //调用treeModel的refresh方法
                     //println("refresh node=" + node);
                     if (node == null) {
                         //刷新根节点还有些bug，所以暂时先使用reload
-                        treeModel.doAction("reload", actionContext);
+                        thingTreeModel.doAction("reload", actionContext);
                     } else {
-                        treeModel.doAction("refresh", actionContext,"node", node);
+                        thingTreeModel.doAction("refresh", actionContext,"node", node);
                     }
                 }
             }
+        }else{
+            //应该是根节点，执行刷新
+            reload(actionContext);
         }
     }
 }

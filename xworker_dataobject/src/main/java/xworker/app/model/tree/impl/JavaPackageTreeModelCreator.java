@@ -26,7 +26,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.dataObject.DataObject;
 import xworker.util.UtilFileIcon;
 
@@ -97,7 +97,7 @@ public class JavaPackageTreeModelCreator {
         }
         
         Map<String, Object> node = new HashMap<String, Object>();
-        TreeModelUtil.setAttributes(self, id, node);
+        TreeModelUtils.setAttributes(self, id, node);
         node.put("text", fileName);
         node.put("icon", icon);
         node.put(TreeModel.Source, file);
@@ -157,7 +157,7 @@ public class JavaPackageTreeModelCreator {
                 //根节点
                 if(currentPackage == ""){
                 	parentNode= new HashMap<String, Object>();
-                	TreeModelUtil.setAttributes(self, "0", parentNode);
+                	TreeModelUtils.setAttributes(self, "0", parentNode);
                 	parentNode.put("text", "packages");
                 	parentNode.put("leaf", "false");
                 	parentNode.put("childs", new ArrayList<Object>());
@@ -171,7 +171,7 @@ public class JavaPackageTreeModelCreator {
             String name = currentPackage == "" ? pkds[i] : currentPackage + "." + pkds[i];
             if(context.get(name) == null){
             	Map<String, Object> node = new HashMap<String, Object>();
-            	TreeModelUtil.setAttributes(self, name, node);
+            	TreeModelUtils.setAttributes(self, name, node);
             	node.put("text", pkds[i]);
             	node.put("leaf", "false");
             	node.put("icon", "/xworker/ide/images/package.gif");
@@ -199,7 +199,7 @@ public class JavaPackageTreeModelCreator {
             List<Map<String, Object>> nodes = new ArrayList<Map<String, Object>>();
             for(DataObject pkg : pkgs){
                 Map<String, Object> node = new HashMap<String, Object>();
-                TreeModelUtil.setAttributes(self, pkg.get("name"), node);
+                TreeModelUtils.setAttributes(self, pkg.get("name"), node);
                 node.put("text", pkg.get("name"));
                 node.put("icon", "/xworker/ide/images/package.gif");
                 node.put("leaf", "true");
@@ -207,7 +207,7 @@ public class JavaPackageTreeModelCreator {
             }
             
             packages = new HashMap<String, Object>();
-            TreeModelUtil.setAttributes(self, "0", packages);
+            TreeModelUtils.setAttributes(self, "0", packages);
             packages.put("text", "");
             packages.put("leaf", "false");
             packages.put("childs", nodes);

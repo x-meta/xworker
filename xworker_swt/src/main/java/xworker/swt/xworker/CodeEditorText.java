@@ -44,12 +44,13 @@ public class CodeEditorText {
 		
 		Thing codeEditor = world.getThing("xworker.swt.xworker.CodeEditor/@editorViewForm");
 		Designer.pushCreator(self);
+		Control root;
 		try{
-			Control control = (Control) codeEditor.doAction("create", newContext);
-			Designer.attachCreator(control, self.getMetadata().getPath(), actionContext);
+			root = codeEditor.doAction("create", newContext);
 		}finally{
 			Designer.popCreator();
 		}
+		Designer.attachCreator(root, self.getMetadata().getPath(), actionContext);
 		
 		Object textEditor = null;
 		if(SwtUtils.isRWT()) {
@@ -94,10 +95,8 @@ public class CodeEditorText {
 				item.doAction("create",  newContext);
 			}
 		}		
-		
-		Designer.attach((Control) textEditor, self.getMetadata().getPath(), actionContext);		
-		
-		return textEditor;        
+
+		return root;
 	}
 
     public static void textKeyDown(ActionContext actionContext){

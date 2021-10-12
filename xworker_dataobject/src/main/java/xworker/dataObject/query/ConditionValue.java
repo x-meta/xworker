@@ -2,6 +2,8 @@ package xworker.dataObject.query;
 
 import org.xmeta.Thing;
 
+import java.util.Date;
+
 public class ConditionValue {
     Condition condition;
     Object value;
@@ -20,7 +22,25 @@ public class ConditionValue {
             type = condition.getConditionThing().getStringBlankAsNull("type");
         }
         if(type == null){
-            type = "string";
+            if(value instanceof Long){
+                type = "long";
+            }else if(value instanceof Integer){
+                type = "int";
+            }else if(value instanceof Byte){
+                type = "byte";
+            }else if(value instanceof Double){
+                type = "double";
+            }else if(value instanceof Float){
+                type = "float";
+            }else if(value instanceof Short){
+                type = "short";
+            }else if(value instanceof Byte[]){
+                type = "byte[]";
+            }else if(value instanceof Date){
+                type = "datetime";
+            } else {
+                type = "string";
+            }
         }
     }
 

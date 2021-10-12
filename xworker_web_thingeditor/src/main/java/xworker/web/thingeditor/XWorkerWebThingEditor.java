@@ -1,70 +1,33 @@
 package xworker.web.thingeditor;
 
 import org.xmeta.ActionContext;
-import org.xmeta.ActionException;
 import org.xmeta.Thing;
 import org.xmeta.World;
 import xworker.lang.executor.Executor;
 import xworker.util.GlobalConfig;
 import xworker.util.ThingUtils;
+import xworker.util.XWorkerUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 public class XWorkerWebThingEditor {
     private static final String TAG = XWorkerWebThingEditor.class.getName();
 
-    public static void checkResources() throws IOException {
-        File webXml = new File(World.getInstance().getPath() + "/webroot/WEB-INF/web.xml");
-        if (webXml.exists()) {
-            return;
-        } else {
-            InputStream resourceIn = World.getInstance().getResourceAsStream("xworker_webroot.zip");
-            if (resourceIn == null) {
-                throw new ActionException("Can not found xworker_webroot.zip");
-            }
-
-            ZipInputStream zin = new ZipInputStream(resourceIn);
-            ZipEntry entry = null;
-            String webroot = World.getInstance().getPath() + "/webroot/";
-            while ((entry = zin.getNextEntry()) != null) {
-                if(entry.isDirectory()){
-                    continue;
-                }
-
-                File outFile = new File(webroot + entry.getName());
-                if (outFile.exists() == false) {
-                    outFile.getParentFile().mkdirs();
-                }
-
-                FileOutputStream fout = new FileOutputStream(outFile);
-                byte[] bytes = new byte[4096];
-                int length = -1;
-                while ((length = zin.read(bytes)) != -1) {
-                    fout.write(bytes, 0, length);
-                }
-                fout.close();
-
-                zin.closeEntry();
-            }
-            zin.close();
-            resourceIn.close();
-        }
+    //xworker.webserver.WebThingEditor/@run1
+    public static void runByAction(ActionContext actionContext) throws IOException{
+        run();
     }
 
     public static void run() throws IOException {
-        //启动注册缓存
+        if(XWorkerUtils.hasWebServer()){
+            //WebServer已经启动了
+            return;
+        }
+
         ThingUtils.startRegistThingCache();
-
-        checkResources();
-
         int httpPort = 9001;
 
         for (int i = 0; i < 300; i++) {
@@ -74,13 +37,19 @@ public class XWorkerWebThingEditor {
                 String webroot = World.getInstance().getPath() + "/webroot/";
                 webServer.doAction("start", new ActionContext(), "port", httpPort, "webroot", webroot);
                 Executor.info(TAG, "XWorker webserver start at " + httpPort);
-                GlobalConfig.setWebUrl("http://localhost:" + httpPort + "/");
+                if(webServer.getBoolean("ssl")) {
+                    GlobalConfig.setWebUrl("https://localhost:" + httpPort + "/");
+                }else{
+                    GlobalConfig.setWebUrl("http://localhost:" + httpPort + "/");
+                }
                 GlobalConfig.setHttpPort(httpPort);
-                return;
+                break;
             }else{
                 httpPort ++;
             }
         }
+
+        Executor.info(TAG, XWorkerUtils.getWebUrl() + "rap?app=xworker.webserver.Login");
     }
 
     private static void bindPort(String host, int port) throws Exception {
@@ -98,4 +67,5 @@ public class XWorkerWebThingEditor {
             return false;
         }
     }
+
 }

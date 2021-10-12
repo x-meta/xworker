@@ -88,6 +88,8 @@ public class CompositeEditorContainer extends AbstractEditorContianer{
 		
 		//概要
 		if(outlineContainer != null) {
+			checkOutline(editor);
+
 			Composite outline = editor.getOutline();
 			outlineContainer.setComposite(outline);
 		}

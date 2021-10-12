@@ -47,6 +47,15 @@ public class ThingTabEditor {
         editor.fireStateChanged();
     }
 
+    public void onOutlineCreated(){
+        Thing thing = actionContext.getObject("thing");
+        if(thing != null) {
+            actionContext.peek().put("parent", outlineComposite);
+            thing.doAction("createThingTabOutline", actionContext);
+        }
+    }
+
+
     public void setContent() {
         //xworker.swt.app.editors.ThingEditor/@ActionContainer/@setContent
         Map<String, Object> params = actionContext.getObject("params");

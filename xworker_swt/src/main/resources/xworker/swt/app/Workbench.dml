@@ -1,4 +1,4 @@
-%1625810458294
+%1631608799494
 @
 sname=Workbench
 slabel=Workbench
@@ -12,21 +12,30 @@ sinheritDescription=false
 sicon=icons/application_side_tree.png
 Sdescription=
 #$@text#$@
-<p>工作台。</p>
+<p><strong>工作台</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 工作台是典型的IDE风格的，可以有菜单、工具栏、视图、工作区和状态栏组成的应用，如XWorker的模型管理器就是一个工作台应用。</p>
+
+<ul>
+	<li><strong>菜单（Menu)</strong><br />
+	可以通过Menu子节点定义。<br />
+	&nbsp;</li>
+	<li><strong>工具栏</strong><br />
+	可以通过CoolBar子节点来定义。<br />
+	&nbsp;</li>
+	<li><strong>视图（View)</strong><br />
+	任何Composite都可以作为视图，可以通过Views子节点定义，也可以通过动作打开视图。视图一般在视图区（左、右和下的CTabFolder)打开，有时视图也可以在编辑区域打开。<br />
+	&nbsp;</li>
+	<li><strong>编辑器（Editor)</strong><br />
+	通常用于编辑某种内容的，一般只在编辑区域打开。编辑器可以自定义菜单、工具栏和状态栏，运行时会和系统的菜单、工具栏和状态栏合并。编辑器模型需要使用<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.swt.app.Editor">xworker.swt.app.Editor</a>模型来编写。<br />
+	&nbsp;</li>
+	<li><strong>状态栏</strong><br />
+	可以通过StatusBar子节点来定义。&nbsp;&nbsp;&nbsp;</li>
+</ul>
 
 <p><strong>保存变量和返回值</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 保存的是xworker.swt.app.Workbench对象，返回的是Shell。</p>
-
-<p><strong>保存的ActionContainer的常用方法：</strong></p>
-
-<ul>
-	<li><strong>IEditor&nbsp;openEditor(String id, Thing editor, Map&lt;String, Object&gt; params)</strong><br />
-	打开一个编辑器。&nbsp;<br />
-	&nbsp;</li>
-	<li><strong>void openViewer(String id, Thing view, String type);</strong><br />
-	打开一个视图，type可以是left、right或bottom。view是Composite事物。如果id为null，使用view的路径。</li>
-</ul>
+<p>&nbsp;&nbsp;&nbsp; 保存的是xworker.swt.app.Workbench对象，返回的是Shell，使用独立的动作上下文。</p>
 
 <p><strong>可以重写的方法</strong></p>
 
@@ -53,11 +62,14 @@ Sdescription=
 <p><strong>事件</strong></p>
 
 <ul>
+	<li><strong>void beforeCreate()</strong><br />
+	执行创建工作台之前的事件。<br />
+	&nbsp;</li>
 	<li><strong>void onCreate(Workbench workbench)</strong><br />
 	当工作台创建后触发。<br />
 	&nbsp;</li>
 	<li><strong>void init(Workbench workbench)</strong><br />
-	执行初始化，在onCreate之前执行。</li>
+	执行初始化，在onCreate之后执行。</li>
 </ul>
 
 <p>更多内容从帮助小精灵中查看。</p>
@@ -377,6 +389,33 @@ sth_mark=false
     sth_mark=false
     sth_registQueryOnlySelf=false
     sid=getRightCoolBar
+    @/@actions/@beforeCreate
+    sname=beforeCreate
+    sunimplementedException=false
+    sdescriptors=xworker.lang.actions.Actions/@NOOP
+    sinterpretationType=Self
+    sattributeTemplate=false
+    schildsAttributeTemplate=false
+    svarScope=Local
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdisableGlobalContext=false
+    sdebugLog=false
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=beforeCreate
   @/@name
   sname=name
   sshowLabel=true
@@ -600,10 +639,7 @@ sth_mark=false
   smodifier=public
   sinheritDescription=false
   sicon=icons/org/eclipse/swt/widgets/Menu.gif
-  Sdescription=
-#$@text#$@
-<p>第一级MenuItem是显示在MenuBar上的，类型通常选择</p>
-#$@text#$@
+  sdescription=<p>第一级MenuItem是显示在MenuBar上的，类型通常选择</p>
   snotXmlAttribute=false
   sjson_isArray=false
   sth_createIndex=false
@@ -751,9 +787,11 @@ sth_mark=false
   sicon=icons/application_cascade.png
   Sdescription=
 #$@text#$@
-<p>视图列表。</p>
+<p>可以在工作台启动后就可打开视图列表。</p>
 
-<p>视图的文档可以参看子节点事物（View)。</p>
+<p><strong>视图</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 任何Composite都可以作为视图。</p>
 #$@text#$@
   snotXmlAttribute=false
   sjson_isArray=false
@@ -1228,7 +1266,7 @@ sth_mark=false
       slabelAlign=right
       slabelVAlign=baseline
       smodifier=public
-      sinputattrs=xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,descritporForNewThing=xworker.swt.widgets.Composite,viewType=thingDescBrowser,thing=xworker.swt.app.Views,seperator=%2C,returnType=path,append=false
+      sinputattrs=xworker.things.p2016.p11.p15.ThingRegistSelector|registType=child,descritporForNewThing=xworker.swt.widgets.Composite,viewType=thingDescBrowser,thing=xworker.workbench.Views,seperator=%2C,returnType=path,append=false
       sreadOnly=false
       sinheritDescription=false
       svalidateAllowBlank=true
@@ -1339,339 +1377,121 @@ sth_mark=false
         sname=name
         sdescriptors=xworker.lang.MetaDescriptor2/@attribute
         sid=name
-  @/@sswtMenus
-  sname=sswtMenus
-  sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus
+  @/@Editors
+  sname=Editors
+  sdescriptors=xworker.lang.MetaDescriptor3/@thing
+  smany=true
+  seditCols=2
+  sformNoLabel=false
+  sinitialization=false
+  smodifier=public
   sinheritDescription=false
+  sicon=icons/page_copy.png
+  Sdescription=
+#$@text#$@
+<p>用来设置在工作台运行后就打开的编辑器。</p>
+#$@text#$@
+  snotXmlAttribute=false
+  sjson_isArray=false
   sth_createIndex=false
   sth_registMyChilds=false
   sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
   sth_mark=false
-  sid=sswtMenus
-    @/@sswtMenus/@menuDefine
-    sname=menuDefine
-    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuDefine
+  sth_registQueryOnlySelf=false
+  sid=Editors
+    @/@Editors/@OpenEditor
+    sname=OpenEditor
+    sdescriptors=xworker.lang.MetaDescriptor3/@thing
+    sextends=xworker.swt.app.AppActions/@OpenEditor
+    smany=true
+    seditCols=2
+    sformNoLabel=false
+    sinitialization=false
+    smodifier=public
     sinheritDescription=false
+    snotXmlAttribute=false
+    sjson_isArray=false
     sth_createIndex=false
     sth_registMyChilds=false
     sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
     sth_mark=false
-    sid=menuDefine
-      @/@sswtMenus/@menuDefine/@workbench
-      sname=workbench
-      slabel=工作台
-      sen_label=Workbench
-      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+    sth_registQueryOnlySelf=false
+    sid=OpenEditor
+      @/@Editors/@OpenEditor/@name
+      sname=name
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
       sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
       sth_createIndex=false
       sth_registMyChilds=false
       sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
       sth_mark=false
-      sid=workbench
-      @/@sswtMenus/@menuDefine/@xworker
-      sname=xworker
-      slabel=XWorker
-      sindex=2
-      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+      sth_registQueryOnlySelf=false
+      sjson_isArray=false
+      sid=name
+      @/@Editors/@OpenEditor/@label
+      sname=label
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=public
+      sreadOnly=false
       sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
       sth_createIndex=false
       sth_registMyChilds=false
       sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
       sth_mark=false
-      sid=xworker
-      @/@sswtMenus/@menuDefine/@application
-      sname=application
-      slabel=Application
-      sindex=2
-      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
+      sth_registQueryOnlySelf=false
+      sjson_isArray=false
+      sid=label
+      @/@Editors/@OpenEditor/@editorContainer
+      sname=editorContainer
+      ssize=50
+      sshowLabel=true
+      slabelAlign=right
+      slabelVAlign=baseline
+      smodifier=private
+      sreadOnly=false
+      sdefault=var:editorContainer
       sinheritDescription=false
+      svalidateAllowBlank=true
+      LvalidateOnBlur=true
+      LallowDecimals=true
+      LallowNegative=true
+      snotXmlAttribute=false
+      sdescriptors=xworker.lang.MetaDescriptor3/@attribute
       sth_createIndex=false
       sth_registMyChilds=false
       sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
       sth_mark=false
-      sid=application
-      @/@sswtMenus/@menuDefine/@examples
-      sname=examples
-      slabel=Examples
-      sindex=2
-      sdescriptors=xworker.lang.ThingMenu/@menuDefine/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=examples
-    @/@sswtMenus/@menuSetting
-    sname=menuSettingWorkbench
-    smenuType=workbench
-    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=menuSetting
-      @/@sswtMenus/@menuSetting/@run
-      sname=run
-      slabel=运行
-      surl=xworker.swt.app.Workbench/@menuActions/@menuRun
-      sisSplit=false
-      sattachParam=true
-      sen_label=Run
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=run
-      @/@sswtMenus/@menuSetting/@restart
-      sname=restart
-      slabel=重新运行
-      surl=xworker.swt.app.Workbench/@menuActions/@restart
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=restart
-      @/@sswtMenus/@menuSetting/@split
-      sname=split
-      sisSplit=true
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=split
-      @/@sswtMenus/@menuSetting/@menu
-      sname=menu
-      slabel=Show View
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=menu
-        @/@sswtMenus/@menuSetting/@menu/@Menu
-        sname=Menu
-        slabel=Project Explorer
-        sextends=left|xworker.swt.app.views.ProjectTree/@tree
-        surl=xworker.swt.app.Workbench/@menuActions/@openViewer
-        sisSplit=false
-        sattachParam=true
-        sdescriptors=xworker.lang.Menu/@menu
-        sinheritDescription=false
-        sth_createIndex=false
-        sth_registMyChilds=false
-        sth_registDisabled=false
-        sth_mark=false
-        sid=Menu
-        @/@sswtMenus/@menuSetting/@menu/@Menu1
-        sname=Menu
-        slabel=File Explorer
-        sextends=left|xworker.swt.app.views.FileTree/@menuTree
-        surl=xworker.swt.app.Workbench/@menuActions/@openViewer
-        sisSplit=false
-        sattachParam=true
-        sdescriptors=xworker.lang.Menu/@menu
-        sinheritDescription=false
-        sth_createIndex=false
-        sth_registMyChilds=false
-        sth_registDisabled=false
-        sth_mark=false
-        sid=Menu1
-        @/@sswtMenus/@menuSetting/@menu/@Menu2
-        sname=Menu
-        slabel=System Console
-        sextends=bottom|xworker.swt.app.views.SystemConsole/@styledText
-        surl=xworker.swt.app.Workbench/@menuActions/@openViewer
-        sisSplit=false
-        sattachParam=true
-        sdescriptors=xworker.lang.Menu/@menu
-        sinheritDescription=false
-        sth_createIndex=false
-        sth_registMyChilds=false
-        sth_registDisabled=false
-        sth_mark=false
-        sid=Menu2
-    @/@sswtMenus/@menuXWorker
-    sname=menuXWorker
-    smenuType=xworker
-    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=menuXWorker
-      @/@sswtMenus/@menuXWorker/@xworkerHome
-      sname=xworkerHome
-      slabel=XWorker主页
-      sextends=xworker.swt.app.editors.XWorkerHome
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sen_label=XWorker Home
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=xworkerHome
-      @/@sswtMenus/@menuXWorker/@helpSprite
-      sname=helpSprite
-      slabel=帮助小精灵
-      surl=xworker.swt.app.Workbench/@menuActions/@openAssistor
-      sisSplit=false
-      sattachParam=true
-      sen_label=Help Sprite
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=helpSprite
-      @/@sswtMenus/@menuXWorker/@debugInfo
-      sname=debugInfo
-      slabel=调试信息
-      sextends=xworker.swt.app.editors.Debuger
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sen_label=Debug Info
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=debugInfo
-      @/@sswtMenus/@menuXWorker/@splite1
-      sname=splite1
-      sisSplit=true
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=splite1
-      @/@sswtMenus/@menuXWorker/@userProgressMontior
-      sname=userProgressMontior
-      slabel=用户任务
-      sextends=xworker.swt.xworker.prototype.UserTaskTableShell/@taskTable
-      surl=xworker.swt.app.Workbench/@menuActions/@openViewer
-      sisSplit=false
-      sattachParam=true
-      sen_label=Progress Monitor
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=userProgressMontior
-      @/@sswtMenus/@menuXWorker/@taskManagerMenuItem
-      sname=taskManagerMenuItem
-      slabel=任务管理器
-      sextends=xworker.ide.task.TaskManager/@mainCompostie
-      surl=xworker.swt.app.Workbench/@menuActions/@openCompositeEditor
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=taskManagerMenuItem
-    @/@sswtMenus/@Examples
-    sname=menuSettingExamples
-    smenuType=examples
-    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=Examples
-      @/@sswtMenus/@Examples/@SwtExamples
-      sname=SwtExamples
-      slabel=SwtExamples
-      sextends=xworker.swt.app.editors.SwtExamples
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=SwtExamples
-      @/@sswtMenus/@Examples/@webExamples
-      sname=webExamples
-      slabel=WebExamples
-      sextends=xworker.swt.app.editors.WebExamples
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=webExamples
-    @/@sswtMenus/@menuApplication
-    sname=menuApplication
-    smenuType=application
-    sdescriptors=xworker.lang.MetaDescriptor3/@swtMenus/@menuSetting
-    sinheritDescription=false
-    sth_createIndex=false
-    sth_registMyChilds=false
-    sth_registDisabled=false
-    sth_mark=false
-    sid=menuApplication
-      @/@sswtMenus/@menuApplication/@Menu
-      sname=groovyConsole
-      slabel=Groovy Console
-      sextends=xworker.swt.app.editors.GroovyConsole
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=Menu
-      @/@sswtMenus/@menuApplication/@webBrowser
-      sname=WebBrowser
-      sextends=xworker.swt.app.editors.WebBrowserEditor
-      surl=xworker.swt.app.Workbench/@menuActions/@openEditor
-      sisSplit=false
-      sattachParam=true
-      sdescriptors=xworker.lang.ThingMenu/@menuSetting/@menu
-      sinheritDescription=false
-      sth_createIndex=false
-      sth_registMyChilds=false
-      sth_registDisabled=false
-      sth_mark=false
-      sid=webBrowser
+      sth_registQueryOnlySelf=false
+      sjson_isArray=false
+      sid=editorContainer
   @/@visible
   sname=visible
   sinputtype=truefalse
@@ -2082,3 +1902,50 @@ if(composite != null){
     sth_fileMonitor=false
     sth_mark=false
     sid=shell
+  @/@MenuBar
+  sname=MenuBar
+  sdescriptors=xworker.lang.MetaDescriptor3/@MenuBar
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_noThingRegistViewer=false
+  sth_fileMonitor=false
+  sth_mark=false
+  sth_registQueryOnlySelf=false
+  snotXmlAttribute=false
+  sjson_isArray=false
+  sid=MenuBar
+    @/@MenuBar/@workbench
+    sname=workbench
+    slabel=Workbench
+    ssortWeight=0
+    sdescriptors=xworker.lang.ThingMenuBar/@Menu
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=workbench
+      @/@MenuBar/@workbench/@run
+      sname=run
+      slabel=运行
+      saction=xworker.swt.app.Workbench/@menuActions/@menuRun
+      ssortWeight=0
+      sdescriptors=xworker.lang.ThingMenuBar/@Menu/@Menu
+      sinheritDescription=false
+      sth_createIndex=false
+      sth_registMyChilds=false
+      sth_registDisabled=false
+      sth_noThingRegistViewer=false
+      sth_fileMonitor=false
+      sth_mark=false
+      sth_registQueryOnlySelf=false
+      snotXmlAttribute=false
+      sjson_isArray=false
+      sid=run

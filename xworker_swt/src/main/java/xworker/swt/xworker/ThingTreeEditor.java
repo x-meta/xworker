@@ -25,7 +25,8 @@ import xworker.ui.swt.Clipboard;
 import xworker.util.UtilData;
 
 @ActionClass(creator="getInstance")
-public class ThingTreeEditor {
+public class
+ThingTreeEditor {
 	ActionContext parentContext;
 	ActionContext actionContext;
 	Tree tree;
@@ -129,12 +130,17 @@ public class ThingTreeEditor {
 	public void onAddChild(ActionContext actionContext) {
 		//Thing currentThing = actionContext.getObject("thing");
 		Thing childThing = actionContext.getObject("childThing");
-		
+
+		if(!thing.getChilds().contains(childThing)) {
+			thing.addChild(childThing);
+		}
 		thing.save();
 		if(tree.getSelectionCount() == 0) {
 			SwtUtils.showThingOnTree(childThing, tree, actionContext);
-			
-			tree.getSelection()[0].setExpanded(true);
+
+			if(tree.getSelectionCount() > 0) {
+				tree.getSelection()[0].setExpanded(true);
+			}
 		}else {
 			SwtUtils.showThingOnTreeItem(childThing, tree.getSelection()[0], actionContext);
 		}
@@ -143,17 +149,58 @@ public class ThingTreeEditor {
 		self.doAction("onAdded", this.parentContext, "thing", childThing);
 		
 		//关闭添加窗口
-		if(addChildShell != null && addChildShell.isDisposed() == false) {
+		if(addChildShell != null && !addChildShell.isDisposed()) {
 			addChildShell.dispose();
 		}
 	}
-	
+
+	public void addRootMenuItemSelection(ActionContext actionContext){
+		if(thing == null) {
+			return;
+		}
+
+		if(addChildShell != null && !addChildShell.isDisposed()) {
+			return;
+		}
+
+		//当前的事物模型
+		Thing currentThing = null;
+		if(tree.getSelectionCount() > 0) {
+			TreeItem treeItem = tree.getSelection()[0];
+			currentThing = (Thing) treeItem.getData();
+			if(currentThing != thing){
+				currentThing = currentThing.getParent();
+				if(treeItem.getParentItem() != null){
+					tree.setSelection(treeItem.getParentItem());
+				}else{
+					tree.setSelection(new TreeItem[0]);
+				}
+			}
+		}else {
+			currentThing = thing;
+		}
+
+		//打开添加子节点的窗口
+		ActionContext ac = new ActionContext();
+		ac.put("parent", tree.getShell());
+		ac.put("instance", this);
+
+		Thing dialogThing = World.getInstance().getThing("xworker.swt.xworker.prototype.ThingTreeEditorAddDialog");
+		addChildShell = dialogThing.doAction("create", ac);
+		addChildShell.setText(addChildShell.getText() + "-" + currentThing.getMetadata().getLabel());
+
+		ActionContainer actions = ac.getObject("addChildActions");
+		actions.doAction("setThing", ac, "thing", currentThing);
+		addChildShell.setData(actions);
+		addChildShell.setVisible(true);
+	}
+
 	public void addMenuItemSelection(ActionContext actionContext) {
 		if(thing == null) {
 			return;
 		}
 		
-		if(addChildShell != null && addChildShell.isDisposed() == false) {
+		if(addChildShell != null && !addChildShell.isDisposed()) {
 			return;
 		}
 		

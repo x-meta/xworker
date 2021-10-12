@@ -124,9 +124,14 @@ public class QuickToolbar {
 		    style |= SWT.SHADOW_OUT;
 		if(self.getBoolean("RIGHT"))
 		    style |= SWT.RIGHT;
-		    
-		Composite parent = (Composite) actionContext.get("parent");
-		ToolBar bar = new ToolBar (parent, style);
+
+		Object parent = actionContext.get("parent");
+		ToolBar bar;
+		if(parent instanceof ToolBar){
+			bar = (ToolBar) parent;
+		}else {
+			bar = new ToolBar((Composite) parent, style);
+		}
 		try{
 			Designer.pushCreator(self);
 			//保存变量和创建子事物

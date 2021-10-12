@@ -19,10 +19,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DragSourceListener;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyEvent;
@@ -68,6 +65,7 @@ import xworker.util.XWorkerUtils;
  */
 public class DesignListener implements PaintListener, MouseListener, MouseTrackListener, DisposeListener, KeyListener, DragSourceListener, DropTargetListener{
 	private static final String TAG = DesignListener.class.getName();
+	public static final String DRAG_PREFIX = "XWorker_Designer_Drag:";
 	
 	Control control;
 	DesignDialog designDialog = new DesignDialog();
@@ -168,7 +166,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	}
 	
 	public void paintControl(PaintEvent event) {
-		if(Designer.isEnabled() == false || XWorkerUtils.getIde() == null) return;
+		if(!Designer.isEnabled() || XWorkerUtils.getIde() == null) return;
 				
 		Control control = (Control) event.widget;
 		
@@ -234,7 +232,7 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 				if(Designer.getThing(newControl) != null){
 					setCurrentControL(newControl);
 					
-					if(designDialog.isOpened() == false){
+					if(!designDialog.isOpened()){
 						designDialog.show(newControl, null);
 					}
 				}							
@@ -246,8 +244,6 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	
 	/**
 	 * 显示弹出菜单。
-	 * 	
-	 * @param c
 	 */
 	public void showMenu(Control c){
 		String thingPath = (String) c.getData("_designer_thingPath");
@@ -279,33 +275,29 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	
 	protected void removeCurrentControl(){
 		if(control != null && !control.isDisposed()){
-			if(designDialog != null && designDialog.shell.isDisposed() == false && 
+			if(designDialog != null && !designDialog.shell.isDisposed() &&
 					control.getDisplay() == designDialog.shell.getDisplay()){
 				final Control fcontrol = control;
-				control.getDisplay().asyncExec(new Runnable(){
-					public void run(){
-						if(fcontrol.isDisposed() == false) {
-							fcontrol.setData("_design_selected", "false");		
-							restoreControlBackground(fcontrol);
-						}
-					}					
-				});				
+				control.getDisplay().asyncExec(() -> {
+					if(!fcontrol.isDisposed()) {
+						fcontrol.setData("_design_selected", "false");
+						restoreControlBackground(fcontrol);
+					}
+				});
 				control.getDisplay().asyncExec(new RedrawControl(control));	
 			}else{
 				try{
 					final Control oldControl = control;
-					oldControl.getDisplay().asyncExec(new Runnable(){
-						public  void run(){
-							if(oldControl.isDisposed() == false) {
-								//使原来选择的控件选择边框消失
-								oldControl.setData("_design_selected", "false");		
-								restoreControlBackground(oldControl);
-								oldControl.getDisplay().asyncExec(new RedrawControl(oldControl));
-							}
+					oldControl.getDisplay().asyncExec(() -> {
+						if(!oldControl.isDisposed()) {
+							//使原来选择的控件选择边框消失
+							oldControl.setData("_design_selected", "false");
+							restoreControlBackground(oldControl);
+							oldControl.getDisplay().asyncExec(new RedrawControl(oldControl));
 						}
 					});
 					
-				}catch(Throwable t1){							
+				}catch(Throwable ignored){
 				}
 			}
 			
@@ -324,6 +316,10 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 	
 	public void setCurrentControL(Control newControl) {
 		setCurrentControL(newControl, null);
+	}
+
+	public Control getCurrentControl(){
+		return control;
 	}
 	
 	public void setCurrentControL(Control newControl, Thing tools){
@@ -685,9 +681,33 @@ public class DesignListener implements PaintListener, MouseListener, MouseTrackL
 
 	@Override
 	public void dragSetData(DragSourceEvent event) {
+		DragSource dragSource = (DragSource) event.widget;
+		Control control = dragSource.getControl();
+		Thing thing = Designer.getThing(control);
+		if(thing == null){
+			return;
+		}
+
+		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+			event.data = DRAG_PREFIX + thing.getMetadata().getPath();
+		}
 	}
 
 	@Override
 	public void dragStart(DragSourceEvent event) {
+		DragSource dragSource = (DragSource) event.widget;
+		Control control = dragSource.getControl();
+
+		if(Designer.getCurrentDesignControl() == control){
+			Thing thing = Designer.getThing(control);
+			if(thing == null){
+				event.doit = false;
+				return;
+			}
+
+			DesignDND.thing = thing;
+			DesignDND.source = control;
+			event.data = DRAG_PREFIX + thing.getMetadata().getPath();
+		}
 	}
 }

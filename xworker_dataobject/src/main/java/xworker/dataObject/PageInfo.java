@@ -35,7 +35,7 @@ public class PageInfo{
 	
 	public PageInfo(){
 		 data = new HashMap<>();
-		 setLimit(100);
+		 setLimit(0);
 		 setPage(0);
 	}
 	
@@ -44,7 +44,7 @@ public class PageInfo{
 			data = new HashMap<>();
 			this.data = data;
 
-			setLimit(100);
+			setLimit(0);
 			setPage(0);
 		}else {
 			this.data = data;
@@ -75,13 +75,14 @@ public class PageInfo{
 
 	/**
 	 * 返回当前页数。
-	 *
-	 * @return
 	 */
 	public long getPage(){
 		long start = getStart() + 1;
 		long totalCount = getTotalCount();
 		long limit = getLimit();
+		if(limit <= 0){
+			return 1;
+		}
 		if(start > totalCount){
 			start = totalCount / limit + 1;
 		}
@@ -96,8 +97,6 @@ public class PageInfo{
 
 	/**
 	 * 设置当前页。
-	 *
-	 * @param page
 	 */
 	public void setPage(long page){
 		if(page < 1){
@@ -110,8 +109,6 @@ public class PageInfo{
 
 	/**
 	 * 通过偏移量设置当前页。
-	 *
-	 * @param offset
 	 */
 	public void setPageByOffset(long offset){
 		long pageSize = getPageSize();
@@ -121,7 +118,6 @@ public class PageInfo{
 
 	/**
 	 * 如果查询后的结果是动态生成的新的数据对象，那么可以通过该方法快速设置。
-	 * @param dataObject
 	 */
 	public void setDataObject(Thing dataObject){
 		data.put("dynamicDataObject", dataObject);
@@ -129,8 +125,6 @@ public class PageInfo{
 
 	/**
 	 * 返回查询新生成的数据对象，如果存在。
-	 *
-	 * @return
 	 */
 	public Thing getDataObject(){
 		return (Thing) data.get("dynamicDataObject");
@@ -147,8 +141,6 @@ public class PageInfo{
 
 	/**
 	 * 获取前面的最多5页。
-	 *
-	 * @return
 	 */
 	public List<Long> getPrePages(){
 		List<Long> ps = new ArrayList<>();
@@ -170,8 +162,6 @@ public class PageInfo{
 
 	/**
 	 * 返回是否有下一页。
-	 *
-	 * @return
 	 */
 	public boolean hasNextPage(){
 		return getTotalPage() > getPage();
@@ -179,8 +169,6 @@ public class PageInfo{
 
 	/**
 	 * 返回后续的最多5个页。
-	 *
-	 * @return
 	 */
 	public List<Long> getNextPages(){
 		List<Long> ps = new ArrayList<>();
@@ -204,21 +192,19 @@ public class PageInfo{
 
 	/**
 	 * 返回总页数。
-	 *
-	 * @return
 	 */
 	public long getTotalPage(){
 		long totalCount = getTotalCount();
 		long limit = getLimit();
+		if(limit <= 0){
+			return 1;
+		}
 
-		long totalPage = totalCount /limit + (totalCount % limit > 0 ? 1 : 0);
-		return totalPage;
+		return totalCount /limit + (totalCount % limit > 0 ? 1 : 0);
 	}
 
 	/**
 	 * 返回记录的起始。
-	 *
-	 * @return
 	 */
 	public long getStart() {
 		return getLong(DataObjectConstants.PAGEINFO_START);
@@ -226,18 +212,13 @@ public class PageInfo{
 
 	/**
 	 * 返回页大小。
-	 *
-	 * @return
 	 */
 	public long getPageSize(){
-		long pageSize = getLong(DataObjectConstants.PAGEINFO_PAGESIZE);
-		return pageSize > 0 ? pageSize : 100;
+		return getLong(DataObjectConstants.PAGEINFO_PAGESIZE);
 	}
 
 	/**
 	 * 设置一页的大小。
-	 *
-	 * @param pageSize
 	 */
 	public void setPageSize(int pageSize){
 		if(pageSize < 1){
@@ -254,8 +235,6 @@ public class PageInfo{
 
 	/**
 	 * 设置起始偏移量。
-	 *
-	 * @param start
 	 */
 	public void setStart(long start) {
 		data.put(DataObjectConstants.PAGEINFO_START, start);
@@ -263,21 +242,13 @@ public class PageInfo{
 
 	/**
 	 * 返回限制数量，同pageSize。
-	 * 
-	 * @return
 	 */
 	public long getLimit() {
-		long limit = getLong(DataObjectConstants.PAGEINFO_LIMIT);
-		if(limit <= 0) {
-			limit = 100;
-		}
-		return limit;
+		return getLong(DataObjectConstants.PAGEINFO_LIMIT);
 	}
 
 	/**
 	 * 设置限制数量，同pageSize。
-	 *
-	 * @param limit
 	 */
 	public void setLimit(long limit) {
 		data.put(DataObjectConstants.PAGEINFO_LIMIT, limit);
@@ -295,8 +266,6 @@ public class PageInfo{
 
 	/**
 	 * 返回PageInfo所属的Map。
-	 *
-	 * @return
 	 */
 	public Map<String, Object> getPageInfoData(){
 		return data;
@@ -304,8 +273,6 @@ public class PageInfo{
 
 	/**
 	 * 设置查询的结果列表。
-	 *
-	 * @param datas
 	 */
 	public void setDatas(List<DataObject> datas) {
 		data.put(DataObjectConstants.PAGEINFO_DATAS, datas);
@@ -391,8 +358,6 @@ public class PageInfo{
 	
 	/**
 	 * 返回分页信息。该方法应该还没有写完，不能使用。
-	 * 
-	 * @return
 	 */
 	public List<Page> getPagination(int count){
 		List<Page> pages = new ArrayList<Page>();
@@ -416,5 +381,12 @@ public class PageInfo{
 		public boolean isCurrentPage = false;
 		public boolean isPrePage = false;
 		public boolean isNextPage = false;
+	}
+
+	@Override
+	public String toString() {
+		return "PageInfo{" +
+				"start=" + getStart() + ",limit=" + getLimit() + ",totalCount:" + getTotalCount() +
+				'}';
 	}
 }

@@ -43,6 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
 import org.xmeta.Thing;
+import org.xmeta.World;
 import org.xmeta.util.*;
 
 import freemarker.template.TemplateException;
@@ -312,12 +313,6 @@ public class UtilData {
 
 	/**
 	 * 分析传入的Map的每一个键的值，如果含有':'，则尝试解析成对象，并放到新的Map中并返回。
-	 *
-	 * @param map
-	 * @param actionContext
-	 * @return
-	 * @throws OgnlException
-	 * @throws IOException
 	 */
 	public static Map<String, Object> convertMap(Map<String, String> map, ActionContext actionContext) throws OgnlException, IOException {
 		Map<String, Object> newMap = new HashMap<>();
@@ -353,10 +348,6 @@ public class UtilData {
 
 	/**
 	 * 把值放入Map中，比如xx.xx就是放入到map的xx的map中。
-	 *
-	 * @param data
-	 * @param name
-	 * @param value
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void putData(Map data, String name, Object value){
@@ -392,10 +383,6 @@ public class UtilData {
 
 	/**
 	 * 根据属性值类型的定义，把相对应的字符串的值转换为指定类型的值。
-	 * 
-	 * @param attribute
-	 * @param value
-	 * @return
 	 */
 	public static Object convertValue(Thing attribute, String value, boolean excludeNull){
 		try{
@@ -482,7 +469,7 @@ public class UtilData {
 	 * @param varName 变量名
 	 * @param actionContext 变量上下文
 	 * @param cls 类
-	 * @return
+	 * @return 对象
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getObject(String varName, ActionContext actionContext, Class<T> cls){
@@ -496,9 +483,6 @@ public class UtilData {
 	
 	/**
 	 * 把对象数组转化成Map。
-	 * 
-	 * @param objectArray
-	 * @return
 	 */
 	public static Map<String, Object> toMap(Object ... objectArray){
 		return UtilMap.toMap(objectArray);
@@ -600,6 +584,16 @@ public class UtilData {
 	
 	public static String getString(Object v, String defaultValue){    
 		return org.xmeta.util.UtilData.getString(v, defaultValue);
+	}
+
+	public static Thing getThing(Object v){
+		if(v instanceof Thing){
+			return (Thing) v;
+		}else if(v instanceof String){
+			return World.getInstance().getThing((String) v);
+		}else{
+			return null;
+		}
 	}
 	
 	public static String getSizeInfo(double size) {

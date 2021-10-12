@@ -64,12 +64,12 @@ public class ThingEditorPrototye {
         return thingContext.get("thing");
     }
 
-    public void save(){
+    public Object save(){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("save");
+        return actions.doAction("save");
     }
 
-    public void selectThing(ActionContext actionContext){
+    public Object selectThing(ActionContext actionContext){
         Object th = actionContext.getObject("thing");
         Thing thing = null;
         if(th instanceof String){
@@ -79,17 +79,17 @@ public class ThingEditorPrototye {
         }
 
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("selectThing", actionContext, "thing", thing);
+        return actions.doAction("selectThing", actionContext, "thing", thing);
     }
 
-    public void refresh(ActionContext actionContext){
+    public Object refresh(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("refreshOutline", actionContext, "refreshThing", actionContext.get("refreshThing"));
+        return actions.doAction("refreshOutline", actionContext, "refreshThing", actionContext.get("refreshThing"));
     }
 
-    public void openThing(ActionContext actionContext){
+    public Object openThing(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("openThing", actionContext,  "thing", actionContext.get("thing"));
+        return actions.doAction("openThing", actionContext,  "thing", actionContext.get("thing"));
     }
 
     public Object getRootThing(ActionContext actionContext){
@@ -110,19 +110,19 @@ public class ThingEditorPrototye {
         return ac.getBoolean("modified");
     }
 
-    public void nodeMoveUp(ActionContext actionContext){
+    public Object nodeMoveUp(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("nodeMoveUp", actionContext);
+        return actions.doAction("nodeMoveUp", actionContext);
     }
 
-    public void nodeMoveDown(ActionContext actionContext){
+    public Object nodeMoveDown(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("nodeMoveDown", actionContext);
+        return actions.doAction("nodeMoveDown", actionContext);
     }
 
-    public void showAddChild(ActionContext actionContext){
+    public Object showAddChild(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("showAddChild", actionContext);
+        return actions.doAction("showAddChild", actionContext);
     }
 
     public Object getCurrentAttribute(ActionContext actionContext){
@@ -130,49 +130,49 @@ public class ThingEditorPrototye {
         return actions.doAction("getCurrentAttribute", actionContext);
     }
 
-    public void setAddChildDescriptor(ActionContext actionContext){
+    public Object setAddChildDescriptor(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("setAddChildDescriptor", actionContext, "descriptor", actionContext.get("descriptor"));
+        return actions.doAction("setAddChildDescriptor", actionContext, "descriptor", actionContext.get("descriptor"));
     }
 
-    public void setAddChildValues(ActionContext actionContext){
+    public Object setAddChildValues(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("setAddChildValues", actionContext, "values", actionContext.getObject("values"));
+        return actions.doAction("setAddChildValues", actionContext, "values", actionContext.getObject("values"));
     }
 
-    public void doAddChild(ActionContext actionContext){
+    public Object doAddChild(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("doAddChild", actionContext);
+        return actions.doAction("doAddChild", actionContext);
     }
 
-    public void setValues(ActionContext actionContext){
+    public Object setValues(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("setValues", actionContext, "values", actionContext.getObject("values"));
+        return actions.doAction("setValues", actionContext, "values", actionContext.getObject("values"));
     }
 
-    public void selectChildTreeNode(ActionContext actionContext){
+    public Object selectChildTreeNode(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("selectChildTreeNode", actionContext, "thingPath", actionContext.getObject("thingPath"));
+        return actions.doAction("selectChildTreeNode", actionContext, "thingPath", actionContext.getObject("thingPath"));
     }
 
-    public void getCurrentThing(ActionContext actionContext){
+    public Object getCurrentThing(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("getCurrentThing", actionContext);
+        return actions.doAction("getCurrentThing", actionContext);
     }
 
-    public void showXmlEditor(ActionContext actionContext){
+    public Object showXmlEditor(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("showXmlEditor", actionContext);
+        return actions.doAction("showXmlEditor", actionContext);
     }
 
-    public void showGuideEditor(ActionContext actionContext){
+    public Object showGuideEditor(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("showGuideEditor", actionContext);
+        return actions.doAction("showGuideEditor", actionContext);
     }
 
-    public void showFormEditor(ActionContext actionContext){
+    public Object showFormEditor(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("showFormEditor", actionContext);
+        return actions.doAction("showFormEditor", actionContext);
     }
 
     public Object isAddChild(ActionContext actionContext){
@@ -200,14 +200,14 @@ public class ThingEditorPrototye {
         return actions.doAction("getAddChildSelectedDescriptor", actionContext);
     }
 
-    public void selectDescriptor(ActionContext actionContext){
+    public Object selectDescriptor(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("selectDescriptor", actionContext, "descriptor", actionContext.getObject("descriptor"));
+        return actions.doAction("selectDescriptor", actionContext, "descriptor", actionContext.getObject("descriptor"));
     }
 
-    public void selectNode(ActionContext actionContext){
+    public Object selectNode(ActionContext actionContext){
         ActionContainer actions = thingContext.getObject("actions");
-        actions.doAction("selectNode", actionContext);
+        return actions.doAction("selectNode", actionContext);
     }
 
     public void doAction(ActionContext actionContext){
@@ -235,4 +235,6 @@ public class ThingEditorPrototye {
         return actions.doAction("getValues", actionContext);
     }
 
+    public void initOutlineBrowser(){
+    }
 }

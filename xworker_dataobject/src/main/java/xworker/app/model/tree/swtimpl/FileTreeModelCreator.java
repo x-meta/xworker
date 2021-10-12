@@ -28,7 +28,7 @@ import org.xmeta.Thing;
 import org.xmeta.util.UtilMap;
 
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.util.UtilFileIcon;
 
 public class FileTreeModelCreator {
@@ -142,7 +142,7 @@ public class FileTreeModelCreator {
         }
         */
         Map<String, Object> node = new HashMap<String, Object>();
-        TreeModelUtil.setAttributes(self, id, node);
+        TreeModelUtils.setAttributes(self, id, node);
         node.put("text", fileName);
         node.put("icon", icon);
         node.put(TreeModel.Source, file);

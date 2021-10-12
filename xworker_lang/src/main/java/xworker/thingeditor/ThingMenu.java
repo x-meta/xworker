@@ -13,7 +13,7 @@ import java.util.*;
  * 模型编辑器中的模型的菜单。
  */
 public class ThingMenu implements Comparable<ThingMenu>{
-    /** 挡墙正在编辑器的模型 */
+    /** 当前正在编辑器的模型 */
     Thing currentThing;
     Thing thing;
     int sortWeight;
@@ -179,9 +179,6 @@ public class ThingMenu implements Comparable<ThingMenu>{
     }
     /**
      * 根据描述者获取定义的菜单。
-     *
-     * @param descriptor
-     * @return
      */
     public static List<ThingMenu> getThingMenus(Thing currentThing, Thing descriptor, String platform, ActionContext actionContext){
         List<ThingMenu> menus = new ArrayList<>();
@@ -229,7 +226,7 @@ public class ThingMenu implements Comparable<ThingMenu>{
             return;
         }
 
-        for(Thing menu : menuBar.getChilds("Menu")){
+        for(Thing menu : menuBar.getAllChilds("Menu")){
             if(platform != null && !"".equals(platform)){
                 String tp = menu.getStringBlankAsNull("platform");
                 if(tp != null && !"".equals(tp) && !platform.equals(tp)){

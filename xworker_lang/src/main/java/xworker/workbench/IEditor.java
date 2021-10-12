@@ -59,6 +59,11 @@ public interface IEditor<Container, Control, Image> {
     Container getOutline();
 
     /**
+     * 概要栏创建的事件。
+     */
+    void onOutlineCreated();
+
+    /**
      * 执行销毁操作。
      */
     void doDispose();

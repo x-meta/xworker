@@ -14,9 +14,41 @@ import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionField;
 
 import xworker.swt.app.IEditor;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class ThingEditor {
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Thing thing = null;
+        if (content instanceof String) {
+            thing = World.getInstance().getThing((String) content);
+        }else  if(content instanceof Thing){
+            thing = (Thing) content;
+        }
+        if(thing != null){
+            return new EditorParams<Object>(self, "thing:" + thing.getMetadata().getPath(), thing) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("thing", this.getContent());
+
+                    return params;
+                }
+
+                @Override
+                public int getPriority() {
+                    //优先级降低
+                    return 1000;
+                }
+            };
+        }
+
+        return null;
+    }
+
 	public static Map<String, Object> createDataParams(ActionContext actionContext) throws IOException{
 		Object data = actionContext.get("data");
 		if(data instanceof Thing) {
@@ -45,7 +77,11 @@ public class ThingEditor {
         
         editor.fireStateChanged();
     }
-    
+
+    public void onOutlineCreated() {
+        thingEditor.doAction("initOutlineBrowser", actionContext);
+    }
+
     public void setContent(){
         //xworker.swt.app.editors.ThingEditor/@ActionContainer/@setContent
         Map<String, Object> params = actionContext.getObject("params");

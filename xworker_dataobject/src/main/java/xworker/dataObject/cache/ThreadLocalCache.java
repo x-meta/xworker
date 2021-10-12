@@ -21,39 +21,41 @@ import java.util.Map;
 import org.xmeta.Thing;
 
 import xworker.dataObject.DataObject;
+import xworker.dataObject.utils.DataObjectLabelUtils;
 
 public class ThreadLocalCache {
-	protected Map<String, Map<Object, DataObjectCacheEntry>> caches = new HashMap<String, Map<Object, DataObjectCacheEntry>>();
+	protected Map<String, Map<Object, DataObjectCacheEntry>> caches = new HashMap<>();
+	protected Map<String, DataObjectLabelUtils> labelUtilsMap = new HashMap<>();
 	
 	protected int count;
-	
+
+	/**
+	 * 获取数据对象标签工具，如果不存在创建一个。
+	 */
+	public DataObjectLabelUtils getDataObjectLabelUtils(Thing dataObject){
+		String path = dataObject.getMetadata().getPath();
+		return labelUtilsMap.computeIfAbsent(path, k-> new DataObjectLabelUtils(dataObject));
+	}
+
 	/**
 	 * 获取数据对象缓存。
 	 * 
-	 * @param dataObjectDescriptor
-	 * @param keyName
-	 * @param key
-	 * @return
 	 */
-	public DataObject getDataObject(Thing dataObjectDescriptor, String keyName, Object key){
+	public DataObject getDataObject(Thing dataObjectDesc, String keyName, Object key){
 		//null应该不能作为键值而存在
 		if(key == null) {
 			return null;
 		}
 		
-		if(dataObjectDescriptor.getBoolean("cacheRelationReadnone")){
-			DataObject dataObject = new DataObject(dataObjectDescriptor.getMetadata().getPath());
+		if(dataObjectDesc.getBoolean("cacheRelationReadnone")){
+			DataObject dataObject = new DataObject(dataObjectDesc.getMetadata().getPath());
 			dataObject.put(keyName, key);
 			dataObject.setInited(false);
 			return dataObject;
 		}else{		
-			String descriptorPath = dataObjectDescriptor.getMetadata().getPath();
-			Map<Object, DataObjectCacheEntry> dataObjectCache = caches.get(descriptorPath);
-			if(dataObjectCache == null){
-				dataObjectCache = new HashMap<Object, DataObjectCacheEntry>();
-				caches.put(descriptorPath, dataObjectCache);
-			}
-			
+			String descriptorPath = dataObjectDesc.getMetadata().getPath();
+			Map<Object, DataObjectCacheEntry> dataObjectCache = caches.computeIfAbsent(descriptorPath, k -> new HashMap<>());
+
 			DataObjectCacheEntry entry = dataObjectCache.get(key);
 			if(entry != null){
 				return entry.dataObject;
@@ -65,7 +67,7 @@ public class ThreadLocalCache {
 			dataObject.setInited(false);
 			
 			//保存缓存
-			if(dataObjectDescriptor.getInt("cacheRelationMaxSize") <= 0 || dataObjectCache.size() < dataObjectDescriptor.getInt("cacheRelationMaxSize")){
+			if(dataObject.getInt("cacheRelationMaxSize") <= 0 || dataObjectCache.size() < dataObject.getInt("cacheRelationMaxSize")){
 				entry = new DataObjectCacheEntry();
 				entry.dataObject = dataObject;
 				dataObjectCache.put(key, entry);
@@ -77,5 +79,6 @@ public class ThreadLocalCache {
 	
 	public void clearCache(){
 		caches.clear();
+		labelUtilsMap.clear();
 	}
 }

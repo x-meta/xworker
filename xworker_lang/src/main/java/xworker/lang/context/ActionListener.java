@@ -24,7 +24,6 @@ public class ActionListener {
 	 * 查看监听器是否已经存在。比如数据库的动作监听器是为了设置Connection，对于同一个数据源应该设置同一个Connection。
 	 * 
 	 * @param key 如果是数据库数据源，那么key一般是数据源模型
-	 * @return
 	 */
 	public ActionListener getActionListener(Thing key) {
 		List<Bindings> scopes = acContext.getScopes();
@@ -44,8 +43,6 @@ public class ActionListener {
 	
 	/**
 	 * 保存动作监听器，key一般是资源事物。
-	 * 
-	 * @param key
 	 */
 	public void save(Thing key) {
 		ActionContext acContext = ContextUtil.getActionContext(actionContext);
@@ -54,9 +51,6 @@ public class ActionListener {
 	
 	/**
 	 * 保存一个变量到动作所在的变量上下文中。
-	 * 
-	 * @param key
-	 * @param value
 	 */
 	public void putToAc(String key, Object value) {
 		acContext.peek().put(key, value);
@@ -64,9 +58,6 @@ public class ActionListener {
 	
 	/**
 	 * 保存一个变量到动作监听器中。
-	 * 
-	 * @param key
-	 * @param value
 	 */
 	public void putToMe(String key, Object value) {
 		actionContext.g().put(key, value);
@@ -90,9 +81,6 @@ public class ActionListener {
 	
 	/**
 	 * 从动作所在的变量上下文中获取一个变量。
-	 * 
-	 * @param key
-	 * @return
 	 */
 	public Object getFromAc(String key) {
 		return acContext.peek().get(key);
@@ -108,9 +96,6 @@ public class ActionListener {
 	
 	/**
 	 * 从动作监听器获取一个变量。
-	 * 
-	 * @param key
-	 * @return
 	 */
 	public Object getFromMe(String key) {
 		return actionContext.get(key);

@@ -146,7 +146,7 @@ public class DesignShellActions {
 			}
 			tree.removeAll();
 			
-			List<Item> items = new ArrayList<Item>();
+			List<Item> items = new ArrayList<>();
 			initItem(rootControl, items, rootThing);
 			
 			//在树上显示
@@ -399,16 +399,17 @@ public class DesignShellActions {
 	}
 	
 	public static void initItem(Control control, List<Item> items, Thing rootThing){
-		String thingPath = (String) control.getData("_designer_thingPath");
+		String thingPath = (String) control.getData(Designer.DATA_THING);
 		//ActionContext actionContext = (ActionContext) control.getData("_designer_actionContext");
-		Boolean isAttribute = (Boolean) control.getData("_designer_isAttribute");
+		Boolean isAttribute = (Boolean) control.getData(Designer.DATA_ISATTRIBUTE);
 		String creator = (String) control.getData(Designer.DATA_CREATOR);
 		Boolean creatorRoot = (Boolean) control.getData(Designer.DATA_CREATOR_ROOT);
+
 		if(isAttribute != null && isAttribute) {
 			return;
 		}
 		
-		if(thingPath != null && !isAttribute && (creator == null || (creatorRoot != null && creatorRoot == true))){
+		if(thingPath != null && (creator == null || (creatorRoot != null && creatorRoot))){
 			Item item = new Item();
 			item.thing = World.getInstance().getThing(thingPath);
 			if(item.thing == null || item.thing.getRoot() != rootThing){

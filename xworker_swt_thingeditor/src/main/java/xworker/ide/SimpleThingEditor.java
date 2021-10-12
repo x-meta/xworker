@@ -21,6 +21,7 @@ import xworker.swt.design.Designer;
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Locale;
 
@@ -50,21 +51,30 @@ public class SimpleThingEditor {
 
 		Session session = SessionManager.getSession(null);
 		Locale locale = session.getLocale();
-		if(locale != null && !locale.getLanguage().equals(new Locale("en").getLanguage())){
-		    zh = true;
-		}else{
-		    zh = false;
-		}
+		zh = locale != null && !locale.getLanguage().equals(new Locale("en").getLanguage());
 
-		if(zh == true){
+		String lang;
+		if(zh){
 		    Locale l = new Locale("en", "US");
+		    lang = "en_US";
 		    session.setLocale(l);
 		    session.setI18nResource(UtilResource.getInstance(l));
 		}else{
+			lang = "zh_CN";
 		    Locale l = new Locale("zh", "CN");
 		    session.setLocale(l);
 		    session.setI18nResource(UtilResource.getInstance(l));
 		}
+
+		//保存语言，下一次启动会保持设置
+		Thing config = world.getThing("_local.xworker.config.GlobalConfig");
+		if(config != null){
+			config.put("language", lang);
+			config.save();
+		}
+
+		//设置IDE为null，以便新的IDE可以设置成功
+		XWorkerUtils.setIde(null, true);
 
 		//重新启动Workbench
 		Thing thing =  oldWorkbench.getThing();
@@ -81,12 +91,13 @@ public class SimpleThingEditor {
 		//关闭之前的
 		oldWorkbench.exit();
 		shell.dispose();
-		
+
+
 		try{
 		    if(oldDisplay.getShells().length == 0){
 		        oldDisplay.dispose();
 		    }
-		}catch(Exception e){
+		}catch(Exception ignored){
 		}
 	}
 	
@@ -212,7 +223,7 @@ public class SimpleThingEditor {
     @ActionField
     public xworker.swt.app.Workbench workbench;
     
-    public static void run() throws MalformedURLException {
+    public static void run() throws IOException {
 		SwtThingEditor.run();
 	}
 }

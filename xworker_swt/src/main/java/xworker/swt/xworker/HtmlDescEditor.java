@@ -58,7 +58,6 @@ public class HtmlDescEditor {
 		actionContext.getScope(0).put(self.getString("name"), htmlThing);
 		newContext.put("htmlThing", htmlThing);
 		
-		Designer.attach((Control) newContext.get("browser"), self.getMetadata().getPath(), actionContext);
 		Designer.attachCreator(composite, self.getMetadata().getPath(), actionContext);
 		composite.setData("htmlThing", htmlThing);
 		return composite;        

@@ -48,8 +48,6 @@ public class Editor {
 
 	/**
 	 * 创建编辑器。
-	 * 
-	 * @param parent
 	 */
 	public void create(Composite editorParent, Composite outlineParent) {
 		editorThing.doAction("create", actionContext, "editorParent", editorParent, 

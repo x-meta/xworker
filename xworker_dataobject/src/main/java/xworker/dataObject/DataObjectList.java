@@ -43,6 +43,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	Thing descriptor = null;
 	/** 父数据对象 */
 	DataObject parent = null;
+	Object parentValue;
 	/** 是否已初始化 */
 	boolean inited = false;
 	/** 初始化时的动作上下文 */
@@ -59,8 +60,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	/**
 	 * 构造函数。
-	 * 
-	 * @param descriptor
 	 */
 	public DataObjectList(String descriptor){
 		this.descriptor = World.getInstance().getThing(descriptor);
@@ -69,8 +68,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	/**
 	 * 构造函数。
-	 * 
-	 * @param descriptor
 	 */
 	public DataObjectList(Thing descriptor){
 		this(descriptor, null);
@@ -90,6 +87,8 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 			this.descriptor = world.getThing(descriptor.getString("dataObjectPath"));
 			refAttributeName = descriptor.getString("refAttributeName");
 			localAttributeName = descriptor.getString("localAttributeName");
+
+			this.parentValue = parent.get(localAttributeName);
 		}
 	}
 	
@@ -105,9 +104,8 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	 */
 	public void finish() {
 		this.fireEvent = true;
-		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+		if(listeners != null) {
+			for (DataObjectListListener listener : listeners) {
 				listener.onLoaded(this);
 			}
 		}
@@ -115,10 +113,10 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	public void addListener(DataObjectListListener listener) {
 		if(listeners == null) {
-			listeners = new CopyOnWriteArrayList<DataObjectListListener>();
+			listeners = new CopyOnWriteArrayList<>();
 		}
 		
-		if(listeners.contains(listener) == false) {
+		if(!listeners.contains(listener)) {
 			listeners.add(listener);
 		}
 	}
@@ -128,7 +126,23 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 			listeners.remove(listener);
 		}
 	}
-	
+
+	/**
+	 * 如果是数据对象的引用，即数据对象设置的一对多的关联，检查关联条件是否已变更，如果已变更那么重新加载数据。
+	 */
+	protected void checkParent(){
+		if(parent == null){
+			return;
+		}
+
+		Object value = parent.get(localAttributeName);
+		if(parentValue != value){
+			parentValue = value;
+
+			load(new ActionContext());
+		}
+	}
+
 	/**
 	 * 装载数据。
 	 * 
@@ -146,7 +160,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		Map<String, Object> conditionData = null;
 		if(parent != null){
 			Condition con = new Condition();
-			con.eq(refAttributeName, parent.get(localAttributeName));
+			con.eq(refAttributeName, parentValue);
 			condition = con.getConditionThing();
 			conditionData = con.getConditionValues();
 		}else {
@@ -157,7 +171,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 			}
 		}
 		
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("conditionConfig", condition);
 		params.put("conditionData", conditionData);
 		List<DataObject> datas = (List<DataObject>) doAction("query", actionContext, params);
@@ -166,8 +180,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 
 	/**
 	 * 删除全部关联。
-	 *
-	 * @param actionContext
 	 */
 	public Integer delete(ActionContext actionContext){
 		if(descriptor == null) {
@@ -177,7 +189,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		inited = true;
 
 		Thing condition = null;
-		Map<String, Object> conditionData = null;
+		Map<String, Object> conditionData;
 		if(parent != null){
 			Condition con = new Condition();
 			con.eq(refAttributeName, parent.get(localAttributeName));
@@ -191,7 +203,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 			}
 		}
 
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("conditionConfig", condition);
 		params.put("conditionData", conditionData);
 		return (Integer) doAction("deleteBatch", actionContext, params);
@@ -199,34 +211,27 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 
 	/**
 	 * 后台加载。
-	 *
-	 * @param actionContext
 	 */
 	public void loadBackground(final ActionContext actionContext){
-		TaskManager.getExecutorService().execute(new Runnable() {
-			@Override
-			public void run() {
-				try{
-					synchronized (DataObjectList.this) {
-						if (DataObjectList.this.inited) {
-							return;
-						}else{
-							//这里设置inited不要取消，是为了同步
-							DataObjectList.this.inited = true;
-						}
+		TaskManager.getExecutorService().execute(() -> {
+			try{
+				synchronized (DataObjectList.this) {
+					if (DataObjectList.this.inited) {
+						return;
+					}else{
+						//这里设置inited不要取消，是为了同步
+						DataObjectList.this.inited = true;
 					}
-					load(actionContext);
-				}catch(Exception e){
-					Executor.warn(TAG, "Load background error, path=" + descriptor, e);
 				}
+				load(actionContext);
+			}catch(Exception e){
+				Executor.warn(TAG, "Load background error, path=" + descriptor, e);
 			}
 		});
 	}
 
 	/**
 	 * 设置新的数据对象列表，并会触发onLoaded()事件。
-	 * 
-	 * @param datas
 	 */
 	public void setDataObjects(List<DataObject> datas) {
 		clear();
@@ -244,9 +249,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	/**
 	 * 执行动作。
-	 * 
-	 * @param name
-	 * @return
 	 */
 	public Object doAction(String name){
 		return doAction(name, null, null);
@@ -254,10 +256,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	/**
 	 * 执行动作。
-	 * 
-	 * @param name
-	 * @param actionContext
-	 * @return
 	 */
 	public Object doAction(String name, ActionContext actionContext){
 		return doAction(name, actionContext, null);
@@ -265,11 +263,6 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	
 	/**
 	 * 执行动作。
-	 * 
-	 * @param name
-	 * @param actionContext
-	 * @param params
-	 * @return
 	 */
 	public Object doAction(String name, ActionContext actionContext, Map<String, Object> params){
 		//Thing thing = World.getInstance().getThing(descriptor.getString("dataObjectPath"));
@@ -297,8 +290,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		this.descriptor = descriptor;
 		
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onReconfig(this);
 			}
 		}
@@ -312,14 +304,10 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	 * 根据主键返回符合条件的数据对象，如果没有返回null。
 	 * 
 	 * keys是name1, value1, name2, value2...成对出现的。name是主键的名字，value是主键的值。
-	 * 
-	 * @param keys
-	 * @return
 	 */
 	public DataObject get(Object ... keys) {
-		for(int i=0; i<this.size(); i++) {
-			DataObject data = this.get(i);
-			if(data.equals(keys)) {
+		for (DataObject data : this) {
+			if (data.equals(keys)) {
 				return data;
 			}
 		}
@@ -347,8 +335,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	public DataObject set(int index, DataObject newDataObject) {
 		DataObject oldDataObject = super.set(index, newDataObject);
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onSeted(this, index, newDataObject, oldDataObject);
 			}
 		}
@@ -358,9 +345,8 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	@Override
 	public boolean add(DataObject e) {
 		boolean result = super.add(e);
-		if(listeners != null && result && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+		if(listeners != null && fireEvent) {
+			for (DataObjectListListener listener : listeners) {
 				listener.onAdded(this, e);
 			}
 		}
@@ -372,8 +358,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		super.add(index, element);
 		
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onAdded(this, index, element);
 			}
 		}
@@ -384,8 +369,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		DataObject dataObject = super.remove(index);
 		
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onRemoved(this, index, dataObject);
 			}
 		}
@@ -410,8 +394,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		}
 		
 		if(listeners != null && r && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onRemoved(this, index, (DataObject) o);
 			}
 		}
@@ -425,8 +408,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		boolean r = super.addAll(c);
 	
 		if(listeners != null && r && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onAddedAll(this, index, c);
 			}
 		}
@@ -439,8 +421,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		boolean r = super.addAll(index, c);
 		
 		if(listeners != null && r && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onAddedAll(this, index, c);
 			}
 		}
@@ -471,8 +452,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		super.clear();
 		
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onLoaded(this);
 			}
 		}
@@ -482,8 +462,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	public boolean removeAll(Collection<?> c) {
 		boolean result =  super.removeAll(c);
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onLoaded(this);
 			}
 		}
@@ -495,8 +474,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 	public boolean removeIf(Predicate<? super DataObject> filter) {
 		boolean result = super.removeIf(filter);
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onLoaded(this);
 			}
 		}
@@ -508,8 +486,7 @@ public class DataObjectList extends CopyOnWriteArrayList<DataObject>{
 		super.replaceAll(operator);
 		
 		if(listeners != null && fireEvent) {
-			for(int i=0; i<listeners.size(); i++) {
-				DataObjectListListener listener = listeners.get(i);
+			for (DataObjectListListener listener : listeners) {
 				listener.onLoaded(this);
 			}
 		}

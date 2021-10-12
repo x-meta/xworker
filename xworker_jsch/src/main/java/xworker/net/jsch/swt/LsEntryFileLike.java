@@ -13,15 +13,15 @@ import java.util.Vector;
 public class LsEntryFileLike implements FileLike<ChannelSftp.LsEntry> {
     private static final String TAG = LsEntryFileLike.class.getName();
 
+    JCSftpEditor jcSftpEditor;
     LsEntryFileLike parent;
 
     ChannelSftp.LsEntry file;
-    ChannelSftp channelSftp;
     //完整路径
     String path;
 
-    public LsEntryFileLike(ChannelSftp channelSftp, ChannelSftp.LsEntry file, String path){
-        this.channelSftp = channelSftp;
+    public LsEntryFileLike(JCSftpEditor jcSftpEditor,  ChannelSftp.LsEntry file, String path){
+        this.jcSftpEditor = jcSftpEditor;
         this.file = file;
         this.path = path;
     }
@@ -127,6 +127,7 @@ public class LsEntryFileLike implements FileLike<ChannelSftp.LsEntry> {
         List<FileLike<ChannelSftp.LsEntry>> files = new ArrayList<>();
         if(file == null || file.getAttrs().isDir()) {
             try{
+                ChannelSftp channelSftp = jcSftpEditor.getChannelSftp();
                 Vector<ChannelSftp.LsEntry> items = (Vector<ChannelSftp.LsEntry>) channelSftp.ls(path);
                 for(ChannelSftp.LsEntry entry : items){
                     Executor.info(TAG, entry.toString());
@@ -135,7 +136,7 @@ public class LsEntryFileLike implements FileLike<ChannelSftp.LsEntry> {
                         continue;
                     }
 
-                    LsEntryFileLike childFile = new LsEntryFileLike(channelSftp, entry, path +
+                    LsEntryFileLike childFile = new LsEntryFileLike(jcSftpEditor,  entry, path +
                             (!"/".equals(path) ? "/" : "") + entry.getFilename());
                     childFile.parent = this;
                     files.add(childFile);
@@ -156,6 +157,8 @@ public class LsEntryFileLike implements FileLike<ChannelSftp.LsEntry> {
     @Override
     public boolean mkdir() {
         try {
+            ChannelSftp channelSftp = jcSftpEditor.getChannelSftp();
+
             channelSftp.mkdir(path);
             return true;
         }catch(Exception e) {
@@ -178,6 +181,8 @@ public class LsEntryFileLike implements FileLike<ChannelSftp.LsEntry> {
         }
 
         try {
+            ChannelSftp channelSftp = jcSftpEditor.getChannelSftp();
+
             channelSftp.rename(path, newPath);
             return true;
         }catch(Exception e) {

@@ -54,7 +54,6 @@ public class TreeModelItem {
     int fontSize;
     String fontStyle;
 
-
     public TreeModelItem(TreeModel treeModel, TreeModelItem parent){
         this.treeModel = treeModel;
         this.parent = parent;
@@ -142,6 +141,19 @@ public class TreeModelItem {
         this.iconCls = item.getString("iconCls");
         this.qtip = item.getString("qtip");
 
+    }
+
+    public void insert(List<TreeModelItem> items, int index){
+        if(this.items == null){
+            this.items = items;
+            return;
+        }
+
+        if(index <0 || index >= this.items.size()){
+            this.items.addAll(items);
+        }else{
+            this.items.addAll(index, items);
+        }
     }
 
     public void setExpandStatusCache(boolean expanded){
@@ -447,8 +459,8 @@ public class TreeModelItem {
         this.separator = separator;
     }
 
-    public Object getSource() {
-        return source;
+    public <T> T getSource() {
+        return (T) source;
     }
 
     public void setSource(Object source) {

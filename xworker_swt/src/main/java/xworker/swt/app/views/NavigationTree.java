@@ -1,22 +1,30 @@
 package xworker.swt.app.views;
 
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.swt.widgets.Event;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import xworker.app.model.tree.TreeModel;
+import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 
 public class NavigationTree {
     @SuppressWarnings("unchecked")
 	public static void onSelection(ActionContext actionContext){
 	    //xworker.swt.app.views.NavigationTree/@tree/@onSelection/@onSelection
     	Event event = actionContext.getObject("event");
-	    Map<String, Object> data = (Map<String, Object>) event.item.getData();
-	    ((Thing) data.get("_source")).doAction("run", actionContext);
+    	TreeModelItem item = (TreeModelItem) event.item.getData();
+    	if(item != null){
+			((Thing) item.getSource()).doAction("run", actionContext);
+		}
 	}
 	
 	public static void mavTreeReloadItemSelection(ActionContext actionContext){
 	    //xworker.swt.app.views.NavigationTree/@tree/@mavTreeMenu/@mavTreeReloadItem/@listeners/@Listener/@mavTreeReloadItemSelection
+		TreeModel treeModel = actionContext.getObject("treeModel");
+		treeModel.reload(null);
+		/*
 		ActionContext parentContext = actionContext.getObject("parentContext");
 		Thing workbenchThing = parentContext.getObject("workbenchThing");
 	    Thing treeModelThing =  workbenchThing.getThing("AppTreeModel@0");
@@ -27,7 +35,7 @@ public class NavigationTree {
 	        if(treeModel != null){
 	            treeModel.doAction("reload", actionContext);
 	        }
-	    }
+	    }*/
 	}
 	
 	public static void  init(ActionContext actionContext){
@@ -42,5 +50,30 @@ public class NavigationTree {
 	    if(appTreeModel != null) {			
 	        appTreeModel.doAction("create", actionContext);
 	    }
+	}
+
+	public static TreeModelItem getRoot(ActionContext actionContext){
+		TreeModel treeModel = actionContext.getObject("treeModel");
+
+		ActionContext parentContext = actionContext.getObject("parentContext");
+		Thing workbenchThing = parentContext.getObject("workbenchThing");
+		Thing appTreeModel  = workbenchThing.doAction("getAppTreeModel", parentContext);
+
+		if(appTreeModel != null) {
+			return TreeModelUtils.toItem(treeModel, null, appTreeModel);
+		}else{
+			return null;
+		}
+    }
+
+    public static List<TreeModelItem> getChilds(ActionContext actionContext){
+		ActionContext parentContext = actionContext.getObject("parentContext");
+		Thing workbenchThing = parentContext.getObject("workbenchThing");
+		Thing appTreeModel  = workbenchThing.doAction("getAppTreeModel", parentContext);
+		if(appTreeModel != null) {
+			return appTreeModel.doAction("getChilds", actionContext);
+		}
+
+		return Collections.emptyList();
 	}
 }

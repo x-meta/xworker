@@ -5,12 +5,13 @@ import org.xmeta.Thing;
 import org.xmeta.util.UtilString;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.util.UtilFileIcon;
+import xworker.util.XWorkerUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class FileTreeModel {
     public static TreeModelItem getRoot(ActionContext actionContext) throws IOException {
@@ -23,10 +24,7 @@ public class FileTreeModel {
         }
 
         File file = new File(filePath);
-        TreeModelItem item = new TreeModelItem(treeModel, null);
-        init(file, item, actionContext);
-
-        return item;
+        return TreeModelUtils.toItem(treeModel, null, self, file, actionContext);
     }
 
     public static List<TreeModelItem> getChilds(ActionContext actionContext) throws IOException{
@@ -44,17 +42,25 @@ public class FileTreeModel {
         }
 
         if(files != null){
+            List<File> fileList = Arrays.asList(files);
+            fileList.sort((o1, o2) -> {
+                if(o1.isDirectory() && o2.isFile()){
+                    return -1;
+                }else if(o1.isFile() && o2.isDirectory()){
+                    return 1;
+                }else{
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
             boolean showFile = self.getBoolean("showFile");
-            for(File file : files){
+            for(File file : fileList){
                 if(file.isFile()){
                     if(showFile){
-                        TreeModelItem item = new TreeModelItem(treeModel, parentItem);
-                        init(file, item, actionContext);
+                        TreeModelItem item = TreeModelUtils.toItem(treeModel, parentItem, self, file, actionContext);
                         items.add(item);
                     }
                 }else{
-                    TreeModelItem item = new TreeModelItem(treeModel, parentItem);
-                    init(file, item, actionContext);
+                    TreeModelItem item = TreeModelUtils.toItem(treeModel, parentItem, self, file, actionContext);
                     items.add(item);
                 }
             }
@@ -63,44 +69,32 @@ public class FileTreeModel {
         return items;
     }
 
+    //xworker.app.model.tree.implnew.FileTreeModel/@create/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext) throws IOException {
+        Thing self = actionContext.getObject("self");
+        TreeModel treeModel = actionContext.getObject("treeModel");
+        TreeModelItem parentItem = actionContext.getObject("parentItem");
+        Object[] sources = actionContext.getObject("sources");
+
+        List<TreeModelItem> items = new ArrayList<>();
+
+        for(Object obj : sources){
+            if(obj instanceof  File){
+                File file = (File) obj;
+                TreeModelItem item = TreeModelUtils.toItem(treeModel, parentItem, self, file, actionContext);
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
+
     public static TreeModelItem getItemById(ActionContext actionContext) throws IOException {
+        Thing self = actionContext.getObject("self");
         TreeModel treeModel = actionContext.getObject("treeModel");
         String id = actionContext.getObject("id");
         File file = new File(id);
-        TreeModelItem item = new TreeModelItem(treeModel, null);
-        init(file, item, actionContext);
-
-        return item;
+        return TreeModelUtils.toItem(treeModel, null, self, file, actionContext);
     }
 
-    public static void init(File file, TreeModelItem item, ActionContext actionContext) throws IOException {
-        String name = file.getName();
-        if(name.equals(":")){
-            item.setText(UtilString.getString("lang:d=计算机&en=Computer", actionContext));
-            item.setIcon("icons/computer.png");
-            item.setId(":");
-        }else{
-            if(name.trim().isEmpty()){
-                item.setText(file.getPath());
-            }else {
-                item.setText(name);
-            }
-            if(file.isDirectory()){
-                item.setIcon("icons/folder.gif");
-            }else {
-                item.setIcon(UtilFileIcon.getFileIcon(file, false));
-            }
-            item.setId(file.getCanonicalPath());
-        }
-
-        String path;
-        try {
-            path = file.getCanonicalPath();
-        }catch(Exception e){
-            path = file.getPath();
-        }
-        item.setDataId(path);
-        item.setId(item.getTreeModel().getThing().getMetadata().getPath() + "|" + path);
-        item.setSource(file);
-    }
 }

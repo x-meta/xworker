@@ -29,7 +29,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.query.UtilCondition;
 
@@ -109,12 +109,12 @@ public class DataObjectTreeModelCreator {
         
     	Object dataObject = actionContext.get("dataObject");
         Map<String, Object> root = new HashMap<String, Object>();
-        TreeModelUtil.copyAttributesToNodeData(dataObject, root);
+        TreeModelUtils.copyAttributesToNodeData(dataObject, root);
         
         root.put(TreeModel.Source, dataObject);
         root.put("dataObject", dataObject);
         root.put("data", dataObject);        
-        TreeModelUtil.setAttributes(self, OgnlUtil.getValue(self, "idField", dataObject), root);
+        TreeModelUtils.setAttributes(self, OgnlUtil.getValue(self, "idField", dataObject), root);
         root.put("text", OgnlUtil.getValue(self.getString("textField"), dataObject));
         String iconField = self.getString("iconField");
         if(iconField != null && !"".equals(iconField)){

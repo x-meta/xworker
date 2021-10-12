@@ -1,7 +1,10 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.swt.browser.Browser;
+import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -10,13 +13,46 @@ import org.xmeta.annotation.ActionField;
 import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilMap;
 
+import xworker.content.ContentHandler;
+import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.xworker.content.SwtQuickContentHandler;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class JdbcExplorer {
 	private static final String TAG = JdbcExplorer.class.getName();
-	
+
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Object session = null;
+        String path = null;
+        if(content instanceof Thing){
+            Thing thing = (Thing) content;
+            if(thing.isThing("xworker.db.jdbc.DataSource")){
+                session = thing;
+                path = thing.getMetadata().getPath();
+            }
+        }
+        if(session != null){
+            return new EditorParams<Object>(self, "jdbcexplorer:" + path, session) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("dataSource", this.getContent());
+
+                    return params;
+                }
+            };
+        }
+
+        return null;
+    }
+
     public Object createDataParams(){
         //xworker.swt.app.editors.JdbcExplorer/@actions1/@createDataParams
         Object data = actionContext.getObject("data");
@@ -58,6 +94,23 @@ public class JdbcExplorer {
         //xworker.swt.app.editors.JdbcExplorer/@EditorComposite/@mainSashForm/@actions/@openComposite/@actions/@getTabContentKey
     	Thing composite = actionContext.getObject("composite");
         return composite.getMetadata().getPath();
+    }
+
+
+    public void onOutlineCreated(){
+        ActionContainer actions = actionContext.getObject("tools");
+        Thing dataSource = actionContext.getObject("dataSource");
+        Browser browser = actionContext.getObject("browser");
+        if(browser != null && !browser.isDisposed()){
+            if(dataSource != null){
+                SwtUtils.setThingDesc(dataSource, browser);
+            }
+
+            SwtQuickContentHandler contentHandler = actions.doAction("getContentHandler", actionContext);
+            if(contentHandler != null){
+                contentHandler.setBrowser(browser);
+            }
+        }
     }
     
     public Object setContent(){
@@ -107,6 +160,8 @@ public class JdbcExplorer {
         ActionContainer tools = actionContext.getObject("tools");
         tools.doAction("init", actionContext, "thing", rthing, "type", "command");
         tools.doAction("refresh", actionContext);
+
+        onOutlineCreated();
         return null;
     }
     

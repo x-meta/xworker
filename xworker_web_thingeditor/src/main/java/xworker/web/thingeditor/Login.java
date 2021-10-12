@@ -9,19 +9,21 @@ import org.xmeta.ui.session.Session;
 import org.xmeta.ui.session.SessionManager;
 import org.xmeta.util.UtilResource;
 import org.xmeta.util.UtilString;
+import xworker.util.UtilData;
+import xworker.util.XWorkerUtils;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 public class Login {
-    public static String name = "admin";
-    public static String password = "admin";
     public static LoginListener loginListener = null;
 
     public static void login(ActionContext actionContext){
         org.xmeta.Thing form = actionContext.getObject("form");
         org.eclipse.swt.widgets.Shell shell = actionContext.getObject("shell");
         Action error = actionContext.getObject("error");
+        Action newpas = actionContext.getObject("newpas");
 
         Map<String, Object> values = form.doAction("getValues", actionContext);
         String lname = (String) values.get("loginName");
@@ -33,9 +35,29 @@ public class Login {
                 return;
             }
         }else{
-            if(!name.equals(lname) || !password.equals(lpassword)){
-                error.run(actionContext);
-                return;
+            Thing weblogin = World.getInstance().getThing("_local.xworker.config.WebLogin");
+            if(weblogin != null) {
+                if(!UtilData.isTrue(weblogin.getAction().run(actionContext))){
+                    error.run(actionContext);
+                    return;
+                }
+            }else{
+                String name = XWorkerUtils.getConfigValue("XWorkerConfig", "editor.web.name");
+                if (name == null || "".equals(name)) {
+                    XWorkerUtils.setConfigValue("XWorkerConfig", "editor.web.name", "admin");
+                }
+                String password = XWorkerUtils.getConfigValue("XWorkerConfig", "editor.web.password");
+                if (password == null || "".equals(password)) {
+                    Random random = new Random();
+                    password = String.valueOf(random.nextInt(1000000) + 10000);
+                    XWorkerUtils.setConfigValue("XWorkerConfig", "editor.web.password", password);
+                    newpas.run(actionContext, "password", password);
+                    return;
+                }
+                if (!name.equals(lname) || !password.equals(lpassword)) {
+                    error.run(actionContext);
+                    return;
+                }
             }
         }
 

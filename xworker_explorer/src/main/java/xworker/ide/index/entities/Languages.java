@@ -12,7 +12,7 @@ import xworker.dataObject.DataObjectEntity;
 import xworker.dataObject.query.Condition;
 
 /**
- * <b>语言</b><p/>
+ * <b>语言</b>
  * 
  */
 public class Languages extends DataObjectEntity<Languages> {

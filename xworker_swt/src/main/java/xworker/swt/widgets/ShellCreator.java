@@ -59,7 +59,7 @@ public class ShellCreator {
     	World world = World.getInstance();
     	//self是事物模型本身
     	Thing self = (Thing) actionContext.get("self");
-		
+
     	//初始化style
 		Action styleAction = world.getAction("xworker.swt.widgets.Composite/@scripts/@getStyles");
 		int style = (Integer) styleAction.run(actionContext);
@@ -134,8 +134,8 @@ public class ShellCreator {
 				}
 				
 				//系统入口，是否是设计模式
-				if(self.getBoolean("design") && Designer.isEnabled() == false 
-						&& World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner") != null){
+				if(self.getBoolean("design") && !Designer.isEnabled()
+						&& World.getInstance().getThing("xworker.swt.xwidgets.prototypes.SimpleThingEditor") != null){
 					Designer.setEnabled(true);
 				}
 				isFirst = true;				

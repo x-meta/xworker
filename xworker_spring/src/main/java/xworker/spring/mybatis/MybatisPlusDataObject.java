@@ -84,7 +84,7 @@ public class MybatisPlusDataObject {
         BaseMapper<Object> mapper = (BaseMapper<Object>) SpringConfig.getApplicationContext().getBean(mapperClass);
         PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
         List<Map<String, Object>> datas = null;
-        if(pageInfo != null){
+        if(pageInfo != null && pageInfo.getLimit() > 0){
             String sort = pageInfo.getSort();
             if(sort != null && !sort.isEmpty()){
                 //wrapper.orderBy(sort, pageInfo.isSortAsc());

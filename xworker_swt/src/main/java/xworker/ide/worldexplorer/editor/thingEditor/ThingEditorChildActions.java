@@ -35,6 +35,7 @@ import xworker.swt.form.ThingDescriptorForm;
 import xworker.swt.util.ResourceManager;
 import xworker.swt.util.SwtUtils;
 import xworker.swt.util.XWorkerTreeUtil;
+import xworker.util.ThingRegistUtils;
 import xworker.util.ThingUtils;
 import xworker.util.UtilData;
 
@@ -435,7 +436,7 @@ public class ThingEditorChildActions {
 		            }
 		        }
 		    }
-			ThingUtils.initFromRegistCache(desChilds, context, descriptor, "child");
+			ThingRegistUtils.initFromRegistCache(desChilds, context, descriptor, "child");
 		}catch(Exception e){
 		    Executor.info(TAG, "add regist child error", e);
 		}
@@ -609,8 +610,8 @@ public class ThingEditorChildActions {
 		            }
 		        }
 		    }
-		    
-		    ThingUtils.initFromRegistCache(desChilds, context, descriptor, "child");
+
+			ThingRegistUtils.initFromRegistCache(desChilds, context, descriptor, "child");
 		}catch(Exception e){
 		    Executor.info(TAG, "add regist child error", e);
 		}

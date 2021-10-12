@@ -1,5 +1,6 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -10,10 +11,21 @@ import org.xmeta.util.ActionContainer;
 import org.xmeta.util.UtilMap;
 
 import xworker.swt.app.IEditor;
+import xworker.swt.util.SwtUtils;
 import xworker.swt.xwidgets.CodeViewer;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 public class DataObjectThingEditor {
+	public static void onOutlineCreated(ActionContext actionContext){
+		//设置outline，如果存在
+		if(actionContext.get("outlineBrowser") != null && actionContext.get("dataObject") != null){
+			Thing dataObject = actionContext.getObject("dataObject");
+			Browser outlineBrowser = actionContext.getObject("outlineBrowser");
+			SwtUtils.setThingDesc((Thing) dataObject, outlineBrowser);
+		}
+	}
+
 	public static void setContent(ActionContext actionContext) {
 		Map<String, Object> params = actionContext.getObject("params");
 
@@ -38,9 +50,8 @@ public class DataObjectThingEditor {
 
 		//设置outline，如果存在
 		if(actionContext.get("outlineBrowser") != null){
-		    String url = XWorkerUtils.getThingDescUrl((Thing) dataObject);
-		    Browser outlineBrowser = actionContext.getObject("outlineBrowser");
-		    outlineBrowser.setUrl(url);
+			Browser outlineBrowser = actionContext.getObject("outlineBrowser");
+			SwtUtils.setThingDesc((Thing) dataObject, outlineBrowser);
 		}
 	}
 	
@@ -68,6 +79,33 @@ public class DataObjectThingEditor {
 		    }
 		}
 		
+		return null;
+	}
+
+	public static EditorParams<Thing> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		Thing thing = null;
+		if(content instanceof  String){
+			thing = World.getInstance().getThing((String) content);
+		}else if(content instanceof Thing){
+			thing = (Thing) content;
+		}
+		if(thing != null){
+			if(thing.isThing("xworker.dataObject.DataObject")){
+				String path = thing.getMetadata().getPath();
+				return new EditorParams<Thing>(self, "DataObjectThing:" + path, thing) {
+					@Override
+					public Map<String, Object> getParams() {
+						Map<String, Object> params = new HashMap<>();
+						params.put("dataObject", this.getContent().getMetadata().getPath());
+
+						return params;
+					}
+				};
+			}
+		}
+
 		return null;
 	}
 }

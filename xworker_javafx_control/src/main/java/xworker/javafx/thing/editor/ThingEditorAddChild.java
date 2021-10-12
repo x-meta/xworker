@@ -13,6 +13,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import xworker.dataObject.DataObject;
 import xworker.util.ThingGroup;
+import xworker.util.ThingRegistUtils;
 import xworker.util.ThingUtils;
 import xworker.util.XWorkerUtils;
 
@@ -169,7 +170,7 @@ public class ThingEditorAddChild implements ThingEditorContentNode{
                     }
                 }
 
-                ThingUtils.initFromRegistCache(desChilds, context, newValue, "child");
+                ThingRegistUtils.initFromRegistCache(desChilds, context, newValue, "child");
                 //移除非thing节点
                 Map<String, String> ctx = new HashMap<>();
                 for(int i=0; i<desChilds.size(); i++){

@@ -15,6 +15,7 @@ import org.xmeta.util.ActionContainer;
 import xworker.lang.executor.Executor;
 import xworker.swt.app.*;
 import xworker.swt.app.MenuContainer;
+import xworker.swt.app.editors.EditorImpl;
 import xworker.workbench.IWorkbench;
 
 public abstract class AbstractEditorContianer implements IEditorContainer, IEditorListener{
@@ -71,7 +72,36 @@ public abstract class AbstractEditorContianer implements IEditorContainer, IEdit
 	}
 
 	public void setOutlineContainer(OutlineContainer outlineContainer) {
+		if(this.outlineContainer != null){
+			//移除之前的
+			this.outlineContainer.removeALl();
+
+			for(xworker.workbench.IEditor<Composite, Control, Image> editor : this.getEditors()){
+				EditorImpl editor1 = (EditorImpl) editor;
+				editor1.setOutlineCreated(false);
+			}
+		}
+
 		this.outlineContainer = outlineContainer;
+		if(this.outlineContainer != null){
+			//重新创建Outline
+			xworker.workbench.IEditor<Composite, Control, Image> editor = this.getActiveEditor();
+			if(editor != null) {
+				EditorImpl editor1 = (EditorImpl) editor;
+				checkOutline(editor1);
+
+				if (editor != null && editor.getOutline() != null && !editor.getOutline().isDisposed()) {
+					this.outlineContainer.setComposite(editor.getOutline());
+				}
+			}
+		}
+	}
+
+	public void checkOutline(EditorImpl editor){
+		if(hasOutline() && !editor.isOutlineCreated()){
+			editor.createOutline();
+			editor.onOutlineCreated();
+		}
 	}
 
 	public CoolBarContainer getCoolBarContainer() {

@@ -246,13 +246,13 @@ public class DataObjectUtil {
 		if(actionContext.get("conditionConfig") == null){
 			matchedDatas = dataObjects;
 		}else{
-			matchedDatas = new ArrayList<DataObject>();
+			matchedDatas = new ArrayList<>();
 			Thing conditionConfig = actionContext.getObject("conditionConfig");
 			Object conditionData = actionContext.get("conditionData");
 			for(DataObject dobj : dataObjects){
-                Boolean matched = (Boolean) conditionConfig.doAction("isMatch", actionContext, "condition",conditionData, "data", dobj );        
+                Boolean matched = conditionConfig.doAction("isMatch", actionContext, "condition",conditionData, "data", dobj );
                 if(matched){
-                    matchedDatas.add((DataObject) dobj);
+                    matchedDatas.add(dobj);
                 }        
             }
 		}
@@ -269,25 +269,22 @@ public class DataObjectUtil {
         	final PageInfo pageInfo = PageInfo.getPageInfo(actionContext);
             //是否排序
             if(pageInfo.getSort() != null &&  !"".equals(pageInfo.getSort())){
-            	Collections.sort(dataObjects, new Comparator<Object>(){
-					@Override
-					public int compare(Object o1, Object o2) {
-						DataObject a = (DataObject) o1;
-						DataObject b = (DataObject) o2;
-						
-						String av = (a == null ? null : a.getString((String) pageInfo.getSort()));
-	                    String bv = (b == null ? null : b.getString((String) pageInfo.getSort()));
-	                    if(av == null && bv == null){
-	                        return 0;
-	                    }else if(av == null && bv != null){
-	                        return  "DESC".equals(pageInfo.getDir()) ? 1 : -1;
-	                    }else if(av != null && bv == null){
-	                        return "DESC".equals(pageInfo.getDir()) ? -1 : 1;
-	                    }else{
-	                        return "DESC".equals(pageInfo.getDir()) ? -av.compareTo(bv) : av.compareTo(bv);
-	                    }            
+            	Collections.sort(dataObjects, (Comparator<Object>) (o1, o2) -> {
+					DataObject a = (DataObject) o1;
+					DataObject b = (DataObject) o2;
+
+					String av = (a == null ? null : a.getString(pageInfo.getSort()));
+					String bv = (b == null ? null : b.getString(pageInfo.getSort()));
+					if(av == null && bv == null){
+						return 0;
+					}else if(av == null){
+						return  "DESC".equals(pageInfo.getDir()) ? 1 : -1;
+					}else if(bv == null){
+						return "DESC".equals(pageInfo.getDir()) ? -1 : 1;
+					}else{
+						return "DESC".equals(pageInfo.getDir()) ? -av.compareTo(bv) : av.compareTo(bv);
 					}
-            	});
+				});
             
             }
             pageInfo.setTotalCount( dataObjects.size());
@@ -303,7 +300,7 @@ public class DataObjectUtil {
                 if(startIndex < 0){
                     startIndex = 0;
                 }    
-                pageInfo.setDatas(dataObjects.subList((int) pageInfo.getStart(), toIndex));
+                pageInfo.setDatas(dataObjects.subList(startIndex, toIndex));
             }else{
                 pageInfo.setDatas(dataObjects);
             }
@@ -338,7 +335,7 @@ public class DataObjectUtil {
 			condition.addChild(createConditionThing(key, key, op));
 		}
 		
-		return (Integer) dataObject.doAction("deleteBatch", actionContext, UtilMap.toMap("conditionConfig", condition, "conditionData", conditions));
+		return dataObject.doAction("deleteBatch", actionContext, UtilMap.toMap("conditionConfig", condition, "conditionData", conditions));
 	}
 	
 	/**
@@ -361,7 +358,7 @@ public class DataObjectUtil {
 			condition.addChild(createConditionThing(key, key, op));
 		}
 		
-		return (Integer) dataObject.doAction("delete", actionContext, UtilMap.toMap("conditionConfig", condition, "conditionData", conditions));
+		return dataObject.doAction("delete", actionContext, UtilMap.toMap("conditionConfig", condition, "conditionData", conditions));
 	}
 	
 	/**
@@ -372,7 +369,7 @@ public class DataObjectUtil {
 		Thing[] keys = theData.getMetadata().getKeys();
 		if(keys != null && keys.length > 0){
 			theData.put(keys[0].getString("name"), id);
-			return (DataObject) dataObject.doAction("load", actionContext, UtilMap.toMap(new Object[]{"theData", theData}));
+			return dataObject.doAction("load", actionContext, UtilMap.toMap(new Object[]{"theData", theData}));
 		}else{
 			throw new ActionException("DataObject has no keys defined, path=" + dataObject.getMetadata().getPath());
 		}
@@ -403,10 +400,8 @@ public class DataObjectUtil {
         String text = "no label field";
         if(labelField != null && !labelField.equals("")){
             text = dataObject.getString(labelField);
-            if(text == null || text.equals("")){
+            if(text == null){
                 text = "";
-            }else{
-                text = String.valueOf(text);
             }
         }
         
@@ -431,63 +426,67 @@ public class DataObjectUtil {
 		if(value == null || "".equals(value)){
 			return null;
 		}
-		
-		if("byte".equals(type)){
-			return UtilData.getByte(value, (byte) 0);
-		}else if("char".equals(type)){
-			return UtilData.getChar(value, (char) 0);
-		}else if("short".equals(type)){
-			return UtilData.getShort(value, (short) 0);
-		}else if("int".equals(type)){
-			return (int) UtilData.getLong(value, 0);
-		}else if("long".equals(type)){
-			return UtilData.getLong(value, 0);
-		}else if("byte[]".equals(type)){
-			return UtilData.getBytes(value, null);
-		}else if("float".equals(type)){
-			return UtilData.getFloat(value, 0);
-		}else if("double".equals(type)){
-			return UtilData.getDouble(value, 0);
-		}else if("boolean".equals(type)){
-			return UtilData.getBoolean(value, false);
-		}else if("date".equals(type)){
-			String pattern = attribute.getString("editPattern");
-			if(pattern == null || "".equals(pattern)){
-				pattern = "yyyy-MM-dd";
+
+		switch (type) {
+			case "byte":
+				return UtilData.getByte(value, (byte) 0);
+			case "char":
+				return UtilData.getChar(value, (char) 0);
+			case "short":
+				return UtilData.getShort(value, (short) 0);
+			case "int":
+				return (int) UtilData.getLong(value, 0);
+			case "long":
+				return UtilData.getLong(value, 0);
+			case "byte[]":
+				return UtilData.getBytes(value, null);
+			case "float":
+				return UtilData.getFloat(value, 0);
+			case "double":
+				return UtilData.getDouble(value, 0);
+			case "boolean":
+				return UtilData.getBoolean(value, false);
+			case "date": {
+				String pattern = attribute.getString("editPattern");
+				if (pattern == null || "".equals(pattern)) {
+					pattern = "yyyy-MM-dd";
+				}
+
+				Date date = UtilData.getDate(value, null, pattern);
+				if (date != null) {
+					return new java.sql.Date(date.getTime());
+				} else {
+					return null;
+				}
 			}
-			
-			Date date = UtilData.getDate(value, null, pattern);
-			if(date != null){
-				return new java.sql.Date(date.getTime());
-			}else{				
-				return  null;
+			case "datetime": {
+				String pattern = attribute.getString("editPattern");
+				if (pattern == null || "".equals(pattern)) {
+					pattern = "yyyy-MM-dd HH:mm:ss";
+				}
+
+				Date date = UtilData.getDate(value, null, pattern);
+				if (date != null) {
+					return new java.sql.Timestamp(date.getTime());
+				} else {
+					return null;
+				}
 			}
-		}else if("datetime".equals(type)){
-			String pattern = attribute.getString("editPattern");
-			if(pattern == null || "".equals(pattern)){
-				pattern = "yyyy-MM-dd HH:mm:ss";
+			case "time": {
+				String pattern = attribute.getString("editPattern");
+				if (pattern == null || "".equals(pattern)) {
+					pattern = "HH:mm:ss";
+				}
+
+				Date date = UtilData.getDate(value, null, pattern);
+				if (date != null) {
+					return new java.sql.Time(date.getTime());
+				} else {
+					return null;
+				}
 			}
-			
-			Date date = UtilData.getDate(value, null, pattern);
-			if(date != null){
-				return new java.sql.Timestamp(date.getTime());
-			}else{
-				return null;
-			}
-		}else if("time".equals(type)){
-			String pattern = attribute.getString("editPattern");
-			if(pattern == null || "".equals(pattern)){
-				pattern = "HH:mm:ss";
-			}
-			
-			Date date = UtilData.getDate(value, null, pattern);
-			if(date != null){
-				return new java.sql.Time(date.getTime());
-			}else{
-				return null;
-			}
-		}else{
-			return UtilData.getString(value, null);
+			default:
+				return UtilData.getString(value, null);
 			//throw new XWorkerException("not implemented type " + type);
 		}
 	}
@@ -564,12 +563,12 @@ public class DataObjectUtil {
             int index = defaultValue.indexOf("+");
             if(index != -1){
                 dateStr = defaultValue.substring(0, index).trim();
-                numberStr = defaultValue.substring(index, defaultValue.length()).trim();
+                numberStr = defaultValue.substring(index).trim();
             }else{
                 index = defaultValue.indexOf("-");
                 if(index != -1){
                     dateStr = defaultValue.substring(0, index).trim();
-                    numberStr = defaultValue.substring(index, defaultValue.length()).trim();
+                    numberStr = defaultValue.substring(index).trim();
                 }
             }
      
@@ -608,7 +607,7 @@ public class DataObjectUtil {
 					try {
 						double d = (Double) OgnlUtil.getValue(dateStr, actionContext);
 						date = UtilDate.getDate(date, d);
-					} catch (Exception e) {
+					} catch (Exception ignored) {
 					}
 					break;
 			}
@@ -652,7 +651,7 @@ public class DataObjectUtil {
 					}
 
 					try {
-						data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
+						data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute), false);
 					} catch (SQLException e) {
 						Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attribute);
 						throw e;
@@ -686,7 +685,7 @@ public class DataObjectUtil {
         
         ActionContext ac = new ActionContext();
         ac.put("datas", datas);
-        return (List<DataObject>) sort.doAction("run", ac);
+        return sort.doAction("run", ac);
 	}
 	
 	/**
@@ -697,7 +696,7 @@ public class DataObjectUtil {
 			return null;
 		}
 		
-		List<DataObject> datas = new ArrayList<DataObject>();
+		List<DataObject> datas = new ArrayList<>();
 		datas.add(data);
 		
 		return toCsv(datas, hasHeader);
@@ -771,11 +770,12 @@ public class DataObjectUtil {
 
 		PreparedStatement pst = null;
 		ResultSet rs = null;
+		long startTime = System.currentTimeMillis();
 		try{
 			//查询总数
 			if(countSql != null && !"".equals(countSql)){
 				if(dataObjectSelf.getBoolean("showSql")){
-					Executor.info(TAG, countSql);
+					Executor.info(TAG, countSql + ", " + queryConfig.getPageInfo());
 				}
 
 				UserTaskManager.setUserTaskLabelDetail(userTask, "Query total count", countSql);
@@ -798,11 +798,13 @@ public class DataObjectUtil {
 				//不知道总数的情况下，设置比当前总数大一
 				//pageInfo.setTotalCount((pageInfo.getPage() + 1) * pageInfo.getLimit());
 			}
+			Executor.debug(TAG, "Query total count time:{}", (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
 
 			//分页查询
 			String sql = querySql;
 			if(dataObjectSelf.getBoolean("showSql")){
-				Executor.info(TAG, sql);
+				Executor.info(TAG, sql + ", " + queryConfig.getPageInfo());
 			}
 			pst = con.prepareStatement(sql);
 			int index = DbDataObject.setStatementParams(pst, 1, queryConfig, attributes);
@@ -827,6 +829,8 @@ public class DataObjectUtil {
 			UserTaskManager.setUserTaskLabelDetail(userTask, "Statement prepared, executing......", null);
 			UserTaskManager.setUserTaskData(userTask, "pst", pst);
 			rs = pst.executeQuery();
+			Executor.debug(TAG, "Execute query time: {}", (System.currentTimeMillis() - startTime));
+			startTime = System.currentTimeMillis();
 
 			//读取记录
 			if(createIterator != null && createIterator){
@@ -846,6 +850,8 @@ public class DataObjectUtil {
 					pst.close();
 				}
 			}
+
+			Executor.debug(TAG, "Read datas from resultset time: {}", (System.currentTimeMillis() - startTime));
 		}
 	}
 }

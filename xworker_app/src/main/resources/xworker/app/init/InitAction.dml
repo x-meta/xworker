@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<ActionThing name="InitAction" descriptors="xworker.lang.ActionThing">&#xd;
+    <description><![CDATA[<p>作为模型应用时执行setup.cmd或setup.sh时的初始化操作。</p>
+]]></description>&#xd;
+    <GroovyAction name="initdbpath" _xmeta_id_="initdb" descriptors="xworker.lang.actions.GroovyAction">&#xd;
+        <code><![CDATA[def dir = new File(world.getPath() + "/databases/sqlite/");
+if(!dir.exists()){
+    dir.mkdirs();
+}]]></code>&#xd;
+    </GroovyAction>&#xd;
+    <InitDatabase name="initAppDb" descriptors="xworker.db.jdbc.utils.JdbcActions/@InitDatabase"
+         thingManager="_local" dataSource="_local.xworker.db.XWorkerAppDataSource" ddlThing="xworker.app.db.DDlAll"
+         checkSql="select * from tblUser">&#xd;
+        <DataSource name="DataSource" descriptors="xworker.db.jdbc.utils.JdbcActions/@InitDatabase/@DataSource,xworker.db.jdbc.DataSource"
+             label="AppManager" dbType="sqlite" drivers="15" driver_class="org.sqlite.JDBC"
+             url="template:jdbc:sqlite:${world.path}/databases/sqlite/xworker_app.db"
+             checkoutTimeout="3000" th_createIndex="true" th_registThing="child|xworker.ui.db.datasource.JdbcDatasourceRegistor"
+             group="xworker.应用管理"/>&#xd;
+    </InitDatabase>&#xd;
+    <GroovyAction name="init" descriptors="xworker.lang.actions.GroovyAction">&#xd;
+        <code><![CDATA[import xworker.app.init.InitApp;
+import xworker.dataObject.query.Condition;
+import xworker.dataObject.DataObject;
+
+import java.util.Random;
+import xworker.app.user.UserActions;
+
+
+//插入数据
+println "Init app database datas...";
+InitApp.run();
+
+//检查admin账号
+println "Check admin account";
+def adminUser = new DataObject("xworker.app.user.dataobjects.User");
+def con = new Condition();
+con.eq("loginName", "admin");
+adminUser = adminUser.load(actionContext, con);
+if(adminUser == null){
+    //创建admin
+    adminUser = new DataObject("xworker.app.user.dataobjects.User");
+    adminUser.set("loginName", "admin");
+    
+    //创建密码MD5
+    Random r = new Random();
+    String randomKey = "" + (1000 + r.nextInt(10000000));
+    String password = UserActions.getMd5("admin", randomKey);
+    
+    //保存用户的密码
+    adminUser.password = password;
+    adminUser.randomKey = randomKey;
+    adminUser.name = "admin";
+    adminUser.role =1;
+    adminUser.create(actionContext);
+}
+
+println "App inited";]]></code>&#xd;
+    </GroovyAction>&#xd;
+</ActionThing>

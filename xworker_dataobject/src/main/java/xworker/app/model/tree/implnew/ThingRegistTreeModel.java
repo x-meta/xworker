@@ -4,10 +4,12 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.util.ThingGroup;
 import xworker.util.XWorkerUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ThingRegistTreeModel {
@@ -42,31 +44,11 @@ public class ThingRegistTreeModel {
     }
 
     private static TreeModelItem toTreeModelItem(TreeModel treeModel, TreeModelItem parentItem, ThingGroup thingGroup){
-        TreeModelItem item = new TreeModelItem(treeModel, parentItem);
-        String id = treeModel.getThing().getMetadata().getPath() + "|";
-        if(thingGroup.getThing() == null){
-            //是目录
-            item.setSource(thingGroup);
-            item.setText(thingGroup.getGroup());
-            item.setId(id + thingGroup.getGroup());
-            item.setDataId(thingGroup.getGroup());
-            item.setIcon("icons/folder.png");
-        }else{
-            Thing thing = thingGroup.getThing();
-            item.setSource(thing);
-            item.setText(thing.getMetadata().getLabel());
-            item.setIcon(XWorkerUtils.getThingIcon(thing));
-            item.setDataId(thing.getMetadata().getPath());
-            item.setId(id + thing.getMetadata().getPath());
-        }
+        return TreeModelUtils.toItem(treeModel, parentItem, thingGroup);
+    }
 
-        List<TreeModelItem> items = new ArrayList<>();
-        for(ThingGroup childGroup : thingGroup.getChilds()){
-            items.add(toTreeModelItem(treeModel, item, childGroup));
-        }
-
-        item.setItems(items);
-
-        return item;
+    //xworker.app.model.tree.implnew.ThingRegistTreeModel/@actions/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext){
+        return Collections.emptyList();
     }
 }

@@ -67,6 +67,33 @@ public class ThingTreeModel {
         return items;
     }
 
+    //xworker.app.model.tree.implnew.ActionThingTreeModel/@actions/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeModel treeModel = actionContext.getObject("treeModel");
+        TreeModelItem parentItem = actionContext.getObject("parentItem");
+        Object[] sources = actionContext.getObject("sources");
+
+        List<TreeModelItem> items = new ArrayList<>();
+
+        for(Object obj : sources){
+            if(obj instanceof  Thing){
+                Thing child = (Thing) obj;
+
+                TreeModelItem item = new TreeModelItem(treeModel, parentItem);
+                item.setSource(child);
+                item.setText(child.getMetadata().getLabel());
+                item.setIcon(XWorkerUtils.getThingIcon(child));
+                item.setDataId(child.getMetadata().getPath());
+                item.setId(treeModel.getThing().getMetadata().getPath() + "|" + child.getMetadata().getPath());
+
+                items.add(item);
+            }
+        }
+
+        return items;
+    }
+
     public static TreeModelItem getItemById(ActionContext actionContext){
         TreeModel treeModel = actionContext.getObject("treeMode");
         String path = actionContext.getObject("id");

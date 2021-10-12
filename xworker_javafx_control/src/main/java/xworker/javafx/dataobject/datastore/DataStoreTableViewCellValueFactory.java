@@ -65,7 +65,7 @@ public class DataStoreTableViewCellValueFactory implements Callback<TableColumn.
                 autoSaveable = new DataObjectLongProperty(data, attribute, name);
             } else if ("float".equals(type)) {
                 autoSaveable = new DataObjectFloatProperty(data, attribute, name);
-            } else if ("double".equals(type) || "checkBox".equals(type)) {
+            } else if ("double".equals(type) || "float".equals(type)) {
                 autoSaveable = new DataObjectDoubleProperty(data, attribute, name);
             } else if ("boolean".equals(type)) {
                 autoSaveable = new DataObjectBooleanProperty(data, attribute, name);

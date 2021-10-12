@@ -12,6 +12,7 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 
 import xworker.dataObject.DataObject;
+import xworker.util.ThingRegistUtils;
 import xworker.util.ThingUtils;
 
 public class ThingActions {
@@ -52,7 +53,7 @@ public class ThingActions {
 		        }
 		    }
 		    
-		    ThingUtils.initFromRegistCache(desChilds, context, descriptor, "child");
+		    ThingRegistUtils.initFromRegistCache(desChilds, context, descriptor, "child");
 		}catch(Exception e){
 			logger.warn("search regist child error", e);
 		}

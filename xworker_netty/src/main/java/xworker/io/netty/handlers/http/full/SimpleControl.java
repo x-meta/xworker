@@ -33,14 +33,14 @@ import xworker.util.UtilTemplate;
 
 
 public class SimpleControl {
-	private static World world = World.getInstance();
+	private static final World world = World.getInstance();
 	public static boolean debug = true;
 	private static long lastCheckGlbalConfigTime = 0;
-	private static WebSessionManager sessionManager = new WebSessionManager();
+	private static final WebSessionManager sessionManager = new WebSessionManager();
 	private static final String[] supportSurfixs = new String[]{".do", ".ac", ".dml", ".xer", ".xer.txt", ".xer.xml"};
 	private static boolean allowUnderLine = false;
 	/** 允许访问的事物管理器列表，如果不在这个列表，则不允许访问 */
-	private static List<String> allowThingManagers = new ArrayList<String>();
+	private static final List<String> allowThingManagers = new ArrayList<>();
 	
 	public static Object doRequest(ActionContext actionContext) {
 		long start = System.currentTimeMillis();
@@ -160,23 +160,22 @@ public class SimpleControl {
         //取得子区域的定义，处理区域
         List<Thing> regions = resultObject.getChilds("region");
         if(regions != null){
-            for(int k=0; k<regions.size(); k++){
-                Thing region = (Thing) regions.get(k);
-                
-                //替换region的变量
-                String name = region.getString("name");
-                actionContext.put(name, region.doAction("doRegion", actionContext));
-            }
+			for (Thing thing : regions) {
+
+				//替换region的变量
+				String name = thing.getString("name");
+				actionContext.put(name, thing.doAction("doRegion", actionContext));
+			}
         }
                 
         String contentType = resultObject.getString("contentType");
-        if(contentType.indexOf("${") != -1){
+        if(contentType.contains("${")){
         	contentType = UtilTemplate.processThingAttributeToString(resultObject, "contentType", actionContext);
         }
                        
         //执行结果
         String type = resultObject.getString("type"); 
-        if(type.indexOf("${") != -1){
+        if(type.contains("${")){
         	//type = UtilTemplate.processString(actionContext, resultObject.getMetadata().getPath() + "type", type);
         	type = UtilTemplate.processThingAttributeToString(resultObject, "type", actionContext);
         }
@@ -189,7 +188,7 @@ public class SimpleControl {
 	public static Object freemarker(ActionContext actionContext) throws Throwable{		
 		Thing resultObject = (Thing) actionContext.get("self");
 		String path = resultObject.getString("value");
-		if(path.indexOf("${") != -1){
+		if(path.contains("${")){
 			path = UtilTemplate.processString(actionContext, resultObject.getMetadata().getPath() + "value", path);
         }
 		if(path == null || "".equals(path)){
@@ -209,7 +208,7 @@ public class SimpleControl {
 		
 		Thing resultObject = (Thing) actionContext.get("self");
 		String path = resultObject.getString("value");
-		if(path.indexOf("${") != -1){
+		if(path.contains("${")){
 			path = UtilTemplate.processString(actionContext, resultObject.getMetadata().getPath() + "value", path);
         }
 		
@@ -531,10 +530,12 @@ public class SimpleControl {
 				return resultObject.doAction("doResult", actionContext);
 			}
 
+			/*
 			FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.OK,
 					Unpooled.copiedBuffer(result + ".\r\n", CharsetUtil.UTF_8));
 			response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/plain;charset=utf-8");
-			return response;
+			return response;*/
+			return null;
 		}catch(Exception e){
 			FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.INTERNAL_SERVER_ERROR,
 					Unpooled.copiedBuffer(ExceptionUtil.toString(e) + ".\r\n", CharsetUtil.UTF_8));

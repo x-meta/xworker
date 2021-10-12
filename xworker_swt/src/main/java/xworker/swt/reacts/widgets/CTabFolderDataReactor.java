@@ -13,6 +13,8 @@ import xworker.swt.app.IEditor;
 import xworker.swt.app.editorContainers.CTabFolderEditorContainer;
 import xworker.swt.reacts.DataReactorContext;
 import xworker.swt.reacts.WidgetDataReactor;
+import xworker.workbench.EditorParams;
+import xworker.workbench.WorkbenchUtils;
 
 public class CTabFolderDataReactor extends WidgetDataReactor{
 	private static final String TAG = CTabFolderDataReactor.class.getName();
@@ -32,18 +34,12 @@ public class CTabFolderDataReactor extends WidgetDataReactor{
 
 	@Override
 	protected void widgetDoOnSelected(List<Object> datas, DataReactorContext context) {
-		if(datas.size() > 0) {
-			Object data = datas.get(0);
-			
+		for(Object data : datas){
 			//创建打打开编辑器的参数
-			Map<String, Object> params = DataEditorProvider.createDataParams(data, actionContext);
-			if(params != null) {
-				Thing editor = (Thing) params.get(IEditor.EDITOR_THING);
-				if(editor != null) {					
-					//打开编辑器
-					String id = (String) params.get(IEditor.EDITOR_ID);
-					editorContainer.openEditor(id, editor, params);
-				}
+			List<EditorParams<Object>> editorParamsList = WorkbenchUtils.getEditors("swt", data, actionContext);
+			if (editorParamsList.size() > 0) {
+				EditorParams<Object> editorParams = editorParamsList.get(0);
+				editorContainer.openEditor(editorParams.getId(), editorParams.getEditor(), editorParams.getParams());
 			}
 		}
 	}

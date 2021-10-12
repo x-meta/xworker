@@ -1,6 +1,10 @@
 package xworker.javafx.scene.media;
 
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.layout.Region;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.xmeta.ActionContext;
@@ -46,8 +50,11 @@ public class MediaViewActions {
 
     public static MediaView create(ActionContext actionContext){
         Thing self = actionContext.getObject("self");
+        Region parent = actionContext.getObject("parent");
 
-        MediaView node = new MediaView();
+        Media media = new Media("file:/e:/git/xworker/xworker_explorer/xworker/webroot/temp/S03E01.mp4");
+        MediaPlayer mediaPlayer1 = new MediaPlayer(media);
+        MediaView node = new MediaView(mediaPlayer1);
         init(node, self, actionContext);
         actionContext.g().put(self.getMetadata().getName(), node);
 
@@ -55,10 +62,16 @@ public class MediaViewActions {
         for(Thing child : self.getChilds()){
             Object obj = child.doAction("create", actionContext);
             if(obj instanceof MediaPlayer){
-                node.setMediaPlayer((MediaPlayer) obj);
+                MediaPlayer mediaPlayer = (MediaPlayer) obj;
+                node.setMediaPlayer(mediaPlayer);
+                mediaPlayer.play();
             }
         }
 
+        Platform.runLater(() -> {
+            mediaPlayer1.play();
+            System.out.println("Played");
+        });
         return node;
     }
 }

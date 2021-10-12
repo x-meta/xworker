@@ -1,5 +1,6 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,11 +15,39 @@ import org.xmeta.util.UtilMap;
 
 import xworker.lang.executor.Executor;
 import xworker.swt.app.IEditor;
+import xworker.swt.util.SwtUtils;
+import xworker.swt.xworker.content.SwtQuickContentHandler;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class ThingRegistEditor {
 	private static final String TAG = ThingRegistEditor.class.getName();
+
+    public static EditorParams<Object> createParams(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        Object content = actionContext.getObject("content");
+        Thing thing = null;
+        if (content instanceof String) {
+            thing = World.getInstance().getThing((String) content);
+        }else  if(content instanceof Thing){
+            thing = (Thing) content;
+        }
+        if(thing != null && (thing.isThing("xworker.swt.xworker.ThingRegistThing") || thing.isThing("xworker.lang.util.ThingIndex"))){
+            return new EditorParams<Object>(self, "thingregistor:" + thing.getMetadata().getPath(), thing) {
+                @Override
+                public Map<String, Object> getParams() {
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("thing", this.getContent());
+
+                    return params;
+                }
+            };
+        }
+
+        return null;
+    }
+
     public Object createDataParams(){
         //xworker.swt.app.editors.ThingRegistEditor/@actions1/@createDataParams
         Object data = actionContext.get("data");
@@ -74,6 +103,22 @@ public class ThingRegistEditor {
             
             ActionContainer thingRegist = actionContext.getObject("thingRegist");
             thingRegist.doAction("selectThing", actionContext, "thing", thing);
+        }
+    }
+
+    public void onOutlineCreated(){
+        Thing thing = actionContext.getObject("thing");
+        Browser browser = actionContext.getObject("topicBrowser");
+        if(browser != null && !browser.isDisposed()){
+            if(thing != null){
+                SwtUtils.setThingDesc(thing, browser);
+            }
+
+            ActionContainer thingRegistor = actionContext.getObject("thingRegistor");
+            SwtQuickContentHandler contentHandler = thingRegistor.doAction("getContentHandler", actionContext);
+            if(contentHandler != null){
+                contentHandler.setBrowser(browser);
+            }
         }
     }
     

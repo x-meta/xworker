@@ -1,6 +1,7 @@
 package xworker.swt.app.editors;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -39,11 +40,33 @@ import xworker.swt.xworker.DataTable;
 import xworker.ui.swt.SwtBorder;
 import xworker.util.UtilFileIcon;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator="createInstance")
 public class XWorkerPackageViewer {
 	private static final String TAG = XWorkerPackageViewer.class.getName();
-	
+
+	public static EditorParams<Object> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		if(content instanceof Index){
+			Index index = (Index) content;
+			if(!(index.getType().equals(Index.TYPE_THING) || index.getType().equals(Index.TYPE_FILE))) {
+				return new EditorParams<Object>(self, "xworkerpackageviewer:" + index.getPath(), index) {
+					@Override
+					public Map<String, Object> getParams() {
+						Map<String, Object> params = new HashMap<>();
+						params.put("index", this.getContent());
+
+						return params;
+					}
+				};
+			}
+		}
+
+		return null;
+	}
+
 	public void initCode() {
 		Composite titleComposite = actionContext.getObject("titleComposite");
 		//标题的边框
@@ -563,7 +586,7 @@ public class XWorkerPackageViewer {
 	            String url = XWorkerUtils.getThingDescUrl(helpThing);
 	            packageViewerHelpBrowser.setUrl(url);
 	        }else{
-	            packageViewerHelpBrowser.setText("未知的类型：" + indexType);
+	            packageViewerHelpBrowser.setText(UtilString.getString("lang:d=未知的类型：&en=Unknown Type: ", actionContext)  + indexType);
 	        }
 	    }
 	    

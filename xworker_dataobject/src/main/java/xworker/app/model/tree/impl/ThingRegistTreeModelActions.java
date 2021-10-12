@@ -33,7 +33,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.dataObject.DataObject;
 
 public class ThingRegistTreeModelActions {
@@ -263,7 +263,7 @@ public class ThingRegistTreeModelActions {
 			}
 			node = new HashMap<String, Object>();
 			node.put(TreeModel.Source, treeModel);
-			TreeModelUtil.setAttributes(treeModel, path, node);
+			TreeModelUtils.setAttributes(treeModel, path, node);
 			node.put("text", name);
 			if(thing == null){
 				node.put("icon", "icons/folder.png");

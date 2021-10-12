@@ -22,7 +22,7 @@ import xworker.util.ThingUtils;
  *
  */
 public class InitApp {
-	private static Logger logger = LoggerFactory.getLogger(InitApp.class);
+	private static final Logger logger = LoggerFactory.getLogger(InitApp.class);
 	private static boolean isIniting = false;
 	
 	public static boolean isIniting(){
@@ -76,9 +76,6 @@ public class InitApp {
     
     /**
      * 执行初始化操作。
-     * 
-     * @param initThing
-     * @param actionContext
      */
     public static void init(Thing initThing, ActionContext actionContext){
     	List<DataObject> initLogs = DataObjectUtil.query("xworker.app.init.dataobjects.InitLog",

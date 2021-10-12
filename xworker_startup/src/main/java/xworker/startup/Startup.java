@@ -157,12 +157,17 @@ public class Startup {
 				dmlCfg.toArray(args);
 			}else{
 				//System.out.println("XWorker home is: " + args[0]);
+				if(args[0].equals("rap")){
+					args = new String[]{
+
+					};
+				}
 			}
 			
 			//过滤参数中的引号
 			for(int i=0; i<args.length; i++){				
 				String arg = args[i];
-				if(arg.length() >= 2 && arg.charAt(0) == '"' && arg.charAt(arg.length()) == '"'){
+				if(arg.startsWith("\"") && arg.endsWith("\"")){
 					args[i] = arg.substring(1, arg.length() - 1);
 				}
 			}
@@ -177,7 +182,12 @@ public class Startup {
 			if(localConfig.exists() && localConfig.isDirectory()){
 				urlList.add(localConfig.toURI().toURL());
 			}			
-			
+
+			if(args.length >= 2 && "xworker.webserver.WebThingEditor".equals(args[1])){
+				//添加RAP类库，RAP是Web编辑器，应该只有一种情况启动，因为只是启动了一个包含RAP的Web服务器
+				System.out.println("添加RAP类库：" + "./lib_rap/");
+				initJars(new File(args[0] + "/lib_rap"), urlList);
+			}
 			initJars(new File("./os/lib/lib_"  + OS), urlList);
 			initJars(new File("./os/lib/lib_"  + OS + "_" + PROCESSOR_ARCHITECTURE), urlList);
 			initJars(new File("./lib/"), urlList);
@@ -204,7 +214,7 @@ public class Startup {
 			//System.out.println("init libs: " + (System.currentTimeMillis() - start));
 			Thread.currentThread().setContextClassLoader(classLoader);
 			Class trCls = classLoader.loadClass("org.xmeta.util.ThingRunner");
-			Method method = trCls.getDeclaredMethod("run", new Class[]{String[].class});
+			Method method = trCls.getDeclaredMethod("run", String[].class);
 			
 			//System.out.println("get ThingRunner: " + (System.currentTimeMillis() - start));
 			method.invoke(null, new Object[]{args});

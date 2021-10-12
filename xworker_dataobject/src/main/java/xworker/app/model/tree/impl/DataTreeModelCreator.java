@@ -27,7 +27,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.lang.executor.Executor;
 
 public class DataTreeModelCreator {
@@ -126,7 +126,7 @@ public class DataTreeModelCreator {
         
         Map<String, Object> node = new HashMap<String, Object>();
         node.put("text", getValue(data, self.getString("textName")));
-        TreeModelUtil.setAttributes(self, id, node);
+        TreeModelUtils.setAttributes(self, id, node);
         node.put("icon", getValue(data, self.getString("iconName")));
         node.put("cls", getValue(data, self.getString("clsName")));
         node.put(TreeModel.Source, data);

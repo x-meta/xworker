@@ -109,7 +109,7 @@ public class DbDataObjectActions {
                 
                 //设置属性值
                 for (Thing attribute : attributes) {
-                    theData.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
+                    theData.put(attribute.getString("name"), DbUtil.getValue(rs, attribute), false);
                 }
                 
                 theData.setInited(true);   
@@ -421,7 +421,7 @@ public class DbDataObjectActions {
                         }
 
                         try {
-                            data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)));
+                            data.put(attributes.get(i).getString("name"), DbUtil.getValue(rs, attributes.get(i)), false);
                         } catch (Exception e) {
                             Executor.error(TAG, "get result value error: " + e.getMessage() + ": " + attributes.get(i));
                             throw e;
@@ -644,8 +644,12 @@ public class DbDataObjectActions {
             
             if(attr != keyThing){//!attr.getBoolean("key")){
                 Thing property = new Thing("xworker.db.hibernate.hibernate-mapping-nodes.class/@property");
+                String attrName = attr.getString("name");
+                String attrColumn = attr.getString("fieldName");
                 property.set("name", attr.get("name"));
-                //property.set("column", attr.get("fieldName"));
+                if(!attrName.equals(attrColumn)) {
+                    property.set("column", attrColumn);
+                }
                 property.set("type", getType(attr.getString("type")));
                 property.set("length", attr.get("length"));
                 property.set("precision", attr.get("precision"));

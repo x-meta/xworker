@@ -50,14 +50,14 @@ import org.slf4j.LoggerFactory;
  * Put in web.xml the servlet mapping
  * 
  * <pre>
- * &ltservlet&gt
- * 	&ltservlet-name&gtFileManagerServlet&lt/servlet-name&gt
- * 	&ltservlet-class&gtcom.project.web.servlet.AngularFileManagerServlet&lt/servlet-class&gt
- * &lt/servlet&gt
- * &ltservlet-mapping&gt
- * 	&ltservlet-name&gtFileManagerServlet&lt/servlet-name&gt
- * 	&lturl-pattern&gt/fm/*&lt/url-pattern&gt
- * &lt/servlet-mapping&gt
+ * &lt;servlet&gt;
+ * 	&lt;servlet-name&gt;FileManagerServlet&lt;/servlet-name&gt;
+ * 	&lt;servlet-class&gt;com.project.web.servlet.AngularFileManagerServlet&lt;/servlet-class&gt;
+ * &lt;/servlet&gt;
+ * &lt;servlet-mapping&gt;
+ * 	&lt;servlet-name&gt;FileManagerServlet&lt;/servlet-name&gt;
+ * 	&lt;url-pattern&gt;/fm/*&lt;/url-pattern&gt;
+ * &lt;/servlet-mapping&gt;
  * </pre>
  * 
  * that catch all request to path /fm/*<br>

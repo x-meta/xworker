@@ -71,6 +71,7 @@ public class GroovyAction {
 			
 			if(recompile && World.getInstance().getMode() == World.MODE_PROGRAMING){
 				//重新编译并装载脚本
+				action.setActionClass(null);
 				Thing actionThing = action.getThing();
 				if(actionThing.getStringBlankAsNull("outterClassName") == null){
 					String className = actionThing.getStringBlankAsNull("innerClassName");
@@ -173,9 +174,8 @@ public class GroovyAction {
 				
 				//代码辅助
 				Binding binding = new Binding(context);
-				script.setBinding(binding);				
-				Object result = script.run();			
-				return result;
+				script.setBinding(binding);
+				return script.run();
 			}finally{
 				//bindings1.remove("self");
 				context.popAction();

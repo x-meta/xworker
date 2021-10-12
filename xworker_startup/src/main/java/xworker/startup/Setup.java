@@ -1,11 +1,8 @@
 
 package xworker.startup;
 
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.Objects;
 
 /**
  * 设置XWorker。
@@ -27,7 +24,13 @@ public class Setup {
 	}
 	
 	public static void setExecutable(File file){
-		file.setExecutable(true);
+		if(file.exists() && file.isFile()) {
+			if(file.setExecutable(true)){
+				System.out.println("Set executable success, file=" + file.getName());
+			}else{
+				System.out.println("Set executable failure, file=" + file.getName());
+			}
+		}
 	}
 	
 	public static void write(String[] lines, OutputStream out) throws IOException{
@@ -36,7 +39,7 @@ public class Setup {
 			out.write("\n".getBytes());
 		}
 	}
-	
+
 	public static void setup() throws IOException{
 		String OS = null;
 		try{
@@ -52,7 +55,7 @@ public class Setup {
 	
 	public static void setup(String OS) throws IOException{
 		File dbdir = new File("./databases/sqlite/");
-		if(dbdir.exists() == false){
+		if(!dbdir.exists()){
 			dbdir.mkdirs();
 		}
 		
@@ -62,11 +65,11 @@ public class Setup {
 				"url=https://www.xworker.org/do?sc=xworker.tools.update.Download"
 		}, true);
 		
-		if(OS.indexOf("windows") != -1){
+		if(OS.contains("windows")){
 			setupWindows();
-		}else if(OS.indexOf("linux") != -1){
+		}else if(OS.contains("linux")){
 			setupLinux();
-		}else if(OS.indexOf("mac os x") != -1){
+		}else if(OS.contains("mac os x")){
 			setupMaxOsX();
 		}else{
 			System.out.println("unkonw system, can not set up xworker");
@@ -79,27 +82,29 @@ public class Setup {
 		home = home.substring(0, home.length() - 1);
 		
 		//写入update.sh
+		/*
 		write("./update.sh", new String[]{
 				"#!/bin/sh",
 				"cd " + home,
 				"java -classpath \"" + home + "xworker.jar\" xworker.filesync.FileSync $1",
 				"./upidx.sh"
-		}, true);
+		}, true);*/
 				
 		write("./dmlforlink.sh", new String[]{
 				"#!/bin/sh",
 				"",
 				home + "dml.sh \"$@\""
 		}, true);
-		
+
+		/*
 		write("./dml-rapforlink.sh", new String[]{
 				"#!/bin/sh",
 				"",
 				home + "dml-rap.sh \"$@\""
-		}, true);
+		}, true);*/
 		
 		File localBin = new File("/usr/local/bin");
-		if(localBin.exists() == false) {
+		if(!localBin.exists()) {
 			localBin.mkdirs();
 		}
 		//写入setup.sh，进行文件关联等		
@@ -114,6 +119,7 @@ public class Setup {
 		write("./dml.sh", new String[]{					
 				"java -version"				
 		}, false);
+		/*
 		write("./upidx.sh", new String[]{					
 				"java -version"				
 		}, false);
@@ -122,15 +128,22 @@ public class Setup {
 		}, false);
 		write("./dml2xsd.sh", new String[] {
 				"dml.sh xworker.tools.GenerateXsd run $1 $2"
-		}, false);
+		}, false);*/
 		String os = Startup.getOS();
 		String arc = Startup.getPROCESSOR_ARCHITECTURE();
 		write("./dml.conf.sh", new String[]{
 				"# Mac OS will open -XstartOnFirstThread\n" + 
 				"JAVA_OPTS=\"$JAVA_OPTS -XstartOnFirstThread\"\n" + 
-				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/os/library/" 
+				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/library:$XWORKER_HOME/os/library/"
 					+ os + "_" + arc + "/:$XWORKER_HOME/os/library/" + os + "/:$PATH\""
 		}, true);
+
+		for(File file : Objects.requireNonNull(dir.listFiles())){
+			if(file.getName().toLowerCase().endsWith(".sh")){
+				setExecutable(file);
+			}
+		}
+		/*
 		setExecutable(new File("./update.sh"));
 		setExecutable(new File("./dml.sh"));
 		setExecutable(new File("./setupenv.sh"));
@@ -141,6 +154,10 @@ public class Setup {
 		setExecutable(new File("./dml-rapforlink.sh"));
 		setExecutable(new File("./dml2xsd.sh"));
 		setExecutable(new File("./dml.conf.sh"));
+		setExecutable(new File("./swt.sh"));
+		setExecutable(new File("./web.sh"));
+		setExecutable(new File("./javafx.sh"));
+		*/
 	}
 	
 	public static void setupLinux() throws IOException{
@@ -149,12 +166,13 @@ public class Setup {
 		home = home.substring(0, home.length() - 1);
 		
 		//写入update.sh
+		/*
 		write("./update.sh", new String[]{
 				"#!/bin/sh",
 				"cd " + home,
 				"java -classpath \"" + home + "xworker.jar\" xworker.filesync.FileSync $1",
 				"./upidx.sh"
-		}, true);
+		}, true);*/
 		
 		//写入文件类型
 		write("./config/xworker-dml.xml", new String[]{
@@ -187,12 +205,13 @@ public class Setup {
 				"",
 				home + "dml.sh \"$@\""
 		}, true);
-		
+
+		/*
 		write("./dml-rapforlink.sh", new String[]{
 				"#!/bin/sh",
 				"",
 				home + "dml-rap.sh \"$@\""
-		}, true);
+		}, true);*/
 		
 		//写入setup.sh，进行文件关联等		
 		write("./setupenv.sh", new String[]{		
@@ -211,20 +230,27 @@ public class Setup {
 		write("./dml.sh", new String[]{					
 				"java -version"				
 		}, false);
+		/*
 		write("./upidx.sh", new String[]{					
 				"java -version"				
 		}, false);
 		write("./thingexplorer.sh", new String[]{					
 				"java -version"				
-		}, false);
+		}, false);*/
 		
 		String os = Startup.getOS();
 		String arc = Startup.getPROCESSOR_ARCHITECTURE();
 		write("./dml.conf.sh", new String[]{
-				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/os/library/" 
+				"JAVA_OPTS=\"$JAVA_OPTS -Djava.library.path=$XWORKER_HOME/library:$XWORKER_HOME/os/library/"
 					+ os + "_" + arc + "/:$XWORKER_HOME/os/library/" + os + "/:$PATH\""
 		}, true);
-					
+
+		for(File file : Objects.requireNonNull(dir.listFiles())){
+			if(file.getName().toLowerCase().endsWith(".sh")){
+				setExecutable(file);
+			}
+		}
+		/*
 		setExecutable(new File("./update.sh"));
 		setExecutable(new File("./dml.sh"));
 		setExecutable(new File("./setupenv.sh"));
@@ -234,7 +260,10 @@ public class Setup {
 		setExecutable(new File("./dml-rap.sh"));
 		setExecutable(new File("./dml-rapforlink.sh"));
 		setExecutable(new File("./dml.conf.sh"));
-		
+		setExecutable(new File("./swt.sh"));
+		setExecutable(new File("./web.sh"));
+		setExecutable(new File("./javafx.sh"));
+		*/
 		//Desktop.getDesktop().open(new File("update.sh"));
 		//Desktop.getDesktop().open(new File("setup.sh"));
 	}
@@ -245,11 +274,12 @@ public class Setup {
 		home = home.substring(0, home.length() - 1);
 		
 		//检查update.cmd是否存在
+		/*
 		write("./update.cmd", new String[]{
 				"cd /d " + home + "\r",
 				"java -classpath \"xworker.jar\" xworker.filesync.FileSync %1\r",
 				"upidx.cmd"
-		}, true);
+		}, true);*/
 		
 		//创建ThngExpl
 		//写入文件关联cmd		
@@ -269,12 +299,12 @@ public class Setup {
 		String os = Startup.getOS();
 		String arc = Startup.getPROCESSOR_ARCHITECTURE();
 		write("./dml.conf.cmd", new String[]{
-				"set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path=\"%XWORKER_HOME%os\\library\\" 
+				"set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path=\"%XWORKER_HOME%\\library\\;%XWORKER_HOME%os\\library\\"
 					+ os + "_" + arc + "\\;%XWORKER_HOME%os\\library\\" + os + "\\;%PATH%\""
 		}, true);
 		
 		//启动update.cmd
-		Desktop.getDesktop().open(new File("update.cmd"));
+		//Desktop.getDesktop().open(new File("update.cmd"));
 	}
 	
 	public static void main(String args[]){

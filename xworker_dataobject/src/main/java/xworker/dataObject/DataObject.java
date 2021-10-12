@@ -31,9 +31,11 @@ import org.xmeta.util.OgnlUtil;
 import org.xmeta.util.UtilData;
 
 import xworker.dataObject.cache.DataObjectCache;
+import xworker.dataObject.cache.ThreadLocalCache;
 import xworker.dataObject.query.Condition;
 import xworker.dataObject.query.QueryConfig;
 import xworker.dataObject.query.UtilCondition;
+import xworker.dataObject.utils.DataObjectLabelUtils;
 import xworker.dataObject.utils.DataObjectUtil;
 import xworker.lang.executor.Executor;
 import xworker.task.TaskManager;
@@ -83,7 +85,7 @@ public class DataObject extends HashMap<String, Object> {
 	private int flag = FLAG_STORED;
 
 	/** 和SWT控件setData和getData一样，用于保存第三方的数据 */
-	private Map<String, Object> datas = new HashMap<String, Object>();
+	private Map<String, Object> datas = new HashMap<>();
 	
 	/**
 	 * 数据对象监听器，用来监听数据对象的变更等。比如UI联动。
@@ -103,7 +105,7 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 修改栈。
 	 */
-	private ThreadLocal<Stack<Object>> modifiyStack = new ThreadLocal<Stack<Object>>();
+	private final ThreadLocal<Stack<Object>> modifiyStack = new ThreadLocal<>();
 	
 	/**
 	 * 无描述者的构造函数，这样构造出来的数据对象只能当作临时数据(Map)用。
@@ -157,8 +159,6 @@ public class DataObject extends HashMap<String, Object> {
 
 	/**
 	 * 设置第一个主键的值。
-	 *
-	 * @param value
 	 */
 	public void setKeyValue(Object value){
 		Thing[] keys = getMetadata().getKeys();
@@ -361,6 +361,14 @@ public class DataObject extends HashMap<String, Object> {
 				}
 				
 				if(metadata != null){
+					//清空相关依赖
+					List<Thing> relations = metadata.getRelationThings(key);
+					if(relations != null){
+						for(Thing relation : relations){
+							super.put(relation.getString("name"), null);
+						}
+					}
+
 					Thing definition = metadata.getDefinition(key);
 					if (definition != null && "attribute".equals(definition.getThingName())) {
 						value = DataObjectUtil.getValue(value, definition);
@@ -413,7 +421,7 @@ public class DataObject extends HashMap<String, Object> {
 	public void begin() {
 		Stack<Object> stack = modifiyStack.get();
 		if(stack == null) {
-			stack = new Stack<Object>();
+			stack = new Stack<>();
 			modifiyStack.set(stack);
 		}
 		
@@ -551,14 +559,19 @@ public class DataObject extends HashMap<String, Object> {
 	}
 	
 	@Override
-	public Object get(Object key) {
+	public Object get(Object keyObj) {
+		if(keyObj == null){
+			return null;
+		}
+
+		String key = keyObj.toString();
 		if (this.wrappedObject != null) {
 			if (metadata != null) {
-				Thing definition = metadata.getDefinition(key.toString());
+				Thing definition = metadata.getDefinition(key);
 				if (definition != null) {
 					String propertyPath = definition.getStringBlankAsNull("propertyPath");
 					if (propertyPath == null) {
-						propertyPath = key.toString();
+						propertyPath = key;
 					}
 
 					return OgnlUtil.getValue(propertyPath, wrappedObject);
@@ -590,20 +603,33 @@ public class DataObject extends HashMap<String, Object> {
 			return data;
 		} else {
 			Object obj = super.get(key);
-			/*
-			下面的对象也应该是延迟加载的。
-			if (obj instanceof DataObject) {
-				DataObject dobj = (DataObject) obj;
-				if (!dobj.isInited()) {
-					dobj = dobj.load(null);
-					super.put((String) key, dobj);
+			if(obj == null){
+				Thing desc = metadata.getDefinition(key);
+				if(desc != null && "thing".equals(desc.getThingName())){
+					//是关联
+					if(desc.getBoolean("many")){
+						DataObjectList dlist = new DataObjectList(desc, this);
+						dlist.load(new ActionContext());
+
+						//dlist.load(null);
+						this.put(key, dlist, false);
+						obj = dlist;
+					}else{
+						Thing relationThing = World.getInstance().getThing(desc.getString("dataObjectPath"));
+						if(relationThing != null){
+							DataObject d = null;
+							Object  refValue = this.get(desc.getString("localAttributeName"));
+							if(relationThing.getBoolean("cacheRelation")){
+								d = DataObjectCache.getDataObject(relationThing, desc.getString("refAttributeName"), refValue);
+							}else{
+								d = DataObjectCache.getDataObjectThreadCache(relationThing, desc.getString("refAttributeName"), refValue);
+							}
+							this.put(key, d, false);
+							obj = d;
+						}
+					}
 				}
-			} else if (obj instanceof DataObjectList) {
-				DataObjectList dobjlist = (DataObjectList) obj;
-				if (!dobjlist.isInited()) {
-					dobjlist.load(null);
-				}
-			}*/
+			}
 
 			return obj;
 		}
@@ -669,6 +695,19 @@ public class DataObject extends HashMap<String, Object> {
 	 */
 	public DataObject load(ActionContext actionContext, Condition condition) {
 		List<DataObject> datas = query(actionContext, condition);
+		if(datas.size() > 0) {
+			setInited(true);
+			DataObject dataObj = datas.get(0);
+			this.putAll(dataObj);
+
+			return this;
+		}else {
+			return null;
+		}
+	}
+
+	public DataObject load(ActionContext actionContext, QueryConfig queryConfig) {
+		List<DataObject> datas = query(actionContext, queryConfig);
 		if(datas.size() > 0) {
 			setInited(true);
 			DataObject dataObj = datas.get(0);
@@ -785,7 +824,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * @return 删除的数量
 	 */
 	public int delete(ActionContext actionContext, Condition condition){
-		return delete(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+		return delete(actionContext, new QueryConfig(condition));
 	}
 	
 	/**
@@ -847,6 +886,9 @@ public class DataObject extends HashMap<String, Object> {
 			actionContext = new ActionContext();
 		}
 
+		long start = System.currentTimeMillis();
+		String path = metadata.getDescriptor().getMetadata().getPath();
+		Executor.debug(TAG, "Query, dataobject={}" + path);
 		try {
 			Bindings bindings = actionContext.push(null);
 			//查询条件的变量
@@ -865,6 +907,8 @@ public class DataObject extends HashMap<String, Object> {
 			return doAction("query", actionContext);
 		} finally {
 			actionContext.pop();
+
+			Executor.debug(TAG, "Query time: {}, dataobject={}", (System.currentTimeMillis() - start), path);
 		}
 	}
 
@@ -877,7 +921,7 @@ public class DataObject extends HashMap<String, Object> {
 	 * @return 查询结果列表
 	 */
 	public List<DataObject> query(ActionContext actionContext, Condition condition){
-		return query(actionContext, condition.getConditionThing(), condition.getConditionValues()); 
+		return query(actionContext, new QueryConfig(condition));
 	}
 	
 	/**
@@ -895,6 +939,7 @@ public class DataObject extends HashMap<String, Object> {
 			actionContext = new ActionContext();
 		}
 
+		long start = System.currentTimeMillis();
 		try {
 			Bindings bindings = actionContext.push(null);
 			//查询条件的变量
@@ -906,9 +951,11 @@ public class DataObject extends HashMap<String, Object> {
 
 			bindings.put("queryConfig", new QueryConfig((Thing) condition, (Map<String, Object>) queryDatas, actionContext));
 
-			return (List<DataObject>) doAction("query", actionContext);
+			return doAction("query", actionContext);
 		} finally {
 			actionContext.pop();
+
+			Executor.debug(TAG, "Query time: {}, dataobject={}", (System.currentTimeMillis() - start), metadata.getDescriptor());
 		}
 	}
 	
@@ -1164,10 +1211,8 @@ public class DataObject extends HashMap<String, Object> {
 	}
 
 	public DataObject createIfNotExists(ActionContext actionContext, String ... keys){
-		List<String> ks = new ArrayList<String>();
-		for(String key : keys){
-			ks.add(key);
-		}
+		List<String> ks = new ArrayList<>();
+		Collections.addAll(ks, keys);
 		
 		return createIfNotExists(ks, actionContext);
 	}
@@ -1314,6 +1359,7 @@ public class DataObject extends HashMap<String, Object> {
 		Thing descriptor = getMetadata().getDescriptor();
 
 		//初始化多个属性列表
+		/*已改成在读取时才初始化，见get()方法
         List<Thing> things = getMetadata().getThings();
         for(int i=0; i<things.size(); i++){
         	Thing thing = things.get(i);
@@ -1332,7 +1378,7 @@ public class DataObject extends HashMap<String, Object> {
 					put(thing.getMetadata().getName(), data, false);
 				}
 			}
-        }
+        }*/
 
         //触发onLoaded事件
         if(descriptor.getBoolean("onLoaded")){
@@ -1364,9 +1410,6 @@ public class DataObject extends HashMap<String, Object> {
 	
 	/**
 	 * 返回用户任务，通过用户任务在界面上可以查看执行的进度，或者取消执行等。
-	 * 
-	 * @param dataObject
-	 * @return
 	 */
 	public static UserTask getUserTask(Thing dataObject, ActionContext actionContext){
 		if(dataObject == null || dataObject.getBoolean("showUserTask") == false){
@@ -1431,8 +1474,6 @@ public class DataObject extends HashMap<String, Object> {
 	
 	/**
 	 * 把自己的元数据等复制到指定数据对象，内部共用基数数据。
-	 * 
-	 * @param dataObject
 	 */
 	public void copyTo(DataObject dataObject) {
 		dataObject.datas = this.datas;
@@ -1446,8 +1487,6 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 设置了包装的对象后，数据对象取值和获取值将通过包装的对象获取。从对象上获取和设置值通过Ognl实现，key是数据对象属性的名字，
 	 * 如果设置了相应的数据对象属性定义，那么试图通过propertyPath属性来获取属性的ognl表达式。
-	 * 
-	 * @param wrappedObject
 	 */
 	public void setWrappedObject(Object wrappedObject) {
 		this.wrappedObject = wrappedObject;
@@ -1456,8 +1495,6 @@ public class DataObject extends HashMap<String, Object> {
 	/**
 	 * 返回数据对象的标签值。如果数据对象设置了displayName，即要作为标签的字段名，那么返回该字段的值的字符串，否则返回主键的值字符串，
 	 * 如果没有主键，使用默认的父类的toString()方法。
-	 *
-	 * @return
 	 */
 	public String getLabel() {
 		String label = null;
@@ -1481,5 +1518,23 @@ public class DataObject extends HashMap<String, Object> {
 		
 		//按照HashMap的toString()方法
 		return super.toString();
+	}
+
+	/**
+	 * 返回指定属性名的标签。即把属性的值转成字符串，如果属性的值为null，那么返回空字符串，如果存在引用，那么返回应用的数据对象的标签。
+	 *
+	 * @param attributeName 属性名
+	 * @return 属性值转字符串的结果
+	 */
+	public String getLabel(String attributeName){
+		DataObjectCache.begin();
+		try {
+			ThreadLocalCache cache = DataObjectCache.getThreadLocalCache();
+			DataObjectLabelUtils utils = cache.getDataObjectLabelUtils(getMetadata().getDescriptor());
+
+			return utils.getLabel(this, attributeName);
+		}finally {
+			DataObjectCache.finish();
+		}
 	}
 }

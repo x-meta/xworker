@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<thing name="OpenQucikContentEditor" descriptors="xworker.lang.MetaDescriptor3" extends="xworker.swt.app.AppTreeMenuNode">&#xd;
+    <description><![CDATA[<p>打开一个快速内容的编辑器。</p>
+
+<p><strong>可以重写的方法：</strong></p>
+
+<ul>
+	<li><strong>Thing getThing()</strong><br />
+	返回一个快速内容模型。</li>
+</ul>
+
+<p>&nbsp;</p>
+]]></description>&#xd;
+    <actions>&#xd;
+        <JavaAction name="run" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.treeMenuNodes.OpenQucikContentEditor"
+             methodName="run" varScope="Local">&#xd;
+            <code><![CDATA[def openEditor = world.getAction("xworker.swt.app.treeMenuNodes.OpenEditor/@actions1/@run/@ActionDefined/@openEditor");
+def editor = world.getThing("xworker.swt.app.editors.ThingEditor");
+def thing = self.doAction("getThing", actionContext);
+if(thing != null){
+    openEditor(actionContext, "id", thing.getMetadata().getPath(), 
+                              "editor", editor, 
+                              "params",["thing": thing]);
+}else{
+    log.info("Thing not exists, path=" + self.getMetadata().getPath());
+}]]></code>&#xd;
+        </JavaAction>&#xd;
+        <GetThing name="getQuickContent" _xmeta_id_="2315" descriptors="xworker.lang.actions.ActionUtil/@getThing"
+             attributeName="quickContent" childThingName="QuickContent" usage="params"/>&#xd;
+    </actions>&#xd;
+    <attribute name="name" labelAlign="" labelVAlign=""/>&#xd;
+    <attribute name="label" labelAlign="" labelVAlign=""/>&#xd;
+    <attribute name="quickContent" _xmeta_id_="thing" inputtype="dataSelector" size="60"/>&#xd;
+    <attribute name="description" inputtype="html" labelAlign="" labelVAlign=""/>&#xd;
+    <attribute name="icon" descriptors="xworker.lang.MetaDescriptor2/@attribute" label="图标"
+         default="icons/xworker/dataObject.gif" size="60" colspan="2" group="Node" en_label="Icon"/>&#xd;
+    <thing name="QuickContent" extends="xworker.content.QuickContent" inheritDescription="true"/>&#xd;
+</thing>

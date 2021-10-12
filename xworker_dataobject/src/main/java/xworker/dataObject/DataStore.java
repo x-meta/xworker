@@ -31,7 +31,7 @@ public class DataStore {
     /**
      * 分页设置。
      */
-    PageInfo pageInfo = new PageInfo();
+    PageInfo pageInfo = new PageInfo(0, 100);
 
     /**
      * 查询结果数据对象列表。
@@ -323,6 +323,7 @@ public class DataStore {
 
         public void run(){
             try {
+                DataObject.beginThreadCache();
                 Thing dataObject = dataStore.dataObject;
                 ActionContext actionContext = dataStore.actionContext;
                 Map<String, Object> params = dataStore.params;
@@ -371,6 +372,7 @@ public class DataStore {
                 Executor.error(TAG, "Do dataobject query exception, dataObject=" + dataStore.getDataObjectPath(), e);
             }finally{
                 dataStore.loading = false;
+                DataObject.finishThreadCache();
             }
         }
     }

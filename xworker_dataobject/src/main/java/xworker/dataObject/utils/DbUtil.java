@@ -20,9 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
@@ -34,6 +32,7 @@ import org.xmeta.util.UtilData;
 
 import xworker.dataObject.DataObject;
 import xworker.lang.executor.Executor;
+import xworker.task.UserTaskManager;
 
 /**
  * 数据库工具类。
@@ -375,5 +374,33 @@ public class DbUtil {
 		}else{
 			throw new XMetaException("not implemented type " + type);
 		}
+	}
+
+	public static List<DataObject> readResults(Thing dataObject, ResultSet rs) throws SQLException {
+		List<DataObject> datas = new ArrayList<>();
+
+		List<Thing> attributes = (List<Thing>) dataObject.get("attribute@");
+		for(int i=0; i<attributes.size(); i++){
+			//过滤非数据字段和不需要显示的字段
+			if(!attributes.get(i).getBoolean("dataField")){
+				attributes.remove(i);
+				i--;
+			}
+		}
+
+		while(rs.next()){
+			//构造对象
+			DataObject data = new DataObject(dataObject);
+			data.setInited(false);
+			//设置属性值
+			for (Thing attribute : attributes) {
+				data.put(attribute.getString("name"), DbUtil.getValue(rs, attribute));
+			}
+
+			data.setInited(true);
+			datas.add(data);
+		}
+
+		return datas;
 	}
 }

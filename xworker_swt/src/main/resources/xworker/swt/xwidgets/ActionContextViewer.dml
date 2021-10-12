@@ -1,4 +1,4 @@
-^1582767326514
+^1631084551838
 @
 sname
 ActionContextViewer
@@ -137,6 +137,18 @@ if(acc == null || !( acc instanceof ActionContext)){
 }
 ac.put("actionContextForView", acc);
 ac.actions.doAction("setActionContext", actionContext, ["ac": acc]);
+
+//代码
+if(ac.get("codeText") != null){
+    if(self.getBoolean("disableEditCode")){
+        ac.codeText.setEditable(false);
+    }
+    
+    def code = self.getStringBlankAsNull("code");
+    if(code != null){
+         ac.codeText.setText(code);
+    }
+}
 
 actionContext.g().put(self.getMetadata().getName(), ac.actions);
 Designer.attachCreator(composite, self.metadata.path, actionContext);
@@ -335,6 +347,106 @@ return composite;
   false
   sid
   actionContext
+  @/@disableEditCode
+  sname
+  disableEditCode
+  sinputtype
+  truefalse
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  Sdescription
+#$@text#$@
+<p>如果为真将不允许修改代码。</p>
+#$@text#$@
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  disableEditCode
+  @/@code
+  sname
+  code
+  sinputtype
+  textarea
+  sshowLabel
+  true
+  slabelAlign
+  right
+  slabelVAlign
+  baseline
+  smodifier
+  public
+  sinputattrs
+  codeName=groovy codeType=groovy wrap=false fillBoth=true cols= rows= textAssistor=
+  sreadOnly
+  false
+  sinheritDescription
+  false
+  svalidateAllowBlank
+  true
+  LvalidateOnBlur
+  true
+  LallowDecimals
+  true
+  LallowNegative
+  true
+  snotXmlAttribute
+  false
+  sdescriptors
+  xworker.lang.MetaDescriptor3/@attribute
+  sth_createIndex
+  false
+  sth_registMyChilds
+  false
+  sth_registDisabled
+  false
+  sth_noThingRegistViewer
+  false
+  sth_fileMonitor
+  false
+  sth_mark
+  false
+  sth_registQueryOnlySelf
+  false
+  sjson_isArray
+  false
+  sid
+  code
   @/@description
   sname
   description

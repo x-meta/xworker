@@ -1,124 +1,129 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
-<Editor name="JCSftpEditor" descriptors="xworker.swt.app.Editor" objectForThingLoader="jCSftpEditor"
-     objectClassForThingLoader="xworker.net.jsch.swt.JCSftpEditor">
+<Editor name="JCSftpEditor" descriptors="xworker.swt.app.Editor" platforms="swt" objectForThingLoader="jCSftpEditor"
+     objectClassForThingLoader="xworker.net.jsch.swt.JCSftpEditor" th_createIndex="true"
+     th_registThing="child|xworker.workbench.Editors" group="swt.net.jsch">&#xd;
     <exampleParams><![CDATA[{
     session:"sessionThing"
-}]]></exampleParams>
-    <EditorComposite>
-        <FillLayout name="FillLayout"></FillLayout>
-        <SashForm name="topSashForm" weights="50,50">
-            <Composite name="localComposite" BORDER="true">
-                <GridLayout name="GridLayout"></GridLayout>
-                <Text name="localPathText" BORDER="true">
-                    <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
-                </Text>
-                <FileListExplorer name="localFileExplorer" sysRoots="true">
-                    <GridData name="GridData" style="FILL_BOTH"></GridData>
-                    <DragSource DROP_COPY="true" DROP_MOVE="true">
-                        <Transfer name="Transfer" type="File"></Transfer>
+}]]></exampleParams>&#xd;
+    <actions>&#xd;
+        <JavaAction name="createParams" outerClassName="xworker.net.jsch.swt.JCSftpEditor"
+             methodName="createParams"/>&#xd;
+    </actions>&#xd;
+    <EditorComposite>&#xd;
+        <FillLayout name="FillLayout"/>&#xd;
+        <SashForm name="topSashForm" weights="50,50">&#xd;
+            <Composite name="localComposite" BORDER="true">&#xd;
+                <GridLayout name="GridLayout"/>&#xd;
+                <Text name="localPathText" BORDER="true">&#xd;
+                    <GridData name="GridData" style="FILL_HORIZONTAL"/>&#xd;
+                </Text>&#xd;
+                <FileListExplorer name="localFileExplorer" sysRoots="true">&#xd;
+                    <GridData name="GridData" style="FILL_BOTH"/>&#xd;
+                    <DragSource DROP_COPY="true" DROP_MOVE="true">&#xd;
+                        <Transfer name="Transfer" type="File"/>&#xd;
                         <Listener name="localDragSetData" _xmeta_id_="Listener" type="DragSetData"
-                             methodName="localDragSetData"></Listener>
-                        <Listener name="localDragStart" type="DragStart"></Listener>
-                        <Transfer name="textTransfer" type="Text"></Transfer>
-                    </DragSource>
-                    <DropTarget DROP_COPY="true" DROP_MOVE="true">
-                        <Transfer name="Transfer" type="File"></Transfer>
+                             methodName="localDragSetData"/>&#xd;
+                        <Listener name="localDragStart" type="DragStart"/>&#xd;
+                        <Transfer name="textTransfer" type="Text"/>&#xd;
+                    </DragSource>&#xd;
+                    <DropTarget DROP_COPY="true" DROP_MOVE="true">&#xd;
+                        <Transfer name="Transfer" type="File"/>&#xd;
                         <Listener name="localDropAccept" _xmeta_id_="removeDropAccept"
-                             type="DropAccept" methodName="localDropAccept"></Listener>
+                             type="DropAccept" methodName="localDropAccept"/>&#xd;
                         <Listener name="localDrop" _xmeta_id_="remoteDrop" type="Drop"
-                             methodName="localDrop"></Listener>
+                             methodName="localDrop"/>&#xd;
                         <Transfer name="textTransfer" descriptors="xworker.swt.dnd.DragSource/@Transfer"
-                             type="Text"></Transfer>
-                    </DropTarget>
+                             type="Text"/>&#xd;
+                    </DropTarget>&#xd;
                     <Menu name="localFileContentMenu" _xmeta_id_="remoteFileContentMenu"
-                         style="POP_UP">
+                         style="POP_UP">&#xd;
                         <MenuItem name="localRenameMenuItem" _xmeta_id_="remoteRenameMenuItem"
-                             text="lang:d=重命名&amp;en=Rename" style="PUSH">
-                            <listeners>
-                                <Listener>
+                             text="lang:d=重命名&amp;en=Rename" style="PUSH">&#xd;
+                            <listeners>&#xd;
+                                <Listener>&#xd;
                                     <Prompt descriptors="xworker.swt.actions.MessageBoxActions/@Prompt"
                                          title="lang:d=重命名&amp;en=Rename" message="lang:d=请输入新的文件名!&amp;en=Please input new file name!"
-                                         text="ognl:localFileExplorer.getSelection()[0].getName()">
-                                        <actions>
-                                            <ThingLoaderObjectMethod name="ok" method="localRename"></ThingLoaderObjectMethod>
-                                        </actions>
-                                    </Prompt>
-                                </Listener>
-                            </listeners>
-                        </MenuItem>
+                                         text="ognl:localFileExplorer.getSelection()[0].getName()">&#xd;
+                                        <actions>&#xd;
+                                            <ThingLoaderObjectMethod name="ok" method="localRename"/>&#xd;
+                                        </actions>&#xd;
+                                    </Prompt>&#xd;
+                                </Listener>&#xd;
+                            </listeners>&#xd;
+                        </MenuItem>&#xd;
                         <MenuItem name="localDeleteMenuItem" _xmeta_id_="remoteDeleteMenuItem"
-                             text="lang:d=删除&amp;en=Delete" style="PUSH">
-                            <listeners>
-                                <Listener>
+                             text="lang:d=删除&amp;en=Delete" style="PUSH">&#xd;
+                            <listeners>&#xd;
+                                <Listener>&#xd;
                                     <MessageBox descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
                                          shell="ognl:remoteComposite.getShell()" icon="ICON_QUESTION"
-                                         title="lang:d=删除&amp;en=Delete" message="lang:d=确定要删除选中的文件么？&amp;en=Are you sure to delete the selected file?">
-                                        <actions>
-                                            <ThingLoaderObjectMethod name="ok" method="localDelete"></ThingLoaderObjectMethod>
-                                        </actions>
-                                    </MessageBox>
-                                </Listener>
-                            </listeners>
-                        </MenuItem>
-                    </Menu>
-                </FileListExplorer>
-            </Composite>
-            <Composite name="remoteComposite" BORDER="true">
-                <GridLayout name="GridLayout"></GridLayout>
-                <Text name="remotePathText" BORDER="true">
-                    <GridData name="GridData" style="FILL_HORIZONTAL"></GridData>
-                </Text>
-                <FileListExplorer name="remoteFileExplorer">
-                    <GridData name="GridData" style="FILL_BOTH"></GridData>
-                    <DropTarget DROP_COPY="true" DROP_MOVE="true">
-                        <Transfer name="Transfer" type="File"></Transfer>
+                                         title="lang:d=删除&amp;en=Delete" message="lang:d=确定要删除选中的文件么？&amp;en=Are you sure to delete the selected file?">&#xd;
+                                        <actions>&#xd;
+                                            <ThingLoaderObjectMethod name="ok" method="localDelete"/>&#xd;
+                                        </actions>&#xd;
+                                    </MessageBox>&#xd;
+                                </Listener>&#xd;
+                            </listeners>&#xd;
+                        </MenuItem>&#xd;
+                    </Menu>&#xd;
+                </FileListExplorer>&#xd;
+            </Composite>&#xd;
+            <Composite name="remoteComposite" BORDER="true">&#xd;
+                <GridLayout name="GridLayout"/>&#xd;
+                <Text name="remotePathText" BORDER="true">&#xd;
+                    <GridData name="GridData" style="FILL_HORIZONTAL"/>&#xd;
+                </Text>&#xd;
+                <FileListExplorer name="remoteFileExplorer">&#xd;
+                    <GridData name="GridData" style="FILL_BOTH"/>&#xd;
+                    <DropTarget DROP_COPY="true" DROP_MOVE="true">&#xd;
+                        <Transfer name="Transfer" type="File"/>&#xd;
                         <Listener name="remoteDropAccept" _xmeta_id_="removeDropAccept"
-                             type="DropAccept" methodName="remoteDropAccept"></Listener>
-                        <Listener name="remoteDrop" type="Drop" methodName="remoteDrop"></Listener>
+                             type="DropAccept" methodName="remoteDropAccept"/>&#xd;
+                        <Listener name="remoteDrop" type="Drop" methodName="remoteDrop"/>&#xd;
                         <Transfer name="textTransfer" descriptors="xworker.swt.dnd.DragSource/@Transfer"
-                             type="Text"></Transfer>
-                    </DropTarget>
-                    <DragSource DROP_COPY="true" DROP_MOVE="true">
-                        <Transfer name="Transfer" type="File"></Transfer>
+                             type="Text"/>&#xd;
+                    </DropTarget>&#xd;
+                    <DragSource DROP_COPY="true" DROP_MOVE="true">&#xd;
+                        <Transfer name="Transfer" type="File"/>&#xd;
                         <Listener name="remoteDragSetData" _xmeta_id_="Listener" type="DragSetData"
-                             methodName="remoteDragSetData"></Listener>
-                        <Listener name="remoteDragStart" _xmeta_id_="localDragStart" type="DragStart"></Listener>
-                        <Transfer name="textTransfer" type="Text"></Transfer>
-                    </DragSource>
-                    <Menu name="remoteFileContentMenu" style="POP_UP">
+                             methodName="remoteDragSetData"/>&#xd;
+                        <Listener name="remoteDragStart" _xmeta_id_="localDragStart" type="DragStart"/>&#xd;
+                        <Transfer name="textTransfer" type="Text"/>&#xd;
+                    </DragSource>&#xd;
+                    <Menu name="remoteFileContentMenu" style="POP_UP">&#xd;
                         <MenuItem name="remoteRenameMenuItem" text="lang:d=重命名&amp;en=Rename"
-                             style="PUSH">
-                            <listeners>
-                                <Listener>
+                             style="PUSH">&#xd;
+                            <listeners>&#xd;
+                                <Listener>&#xd;
                                     <Prompt descriptors="xworker.swt.actions.MessageBoxActions/@Prompt"
                                          title="lang:d=重命名&amp;en=Rename" message="lang:d=请输入新的文件名!&amp;en=Please input new file name!"
-                                         text="ognl:remoteFileExplorer.getSelection()[0].getName()">
-                                        <actions>
-                                            <ThingLoaderObjectMethod name="ok" method="remoteRename"></ThingLoaderObjectMethod>
-                                        </actions>
-                                    </Prompt>
-                                </Listener>
-                            </listeners>
-                        </MenuItem>
+                                         text="ognl:remoteFileExplorer.getSelection()[0].getName()">&#xd;
+                                        <actions>&#xd;
+                                            <ThingLoaderObjectMethod name="ok" method="remoteRename"/>&#xd;
+                                        </actions>&#xd;
+                                    </Prompt>&#xd;
+                                </Listener>&#xd;
+                            </listeners>&#xd;
+                        </MenuItem>&#xd;
                         <MenuItem name="remoteDeleteMenuItem" text="lang:d=删除&amp;en=Delete"
-                             style="PUSH">
-                            <listeners>
-                                <Listener>
+                             style="PUSH">&#xd;
+                            <listeners>&#xd;
+                                <Listener>&#xd;
                                     <MessageBox descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
                                          shell="ognl:remoteComposite.getShell()" icon="ICON_QUESTION"
-                                         title="lang:d=删除&amp;en=Delete" message="lang:d=确定要删除选中的文件么？&amp;en=Are you sure to delete the selected file?">
-                                        <actions>
-                                            <ThingLoaderObjectMethod name="ok" method="remoteDelete"></ThingLoaderObjectMethod>
-                                        </actions>
-                                    </MessageBox>
-                                </Listener>
-                            </listeners>
-                        </MenuItem>
-                    </Menu>
-                </FileListExplorer>
-            </Composite>
-        </SashForm>
-    </EditorComposite>
-    <ActionContainer name="actions" _xmeta_id_="ActionContainer" thingLoader="true"></ActionContainer>
+                                         title="lang:d=删除&amp;en=Delete" message="lang:d=确定要删除选中的文件么？&amp;en=Are you sure to delete the selected file?">&#xd;
+                                        <actions>&#xd;
+                                            <ThingLoaderObjectMethod name="ok" method="remoteDelete"/>&#xd;
+                                        </actions>&#xd;
+                                    </MessageBox>&#xd;
+                                </Listener>&#xd;
+                            </listeners>&#xd;
+                        </MenuItem>&#xd;
+                    </Menu>&#xd;
+                </FileListExplorer>&#xd;
+            </Composite>&#xd;
+        </SashForm>&#xd;
+    </EditorComposite>&#xd;
+    <ActionContainer name="actions" _xmeta_id_="ActionContainer" thingLoader="true"/>&#xd;
 </Editor>

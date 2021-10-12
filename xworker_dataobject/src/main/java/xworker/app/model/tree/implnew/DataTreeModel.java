@@ -6,7 +6,9 @@ import org.xmeta.Thing;
 import org.xmeta.util.OgnlUtil;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,38 +49,25 @@ public class DataTreeModel {
         return items;
     }
 
+    //xworker.app.model.tree.implnew.DataTreeModel/@actions/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeModel treeModel = actionContext.getObject("treeModel");
+        TreeModelItem parentItem = actionContext.getObject("parentItem");
+        Object[] sources = actionContext.getObject("sources");
+
+        List<TreeModelItem> items = new ArrayList<>();
+
+        for(Object obj : sources){
+            items.add(dataToItem(treeModel, parentItem, self, obj));
+        }
+
+        return items;
+    }
+
     public static TreeModelItem dataToItem(TreeModel treeModel, TreeModelItem parentItem, Thing self, Object data){
-        String id = getValue(data, self.getString("idName"));
-        if(id == null){
-            return null;
-        }
-
-        TreeModelItem item = new TreeModelItem(treeModel, parentItem);
-        item.setText(getValue(data, self.getString("textName")));
-        item.setIcon(getValue(data, self.getString("iconName")));
-        item.setCls(getValue(data, self.getString("clsName")));
-        item.setId(treeModel.getThing().getMetadata().getPath() + "|" + id);
-        item.setDataId(id);
-        item.setSource(data);
-
-        return item;
+        return TreeModelUtils.toItem(treeModel, parentItem, self, data);
     }
 
-    public static String getValue(Object data, String name){
-        try{
-            if(name == null || "".equals(name)){
-                return null;
-            }
 
-            Object v = OgnlUtil.getValue(name, data);
-            if(v != null){
-                return v.toString();
-            }else{
-                return null;
-            }
-        }catch(Exception e){
-            Executor.warn(TAG, "DataTreeModel getRoot: getValueError, name=" + name, e);
-            return null;
-        }
-    }
 }

@@ -2,6 +2,7 @@ package xworker.swt.app;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
@@ -27,6 +28,15 @@ public class OutlineContainer {
 	
 	public void setComposite(Composite composite) {
 		actions.doAction("setComposite", actionContext, "composite", composite);
+	}
+
+	public void removeALl(){
+		Composite parent = getParentComposite();
+		if(parent != null && !parent.isDisposed()){
+			for(Control child : parent.getChildren()){
+				child.dispose();
+			}
+		}
 	}
 	
 	public Composite getParentComposite() {

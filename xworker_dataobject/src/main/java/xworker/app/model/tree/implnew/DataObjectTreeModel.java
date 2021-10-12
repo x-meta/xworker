@@ -5,9 +5,11 @@ import org.xmeta.Thing;
 import org.xmeta.World;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.query.Condition;
 import xworker.lang.executor.Executor;
+import xworker.util.XWorkerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,24 @@ public class DataObjectTreeModel {
         }
     }
 
+    //xworker.app.model.tree.implnew.DataObjectTreeModel/@actions/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext){
+        Thing self = actionContext.getObject("self");
+        TreeModel treeModel = actionContext.getObject("treeModel");
+        TreeModelItem parentItem = actionContext.getObject("parentItem");
+        Object[] sources = actionContext.getObject("sources");
+
+        List<TreeModelItem> items = new ArrayList<>();
+
+        for(Object obj : sources){
+            if(obj instanceof  DataObject){
+                items.add(dataObjectToNode(treeModel, parentItem, self, (DataObject) obj, actionContext));
+            }
+        }
+
+        return items;
+    }
+
     @SuppressWarnings("unchecked")
     public static Object getChilds(ActionContext actionContext){
         Thing self = (Thing) actionContext.get("self");
@@ -75,19 +95,7 @@ public class DataObjectTreeModel {
     }
 
     public static TreeModelItem dataObjectToNode(TreeModel treeModel, TreeModelItem parentItem, Thing self, DataObject data, ActionContext actionContext) {
-        TreeModelItem item = new TreeModelItem(treeModel, parentItem);
-        item.setSource(data);
-        String id = data.getString(self.getString("idField"));
-        item.setId(treeModel.getThing().getMetadata().getPath() + "|" + id);
-        item.setDataId(id);
-        item.setText(data.getString(self.getString("textField")));
-        item.setIcon(data.getString(self.getString("iconField")));
-        item.setCls(data.getString(self.getString("clsField")));
-        item.setLeaf(data.getBoolean(self.getString("isLeafField")));
-
-        self.doAction("init", actionContext, "item", item, "data", data);
-
-        return item;
+        return TreeModelUtils.toItem(treeModel, parentItem, self, data, actionContext);
     }
 
     public static TreeModelItem getItemById(ActionContext actionContext){

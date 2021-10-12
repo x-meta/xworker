@@ -186,7 +186,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 		
 		if("editor".equals(type)) {
 			//在编辑区域打开一个View
-			Map<String, Object> params1 = new HashMap<String, Object>();
+			Map<String, Object> params1 = new HashMap<>();
 			if(params != null) {
 				params1.putAll(params);
 			}
@@ -197,7 +197,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 			params1.put("editorThing", view);
 			
 			Thing editor = World.getInstance().getThing("xworker.swt.app.editors.CompositeEditor");
-			openEditor(id, editor, params);
+			openEditor(id, editor, params1);
 			return null;
 		}
 		
@@ -416,7 +416,7 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 		final ActionContext ac = new ActionContext();
 		
 		//配置
-		Map<String, Object> config = new HashMap<String, Object>();
+		Map<String, Object> config = new HashMap<>();
 		config.put("hasMenu", self.getBoolean("menu"));
 		config.put("hasCoolBar", self.getBoolean("coolBar"));
 		config.put("hasRightTab", self.getBoolean("rightTab"));
@@ -432,7 +432,10 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 		ac.put("workbenchThing", self);
 		ac.put("parentContext", actionContext);
 		ac.put("rapInterval", self.getLong("rapInterval"));
-		
+
+		//create之前的事件
+		self.doAction("beforeCreate", ac);
+
 		//创建Shell
 		Shell shell =  null;
 		Designer.pushCreator(self);
@@ -558,6 +561,13 @@ public class Workbench implements IWorkbench<Composite, Control, Image>, IEditor
 
 					workbench.mainSashForm.layout();
 					workbench.topSashForm.layout();
+
+					Thing editors = self.getThing("Editor@0");
+					if(editors != null) {
+						for(Thing editor : editors.getChilds("View")) {
+							editor.getAction().run(actionContext, "editorContainer", workbench.getEditorContainer());
+						}
+					}
 				}catch(Exception e) {
 					Executor.error(TAG, "init error, workbench=" + self.getMetadata().getPath(),  e);
 				}

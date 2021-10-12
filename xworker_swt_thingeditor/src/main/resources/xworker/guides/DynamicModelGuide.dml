@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<Shell name="shell" descriptors="xworker.swt.widgets.Shell" text="动态模型简介" label="DynamicModelGuide">&#xd;
+    <FillLayout name="FillLayout"/>&#xd;
+    <GuideComposite name="guide">&#xd;
+        <Guide showHeader="true">&#xd;
+            <SimpleBrowser name="introcude" label="动态模型简介">&#xd;
+                <description><![CDATA[<p>&nbsp;&nbsp;&nbsp;&nbsp;动态模型是一种基于模型的面向对象的编程方法，其中模型可以用XML等来表示。</p>
+
+<p style="margin: 0px 0px 10px; color: rgb(51, 51, 51); text-transform: none; text-indent: 0px; letter-spacing: normal; font-family: &quot;Helvetica Neue&quot;, Helvetica, Arial, sans-serif; font-size: 14px; font-style: normal; font-weight: 400; word-spacing: 0px; white-space: normal; box-sizing: border-box; orphans: 2; widows: 2; background-color: rgb(255, 255, 255); font-variant-ligatures: normal; font-variant-caps: normal; -webkit-text-stroke-width: 0px; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial;">&nbsp; &nbsp; 比如下面的XML就是一个模型程序，这个XML的每一个节点都是一个对象。可以点击下面的<strong>运行</strong>按钮运行该模型， 运行后会打开一个窗口，窗口中有一个显示XWorker主页的浏览器。</p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+ 
+&lt;Shell name=&quot;shell&quot; text=&quot;Hello World!&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot;
+               width=&quot;800&quot; height=&quot;600&quot;&gt;
+    &lt;FillLayout name=&quot;FillLayout&quot;&gt;&lt;/FillLayout&gt;
+    &lt;Browser name=&quot;Browser&quot; url=&quot;https://www.xworker.org&quot;&gt;&lt;/Browser&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; 点击<strong>下一步</strong>按钮了解动态模型编程的特点。</p>
+
+<p>&nbsp;</p>
+]]></description>&#xd;
+                <Buttons>&#xd;
+                    <Button name="executeButton" text="lang:d=运行&amp;en=Run">&#xd;
+                        <Event name="onSelection">&#xd;
+                            <OpenShell name="openShell" descriptors="xworker.swt.actions.ShellActionsNew/@OpenShell"
+                                 shellPath="xworker.guides.DynamicModelGuide/@HelloWorld"
+                                 singleInstance="true"/>&#xd;
+                        </Event>&#xd;
+                    </Button>&#xd;
+                    <NextButton name="nextButton" label="动态模型的特点" en_label="Features"/>&#xd;
+                </Buttons>&#xd;
+            </SimpleBrowser>&#xd;
+            <BrowserComposite name="features" label="动态模型的特点" browserLocation="top">&#xd;
+                <description><![CDATA[<p>&nbsp;&nbsp;&nbsp; 动态模型编程的特点是可以实现实时编程。实时编程是指可以在系统运行时编程，从而能动态的修改系统本身。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如执行下面的代码会随机改变本应用的背景色，可以点击<strong>运行</strong>按钮执行代码。</p>
+
+<p><strong>实时编程的基础</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 动态模型之所以可以实现实时编程，是因为动态模型把各种变量都放在一个容器里，我们可以随时从这个容器里获取和修改变量。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 比如下面就列出了当前应用中的各个变量，我们可以通过脚本等来处理这些变量。</p>
+]]></description>&#xd;
+                <Composite>&#xd;
+                    <GridLayout name="GridLayout"/>&#xd;
+                    <ActionContextViewer name="actionContextViewer" disableEditCode="true">&#xd;
+                        <code><![CDATA[import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+
+def colors = [SWT.COLOR_BLUE,SWT.COLOR_GRAY,SWT.COLOR_CYAN,SWT.COLOR_WIDGET_BACKGROUND];
+def random = new Random();
+def color = nextButton.getDisplay().getSystemColor(colors[random.nextInt(4)]);
+nextButton.getParent().getParent().setBackground(color);]]></code>&#xd;
+                        <GridData name="GridData" style="FILL_BOTH"/>&#xd;
+                    </ActionContextViewer>&#xd;
+                </Composite>&#xd;
+                <Buttons>&#xd;
+                    <PreButton name="nextButton" label="动态模型简介" en_label="Introduce"/>&#xd;
+                    <NextButton name="nextButton" _xmeta_id_="nextButton1"/>&#xd;
+                </Buttons>&#xd;
+            </BrowserComposite>&#xd;
+        </Guide>&#xd;
+    </GuideComposite>&#xd;
+    <Shell name="helloWorld" _xmeta_id_="HelloWorld" descriptors="xworker.swt.widgets.Shell"
+         text="Hello World!" width="800" height="600">&#xd;
+        <FillLayout name="FillLayout"/>&#xd;
+        <Browser name="Browser" url="https://www.xworker.org"/>&#xd;
+    </Shell>&#xd;
+</Shell>

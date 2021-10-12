@@ -27,7 +27,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 
 public class ListTreeModelCreator {
     @SuppressWarnings("unchecked")
@@ -36,7 +36,7 @@ public class ListTreeModelCreator {
         
         if(self.getBoolean("virtualRoot")){
         	Map<String, Object> node = new HashMap<String, Object>();
-        	TreeModelUtil.setAttributes(self, self.getString("rootIdValue"), node);
+        	TreeModelUtils.setAttributes(self, self.getString("rootIdValue"), node);
         	node.put("text", "");
         	node.put("leaf", "false");
             return node;
@@ -90,9 +90,9 @@ public class ListTreeModelCreator {
     	Thing self = (Thing) actionContext.get("self");
         Object data = actionContext.get("data");
     	Map<String, Object> node = new HashMap<String, Object>();
-        TreeModelUtil.setAttributes(self, OgnlUtil.getValue(self, "idField",data), node);
+        TreeModelUtils.setAttributes(self, OgnlUtil.getValue(self, "idField",data), node);
         node.put("text", OgnlUtil.getValue(self.getString("textField"), data));
-        TreeModelUtil.copyAttributesToNodeData(data, node);
+        TreeModelUtils.copyAttributesToNodeData(data, node);
         node.put("data", data);
         node.put(TreeModel.Source, data);
         

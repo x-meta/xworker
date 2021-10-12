@@ -33,6 +33,7 @@ import ognl.OgnlException;
 import xworker.dataObject.DataObject;
 import xworker.dataObject.DataObjectList;
 import xworker.lang.executor.Executor;
+import xworker.util.ThingUtils;
 import xworker.util.UtilData;
 
 public class DataObjectActionsActions {
@@ -521,5 +522,10 @@ public class DataObjectActionsActions {
     		}
     		
     	}
+    }
+
+    //xworker.dataObject.actions.DataObjectActions/@StartRegistThingCache/@actions/@run
+    public static void startRegistThingCache(ActionContext actionContext){
+        ThingUtils.startRegistThingCache();
     }
 }

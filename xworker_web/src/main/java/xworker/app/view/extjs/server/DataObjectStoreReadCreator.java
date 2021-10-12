@@ -33,6 +33,7 @@ import org.xmeta.util.UtilMap;
 
 import ognl.OgnlException;
 import xworker.dataObject.DataObject;
+import xworker.dataObject.PageInfo;
 import xworker.dataObject.utils.JsonFormator;
 import xworker.lang.executor.Executor;
 import xworker.security.PermissionConstants;
@@ -72,9 +73,10 @@ public class DataObjectStoreReadCreator {
         
         //分页信息
         Map<String, Object> pageInfo = new HashMap<String, Object>();
+		PageInfo pageInfo1 = new PageInfo(pageInfo);
         pageInfo.put("start", getInt(request.getParameter("start"), 0));
         pageInfo.put("limit", getInt(request.getParameter("limit"), 0));
-        if((Integer) pageInfo.get("limit") == 0){
+        if(pageInfo1.getLimit() == 0){
             pageInfo.put("limit", getInt(request.getParameter("pageSize"), 0));
         }
         pageInfo.put("datas", new ArrayList<Object>());
@@ -108,7 +110,7 @@ public class DataObjectStoreReadCreator {
 	                code = code + "[" + code + "]";
 	                pageInfo.put("totalCount", 1);	                
 	            }else{
-	                if((Integer) pageInfo.get("totalCount") == 0){
+	                if(pageInfo1.getTotalCount() == 0){
 	                	if(datas instanceof List){
 	                        pageInfo.put("totalCount", ((List) datas).size());
 	                    }else if(datas != null){

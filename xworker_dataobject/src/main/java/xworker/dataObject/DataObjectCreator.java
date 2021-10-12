@@ -630,7 +630,7 @@ public class DataObjectCreator {
     public static Object getAttributeDescriptor(ActionContext actionContext){
     	Thing self = (Thing) actionContext.get("self");
         String path = self.getMetadata().getPath();
-        if(path.indexOf(":/") == -1){
+        if(!path.contains(":/")){
             return path + "/@attribute";
         }else{
             return path + "/@attribute";

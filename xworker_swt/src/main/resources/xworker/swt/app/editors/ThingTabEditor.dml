@@ -1,27 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
-<Editor name="ThingTabEditor" descriptors="xworker.swt.app.Editor" description="&lt;p&gt;事物编辑器，参数thing: Thing。&lt;/p&gt;"
-     th_createIndex="true" th_registThing="child|xworker.workbench.Editors" group="swt.null">
+<Editor name="ThingTabEditor" descriptors="xworker.swt.app.Editor" description="&lt;p>事物编辑器，参数thing: Thing。&lt;/p>"
+     th_createIndex="true" th_registThing="child|xworker.workbench.Editors" group="swt.xworker">&#xd;
     <exampleParams><![CDATA[{
     thing:thing
-}]]></exampleParams>
-    <actions>
+}]]></exampleParams>&#xd;
+    <actions>&#xd;
         <JavaAction name="createDataParams" descriptors="xworker.lang.actions.JavaAction"
              outerClassName="xworker.swt.app.editors.ThingTabEditor" methodName="createDataParams"
-             varScope="Local"></JavaAction>
-    </actions>
-    <EditorComposite name="editorComposite" _xmeta_id_="EditorComposite">
-        <FillLayout name="FillLayout"></FillLayout>
-        <Resource name="resources">
-            <Image name="editorIcon" imageFile="icons/xworker/dataObject.gif"></Image>
-        </Resource>
-    </EditorComposite>
-    <OutlineComposite name="outlineComposite" _xmeta_id_="OutlineComposite">
-        <FillLayout name="FillLayout"></FillLayout>
-    </OutlineComposite>
-    <ActionContainer name="actions" _xmeta_id_="ActionContainer">
+             varScope="Local"/>&#xd;
+    </actions>&#xd;
+    <EditorComposite name="editorComposite" _xmeta_id_="EditorComposite">&#xd;
+        <FillLayout name="FillLayout"/>&#xd;
+        <Resource name="resources">&#xd;
+            <Image name="editorIcon" imageFile="icons/xworker/dataObject.gif"/>&#xd;
+        </Resource>&#xd;
+    </EditorComposite>&#xd;
+    <OutlineComposite name="outlineComposite" _xmeta_id_="OutlineComposite">&#xd;
+        <FillLayout name="FillLayout"/>&#xd;
+    </OutlineComposite>&#xd;
+    <ActionContainer name="actions" _xmeta_id_="ActionContainer">&#xd;
         <JavaAction name="setContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="setContent" varScope="Local">
+             methodName="setContent" varScope="Local">&#xd;
             <code><![CDATA[import java.io.File;
 
 //判断参数是否存在
@@ -53,15 +53,15 @@ def isSame(oldThing, newThing){
     def newPath = newThing.getRoot().getMetadata().getPath();
     
     return oldPath.equals(newPath);
-}]]></code>
-            <ActionDefined>
+}]]></code>&#xd;
+            <ActionDefined>&#xd;
                 <MessageBox name="noParams" descriptors="xworker.swt.actions.MessageBoxActions/@MessageBox"
                      shell="ognl:EditorComposite.getShell()" icon="ICON_WARNING" buttons="OK"
-                     title="lang:d=文件文本编辑器&amp;FileTextEditor" message="lang:d=参数不存在，不能编辑文件！&amp;en=Can not edit file, params not exists!"></MessageBox>
-            </ActionDefined>
-        </JavaAction>
+                     title="lang:d=文件文本编辑器&amp;FileTextEditor" message="lang:d=参数不存在，不能编辑文件！&amp;en=Can not edit file, params not exists!"/>&#xd;
+            </ActionDefined>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="isSameContent" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="isSameContent" varScope="Local">
+             methodName="isSameContent" varScope="Local">&#xd;
             <code><![CDATA[return false;
 /*
 if(actionContext.get("thing") == null){
@@ -80,18 +80,18 @@ if(t != null && thing.getRoot() == t.getRoot()){
     return true;
 }else{
     return false;
-}*/]]></code>
-        </JavaAction>
+}*/]]></code>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="getSimpleTitle" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="getSimpleTitle" varScope="Local">
+             methodName="getSimpleTitle" varScope="Local">&#xd;
             <code><![CDATA[if(actionContext.get("thing") != null){
     return thing.getRoot().getMetadata().getLabel();
 }else{
     return "ThingEditor";
-}]]></code>
-        </JavaAction>
+}]]></code>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="getTitle" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="getTitle" varScope="Local">
+             methodName="getTitle" varScope="Local">&#xd;
             <code><![CDATA[if(actionContext.get("thing") != null){
     def thingManager = thing.getMetadata().getThingManager();
     if(thingManager != null){
@@ -101,10 +101,10 @@ if(t != null && thing.getRoot() == t.getRoot()){
     }
 }else{
     return "null/ThingEditor";
-}]]></code>
-        </JavaAction>
+}]]></code>&#xd;
+        </JavaAction>&#xd;
         <JavaAction name="doDispose" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="doDispose" varScope="Local">
+             methodName="doDispose" varScope="Local">&#xd;
             <code><![CDATA[if(EditorComposite.isDisposed() == false){
     EditorComposite.dispose();
 }
@@ -112,13 +112,15 @@ if(t != null && thing.getRoot() == t.getRoot()){
 if(thingEditor.actionContext.thingContext != null &&
         thingEditor.actionContext.thingContext.OutlineComposite != null){
     thingEditor.actionContext.thingContext.OutlineComposite.dispose();
-}]]></code>
-        </JavaAction>
-        <Ognl name="getOutline" expression="outlineComposite"></Ognl>
-        <NOOP name="onUnActive"></NOOP>
-        <NOOP name="onActive"></NOOP>
-        <GetVariable name="getIcon" varName="editorIcon"></GetVariable>
+}]]></code>&#xd;
+        </JavaAction>&#xd;
+        <Ognl name="getOutline" expression="outlineComposite"/>&#xd;
+        <NOOP name="onUnActive"/>&#xd;
+        <NOOP name="onActive"/>&#xd;
+        <GetVariable name="getIcon" varName="editorIcon"/>&#xd;
         <JavaAction name="doAction" outerClassName="xworker.swt.app.editors.ThingTabEditor"
-             methodName="doAction"></JavaAction>
-    </ActionContainer>
+             methodName="doAction"/>&#xd;
+        <JavaAction name="onOutlineCreated" outerClassName="xworker.swt.app.editors.ThingTabEditor"
+             methodName="onOutlineCreated"/>&#xd;
+    </ActionContainer>&#xd;
 </Editor>

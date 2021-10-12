@@ -84,10 +84,10 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 			actionContext.put("session", session);
 			actionContext.put("uri", uri);
 			actionContext.put("world", World.getInstance());
-			List<Cookie> responseCookies = new ArrayList<Cookie>();
+			List<Cookie> responseCookies = new ArrayList<>();
 			actionContext.put("responseCookies", responseCookies);
 			
-			HttpResponse response = null;
+			FullHttpResponse response = null;
 			for(Handler handler : handlers) {
 				//找到匹配的Handler并处理
 				if(handler.accept(path)) {
@@ -97,23 +97,19 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 			}
 			
 			if(response == null) {
-				this.sendError(request, ctx, FORBIDDEN);
+				//this.sendError(request, ctx, FORBIDDEN);
 				return;
 			}
-			
-			if(response != null) {
-				if(response instanceof FullHttpResponse) {
-					//加入SESSIONID的cookie
-					Cookie cookie = new DefaultCookie(HttpSession.SESSIONID, session.getSessionId());
-					cookie.setMaxAge( 15 * 60);
-					response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
-				    
-					for(Cookie cke : responseCookies) {
-						response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cke));
-					}
-					sendAndCleanupConnection(request, ctx, (FullHttpResponse) response);
-				}
+
+			//加入SESSIONID的cookie
+			Cookie cookie = new DefaultCookie(HttpSession.SESSIONID, session.getSessionId());
+			cookie.setMaxAge( 15 * 60);
+			response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
+
+			for(Cookie cke : responseCookies) {
+				response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cke));
 			}
+			sendAndCleanupConnection(request, ctx, response);
 		}finally {
 			requestBean.destroy();
 		}

@@ -12,7 +12,7 @@ import org.xmeta.World;
 
 import ognl.OgnlException;
 import xworker.app.model.tree.TreeModel;
-import xworker.app.model.tree.TreeModelUtil;
+import xworker.app.model.tree.TreeModelUtils;
 
 public class ThingTreeModelActions {
 	
@@ -122,7 +122,7 @@ public class ThingTreeModelActions {
 	public static Map<String, Object> toTreeNode(Thing thing, Thing treeModel, List<String> includeThingNames,
 				List<String> excludeThingNames, ActionContext actionContext){
 		Map<String, Object> node = new HashMap<String, Object>();		
-		TreeModelUtil.setAttributes(treeModel, thing.getMetadata().getPath(), node);		
+		TreeModelUtils.setAttributes(treeModel, thing.getMetadata().getPath(), node);
 		node.put("text", thing.getMetadata().getLabel());
 		String icon = thing.getStringBlankAsNull("icon");
 		if(icon == null){

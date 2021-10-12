@@ -47,6 +47,7 @@ public class CreateDirectoryDialog {
 		        return;
 		    }
 		}catch(Exception e){
+			e.printStackTrace();
 		    showMessage.run(actionContext, "message", "创建文件夹" + file.getPath() + "失败，" + e.getMessage());
 		    return;
 		}

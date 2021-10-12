@@ -4,14 +4,13 @@ import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import org.xmeta.World;
-import xworker.listeners.SwtMenuListener;
-import xworker.swt.app.Workbench;
+import xworker.startup.Startup;
+import xworker.util.XWorkerUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +59,7 @@ public class SwtThingEditor {
                 ZipEntry entry = null;
                 while((entry = zin.getNextEntry()) != null){
                     File outFile = new File(world.getPath() + "/" + entry.getName());
-                    if(outFile.exists() == false) {
+                    if(!outFile.exists()) {
                         if (entry.isDirectory()) {
                             outFile.mkdirs();
                         } else {
@@ -135,17 +134,53 @@ public class SwtThingEditor {
         }
     }
 
+    public static void unzipResource() throws IOException {
+        String worldPath = World.getInstance().getPath();
+        boolean ok = true;
+        //检查文件是否存在
+        File xmlFile = new File(worldPath + "/config/colorer/catalog.xml");
+        if (!xmlFile.exists()) {
+            try(InputStream resourceIn = World.getInstance().getResourceAsStream("xworker_swt.zip");
+                ZipInputStream zin = new ZipInputStream(resourceIn)){
+                XWorkerUtils.unzipToXWorker(zin, true);
+            }
+            ok = false;
+        }
 
-    public static void check(){
+        //检查类库是否已经
+        if(ok) {
+            try {
+                Class.forName("org.eclipse.swt.SWT");
+            } catch (Exception e) {
+                ok = false;
+            }
+        }
+
+        if(!ok){
+            String OS = Startup.getOS();
+            String PROCESSOR_ARCHITECTURE = Startup.getPROCESSOR_ARCHITECTURE();
+            System.out.println("If this program starts from a java project:");
+            System.out.println("    Add JVM options -Djava.library.path=" + worldPath + "/os/library/"
+                    + OS + "_" + PROCESSOR_ARCHITECTURE +"/ to Run/Debug Configuration");
+            System.out.println("    Add jars in "  + worldPath + "/lib/; "  + worldPath + "/os/lib/lib_"
+                    + OS + "_" + PROCESSOR_ARCHITECTURE +"/ to java project");
+
+            System.out.println("Please restart the system.");
+            System.exit(0);
+        }
+    }
+
+    public static void check() throws IOException{
         //检查xworker的目录是否存在，不存在则创建一个
         File xworkerRoot = new File(World.getInstance().getPath());
         if(!xworkerRoot.exists()){
             xworkerRoot.mkdirs();
         }
 
-        checkSWT();
+        unzipResource();
+        //checkSWT();
 
-        checkColorer();
+        //checkColorer();
 
         checkDir(new File(xworkerRoot, "databases"));
     }
@@ -158,10 +193,8 @@ public class SwtThingEditor {
 
     /**
      * 运行模型管理器。
-     *
-     * @throws MalformedURLException
      */
-    public static void run() throws MalformedURLException {
+    public static void run() throws IOException {
         run(true, null);
     }
 
@@ -169,10 +202,8 @@ public class SwtThingEditor {
      * 运行模型管理器。
      *
      * @param editorConfig 模型管理器额外的配置，使用xworker.swt.SwtThingEditorConfig模型编写
-     *
-     * @throws MalformedURLException
      */
-    public static void run(Thing editorConfig) throws MalformedURLException {
+    public static void run(Thing editorConfig) throws IOException {
         run(true, editorConfig);
     }
 
@@ -181,10 +212,8 @@ public class SwtThingEditor {
      *
      * @param check 是否检查已经下载了swt.jar
      * @param editorConfig 模型管理器额外的配置，使用xworker.swt.SwtThingEditorConfig模型编写
-     *
-     * @throws MalformedURLException
      */
-    public static void run(boolean check, Thing editorConfig) throws MalformedURLException {
+    public static void run(boolean check, Thing editorConfig) throws IOException {
         if(check) {
             //检查环境是否可以运行
             check();
@@ -205,7 +234,7 @@ public class SwtThingEditor {
     }
 
     //xworker.thingeditor.SwtThingEditor/@run1
-    public static void actionRun(ActionContext actionContext) throws MalformedURLException {
+    public static void actionRun(ActionContext actionContext) throws IOException {
         Action startWebServer = actionContext.getObject("startWebServer");
 
         if(startWebServer != null){

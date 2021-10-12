@@ -1,0 +1,411 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<ActionThing name="Setup" descriptors="xworker.lang.ActionThing">&#xd;
+    <description><![CDATA[<p>初始化ThingExplorer。</p>
+]]></description>&#xd;
+    <JavaAction name="init" descriptors="xworker.lang.actions.JavaAction" outerClassName="xworker.thingeditor.SetupActions"
+         methodName="init" varScope="Local" saveReturn="true" returnVarName="startupJar">&#xd;
+        <code><![CDATA[//找到startup的包
+def libDir = new File("./lib/");
+for(file in libDir.listFiles()){
+    if(file.getName().startsWith("xworker_startup")){
+        return file.getName();
+        break;
+    }
+}
+
+return "no startup";]]></code>&#xd;
+    </JavaAction>&#xd;
+    <JavaAction name="setUp" _xmeta_id_="run" descriptors="xworker.lang.actions.JavaAction"
+         outerClassName="xworker.thingeditor.SetupActions" methodName="setup" varScope="Local">&#xd;
+        <code><![CDATA[import xworker.startup.Setup;
+import xworker.startup.Startup;
+
+//环境
+Startup.initOS();
+def os = Startup.getOS();
+
+def swt = world.getThing("xworker.thingeditor.SwtThingEditor");
+def web = world.getThing("xworker.webserver.WebThingEditor");
+def javafx = world.getThing("xworker.javafx.thingeditor.JavaFXThingEditor");
+
+//生成各种启动脚本文件
+if(os.contains("win32")){
+    //windows
+    dml_cmd(actionContext);
+    if(swt != null){
+        dml_cmd_swt(actionContext);
+    }
+    if(web != null){
+        dml_cmd_web(actionContext);
+    }
+    if(javafx != null){
+        dml_cmd_javafx(actionContext);
+    }
+}else{
+    //其它操作系统
+    dml_sh(actionContext);
+    if(swt != null){
+        dml_sh_swt(actionContext);
+    }
+    if(web != null){
+        dml_sh_web(actionContext);
+    }
+    if(javafx != null){
+        dml_sh_javafx(actionContext);
+    }
+}
+
+//生成setup文件
+Setup.setup();]]></code>&#xd;
+        <ActionDefined>&#xd;
+            <Freemarker name="dml_cmd" descriptors="xworker.lang.text.Freemarker" output="./dml.cmd">&#xd;
+                <code><![CDATA[@echo off
+rem -------------------------------------------------------------------------
+rem XWorker Bootstrap Script for Win32
+rem -------------------------------------------------------------------------
+
+rem Modify charset to utf-8
+rem CHCP 65001
+
+@if not "%ECHO%" == ""  echo %ECHO%
+@if "%OS%" == "Windows_NT"  setlocal
+
+set DIRNAME=.\
+if "%OS%" == "Windows_NT" set DIRNAME=%~dp0%
+set PROGNAME=run.bat
+if "%OS%" == "Windows_NT" set PROGNAME=%~nx0%
+
+pushd %DIRNAME%
+set XWORKER_HOME=%CD%\
+popd
+
+rem Read all command line arguments
+
+REM
+REM The %ARGS% env variable commented out in favor of using %* to include
+REM all args in java command line. See bug #840239. [jpl]
+REM
+REM set ARGS=
+REM :loop
+REM if [%1] == [] goto endloop
+REM         set ARGS=%ARGS% %1
+REM         shift
+REM         goto loop
+REM :endloop
+
+rem Find run.jar, or we can't continue
+
+set RUNJAR=%XWORKER_HOME%\lib\
+if exist "%RUNJAR%" goto FOUND_RUN_JAR
+echo Could not locate %RUNJAR%. Please check that you are in the
+echo bin directory when running this script.
+goto END
+
+:FOUND_RUN_JAR
+@setlocal enableextensions enabledelayedexpansion
+REM @set classpath=.;xworker.jar;
+REM @for %%c in (lib/*.jar) do @set classpath=!classpath!;lib/%%c
+REM @for %%c in (lib/db/*.jar) do @set classpath=!classpath!;lib/db/%%c
+rem @echo %classpath%
+@set RUNJAR=%classpath%%XWORKER_HOME%\lib\nvn\${startupJar?if_exists};./bin
+rem @echo %RUNJAR%
+if not "%JAVA_HOME%" == "" goto ADD_TOOLS
+
+set JAVA=java
+echo JAVA_HOME is not set.  Unexpected results may occur.
+echo Set JAVA_HOME to the directory of your local JDK to avoid this message.
+goto SKIP_TOOLS
+
+:ADD_TOOLS
+
+set JAVA=%JAVA_HOME%\bin\java
+
+rem A full JDK with toos.jar is not required anymore since XWORKER web packages
+rem the eclipse jdt compiler and javassist has its own internal compiler.
+if not exist "%JAVA_HOME%\lib\tools.jar" goto SKIP_TOOLS
+
+rem If exists, point to the JDK javac compiler in case the user wants to
+rem later override the eclipse jdt compiler for compiling JSP pages.
+set JAVAC_JAR=%JAVA_HOME%\lib\tools.jar
+
+:SKIP_TOOLS
+
+rem If XWORKER_CLASSPATH or JAVAC_JAR is empty, don't include it, as this will 
+rem result in including the local directory in the classpath, which makes
+rem error tracking harder.
+if not "%JAVAC_JAR%" == "" set RUNJAR=%JAVAC_JAR%;%RUNJAR%
+if "%XWORKER_CLASSPATH%" == "" set RUN_CLASSPATH=%RUNJAR%
+if "%RUN_CLASSPATH%" == "" set RUN_CLASSPATH=%XWORKER_CLASSPATH%;%RUNJAR%
+
+set XWORKER_CLASSPATH=%RUN_CLASSPATH%
+
+rem Setup XWORKER specific properties
+set JAVA_OPTS=%JAVA_OPTS% -Dprogram.name=%PROGNAME%  -Dfile.encoding=UTF-8
+
+rem JVM memory allocation pool parameters. Modify as appropriate.
+rem set JAVA_OPTS=%JAVA_OPTS% -Xms512m -Xmx2048m
+
+rem With Sun JVMs reduce the RMI GCs to once per hour
+set JAVA_OPTS=%JAVA_OPTS% -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000
+
+rem JPDA options. Uncomment and modify as appropriate to enable remote debugging.
+rem set JAVA_OPTS=-Xdebug -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y %JAVA_OPTS%
+
+rem Setup the java endorsed dirs
+rem set XWORKER_ENDORSED_DIRS=%XWORKER_HOME%\lib\endorsed
+
+if exist %XWORKER_HOME%\dml.conf.cmd  call "%XWORKER_HOME%\dml.conf.cmd"
+
+
+rem echo ===============================================================================
+rem echo.
+rem echo   XWORKER Bootstrap Environment
+rem echo.
+rem echo   XWORKER_HOME: %XWORKER_HOME%
+rem echo.
+rem echo   JAVA: %JAVA%
+rem echo.
+rem echo   JAVA_OPTS: %JAVA_OPTS%
+rem echo.
+rem echo   CLASSPATH: %XWORKER_CLASSPATH%
+rem echo.
+rem echo ===============================================================================
+rem echo.
+
+:RESTART
+"%JAVA%" %JAVA_OPTS% "-Djava.endorsed.dirs=%XWORKER_ENDORSED_DIRS%" -classpath "%XWORKER_CLASSPATH%;%XWORKER_HOME%\lib\mvn\${startupJar?if_exists}" xworker.startup.Startup  %XWORKER_HOME% %*
+if ERRORLEVEL 10 goto RESTART
+
+:END
+if "%NOPAUSE%" == "xx" pause
+
+:END_NO_PAUSE]]></code>&#xd;
+            </Freemarker>&#xd;
+            <Freemarker name="dml_cmd_swt" _xmeta_id_="dml_cmd1" descriptors="xworker.lang.text.Freemarker"
+                 code="dml.cmd xworker.thingeditor.SwtThingEditor run" output="./swt.cmd"/>&#xd;
+            <Freemarker name="dml_cmd_web" _xmeta_id_="dml_cmd11" descriptors="xworker.lang.text.Freemarker"
+                 code="dml.cmd xworker.webserver.WebThingEditor run" output="./web.cmd"/>&#xd;
+            <Freemarker name="dml_cmd_javafx" _xmeta_id_="dml_cmd12" descriptors="xworker.lang.text.Freemarker"
+                 code="dml.cmd xworker.javafx.thingeditor.JavaFXThingEditor run" output="./javafx.cmd"/>&#xd;
+            <Freemarker name="dml_sh" descriptors="xworker.lang.text.Freemarker" output="./dml.sh">&#xd;
+                <code><![CDATA[#!/bin/bash
+
+DIRNAME=`dirname "$0"`
+PROGNAME=`basename "$0"`
+GREP="grep"
+
+# Force use GTK2
+export SWT_GTK3=0
+
+# Use the maximum available, or set MAX_FD != -1 to use that
+MAX_FD="maximum"
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false;
+darwin=false;
+linux=false;
+case "`uname`" in
+    CYGWIN*)
+        cygwin=true
+        ;;
+
+    Darwin*)
+        darwin=true
+        ;;
+
+    Linux)
+        linux=true
+        ;;
+esac
+
+JAVA_OPTS=""
+# JVM memory allocation pool parameters - modify as appropriate.
+# JAVA_OPTS="-XstartOnFirstThread -Xms512M -Xmx2048M -XX:MaxPermSize=256M"
+
+# Reduce the RMI GCs to once per hour for Sun JVMs.
+JAVA_OPTS="$JAVA_OPTS -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.net.preferIPv4Stack=true  -Dfile.encoding=UTF-8"
+
+# Sample JPDA settings for remote socket debugging
+# JAVA_OPTS="$JAVA_OPTS -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=n"
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+    [ -n "$XWORKER_HOME" ] &&
+        XWORKER_HOME=`cygpath --unix "$XWORKER_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+        JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+    [ -n "$JAVAC_JAR" ] &&
+        JAVAC_JAR=`cygpath --unix "$JAVAC_JAR"`
+fi
+
+# Setup XWORKER_HOME
+RESOLVED_XWORKER_HOME=`cd "$DIRNAME"; pwd`
+if [ "x$XWORKER_HOME" = "x" ]; then
+    # get the full path (without any relative bits)
+    XWORKER_HOME=$RESOLVED_XWORKER_HOME
+else
+ SANITIZED_XWORKER_HOME=`cd "$XWOKRER"; pwd`
+ if [ "$RESOLVED_XWORKER_HOME" != "$SANITIZED_XWORKER_HOME" ]; then
+   echo "WARNING XWORKER_HOME may be pointing to a different installation - unpredictable results may occur."
+   echo ""
+ fi
+fi
+export XWORKER_HOME
+
+configSh="$DIRNAME/dml.conf.sh"
+if [ -f "$configSh" ]; then
+   source "$configSh"
+fi
+
+LOCALCLASSPATH="$XWORKER_HOME/config/:$XWORKER_HOME/lib/mvn/${startupJar?if_exists}"
+# Explicitly add javac path to classpath, assume JAVA_HOME set
+# properly in rpm mode
+if [ -f "$JAVA_HOME/lib/tools.jar" ] ; then
+  LOCALCLASSPATH="$LOCALCLASSPATH:$JAVA_HOME/lib/tools.jar"
+fi
+if [ -f "$JAVA_HOME/lib/classes.zip" ] ; then
+  LOCALCLASSPATH="$LOCALCLASSPATH:$JAVA_HOME/lib/classes.zip"
+fi
+
+# Setup the JVM
+if [ "x$JAVA" = "x" ]; then
+    if [ "x$JAVA_HOME" != "x" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+    else
+        JAVA="java"
+    fi
+fi
+
+if [ "$PRESERVE_JAVA_OPTS" != "true" ]; then
+    # Check for -d32/-d64 in JAVA_OPTS
+    JVM_D64_OPTION=`echo $JAVA_OPTS | $GREP "\-d64"`
+    JVM_D32_OPTION=`echo $JAVA_OPTS | $GREP "\-d32"`
+
+    # Check If server or client is specified
+    SERVER_SET=`echo $JAVA_OPTS | $GREP "\-server"`
+    CLIENT_SET=`echo $JAVA_OPTS | $GREP "\-client"`
+
+    if [ "x$JVM_D32_OPTION" != "x" ]; then
+        JVM_OPTVERSION="-d32"
+    elif [ "x$JVM_D64_OPTION" != "x" ]; then
+        JVM_OPTVERSION="-d64"
+    elif $darwin && [ "x$SERVER_SET" = "x" ]; then
+        # Use 32-bit on Mac, unless server has been specified or the user opts are incompatible
+        "$JAVA" -d32 $JAVA_OPTS -version > /dev/null 2>&1 && PREPEND_JAVA_OPTS="-d32" && JVM_OPTVERSION="-d32"
+    fi
+
+    CLIENT_VM=false
+    if [ "x$CLIENT_SET" != "x" ]; then
+        CLIENT_VM=true
+    elif [ "x$SERVER_SET" = "x" ]; then
+        if $darwin && [ "$JVM_OPTVERSION" = "-d32" ]; then
+            # Prefer client for Macs, since they are primarily used for development
+            CLIENT_VM=true
+            PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -client"
+        else
+            PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -server"
+        fi
+    fi
+
+    if [ $CLIENT_VM = false ]; then
+        NO_COMPRESSED_OOPS=`echo $JAVA_OPTS | $GREP "\-XX:\-UseCompressedOops"`
+        if [ "x$NO_COMPRESSED_OOPS" = "x" ]; then
+            "$JAVA" $JVM_OPTVERSION -server -XX:+UseCompressedOops -version >/dev/null 2>&1 && PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -XX:+UseCompressedOops"
+        fi
+
+        NO_TIERED_COMPILATION=`echo $JAVA_OPTS | $GREP "\-XX:\-TieredCompilation"`
+        if [ "x$NO_TIERED_COMPILATION" = "x" ]; then
+            "$JAVA" $JVM_OPTVERSION -server -XX:+TieredCompilation -version >/dev/null 2>&1 && PREPEND_JAVA_OPTS="$PREPEND_JAVA_OPTS -XX:+TieredCompilation"
+        fi
+    fi
+
+    JAVA_OPTS="$PREPEND_JAVA_OPTS $JAVA_OPTS"
+fi
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+    XWORKER_HOME=`cygpath --path --windows "$XWORKER_HOME"`
+    JAVA_HOME=`cygpath --path --windows "$JAVA_HOME"`
+    XWOKRER_CLASSPATH=`cygpath --path --windows "$XWOKRER_CLASSPATH"`
+    XWOKRER_ENDORSED_DIRS=`cygpath --path --windows "$XWOKRER_ENDORSED_DIRS"`
+    XWOKRER_MODULEPATH=`cygpath --path --windows "$XWOKRER_MODULEPATH"`
+fi
+
+# Display our environment
+# echo "========================================================================="
+# echo ""
+# echo "  XWorker Bootstrap Environment"
+# echo ""
+# echo "  XWORKER_HOME: $XWORKER_HOME"
+# echo ""
+# echo "  JAVA: $JAVA"
+# echo ""
+# echo "  JAVA_OPTS: $JAVA_OPTS"
+# echo ""
+# echo "  LOCALCLASSPATH: $LOCALCLASSPATH"
+# echo ""
+# echo "========================================================================="
+# echo ""
+
+while true; do
+   if [ "x$LAUNCH_XWORKER_IN_BACKGROUND" = "x" ]; then
+      # Execute the JVM in the foreground
+      eval \"$JAVA\" $JAVA_OPTS \
+         -classpath \"$LOCALCLASSPATH\" \
+         xworker.startup.Startup "$XWORKER_HOME" "$@"
+      XWORKER_STATUS=$?
+   else
+      # Execute the JVM in the background
+      eval \"$JAVA\" -classpath \"$LOCALCLASSPATH\" $JAVA_OPTS \          
+         xworker.startup.Startup "$XWORKER_HOME" "$@" "&"
+     XWORKER_PID=$!
+      # Trap common signals and relay them to the xworker process
+      trap "kill -HUP  $XWORKER_PID" HUP
+      trap "kill -TERM $XWORKER_PID" INT
+      trap "kill -QUIT $XWORKER_PID" QUIT
+      trap "kill -PIPE $XWORKER_PID" PIPE
+      trap "kill -TERM $XWORKER_PID" TERM
+      if [ "x$XWORKER_PIDFILE" != "x" ]; then
+        echo $XWORKER_PID > $XWORKER_PIDFILE
+      fi
+      # Wait until the background process exits
+      WAIT_STATUS=128
+      while [ "$WAIT_STATUS" -ge 128 ]; do
+         wait $XWORKER_PID 2>/dev/null
+         WAIT_STATUS=$?
+         if [ "$WAIT_STATUS" -gt 128 ]; then
+            SIGNAL=`expr $WAIT_STATUS - 128`
+            SIGNAL_NAME=`kill -l $SIGNAL`
+            echo "*** XWorker process ($XWORKERPID) received $SIGNAL_NAME signal ***" >&2
+         fi
+      done
+      if [ "$WAIT_STATUS" -lt 127 ]; then
+         XWORKER_STATUS=$WAIT_STATUS
+      else
+         XWORKER_STATUS=0
+      fi
+      if [ "$XWORKER_STATUS" -ne 10 ]; then
+            # Wait for a complete shudown
+            wait $XWORKER_PID 2>/dev/null
+      fi
+      if [ "x$XWORKER_PIDFILE" != "x" ]; then
+            grep "$JXWORKER_PID" $XWORKER_PIDFILE && rm $XWORKER_PIDFILE
+      fi
+   fi
+   if [ "$XWORKER_STATUS" -eq 10 ]; then
+      echo "Restarting XWorker..."
+   else
+      exit $XWORKER_STATUS
+   fi
+done]]></code>&#xd;
+            </Freemarker>&#xd;
+            <Freemarker name="dml_sh_swt" _xmeta_id_="dml_sh1" descriptors="xworker.lang.text.Freemarker"
+                 code="./dml.sh xworker.thingeditor.SwtThingEditor run" output="./swt.sh"/>&#xd;
+            <Freemarker name="dml_sh_web" _xmeta_id_="dml_sh2" descriptors="xworker.lang.text.Freemarker"
+                 code="./dml.sh xworker.webserver.WebThingEditor run" output="./web.sh"/>&#xd;
+            <Freemarker name="dml_sh_javafx" _xmeta_id_="dml_sh3" descriptors="xworker.lang.text.Freemarker"
+                 code="./dml.sh xworker.javafx.thingeditor.JavaFXThingEditor run" output="./javafx.sh"/>&#xd;
+        </ActionDefined>&#xd;
+    </JavaAction>&#xd;
+</ActionThing>

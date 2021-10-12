@@ -21,10 +21,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
@@ -135,7 +132,14 @@ public class DbDataObject {
 		    }
 		}
 		if(self.getBoolean("showSql")){
-		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+			StringBuilder sb = new StringBuilder(self.getMetadata().getPath());
+			sb.append(":");
+			sb.append(sql);
+			for (Object[] keyData : keyDatas) {
+				sb.append(",");
+				sb.append(keyData[1]);
+			}
+		    Executor.info(TAG, sb.toString());
 		}
 
 		//设置参数值
@@ -160,10 +164,6 @@ public class DbDataObject {
 	
 	/**
 	 *　批量插入数据库。
-	 *
-	 * @param actionContext
-	 * @return
-	 * @throws SQLException 
 	 */
 	public static int createBatch(ActionContext actionContext) throws SQLException {
 		Thing self = actionContext.getObject("self");
@@ -243,7 +243,7 @@ public class DbDataObject {
 		String sql = "insert into " + self.getString("tableName") + "(";
 		String valueSql = " values(";
 		String[] dirtyFields = theData.getMetadata().getDirtyFields();
-		if(dirtyFields == null || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+		if(dirtyFields == null){
 			Executor.warn(TAG, "no value need insert to database");
 		    return null;
 		}
@@ -261,7 +261,7 @@ public class DbDataObject {
 		}
 		sql = sql + valueSql;
 		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-			Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+			Executor.info(TAG, self.getMetadata().getPath() + ":" + sql + "," + theData);
 		}
 
 		//设置参数值
@@ -306,9 +306,6 @@ public class DbDataObject {
 		
 	/**
 	 * 更新数据。
-	 * 
-	 * @param actionContext
-	 * @throws SQLException 
 	 */
 	public static boolean update(ActionContext actionContext) throws SQLException{
 		Thing self = (Thing) actionContext.get("self");
@@ -341,7 +338,22 @@ public class DbDataObject {
 		    }
 		}
 		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+			StringBuilder sb = new StringBuilder(self.getMetadata().getPath());
+			sb.append(":");
+			sb.append(sql);
+			sb.append(", udpateFields:");
+			for(int i=0; i<dirtyFields.length; i++){
+				if(i > 0){
+					sb.append(",");
+				}
+				sb.append(theData.get(dirtyFields[i]));
+			}
+			sb.append(", keys:");
+			for (Object[] keyData : keyDatas) {
+				sb.append(",");
+				sb.append(keyData[1]);
+			}
+			Executor.info(TAG, sb.toString());
 		}
 
 		//设置参数值
@@ -413,11 +425,29 @@ public class DbDataObject {
 		if(clause != null && clause != ""){
 		    sql = sql + " where " + clause;
 		}
-		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
-		}
 
 		List<ConditionValue> cds = queryConfig.getConditionValueList();
+		if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
+			StringBuilder sb = new StringBuilder(self.getMetadata().getPath());
+			sb.append(":");
+			sb.append(sql);
+			sb.append(", udpateFields:");
+			for(int i=0; i<dirtyFields.length; i++){
+				if(i > 0){
+					sb.append(",");
+				}
+				sb.append(theData.get(dirtyFields[i]));
+			}
+			sb.append(", keys:");
+			for(int i=0; i<cds.size(); i++){
+				if(i > 0) {
+					sb.append(",");
+				}
+				sb.append(cds.get(i).getValue());
+			}
+			Executor.info(TAG, sb.toString());
+		}
+
 		if(cds.size() == 0){
 			throw new SQLException("Full table update is not allowed! path=" + self.getMetadata().getPath());
 		}
@@ -469,7 +499,17 @@ public class DbDataObject {
 		}
 
 		if(self.getBoolean("showSql")){
-		    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+			StringBuilder sb = new StringBuilder(self.getMetadata().getPath());
+			sb.append(":");
+			sb.append(sql);
+			sb.append(", keys:");
+			for(int i=0; i<cds.size(); i++){
+				if(i > 0) {
+					sb.append(",");
+				}
+				sb.append(cds.get(i).getValue());
+			}
+			Executor.info(TAG, sb.toString());
 		}
 
 		if(cds.size() == 0){
@@ -715,7 +755,7 @@ public class DbDataObject {
 			QueryConfig queryConfig = actionContext.getObject("queryConfig");
 			if(queryConfig == null) {
 
-				Map<String, Object> datas = (Map<String, Object>) actionContext.get("conditionData");             //查询条件数据
+				Map<String, Object> datas = actionContext.getObject("conditionData");             //查询条件数据
 				if (datas == null) {
 					datas = Collections.emptyMap();
 				}
@@ -740,10 +780,11 @@ public class DbDataObject {
 			}
 
 			//----------------生成SQL语句--------------
-			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext, false);
 
 			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-				Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+				String debugSql = getQuerySql(self, attributes, queryConfig, actionContext, true);
+				Executor.info(TAG, self.getMetadata().getPath() + ":" + debugSql);
 			}
 			UserTaskManager.setUserTaskLabelDetail(userTask, "Sql setted", sql);
 
@@ -785,7 +826,7 @@ public class DbDataObject {
 	public static Object query(ActionContext actionContext) throws Exception{
 		Thing self = (Thing) actionContext.get("self");
 		UserTask userTask =  DataObject.getUserTask(self, actionContext);
-		
+		long start = System.currentTimeMillis();
 		try{
 			//---------------查询参数----------------
 			QueryConfig queryConfig = actionContext.getObject("queryConfig");
@@ -800,7 +841,7 @@ public class DbDataObject {
 				if (conditionConfig == null) {
 					conditionConfig = new Thing();
 				}
-				Executor.debug(TAG, "" + conditionConfig);
+				//Executor.debug(TAG, "" + conditionConfig);
 				//分页信息
 				//Map<String, Object> pageInfo = (Map<String, Object>) actionContext.get("pageInfo");
 				queryConfig = new QueryConfig((Thing) conditionConfig, datas, PageInfo.getPageInfo(actionContext), actionContext);
@@ -816,12 +857,15 @@ public class DbDataObject {
 			}
 
 			//----------------生成SQL语句--------------
-			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext, false);
 			
 			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+				String debugSql = getQuerySql(self, attributes, queryConfig, actionContext, true);
+				Executor.info(TAG, self.getMetadata().getPath() + ":" + debugSql);
 			}
 			UserTaskManager.setUserTaskLabelDetail(userTask, "Sql setted", sql);
+			Executor.debug(TAG, "Sql generate time: {}", (System.currentTimeMillis() - start));
+			start = System.currentTimeMillis();
 			
 			//----------------生成SQL完毕--------------------
 	
@@ -871,9 +915,10 @@ public class DbDataObject {
 			        //执行sql
 			        rs = pst.executeQuery();			        
 			        UserTaskManager.setUserTaskLabelDetail(userTask, "Statement executed", null);
-			        
-			        List<DataObject> ds = new ArrayList<DataObject>();
-			        long start = System.currentTimeMillis();
+			        Executor.debug(TAG, "Execute sql time: {}, no page", System.currentTimeMillis() - start);
+			        start = System.currentTimeMillis();
+
+			        List<DataObject> ds = new ArrayList<>();
 			        while(rs.next()){
 			            //构造对象
 			        	DataObject data = new DataObject(self);
@@ -887,12 +932,12 @@ public class DbDataObject {
 			            ds.add(data);    
 			            //log.info("data=" + data);
 			            
-			            if(userTask != null && System.currentTimeMillis() - start > 1000){
+			            if(userTask != null && System.currentTimeMillis() % start > 1000){
 			            	UserTaskManager.setUserTaskLabelDetail(userTask, ds.size() + " rows has getted", null);
-			            	start = System.currentTimeMillis();
 			            }
 			        }
-			        
+
+					Executor.debug(TAG, "Read datas time: {}, count: {}", System.currentTimeMillis() - start, ds.size());
 			        return ds;
 			    }finally{
 			        if(rs != null){
@@ -952,10 +997,11 @@ public class DbDataObject {
 			}
 
 			//----------------生成SQL语句--------------
-			String sql = getQuerySql(self, attributes, queryConfig, actionContext);
+			String sql = getQuerySql(self, attributes, queryConfig, actionContext, false);
 	
 			if(self.getBoolean("showSql") || Executor.isLogLevelEnabled(TAG, Executor.DEBUG)){
-			    Executor.info(TAG, self.getMetadata().getPath() + ":" + sql);
+				String debugSql = getQuerySql(self, attributes, queryConfig, actionContext, true);
+				Executor.info(TAG, self.getMetadata().getPath() + ":" + debugSql);
 			}
 			UserTaskManager.setUserTaskLabelDetail(userTask, "sql setted", sql);
 			
@@ -1496,7 +1542,7 @@ public class DbDataObject {
 		return sql;
 	}
 
-	public static String getQuerySql(Thing self, List<Thing> attributes, QueryConfig queryConfig, ActionContext actionContext){
+	public static String getQuerySql(Thing self, List<Thing> attributes, QueryConfig queryConfig, ActionContext actionContext, boolean hasValue){
 		StringBuilder sb = new StringBuilder();
 		String sortField = null;
 
@@ -1533,7 +1579,7 @@ public class DbDataObject {
 		}
 
 		//查询条件
-		String clause = queryConfig.getConditionSql();
+		String clause = queryConfig.getConditionSql(hasValue);
 		if(clause != null && !clause.isEmpty()){
 			int whereIndex = sb.indexOf("where");
 			if(whereIndex == -1) {
@@ -1569,6 +1615,15 @@ public class DbDataObject {
 		if(orders != null && !orders.isEmpty()){
 			sb.append(" order by ");
 			sb.append(orders);
+		}else{
+			String storeSortField = self.getStringBlankAsNull("storeSortField");
+			String storeSortDir = self.getStringBlankAsNull("storeSortDir");
+			if(storeSortField != null && storeSortDir != null){
+				sb.append(" order by ");
+				sb.append(storeSortField);
+				sb.append(" ");
+				sb.append(storeSortDir);
+			}
 		}
 
 		return sb.toString();
@@ -1579,12 +1634,6 @@ public class DbDataObject {
 	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
 	 * 
 	 * 在本方法中数据源应该按照XWorker的Configuration设置。
-	 * 
-	 * @param dataSourceName 数据源名称
-	 * @param configuration 配置模型
-	 * @param sql
-	 * @param actionContext
-	 * @return
 	 */
 	public static DataObject loadSql(String dataSourceName, Thing configuration, String sql, ActionContext actionContext) {
 		return loadSql(dataSourceName, configuration, sql, null, actionContext);
@@ -1595,12 +1644,6 @@ public class DbDataObject {
 	 * 
 	 * 在本方法中数据源应该按照XWorker的Configuration设置。
 	 * 
-	 * @param dataSourceName 数据源名称
-	 * @param configuration 配置模型
-	 * @param sql
-	 * @param condition
-	 * @param actionContext
-	 * @return
 	 */
 	public static DataObject loadSql(String dataSourceName, Thing configuration, String sql, Condition condition, ActionContext actionContext) {
 		Thing dataSource = Configuration.getConfiguration(dataSourceName, configuration, actionContext);
@@ -1610,12 +1653,6 @@ public class DbDataObject {
 	
 	/**
 	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
-	 * 
-	 * @param dataSource
-	 * @param sql
-	 * @param condition
-	 * @param actionContext
-	 * @return
 	 */
 	public static DataObject loadSql(Thing dataSource, String sql, Condition condition, ActionContext actionContext) {
 		List<DataObject> datas = querySql(dataSource, sql, condition, actionContext);
@@ -1628,23 +1665,13 @@ public class DbDataObject {
 	
 	/**
 	 * 执行一个sql, 把第一条记录包装成数据对象并返回，如果没有则返回null。
-	 *  
-	 * @param dataSource
-	 * @param sql
-	 * @param actionContext
-	 * @return
-	 */	
+	 */
 	public static DataObject loadSql(Thing dataSource, String sql, ActionContext actionContext) {
 		return loadSql(dataSource, sql, actionContext);
 	}
 	
 	/**
 	 * 执行一个sql, 返回数据对象列表。
-	 * 
-	 * @param dataSource
-	 * @param sql
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> querySql(Thing dataSource, String sql, ActionContext actionContext){
 		return querySql(dataSource, sql, null, actionContext);
@@ -1652,12 +1679,6 @@ public class DbDataObject {
 	
 	/**
 	 * 执行一个sql, 返回数据对象列表。
-	 * 
-	 * @param dataSource
-	 * @param sql
-	 * @param condition
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> querySql(Thing dataSource, String sql, Condition condition, ActionContext actionContext){
 		Thing queryDb = new Thing("xworker.dataObject.db.DbQueryDataObject");
@@ -1674,13 +1695,6 @@ public class DbDataObject {
 	
 	/**
 	 * 执行一个sql, 返回数据对象列表。在本方法中数据源应该按照XWorker的Configuration设置。
-	 * 
-	 * @param dataSourceName
-	 * @param configuration
-	 * @param sql
-	 * @param condition
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> querySql(String dataSourceName, Thing configuration, String sql, Condition condition, ActionContext actionContext){
 		Thing dataSource = Configuration.getConfiguration(dataSourceName, configuration, actionContext);
@@ -1690,12 +1704,6 @@ public class DbDataObject {
 	
 	/**
 	 *  执行一个sql, 返回数据对象列表。在本方法中数据源应该按照XWorker的Configuration设置。
-	 *  
-	 * @param dataSourceName
-	 * @param configuration
-	 * @param sql
-	 * @param actionContext
-	 * @return
 	 */
 	public static List<DataObject> querySql(String dataSourceName, Thing configuration, String sql, ActionContext actionContext){
 		return querySql(dataSourceName, configuration, sql, null, actionContext);

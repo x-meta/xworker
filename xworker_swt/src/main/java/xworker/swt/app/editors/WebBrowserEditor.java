@@ -1,6 +1,9 @@
 package xworker.swt.app.editors;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -15,9 +18,50 @@ import org.xmeta.util.ActionContainer;
 
 import xworker.util.StringUtils;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator = "createInstance")
 public class WebBrowserEditor {
+
+	public static EditorParams<String> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		String url = null;
+		if(content instanceof  String){
+			Thing thing = World.getInstance().getThing((String) content);
+			if(thing != null && thing.isThing("xworker.http.controls.WebControl")){
+				url = XWorkerUtils.getWebControlUrl(thing);
+			}else{
+				try{
+					URL u = new URL((String) content);
+					url = u.toString();
+				}catch(Exception ignore){
+				}
+			}
+		}else if(content instanceof Thing){
+			Thing thing = (Thing) content;
+			if(thing.isThing("xworker.http.controls.WebControl")){
+				url = XWorkerUtils.getWebControlUrl(thing);
+			}
+		}else if(content instanceof URL || content instanceof URI){
+			url = content.toString();
+		}
+
+		if(url != null){
+			return new EditorParams<String>(self, "url:" + url, url) {
+				@Override
+				public Map<String, Object> getParams() {
+					Map<String, Object> params = new HashMap<>();
+					params.put("url", this.getContent());
+
+					return params;
+				}
+			};
+		}
+
+		return null;
+	}
+
 	public void setContent() {
 		// xworker.swt.app.editors.WebBrowserEditor/@actions/@setContent
 		Map<String, Object> params = actionContext.getObject("params");

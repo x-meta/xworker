@@ -1,5 +1,6 @@
 package xworker.swt.app.editors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.swt.browser.Browser;
@@ -10,19 +11,59 @@ import org.xmeta.World;
 import org.xmeta.annotation.ActionClass;
 import org.xmeta.annotation.ActionField;
 
+import xworker.swt.util.SwtUtils;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.EditorParams;
 
 @ActionClass(creator = "createInstance")
 public class ThingViewer {
+	public static EditorParams<Object> createParams(ActionContext actionContext){
+		Thing self = actionContext.getObject("self");
+		Object content = actionContext.getObject("content");
+		Thing thing = null;
+		if (content instanceof String) {
+			thing = World.getInstance().getThing((String) content);
+		}else  if(content instanceof Thing){
+			thing = (Thing) content;
+		}
+		if(thing != null){
+			return new EditorParams<Object>(self, "thingviewer:" + thing.getMetadata().getPath(), thing) {
+				@Override
+				public Map<String, Object> getParams() {
+					Map<String, Object> params = new HashMap<>();
+					params.put("thing", this.getContent());
+
+					return params;
+				}
+
+				@Override
+				public int getPriority() {
+					//优先级降低
+					return 2000;
+				}
+			};
+		}
+
+		return null;
+	}
+
 	public void selection(){
         //xworker.swt.app.editors.ThingViewer/@EditorComposite/@thingViewer/@actions/@selection		
         if(actionContext.get("browser") != null){
         	Browser browser = actionContext.getObject("browser");
         	Thing thing = actionContext.getObject("thing");
-        	
-            String url = XWorkerUtils.getThingDescUrl(thing.getDescriptor());
-            browser.setUrl(url);
+        	actionContext.g().put("thing", thing);
+
+        	SwtUtils.setThingDesc(thing, browser);
         }
+	}
+
+	public void onOutlineCreated(){
+		Thing thing = actionContext.getObject("thing");
+		Browser browser = actionContext.getObject("browser");
+		if(thing != null && browser != null) {
+			SwtUtils.setThingDesc(thing, browser);
+		}
 	}
 
 	public void setContent(){
@@ -45,8 +86,7 @@ public class ThingViewer {
         
         if(actionContext.get("browser") != null){
         	Browser browser = actionContext.getObject("browser");
-            String url = XWorkerUtils.getThingDescUrl(((Thing) thing).getDescriptor());
-            browser.setUrl(url);
+			SwtUtils.setThingDesc((Thing) thing, browser);
         }
         //thingEditor.doAction("selectThing", actionContext, "thing", thing);
         //EditorComposite.layout();

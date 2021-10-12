@@ -27,6 +27,10 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
@@ -97,10 +101,10 @@ public class Designer {
 	private boolean designEditMode = false;
 	/** SWT控件Attach时如果大于0，那么先sleep，为测试用 */
 	private long attachSleepTime = 0;
-	private DesignListener listener = new DesignListener();
+	private final DesignListener listener = new DesignListener();
 	/** 所有的控件都保存在controlMap中，在销毁时移除 */
-	private Map<String, List<Widget>> controlMap = new java.util.concurrent.ConcurrentHashMap<String, List<Widget>>();
-	private List<Control> markedControls = new ArrayList<Control>();
+	private final Map<String, List<Widget>> controlMap = new java.util.concurrent.ConcurrentHashMap<>();
+	private final List<Control> markedControls = new ArrayList<>();
 	/** 标记提示的窗口 */
 	private Shell markTooltipShell = null;
 	
@@ -109,14 +113,14 @@ public class Designer {
 	private static final byte RIGHT = 3;
 	private static final byte LEFT = 4;
 	/** 等待交互的UI监听器 */
-	private Map<String, List<InteractiveListener>> interactiveListeners = new HashMap<String, List<InteractiveListener>>();
+	private final Map<String, List<InteractiveListener>> interactiveListeners = new HashMap<>();
 	/** SWT创建者的栈，创建者是创建SWT时的事物，一般是没有的，但是一些通过模型创建的复合SWT组件，
 	 * 创建者则是这些模型。使用创建者是因为创建者下的模型有可能是动态生成的，并不能在运行时不能通过直接修改
 	 * SWT控件的方式来设计它。
 	 */
-	private static ThreadLocal<Stack<String>> creators = new ThreadLocal<Stack<String>>();
+	private static final ThreadLocal<Stack<String>> creators = new ThreadLocal<>();
 	
-	private static Designer defaultDesigner = new Designer();
+	private static final Designer defaultDesigner = new Designer();
 	
 	private Designer() {
 		//目前设计器需要XWorker的环境来运行
@@ -130,7 +134,7 @@ public class Designer {
 	}
 	
 	public static Designer getDesigner() {
-		Designer designer = null;
+		Designer designer;
 		if(XWorkerUtils.isRWT()) {
 			designer = (Designer) XWorkerUtils.getRWTAttribute(DATA_DESIGNER, null);
 			if(designer == null) {
@@ -148,9 +152,6 @@ public class Designer {
 	
 	/**
 	 * 返回第一个可以被设计的Control，如果当前Control不是，那么试图判断其父Contorl。
-	 * 
-	 * @param control
-	 * @return
 	 */
 	public static Control getDesignableControl(Control control) {
 		if(control == null) {
@@ -164,8 +165,8 @@ public class Designer {
 		}
 		
 		//是否是属性
-		Boolean isAttribute = Designer.isAttribute(control);
-		if(isAttribute != null && isAttribute == true) {
+		boolean isAttribute = Designer.isAttribute(control);
+		if(isAttribute) {
 			return getDesignableControl(control.getParent());
 		}
 		
@@ -188,18 +189,10 @@ public class Designer {
 		}
 		
 		Designer designer = getDesigner();
-		if(interactiveListener == null){
-			designer.interactiveListeners.remove(name);
-			return;
-		}
-		
-		List<InteractiveListener> listeners = designer.interactiveListeners.get(name);
-		if(listeners == null) {
-			listeners = new ArrayList<InteractiveListener>();
-			designer.interactiveListeners.put(name, listeners);			
-		}
-		
-		if(listeners.contains(interactiveListener) == false) {
+
+		List<InteractiveListener> listeners = designer.interactiveListeners.computeIfAbsent(name, k -> new ArrayList<>());
+
+		if(!listeners.contains(interactiveListener)) {
 			listeners.add(interactiveListener);
 		}
 	}
@@ -213,44 +206,42 @@ public class Designer {
 		return designer.interactiveListeners.get(name);
 	}
 	
-	private static Thread markControlThread = new Thread( new Runnable(){
-		public void run(){
-			while(true){
-				try{
-					Designer designer = Designer.getDesigner();
-					synchronized(designer.markedControls){
-						for(int i=0;i<designer.markedControls.size(); i++){
-							final Control control = designer.markedControls.get(i);
-							if(!control.isDisposed()){
-								control.getDisplay().asyncExec(new Runnable(){
-									public void run(){
-										if(!control.isDisposed()){
-											//control.getDisplay().update();
-											control.redraw();
-										}
+	private static final Thread markControlThread = new Thread(() -> {
+		while(true){
+			try{
+				Designer designer = Designer.getDesigner();
+				synchronized(designer.markedControls){
+					for(int i=0;i<designer.markedControls.size(); i++){
+						final Control control = designer.markedControls.get(i);
+						if(!control.isDisposed()){
+							control.getDisplay().asyncExec(new Runnable(){
+								public void run(){
+									if(!control.isDisposed()){
+										//control.getDisplay().update();
+										control.redraw();
 									}
-								});
-							}
+								}
+							});
 						}
 					}
-					
-					//未知原因controlMap中有些disposed的控件没有移除，这里加入移除代码
-					//System.out.println("check control map");
-					for(String key : designer.controlMap.keySet()) {
-						List<Widget> widgets = designer.controlMap.get(key);
-						for(int i=0; i<widgets.size(); i++) {
-							if(widgets.get(i) == null || widgets.get(i).isDisposed()) {
-								widgets.remove(i);
-								i--;
-							}
-						}
-					}
-					Thread.sleep(1000);
-				}catch(Throwable t){
-					Executor.error(TAG, "Mark control thread error", t);
 				}
-	
+
+				//未知原因controlMap中有些disposed的控件没有移除，这里加入移除代码
+				//System.out.println("check control map");
+				for(String key : designer.controlMap.keySet()) {
+					List<Widget> widgets = designer.controlMap.get(key);
+					for(int i=0; i<widgets.size(); i++) {
+						if(widgets.get(i) == null || widgets.get(i).isDisposed()) {
+							widgets.remove(i);
+							i--;
+						}
+					}
+				}
+				Thread.sleep(1000);
+			}catch(Throwable t){
+				Executor.error(TAG, "Mark control thread error", t);
 			}
+
 		}
 	}, "designer control thread");
 	static{
@@ -263,8 +254,6 @@ public class Designer {
 	
 	/**
 	 * 慢动作演示SWT创建过程用，用了最后记得设置为0。
-	 * 
-	 * @param attachSleepTime
 	 */
 	public static void setAttachSleepTime(long attachSleepTime) {
 		Designer designer = Designer.getDesigner();
@@ -273,8 +262,6 @@ public class Designer {
 
 	/**
 	 * 返回是否是设计编辑模型，默认false。
-	 * 
-	 * @return
 	 */
 	public static boolean isDesignEditMode(){
 		Designer designer = Designer.getDesigner();
@@ -287,8 +274,6 @@ public class Designer {
 	}
 	/**
 	* 设计编辑模型。
-	 * 
-	 * @param designEditMode
 	 */
 	public static void setDesignEditMode(boolean designEditMode){
 		Designer designer = Designer.getDesigner();
@@ -298,7 +283,7 @@ public class Designer {
 	/**
 	 * 让指定的Control变得可见。
 	 * 
-	 * @param control
+	 * @param control 控件
 	 */
 	public static void setVisible(Control control) {
 		Composite parent = control.getParent();
@@ -332,12 +317,14 @@ public class Designer {
 	
 	/**
 	 * 设置当前正在设计的控件。
-	 * 
-	 * @param control
 	 */
 	public static void setCurrentDesignControl(Control control){
 		Designer designer = Designer.getDesigner();
 		designer.listener.setCurrentControL(control);
+	}
+
+	public static Control getCurrentDesignControl(){
+		return Designer.getDesigner().listener.getCurrentControl();
 	}
 		
 	/**
@@ -377,7 +364,7 @@ public class Designer {
 	public static void pushCreator(Thing creator){
 		Stack<String> stack = creators.get();
 		if(stack == null){
-			stack = new Stack<String>();
+			stack = new Stack<>();
 			creators.set(stack);
 		}
 		
@@ -395,7 +382,7 @@ public class Designer {
 	
 	public static Thing peekCreator(){
 		Stack<String> stack = creators.get();
-		if(stack != null && stack.empty() == false){			
+		if(stack != null && !stack.empty()){
 			return World.getInstance().getThing(stack.peek());
 		}else{
 			return null;
@@ -404,8 +391,6 @@ public class Designer {
 	
 	/**
 	 * 获取当前Creator的列表，第一个是最先的Creator，如有多个使用英文逗号分隔。
-	 * 
-	 * @return
 	 */
 	public static String peekCreatorPath(){
 		Stack<String> stack = creators.get();
@@ -458,6 +443,19 @@ public class Designer {
 				control.addMouseListener(designer.listener);
 				
 				control.addKeyListener(designer.listener);
+				/*
+				有严重bug（dragOver模拟插入，控件布局改变，产生不可控连锁反应），取消
+				try {
+					DragSource dragSource = new DragSource(control, DND.DROP_MOVE | DND.DROP_COPY);
+					dragSource.setTransfer(TextTransfer.getInstance());
+					dragSource.addDragListener(designer.listener);
+
+					DropTarget dragTarget = new DropTarget(control, DND.DROP_MOVE | DND.DROP_COPY);
+					dragTarget.setTransfer(TextTransfer.getInstance());
+					dragTarget.setDropTargetEffect(new DesignDropTargetEffect(control));
+					dragTarget.addDropListener(designer.listener);
+				}catch(Throwable ignored){
+				}*/
 			}
 			/*
 			if(control.getShell().getData(Designer.DATA_PAINT_LISTENER) == null){
@@ -478,13 +476,9 @@ public class Designer {
 			}else{
 				control.setData(DATA_CREATOR, peekCreatorPath());
 			}
-			
-			List<Widget> ctls = designer.controlMap.get(thingPath);
-			if(ctls == null){
-				ctls = new ArrayList<Widget>();
-				designer.controlMap.put(thingPath, ctls);
-			}
-			
+
+			List<Widget> ctls = designer.controlMap.computeIfAbsent(thingPath, k -> new ArrayList<>());
+
 			boolean have = false; //避免重复插入，虽然应该不可能
 			synchronized(ctls){
 				for(int i=0; i < ctls.size(); i++){
@@ -513,8 +507,6 @@ public class Designer {
 	
 	/**
 	 * 标记控件。
-	 * 
-	 * @param control
 	 */
 	public static void markControl(final Control control){
 		control.getDisplay().asyncExec(new Runnable(){
@@ -542,8 +534,6 @@ public class Designer {
 	
 	/**
 	 * 取消标记控件。
-	 * 
-	 * @param control
 	 */
 	public static void unmarkControl(final Control control){
 		control.getDisplay().asyncExec(new Runnable(){
@@ -562,8 +552,6 @@ public class Designer {
 	
 	/**
 	 * 打开设计窗口。
-	 * 
-	 * @param control
 	 */
 	public static void showDesignDialog(final Control control, Thing tools){
 		Designer designer = Designer.getDesigner();
@@ -572,8 +560,6 @@ public class Designer {
 	
 	/**
 	 * 解除绑定，在控件销毁时解除。
-	 * 
-	 * @param control
 	 */
 	protected static void detach(Widget control){
 		String thingPath = (String) control.getData(DATA_THING);
@@ -597,9 +583,6 @@ public class Designer {
 	
 	/**
 	 * 返回当前编辑器中的指定的控件列表。
-	 * 
-	 * @param controlPaths
-	 * @return
 	 */
 	public static Map<String, List<Control>> getControlsInCurrentEditor(List<String> controlPaths){
 		Control currentEditor = getActiveEditorRootControl();
@@ -612,8 +595,6 @@ public class Designer {
 	
 	/**
 	 * 返回编辑器区域内所有编辑器的列表，通常是TabItem或CTabItem。
-	 * 
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<Control> getAllEditorRootControls(){
@@ -627,8 +608,6 @@ public class Designer {
 	
 	/**
 	 * 获取编辑器列表中激活的那个编辑器。
-	 * 
-	 * @return
 	 */
 	public static Control getActiveEditorRootControl(){
 		ActionContainer ac = XWorkerUtils.getIdeActionContainer();
@@ -641,36 +620,27 @@ public class Designer {
 	
 	/**
 	 * 获取指定路径的控件列表，并且这些控件都属于指定的父控件。
-	 * 
-	 * @param controlPaths
-	 * @param parent
-	 * @return
 	 */
 	public static Map<String, List<Control>> getControlsInSameParnet(List<String> controlPaths, Control parent){
 		if(controlPaths == null || controlPaths.size() == 0){
 			return null;
 		}
 		
-		Map<String, List<Control>> controls = new HashMap<String, List<Control>>();
+		Map<String, List<Control>> controls = new HashMap<>();
 		
 		Designer designer = Designer.getDesigner();
 		for(String path : controlPaths){
 			//根据控件路径查找控件
 			List<Widget> widgets = designer.controlMap.get(path);
-			if(widgets != null){			
-				for(int i=0; i<widgets.size(); i++){
-					Widget widget = widgets.get(i);
-					if(widget instanceof Control){		
+			if(widgets != null){
+				for (Widget widget : widgets) {
+					if (widget instanceof Control) {
 						Control control = (Control) widget;
-						if(isSameParent(control, parent)){
-							List<Control> clist = controls.get(path);
-							if(clist == null){
-								clist = new ArrayList<Control>();
-								controls.put(path, clist);
-							}
-							
+						if (isSameParent(control, parent)) {
+							List<Control> clist = controls.computeIfAbsent(path, k -> new ArrayList<>());
+
 							clist.add(control);
-						}						
+						}
 					}
 				}
 			}
@@ -695,9 +665,6 @@ public class Designer {
 	
 	/**
 	 * 返回创建控件的事物路径。
-	 * 
-	 * @param control
-	 * @return
 	 */
 	public static String getControlThingPath(Control control){
 		if(control == null || control.isDisposed()){
@@ -709,9 +676,6 @@ public class Designer {
 	
 	/**
 	 * 获取设计器绑定在组件上的事物，一般是创建该组件的事物。
-	 * 
-	 * @param widget
-	 * @return
 	 */
 	public static Thing getThing(Widget widget){
 		if(widget == null || widget.isDisposed()){
@@ -724,9 +688,6 @@ public class Designer {
 	
 	/**
 	 * 获取
-	 * 
-	 * @param widget
-	 * @return
 	 */
 	public static ThingEntry getThingEntry(Widget widget) {
 		if(widget == null || widget.isDisposed()){
@@ -738,9 +699,6 @@ public class Designer {
 	
 	/**
 	 * 返回指定的控件是否是事物表单的属性字段或其它属性字段所创建的控件。
-	 * 
-	 * @param control
-	 * @return
 	 */
 	public static boolean isAttribute(Control control){
 		if(control == null || control.isDisposed()){
@@ -751,8 +709,11 @@ public class Designer {
 	
 	/**
 	 * 返回控件的创建者，只返回根的创建者。
-	 * @param control
-	 * @return
+	 *
+	 * 创建者一般自定义的组件模型，组件也可以套用组件，因此一个控件存在多个创建者。
+	 *
+	 * @param control 控件
+	 * @return 根创建者
 	 */
 	public static Thing getCreator(Control control){
 		return getCreator(control, 0);
@@ -760,10 +721,13 @@ public class Designer {
 	
 	/**
 	 * 返回控件的创建者，可以指定返回哪一个创建者。
-	 * 
-	 * @param control
+	 *
+	 * 创建者一般自定义的组件模型，组件也可以套用组件，因此一个控件存在多个创建者。
+	 *
+	 * @param control 控件
 	 * @param index -1 表示当前控件的父创建者，0 表示根创建者
-	 * @return
+	 *
+	 * @return 创建者
 	 */
 	public static Thing getCreator(Control control, int index){
 		if(control == null || control.isDisposed()){
@@ -778,7 +742,7 @@ public class Designer {
 				return null;
 			}
 		}else {
-			String paths[] = path.split("[,]");
+			String[] paths = path.split("[,]");
 					
 			if(index == -1) {
 				return World.getInstance().getThing(paths[paths.length - 1]);
@@ -807,11 +771,25 @@ public class Designer {
 			}
 		}
 	}
-	
+
+	/**
+	 * 如果一个控件是在自定义的组件中的，返回自定义组件的根控件，如果该组件是嵌套其它自定义组件中的，那么返回最上面的那个自定义组件的根控件。
+	 *
+	 * @param control 控件
+	 * @return 自定义组件的根控件，不存在返回null
+	 */
 	public static Control getCreatorControl(Control control){
 		return getCreatorControl(control, 0);
 	}
-	
+
+	/**
+	 * 如果一个控件是自定义的组件中的，返回指定组件的根控件。
+	 *
+	 * @param control 控件
+	 * @param index 组件的索引，0是第一个，1是第一个嵌套的第一个子组件，....其它类推
+	 *
+	 * @return 组件的根控件，不存在返回null
+	 */
 	public static Control getCreatorControl(Control control, int index){
 		Thing creator = getCreator(control, index);
 		if(creator == null){
@@ -837,12 +815,12 @@ public class Designer {
 	}
 	
 	public static boolean isUnderCreator(Control control){
-		Control p = control.getParent();
-		if(p != null && getCreator(p) != null){
-			return true;
-		}else{
+		if(control == null || control.isDisposed()){
 			return false;
 		}
+
+		Control p = control.getParent();
+		return p != null && getCreator(p) != null;
 	}
 			
 	public static boolean isCreatorRoot(Control control){
@@ -851,9 +829,6 @@ public class Designer {
 	
 	/**
 	 * 获取设计器绑定在组件上的变量上下文，该变量上下文通常是用来创建该组件的变量上下文。
-	 * 
-	 * @param widget
-	 * @return
 	 */
 	public static ActionContext getActionContext(Widget widget){
 		return  (ActionContext) widget.getData("_designer_actionContext");
@@ -861,10 +836,6 @@ public class Designer {
 	
 	/**
 	 * 从一个父Control开始寻找对应指定事物的控件，一般该控件是由这个事物创建的。
-	 * 
-	 * @param control
-	 * @param thingPath
-	 * @return
 	 */
 	public static Control findControl(Control control, String thingPath){
 		String cpath = getControlThingPath(control);
@@ -887,9 +858,6 @@ public class Designer {
 	
 	/**
 	 * 获取属于同一个shell的控件集合，可能或返回多个集合，值返回全部空间都同时存在的集合。
-	 * 
-	 * @param controlPaths
-	 * @return 
 	 */
 	public static List<Map<String, List<Control>>> getControlsInSameShell(List<String> controlPaths){
 		if(controlPaths == null || controlPaths.size() == 0){
@@ -962,12 +930,8 @@ public class Designer {
 	}
 	
 	private static void addControl(String path, Map<String, List<Control>> controlMap, Control control){
-		List<Control> controlList = controlMap.get(path);
-		if(controlList == null){
-			controlList = new ArrayList<Control>();
-			controlMap.put(path, controlList);
-		}
-		
+		List<Control> controlList = controlMap.computeIfAbsent(path, k -> new ArrayList<>());
+
 		controlList.add(control);
 	}
 	
@@ -988,9 +952,7 @@ public class Designer {
 					//返回正在显示的控件，判断是否是正在显示的控件
 					if(control.getDisplay() == Display.getCurrent()){
 						//目前先支持在同一个Display下的控件
-						if(control.getShell().isFocusControl()){
-							
-						}
+						control.getShell().isFocusControl();
 					}
 				}
 			}
@@ -1001,9 +963,6 @@ public class Designer {
 	
 	/**
 	 * 返回绑定到thingPath上的所有控件列表。
-	 * 
-	 * @param thingPath
-	 * @return
 	 */
 	public static List<Widget> getWidgets(String thingPath){
 		Designer designer = Designer.getDesigner();
@@ -1073,14 +1032,9 @@ public class Designer {
 	
 	/**
 	 * 为一个控件显示一个提示窗口。
-	 * 
-	 * @param control
-	 * @param toolTipThing
-	 * @param width
-	 * @param height
 	 */
 	public static void showToolTip(Control control, Thing toolTipThing, int width, int height) {
-		if(control.isVisible() == false) {
+		if(!control.isVisible()) {
 			control.setVisible(true);
 		}
 		
@@ -1110,9 +1064,6 @@ public class Designer {
 	
 	/**
 	 * 把一个Shell依附到指定控件的附近。
-	 * 
-	 * @param shell
-	 * @param control
 	 */
 	public static void attachTo(Shell shell, Control control) {
 		//确定提示窗口应该显示的位置
@@ -1141,11 +1092,6 @@ public class Designer {
 	
 	/**
 	 * 从指定的控件或子控件上获取指定事物对应的控件。
-	 * 
-	 * @param control
-	 * @param thingPath
-	 * @param isAttribute
-	 * @return
 	 */
 	public static Control getControl(Control control, String thingPath, boolean isAttribute) {
 		String thing = (String) control.getData(Designer.DATA_THING);
@@ -1172,12 +1118,6 @@ public class Designer {
 	
 	/**
 	 * 从指定的控件或子控件上获取指定事物对应的控件，其中控件的的类名要和simpleClassName一致。
-	 * 
-	 * @param control
-	 * @param thingPath
-	 * @param isAttribute
-	 * @param simpleClassName
-	 * @return
 	 */
 	public static Control getControl(Control control, String thingPath, boolean isAttribute, String simpleClassName) {
 		String thing = (String) control.getData(Designer.DATA_THING);
@@ -1215,7 +1155,7 @@ public class Designer {
 	 * @param height Shell的高度
 	 * @param monitorSize 监视器的大小
 	 * @param seq 位置选择顺序列表
-	 * @return
+	 * @return 位置
 	 */
 	private static Point getTooltipLocation(Control control, Point location,Point cl, Point size, int width, int height, Rectangle monitorSize, int[] seq){
 		//rec是control在display中的区域
@@ -1309,8 +1249,6 @@ public class Designer {
 	
 	/**
 	 * 返回XWorker的URL的根路径。
-	 * 
-	 * @return
 	 */
 	public static String getUrlRoot(){
 		return XWorkerUtils.getWebUrl();
@@ -1325,7 +1263,7 @@ public class Designer {
 	
 	public static void paintIfSelected(Control control, GC gc){
 		String designData = (String) control.getData(Designer.DATA_DESING_SELECTED);
-		if(designData == null || !"true".equals(designData)){
+		if(!"true".equals(designData)){
 			return;
 		}
 		
@@ -1333,9 +1271,6 @@ public class Designer {
 	}
 	/**
 	 * 画一个控件的选择标记。
-	 * 
-	 * @param control
-	 * @param gc
 	 */
 	public static void paintSelected(Control control, GC gc){
 		

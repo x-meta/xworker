@@ -6,6 +6,7 @@ import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
+import xworker.app.model.tree.TreeModelUtils;
 import xworker.app.model.tree.implnew.FileTreeModel;
 import xworker.lang.executor.Executor;
 import xworker.util.UtilFileIcon;
@@ -24,8 +25,7 @@ public class SftpTreeModel {
         String rootPath = self.doAction("getRootPath", actionContext);
 
         File file = new File(rootPath);
-        TreeModelItem rootItem = new TreeModelItem(treeModel, null);
-        FileTreeModel.init(file, rootItem, actionContext);
+        TreeModelItem rootItem = TreeModelUtils.toItem(treeModel, null, self, file, actionContext);
         rootItem.setDataId(rootPath);
         rootItem.setId(treeModel.getThing().getMetadata().getPath() + "|" + rootPath);
 

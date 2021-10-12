@@ -24,8 +24,17 @@ import java.util.List;
 public class SwtQuickContentHandler implements ContentHandler {
     private static final String TAG = SwtQuickContentHandler.class.getName();
 
+    Browser browser = null;
+    public SwtQuickContentHandler(){
+    }
+
+    public SwtQuickContentHandler(Browser browser){
+        this.browser = browser;
+    }
+
     @Override
     public Object handle(Thing quickContent, Content<?> content, ActionContext actionContext) {
+        actionContext.g().put("contentHandler", this);
         String type = content.getType();
 
         World world = World.getInstance();
@@ -75,7 +84,7 @@ public class SwtQuickContentHandler implements ContentHandler {
             Thing thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@dataObjectMultiSelector");
             return thing.doAction("create", actionContext, "content", content.getContent());
         }else if("code".equals(type)){
-            return createCode(quickContent, (StringContent) content, actionContext);
+            return createCode(quickContent,  content, actionContext);
         }else if("swtGuide".equals(type)){
             return createSwtGuide(quickContent, (ThingContent) content, actionContext);
         }else if("html".equals(type)){
@@ -85,6 +94,35 @@ public class SwtQuickContentHandler implements ContentHandler {
         }
 
         return null;
+    }
+
+    public void setBrowser(Browser browser){
+        this.browser = browser;
+    }
+
+    public Browser getBrowser(){
+        return browser;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        if(browser != null && !browser.isDisposed()){
+            browser.setUrl(url);
+        }
+    }
+
+    @Override
+    public void setThingDesc(Thing thing) {
+        if(browser != null && !browser.isDisposed()){
+            SwtUtils.setThingDesc(thing, browser);
+        }
+    }
+
+    @Override
+    public void setText(String text) {
+        if(browser != null && !browser.isDisposed()){
+            browser.setText(text);
+        }
     }
 
     public static Object createState(Thing self, ThingContent content, ActionContext actionContext){
@@ -119,7 +157,7 @@ public class SwtQuickContentHandler implements ContentHandler {
         return thing.doAction("create", actionContext);
     }
 
-    public static Object createCode(Thing self, StringContent content, ActionContext actionContext){
+    public static Object createCode(Thing self, Content<?> content, ActionContext actionContext){
         World world = World.getInstance();
         Thing thing = world.getThing("xworker.swt.xworker.ThingRegistThing/@composite/@codeComposite");
 

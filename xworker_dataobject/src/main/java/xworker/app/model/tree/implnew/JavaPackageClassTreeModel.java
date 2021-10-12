@@ -7,11 +7,14 @@ import xworker.app.model.tree.TreeModel;
 import xworker.app.model.tree.TreeModelItem;
 import xworker.java.assist.JavaCacheItem;
 import xworker.java.assist.JavaClassCache;
+import xworker.util.XWorkerUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class JavaPackageClassTreeModel {
@@ -164,6 +167,11 @@ public class JavaPackageClassTreeModel {
         }
 
         return items;
+    }
+
+    //xworker.app.model.tree.implnew.JavaPackageClassTreeModel/@actions/@createBySources
+    public static List<TreeModelItem> createBySources(ActionContext actionContext){
+        return Collections.emptyList();
     }
 
     public static TreeModelItem getItemById(ActionContext actionContext){

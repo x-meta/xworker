@@ -1,4 +1,4 @@
-^1479175942459
+^1632476394438
 @
 sname
 StockCodeInit
@@ -1888,27 +1888,48 @@ return """110002,南山转债,ss
     Scode
 #$@text#$@
 import xworker.dataObject.DataObject;
+import xworker.dataObject.query.Condition;
+import xworker.lang.executor.Executor;
 
+def TAG = "Stock";
 def stockCodes = world.getAction("xworker.app.stock.dataobjects.datas.StockCodeInit/@actions/@getStockCodes").run(actionContext);
-for(code in stockCodes.split("[\n]")){
+def codes = stockCodes.split("[\n]");
+//Executor.info(TAG, "Init stock codes, count=" + codes.length);
+
+def dao = new DataObject("xworker.app.stock.dataobjects.StockCode");
+def datas = dao.query(actionContext, new Condition());
+def context = [:];
+for(data in datas){
+    context.put(data.getString("code"), data);
+}
+
+def count = 0;
+for(code in codes){
     def ss = code.split("[,]");
+
     def db = new DataObject("xworker.app.stock.dataobjects.StockCode");
     db.put("code", ss[0]);
     db.put("name", ss[1]);
     db.put("tradeMarket", ss[2]);
-    
-    if(db.load(actionContext) != null){
-        db.update(actionContext);
-    }else{
+
+    def data = context.get(ss[0]);
+    if(data != null){
+        if(data.getString("name") != ss[1] || data.getString("tradeMarket") != ss[2]){
+            db.update(actionContext);
+        }
+    } else{
         db.create(actionContext);
     }
     
+    count++;
     //log.info("stockCode " + code + " inited");
+    if(count % 100 == 0){
+        //Executor.info(TAG, "Init stock code " + count + "/" + codes.length);
+    }
 }
 
-def info = "stockeCode inited";
-log.info(info);
-return info;
+//Executor.info(TAG, "Stock codes inited");
+return "Stock codes inited";
 #$@text#$@
     Sdescription
 #$@text#$@
@@ -1932,6 +1953,8 @@ return info;
     false
     ssaveReturn
     false
+    sswitchResult
+    false
     sdebugLog
     false
     sdescriptors
@@ -1952,3 +1975,135 @@ return info;
     false
     sid
     initStockCodes
+      @/@actions/@initStockCodes/@VariablesDescs
+      sname
+      VariablesDescs
+      sdescriptors
+      xworker.lang.MetaThing/@VariablesDesc
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      VariablesDescs
+        @/@actions/@initStockCodes/@VariablesDescs/@dao
+        sname
+        dao
+        svarName
+        xworker.dataObject.DataObject
+        spassive
+        false
+        sscope
+        0
+        stype
+        object
+        sstaticClass
+        false
+        sdescriptors
+        xworker.lang.MetaThing/@VariablesDesc/@Object
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        dao
+      @/@actions/@initStockCodes/@contexts
+      sname
+      contexts
+      sdescriptors
+      xworker.lang.actions.Inout/@contexts
+      sinheritDescription
+      false
+      sth_createIndex
+      false
+      sth_registMyChilds
+      false
+      sth_registDisabled
+      false
+      sth_noThingRegistViewer
+      false
+      sth_fileMonitor
+      false
+      sth_mark
+      false
+      sth_registQueryOnlySelf
+      false
+      snotXmlAttribute
+      false
+      sjson_isArray
+      false
+      sid
+      contexts
+        @/@actions/@initStockCodes/@contexts/@DataSouceActionContext
+        sname
+        DataSouceActionContext
+        sconnectionName
+        con
+        stransaction
+        true
+        sdataSourcePath
+        xworker.app.stock.datasource.StockDatasource
+        sdisable
+        false
+        sonError
+        ignore
+        spreventError
+        false
+        sinherit
+        true
+        sdescriptors
+        xworker.lang.context.Contexts/@DataSouceActionContext
+        sinheritDescription
+        false
+        sth_createIndex
+        false
+        sth_registMyChilds
+        false
+        sth_registDisabled
+        false
+        sth_noThingRegistViewer
+        false
+        sth_fileMonitor
+        false
+        sth_mark
+        false
+        sth_registQueryOnlySelf
+        false
+        snotXmlAttribute
+        false
+        sjson_isArray
+        false
+        sid
+        DataSouceActionContext

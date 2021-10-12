@@ -1,13 +1,17 @@
 package xworker.swt.app;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.ActionException;
@@ -16,8 +20,10 @@ import org.xmeta.World;
 import org.xmeta.util.UtilData;
 
 import xworker.lang.executor.Executor;
+import xworker.workbench.EditorParams;
 import xworker.workbench.IView;
 import xworker.util.XWorkerUtils;
+import xworker.workbench.WorkbenchUtils;
 
 public class AppActions {
 	private static final String TAG = AppActions.class.getName();
@@ -51,7 +57,13 @@ public class AppActions {
 		
 		final String id = self.doAction("getId", actionContext);
 		//println id;
-		final IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
+		IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
+		if(editorContainer == null){
+			if(actionContext.get("workbench") instanceof Workbench){
+				Workbench workbench = actionContext.getObject("workbench");
+				editorContainer = (IEditorContainer) workbench.getEditorContainer();
+			}
+		}
 		Map<String, Object> params = self.doAction("getParams", actionContext);
 		if(params == null) {
 			params = Collections.emptyMap();
@@ -62,19 +74,47 @@ public class AppActions {
 		if(editorContainer == null){
 			XWorkerUtils.openEditor(id, editor, params);
 		}else {
+			final IEditorContainer ic = editorContainer;
 			editorContainer.getComposite().getDisplay().syncExec(new Runnable() {
 				public void run() {
 					try {
-						editorContainer.openEditor(id, editor, ps);
+						ic.openEditor(id, editor, ps);
 					} catch (Exception e) {
 						Executor.error(AppActions.class.getSimpleName(), "open editor error", e);
 					}
 				}
 			});
 		}
-		
-		return editorContainer.getEditor(id);
-		
+
+		return null;
+	}
+
+	public static void openContentEditor(final ActionContext actionContext) {
+		final Thing self = actionContext.getObject("self");
+
+		final Object content = self.doAction("getContent", actionContext);
+		//println id;
+		final IEditorContainer editorContainer = self.doAction("getEditorContainer", actionContext);
+		List<EditorParams<Object>> editorParamsList = WorkbenchUtils.getEditors("swt", content, actionContext);
+		if (editorParamsList.size() == 0) {
+			Executor.warn(TAG, "Can not find a editor to edit " + content);
+			return;
+		}
+
+		EditorParams<Object> editorParams = editorParamsList.get(0);
+		if (editorContainer == null) {
+			XWorkerUtils.openEditor(editorParams.getId(), editorParams.getEditor(), editorParams.getParams());
+		} else {
+			editorContainer.getComposite().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					try {
+						editorContainer.openEditor(editorParams.getId(), editorParams.getEditor(), editorParams.getParams());
+					} catch (Exception e) {
+						Executor.error(AppActions.class.getSimpleName(), "open editor error", e);
+					}
+				}
+			});
+		}
 	}
 	
 	public static void saveAllEdtiors(ActionContext actionContext) {
@@ -247,6 +287,43 @@ public class AppActions {
 					}
 				}
 			});			
+		}
+	}
+
+	public static void restart(ActionContext actionContext) {
+		Thing self = actionContext.getObject("self");
+
+		Workbench workbench = self.doAction("getWorkbench", actionContext);
+		if(workbench != null){
+			//重新启动Workbench
+			Thing thing =  workbench.getThing();
+
+			//为避免系统退出，先建一个shell，保证不会触发最后一个Shell退出时系统退出
+			Shell shell = new Shell(workbench.getShell().getDisplay(), SWT.NONE);
+			Display oldDisplay = shell.getDisplay();
+
+			//重新创建一个Workbench
+			ActionContext ac = new ActionContext();
+			ac.put("parent", shell.getDisplay());
+			thing.doAction("run", ac);
+
+			if(XWorkerUtils.getWorkbench() == workbench){
+				//如果系统的workbench是自己，那么替换为新的
+				XWorkerUtils.getIde().getActionContext().g().putAll(ac.g());
+			}
+			//关闭之前的
+			workbench.exit();
+			shell.dispose();
+
+			try{
+				if(oldDisplay.getShells().length == 0){
+					oldDisplay.dispose();
+				}
+			}catch(Exception ignored){
+			}
+		}else{
+			Executor.warn(TAG, "Can not call workbench.exit(), workbench is null, action={}",
+					self.getMetadata().getPath());
 		}
 	}
 }

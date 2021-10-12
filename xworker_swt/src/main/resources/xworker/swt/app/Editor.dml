@@ -1,8 +1,9 @@
-%1626428109887
+%1632732427215
 @
 sname=Editor
 slabel=Editor
 sdescriptors=xworker.lang.MetaDescriptor3
+sextends=xworker.workbench.Editor
 smany=true
 seditCols=2
 sformNoLabel=false
@@ -30,6 +31,8 @@ Sdescription=
 
 <p><strong>编辑器的实现</strong></p>
 
+<p>&nbsp;&nbsp;&nbsp; 如果主要用Java代码实现，那么同时设置objectForThingLoader和objectClassForThingLoader，并让Java类实现SwtEditor这个接口。</p>
+
 <ul>
 	<li><strong>实现</strong><br />
 	添加相应的子节点，其中<a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.swt.app.Editor/@ActionContainer">ActionContainer</a>子节点是编辑器的行为定义。<br />
@@ -38,16 +41,16 @@ Sdescription=
 	如果一个编辑器无界面，比如系统编辑是在操作系统里打开文件，此时应重写方法hasComposite()并返回false，同时应实现setContent()方法。<br />
 	&nbsp;</li>
 	<li><strong>注册</strong><br />
-	新的编辑器应以child方式注册到xworker.swt.app.Editors下。</li>
+	新的编辑器应以child方式注册到xworker.workbench.Editors下。</li>
 </ul>
 
 <p><strong>根据内容使用那个编辑器</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; 某些应用需要给定内容然后打开特定的编辑器，该功能需要编辑器使用createDataParams方法。</p>
+<p>&nbsp;&nbsp;&nbsp; 某些应用需要给定内容然后打开特定的编辑器，该功能需要编辑器使用createParams()方法。</p>
 
 <ul>
-	<li><strong>Map&lt;String, Object&gt; createDataParams(Object data)</strong><br />
-	如果支持编辑给定的数据，需要实现createDatapram方法，根据数据创建打开编辑器的相关参数。如果不支持编辑该数据，那么应返回null。<br />
+	<li><strong>EditorParams createParams(Object content)</strong><br />
+	如果返回不为null，表示支持编辑该内容。<br />
 	&nbsp;</li>
 	<li><strong>优先级(priority属性)</strong><br />
 	数值越小优先级越高。比如如果一个编辑器特定用来编辑Java文件，那么该编辑就应该比通用的文本编辑的优先级更高，这样才能保证被它打开Java文件而不是通用的文本编辑器。</li>
@@ -145,6 +148,35 @@ sth_mark=false
     sth_registDisabled=false
     sth_mark=false
     sid=create
+    @/@actions/@createOutline
+    sname=createOutline
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    suseOuterJava=true
+    suseInnerJava=false
+    souterClassName=xworker.swt.app.EditorActions
+    smethodName=createOutline
+    sdisableGlobalContext=false
+    sattributeTemplate=false
+    sinterpretationType=Action
+    svarScope=Global
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sswitchResult=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@JavaAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_noThingRegistViewer=false
+    sth_fileMonitor=false
+    sth_mark=false
+    sth_registQueryOnlySelf=false
+    snotXmlAttribute=false
+    sjson_isArray=false
+    sid=createOutline
     @/@actions/@editorChanged
     sname=editorChanged
     sisSynchronized=false
@@ -344,172 +376,6 @@ sth_mark=false
     snotXmlAttribute=false
     sjson_isArray=false
     sid=7322
-  @/@name
-  sname=name
-  sshowLabel=true
-  smodifier=public
-  sreadOnly=false
-  sinheritDescription=false
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_mark=false
-  sid=name
-  @/@label
-  sname=label
-  sshowLabel=true
-  smodifier=public
-  sreadOnly=false
-  sinheritDescription=false
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_mark=false
-  sid=label
-  @/@priority
-  sname=priority
-  sshowLabel=true
-  slabelAlign=right
-  slabelVAlign=baseline
-  smodifier=public
-  sreadOnly=false
-  sdefault=0
-  sinheritDescription=false
-  Sdescription=
-#$@text#$@
-<p>通过数据打开匹配的编辑器时，会使用编辑器的createDataParams方法来判断编辑器是否支持编辑该数据，如果支持怎返回打开编辑器所需的参数。</p>
-
-<p>如果多个编辑器都可以编辑一个数据，那么可以通过本字段来设置那个优先实现，priority的<strong>数字越小优先级越高</strong>。</p>
-
-<p><strong>越是特殊的编辑器，优先级应该设置越高。</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; 比如特殊的Composite模型编辑器 &gt; Composite模型编辑器 &gt; 模型编辑器的优先级。</p>
-#$@text#$@
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_fileMonitor=false
-  sth_mark=false
-  sid=priority
-  @/@objectForThingLoader
-  sname=objectForThingLoader
-  ssize=40
-  sshowLabel=true
-  slabelAlign=right
-  slabelVAlign=baseline
-  smodifier=public
-  sreadOnly=false
-  sinheritDescription=false
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_noThingRegistViewer=false
-  sth_fileMonitor=false
-  sth_mark=false
-  sth_registQueryOnlySelf=false
-  sjson_isArray=false
-  sid=objectForThingLoader
-  @/@objectClassForThingLoader
-  sname=objectClassForThingLoader
-  sinputtype=openWindow
-  ssize=60
-  sshowLabel=true
-  slabelAlign=right
-  slabelVAlign=baseline
-  smodifier=public
-  sinputattrs=xworker.swt.xworker.attributeEditor.openWins.ClassSelector/@shell|
-  sreadOnly=false
-  sinheritDescription=false
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_noThingRegistViewer=false
-  sth_fileMonitor=false
-  sth_mark=false
-  sth_registQueryOnlySelf=false
-  sjson_isArray=false
-  sid=objectClassForThingLoader
-  @/@exampleParams
-  sname=exampleParams
-  sinputtype=textarea
-  sshowLabel=true
-  slabelAlign=right
-  slabelVAlign=baseline
-  smodifier=public
-  sreadOnly=false
-  Sdefault=
-#$@text#$@
-{
-}
-#$@text#$@
-  sinheritDescription=false
-  Sdescription=
-#$@text#$@
-<p>示例参数，在注册浏览器中查看一个Editor时会生成示例，会用到这个参数。</p>
-
-<p>JSON格式字符串。</p>
-#$@text#$@
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_fileMonitor=false
-  sth_mark=false
-  sth_registQueryOnlySelf=false
-  sid=exampleParams
-  @/@description
-  sname=description
-  sinputtype=html
-  sshowLabel=true
-  smodifier=public
-  sreadOnly=false
-  sinheritDescription=false
-  svalidateAllowBlank=true
-  LvalidateOnBlur=true
-  LallowDecimals=true
-  LallowNegative=true
-  snotXmlAttribute=false
-  sdescriptors=xworker.lang.MetaDescriptor3/@attribute
-  sth_createIndex=false
-  sth_registMyChilds=false
-  sth_registDisabled=false
-  sth_mark=false
-  sid=description
   @/@ActionContainer
   sname=ActionContainer
   sdescriptors=xworker.lang.MetaDescriptor3/@thing

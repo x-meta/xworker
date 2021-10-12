@@ -2,12 +2,16 @@ package xworker.app.model.tree;
 
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
+import sun.reflect.generics.tree.Tree;
+import xworker.lang.executor.Executor;
 import xworker.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TreeModel {
+	private static final String TAG = TreeModel.class.getName();
 
 	public static final String ROOT_ID = "__TreeNodeRootId__";
 	
@@ -128,6 +132,51 @@ public class TreeModel {
 		} else {
 			doLoadChilds(parentItem, callback);
 		}
+	}
+
+	/**
+	 * 重新加载一个节点。
+	 *
+	 * @param item 要加载的节点，如果为null那么重新加载根节点
+	 */
+	public void reload(TreeModelItem item){
+		if(item == null){
+			item = rootItem;
+		}
+
+		item.setItems(null);
+		doLoadChilds(item, null);
+		fireItemRefreshed(item);
+	}
+
+	/**
+	 * 在一个树节点的子节点的指定位置插入子节点。
+	 *
+	 * @param parentItem 父节点
+	 * @param index 子节点的索引位置，-1表示插入到模型，如果index大于子节点的个数也插入到末尾
+	 * @param sources 要插入的源对象列表
+	 */
+	public void insert(TreeModelItem parentItem, int index, Object ... sources){
+		if(sources == null || sources.length == 0){
+			return;
+		}
+
+		List<TreeModelItem> items = thing.doAction("createBySources", actionContext, "sources", sources);
+		if(items == null){
+			Executor.warn(TAG, "Create items by sources return null, thing=" + thing.getMetadata().getPath() + ", sources=" + Arrays.toString(sources));
+			return;
+		}
+
+		parentItem.insert(items, index);
+
+		thing.doAction("initItems", actionContext, "treeModel", this, "parentItem", parentItem, "items", items);
+		this.fireItemRefreshed(parentItem);
+	}
+
+	public void remove(TreeModelItem item){
+		item.getParent().getItems().remove(item);
+
+		this.fireItemRemoved(item);
 	}
 
 	public List<TreeModelItem> doLoadChilds(TreeModelItem parentItem, Callback<List<TreeModelItem>, Void> callback){

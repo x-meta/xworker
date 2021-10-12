@@ -54,14 +54,15 @@ public class CodeEditorCreator {
 		
 		Thing codeEditor = world.getThing("xworker.swt.xworker.CodeEditor/@editorViewForm");
 		Designer.pushCreator(self);
+		Control root;
 		try{
-			Control control = (Control) codeEditor.doAction("create", newContext);
-			Designer.attachCreator(control, self.getMetadata().getPath(), actionContext);
+			root = codeEditor.doAction("create", newContext);
 		}finally{
 			Designer.popCreator();
 		}
+		Designer.attachCreator(root, self.getMetadata().getPath(), actionContext);
 		
-		Object textEditor = null;
+		Control textEditor = null;
 		if(SwtUtils.isRWT()) {
 			Text textEdtorT = newContext.getObject("editInput");
 			textEdtorT.setData("actionContext", newContext);
@@ -83,7 +84,7 @@ public class CodeEditorCreator {
 			try{
 				//代码着色
 				Colorer.attach(textEditorS, codeName, codeType);
-			}catch(Throwable t){			
+			}catch(Throwable ignored){
 			}
 			
 			if(self.getStringBlankAsNull("code") != null){
@@ -113,10 +114,8 @@ public class CodeEditorCreator {
 				item.doAction("create",  newContext);
 			}
 		}		
-		
-		Designer.attach((Control) textEditor, self.getMetadata().getPath(), actionContext);		
-		
-		return textEditor;        
+
+		return root;
 	}
 
     public static void textKeyDown(ActionContext actionContext){

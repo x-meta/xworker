@@ -43,11 +43,11 @@ public class QueryConfig {
     }
 
     public Condition condition(){
-        return condition;
+        return getCondition();
     }
 
     public PageInfo pageInfo(){
-        return pageInfo;
+        return getPageInfo();
     }
 
     public void addProjection(String sql){
@@ -64,6 +64,10 @@ public class QueryConfig {
 
     public String getConditionSql(){
         return condition.toSql();
+    }
+
+    public String getConditionSql(boolean hasValue){
+        return condition.toSql(hasValue);
     }
 
     public List<ConditionValue> getConditionValueList(){
@@ -135,6 +139,11 @@ public class QueryConfig {
     }
 
     public PageInfo getPageInfo() {
+        if(orders.size() > 0){
+            Order order = orders.get(0);
+            pageInfo.setSort(order.getName());
+            pageInfo.setDir(order.getDir());
+        }
         return pageInfo;
     }
 

@@ -29,6 +29,7 @@ import java.util.*;
 public class FileListExplorer {
     private static final String TAG = FileListExplorer.class.getName();
 
+    List<FileListExplorerListener> listeners = new ArrayList<>();
     @ActionField
     public org.xmeta.Thing dataStore;
     @ActionField
@@ -88,6 +89,16 @@ public class FileListExplorer {
         return table;
     }
 
+    public void addListener(FileListExplorerListener listener){
+        if(!listeners.contains(listener)){
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(FileListExplorerListener listener){
+        listeners.remove(listener);
+    }
+
     public void setDir(FileLike<?> dir){
         try {
             if(executorService != null){
@@ -122,6 +133,9 @@ public class FileListExplorer {
             }
 
             self.doAction("onSetDir", actionContext, "dir", dir);
+            for(FileListExplorerListener listener : listeners){
+                listener.onSetDir(this, dir);
+            }
         }catch(Exception e){
             Executor.warn(TAG, "Set dir error", e);
         }finally {

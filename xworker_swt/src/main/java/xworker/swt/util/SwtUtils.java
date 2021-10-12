@@ -659,17 +659,15 @@ public class SwtUtils {
 	}
 	/**
 	 * 获得加速键，如Shift+X.
-	 * 
-	 * @param acceleratorStr
-	 * @return
+	 *
 	 */
 	public static int getAccelerator(String acceleratorStr){
 		if(acceleratorStr == null || "".equals(acceleratorStr)) return 0;
 		
 		String[] s = acceleratorStr.split("[+]");
 		int value = 0;
-		for(int i=0; i<s.length; i++){
-			value = value | getKey(s[i]);
+		for (String item : s) {
+			value = value | getKey(item);
 		}
 		
 		return value;
@@ -694,10 +692,6 @@ public class SwtUtils {
 	 * 以对话框的方式打开一个Shell，直到shell关闭为止。
 	 * 
 	 * 注意RWT下返回为null，要监听返回值，使用带SwtDialogCallback参数的方法。
-	 * 
-	 * @param shell
-	 * @param actionContext
-	 * @return
 	 */
 	public static Object openAsDialog(Shell shell, ActionContext actionContext){
 		SwtDialog swtDialog = new SwtDialog(shell, actionContext);
@@ -714,10 +708,6 @@ public class SwtUtils {
 	
 	/**
 	 * 以对话框的方式打开一个Shell。
-	 * 
-	 * @param shell
-	 * @param actionContext
-	 * @param callback
 	 */
 	public static void openAsDialog(Shell shell, ActionContext actionContext, SwtDialogCallback callback){
 		SwtDialog swtDialog = new SwtDialog(shell, actionContext);
@@ -726,9 +716,6 @@ public class SwtUtils {
 	
 	/**
 	 * 动态读取一个输出流的内容到一个Text。
-	 * 
-	 * @param in
-	 * @param text
 	 */
 	public static void readStreamToText(final InputStream in, final Text text){
 		Thread th = new Thread(new Runnable(){
@@ -755,9 +742,6 @@ public class SwtUtils {
 	
 	/**
 	 * 在指定的widget的位置打开菜单。
-	 * 
-	 * @param widget
-	 * @param menu
 	 */
 	public static void showMenuByWidget(Widget widget, Menu menu) {
 		Rectangle rect = MenuActions.getBounds(widget);
@@ -774,11 +758,6 @@ public class SwtUtils {
 	
 	/**
 	 * 取字符串数组。
-	 * 
-	 * @param value
-	 * @param actionContext
-	 * @return
-	 * @throws OgnlException 
 	 */
 	public static String[] getStringArray(String value, ActionContext actionContext) throws OgnlException{
 		if(value == null || "".equals(value.trim())){
@@ -961,12 +940,6 @@ public class SwtUtils {
 	
 	/**
 	 * 从SWT界面上取数据。
-	 * 
-	 * @param control
-	 * @param type
-	 * @param pattern
-	 * @return
-	 * @throws ParseException
 	 */
 	@SuppressWarnings("rawtypes")
 	public static Object getValue(Object control, String type, String pattern) throws ParseException{
@@ -1217,7 +1190,6 @@ public class SwtUtils {
 	
 	/**
 	 * 返回SWT运行的环境，返回DEFAULT或RAP。
-	 * @return
 	 */
 	public static String getEnviroment() {
 		if(isRWT()) {
@@ -1288,9 +1260,6 @@ public class SwtUtils {
 	
 	/**
 	 * 向浏览器中设置事物的文档。
-	 * 
-	 * @param path
-	 * @param browser
 	 */
 	public static void setThingDesc(String path, Browser browser) {
 		setThingDesc(World.getInstance().getThing(path), browser);
@@ -1298,10 +1267,6 @@ public class SwtUtils {
 	
 	/**
 	 * 初始化Control的公共属性。
-	 * 
-	 * @param thing
-	 * @param control
-	 * @param actionContext
 	 */
 	public static void initControl(Thing thing, Control control, ActionContext actionContext) {
 		//父类的初始化方法
@@ -1320,8 +1285,6 @@ public class SwtUtils {
 	
 	/**
 	 * 选中一个CTabItem，并触发选择事件。
-	 * 
-	 * @param item
 	 */
 	public static void setSelection(CTabItem item) {
 		CTabFolder ctab = item.getParent();
@@ -1334,8 +1297,6 @@ public class SwtUtils {
 	
 	/**
 	 * 选中一个TabItem，并触发选择事件。
-	 * 
-	 * @param item
 	 */
 	public static void setSelection(TabItem item) {
 		TabFolder ctab = item.getParent();
@@ -1349,11 +1310,12 @@ public class SwtUtils {
 	
 	/**
 	 * 向浏览器中设置事物的文档。
-	 * 
-	 * @param thing
-	 * @param browser
 	 */
 	public static void setThingDesc(Thing thing, Browser browser) {
+		if(browser == null || browser.isDisposed()){
+			return;
+		}
+
 		if(thing == null) {
 			browser.setText("");
 			return;
@@ -1396,10 +1358,6 @@ public class SwtUtils {
 	
 	/**
 	 * 通过names对应关系从value赋值到target上。
-	 * 
-	 * @param value
-	 * @param names
-	 * @param actionContext
 	 */
 	public static void setValues(Object value, String[][] names, ActionContext actionContext){
 		for(int i=0; i<names.length; i++){
@@ -1436,7 +1394,7 @@ public class SwtUtils {
 	}
 	
 	public static Object getValues(String className, String[][] names, ActionContext actionContext) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
-		Object values = Class.forName(className).getDeclaredConstructor(new Class<?>[0]).newInstance(new Object[] {});
+		Object values = Class.forName(className).getDeclaredConstructor(new Class<?>[0]).newInstance();
 		
 		for(int i=0; i<names.length; i++){
 			Object t = actionContext.get(names[i][1]);
@@ -1463,10 +1421,6 @@ public class SwtUtils {
 	}
 	/**
 	 * 从目标读取数据。
-	 * 
-	 * @param names
-	 * @param actionContext
-	 * @return
 	 */
 	public static Map<String, Object> getValues(String[][] names, ActionContext actionContext){
 		Map<String, Object> values = new HashMap<String, Object>();
@@ -1496,10 +1450,6 @@ public class SwtUtils {
 	
 	/**
 	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象，如果控件选中了多个也只会返回第一个。如果未绑定或未选择返回null。
-	 * 
-	 * @param control
-	 * 
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static DataObject getSelectedDataObject(Control control) {
@@ -1564,10 +1514,6 @@ public class SwtUtils {
 	
 	/**
 	 * 如果控件是绑定到DataStore上的，返回控件选中的数据对象的列表。如果未绑定或未选择返回null。
-	 * 
-	 * @param control
-	 * 
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<DataObject> getSelectedDataObjects(Control control) {
@@ -1637,9 +1583,6 @@ public class SwtUtils {
 	
 	/**
 	 * 把一个控件转化为Image。
-	 * 
-	 * @param control
-	 * @return
 	 */
 	public static Image toImage(Control control){
 		Image image = new Image(control.getDisplay(), control.getBounds());		
@@ -1702,9 +1645,6 @@ public class SwtUtils {
 	
 	/**
 	 * 把控件转化为JPEG图片。
-	 * 
-	 * @param control
-	 * @param fileName
 	 */
 	public static void toImage(Control control, String fileName, int type){
 		Image image = toImage(control);
@@ -1719,10 +1659,6 @@ public class SwtUtils {
 	
 	/**
 	 * 兼容RWT的MessageBox的打开方法。
-	 * 
-	 * @param box 
-	 * @param actionContext
-	 * @param callback 可以为null
 	 */
 	public static void showMessageBox(MessageBox box, ActionContext actionContext, DialogCallback callback) {
 		SwtUtils.openDialog(box, callback, actionContext);
@@ -1730,9 +1666,6 @@ public class SwtUtils {
 	
 	/**
 	 * 把图片保存到文件中。
-	 * 
-	 * @param image
-	 * @param file
 	 */
 	public static void saveImage(Image image, File file){
 		String fileName = file.getName();
@@ -1847,10 +1780,6 @@ public class SwtUtils {
 	
 	/**
 	 * 保存控件图片到webroot的temp目录下，并返回图片的文件。
-	 * 
-	 * @param shellPath
-	 * @param controlName
-	 * @return
 	 */
 	public static String saveImageToWebroot(String shellPath, String controlName){
 		//获取shell事物
@@ -1885,12 +1814,6 @@ public class SwtUtils {
 	
 	/**
 	 * 打开一个事物表单对话框，返回编辑后的值。
-	 * 
-	 * @param parent
-	 * @param title
-	 * @param formThing
-	 * @param values
-	 * @return
 	 */
 	public static Map<String, Object> openThingFormDialog(Shell parent, String title, Thing formThing, Map<String,Object> values){
 		Thing thing = new Thing(formThing.getMetadata().getPath());
@@ -1903,11 +1826,6 @@ public class SwtUtils {
 	
 	/**
 	 * 打开一个事物表单对话框，返回编辑后的值。
-	 * 
-	 * @param parent
-	 * @param title
-	 * @param thing
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Object> openThingFormDialog(Shell parent, String title, Thing thing){
@@ -1924,10 +1842,7 @@ public class SwtUtils {
 	
 	/**
 	 * 过滤事物的LayoutData，如果事物包含LayoutData切和父容器的不一致，那么就会移除，否则保留。
-	 * 
-	 * @param parent
-	 * @param thing
-	 * 
+ *
 	 * @return 如果有移除的返回true，否则返回false
 	 */
 	public static boolean trimLayoutData(Composite parent, Thing thing){
@@ -1959,10 +1874,6 @@ public class SwtUtils {
 	
 	/**
 	 * 获取事物上符合容器布局的LayoutData。
-	 * 
-	 * @param parent
-	 * @param thing
-	 * @return
 	 */
 	public static Thing getLayoutData(Composite parent, Thing thing){
 		Layout layout = parent.getLayout();
@@ -1991,9 +1902,6 @@ public class SwtUtils {
 	
 	/**
 	 * 根据容器的布局类型创建符合布局的LayoutData。
-	 * 
-	 * @param parent
-	 * @return
 	 */
 	public static Thing createLayoutData(Composite parent){
 		Layout layout = parent.getLayout();
@@ -2055,8 +1963,6 @@ public class SwtUtils {
 	
 	/**
 	 * 返回是否运行在Eclpise的RWT环境下。
-	 * 
-	 * @return
 	 */
 	public static boolean isRWT() {
 		if(isRWT == null) {
@@ -2078,8 +1984,6 @@ public class SwtUtils {
 	/**
 	 * 创建不支持RAP的提示。如果一个控件不支持RAP那么可以用此方法方便的创建一个不支持RAP的提示。
 	 * 
-	 * @param self
-	 * @param actionContext
 	 * @return null表示支持RAP，否则表示不支持RAP
 	 */
 	public static Composite createNoSupportRAP(Thing self, ActionContext actionContext) {
@@ -2136,10 +2040,6 @@ public class SwtUtils {
 	
 	/**
 	 * 为兼容RWT而设置的打开对话框的方法。
-	 * 
-	 * @param dialog
-	 * @param callback
-	 * @param actionContext
 	 */
 	public static void openDialog(Dialog dialog, DialogCallback callback, ActionContext actionContext) {
 		if(SwtUtils.isRWT()) {
@@ -2330,8 +2230,6 @@ public class SwtUtils {
 	 * 设置初始化样式，子控件创建时会使用该style作为初始值。一般用于复合控件，用于扩展原型中样式定义。
 	 * 
 	 * 调用之前pushInitStyle()，必须在finally里调用popInitStyle()方法，以保证样式及时被清空。
-	 * 
-	 * @param style
 	 */
 	public static void setInitStyle(String path, int style) {
 		ActionContext actionContext = creatorInitStyleLocal.get();
@@ -2343,8 +2241,6 @@ public class SwtUtils {
 	
 	/**
 	 * 获取初始化样式，并移除设置。如果没有返回SWT.NONE。
-	 * 
-	 * @return
 	 */
 	public static int getInitStyle(String path) {
 		ActionContext actionContext = creatorInitStyleLocal.get();
@@ -2368,9 +2264,6 @@ public class SwtUtils {
 	
 	/**
 	 * 使用cls的name作为key从widget的数据里获取对象，并转成T类型的对象返回。
-	 * @param widget
-	 * @param cls
-	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T getRegist(Widget widget, Class<T> cls) {
@@ -2380,10 +2273,6 @@ public class SwtUtils {
 	
 	/**
 	 * 把对象用cls的name作为key保存到widget的数据中。
-	 * 
-	 * @param widget
-	 * @param obj
-	 * @param cls
 	 */
 	public static void regist(Widget widget, Object obj , Class<?> cls) {
 		widget.setData(cls.getName(), obj);
@@ -2391,10 +2280,6 @@ public class SwtUtils {
 	
 	/**
 	 * 创建复合组件的创建器，用于创建复合模型的SWT组件。
-	 * 
-	 * @param self
-	 * @param actionContext
-	 * @return
 	 */
 	public static ThingCompositeCreator createCompositeCreator(Thing self, ActionContext actionContext) {
 		return new ThingCompositeCreator(self, actionContext);
@@ -2404,7 +2289,7 @@ public class SwtUtils {
 	public static Object runIAction(String className, Thing thing, ActionContext actionContext) {
 		try {
 			Class<IAction> cls = (Class<IAction>) Class.forName(className);
-			IAction action = cls.getConstructor(new Class<?>[0]).newInstance(new Object[0]);
+			IAction action = cls.getConstructor(new Class<?>[0]).newInstance();
 			return action.run(thing, actionContext);
 		}catch(Exception e) {
 			throw new ActionException("runIAction error", e);

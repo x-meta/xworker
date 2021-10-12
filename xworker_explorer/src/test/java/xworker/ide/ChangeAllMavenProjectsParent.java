@@ -17,8 +17,8 @@ public class ChangeAllMavenProjectsParent {
                         index1 = xml.indexOf("<version>", index1) + "<version>".length();
                         int index2 = xml.indexOf("</version>", index1);
                         System.out.println(pomFile.getAbsolutePath() + " : " + (xml.substring(index1, index2)));
-                        xml = xml.substring(0, index1) + "1.0.1-SNAPSHOT" + xml.substring(index2, xml.length());
-                        System.out.println(xml);
+                        xml = xml.substring(0, index1) + "1.0.2-SNAPSHOT" + xml.substring(index2, xml.length());
+                        //System.out.println(pomFile.getAbsolutePath());
                         FileUtils.write(pomFile, xml, "utf-8");
                     }
                 }

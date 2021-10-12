@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,8 +64,8 @@ public class UtilTemplate {
 		Template template = new Template(name, reader, null);
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();   
-    	template.process(object,new OutputStreamWriter(out, "utf-8"));
-		return new String(out.toByteArray(), "utf-8");
+    	template.process(object,new OutputStreamWriter(out, StandardCharsets.UTF_8));
+		return out.toString("utf-8");
             //替换变量里的值，允许设置如${name}形式的配置参数值
 		/*String value = templateCode;
         if(templateCode.indexOf("${") != -1){
@@ -126,13 +127,6 @@ public class UtilTemplate {
 	
 	/**
 	 * 模板是事物的属性，处理模板然后返回生成的字符串。
-	 * 
-	 * @param thing
-	 * @param attributeName
-	 * @param root
-	 * @return
-	 * @throws TemplateException 
-	 * @throws IOException 
 	 */
 	public static String processThingAttributeToString(Thing thing, String attributeName, Object root) throws IOException, TemplateException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();   
@@ -142,14 +136,6 @@ public class UtilTemplate {
 	
 	/**
 	 * 模板是事物的属性，会把模板对象放到事物的缓存中已提高性能。使用Freemakrer模板。
-	 * 
-	 * @param thing
-	 * @param attributeName
-	 * @param root
-	 * @param out
-	 * @param encoding
-	 * @throws IOException 
-	 * @throws TemplateException 
 	 */
 	public static void processThingAttribute(Thing thing, String attributeName, Object root, Writer out, String encoding) throws IOException, TemplateException{
 		String key = "__utilTemplate-" + attributeName + "__";
@@ -182,9 +168,6 @@ public class UtilTemplate {
 	
 	/**
 	 * 从缓存中移除模板。
-	 * 
-	 * @param templateName
-	 * @throws IOException
 	 */
 	public static void removeTempalteCache(String templateName) throws IOException{
 		Configuration cfg = (Configuration) freemarkerHandlers.get("");			
@@ -281,12 +264,6 @@ public class UtilTemplate {
 	
 	/**
 	 * 处理模版，内容使用Writer写入。
-	 * 
-	 * @param object
-	 * @param templateFile
-	 * @param templateType
-	 * @param outputWriter
-	 * @throws Throwable 
 	 */
 	public static void process(Object object, String templateFile, String templateType, Writer outputWriter) throws Throwable{
 		process(object, templateFile, templateType, outputWriter, null);
@@ -294,13 +271,6 @@ public class UtilTemplate {
 	
 	/**
 	 * 指定数据对象的路径、模版文件名和模版类型处理模版，输出到Writer中。
-	 * 
-	 * @param dataObjectName
-	 * @param templateFile
-	 * @param templateType
-	 * @param outputWriter
-	 * @throws Throwable 
-	 * @throws IOException 
 	 */
 	public static void processThing(String dataObjectName, String templateFile, String templateType, Writer outputWriter) throws Throwable{
 		World dataCenter = World.getInstance();
