@@ -1,42 +1,46 @@
-XWorker
-============
-## Introduction
-Xworker is the development platform of dynamic model. With xworker, you can edit, run and publish model programs.
+# XWorker
+Xworker is the development platform of dynamic model, and xworker also provides some model libraries.
 
-Xworker's official website is [xworker's official website](http://https://www.xworker.org). You can download and install xworker on the official website, or view documents, samples, tutorials, etc.
+## Dynamic model
+### 1. Object oriented programming method based on structured data
+Dynamic model is a model-based object-oriented programming method, in which the model can be represented by XML and so on.
 
-## Dynamic Model 
-Dynamic model is a programming method. It uses model to program, and the model can be expressed in XML.
-
-For example, the following XML code is a model program.
-
-```xml
+For example, the following XML is a model program, and each node of the XML is an object. You can click here to run the model. After running, a window will open with a browser displaying the xworker home page.
+```
 <?xml version="1.0" encoding="utf-8"?>
-
-<Shell name="HelloWorld" descriptors="xworker.swt.widgets.Shell" text="Hello World" RESIZE="true"
-     width="800" height="600">
+ 
+<Shell name="shell" text="Hello World" descriptors="xworker.swt.widgets.Shell"
+               width="800" height="600">
     <FillLayout name="FillLayout"></FillLayout>
-    <Browser name="Browser" url="https://www.xworker.org" WEBKIT="true"></Browser>
+    <Browser name="Browser" url="https://www.xworker.org"></Browser>
 </Shell>
 ```
-The above model is a SWT application, and the screenshot after running is as follows.
-![SWT](https://www.xworker.org/files/2019/0724/065539rundml.png "SWT")
+The above model is a SWT application. The screenshot after running is as follows.
+![SWT](https://images.gitee.com/uploads/images/2019/1217/164635_22cd7199_493262.png  "SWT application")
 
-## Compiling and running xworker
-### Compile
-Xworker contains several eclipse projects that need to be imported into eclipse and compiled automatically by eclipse.
+### 2. Characteristics of dynamic model
+- **dynamic programming**
+Dynamic programming can be realized by using dynamic model, that is, real-time programming when the system is running, so as to dynamically modify the function of the system.
+- **quick programming**
+Fast programming can be achieved using dynamic models. This is because the model generally encapsulates the use interfaces of various APIs. These APIs can be used quickly through the model, and different APIs can be easily integrated by using the dynamic model, so as to develop complex applications more easily.
 
-It's better to import the dynamic model project, so as not to fail the compilation.
+### 3. How to use dynamic model
+#### 3.1. Use occasion
+As a programming method, dynamic models can be used in Java projects, or they can be programmed directly.
 
-gitee: https://gitee.com/xworker/x-meta.git, github: https://github.com/x-meta/x-meta.git.
+#### 3.2. Model library
+The dynamic model engine x-meta used by xworker is developed in Java, and the model library is also published in the form of jar. Generally, the dynamic model can be used by introducing relevant class libraries into Java projects.
+Xworker's model library is published on Maven and can be found in [Maven](https://mvnrepository.com/search?q=xworker) View published class libraries.
 
-### Run 
-After the compilation, run xworker.ide.XWorkerExplorer under xworker_explorer project. The screenshot of xworker after running is as follows.
+#### 3.3. How to edit and run a model
+Although the model can be expressed in XML, it may be difficult to edit the model manually, so the model editor is generally used to edit the model.
+Xworker provides a model editor where you can edit models. Because the dynamic model is usually real-time dynamic programming, the model editor is generally a part of your program. You can edit the model while running the program.
 
-![ThingManager](https://www.xworker.org/images/2016/0926/170000thingexplorer2.png "ThingManager")
+#### 3.4. How to publish model programs
+With the packaging and publishing of Java programs, the model can be packaged into jar, and the application of dynamic model is also a Java application.
 
-### Package
-You can run mvn_install_nopause.cmd in xworker directory to package xworker. The packed xworker is in xworker_explorer/target/xworker directory.
+#### 3.5. Documentation and examples
+See [xworker home page](https://www.xworker.org)  or [wiki](https://gitee.com/xworker/xworker/wikis/pages) for documentation. See [apps](https://gitee.com/xworker/apps) for application examples。 Examples of specific models and documents can generally be found in the model editor.
 
-### Multilingual
-Xworker supports Chinese and English, but most of the model documents are in Chinese, and there is no corresponding English.
+## Join us
+Xworker is a platform based on Apache 2.0 open source protocol. Xworker looks forward to your participation. Please join us to improve it. QQ group: ** 312989786 **.
