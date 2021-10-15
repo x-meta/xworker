@@ -77,6 +77,43 @@ sth_noThingRegistViewer
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Global variables</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Global variables refer to variables stored in the bottom stack layer in the action context. Since the bottom stack layer is shared by all threads and usually will not be popped up, so long as the action context Exist, these variables are there, so these variables are called global. </p>
+
+<h2>1. Set global variables</h2>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+
+//Create action context
+ActionContext actionContext = new ActionContext();
+
+//1. When the action context is just created, the put variable is global. If you can’t ensure that the action context was just created,
+//That is, if the push() method has not been executed, it is recommended not to use this method to set variables
+actionContext.put((String) key,(Objet) object);
+
+//2. Conventional method, you can set global variables by returning to the bottom layer of the stack through the g() function
+actionContext.g().put((String) key, (Object) object);
+</pre>
+
+<h2>2. Use global variables</h2>
+
+<pre class="brush:groovy;">
+//If you want to explicitly use global variables, then use the g() function to return to the bottom stack
+Object obj = actionContext.g().get((String) key);
+
+//Under normal circumstances, it can be obtained directly by the variable name, but it is also possible to obtain local variables or parameters, etc.
+Object obj = actionContext.get((String) key);</pre>
+
+<h2>&nbsp;&nbsp;&nbsp;</h2>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf

@@ -1,0 +1,83 @@
+%1556193564397
+@
+sname=AddChildByXML
+slabel=AddChildByXML
+smode=run
+sdisabled=false
+Sdescription=
+#$@text#$@
+<p>菜单的参数是模型的XML，通过XML分析模型然后插入到子节点中。</p>
+#$@text#$@
+sinterpretationType=Self
+sattributeTemplate=false
+schildsAttributeTemplate=false
+svarScope=Local
+sisSynchronized=false
+sthrowException=true
+suseOtherAction=false
+screateLocalVarScope=false
+ssaveReturn=false
+sdisableGlobalContext=false
+sdebugLog=false
+sdescriptors=xworker.lang.ActionThing
+sinheritDescription=false
+sth_createIndex=true
+sth_registThing=child|xworker.ide.util.MenuIndex
+sth_registMyChilds=false
+sth_registDisabled=false
+sgroup=actions
+sth_mark=false
+  @/@RefreshOutline
+  sname=RefreshOutline
+  sinterpretationType=Self
+  sattributeTemplate=false
+  schildsAttributeTemplate=false
+  svarScope=Local
+  sisSynchronized=false
+  sthrowException=true
+  suseOtherAction=false
+  screateLocalVarScope=false
+  ssaveReturn=false
+  sdisableGlobalContext=false
+  sdebugLog=false
+  sdescriptors=xworker.ide.worldexplorer.swt.actions.ThingEditorActions/@RefreshOutline
+  sinheritDescription=false
+  sth_createIndex=false
+  sth_registMyChilds=false
+  sth_registDisabled=false
+  sth_mark=false
+  sid=RefreshOutline
+    @/@RefreshOutline/@GroovyAction
+    sname=GroovyAction
+    sisSynchronized=false
+    sthrowException=true
+    suseOtherAction=false
+    svarScope=Local
+    sdisableGlobalContext=false
+    Scode=
+#$@text#$@
+import org.xmeta.Thing;
+
+//菜单定义
+def menu = event.widget.getData("menu");
+
+//新建子节点并保存
+def xml = menu.params;
+def thing = new Thing();
+thing.paste(xml);
+
+def name = currentThing.getMetadata().getName() + thing.getThingName();
+currentThing.addChild(thing);
+currentThing.save();
+#$@text#$@
+    sinterpretationType=Action
+    screateLocalVarScope=false
+    ssaveReturn=false
+    sdebugLog=false
+    sdescriptors=xworker.lang.actions.Actions/@GroovyAction
+    sinheritDescription=false
+    sth_createIndex=false
+    sth_registMyChilds=false
+    sth_registDisabled=false
+    sth_mark=false
+    sid=GroovyAction

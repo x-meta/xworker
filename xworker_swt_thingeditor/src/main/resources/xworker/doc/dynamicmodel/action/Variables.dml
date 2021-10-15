@@ -126,6 +126,92 @@ sth_noThingRegistViewer
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Action context</h1>
+
+<h2>1. Introduction</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;The action context is the environment in which the action is executed, and an action context is required to execute an action. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The execution environment of the action mainly contains two, one is the variable, the other is the thread state. Since dynamic context is mostly used to manage variables, action context is sometimes called variable context. </p>
+
+<h2>2. Manage variables</h2>
+
+<h3>2.1. Basic concepts</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The action context is a stack, each layer of the stack is equivalent to a Map&lt;String, Object&gt;, and the whole action context can also be regarded as a Map&lt;String, Object&gt;. Variables can be set and obtained through the variable context, or variables of a certain stack layer can be set and obtained directly through the stack. </p>
+
+<p>&nbsp;&nbsp;&nbsp; It is important to note that <strong>threads do not share stacks</strong>. That is, in the same variable context, in different threads, the threads use their own stacks, and push() or pop() in the thread does not affect other threads. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Although different threads use different stacks, <strong>the lowest stack layer is shared by threads</strong>. </p>
+
+<h3>2.2. Acquisition order of variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; When obtaining variables through the variable context, they are obtained sequentially from the upper layer of the stack to the lower layer. If there is this variable in a certain stack layer, it will return. The upper stack is the newly pushed stack layer. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The schematic code for obtaining variables is as follows. </p>
+
+<pre class="brush:as3;">
+                Object value = null;
+Stack&lt;Bindings&gt; bindingsStack = getBindingStack();
+for (int i = bindingsStack.size()-1; i &gt;= 0; i--) {
+Map&lt;String, Object&gt; map = bindingsStack.get(i);
+value = map.get(key);
+
+if (value != null) {
+break;
+} else if (map.containsKey(key)) {
+break;
+}
+}
+
+return value;</pre>
+
+<h3>2.3. Variable scope</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The concept of relative global variables and local variables can be realized based on the dynamic context stack. </p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>Local variables,</strong> can be understood as temporarily added variables. When used, they are pushed into a stack layer, and variables are set in this stack layer. Pop the stack layer so that the variable disappears. It should be noted that when using local variables, push and pop must be paired and placed in try/finally. </p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>Global Variables</strong>, since the bottom stack layer of the action context is shared by all threads and will not be popped out in daily use, the variables of this stack layer can be As a global variable. </p>
+
+<h2>3. Thread status</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The thread state is used to indicate the behavior of the action, and the thread state is related to the action of the syntax type. The thread states mainly include RUNNING, RETURN, BREAK, BREAK, CONTINUE and EXCEPTION. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, an action is a while loop, and the code is as follows. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+import org.xmtea.ActionContext;
+
+//while action model itself
+Thing self = ...;
+
+Object result = null;
+List&lt;Thing&gt; childs = self.getChilds();
+while(self.doAction(&quot;condition&quot;, actionContext){
+    for(Thing child: childs){
+        result = child.getAction().run(actionContext);
+
+        int status = actionContext.getStatus();
+        if(status == ActionContext.RETURN){
+            //The return method executed by the child node
+            return result;
+        }else if(status == ActionContext.BREAK){
+           //The child node requires break
+            break;
+        }else if(status == ActionContext.CONTINUE){
+           //The child node requires continue;
+           continue;
+        }
+    }
+}
+
+return result;
+</pre>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf

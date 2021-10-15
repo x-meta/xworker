@@ -78,6 +78,62 @@ sth_registDisabled
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Action Listener</h1>
+
+<p>&nbsp;&nbsp;&nbsp; An action listener is a thing that can monitor the execution of an action. It can execute the corresponding init, suceess and exception methods before the action is executed, the execution is successful or the execution is abnormal, so that the execution of the action can be monitored. In addition, the onDoAction method is added to monitor the execution of things. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The action listener can be used to implement action monitoring, action debugging, database resource creation and release, and so on. </p>
+
+<h2>1. Use the action listener</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Add contexts (action listeners or ActionListeners) sub-things under an action, and you can add action listeners for the action. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The action listener was originally called the action context, but was later renamed the action listener, so the contexts child thing was added, and the label was the action listener (Chinese) or ActionListener (English). </p>
+
+<h2>2. Global action listener</h2>
+
+<p>&nbsp;&nbsp;&nbsp; You can add a global action listener through the World.addGlobalActionListener(Thing listener, int index) method. </p>
+
+<p>&nbsp;&nbsp;&nbsp;The global action listener will monitor the execution of every action in the system. If the execution of the action context takes too much time, it will slow down the overall speed of the system. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, the action debugging function of XWorker is realized through the global action listener. </p>
+
+<h3>2.1. Avoid recursion</h3>
+
+<p>&nbsp;&nbsp;&nbsp; To avoid recursion, actions in the global action context cannot be monitored by the global action context. </p>
+
+<h2>4. How to implement an action listener</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Things that implement the init, success, exception and onDoAction methods can all be used as action listeners. The action listener should be registered under the thing xworker.lang.context.Contexts in a child manner. </p>
+
+<h3>4.1. Get the monitored action and variable context</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The action listener uses an independent variable context, and the monitored action and action variable context can be obtained in the variable context of the action listener. </p>
+
+<pre class="brush:java;">
+//The variable context of the action being monitored
+ActionContext acContext = (ActionContext) actionContext.get(Action.str_parentContext);
+//Get the monitored action
+List&lt;Action&gt; actions = acContext.getActions();
+Action action = actions.get(actions.size()-1);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The above is valid for init, sucess and exception methods. </p>
+
+<h3>4.2. Get the name of the monitored thing and method</h3>
+
+<p>&nbsp;&nbsp;&nbsp; does not use an independent variable context when monitoring things perform actions, so the current variable context is the variable context when things perform actions. </p>
+
+<pre class="brush:java;">
+//Get things and the name of the corresponding method to be executed
+Thing thing = actionContext.getObject(&quot;thing&quot;);
+String actionName = actionContext.getObject(&quot;actionName&quot;);</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
   @/@DataSouceActionContext
@@ -394,6 +450,8 @@ false
     false
     sth_registDisabled
     false
+    sen_description
+    <p>If it is not the root thing, an index will only be created in the database that is specified to be created. </p>
     sth_mark
     false
     sid

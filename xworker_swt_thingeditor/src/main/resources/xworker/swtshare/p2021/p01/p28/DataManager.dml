@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<QuickContent name="DataManager" descriptors="xworker.content.QuickContent" type="swtDemo" path="xworker.swtshare.p2021.p01.p28.DataManager/@Composite"
+     group="xworker.-800|SWT.-900|mvc" icon="icons/application.png" th_createIndex="true"
+     th_registThing="child|xworker.example.ExamplesIndex">&#xd;
+    <description><![CDATA[<p>DataManager是和数据相关的综合模型，既可以设置数据绑定，也可以设置响应器等。</p>
+
+<p><strong>基本使用方法</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; 在控件的属性dataBinds设置数据绑定，在属性reactorRules里设置响应规则。DataManager放在模型末尾，执行时会初始化控件设置的dataBinds和reactorRules。</p>
+
+<p>&nbsp;&nbsp;&nbsp; 另外也可以在DataManager节点下增加模型和控制等模型。</p>]]></description>&#xd;
+    <en_description><![CDATA[<p>DataManager is a comprehensive model related to data, which can set data binding and responder. </p>
+
+<p><strong>Basic usage</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Set the data binding in the property dataBinds of the control, and set the response rule in the property reactorRules. The DataManager is placed at the end of the model, and the dataBinds and reactorRules set by the control are initialized when executed. </p>
+
+<p>&nbsp;&nbsp;&nbsp; In addition, models and control models can also be added under the DataManager node. </p>]]></en_description>&#xd;
+    <Composite>&#xd;
+        <GridLayout name="GridLayout" numColumns="2"/>&#xd;
+        <DataObjectForm name="form" editCols="2" fireDataObjectMidify="true">&#xd;
+            <GridData name="GridData" style="FILL_HORIZONTAL" horizontalSpan="2"/>&#xd;
+        </DataObjectForm>&#xd;
+        <Text name="urlText" BORDER="true" text="https://www.xworker.org">&#xd;
+            <dataBinds><![CDATA[data | background:bgcolor
+data | foreground:color]]></dataBinds>&#xd;
+            <reactorRules><![CDATA[urlText?modify=true
+urlText > goButton > browser]]></reactorRules>&#xd;
+            <GridData name="GridData" style="FILL_HORIZONTAL"/>&#xd;
+        </Text>&#xd;
+        <Button name="goButton" text="Go"/>&#xd;
+        <Browser name="browser">&#xd;
+            <GridData name="GridData" style="FILL_BOTH" horizontalSpan="2"/>&#xd;
+        </Browser>&#xd;
+        <DataManager fireLoadReactors="data,urlText,urlTextDefault">&#xd;
+            <DataObject name="data">&#xd;
+                <DataObjects>&#xd;
+                    <AbstractDataObject>&#xd;
+                        <attribute name="bgcolor" label="背景色"/>&#xd;
+                        <attribute name="color" label="前景色"/>&#xd;
+                    </AbstractDataObject>&#xd;
+                </DataObjects>&#xd;
+            </DataObject>&#xd;
+            <DataReactors>&#xd;
+                <rules><![CDATA[data > form
+urlTextDefault > browser]]></rules>&#xd;
+                <TextDataReactor name="urlTextDefault" bindTo="var:urlText"/>&#xd;
+            </DataReactors>&#xd;
+        </DataManager>&#xd;
+    </Composite>&#xd;
+</QuickContent>

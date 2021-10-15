@@ -89,6 +89,69 @@ snotXmlAttribute
 false
 sjson_isArray
 false
+Sen_description
+#$@text#$@
+<p>Data objects are used for general CURD operations of data, and are also a bridge between interface and data. Data management-related applications can be easily written using data objects and related interface technologies. </p>
+
+<h2>Basic concepts of data objects</h2>
+
+<ul>
+<li><strong>Table and relational data model</strong><br />
+Data objects are based on tables and relational data models. A data object corresponds to a table. The field attributes in the table can establish a one-to-one or one-to-many relationship with other data objects. <br />
+&nbsp;</li>
+<li><strong>Primary key</strong><br />
+A data object should have at least one key field. Without a key field, the update data cannot be updated, or the update data will cause unknown effects (it is impossible to determine which records to update). <br />
+&nbsp;</li>
+<li><strong>Support multiple data sources</strong><br />
+The data object is an abstract interface that can implement data objects related to various data sources such as databases, CVS, and Excel. &nbsp;<br />
+&nbsp;</li>
+<li><strong>Data objects are objects</strong><br />
+Data objects can be used as objects, properties can be obtained through get (String key) or getXXX (String key), and actions can also be executed through the doAction method. </li>
+</ul>
+
+<h2>Methods that can be overridden</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The realization of the data object or the instance of the data object can implement the following methods as needed. </p>
+
+<ul>
+<li><strong>DataObject doLoad(DataObject theData)</strong><br />
+Load the data object according to theData. Usually theData sets the value of the primary key. The doLoad method finds the corresponding record through the primary key and encapsulates it in the DataObject and method. <br />
+&nbsp;</li>
+<li><strong>DataObject doCreate(DataObject theData)</strong><br />
+Create a record based on the content of theData. <br />
+&nbsp;</li>
+<li><strong>boolean&nbsp;doUpdate(DataObject theData)</strong><br />
+Update the data, if the update fails, it returns false, otherwise it returns true. <br />
+&nbsp;</li>
+<li><strong>boolean doDelete(DataObject theData)</strong><br />
+Delete data, return false if the deletion fails, otherwise return true. <br />
+&nbsp;</li>
+<li><strong>List&lt;DataObject&gt; doQuery(QueryConfig queryConfig)</strong><br />
+Query data and return a list of data objects with compound conditions. For query conditions, please refer to <a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.dataObject.query.Condition">xworker.dataObject.query.Condition</a> . </li>
+</ul>
+
+<h2>Events that can be monitored</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; You can refer to the contents of the Event tab when editing data objects. </p>
+
+<h2>Auxiliary tool for mapping data objects</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; XWorker has written a general mapping tool. To use this tool, the data object needs to implement the following methods. </p>
+
+<ul>
+<li><strong>boolean isMappingAble()</strong><br />
+Can it be mapped? <br />
+&nbsp;</li>
+<li><strong>List&lt;Map&lt;String, Object&gt;&gt; getMappingFields()</strong><br />
+Get the list of fields that can be mapped. Map needs to set two attributes, colName and colTitle. <br />
+&nbsp;</li>
+<li><strong>String getMappingAttributeName()</strong><br />
+Returns the name of the mapped field. For example, the data corresponds to columnName, which is the name of the table field in the database. <br />
+&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
   @/@actions
   sname
   actions
@@ -131,6 +194,12 @@ false
     false
     sdescriptors
     xworker.lang.actions.JavaAction
+    Sen_description
+#$@text#$@
+<p>Load data objects by identification. </p>
+<p>The parameter is passed into theData, theData usually only sets the identification field. The load method should load the data object through the identification. If it succeeds, it returns theData, otherwise it returns null. Any exception indicates that the loading failed. </p>
+<p>After the data is loaded, you need to initialize the relationship of the sub-data, you can call the initOnLoaded method of the DataObject to initialize. The load method also needs to handle events. Data objects that use the IDataObject interface or only implement the doLoad method do not need to care about the initialization and event handling of the sub-data (one-to-one or one-to-many), only the basic properties of the data object need to be filled. </p>
+#$@text#$@
     sid
     load
       @/@actions/@load/@ins
@@ -190,6 +259,8 @@ false
     false
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>If the creation is successful, return the created data object, return null or throw an exception to indicate that the creation failed. </p>
     sid
     create
       @/@actions/@create/@ins
@@ -241,6 +312,8 @@ false
     <p>如果更新成功返回true，否则返回false。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Return true if the update is successful, otherwise false. </p>
     sid
     update
       @/@actions/@update/@ins
@@ -292,6 +365,8 @@ false
     <p>批量更新，根据查询条件查找并更新符合条件的记录，返回成功更新的记录数。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Batch update, find and update the records that meet the conditions according to the query conditions, and return the number of records successfully updated. </p>
     sid
     updateBatch
       @/@actions/@updateBatch/@ins
@@ -380,6 +455,8 @@ false
     <p>如果删除成功返回true，否则返回false。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Return true if the deletion is successful, otherwise false. </p>
     sid
     delete
       @/@actions/@delete/@ins
@@ -431,6 +508,8 @@ false
     <p>批量删除，根据查询条件查找并删除符合条件的记录，返回成功删除的记录数。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Delete in batches, find and delete records that meet the conditions according to query conditions, and return the number of records successfully deleted. </p>
     sid
     deleteBatch
       @/@actions/@deleteBatch/@ins
@@ -539,6 +618,20 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     false
     sdescriptors
     xworker.lang.actions.JavaAction
+    Sen_description
+#$@text#$@
+<p>Define conditionConfig and conditionData query according to conditions, and return a list of record data objects that meet the conditions (List&lt;DataObject&gt;). </p>
+<p>You can pass in a paging information (variable name is pageInfo), pageInfo may be a Map, or you can use the xworker.PageInfo object. </p>
+<p>pageInfo.start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Record start index<br />
+pageInfo.limit&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; returns the maximum number of records<br />
+pageInfo.datas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the result of the query, should be a List&lt;DataObject&gt;<br />
+pageInfo.success&nbsp;&nbsp;&nbsp;whether the query is successful<br />
+pageInfo.msg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; prompt information about the result of the operation<br />
+pageInfo.totalCount&nbsp;Total number of records<br />
+pageInfo.sort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sort field<br />
+pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sorting direction, ASC or DESC</p>
+<p>&nbsp;</p>
+#$@text#$@
     sid
     query
       @/@actions/@query/@ins
@@ -618,6 +711,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     xworker.lang.actions.Actions/@JavaAction
     sth_createIndex
     false
+    sen_description
+    <p>Verification before creating data. </p>
     sid
     validate
       @/@actions/@validate/@ins
@@ -715,6 +810,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     xworker.lang.actions.Actions/@JavaAction
     sth_createIndex
     false
+    sen_description
+    <p>Check before update. </p>
     sth_mark
     false
     sid
@@ -862,6 +959,29 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     false
     sth_registMyChilds
     false
+    Sen_description
+#$@text#$@
+<p>Obsolete, use the createIterator method. </p>
+
+<p>The interface for traversing data is similar to query, but instead of returning a result set, it traverses every record during query. </p>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li><strong>action</strong><br />
+The action of traversal. </li>
+</ul>
+
+<p><strong>Parameters of traversal action</strong></p>
+
+<ul>
+<li><strong>index</strong><br />
+The current number, starting from 1. <br />
+&nbsp;</li>
+<li><strong>data</strong><br />
+The current data object traversed. </li>
+</ul>
+#$@text#$@
     sth_mark
     false
     sid
@@ -898,6 +1018,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         false
         scheckLevel
         exception
+        sen_label
+        Incoming action
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
         sinheritDescription
@@ -997,6 +1119,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>通过对象创建数据对象。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Create data objects from objects. </p>
     sid
     createDataObjectFromObject
       @/@actions/@createDataObjectFromObject/@ins
@@ -1065,6 +1189,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>把当期事物转换成数据对象。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Convert current things into data objects. </p>
     sid
     getInstance
     @/@actions/@parseJsonData
@@ -1088,6 +1214,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>从JasonData中读取数据，返回数据对象。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Read data from JasonData and return the data object. </p>
     sid
     parseJsonData
       @/@actions/@parseJsonData/@ins
@@ -1156,6 +1284,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>从HttpRequest中分析数据对象，目前只能分析单实例的数据对象。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Analyze data objects from HttpRequest. Currently, only single-instance data objects can be analyzed. </p>
     sid
     parseRequestData
     @/@actions/@getKeys
@@ -1179,6 +1309,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>返回主键的属性定义列表。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Return to the attribute definition list of the primary key. </p>
     sid
     getKeys
     @/@actions/@getEditorAttributes
@@ -1210,6 +1342,16 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 #$@text#$@
     sdescriptors
     xworker.lang.actions.JavaAction
+    Sen_description
+#$@text#$@
+<p>Return to the list of attributes to be used in the interface. </p>
+<p>Input parameters:</p>
+<p>editorType, the editor type, the value is one of create, edit, view, grid, query, and the default is edit. </p>
+<p>Return object:</p>
+<p>{</p>
+<p>&nbsp;&nbsp;&nbsp; attribute:xx, viewConfig:xx</p>
+<p>}</p>
+#$@text#$@
     sid
     getEditorAttributes
       @/@actions/@getEditorAttributes/@ins
@@ -1259,6 +1401,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>返回读取的字段列表，比如Extjs的表格的Store中需要读取的字段列表。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Returns the list of fields that need to be read, such as the list of fields that need to be read in the Store of the Extjs table. </p>
     sid
     getReaderAttributes
     @/@actions/@menu_editData
@@ -1303,6 +1447,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>打开SWT编辑器。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Open the SWT editor. </p>
     sid
     openSwtEditor
       @/@actions/@openSwtEditor/@ins
@@ -1331,6 +1477,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         <p>编辑类型。</p>
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
+        sen_description
+        <p>Edit type. </p>
         sid
         type
         @/@actions/@openSwtEditor/@ins/@dataObject
@@ -1348,6 +1496,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
         <p>要编辑的数据对象，可以为空。</p>
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
+        sen_description
+        <p>The data object to be edited can be empty. </p>
         sid
         dataObject
         @/@actions/@openSwtEditor/@ins/@parent
@@ -1409,6 +1559,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>在调用创建方法(create)前的自动初始化方法，一般是有了初始数据后的对这些初始数据处理的方法。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>The automatic initialization method before calling the create method (create) is generally a method of processing the initial data after the initial data is available. </p>
     sid
     autoInit
     @/@actions/@isMappingAble
@@ -1436,6 +1588,12 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 #$@text#$@
     sdescriptors
     xworker.lang.actions.JavaAction
+    Sen_description
+#$@text#$@
+<p>Returns whether the attributes can be mapped, such as database data objects, CSV data objects, and Excel data objects that are suitable for table fields, CSV or Excel column mapping. </p>
+<p>Returns true/false, if it cannot be mapped, an exception with explanatory text can be thrown directly. </p>
+<p>Mapping is used to quickly edit attributes. </p>
+#$@text#$@
     sid
     isMappingAble
     @/@actions/@getMappingFields
@@ -1459,6 +1617,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>返回可以映射的字段列表，每一个字段列表是一个Map，有colName和colTitle两个属性。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Returns a list of fields that can be mapped. Each field list is a Map with two attributes, colName and colTitle. </p>
     sid
     getMappingFields
     @/@actions/@getMappingAttributeName
@@ -1482,6 +1642,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>获取映射到本事物的属性上的对应的名称，比如数据库数据对象的属性的fieldName是数据库表的字段名。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Get the corresponding name mapped to the attribute of this thing, for example, the fieldName of the attribute of the database data object is the field name of the database table. </p>
     sid
     getMappingAttributeName
     @/@actions/@getAttributeDescriptor
@@ -1511,6 +1673,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     Global
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Returns the attribute definition path of the data object. </p>
     sid
     getAttributeDescriptor
     @/@actions/@init
@@ -1537,6 +1701,11 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
 #$@text#$@
     sdescriptors
     xworker.lang.actions.JavaAction
+    Sen_description
+#$@text#$@
+<p>The instance of the data object initializes the default value, and the Data variable needs to be called by the data object instance. </p>
+<p>When creating a data object instance, the default value will not be automatically initialized, only the initiative to call the DataObject.init(actionContext) method. </p>
+#$@text#$@
     sid
     init
     @/@actions/@doLoad
@@ -2055,6 +2224,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     xworker.lang.actions.JavaAction
     sth_createIndex
     false
+    sen_description
+    <p>The event before creation, you need to set autoInit=true to take effect. </p>
     sth_mark
     false
     sid
@@ -2118,6 +2289,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     <p>创建之后的事件，只有在属性afterCreated=true时生效。</p>
     sth_createIndex
     false
+    sen_description
+    <p>Events after creation will only take effect when the attribute afterCreated=true. </p>
     sth_mark
     false
     sid
@@ -2645,6 +2818,8 @@ pageInfo.dir&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n
     false
     sth_registDisabled
     false
+    sen_description
+    <p>For the available parameters, see <a href="do?sc=xworker.ide.worldexplorer.swt.http.ThingDoc/@desc&amp;thing=xworker.dataObject.DataObject/@actions/@query">query</a> a>'s documentation. </p>
     sth_mark
     false
     sid
@@ -4046,6 +4221,8 @@ ${data.doAction("toJavaEntityCode", actionContext)?if_exists?html}
         <p>数据对象。</p>
         sdescriptors
         xworker.lang.actions.Inout/@ins/@param
+        sen_description
+        <p>Data object. </p>
         sid
         theData
     @/@actions/@menu_toJavaModel1
@@ -4115,6 +4292,11 @@ ${data.doAction("toJavaEntityCode", actionContext)?if_exists?html}
 #$@text#$@
   sdescriptors
   xworker.lang.MetaDescriptor2/@attribute
+  Sen_description
+#$@text#$@
+<p>The name of thing.</p>
+<p>Used for code generation is the class name. </p>
+#$@text#$@
   sid
   name
   @/@label
@@ -4155,6 +4337,8 @@ ${data.doAction("toJavaEntityCode", actionContext)?if_exists?html}
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>Generally used for code generation, the same as java package when generating java code. </p>
   sid
   package
   @/@editCols
@@ -4224,8 +4408,12 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   LallowNegative
   false
+  sen_label
+  Value name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>In general display occasions, the identification field when pulling the frame is as follows. </p>
   sid
   valueName
   @/@idName
@@ -4257,8 +4445,12 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   LallowNegative
   false
+  sen_label
+  Display field name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>Display field in general display occasions. </p>
   sid
   idName
   @/@splitPage
@@ -4294,6 +4486,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   snotXmlAttribute
   false
+  sen_label
+  Table pagination display
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -4329,6 +4523,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   true
   snotXmlAttribute
   false
+  sen_label
+  Paging Size
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -4366,6 +4562,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   true
   snotXmlAttribute
   false
+  sen_label
+  Do not count the total number of records
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -4374,6 +4572,12 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Whether not to count the total number of records when querying. </p>
+
+<p>It is now used in some special queries in the database. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -4407,6 +4611,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   true
   snotXmlAttribute
   false
+  sen_label
+  Use cursor paging
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -4415,6 +4621,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Generally, database-related technology paging is used for paging in the database. If the paging method of a specific type of database is not implemented, or if this attribute is specified as true, then the mobile cursor is used to implement paging. </p>
   sth_mark
   false
   sid
@@ -4962,6 +5170,25 @@ i...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p><strong>How to edit the table</strong></p>
+
+<ul>
+<li><strong>By cell</strong><br />
+Double add a cell of the table, edit this cell. <br />
+&nbsp;</li>
+<li><strong>By row</strong><br />
+Double-click a row of the table to pop up an editor on the row of the table, and you can edit multiple rows of the table at a time. <br />
+&nbsp;</li>
+<li><strong>Pop-up window (window)</strong><br />
+After double-clicking the row of the table, an editing window pops up to edit the data of the table. </li>
+</ul>
+
+<p><strong>Attention</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Different interface implementation methods may be different, and some may not be implemented. Please see the specific interface implementation. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -4973,6 +5200,8 @@ i...
     按单元格
     svalue
     cell
+    sen_label
+    By cell
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sth_createIndex
@@ -4988,6 +5217,8 @@ i...
     按行
     svalue
     row
+    sen_label
+    By row
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sth_createIndex
@@ -5003,6 +5234,8 @@ i...
     弹出窗口
     svalue
     window
+    sen_label
+    Open window
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sth_createIndex
@@ -5030,6 +5263,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Load data address
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5053,6 +5288,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Create data address
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5076,6 +5313,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Update data address
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5099,6 +5338,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Delete data address
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5116,6 +5357,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Loading prompt
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5133,6 +5376,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Create prompt
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5150,6 +5395,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Update prompt
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5167,6 +5414,8 @@ i...
   false
   LallowNegative
   false
+  sen_label
+  Delete prompt
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5474,6 +5723,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Length auto-expanding column
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5497,8 +5748,12 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Column lock mode
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>Only take effect when the view of the table control is not customized. </p>
   sid
   gridColumnLocking
   @/@gridLockText
@@ -5516,6 +5771,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Lock text
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5535,6 +5792,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Unlock text
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5558,8 +5817,12 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Column grouping
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>Whether to group the head of the column. </p>
   sid
   columnGroup
   @/@gridCheckable
@@ -5579,6 +5842,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Show row selection box
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5600,6 +5865,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Show line number
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5621,6 +5888,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Row grouping
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5638,6 +5907,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Row grouping field
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5663,6 +5934,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Grouping template
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5684,6 +5957,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Row expansion
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5705,6 +5980,8 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Row extension template
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -5748,8 +6025,20 @@ Note...
   false
   snotXmlAttribute
   false
+  sen_label
+  Automatically generate logo
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>Whether it is an automatically generated logo, if it is true, then the logo will be generated together with the method of survival logo. </p>
+
+<p><strong>Notes:</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; In the default implementation, only the first logo can be initialized. If there are multiple logos, it cannot be initialized. </p>
+
+<p>&nbsp;</p>
+#$@text#$@
   sid
   autoGenerateId
   @/@idGenerateType
@@ -5784,8 +6073,15 @@ Note...
   false
   snotXmlAttribute
   false
+  sen_label
+  Method of generating logo
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>The type of method to generate the logo, and the method of generating the logo is realized by the specific data object. </p>
+<p>If it is a sequence, and there is a. number in the sequence, it is considered to be a sequence realized by a table, where the front is the table name, and the back is the sequence name. The sequence table should have two fields, name and seq, and name is the sequence The name is the primary key, and seq is the number type. </p>
+#$@text#$@
   sid
   idGenerateType
     @/@idGenerateType/@method
@@ -5795,6 +6091,8 @@ Note...
     动作
     svalue
     action
+    sen_label
+    Action
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sid
@@ -5806,6 +6104,8 @@ Note...
     序列
     svalue
     sequence
+    sen_label
+    Sequence
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sid
@@ -5817,6 +6117,8 @@ Note...
     自增长
     svalue
     autogrow
+    sen_label
+    Autoincrease
     sdescriptors
     xworker.lang.MetaDescriptor3/@attribute/@value
     sid
@@ -5864,8 +6166,15 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  ID sequence name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>The name of the sequence. </p>
+<p>The implementation depends on the specific data object definition, usually the database has a sequence. </p>
+#$@text#$@
   sid
   sequenceName
   @/@idAction
@@ -5888,8 +6197,15 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  ID action
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>If the method of generating the ID is an action, then this field specifies the name of the specific action, which is responsible for generating the logo when creating the data. </p>
+<p>&nbsp;</p>
+#$@text#$@
   sid
   idAction
   @/@storeSortField
@@ -6334,16 +6650,12 @@ Note...
   @/@defaultQueryConfig
   sname
   defaultQueryConfig
-  slabel
-  默认查询配置
   sinputtype
   dataSelector
   ssize
   60
   scolspan
   2
-  sgroup
-  Store
   LvalidateOnBlur
   false
   LallowDecimals
@@ -6389,8 +6701,16 @@ Note...
   false
   snotXmlAttribute
   false
+  sen_label
+  Automatically initialize when created
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>Whether to perform the automatic initialization method when creating. </p>
+
+<p>Initialization is provided by the action defined by the data object, and the default implementation is to initialize the field with a value of null according to the default value defined by the attribute. </p>
+#$@text#$@
   sid
   autoInit
   @/@autoInitAction
@@ -6416,8 +6736,12 @@ Note...
   false
   LallowNegative
   false
+  sen_label
+  Initialize actions when created
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>If automatic initialization is true, then specify the initialization action here. </p>
   sid
   autoInitAction
   @/@description
@@ -6468,8 +6792,16 @@ Note...
   true
   LallowNegative
   true
+  sen_label
+  Enable caching
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>Associated cache is used when this object is associated with other objects, and other objects refer to the cache settings of this object. </p>
+<p>For example, when a user is associated with gender, when querying a user, the user’s data only has gender identification, and the peer must display the gender name on the interface, so the gender data object will be read. If there are a lot of user records, then the same gender data object will be It may be loaded multiple times and the efficiency is relatively low. The associative cache is used to set whether to set the cache when the association is read, and read the associated data object from the cache. </p>
+<p>The caching of the associated data object is implemented by the system, and it does not support operations such as automatic update and deletion of the cache. The implementation of other caches is implemented by the data object itself. </p>
+#$@text#$@
   sid
   cache
   @/@cacheRelationTimeout
@@ -6493,8 +6825,12 @@ Note...
   true
   LallowNegative
   true
+  sen_label
+  Cache expiration time
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>Greater than 0 means there is an expiration time, in seconds, if the cache exceeds the expiration time, it will be re-initialized the next time it is read. </p>
   sid
   cacheRelationTimeout
   @/@cacheRelationMaxSize
@@ -6520,8 +6856,12 @@ Note...
   true
   LallowNegative
   true
+  sen_label
+  Maximum number of records
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>It is effective in the mode of pre-reading all the records of the cache, in order to avoid setting a very large number of recorded data objects into the associated cache and causing insufficient memory. </p>
   sid
   cacheRelationMaxSize
   @/@cacheRelationRead
@@ -6552,8 +6892,15 @@ Note...
   true
   LallowNegative
   true
+  sen_label
+  Disable read cache
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>In the case of not setting the associated cache, a temporary cache for batch loading of data at one time. </p>
+<p>For example, if the user is associated with gender, there is no associated cache set for gender. When multiple users are read at a time, only this operation is temporarily cached, and a gender will only be loaded once, otherwise it will correspond to the use of not reading a user. The gender will be loaded. </p>
+#$@text#$@
   sid
   cacheRelationRead
   @/@modifyActon
@@ -6577,6 +6924,8 @@ Note...
   true
   LallowNegative
   true
+  sen_label
+  Modify action
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sid
@@ -6600,6 +6949,8 @@ Note...
   public
   sinheritDescription
   false
+  sen_label
+  SWT edit settings
   sid
   SwtEditSetting
   @/@afterCreated
@@ -6629,6 +6980,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, the afterCreated event is triggered. </p>
   sth_mark
   false
   sid
@@ -6660,6 +7013,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, trigger the onLoaded event. </p>
   sth_mark
   false
   sid
@@ -6691,6 +7046,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, trigger the beforeUpdate event. </p>
   sth_mark
   false
   sid
@@ -6728,6 +7085,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, the afterUpdated event is triggered. </p>
   sth_mark
   false
   sid
@@ -6763,6 +7122,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, trigger the beforeDelete event. </p>
   sth_mark
   false
   sid
@@ -6798,6 +7159,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, trigger the dafterDeleted event. </p>
   sth_mark
   false
   sid
@@ -6872,6 +7235,8 @@ Note...
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
   false
+  sen_description
+  <p>If true, the afterQueryed event is triggered when the query is successful. The parameters are datas and pageInfo, where datas is the data to be queried, pageInfo is the parameter passed in during the query, and pageInfo may be null. </p>
   sth_mark
   false
   sid
@@ -6909,6 +7274,8 @@ Note...
   false
   sth_registMyChilds
   false
+  sen_description
+  <p>Query the thing path of the configuration condition, and it can also be realized by adding a sub-thing Condition. </p>
   sth_mark
   false
   sid
@@ -6965,6 +7332,8 @@ Note...
   false
   sth_registMyChilds
   false
+  sen_description
+  <p>In some editing interfaces, the first thing under the skill may be used as the generated thing of the query form. </p>
   sth_mark
   false
   sid
@@ -7076,6 +7445,18 @@ Note...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Whether to use UserTask to monitor the status, such as when performing time-consuming queries or exporting data, you can see the corresponding status. </p>
+
+<p>Data objects are needed to achieve corresponding monitoring. </p>
+
+<p><strong>Cancel execution</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; The cancellation of the execution can be achieved by overriding the void cancelUserTask (UserTask userTask) method, or the status of the userTask can be monitored during execution. If it is cancelled by the user, the terminal will execute it. </p>
+
+<p>&nbsp;</p>
+#$@text#$@
   sth_mark
   false
   sid

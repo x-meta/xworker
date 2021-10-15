@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<QuickContent name="GenerateNebulaMavenDependences" descriptors="xworker.content.QuickContent"
+     type="groovy" group="tools.assist.SWT" codeType="groovy" th_createIndex="true" th_registThing="command|xworker.command.Root">
+    <code><![CDATA[def dir = new File("e:\\git\\xworker\\xworker_swt\\lib\\nebula\\");
+for(file in dir.listFiles()){
+    if(file.isFile() == false){
+        continue;
+    }
+
+    def name = file.getName();
+    def path = name;
+    if(name.indexOf("source") != -1 || name.indexOf("snippets") != -1){
+        continue;
+    }
+    name = name.substring(19, name.length());
+    def index = name.indexOf("_");
+    def version = name.substring(index + 1, name.length() - 4);
+    name = name.substring(0, index);
+//    println name + "    " + version;
+
+    println"        <dependency>";
+    println"            <groupId>org.eclipse.nebula</groupId>";
+    println"            <artifactId>${name}</artifactId>";
+    println"            <scope>system</scope>";
+    println"            <version>${version}</version>";
+    println"            <systemPath>\${basedir}/lib/nebula/${path}</systemPath>";
+    println"        </dependency>";
+}
+]]></code>
+</QuickContent>

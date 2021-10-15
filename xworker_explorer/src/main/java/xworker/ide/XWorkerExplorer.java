@@ -70,6 +70,15 @@ public class XWorkerExplorer {
 			SystemIoRedirector.init();
 			
 			System.out.println(world.getThingManager("_local"));
+
+			File dir = new File("..");
+			for(File child : dir.listFiles()){
+				File src = new File(child, "/src/main/resources");
+				if(src.exists() && world.getThingManager(child.getName()) == null){
+					world.addFileThingManager(child.getName(), src, false, false);
+				}
+			}
+
 			//启动编辑器			
 			Thing worldExplorer = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner");		
 			worldExplorer.doAction("run");

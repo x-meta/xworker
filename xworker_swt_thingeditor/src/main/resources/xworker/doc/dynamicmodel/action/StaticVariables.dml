@@ -85,6 +85,51 @@ sth_noThingRegistViewer
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Static variables</h1>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Dynamic models do not have the concept of static variables. If you need static variables that are globally visible in the system, you can use Java to implement them, or through the World and Thing objects of the engine. </p>
+
+<h2>Pass World</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Since World has only one instance and is static, the variables saved to World can be used as static variables. </p>
+
+<ul>
+<li><strong>void World.getIntance().setData(String key, Object value)</strong><br />
+Set a variable. This variable will not be recycled by the system, so it should be set carefully. <br />
+&nbsp;</li>
+<li><strong>Object World.getInstance().getData(String key)</strong><br />
+Return a variable. If it has not been set, it returns null. </li>
+</ul>
+
+<h2>Through Thing</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Variables can be set and obtained through the following methods of the model. Note that the following methods all appear in pairs, and the corresponding get method is omitted here. For example, setXXXData(String key, Object value) corresponds to an Object getXXXData(String key) method. </p>
+
+<ul>
+<li><strong>void thing.setData(String key, Object value)</strong><br />
+Set a variable bound to the model, and the variable will be recycled by the system when the model is recycled. <br />
+&nbsp;&nbsp;</li>
+<li><strong>void thing.setCachedData(String key, Object value)</strong><br />
+Set a variable bound to the model. If the model is modified, the variable is invalid (returns null). <br />
+&nbsp;</li>
+<li><strong>void thing.setThreadData(String key, Object value)</strong><br />
+Set a variable bound to the model and bound to the thread. <br />
+&nbsp;</li>
+<li><strong>void thing.setStaticData(String key, Object value)</strong><br />
+Set a variable on the World, where the key value is a combination of the model path and key. <br />
+&nbsp;</li>
+<li><strong>void thing.setStaticCachedData(String key, Object value)</strong><br />
+Set a variable on the World, where the key value is a combination of the model path and key, and when the model is modified, it also becomes invalid. <br />
+&nbsp;</li>
+<li><strong>void thing.setStaticThreadData(String key, Object value)</strong><br />
+Set a variable that is placed on the World and bound to the thread, where the key value is a combination of the model path and the key. <br />
+&nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf

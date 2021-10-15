@@ -1,21 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <ShellGuide name="ActionIntroduce" descriptors="xworker.swt.guide.ShellGuide" label="动作" en_label="Action"
      en_group="-20000|Dynamic Model.1000|Action" th_createIndex="true" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
-     group="-20000|动态模型.1000|动作">
-    <actions>
-        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
-        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
-    </actions>
-    <Guide name="Guide" label="简介" activeControlThing="xworker.things.p2020.p07.p07.ActionIntroduce/@shell">
+     group="-20000|动态模型.1000|动作">&#xd;
+    <actions>&#xd;
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"/>&#xd;
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"/>&#xd;
+    </actions>&#xd;
+    <Guide name="Guide" label="简介" activeControlThing="xworker.things.p2020.p07.p07.ActionIntroduce/@shell"
+         en_label="Introduction">&#xd;
         <description><![CDATA[<h2>动作</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 动作相当于函数和方法，可以作为函数执行，也可以作为模型对象的方法。</p>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="Guide" _xmeta_id_="Guide1" label="转化为动作">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Action</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Actions are equivalent to functions and methods, which can be executed as functions or as methods of model objects. </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" _xmeta_id_="Guide1" label="转化为动作" en_label="Into action">&#xd;
         <description><![CDATA[<h2>模型转化为动作</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 动态模型规定任何模型都可以转化为动作，如下面的示意代码。</p>
@@ -29,10 +34,23 @@ Thing thing = new Thing();
 
 //转化为动作
 Action action = thing.getAction();
-</pre>
-]]></description>
-    </Guide>
-    <Guide name="Guide" _xmeta_id_="Guide2" label="当作函数执行">
+</pre>]]></description>&#xd;
+        <en_description><![CDATA[<h2>The model is transformed into an action</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The dynamic model stipulates that any model can be transformed into an action, as shown in the following code. </p>
+
+<pre class="brush:as3;">
+import org.xmeta.Thing;
+import org.xmeta.Action;
+
+//Model
+Thing thing = new Thing();
+
+//Convert to action
+Action action = thing.getAction();
+</pre>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" _xmeta_id_="Guide2" label="当作函数执行" en_label="Execute as a function">&#xd;
         <description><![CDATA[<h2>动作作为函数执行</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 动作可以当作函数来执行，如下面的示意代码。</p>
@@ -61,10 +79,38 @@ result = action.run(actionContext, params);
 //通过Object[]传参
 result = action.run(actionContext, &quot;param1&quot;, param1, &quot;param2&quot;, param2...); 
 
-</pre>
-]]></description>
-    </Guide>
-    <Guide name="Guide" _xmeta_id_="Guide3" label="作为模型对象的方法">
+</pre>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Actions are executed as functions</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Actions can be executed as functions, as shown in the code below. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+
+//Model
+Thing thing = new Thing();
+
+//Convert to action
+Action action = thing.getAction();
+
+//Variable (action) context, action execution requires context
+ActionContext actionContext = new ActionContext();
+
+//The action is executed as a function
+Object result = action.run(actionContext);
+
+//Pass the parameters when the action is executed as a function
+Map&lt;String, Object&gt; params = ....;
+//Pass parameters through Map
+result = action.run(actionContext, params);
+//Pass parameters through Object[]
+result = action.run(actionContext, &quot;param1&quot;, param1, &quot;param2&quot;, param2...);
+
+</pre>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" _xmeta_id_="Guide3" label="作为模型对象的方法" en_label="Methods as model objects">&#xd;
         <description><![CDATA[<h2>作为模型对象的方法</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 动作可以作为模型对象的方法。</p>
@@ -102,7 +148,44 @@ public Object doAction(String name, ActionContext actionContext){
     } 
 }</pre>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Methods as model objects</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Actions can be used as methods of model objects. </p>
+
+<h3>Methods of executing model objects</h3>
+
+<p>&nbsp;&nbsp;&nbsp; As shown in the code below. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+import org.xmeta.ActionContext;
+
+//Model
+Thing thing = new Thing();
+
+//Execute method, actionName is a string, is the name of the method
+Object result = thing.doAction(actionName, new ActionContext());
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;The schematic code of the doAction method of the model object is as follows, you can see that the actual execution is an action. </p>
+
+<pre class="brush:groovy;">
+//doAction is a method of org.xmeta.Thing
+public Object doAction(String name, ActionContext actionContext){
+    //Get the definition of the method
+    Thing actionThing = getActionThing(name);
+
+    //Put the model itself in the variable context
+    actionContext.push().put(&quot;self&quot;, this);
+    try{
+        //Perform an action
+        actionThing.getAction().run(actionContext);
+    }finally{
+        actionContext.pop();
+    }
+}</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
 </ShellGuide>

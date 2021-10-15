@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="QuickQuery" descriptors="xworker.content.QuickContent" label="Condition的SQL特殊用法"
      type="thingDesc" group="xworker.dataobject.queryConfig" icon="icons/html.png" simpleBrowser="true"
-     en_group="xworker.dataobject.200|Query" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     en_label="SQL special usage of Condition" en_group="xworker.dataobject.200|Query"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>Condition的SQL特殊用法</h1>
 
 <p>&nbsp;&nbsp;&nbsp; Condition在SQL下的特殊用法，这些用法对非SQL的条件一般是无效的。</p>
@@ -50,6 +51,53 @@ condition.orclauseTemplate(&quot;name&quot;, Condition.in, &quot;select id from 
 <pre class="brush:plain;">
 name in (?,?,?) and sex = ? or name in (select id from user where name = ? t)</pre>
 
-<p>&nbsp;</p>
-]]></description>
+<p>&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Special SQL Usage of Condition</h1>
+
+<p>&nbsp;&nbsp;&nbsp; The special usage of Condition under SQL, these usages are generally invalid for non-SQL conditions. </p>
+
+<h2>1. Always additional SQL statements</h2>
+
+<p>&nbsp;&nbsp;&nbsp; such as the code below. </p>
+
+<pre class="brush:groovy;">
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot; );
+condition.sql(&quot;test&quot;, &quot;(name=&#39;test&#39; and sex=&#39;male&#39;)&quot;);
+condition.orsql(&quot;test&quot;, &quot;(name=? and sex=?)&quot;, &quot;test&quot;, &quot;male&quot;);
+print(condition);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The generated SQL statement is as follows. </p>
+
+<pre class="brush:plain;">
+name in (?,?,?) and sex =? and (name=&#39;test&#39; and sex=&#39;male&#39;) or (name=? and sex=?)</pre >
+
+<h2>2. Sub-conditions with select</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Generally used for in or not in, etc. </p>
+
+<pre class="brush:groovy;">
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot; );
+condition.clause(&quot;name&quot;, Condition.in, &quot;select id from user&quot;).eq(&quot;name&quot;, &quot;test&quot;);
+</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The generated SQL is as follows. </p>
+
+<pre class="brush:plain;">
+name in (?,?,?) and sex =? and name in (select id from user where name = ?)</pre>
+
+<p>&nbsp;&nbsp;&nbsp; Use code templates, %%SQL%% is the part to be replaced. Such as the following code. </p>
+
+<pre class="brush:groovy;">
+condition = new Condition();
+condition.in(&quot;name&quot;, &quot;a&quot;, &quot;b&quot;, &quot;c&quot;).and().eq(&quot;sex&quot;, null).oreq(&quot;sex&quot;, &quot;fmale&quot; );
+condition.orclauseTemplate(&quot;name&quot;, Condition.in, &quot;select id from user where %%SQL%% t&quot;).eq(&quot;name&quot;, &quot;test&quot;);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The generated SQL is as follows. </p>
+
+<pre class="brush:plain;">
+name in (?,?,?) and sex =? or name in (select id from user where name =? t)</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <ShellGuide name="ActionContextIntroduce" descriptors="xworker.swt.guide.ShellGuide" label="动作上下文"
      en_label="ActionContext" en_group="-20000|Dynamic Model.1000|Action" th_createIndex="true"
      th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex" group="-20000|动态模型.1000|动作"
-     th_sortWeight="300">
-    <actions>
-        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
-        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
-    </actions>
-    <Guide name="introduce" label="简介">
+     th_sortWeight="300">&#xd;
+    <actions>&#xd;
+        <getIDEShell name="getMaskComposite" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"/>&#xd;
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"/>&#xd;
+    </actions>&#xd;
+    <Guide name="introduce" label="简介" en_label="Introduction">&#xd;
         <description><![CDATA[<h2>动作上下文</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 动作上下文也称为变量上下文，主要用于<strong>管理变量和线程状态</strong>，每一个动作执行时必须要指定动作上下文，动作中的能使用的变量是由变量上下文提供的。</p>
@@ -20,10 +20,21 @@ import org.xmeta.ActionContext;
 
 ActionContext actionContext = new ActionContext();</pre>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="Guide" label="全局变量">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Action context</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Action context is also called variable context, which is mainly used to <strong>manage variables and thread state</strong>. When each action is executed, the action context must be specified. What can be used in the action Variables are provided by the variable context. </p>
+
+<h3>Create variable context</h3>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+
+ActionContext actionContext = new ActionContext();</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" label="全局变量" en_label="Global variable">&#xd;
         <description><![CDATA[<h2>全局变量</h2>
 
 <p>&nbsp;&nbsp;&nbsp;&nbsp;一个ActionContext可以同时在多个线程下给多个动作同时使用，全局变量是指在不同的线程下都可以访问的变量。</p>
@@ -51,10 +62,37 @@ import org.xmeta.Bindings;
 Bindings g = actionContext.g();
 g.put(name, value);</pre>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="Guide" _xmeta_id_="Guide1" label="局部变量">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Global variables</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;An ActionContext can be used for multiple actions in multiple threads at the same time. Global variables refer to variables that can be accessed under different threads. </p>
+
+<h3>Initial variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Initial variables are global. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.ActionContext;
+
+ActionContext actionContext = new ActionContext();
+
+//The variables set at this time are global
+actionContext.put(name, value);</pre>
+
+<h3>g() Stack Level Variables</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The variables in the stack obtained by the g() method are also global. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Bindings;
+
+//The variables set below are also global
+Bindings g = actionContext.g();
+g.put(name, value);</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" _xmeta_id_="Guide1" label="局部变量" en_label="Local variable">&#xd;
         <description><![CDATA[<h2>局部变量</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 局部变量是和线程绑定的，其它线程看不到本线程的局部变量，局部变量是通过栈实现的。</p>
@@ -92,10 +130,47 @@ Bindings bindings = actionContext.l();</pre>
 
 <p>&nbsp;&nbsp; &nbsp;</p>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="threadStatus" label="线程状态">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Local variables</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Local variables are bound to threads, other threads cannot see the local variables of this thread, local variables are implemented through the stack. </p>
+
+<h3>Set local variables through the stack</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Local variables can be set through peek(), push() and pop() and. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Bindings;
+
+//Through peek(), set local variables
+Bindings bindings = actionContext.peek();
+bindings.put(name, value);
+
+//Manage local variables through push() and pop()
+Bindings bindings = actionContext.push()
+try{
+    bindings.put(name, value);
+}finally{
+    //Push and pop must appear in pairs, and pop must be executed
+    actionContext.pop();
+}</pre>
+
+<h3>By l() or local variable stack</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;If a Bindings executes the setVarScopeFlag() method, then the Bindings can be obtained through the l() method. </p>
+
+<pre class="brush:groovy;">
+//Set to local stack mark
+actionContext.pee().setVarScopeFlag();
+
+//Get the Bindings that have executed the setVarScopeFlag() method near the top of the stack, which may return null
+Bindings bindings = actionContext.l();</pre>
+
+<p>&nbsp;&nbsp; &nbsp;</p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="threadStatus" label="线程状态" en_label="Thread state">&#xd;
         <description><![CDATA[<h2>线程状态</h2>
 
 <p>&nbsp;&nbsp;&nbsp; ActionContext的线程状态可以用来实现语法类的模型，比如实现return、try/catch、continue、break等等语法模型。</p>
@@ -131,10 +206,45 @@ while(checkCondition(self, actionContext)){
 	}
 }</pre>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="Guide" _xmeta_id_="Guide2" label="变量约定">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Thread status</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The thread state of ActionContext can be used to implement grammatical models, such as return, try/catch, continue, break and other grammatical models. </p>
+
+<h3>Schematic code</h3>
+
+<p>&nbsp;&nbsp;&nbsp; For example, the following is the schematic code of the While model, where the thread state of the ActionContext is used. </p>
+
+<pre class="brush:groovy;">
+while(checkCondition(self, actionContext)){
+	 
+	for (Thing child : childActions.getChilds()) {
+		Action action = world.getAction(child);
+		if (action != null) {
+			result = action.run(actionContext, null, true);
+		}
+
+		int sint = actionContext.getStatus();
+		if (sint != ActionContext.RUNNING) {
+			break;
+		}
+	}
+
+//Judging the status of the loop
+	if (actionContext.getStatus() == ActionContext.BREAK) {
+		actionContext.setStatus(ActionContext.RUNNING);
+		break;
+	} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+		actionContext.setStatus(ActionContext.RUNNING);
+		continue;
+	} else if (actionContext.getStatus() != ActionContext.RUNNING) {
+		break;
+	}
+}</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="Guide" _xmeta_id_="Guide2" label="变量约定" en_label="Variable convention">&#xd;
         <description><![CDATA[<h2>变量约定</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 变量上下文中有一些约定俗成的变量，比如下面的变量。</p>
@@ -153,7 +263,25 @@ while(checkCondition(self, actionContext)){
 	动态模型引擎的World实例。&nbsp;</li>
 </ul>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Variable conventions</h2>
+
+<p>&nbsp;&nbsp;&nbsp; There are some conventional variables in the variable context, such as the following variables. </p>
+
+<ul>
+<li><strong>actionContext: org.xmeta.ActionContext</strong><br />
+The variable context itself. <br />
+&nbsp;</li>
+<li><strong>parentContext: org.xmeta.ActionContext</strong><br />
+The parent variable context may not exist. <br />
+&nbsp;</li>
+<li><strong>_g: org.xmeta.Bindings</strong><br />
+Global variable stack. <br />
+&nbsp;</li>
+<li><strong>world: org.xmeta.World&nbsp;</strong><br />
+The World instance of the dynamic model engine. &nbsp;</li>
+</ul>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
 </ShellGuide>

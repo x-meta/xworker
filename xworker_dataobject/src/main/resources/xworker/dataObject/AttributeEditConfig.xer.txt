@@ -60,6 +60,11 @@ false
 <br />
 可以在输入扩展属性里定义编辑控件的更多参数。
 #$@text#$@
+  Sen_description
+#$@text#$@
+<p>If you want to make further settings for the input method, you can try to click the &lsquo;*&rsquo; button behind the attribute&lsquo;input extended attributes&rsquo;input box. </p>
+<p>If you use DataStore or association as the data source, you should note that the associated data object should have a primary key, otherwise there will be cases where the value cannot be obtained, such as swt's combo. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -208,6 +213,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Generally refers to the read-only property of the edit control. </p>
   sth_mark
   false
   sid
@@ -249,6 +256,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Generally refers to whether it can be edited when editing by cell in the table. </p>
   sth_mark
   false
   sid
@@ -337,6 +346,8 @@ false
   false
   szh_description
   属性的格式，如yyyy-MM-dd。
+  sen_description
+  <p>Java format, such as yyyy-MM-dd.</p>
   sth_mark
   false
   sth_registQueryOnlySelf
@@ -419,6 +430,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The format of JavaScript. </p>
   sth_mark
   false
   sid
@@ -555,6 +568,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether to display the label in the edit form. </p>
   sth_mark
   false
   sid
@@ -844,6 +859,8 @@ false
   true
   snotXmlAttribute
   false
+  sen_label
+  Label color
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -883,6 +900,8 @@ false
   true
   snotXmlAttribute
   false
+  sen_label
+  Label font
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -920,6 +939,8 @@ false
   true
   snotXmlAttribute
   false
+  sen_label
+  Additional label
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -959,6 +980,8 @@ false
   true
   snotXmlAttribute
   false
+  sen_label
+  Additional label color
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -998,6 +1021,8 @@ false
   true
   snotXmlAttribute
   false
+  sen_label
+  Additional label font
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
   sth_createIndex
@@ -1718,6 +1743,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The transaction path of the verification action. The default is the verification method implemented by the Model. </p>
   sth_mark
   false
   sid
@@ -1862,6 +1889,8 @@ time in a valid ...
       false
       sth_registDisabled
       false
+      sen_description
+      <p>It's just an entrance. </p>
       sth_mark
       false
       sid
@@ -2071,11 +2100,36 @@ time in a valid ...
     false
     Sen_description
 #$@text#$@
-<p>custom property editor. <!-- p--></p>
+<p>Customized attribute editor. </p>
 
-<p>this thing by calling the create method to create property editors, call createModel method to create Model. <!-- p--></p>
+<p><strong>Controls</strong></p>
 
-<p>call the create method and createModel ways to use property editors to create the context of public action, when the create method is called when the incoming gridData (xworker.ui.layout.GridData) variables, called createModel will be passed attribute variables (current property) . <!-- p--></p>
+<p>&nbsp;&nbsp;&nbsp; Call the create() method to create the control, the create method of all child nodes is executed by default, and the execution result of the last child node is returned. There is no independent variable context, the variable context of the common form. </p>
+
+<p><strong>Model</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Use the createModel() method to create a model. If not implemented, use the default Model. Model is used to fetch and assign values ​​from the edit control and implement verification. </p>
+
+<p><strong>Control naming rules</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;The rules when using the default Model. The naming rule of the control is <attribute name>+Input. If the name of the attribute is name, then the name of the control saved in the global variable should be nameInput. </p>
+
+<p><strong>Control layout</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; The layout is GridLayout, the control can use GridData, if not set, use the gridData created by the form. </p>
+
+<p><strong>Methods that can be overridden</strong></p>
+
+<ul>
+<li><strong>Control create(Composite parent,&nbsp;&nbsp;&nbsp;GridData layngData, Thing&nbsp;attribute,&nbsp;boolean itThingEditor, ModifyListener modifyListener)</strong><br />
+Create an edit control. <br />
+&nbsp;</li>
+<li><strong>Thing&nbsp;createModel(Thing attribute)</strong><br />
+Create an attribute model. &nbsp;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+
+<p>&nbsp; &nbsp;</p>
 #$@text#$@
     sth_mark
     false
@@ -2166,6 +2220,41 @@ time in a valid ...
     false
     sth_registDisabled
     false
+    Sen_description
+#$@text#$@
+<p>Item editor, used when selecting custom when editing items in tables, trees, etc. </p>
+
+<h3>Convention</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Only the first child node takes effect. You need to create an ActionContainer named actions. The methods of ActionContianer are:</p>
+
+<ul>
+<li><strong>Object getValue()</strong><br />
+Returns the edited value. <br />
+&nbsp;</li>
+<li><strong>void setValue(Item item, int column, Object value)</strong><br />
+Set the value of the editor. </li>
+</ul>
+
+<h3>Save and edit variables and automatically destroy</h3>
+
+<ul>
+<li><strong>editor.saveValue()</strong><br />
+Use the editor variable to call the saveValue() method to save the variable. <br />
+&nbsp;</li>
+<li><strong>Automatic destruction</strong><br />
+When the editing is completed, the edit control can be automatically destroyed, so that the next cell can be edited by the table, etc. <br />
+A judgment is required before destruction, xworker.swt.custom.tableEditors.ItemEditorUtils.isNotDisposeOnSaveValue(TimeEditor.this.actionContext)==false will only destroy the control, otherwise do not destroy the control. </li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
     sth_mark
     false
     sid
@@ -2352,6 +2441,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>By default, the value name is consistent with the attribute name. If the attribute needs to display other fields or a combination of other fields (using Ognl expressions), you can specify it in this field. </p>
   sth_mark
   false
   sid
@@ -2471,6 +2562,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is false, the field will not be displayed in the table. </p>
   sth_mark
   false
   sid
@@ -2510,6 +2603,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The width of the column. </p>
   sth_mark
   false
   sid
@@ -2551,6 +2646,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether to show the editor in the table. The text is displayed by default. If the editor is displayed, the table must also be editable. </p>
   sth_mark
   false
   sid
@@ -2598,6 +2695,14 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Whether to display the labels of related things in the table by default. </p>
+
+<p>Conditions for displaying the labels of related things:</p>
+
+<p>1. Set the store reference, usually the global DataStore. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -2639,6 +2744,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Use the value of other fields in the table to display the value of the field. </p>
   sth_mark
   false
   sid
@@ -2676,6 +2783,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether it is a fixed column in the table (column that cannot be dragged)</p>
   sth_mark
   false
   sid
@@ -2713,6 +2822,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether the column is hidden. </p>
   sth_mark
   false
   sid
@@ -2750,6 +2861,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether it can be hidden. </p>
   sth_mark
   false
   sid
@@ -2787,6 +2900,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether it can be sorted. </p>
   sth_mark
   false
   sid
@@ -2820,6 +2935,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The default sort order. </p>
   sth_mark
   false
   sid
@@ -2857,6 +2974,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Prompt content. </p>
   sth_mark
   false
   sid
@@ -2890,6 +3009,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The label of the column in the table, the default is the label of the attribute. </p>
   sth_mark
   false
   sid
@@ -2925,6 +3046,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Horizontal alignment. </p>
   sth_mark
   false
   sid
@@ -3052,6 +3175,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether the column is locked. </p>
   sth_mark
   false
   sid
@@ -3087,6 +3212,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If there are multiple levels, then use. Split, such as total column. Sub-column 1, total column. Sub-column 2. The group of columns is centered by default. </p>
   sth_mark
   false
   sid
@@ -3124,6 +3251,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether it can be grouped. </p>
   sth_mark
   false
   sid
@@ -3157,6 +3286,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Group name. </p>
   sth_mark
   false
   sid
@@ -3190,6 +3321,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The text of the empty group when the lines are grouped. </p>
   sth_mark
   false
   sid
@@ -3227,6 +3360,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether to close the pop-up menu of the column header. </p>
   sth_mark
   false
   sid
@@ -3264,6 +3399,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Whether the size of the column can be changed. </p>
   sth_mark
   false
   sid
@@ -3295,6 +3432,8 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Extjs related definitions. </p>
   sth_mark
   false
   sid
@@ -3500,6 +3639,8 @@ time in a valid ...
     false
     sth_registDisabled
     false
+    sen_description
+    <p>Create, edit and view a universal editor. </p>
     sth_mark
     false
     sid
@@ -3688,6 +3829,11 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>If the value of the field is selected from other data objects, specify the associated data object. </p>
+<p>You can specify the selected query conditions, if it is a drop-down selection, you can also specify the drop-down selection options. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -3855,6 +4001,13 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Refer to the global DataStore, and use the DataStoreManager to obtain the related DataStore, which can be the name of the DataStore or the transaction path of the DataStore. </p>
+
+<p><span style="color:rgb(255, 0, 0)"><strong>SWT:</strong></span><br />
+If it is used in the SWT DataObjectForm, then parentContext.parentContext is the context of the SWT interface, and use parentContext.parentContext.&lt;storeName&gt; to access the DataStore defined in the SWT interface. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -3910,6 +4063,22 @@ time in a valid ...
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Same as Store attribute, this attribute is used in Extjs. </p>
+
+<p><strong>Specify Store by logo</strong></p>
+
+<p>For example, you can enter Ext.StoreMgr.get(&#39;xxxx&#39;), where xxxx is the store logo. Generally, the Store of Extjs is set by this method. At this time, the Store is usually global. </p>
+
+<p>The generated code is such as: store: Ext.StoreMgr.get(&#39;xxxx&#39;). </p>
+
+<p><strong>Set Store through variables</strong></p>
+
+<p>For example, you can enter xxxx, where xxxx is the variable name. Health</p>
+
+<p>The finished code is such as: store:xxxx. </p>
+#$@text#$@
   sth_mark
   false
   sid

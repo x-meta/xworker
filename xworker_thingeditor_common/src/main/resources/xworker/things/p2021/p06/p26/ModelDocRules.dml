@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="ModelDocRules" descriptors="xworker.content.QuickContent" label="模型文档约定"
      type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="100" simpleBrowser="true"
-     en_label="Model Document Rules" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     en_label="Model Document Rules" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>模型文档约定</h1>
 
 <h2>1.基本知识</h2>
@@ -104,6 +104,107 @@ File file = thing.doAction(actionContext, &quot;path&quot;, &quot;/abcd.txt&quot
 
 <p>&nbsp;&nbsp;&nbsp; 返回的对象通常是框架需要的对象。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 比如XWorker的SWT中的ThingForm模型，ThingForm执行create后会创建两个对象。一个变量是SWT框架需要它返回的类型为Control的对象，另一个是ThingForm对象。Control对象是SWT框架需要用的，父容器界面可能需要处理它，ThingForm是后期用户要使用的，以便操作ThingForm控件。</p>
-]]></description>
+<p>&nbsp;&nbsp;&nbsp; 比如XWorker的SWT中的ThingForm模型，ThingForm执行create后会创建两个对象。一个变量是SWT框架需要它返回的类型为Control的对象，另一个是ThingForm对象。Control对象是SWT框架需要用的，父容器界面可能需要处理它，ThingForm是后期用户要使用的，以便操作ThingForm控件。</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Model document conventions</h1>
+
+<h2>1. Basic knowledge</h2>
+
+<h3>1.1. Where is the documentation for the model? </h3>
+
+<p>&nbsp;&nbsp;&nbsp; Model documentation can generally be found in the following three places. </p>
+
+<ul>
+<li><strong>Model Editor</strong><br />
+The model usually comes with its own documentation, which can be viewed in the model editor. <br />
+&nbsp;</li>
+<li><strong>System documentation and examples</strong><br />
+System documentation and examples are generally overview documents. Third-party documents and examples can also be displayed here. <br />
+&nbsp;</li>
+<li><strong>Help the elf</strong><br />
+Generally, it is auxiliary documents and tools. After opening the help wizard, click a node in the model editor, and the help wizard can display documents and tools related to the model node. Third-party documents and tools can also be displayed here. </li>
+</ul>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>This article mainly describes the relevant knowledge of the documents that come with the model. </strong></p>
+
+<h3>1.2. Model document comparison &ldquo;simplification&rdquo;</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Because the model document is together with the model, in order to avoid the file size is too large, so the model document is written on the side "simplified", at least the model document in XWorker is so of. </p>
+
+<h3>1.3. There are conventions in the document</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Since the model documentation is relatively &ldquo;simplified&rdquo;, there are various conventions, and understanding these conventions helps to understand the model documentation. </p>
+
+<h2>2. Document conventions for actions and behaviors</h2>
+
+<h3>2.1. Use Java code to express actions and behaviors</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The actions and behaviors of the model are expressed in Java code. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, the following Java code. </p>
+
+<pre class="brush:java;">
+File getFile(String path);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; When this code corresponds to the actions and behaviors of the model, the schematic code for calling this action and behavior is as follows. </p>
+
+<pre class="brush:java;">
+//As an action
+Action getFile = ...;
+File file = getFile.run(actionContext, &quot;path&quot;, &quot;/abcd.txt&quot;);
+
+//As behavior
+File file = thing.doAction(actionContext, &quot;path&quot;, &quot;/abcd.txt&quot;);
+</pre>
+
+<h3>2.2. Methods that can be overridden</h3>
+
+<p>&nbsp;&nbsp;&nbsp; If the words <strong>rewriteable method</strong> appear in the code, it indicates that the following method is generally used as a parameter method, and the user can rewrite it as needed . </p>
+
+<h4>2.2.1. Parameter method</h4>
+
+<p>&nbsp;&nbsp;&nbsp; The parameter method means that this method is generally used to obtain parameters. For example, if the action of copying a file is boolean copyFile(File src, File dest), then there may be two parameter actions: File getSrc() and File getDest(). </p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>Parameter methods are generally implemented by default, and this implementation is bound to the attributes of the model</strong>. For example, the File getSrc() parameter method above may be bound to the src attribute of the model. The user can set the source path in the src attribute of the model, and the getSrc() method returns the corresponding file through the value of the attribute. </p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>Parameter attributes support various expressions</strong>. XWorker provides a set of actions specifically used to obtain values ​​through attributes. These actions are generally grouped under <strong>_actions.thingaction</strong>. If you use these actions provided by XWorker, you generally support expressions such as var:, ognl:, label:, etc. Using these expressions helps to get the desired parameters. In addition, if these actions are used, the action document will generally be displayed in the attribute document. </p>
+
+<p>&nbsp;&nbsp;&nbsp; <strong>If the needs are still not met, the user can override this method</strong>. </p>
+
+<h3>2.3. Methods that need to be rewritten</h3>
+
+<p>&nbsp;&nbsp;&nbsp; If the words <strong>methods to be rewritten</strong> appear, it indicates that the following methods generally need to be rewritten by the user. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, if an action traverses a file and treats the content of the file as a string, the void handleFileContent(File file, String cotnent) action may be defined at this time, and the user needs to rewrite it In order to process the content of the file. </p>
+
+<h3>2.4. Events that can be monitored</h3>
+
+<p>&nbsp;&nbsp;&nbsp; If the words <strong>events that can be monitored</strong> or <strong>events</strong> appear, it means that this method is generally used for events or callbacks. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, in a dialog box model, methods such as ok and cancel may be declared, and the user can implement the corresponding methods, such as the ok method implemented, then when the dialog box clicks the OK button, it will Call the ok method. </p>
+
+<h3>2.5. Action usage purpose</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Sometimes you can determine what the action is for based on the use attribute of the action. The value of the purpose of the action attribute is a string for prompting. The following are commonly used strings. </p>
+
+<ul>
+<li><strong>params</strong><br />
+Indicates that the action is used to obtain parameters. <br />
+&nbsp;</li>
+<li><strong>event</strong><br />
+Events and callbacks. This action is generally used for events and callbacks. </li>
+</ul>
+
+<h2>3. Saved and returned objects</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Some model documents will have the words <strong>Saved and Returned Objects</strong>, which means that the purpose of the model is to create Java objects and save the objects to the global context middle. For example, SWT and JavaFX models, after executing the create method, the model corresponding to the Java object will be created, and they will also save the object in the global context for later use. </p>
+
+<h3>3.1. Saved objects</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The saved object generally refers to the variable saved in the global stack of the variable context. These variables can be used later. </p>
+
+<h3>3.2. Returned objects</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The returned object is usually the object required by the framework. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, in the ThingForm model of XWorker's SWT, two objects will be created after ThingForm executes create. One variable is an object of type Control that the SWT framework needs to return, and the other is a ThingForm object. The Control object is needed by the SWT framework, and the parent container interface may need to handle it. The ThingForm is used by later users to operate the ThingForm control. </p>]]></en_description>&#xd;
 </QuickContent>

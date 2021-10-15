@@ -188,35 +188,149 @@ sth_deprecated
 false
 Sen_description
 #$@text#$@
-<h1>Define model</h1>
+<h1>Define the model</h1>
 
-<h2>1.Object-oriented</h2>
+<h2>1. Basic knowledge</h2>
 
-<p>&nbsp;&nbsp;&nbsp; Dynamic model implements object-oriented programming method, and defining model is equivalent to defining class.</p>
+<h3>1.1. The structure of the model</h3>
 
-<h3>1.1.Descriptor</h3>
+<p>&nbsp;&nbsp;&nbsp; The dynamic model is object-oriented, a model can be regarded as an object, and an object is composed of attributes, sub-models (sub-objects) and behaviors. </p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;In dynamic models, class models are also called descriptors.</p>
+<h3>1.2. Defining the model is equivalent to defining the class of the model</h3>
 
-<h3>1.2.Classes and objects are models</h3>
+<p>&nbsp;&nbsp;&nbsp; Since a model is an object, defining a model is equivalent to defining its class, that is, defining what attributes, submodels, and behaviors a model has. </p>
 
-<p>&nbsp;&nbsp;&nbsp; In dynamic models, classes and objects are models. A model can regard it as a class or object according to its usage, so there is no special definition of class in dynamic model, instead, it uses descriptor instead of class.</p>
+<p>&nbsp;&nbsp;&nbsp; The class of a model is also a model. The class model uses its various sub-nodes to define the attributes, sub-models, and behaviors of the model. </p>
 
-<h2>2.How to define a model</h2>
+<h3>1.3. Basic object-oriented knowledge in dynamic models</h3>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;Define a model, which attributes, sub models, and methods the model has.</p>
+<h4>1.3.1. Each node of the model is an independent object</h4>
 
-<h3>2.1.Meta descriptor</h3>
+<p>&nbsp;&nbsp;&nbsp; In a dynamic model, each node of a model can be regarded as an independent object. </p>
 
-<p>&nbsp;&nbsp;&nbsp; Meta descriptors are a kind of model, which is usually used to write class models.</p>
+<h4>1.3.2. Attributes of the model</h4>
 
-<h3>2.2.xworker.lang.MetaDescriptor3</h3>
+<p>&nbsp;&nbsp;&nbsp; A model can set any attributes at runtime. The attributes are stored in Map&lt;String, Object&gt;, and there is no restriction on the value type of the attribute. However, only the defined properties will be saved when persisting, and the value must be able to be serialized (it is best to use only basic types of data). </p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;xworker.lang.MetaDescriptor3 model is the most commonly used meta descriptor in xworker, which is generally used to define new models.</p>
+<h4>1.3.3. Model behavior</h4>
 
-<h2>3.xworker.lang.MetaThing</h2>
+<p>&nbsp;&nbsp;&nbsp; The first child node of a model named actions is the definition of its behavior. In addition, the behavior of the model can also be inherited from its class or inherited model. . To find the behavior of a model, first look up from itself, secondly from class, and then from inheritance. </p>
 
-<p>&nbsp;&nbsp;&nbsp; xworker.lang.MetaThing is the base class model defined by xworker, and any model takes it as its own base class xworker.lang.MetaThing.The properties and methods common to all models are defined.</p>
+<h4>1.3.4. Model inheritance</h4>
+
+<p>&nbsp;&nbsp;&nbsp; When a model inherits another model, only the behavior is inherited, not attributes and child nodes. But when these two models are used as class models, the attributes and child nodes they define will be inherited. For example, animals have the attribute of names, and humans inherit the attribute of animals, so people also have the attribute of names. At this time, the instance of human Zhang San has the attribute of names, and the attribute of names is inherited from animals. </p>
+
+<h4>1.3.5. Model class</h4>
+
+<p>&nbsp;&nbsp;&nbsp; A model can take any model and any number of models as its own class. The model inherits the behavior of the class model and saves the attributes defined by the class model when the model is persisted. </p>
+
+<h2>2. How to define the model</h2>
+
+<h3>2.1. Use xworker.lang.MetaDescriptor3 to write the class model</h3>
+
+<p>&nbsp;&nbsp;&nbsp; In the dynamic model, in theory, any model can be edited using an existing model, and the class model is also a model, so the class model can also be edited using the existing model. In XWorker, the model xworker.lang.MetaDescriptor3 is generally used to write class models. </p>
+
+<h3>2.2. Class model example</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The Person model below is a class model, which is written using the MetaDescriptor3 model. Its actions sub-node is the definition of behavior, the attribute node is the definition of the attribute, the thing node is the definition of the sub-model, and MenuBar is the definition of the model menu. </p>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;thing name=&quot;Person&quot; descriptors=&quot;xworker.lang.MetaDescriptor3&quot;&gt;
+    &lt;actions&gt;
+        &lt;GroovyAction name=&quot;sayHello&quot; descriptors=&quot;xworker.lang.actions.GroovyAction&quot; code=&quot;println self.name + &amp;quot; say hello world&amp;quot;;&quot;&gt;&lt;/GroovyAction&gt;
+    &lt;/actions&gt;
+    &lt;attribute name=&quot;name&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;age&quot;&gt;&lt;/attribute&gt;
+    &lt;attribute name=&quot;sex&quot; inputtype=&quot;select&quot;&gt;
+        &lt;value name=&quot;Male&quot; value=&quot;0&quot;&gt;&lt;/value&gt;
+        &lt;value name=&quot;female&quot; value=&quot;1&quot;&gt;&lt;/value&gt;
+    &lt;/attribute&gt;
+    &lt;attribute name=&quot;description&quot; inputtype=&quot;html&quot;&gt;&lt;/attribute&gt;
+    &lt;thing name=&quot;Child&quot; extends=&quot;xworker.doc.dyanmicmodel.examples.Person&quot;&gt;&lt;/thing&gt;
+    &lt;MenuBar&gt;
+        &lt;Menu name=&quot;Person&quot;&gt;
+            &lt;ExecuteAction name=&quot;ExecuteAction&quot; label=&quot;Run&quot; actionName=&quot;sayHello&quot;&gt;&lt;/ExecuteAction&gt;
+        &lt;/Menu&gt;
+    &lt;/MenuBar&gt;
+&lt;/thing&gt;</pre>
+
+<h2>3. Skills for defining models</h2>
+
+<h3>3.1. Use inheritance to define complex models</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Inheritance is very useful when defining models, and can be used to define complex models. For example, in the above model, Child inherits the Person model, so Child is also a Person. </p>
+
+<p>&nbsp;&nbsp;&nbsp; When the model is actually defined, for example, when packaging the Java API, the model can be defined in accordance with the actual Java classes and interfaces, and the inheritance relationship of the model can also be defined in accordance with the inheritance relationship of Java. Java's interface is also inherited in the model. </p>
+
+<h3>3.2. Model Editor</h3>
+
+<p>&nbsp;&nbsp;&nbsp; When defining the model, you can also set the editor of the model, mainly to set the editing method of the attributes. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Here are a few commonly used attributes related to the attribute editor. </p>
+
+<ul>
+<li><strong>inputtype</strong><br />
+	input method. XWorker presets some attribute editors, such as text boxes, HTML editors, drop-down lists, and so on. <br />
+&nbsp;</li>
+<li><strong>inputattrs</strong><br />
+Enter extended attributes. You can set additional attributes related to the input method. In addition, it can generally provide help. After selecting an input method, click the * button to enter the extended attributes to pop up the help or setting interface. <br />
+&nbsp;</li>
+<li><strong>size</strong><br />
+	size. The size of the input control, generally the width. It is an estimated value, such as 60, not a pixel value. <br />
+&nbsp;</li>
+<li><strong>group</strong><br />
+Grouping. The attributes with the same name are grouped into the same tab page. <br />
+&nbsp;</li>
+<li><strong>Other</strong><br />
+Others such as cross-row, cross-column, etc. can refer to their documents. </li>
+</ul>
+
+<h3>3.3. Use registration</h3>
+
+<h4>3.3.1. Introduction to model registration</h4>
+
+<p>&nbsp;&nbsp;&nbsp; Model registration is to register a model under another model. The type of registration can be specified when registering. For example, if model B is registered under model A as child (registration type), then model B can be found when the child's registration is searched through model A. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Model registration is a useful feature. For example, model registration is often used in frameworks and help systems. </p>
+
+<ul>
+<li><strong>Frame</strong><br />
+For example, a third party can provide an interface control model, and the third-party control model can be registered under the container control of the interface in a child manner, so that you can see and use the third-party control when writing the interface to add the child control of the container. <br />
+&nbsp;</li>
+<li><strong>Documents and examples</strong><br />
+For example, you can write documents and examples for a model, and then register to the model, so that you can get the registered documents and examples through this model. </li>
+</ul>
+
+<h4>3.3.2. Use model registration</h4>
+
+<p>&nbsp;&nbsp;&nbsp; The essence of model registration is an index. For example, the B model is registered to the A model in a child manner, which means that there is a registration related attribute in the B model, and the value of this attribute is &ldquo;child|A&rdquo;. So how to get the B model through A? In fact, it is to search all models, find the attributes related to the registration, and see if its value has A. For example, "child|A" means that the model is registered to A in a child manner, and it meets the conditions. </p>
+
+<p>&nbsp;&nbsp;&nbsp; To set the registration related properties of the model, you can select the descriptor (class) MetaThing in the model editor to edit, and you can see the related properties in the Regist tab. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Since searching all models is a time-consuming and memory-consuming task, the registration index is usually cached in memory or in the database. </p>
+
+<h4>3.3.3. How to search for registration</h4>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Such as the sample code below. </p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Thing;
+
+import xworker.util.XWorkerUtils;
+import xworker.lang.executor.Executor;
+
+//Query registered things, search for models registered on xworker.lang.actions.Actions
+Thing thingsIndex = world.getThing(&quot;xworker.lang.actions.Actions&quot;);
+List&lt;Thing&gt; things = XWorkerUtils.searchRegistThings(thingsIndex, &quot;child&quot;, [], actionContext);
+</pre>
+
+<h2>&nbsp;</h2>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
 #$@text#$@
 sth_mark
 false

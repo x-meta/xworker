@@ -177,7 +177,7 @@ public class SwtThingEditor {
             xworkerRoot.mkdirs();
         }
 
-        unzipResource();
+        //unzipResource();
         //checkSWT();
 
         //checkColorer();

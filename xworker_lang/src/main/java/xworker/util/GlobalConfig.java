@@ -67,23 +67,24 @@ public class GlobalConfig {
 		}
     	
     	//logger.info(XWorkerUtils.isThingExplorer()  + ":" + XWorkerUtils.getIde());
-    	if(!XWorkerUtils.isThingExplorer() && World.getInstance().getData("jettyServer") == null && XWorkerUtils.hasXWorker()){
+		//启动WEB服务器
+		Thing webSever = World.getInstance().getThing("xworker.webserver.WebServer");
+    	if(!XWorkerUtils.isThingExplorer() && World.getInstance().getData("jettyServer") == null && webSever != null){
     		boolean ssl = false;
     		Thing globalConfig = World.getInstance().getThing("_local.xworker.config.GlobalConfig");    	
     		if(globalConfig != null) {
     			ssl = globalConfig.getBoolean("webSSL");
     		}
     		//不是在XWorker的事物管理器运行环境下，此时试图启动Jetty服务器
-    		ActionContext ac = new ActionContext();       		
+    		ActionContext ac = new ActionContext();
+    		ac.put("webroot", World.getInstance().getPath() + "/webroot/");
+
     		//端口可能会被占用，所以尝试启动多个，直到成功
     		for(int i=0; i<300; i++){		
     			Executor.info(TAG, "Check port availabe, port=" + httpPort);
     			if(isPortAvailable(httpPort)){    		
 	    			ac.put("port", httpPort);
-	    			Thing jetty = World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry2");
-	    			if(jetty != null) {
-	    				jetty.getAction().run(ac);
-	    			}
+	    			webSever.doAction("run", ac);
 	    			
 	    			if(ssl) {
 	    				webUrl = "https://localhost:" + httpPort + "/";

@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="UsingAction" descriptors="xworker.content.QuickContent" label="使用动作" type="thingDesc"
      group="dynamicModel.-990|Actions.using" groupDescriptor="true" icon="icons/html.png"
      th_sortWeight="-10100" simpleBrowser="true" en_label="Using Action" th_createIndex="true"
-     th_registThing="child|xworker.example.ExamplesIndex">
+     th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>使用动作</h1>
 
 <h2>1.编辑动作模型</h2>
@@ -63,47 +63,46 @@ action.run(ac, params);</pre>
 
 <p>&nbsp;</p>
 
-<p>&nbsp;&nbsp;&nbsp;</p>
-]]></description>
-    <en_description><![CDATA[<h1>Use action</h1>
+<p>&nbsp;&nbsp;&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Use actions</h1>
 
-<h2>1.Edit action model</h2>
+<h2>1. Edit the action model</h2>
 
-<p>&nbsp;&nbsp;&nbsp; Action is also a model. In theory, any model can be transformed into action to execute, so the method of editing action is the method of editing model.</p>
+<p>&nbsp;&nbsp;&nbsp; Actions are also models. In theory, any model can be converted into actions for execution, so the method of editing actions is the method of editing models. </p>
 
-<p>&nbsp;&nbsp;&nbsp; Action can be used as a standalone application or as the behavior of other models. Action is often used as a standalone application <strong>xworker.lang.ActionThing</strong> model. As the behavior of an object, it can be written in any model.</p>
+<p>&nbsp;&nbsp;&nbsp; Actions can be used as stand-alone applications or as behaviors in other models. When the action is used as a stand-alone application, it is often written using the xworker.lang.ActionThing model. The behavior as an object can be written in any model. </p>
 
-<h2>2.Get action</h2>
+<h2>2. Get action</h2>
 
-<p>&nbsp;&nbsp;&nbsp; Action is also a model. You can get the model first and then convert it into action. Like the groovy code below.</p>
+<p>&nbsp;&nbsp;&nbsp; Actions are also models. You can obtain the model first, and then convert it into an action. Such as the following Groovy code. </p>
 
 <pre class="brush:groovy;">
 import org.xmeta.Action;
 import org.xmeta.Thing;
 
-//Get an action model
+//Get the action model
 Thing thing = world.getThing(&quot;xworker.example.action._actions.HelloWorld&quot;);
 
 //Convert to action
 Action action = thing.getAction();</pre>
 
-<p>&nbsp;&nbsp;&nbsp; Actions can also be obtained directly through the world. The getaction () method of the world first obtains the model and then converts it into actions.</p>
+<p>&nbsp;&nbsp;&nbsp; You can also get the action directly through World. The getAction() method of World also first gets the model and then converts it into an action. </p>
 
 <pre class="brush:groovy;">
 import org.xmeta.Action;
 
 Action action = world.getAction(&quot;xworker.example.action._actions.HelloWorld&quot;);</pre>
 
-<h2>3.Execute action</h2>
+<h2>3. Perform actions</h2>
 
-<p>&nbsp;&nbsp;&nbsp; After obtaining the action, it can be used for execution. Before execution, you need to prepare the execution environment, that is, the action context.</p>
+<p>&nbsp;&nbsp;&nbsp; After obtaining the action, it can be used for execution. Before execution, you need to prepare the execution environment, that is, the action context. </p>
 
 <pre class="brush:groovy;">
 import org.xmeta.Action;
 import org.xmeta.ActionContext;
 import org.xmeta.Thing;
 
-//Get an action model
+//Get the action model
 Thing thing = world.getThing(&quot;xworker.example.action._actions.HelloWorld&quot;);
 
 //Convert to action
@@ -112,9 +111,17 @@ Action action = thing.getAction();
 //Prepare the running environment and create the action context
 ActionContext ac = new ActionContext();
 
-//Execute action
-action.run(ac);</pre>
+//Perform an action
+action.run(ac);
 
-<p>&nbsp;&nbsp;&nbsp;</p>
-]]></en_description>
+//Passing parameters-use an array, the array is a pair of names and values
+action.run(ac, &quot;name&quot;, &quot;xworker&quot;, &quot;age&quot;, 10...);
+
+//Passing parameters-use Map
+Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();
+action.run(ac, params);</pre>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

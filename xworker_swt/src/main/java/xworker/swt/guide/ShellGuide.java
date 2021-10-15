@@ -436,6 +436,7 @@ public class ShellGuide implements DisposeListener, ControlListener{
 						doAction(guideNode, "afterInited");
 					}catch(Exception e) {
 						e.printStackTrace();
+						this.close();
 					}finally {
 						initGuideNode = false;
 					}

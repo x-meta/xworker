@@ -118,7 +118,10 @@ public class XWorkerUtils {
 	 * 返回系统是否包含了XWorker的环境，主要是判断编辑器等是否存在。
 	 */
 	public static boolean hasXWorker() {
-		return World.getInstance().getThing("xworker.ide.worldexplorer.swt.SimpleExplorerRunner/@startJettry2") != null;
+		World world = World.getInstance();
+		return world.getThing("xworker.thingeditor.SwtThingEditor") != null
+				|| world.getThing("xworker.javafx.thingeditor.JavaFXThingEditor") != null
+				|| world.getThing("xworker.webserver.WebThingEditor") != null;
 	}
 	
 	/**

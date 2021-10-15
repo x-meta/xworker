@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="SwtThingEditorDoc" descriptors="xworker.content.QuickContent" label="swt_thingeditor"
      type="thingDesc" group="xworker.swt_thingeditor" groupDescriptor="true" icon="icons/html.png"
-     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>xworker_swt_thingeditor</h1>
 
 <p>&nbsp;&nbsp;&nbsp; xworker_swt_thingeditor是使用SWT编写的模型管理器。</p>
@@ -41,6 +41,44 @@ public class TestSimpleThingEditor {
     }
 }</pre>
 
-<p>&nbsp;</p>
-]]></description>
+<p>&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>xworker_swt_thingeditor</h1>
+
+<p>&nbsp;&nbsp;&nbsp; xworker_swt_thingeditor is a model manager written in SWT. </p>
+
+<h2>1. Custom model manager</h2>
+
+<p>&nbsp;&nbsp;&nbsp; You can use <strong>xworker.swt.SwtThingEditorConfig</strong> to write the configuration model, and pass it in when you start the model manager. See the relevant code commented below. </p>
+
+<pre class="brush:java;">
+import org.xmeta.World;
+import xworker.swt.SwtThingEditor;
+
+import java.io.File;
+
+public class TestSimpleThingEditor {
+    public static void main(String args[]){
+        try{
+            //Get an instance of the dynamic model engine
+            World world = World.getInstance();
+            //Initialize the working directory of the engine, some temporary files may be generated, and the directory must be writable
+            world.init(&quot;./xworker/&quot;);
+
+            //Add the model manager, which is the directory where the model is stored, which is required for editing the model. Test is the name of the model manager and cannot be duplicated with other model managers.
+            world.addFileThingManager(&quot;Test&quot;, new File(&quot;./src/main/resources&quot;), false, true);
+           //The model can be placed in the Java source code directory, the model can be compiled and packaged with Java, but the model in the jar is generally read-only
+
+            //Run the model editor
+            SwtThingEditor.run();
+
+            //You can also use xworker.swt.SwtThingEditorConfig to write configuration for custom menus, toolbars, etc.
+            //Thing editorConfig = world.getThing(&quot;xxxx&quot;);
+            //SwtThingEditor.run(editorConfig)
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

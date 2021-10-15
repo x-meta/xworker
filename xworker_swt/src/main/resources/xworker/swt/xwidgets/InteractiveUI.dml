@@ -82,6 +82,58 @@ sth_registMyChilds
 false
 sth_registDisabled
 false
+Sen_description
+#$@text#$@
+<p><strong>Interactive UI</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; is the client. After creation, the parent control adds mouse event monitoring after binding. When the mouse clicks on the parent control, the information will be sent to the interactive server, and then interact with the server, such as help Elf. </p>
+
+<p><strong>Variable context and return value</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; The global context saves and returns InteractiveUI. </p>
+
+<p><strong>Auxiliary information</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; registThing, registType, and commdandIndex are auxiliary information, which may be needed by some interactive servers, which is here for the convenience of setting. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Therefore, the specific information that needs to be set may have to refer to the relevant instructions of the server. </p>
+
+<p><strong>Interactive framework</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; InteractiveUI and InteractiveListener correspond to each other and are the interaction framework between interfaces. InteractiveUI is bound to a control, InteractiveListener is used to monitor InteractiveUI, usually InteractiveListener actively monitors InteractiveUI. They can send messages to each other. </p>
+
+<p><strong>Commonly used Java methods:</strong></p>
+
+<ul>
+<li><strong>void sendMessage(Object message)</strong><br />
+Send messages to all listeners (InteractiveListener). </li>
+</ul>
+
+<p><strong>Methods that can be overridden:</strong></p>
+
+<ul>
+<li><strong>void sendMessage(Object message)</strong><br />
+Send messages to all listeners. <br />
+&nbsp;</li>
+<li><strong>void receiveMessage(InteractiveListener listener, Object message)</strong><br />
+Receive messages from the listener. <br />
+&nbsp;</li>
+<li><strong>Control getParent()</strong><br />
+The parent control is bound by default, and it can also be bound to other designated controls by overriding the getParent method. <br />
+&nbsp;</li>
+<li><strong>Thing getRegistThing()</strong><br />
+Return to register things. <br />
+&nbsp;</li>
+<li><strong>String getRegistType()</strong><br />
+Return to the registration method. <br />
+&nbsp;</li>
+<li><strong>String getCommandIndex()</strong><br />
+Get the path of the root thing of the command index, if it is used when the command tool is an interactive object. <br />
+,</li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
   @/@actions
@@ -543,6 +595,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is not empty, then it will be sent to the listener with the specified name, otherwise it will be sent to the default listener, that is, the listener whose name is an empty string. </p>
   sth_mark
   false
   sid
@@ -578,6 +632,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The variables brought into Map&lt;String, Object&gt; are used as the variables of the interactor. It is to save non-global variables. If the variables are in the global variable stack of the actionContext, there is no need to pay attention to the secondary problem. </p>
   sth_mark
   false
   sid
@@ -685,6 +741,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Command index, corresponding to the path of things. The command tool needs this index as the initial word (word). </p>
   sth_mark
   false
   sid
@@ -720,6 +778,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>In a component interface with a parent-child relationship, when the mouse clicks on a control, you may get a series of interactive controls. At this time, help the elf choose the control with the highest priority for default display. </p>
   sth_mark
   false
   sid

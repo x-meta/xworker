@@ -51,44 +51,22 @@ sth_registDisabled
 false
 Sen_description
 #$@text#$@
-<p><strong>MetaThing</strong></p>
+<p><strong>Meta things</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; MetaThing is the first thing of xworker, but this metathing has replaced the real metathing which defined in code. MetaThing has defined the common attributes and child things of any things.</p>
+<p>&nbsp;&nbsp;&nbsp; Metathing is a public class of any model. Metathing defines some attributes and behaviors that any model has. </p>
 
-<p><strong>Author</strong></p>
+<p><strong>Common attributes</strong></p>
 
-<p>&nbsp;&nbsp;&nbsp; If you are a contributor you can write you name in the author if the thing is created or edited by you.</p>
+<ul>
+<li><strong>Multilingual</strong><br />
+Xx language can be set by adding xx_label and xx_description attributes, for example, xx is zh or en. <br />
+Multi-language is generally used in the interface, such as XWorker's thing editor. <br />
+&nbsp;</li>
+<li><strong>Registration and indexing</strong><br />
+You can set the content of the XWorker database index, such as keywords, registered things, and related things. </li>
+</ul>
 
-<p><strong>NultiLanguage</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; Use xx_label and xx_description attribute can set xx language, for exmaple xx is zh or en.</p>
-
-<p><strong>Index</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; Things in xworker are indexed to DB,&nbsp; you can set keywords rigist info etc.</p>
-
-<p><strong>Basic MetaTing</strong></p>
-
-<p>&nbsp;&nbsp;&nbsp; Basic MetaThing defined in code is like below:</p>
-
-<pre>
-    <span style="color:rgb(255, 0, 0)">&lt;thing name=&rdquo;thing&rdquo;&gt;
-        &lt;attribute name=&rdquo;name&rdquo;/&gt;
-        &lt;thing name=&rdquo;attribute&rdquo;&gt;
-             &lt;attribute name=&rdquo;name&rdquo;/&gt;
-        &lt;/thing&gt;
-</span>        <span style="color:rgb(0, 0, 255)">&lt;ting name=&rdquo;thing&rdquo;&gt;
-            &lt;attribute name=&quot;name&quot;/&gt;
-            &lt;thing name=&quot;attribute&quot;&gt;
-                &lt;attribute name=&quot;name&quot;/&gt;
-            &lt;/thing&gt;
-</span>            <span style="color:rgb(51, 153, 102)">&lt;thing name=&quot;thing&quot;&gt;
-                ...
-            &lt;/thing&gt;
-</span>        <span style="color:rgb(0, 0, 255)">&lt;/thing&gt;
-</span>    <span style="color:rgb(255, 0, 0)">&lt;/thing&gt; </span>   </pre>
-
-<p>&nbsp; Any thing are created by it directly or undirectly.</p>
+<p>&nbsp;</p>
 #$@text#$@
 sth_mark
 false
@@ -341,6 +319,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Descriptors are also classes of things. The current structure and behavior of things are defined by the description. A thing can have multiple descriptors. If there are multiple, use English commas to separate them. </p>
   sth_mark
   false
   sid
@@ -409,6 +389,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If there is no description for this thing, then use the description of the first thing inherited. Only valid for the description obtained in the thing.getMetadata().getDescription() method. </p>
   sth_mark
   false
   sid
@@ -526,6 +508,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is not the root thing, an index will only be created in the database that is specified to be created. </p>
   sth_mark
   false
   sid
@@ -569,6 +553,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If there are multiple uses, split it</p>
   sth_mark
   false
   sid
@@ -626,6 +612,22 @@ false
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>Register the current thing to other things, the type and path are separated by |, if there are more than one, use a comma to separate. </p>
+
+<p><strong>Registration type:</strong></p>
+
+<ul>
+<li><strong>Sub-things:</strong> The current thing is a sub-thing of other things. </li>
+<li><strong>Template:</strong> The current thing is a model of other things. </li>
+<li><strong>Notes:</strong> The current thing is a note of other things. </li>
+<li><strong>Features:</strong> The current thing is the characteristic of other things. </li>
+<li><strong>Relation:</strong> The current thing is the connection of other things. </li>
+<li><strong>Classification:</strong> The current thing is the classification of other things. <br />
+&nbsp;</li>
+</ul>
+#$@text#$@
   sth_mark
   false
   sid
@@ -848,6 +850,12 @@ false
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p><strong>Function</strong></p>
+
+<p>If it is true, then when this thing is registered as a child thing of another thing, when the target thing adds a child thing, it will not use this thing, but use the child thing of this thing. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -899,6 +907,12 @@ false
   false
   sth_fileMonitor
   false
+  Sen_description
+#$@text#$@
+<p>If it is not null, get the list of child nodes to be registered as an action. </p>
+
+<p>If <strong>register my children (th_registMyChilds)</strong> has been set to true, this attribute will not take effect. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -942,6 +956,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is true, then the thing will not be displayed in the corresponding UI for display registration. This attribute is just a reference, see the corresponding UI for details. </p>
   sth_mark
   false
   sid
@@ -1034,6 +1050,18 @@ false
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>The thing used to browse it in the thing registration browser is usually a composite of SWT. </p>
+
+<p><strong>Implementation of the viewer</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; The create method of swt needs to be implemented, and the parameter is thing, which is the thing to be browsed. </p>
+
+<p><strong>self</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; If the value is self, then it will call its own view and browse self. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -1093,6 +1121,8 @@ false
   false
   sth_deprecated
   false
+  sen_description
+  <p>If true, the viewing interface will not be displayed in the registered browser. </p>
   sth_mark
   false
   sth_registQueryOnlySelf
@@ -1135,6 +1165,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   排序权重
   sdescription
   <p>排序时的权重，比如显示在树节点中时。</p>
+  sen_label
+  Sort weight
   sdescriptors
   xworker.lang.MetaDescriptor2/@attribute
   sinheritDescription
@@ -1145,6 +1177,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The weight when sorting, such as when displayed in a tree node. </p>
   sth_mark
   false
   sid
@@ -1213,6 +1247,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If things are stored in the file system and loaded through FileThingManager, then whether to monitor. If monitoring, then after the file is externally modified, things will be reloaded. </p>
   sth_mark
   false
   sid
@@ -1258,6 +1294,8 @@ Grouping can be a multi-level, multi-level grouping can be ',' numbers separated
   false
   sth_fileMonitor
   false
+  sen_description
+  <p>If true, it means that the model is no longer recommended and will be cancelled in a future version. </p>
   sth_mark
   false
   sid
@@ -1737,6 +1775,8 @@ return ThingUtils.toJson(self);
     false
     sth_registDisabled
     false
+    sen_description
+    <p>Considering the performance and some unclear points, taking the attribute in org.xmeta.Thing does not take the inherited attribute. This method makes up for the above shortcomings and takes the value of the attribute in org.xmeta.Thing In the future, it may be consistent with the function of this method. </p>
     sth_mark
     false
     sid
@@ -1826,6 +1866,8 @@ return ThingUtils.toJson(self);
     false
     sth_registDisabled
     false
+    sen_description
+    <p>Return the path of all descriptors and successors. </p>
     sth_mark
     false
     sid
@@ -1919,6 +1961,12 @@ return ThingUtils.toJson(self);
     false
     sth_registDisabled
     false
+    Sen_description
+#$@text#$@
+<p>Some functions need to find things through the descriptor, and if one thing implies multiple things at the same time, then more things can be returned through this method. </p>
+
+<p>For example, a thing is a query interface, and there is a query condition form and a result table at the same time. At this time, the query form and the result table are implicit. If the query button event can query the condition form or the result table through the descriptor Things, then the query interface needs to implement this method, and return query condition form things and result form things. </p>
+#$@text#$@
     sth_mark
     false
     sid
@@ -1962,6 +2010,8 @@ return ThingUtils.toJson(self);
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is set as a mark, it will be displayed in the outline tree of the thing. </p>
   sth_mark
   false
   sid
@@ -2028,6 +2078,8 @@ return ThingUtils.toJson(self);
   false
   sth_registDisabled
   false
+  sen_description
+  <p>The color of the node in the summary tree in the editor. </p>
   sth_mark
   false
   sid
@@ -2372,6 +2424,8 @@ return ThingUtils.toJson(self);
   false
   sth_registDisabled
   false
+  sen_description
+  <p>Demonstration waiting time (milliseconds). If it is greater than 0, it will stay at this node and display the document during the demonstration. </p>
   sth_mark
   false
   sid
@@ -2418,6 +2472,21 @@ return ThingUtils.toJson(self);
   false
   sth_fileMonitor
   false
+  Sen_description
+#$@text#$@
+<p>变量定义，提供当前事物模型有那些变量的信息。可以给代码编辑器提供辅助。只是变量定义，执行时并不创建变量。</p>
+
+<p><strong>变量定义的优先级：</strong></p>
+
+<ol>
+	<li>当前事物，以及子事物。</li>
+	<li>父事物，直到根模型。</li>
+	<li>当前事物的描述者和继承。</li>
+	<li>父事物的描述者和继承，直到根模型。&nbsp;&nbsp;&nbsp;</li>
+</ol>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -2547,6 +2616,42 @@ return ThingUtils.toJson(self);
     false
     sth_fileMonitor
     false
+    Sen_description
+#$@text#$@
+<p><strong>The definition of variables, currently supports the following types</strong></p>
+
+<ul>
+<li><strong>object</strong><br />
+For Java objects, the className needs to be specified. <br />
+&nbsp;</li>
+<li><strong>thing</strong><br />
+Thing model, need to specify thing. <br />
+&nbsp;</li>
+<li><strong>actionContainer</strong><br />
+Action container, need to specify thing. &nbsp;&nbsp;<br />
+&nbsp;</li>
+<li><strong>dataObject</strong><br />
+Data object, need to execute thing. <br />
+&nbsp;</li>
+<li><strong>parent</strong><br />
+It is the thing model that defines VariablesDescs. </li>
+</ul>
+
+<p><strong>Methods that can be overridden:</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The parameter thing is generally the current thing. For example, the variable is defined on the class model of an SWT control, and the variable name should be the name of the instance model. At this time, the thing is the instance model. </p>
+
+<ul>
+<li><strong>String getVarName(Thing thing)</strong><br />
+Return the variable name. If the variable name is nul, then the variable definition will not be created. <br />
+&nbsp;</li>
+<li><strong>String getClassName(Thing thing)</strong><br />
+Returns the class name. <br />
+&nbsp;</li>
+<li><strong>Thing&nbsp;getThing(Thing thing)</strong><br />
+Return to the thing model. &nbsp;</li>
+</ul>
+#$@text#$@
     sth_mark
     false
     sid
@@ -2912,6 +3017,8 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      sen_description
+      <p>If the value is _thingName_, then use thing.getMetadata().getName() as the variable name. </p>
       sth_mark
       false
       sid
@@ -2982,6 +3089,12 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      Sen_description
+#$@text#$@
+<p>If it is true, it indicates that it needs to be activated by other methods. </p>
+
+<p>For example, the variable definition of the action is only when the variable is defined and the return value is saved, and it does not take effect at other times. </p>
+#$@text#$@
       sth_mark
       false
       sid
@@ -3027,6 +3140,8 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      sen_description
+      <p>Scope of action. </p>
       sth_mark
       false
       sth_registQueryOnlySelf
@@ -3363,6 +3478,8 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      sen_description
+      <p>Whether the variable is a static class, if it is, then it should be import xxxxx; in the script when the variable is introduced, otherwise it is obtained through actionContext.getObject(&quot;xxx&quot;). </p>
       sth_mark
       false
       sth_registQueryOnlySelf
@@ -3527,6 +3644,19 @@ return ThingUtils.toJson(self);
     false
     sth_fileMonitor
     false
+    Sen_description
+#$@text#$@
+<p>Define multiple variables at once. </p>
+
+<p><strong>Methods to be implemented:</strong></p>
+
+<ul>
+<li><strong>List&lt;VariableDesc&gt; create(Thing thing)</strong><br />
+Create multiple variable definitions. </li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
     sth_mark
     false
     sid
@@ -3714,6 +3844,12 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      Sen_description
+#$@text#$@
+<p>If it is true, it indicates that it needs to be activated by other methods. </p>
+
+<p>For example, the variable definition of the action is only when the variable is defined and the return value is saved, and it does not take effect at other times. </p>
+#$@text#$@
       sth_mark
       false
       sid
@@ -3833,6 +3969,19 @@ return ThingUtils.toJson(self);
     false
     sth_fileMonitor
     false
+    Sen_description
+#$@text#$@
+<p>Match the variable type according to the return value of the thing action. </p>
+
+<p><strong>How things should be implemented:</strong></p>
+
+<ul>
+<li><strong>String getVariableDescType()&nbsp;&nbsp;&nbsp; </strong><br />
+Variable type. </li>
+</ul>
+
+<p>&nbsp;&nbsp;</p>
+#$@text#$@
     sth_mark
     false
     sid
@@ -4059,6 +4208,12 @@ return ThingUtils.toJson(self);
       false
       sth_fileMonitor
       false
+      Sen_description
+#$@text#$@
+<p>If it is true, it indicates that it needs to be activated by other methods. </p>
+
+<p>For example, the variable definition of the action is only when the variable is defined and the return value is saved, and it does not take effect at other times. </p>
+#$@text#$@
       sth_mark
       false
       sid
@@ -4149,6 +4304,8 @@ return ThingUtils.toJson(self);
   false
   sth_fileMonitor
   false
+  sen_description
+  <p>When querying and registering, only include yourself, not including the list of inheritors and descriptions. </p>
   sth_mark
   false
   sid
@@ -4176,6 +4333,12 @@ return ThingUtils.toJson(self);
   false
   sth_registMyChilds
   false
+  Sen_description
+#$@text#$@
+<p>If it is true, it means that it is not an attribute or node of XML, which is applicable to the structure imported from DTD or Schema, and is used when exporting XML. </p>
+
+<p>See the class xworker.xml.XmlUtils. </p>
+#$@text#$@
   sth_mark
   false
   sid

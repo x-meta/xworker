@@ -95,6 +95,63 @@ sth_noThingRegistViewer
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Thread status</h1>
+
+<h2>1. Introduction</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Thread state is used in the model of grammar classes, such as Break, Coninue, Return, Try/Catch, etc. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Syntax models are usually not effective separately. For example, Break and Continue are generally used in a loop, so the Break and Continue models are generally child nodes of the loop model, and these models are called in the loop model. </p>
+
+<h2>2.While model example</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The While model is a loop. The child node is executed during the loop. If the thread state of the variable context is set to BREAK or CONTINUE after the child node is executed, the corresponding processing will be done. The schematic code for the realization of the While model is as follows. </p>
+
+<pre class="brush:java;">
+//Determine whether the conditions of while are met
+while(IfCreator.checkCondition(self, actionContext)){
+        //Execute child node
+for (Thing child: childActions.getChilds()) {
+Action action = world.getAction(child);
+if (action != null) {
+result = action.run(actionContext, null, true);
+}
+
+                //Determine the thread status of the child node
+int sint = actionContext.getStatus();
+if (sint != ActionContext.RUNNING) {
+break;
+}
+}
+
+//Judging the status of the loop
+if (actionContext.getStatus() == ActionContext.BREAK) {
+actionContext.setStatus(ActionContext.RUNNING);
+break;
+} else if (actionContext.getStatus() == ActionContext.CONTINUE) {
+actionContext.setStatus(ActionContext.RUNNING);
+continue;
+} else if (actionContext.getStatus() != ActionContext.RUNNING) {
+break;
+}
+}</pre>
+
+<h2>3.Break model example</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The Break model is used to set the thread status to BREAK. code show as below. </p>
+
+<pre class="brush:java;">
+public class BreakCreator {
+public static void run(ActionContext context){
+        context.setStatus(ActionContext.BREAK);
+    }
+
+}</pre>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf

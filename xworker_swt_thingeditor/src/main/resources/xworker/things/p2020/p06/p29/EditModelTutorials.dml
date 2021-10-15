@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <ShellGuide name="EditModelTutorials" descriptors="xworker.swt.guide.ShellGuide" label="编辑模型"
      en_label="Edit Model" en_group="-20000|Dynamic Model.Edit Model" th_registThing="child|xworker.lang.util.indexs.ShellGuideIndex"
-     group="-20000|动态模型.编辑模型" th_sortWeight="20">
-    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">
-        <Variable name="thingEditor" varName="thingEditor" type="actionContainer" thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions"></Variable>
-    </VariablesDescs>
-    <actions>
-        <getIDEShell name="getMaskComposite" _xmeta_id_="getMaskComposite1" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"></getIDEShell>
-        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"></getIdeActionContext>
-    </actions>
-    <Guide name="init" label="初始化" delay="">
-        <actions>
-            <GroovyAction name="init">
+     group="-20000|动态模型.编辑模型" th_sortWeight="20">&#xd;
+    <VariablesDescs descriptors="xworker.lang.MetaThing/@VariablesDesc">&#xd;
+        <Variable name="thingEditor" varName="thingEditor" type="actionContainer" thing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions"/>&#xd;
+    </VariablesDescs>&#xd;
+    <actions>&#xd;
+        <getIDEShell name="getMaskComposite" _xmeta_id_="getMaskComposite1" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIDEShell"/>&#xd;
+        <getIdeActionContext name="getActionContext" descriptors="xworker.lang.actions.utils.XWorkerActions/@getIdeActionContainer1"/>&#xd;
+    </actions>&#xd;
+    <Guide name="init" label="初始化" en_label="Init">&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init">&#xd;
                 <code><![CDATA[import org.xmeta.Thing;
 import xworker.util.XWorkerUtils;
 
@@ -20,12 +20,12 @@ import xworker.util.XWorkerUtils;
 def thing = new Thing("xworker.swt.widgets.Shell");
 XWorkerUtils.ideOpenThing(thing);
 
-guide.setData("thing", thing);]]></code>
-            </GroovyAction>
-            <ValueFactory name="finished" type="boolean" value="true"></ValueFactory>
-        </actions>
-    </Guide>
-    <Guide name="introduce" label="简介" delay="5000" disablePreButton="true">
+guide.setData("thing", thing);]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <ValueFactory name="finished" type="boolean" value="true"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
+    <Guide name="introduce" label="简介" delay="5000" disablePreButton="true" en_label="Introduction">&#xd;
         <description><![CDATA[<h2>编辑模型</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 本教程将通过示例来演示如何编辑一个模型。</p>
@@ -36,102 +36,137 @@ guide.setData("thing", thing);]]></code>
 
 <p>&nbsp;&nbsp;&nbsp; 模型可用XML来表示，所以模型是树形结构的数据，其中每个节点可以包含多个属性。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 因此，编辑模型就是管理模型的节点以及编辑节点的属性。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="getActiveControl">
+<p>&nbsp;&nbsp;&nbsp; 因此，编辑模型就是管理模型的节点以及编辑节点的属性。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; This tutorial will demonstrate how to edit a model through examples. </p>
+
+<p>&nbsp;&nbsp;&nbsp; This tutorial has created and opened a xworker.swt.widgets.Shell model, we will create a browser to display the home page of XWorker. </p>
+
+<h3>The structure of the model</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The model can be represented by XML, so the model is a tree structured data, where each node can contain multiple attributes. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Therefore, editing the model is to manage the nodes of the model and edit the attributes of the nodes. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="getActiveControl">&#xd;
                 <code><![CDATA[//获取事物的编辑器 
 def thing = guide.getData("thing");
-def editor = workbench.getEditor(thing.getMetadata().getPath());
+def editor = workbench.getEditor("thing:" + thing.getMetadata().getPath());
 
 //设置事物编辑器，让后续可以直接使用
 def thingEditor = editor.getActionContext().get("thingEditor");
 guide.setData("thingEditor", thingEditor);
-return editor.getEditor();]]></code>
-                <Variables>
-                    <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"></GetWorkbench>
-                </Variables>
-            </GroovyAction>
-        </actions>
-    </Guide>
-    <Guide name="editShell" _xmeta_id_="form" label="编辑shell" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@structComposite">
+return editor.getEditor();]]></code>&#xd;
+                <Variables>&#xd;
+                    <GetWorkbench name="workbench" descriptors="xworker.ide.worldexplorer.actions.ExplorerActions/@GetWorkbench"/>&#xd;
+                </Variables>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
+    <Guide name="editShell" _xmeta_id_="form" label="编辑shell" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@structComposite"
+         en_label="Edit Shell">&#xd;
         <description><![CDATA[<h2>编辑Shell节点</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 首先我们来编辑模型的根节点Shell模型，可以看到Shell模型的表单，表单是根据模型的类（描述者）动态生成的。</p>
 
-<p>&nbsp;</p>
-]]></description>
-        <actions>
-            <GroovyAction name="init">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit Shell node</h2>
+
+<p>&nbsp;&nbsp;&nbsp; First, let's edit the shell model of the root node of the model. You can see the form of the Shell model. The form is dynamically generated according to the model's class (descriptor). </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init">&#xd;
                 <code><![CDATA[def thing = guide.getData("thing");
-thingEditor.doAction("selectThing", actionContext, "thing", thing, "refresh", false);]]></code>
-            </GroovyAction>
-            <RefAction name="getActiveControlParent" refActionPath="xworker.things.p2020.p06.p28.EditModleTutorials/@introduce/@actions/@getActiveControl"></RefAction>
-        </actions>
-    </Guide>
+thingEditor.doAction("selectThing", actionContext, "thing", thing, "refresh", false);]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <RefAction name="getActiveControlParent" refActionPath="xworker.things.p2020.p06.p28.EditModleTutorials/@introduce/@actions/@getActiveControl"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="editName" label="编辑名字" delay="5000" activeControlThing="xworker.swt.widgets.Shell/@name"
-         activeControlIsAttribute="true" activeControlClassName="Text">
+         activeControlIsAttribute="true" activeControlClassName="Text" en_label="Edit name">&#xd;
         <description><![CDATA[<h2>模型的名字</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; 设置模型的名字。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="afterInited">
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 设置模型的名字。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>The name of the model</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Set the name of the model. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="afterInited">&#xd;
                 <code><![CDATA[if(activeControl != null){
     activeControl.setText("shell");
-}]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="editName" _xmeta_id_="editName1" label="标题" delay="5000" activeControlThing="xworker.swt.widgets.Shell/@text"
-         activeControlIsAttribute="true" activeControlClassName="Text">
+         activeControlIsAttribute="true" activeControlClassName="Text" en_label="Title">&#xd;
         <description><![CDATA[<h2>设置text属性</h2>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp; Shell的text属性是窗口的标题。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="afterInited">
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Shell的text属性是窗口的标题。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Set the text attribute</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The text attribute of the Shell is the title of the window. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="afterInited">&#xd;
                 <code><![CDATA[if(activeControl != null){
     activeControl.setText("Hello World");
-}]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
-    <Guide name="save" label="保存模型" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@guideButton1">
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
+    <Guide name="save" label="保存模型" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@guideButton1"
+         en_label="Save model">&#xd;
         <description><![CDATA[<h2>保存模型</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 模型编辑器<strong>没有重做和撤销</strong>功能，当需要切换到其它节点或添加子节点时，最好先保存一下。</p>
 
 <p>&nbsp;&nbsp;&nbsp; 也可以通过快捷键Ctrl + s或Alt + s保存模型。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
-]]></description>
-    </Guide>
-    <Guide name="addChildButton" label="添加子节点按钮" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@addChildButton">
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Save the model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The model editor <strong>does not have redo and undo</strong> functions. When you need to switch to other nodes or add child nodes, you'd better save it first. </p>
+
+<p>&nbsp;&nbsp;&nbsp; You can also use the shortcut keys Ctrl + s or Alt + s to save the model. </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
+    <Guide name="addChildButton" label="添加子节点按钮" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@addChildButton"
+         en_label="Add child node button">&#xd;
         <description><![CDATA[<h2>添加子节点</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 现在我们为模型添加两个子节点， 一个是FillLayout，一个是Browser。其中Browser是浏览器控件，FillLayout是窗口的布局，让浏览器控件填满Shell窗口。&nbsp;&nbsp;&nbsp;</p>
 
-<p>&nbsp;&nbsp;&nbsp; 点击添加子节点按钮可以进入添加子节点的界面。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"></GroovyAction>
+<p>&nbsp;&nbsp;&nbsp; 点击添加子节点按钮可以进入添加子节点的界面。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Add child node</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Now we add two child nodes to the model, one is FillLayout and the other is Browser. Among them, Browser is the browser control, and FillLayout is the layout of the window, allowing the browser control to fill the Shell window. &nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp; Click the Add subnode button to enter the interface for adding subnodes. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init" code="thingEditor.doAction(&quot;showFormEditor&quot;, actionContext);"/>&#xd;
             <ExecuteActionContainerAction name="canNext" descriptors="xworker.lang.actions.ActionContainerAction"
-                 actionContainer="var:thingEditor" action="isAddChild" actionContainerThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions"></ExecuteActionContainerAction>
-            <RefAction name="finished" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButton/@actions/@canNext"></RefAction>
-        </actions>
-    </Guide>
+                 actionContainer="var:thingEditor" action="isAddChild" actionContainerThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@actions"/>&#xd;
+            <RefAction name="finished" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButton/@actions/@canNext"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="selectableChilds" _xmeta_id_="selectableChilds2" label="选择FillLayout"
          activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childTreeDescSash"
-         disablePreButton="true" disableNextButton="true">
+         disablePreButton="true" disableNextButton="true" en_label="Choose FillLayout">&#xd;
         <description><![CDATA[<h2>选择FillLayout</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 一个模型可以添加的子节点是由模型的类定义的，在这里列出了可以添加的子节点。</p>
 
-<p>&nbsp;&nbsp;&nbsp; FillLayout模型可以在分组layout中找到，请先选择FillLayout模型。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="finished" _xmeta_id_="afterInited">
+<p>&nbsp;&nbsp;&nbsp; FillLayout模型可以在分组layout中找到，请先选择FillLayout模型。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Select FillLayout</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The child nodes that can be added to a model are defined by the model's class, and the child nodes that can be added are listed here. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The FillLayout model can be found in the group layout, please select the FillLayout model first. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="finished" _xmeta_id_="afterInited">&#xd;
                 <code><![CDATA[//println "xxxxxxxxxxx" + thingEditor;
 def descriptor = world.getThing("xworker.swt.Layouts/@FillLayout");
 def desc = thingEditor.doAction("getAddChildSelectedDescriptor", actionContext);
@@ -139,148 +174,184 @@ if(descriptor == desc){
     return true;
 }else{
     return false;
-}]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="selectableChilds" label="编辑FillLayout" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentComposite"
-         disablePreButton="true">
+         disablePreButton="true" en_label="Edit FillLayout">&#xd;
         <description><![CDATA[<h2>编辑FillLayout</h2>
 
-<p>&nbsp;&nbsp;&nbsp; 选择FillLayout模型后，下面是FillLayout的表单。可以在这里简单编辑，也可以添加子节点后再编辑。</p>
-]]></description>
-    </Guide>
+<p>&nbsp;&nbsp;&nbsp; 选择FillLayout模型后，下面是FillLayout的表单。可以在这里简单编辑，也可以添加子节点后再编辑。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit FillLayout</h2>
+
+<p>&nbsp;&nbsp;&nbsp; After selecting the FillLayout model, the following is the FillLayout form. You can simply edit it here, or you can edit it after adding a child node. </p>]]></en_description>&#xd;
+    </Guide>&#xd;
     <Guide name="addChildButtons" label="添加子节点按钮" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentButtonComposite/@addChildButton"
-         disablePreButton="true" disableNextButton="true">
+         disablePreButton="true" disableNextButton="true" en_label="Add child node button">&#xd;
         <description><![CDATA[<h2>添加FillLayout</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 请点击添<strong>加按</strong>钮添加FillLayout子模型。</p>
 
-<p>&nbsp;</p>
-]]></description>
-        <actions>
-            <GroovyAction name="finished">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Add FillLayout</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Please click the Add<strong>Add</strong> button to add the FillLayout submodel. </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="finished">&#xd;
                 <code><![CDATA[def thing = guide.getData("thing");
 if(thing.getThing("FillLayout@0") == null){
     return false;
 }else{
     return true;
-}]]></code>
-            </GroovyAction>
-            <RefAction name="canNext" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButtons/@actions/@finished"></RefAction>
-        </actions>
-    </Guide>
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <RefAction name="canNext" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButtons/@actions/@finished"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="selectableChilds" _xmeta_id_="selectableChilds1" label="选择Browser"
          activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childTreeDescSash"
-         disablePreButton="true" disableNextButton="true">
+         disablePreButton="true" disableNextButton="true" en_label="Choose Browser">&#xd;
         <description><![CDATA[<h2>选择Browser</h2>
 
 <p>&nbsp;&nbsp;&nbsp; FillLayout子节点添加完毕后，我们现在添加Browser控件。</p>
 
-<p>&nbsp;&nbsp;&nbsp; Browser可以在分组custom中找到。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="finished" _xmeta_id_="afterInited">
+<p>&nbsp;&nbsp;&nbsp; Browser可以在分组custom中找到。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Select Browser</h2>
+
+<p>&nbsp;&nbsp;&nbsp; After adding the FillLayout child nodes, we will now add the Browser control. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Browser can be found in the group custom. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="finished" _xmeta_id_="afterInited">&#xd;
                 <code><![CDATA[def descriptor = world.getThing("xworker.swt.Widgets/@Browser");
 def desc = thingEditor.doAction("getAddChildSelectedDescriptor", actionContext);
 if(descriptor == desc){
     return true;
 }else{
     return false;
-}]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="addChildButtons" _xmeta_id_="addChildButtons1" label="编辑Browser" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentComposite"
-         disablePreButton="true">
+         disablePreButton="true" en_label="Edit Browser">&#xd;
         <description><![CDATA[<h2>编辑Browser</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 可以在这里编辑Browser的属性，也可以在添加Browser节点后再修改。</p>
 
-<p>&nbsp;</p>
-]]></description>
-    </Guide>
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit Browser</h2>
+
+<p>&nbsp;&nbsp;&nbsp; You can edit the attributes of the Browser here, or you can modify it after adding the Browser node. </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+    </Guide>&#xd;
     <Guide name="addChildButtons" _xmeta_id_="addChildButtons11" label="添加Browser" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@addChildSashForm/@childComposite/@childContentButtonComposite/@addChildButton"
-         disablePreButton="true" disableNextButton="true">
+         disablePreButton="true" disableNextButton="true" en_label="Add Browser">&#xd;
         <description><![CDATA[<h2>添加Browser</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 请点击<strong>添加</strong>按钮添加Browser节点。</p>
 
-<p>&nbsp;</p>
-]]></description>
-        <actions>
-            <GroovyAction name="finished">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Add Browser</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Please click the <strong>Add</strong> button to add a Browser node. </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="finished">&#xd;
                 <code><![CDATA[def thing = guide.getData("thing");
 if(thing.getThing("Browser@0") == null){
     return false;
 }else{
     return true;
-}]]></code>
-            </GroovyAction>
-            <RefAction name="canNext" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButtons11/@actions/@finished"></RefAction>
-        </actions>
-    </Guide>
-    <Guide name="editShell" _xmeta_id_="form1" label="编辑Browser" delay="500" disablePreButton="true">
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <RefAction name="canNext" refActionPath="xworker.things.p2020.p06.p29.EditModelTutorials/@addChildButtons11/@actions/@finished"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
+    <Guide name="editShell" _xmeta_id_="form1" label="编辑Browser" delay="500" disablePreButton="true"
+         en_label="Edit Browser">&#xd;
         <description><![CDATA[<h2>编辑Shell节点</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 首先我们来编辑模型的根节点Shell模型，可以看到Shell模型的表单，表单是根据模型的类（描述者）动态生成的。</p>
 
-<p>&nbsp;</p>
-]]></description>
-        <actions>
-            <GroovyAction name="init">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit Shell node</h2>
+
+<p>&nbsp;&nbsp;&nbsp; First, let's edit the shell model of the root node of the model. You can see the form of the Shell model. The form is dynamically generated according to the model's class (descriptor). </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init">&#xd;
                 <code><![CDATA[thingEditor.doAction("showFormEditor", actionContext);
 def thing = guide.getData("thing");
 thing = thing.getThing("Browser@0");
-thingEditor.doAction("selectThing", actionContext, "thing", thing, "refresh", false);]]></code>
-            </GroovyAction>
-            <ValueFactory name="finished" type="boolean" value="true"></ValueFactory>
-        </actions>
-    </Guide>
+thingEditor.doAction("selectThing", actionContext, "thing", thing, "refresh", false);]]></code>&#xd;
+            </GroovyAction>&#xd;
+            <ValueFactory name="finished" type="boolean" value="true"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="editShell" _xmeta_id_="form2" label="设置url" delay="5000" activeControlThing="xworker.swt.browser.Browser/@url"
-         activeControlIsAttribute="true" activeControlClassName="Text" disablePreButton="true">
+         activeControlIsAttribute="true" activeControlClassName="Text" disablePreButton="true"
+         en_label="Set url">&#xd;
         <description><![CDATA[<h2>编辑浏览器的地址</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 现在让我们选择Browser节点，并设置浏览器要打开的地址<a href="https://www.xworker.org">https://www.xworker.org</a>。</p>
 
-<p>&nbsp;</p>
-]]></description>
-        <actions>
-            <RefAction name="getActiveControlParent" refActionPath="xworker.things.p2020.p06.p28.EditModleTutorials/@introduce/@actions/@getActiveControl"></RefAction>
-            <GroovyAction name="afterInited">
+<p>&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Edit browser address</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Now let us select the Browser node and set the address to be opened by the browser <a href="https://www.xworker.org">https://www.xworker.org< /a>. </p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <RefAction name="getActiveControlParent" refActionPath="xworker.things.p2020.p06.p28.EditModleTutorials/@introduce/@actions/@getActiveControl"/>&#xd;
+            <GroovyAction name="afterInited">&#xd;
                 <code><![CDATA[if(activeControl != null){
     activeControl.setText("https://www.xworker.org");
-}]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
+}]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="save" _xmeta_id_="save1" label="保存模型" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@mainSashForm/@editPartComposite/@contentEditComposite/@childContentButtonComposite/@guideButton1"
-         disablePreButton="true">
+         disablePreButton="true" en_label="Save the model">&#xd;
         <description><![CDATA[<h2>保存模型</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 现在示例模型已经编辑完毕，让我们保存模型，也可以通过快捷键Ctrl + s或Alt + s保存模型。</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
-]]></description>
-        <actions>
-            <GroovyAction name="init" code="thingEditor.doAction(&quot;save&quot;, actionContext);"></GroovyAction>
-        </actions>
-    </Guide>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Save the model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Now that the sample model has been edited, let us save the model. You can also save the model through the shortcut keys Ctrl + s or Alt + s. </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init" code="thingEditor.doAction(&quot;save&quot;, actionContext);"/>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
     <Guide name="menu" label="运行菜单" delay="5000" activeControlThing="xworker.ide.worldexplorer.swt.dataExplorerParts.ThingEditor/@rightComposite/@contentComposite/@menuBarComposite/@coolBar/@menuCoolItem/@toolBar"
-         disablePreButton="true">
+         disablePreButton="true" en_label="Run menu">&#xd;
         <description><![CDATA[<h2>运行菜单</h2>
 
 <p>&nbsp;&nbsp;&nbsp; 一些可以执行的模型通常设置了菜单，通过菜单可以执行模型。</p>
 
-<p>&nbsp;&nbsp;&nbsp; 比如要执行本示例Shell模型，首先选择根节点Shell模型，然后选择菜单SWT-&gt;运行。</p>
-]]></description>
-        <actions>
-            <GroovyAction name="init">
+<p>&nbsp;&nbsp;&nbsp; 比如要执行本示例Shell模型，首先选择根节点Shell模型，然后选择菜单SWT-&gt;运行。</p>]]></description>&#xd;
+        <en_description><![CDATA[<h2>Run menu</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Some executable models usually have a menu, and the model can be executed through the menu. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, to execute this example Shell model, first select the root node Shell model, and then select the menu SWT->Run. </p>]]></en_description>&#xd;
+        <actions>&#xd;
+            <GroovyAction name="init">&#xd;
                 <code><![CDATA[//选择根节点
 def thing = guide.getData("thing");
 thingEditor.doAction("selectThing", actionContext, "thing", thing);
-thingEditor.doAction("openThing", actionContext, "thing", thing);]]></code>
-            </GroovyAction>
-        </actions>
-    </Guide>
+thingEditor.doAction("openThing", actionContext, "thing", thing);]]></code>&#xd;
+            </GroovyAction>&#xd;
+        </actions>&#xd;
+    </Guide>&#xd;
 </ShellGuide>

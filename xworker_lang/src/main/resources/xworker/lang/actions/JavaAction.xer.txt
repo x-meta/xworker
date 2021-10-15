@@ -74,8 +74,46 @@ sth_registMyChilds
 false
 sth_registDisabled
 false
-sen_description
-<p>Java action.</p>
+Sen_description
+#$@text#$@
+<p><strong>JavaAction</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; The role of JavaAction is to execute Java code, JavaAction is a basic action, and other types of action models are finally interpreted and executed by JavaAction. </p>
+
+<p><strong>Method of calling Java</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; is achieved by calling Java methods. </p>
+
+<ul>
+<li><strong>Java method with fixed parameters</strong><br />
+Such as: public static String run(ActionContext actionContext), the parameter is fixed to ActionContext, and the return value type and whether it is static is not limited. <br />
+&nbsp;</li>
+<li><strong>Java method with multiple parameters</strong><br />
+Because sometimes the parameter name cannot be obtained correctly through transmission, and the parameter name is taken from the variable context, it needs to be explained by annotations, such as the following example:<br />
+<strong>@ActionParams(names=&quot;p1,p2,p3&quot;)</strong><br />
+public static String run(Object p1,&nbsp;String p2,&nbsp; int p3, ActionContext actionContext)<br />
+If the last parameter is ActionContext, you don't need to explain it in the comments. <br />
+&nbsp;</li>
+<li><strong>Non-static method</strong><br />
+When a non-static method is executed, there must be an object to which it belongs, so the following annotations are required. <br />
+<strong>@ActionClass(creator=&quot;xxx&quot;)</strong>, optional, for classes, creator is used to specify a method of instantiating an object, the method of instantiating an object must be static and the parameter must be ActionCotnext . <br />
+<strong>@ActionField(name=&quot;xxx&quot;)</strong>, for attributes, mark the xxx variable from the variable context to assign a value to it before executing the called method. </li>
+</ul>
+
+<p><strong>External Java</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; refers to a Java class in a Java project or packaged in a class library. This method is commonly used. </p>
+
+<p><strong>Internal Java</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; refers to the Java code written under the manager of the current thing model. It is rarely used, and it hasn't been tested for a long time whether the function is still normal. </p>
+
+<p><strong>Java code</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Write Java code directly in the current model. It is rarely used, and it hasn't been tested for a long time whether the function is still normal. </p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+#$@text#$@
 sth_mark
 false
   @/@name
@@ -299,6 +337,12 @@ false
   Reference outer Java
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>Whether it is a Java class under a class library, such as a java class compiled and packaged in a jar. </p>
+
+<p>You can only choose between using external Java and using internal Java, or you can choose neither. If you don’t choose either, you can write the Java code directly in the code attribute of the model. </p>
+#$@text#$@
   sid
   useOuterJava
   @/@useInnerJava
@@ -354,6 +398,16 @@ false
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>If internal Java is used, then the Java source code is placed with the thing, and the directory of the thing manager is the path of the Java source code. </p>
+
+<p>You can only choose between using external Java and using internal Java, or you can choose neither. If you don’t choose either, you can write the Java code directly in the code attribute of the model. </p>
+
+<p><strong>Note:</strong></p>
+
+<p>Only valid for file type transaction manager. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -395,6 +449,8 @@ false
   Referenced Class Name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>It needs to be filled in when using external Java or internal Java, if the Java code is directly written into this transaction, it is not necessary. </p>
   sid
   outerClassName
   @/@className
@@ -422,6 +478,8 @@ false
   Class Name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>The name of the Java class represented by the code. Such as: User. </p>
   sid
   className
   @/@methodName
@@ -459,6 +517,8 @@ false
   Method Name
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  sen_description
+  <p>The name of the method to be called. </p>
   sid
   methodName
   @/@disableGlobalContext
@@ -676,6 +736,8 @@ false
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If true, you can use the freemarker template in the attributes, and the attributes with the template will be generated into specific attributes before the action is executed. </p>
   sth_mark
   false
   sid

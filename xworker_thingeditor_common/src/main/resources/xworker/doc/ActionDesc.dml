@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="ActionDesc" descriptors="xworker.content.QuickContent" label="动作" type="thingDesc"
      group="dynamicModel.-990|Actions" groupDescriptor="true" icon="icons/html.png" th_sortWeight="-990"
-     simpleBrowser="true" en_label="Action" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     simpleBrowser="true" en_label="Action" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>动作</h1>
 
 <h2>1.简介</h2>
@@ -187,10 +187,190 @@ public class Thing{
      }
 }</pre>
 
-<p>&nbsp;</p>
-]]></description>
+<p>&nbsp;</p>]]></description>&#xd;
     <en_description><![CDATA[<h1>Action</h1>
 
-<p>&nbsp;&nbsp;&nbsp; Actions are models that can be executed as methods and functions, and the behavior of objects is defined by actions.</p>
-]]></en_description>
+<h2>1. Introduction</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The model is data like XML, the data itself cannot be run directly, and the action is to make the model an executable method, so that the dynamic model truly becomes a programming method. </p>
+
+<h2>2. The principle of making the model executable</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The execution principle of the model is in <a href="javascript:invoke('action:xworker.swt.xworker.prototype.ThingRegistSelector/@actions/@utilBrowserSelectThing?thing=xworker.doc.dyanmicmodel. DynamicModel')">Dynamic Model</a> has been introduced in the documentation, and I will explain it in detail here. </p>
+
+<h3>2.1. The model is interpreted and executed</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The model itself is data. When a model is executed, it is actually executing an interpreter program, which can process model data. For example, to execute the code: &quot;return x + y;&quot;, the code itself is data, which can be represented by a model. To make it execute, it is necessary to write a program to interpret and execute this section of &quot;return x + y;&quot; Code. When the interpreter is executed, it is equivalent to &quot;return x&nbsp;+ y;&quot; this code is executed. </p>
+
+<h3>2.2. Loop interpretation and execution</h3>
+
+<p>&nbsp;&nbsp;&nbsp; If you realize that code can be data, and interpreting and executing code data can be equivalent to code execution, then you can design an execution method for any model. </p>
+
+<ol>
+<li>First assume that any model is executable. If you want to run a model, you can turn it into an action. The action is actually a method named run (the model is also an object and has its own behavior). </li>
+<li>The method whose model name is run is also a model. To run the model with the run method, run its run method as well. </li>
+<li>The above is an iterative process. If you want the iteration to be terminated, there are some models that do not need to execute its run method, but are directly interpreted and executed by the engine. </li>
+</ol>
+
+<p>&nbsp;&nbsp;&nbsp; The above is the principle of making the model executable. In fact, the execution of any model is iterated to the meta-system (the system that implements the dynamic model). For example, the dynamic model of XWorker is written in Java, which means that it is a Java program, and the final execution is the execution of Java code. </p>
+
+<h3>2.3. Solve the limitations of the action model</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Since the models are ultimately interpreted and executed by the meta-system (the system that implements the dynamic model), there is a question whether the interpreter on the existing meta-system can interpret and execute arbitrary Model? To solve this problem, the following methods can generally be used. </p>
+
+<h4>2.3.1. Writing grammatical action models</h4>
+
+<p>&nbsp;&nbsp;&nbsp; Various grammatical action models can be written. Various grammars of Java can be encapsulated into corresponding action models, such as try/catch, while and other action models. </p>
+
+<p>&nbsp;&nbsp;&nbsp; You can write grammatical action models, which means that you can build new programming languages ​​with models. When you have a programming language written with models, you can theoretically use the model to explain and execute any model. NS. However, in actual programming, it is recommended to use Java to write the action model, which is convenient for debugging and has high performance. </p>
+
+<h4>2.3.2. Use script-like action models</h4>
+
+<p>&nbsp;&nbsp;&nbsp; You can use the script-like action model, and you can run the script through the script-like model, and the script can be written and run at any time. Script models such as Groovy, Js, BeanShell, Lua, etc. </p>
+
+<h3>2.4. Acquisition order of behavior</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Since the behavior of a model object can be defined in the model object itself, it can also be inherited from its class and other objects, so if both itself and the class define actions with the same name, then the object should use specific Which one of them? </p>
+
+<p>&nbsp;&nbsp;&nbsp; The order of obtaining the object behavior is as follows, if it is obtained, it will not be obtained later. </p>
+
+<ol>
+<li>Get from self-defined behavior. </li>
+<li>Get from the behavior defined by its descriptor (class) itself. </li>
+<li>Get from the behavior defined by other objects it inherits. </li>
+<li>Acquired from the behavior inherited by its descriptor (class). </li>
+<li>Acquired from the behavior inherited from other objects it inherits. </li>
+</ol>
+
+<h2>3. The realization of the action</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Use the schematic code to explain how the action is implemented. </p>
+
+<h3>3.1. Convert to action</h3>
+
+<pre class="brush:java;">
+import org.xmeta.Action;
+import org.xmeta.Thing;
+
+//Thing is the model
+Thing thing = ......;
+
+//Action is an action, the model can be transformed into an action
+Action action = thing.getAction();</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The schematic code of getAction(). </p>
+
+<pre class="brush:java;">
+package org.xmeta;
+
+public class Thing{
+     public Action getAction(){
+         return new Action(this);
+     }
+}</pre>
+
+<h3>3.2. Perform actions</h3>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+
+Object result = action.run(new ActionContext());</pre>
+
+<p>&nbsp;&nbsp;&nbsp; You can call the run() method of the action to execute it, which requires the parameter ActionContext, which is the context of the action execution, used to manage the variable stack and thread state, etc. &nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp; The implementation code of the run() method is as follows. </p>
+
+<pre class="brush:java;">
+package org.xmeta;
+
+public class Action{
+    public Object run(ActionContext actionContext){
+        //Model when converted to action
+        Thing thing = getThing();
+        
+        //thingName is the type name of the model
+        if(&quot;JavaAction&quot;.equlas(thing.getThingName()){
+             //Execute the Java method specified by the model. Here is the end of the iteration
+             return javaMethod.invoke(actionContext);
+        }else{
+             //Get the run method of the model
+             Thing runThing = thing.getActionThing(&quot;run&quot;);
+             //Convert the run method into action execution. Iterations are formed here
+             return runThing.getAction().run(actionContext);
+        }
+    }
+}</pre>
+
+<h2>4. The purpose of the action</h2>
+
+<h3>4.1. Can be used as functions and methods</h3>
+
+<pre class="brush:java;">
+import org.xmeta.Action;
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+//Get actions from the model
+Thing thing = ...;
+Action action = thing.getAction();
+
+//Perform an action
+ActionContext actionContext = new ActionContext();
+Object result = actionContext.run(actionContext);
+
+//Pass the parameter execution, the parameter is passed in by name
+Object result = actionContext.run(actionContext, &quot;x&quot;, 1, &quot;y&quot;, 2);
+</pre>
+
+<h3>4.2. Can be executed as an object behavior</h3>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+//Get model
+Thing thing = ...;
+
+ActionContext actionContext = new ActionContext();
+
+//Execute its behavior
+Object result = thing.doAction(&quot;run&quot;, actionContext);
+
+//Perform its behavior, pass in parameters
+Object result = thing.doAction(&quot;run&quot;, actionContext, &quot;x&quot;, 1, &quot;y&quot;, 2);</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The principle of executing object behavior is shown in the following code. </p>
+
+<pre class="brush:java;">
+import org.xmeta.ActionContext;
+import org.xmeta.Thing;
+
+public class Thing{
+     public Object doActin(String name, ActionContext actionContext, Object ... params){
+         //Get the definition of the action model
+         Thing actionThing = getActionThing(name);
+         //Convert to action
+         Action action = actionThing.getAction();
+
+         //Convert the parameters to Map
+         Map&lt;String, Object&gt; paramsMap = UtilMap.toMap(params);
+         
+         //Create to give variable stack
+         Bindings bindings = actionContext.push();
+         try{
+              //Put the parameters
+              bindings.putAll(paramsMap);
+              //Put in yourself
+              bindings.put(&quot;self&quot;, this);
+
+              //implement
+              return action.run(actionContext);
+         }finally{
+             //Pop up the variable stack and appear in pairs with push()
+             actionContext.pop();
+         }
+     }
+}</pre>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

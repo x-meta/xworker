@@ -73,6 +73,39 @@ sth_fileMonitor
 false
 sth_deprecated
 false
+Sen_description
+#$@text#$@
+<p>Use the actions defined by Groovy scripts. </p>
+
+<p><strong>Script</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Groovy script is compiled into groovy.lang.Script, and it is also running. If you write ordinary Java classes in Groovy, you can try to call it with JavaAction. </p>
+
+<p><strong>Variable Management</strong></p>
+
+<p>&nbsp;&nbsp;&nbsp; Variable declaration, custom variables in Groovy scripts should be declared through def. Variables used directly without declaration will be stored in the global variable stack of the variable context, which may cause variable pollution. </p>
+
+<p>&nbsp;&nbsp;&nbsp; You can directly use the variables in the variable context, and you need to manage the variables in the variable context yourself. Default variable in variable context:</p>
+
+<ul>
+<li><strong>actionContext: ActionContext</strong><br />
+The variable context itself. <br />
+&nbsp;</li>
+<li><strong>world: World</strong><br />
+The org.xmeta.World object, the general container of the thing model. </li>
+</ul>
+
+<p><strong>How to write Groovy scripts</strong></p>
+
+<ul>
+<li><strong>Use external Groovy</strong><br />
+Groovy scripts written and compiled outside of XWorker. </li>
+<li><strong>Use internal Groovy</strong><br />
+*.Groovy script file written in the transaction manager of the current transaction. </li>
+<li><strong>Code</strong><br />
+Groovy script written directly in the action. </li>
+</ul>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf
@@ -507,6 +540,12 @@ public class GetActionClass {
   false
   sdescriptors
   xworker.lang.MetaDescriptor3/@attribute
+  Sen_description
+#$@text#$@
+<p>The output range of the variable. </p>
+<p>The script may contain some global variables of the script. The global variables of these scripts can be output to which variable range through the varScope parameter. If you select Local, then output to the current action variable range, if you select Global, then output In the global variable range (the underlying variable range of ActionContext), if the input is an action path, then output to the variable range of the corresponding action, if it is a number, then input to the specified variable range, a positive number means counting from 0, a negative number Means counting down from the top. </p>
+<p>The default variable output scope of Groovy script is global. </p>
+#$@text#$@
   sid
   varScope
     @/@varScope/@Local
@@ -566,6 +605,8 @@ public class GetActionClass {
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If an action is a global context action, it should be prohibited, otherwise it will cause an infinite recursive loop. </p>
   sth_mark
   false
   sid
@@ -607,6 +648,8 @@ public class GetActionClass {
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is not empty, it means that the Groovy code is written outside of XWorker and has been compiled into a Java class. It may be packaged into a jar after compilation. Here you need to execute the full name of the Groovy class. </p>
   sth_mark
   false
   sid
@@ -654,6 +697,14 @@ public class GetActionClass {
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>If it is not empty, it means that the Groovy code is written in the transaction management of the current thing, which means that the Groovy code is not written in the Groovy action. </p>
+
+<p><strong>Attention</strong></p>
+
+<p>Only FileThingManager can put Groovy scripts in the form of files under the thing manager, and no other thing managers have this function. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -775,6 +826,12 @@ public class GetActionClass {
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>The child nodes under Variables will be executed separately as actions, and the execution result of the action will be put into the variable context as a variable, where the variable name is the name of the action. </p>
+
+<p>The scope of the variables created is limited to the execution of GroovyAction. </p>
+#$@text#$@
   sth_mark
   false
   sid

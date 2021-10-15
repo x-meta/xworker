@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="NettyDocument" descriptors="xworker.content.QuickContent" label="netty"
      type="thingDesc" group="xworker.netty" groupDescriptor="true" icon="icons/html.png"
-     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>Netty</h1>
 
 <p>&nbsp;&nbsp;&nbsp; 本文假设你已掌握了Netty的基本知识。</p>
@@ -96,6 +96,99 @@ if(msg.action == &quot;regist&quot;){
 
 <p>&nbsp;</p>
 
+<p>&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Netty</h1>
+
+<p>&nbsp;&nbsp;&nbsp; This article assumes that you have mastered the basic knowledge of Netty. </p>
+
+<h2>1.Server</h2>
+
+<h3>1.1. Models and Java classes</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The Netty server model is <strong>xworker.netty.NettyServer</strong>, and the corresponding Java class is <strong>xworker.io.netty.NettyServer</strong>. </p>
+
+<p>&nbsp;&nbsp;&nbsp; A server model generally has only one Java object instance. </p>
+
+<h3>1.2. Common methods</h3>
+
+<ul>
+<li><strong>NettyServer start()</strong><br />
+Start the server. <br />
+&nbsp;</li>
+<li><strong>NettyServer close()</strong><br />
+Shut down the server. </li>
+</ul>
+
+<h2>2.Client</h2>
+
+<h3>2.1. Models and Java classes</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Netty's client model is xworker.netty.NettyClient, and the corresponding Java class is xworker.io.netty.NettyClient. </p>
+
+<p>&nbsp;&nbsp;&nbsp; A client model can have one or more Java object instances. </p>
+
+<h3>2.2. Common methods</h3>
+
+<ul>
+<li><strong>NettyClient connect()</strong><br />
+	connect to the server. <br />
+&nbsp;</li>
+<li><strong>NettyClient close()</strong><br />
+Close the connection. </li>
+</ul>
+
+<h2>3.Netty User Guide</h2>
+
+<h3>3.1. Receive messages</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Use your own ChannelHandler to process the received message, such as adding a ChannelInboundHandler after decoding the message, and rewriting channelRead(Session session, Object msg), and processing the received message in the channelRead method . </p>
+
+<p>&nbsp;&nbsp;&nbsp; The above methods are valid for both the server and the client. </p>
+
+<h3>3.2. Send message</h3>
+
+<h4>3.2.1. Client</h4>
+
+<p>&nbsp;&nbsp;&nbsp; Clients can send messages through the NettyClient.sendMessage(Object message) method. If NettyClient is not connected, a ChannelException will be thrown. </p>
+
+<h4>3.2.2. Server side</h4>
+
+<p>&nbsp;&nbsp;&nbsp; The server sends messages through the Session, and can cache the Session in channelRead. For example, when the user logs in and registers, the Session is cached according to the user ID, and the Session is obtained from the cache by the user ID later, and Session.setMessage is called The (Object message) method sends a message. If the Session is closed, etc., an IOException will be thrown. </p>
+
+<h3>3.3. Simple session management on the server side</h3>
+
+<p>&nbsp;&nbsp;&nbsp; XWorker provides a simple server-side session management, which can group sessions and send messages to a group. </p>
+
+<p>&nbsp;&nbsp;&nbsp; such as the following sample code:</p>
+
+<pre class="brush:groovy;">
+import java.text.SimpleDateFormat;
+def sf = new SimpleDateFormat(&quot;HH:mm:ss&quot;);
+
+if(msg.action == &quot;regist&quot;){
+    session.setSessionId(msg.name);
+    
+    msg.put(&quot;from&quot;, &quot;System&quot;);
+    msg.put(&quot;time&quot;, sf.format(new Date()));
+    msg.put(&quot;message&quot;, session.getSessionId() + &quot; has registed!&quot;);
+    session.getSessionManager().sendMessageToGroup(&quot;all&quot;, msg);
+}else if(msg.action == &quot;sendMessage&quot;){
+    msg.put(&quot;from&quot;, session.getSessionId());
+    msg.put(&quot;time&quot;, sf.format(new Date()));
+    if(msg.to == &quot;all&quot;){
+        session.getSessionManager().sendMessageToGroup(&quot;all&quot;, msg);
+    }else{
+        session.getSessionManager().sendMessage(msg.to, msg);
+    }
+}</pre>
+
 <p>&nbsp;</p>
-]]></description>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

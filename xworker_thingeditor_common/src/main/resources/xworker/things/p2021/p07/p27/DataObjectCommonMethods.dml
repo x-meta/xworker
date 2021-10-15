@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="DataObjectCommonMethods" descriptors="xworker.content.QuickContent" label="数据对象需要实现的方法"
      type="thingDesc" group="xworker.dataobject" icon="icons/html.png" th_sortWeight="-9990"
-     simpleBrowser="true" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     simpleBrowser="true" en_label="The method that the data object needs to implement"
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>数据对象需要实现的方法</h1>
 
 <p>&nbsp;&nbsp;&nbsp; 是指数据模型需要实现的方法，可以根据需要实现相关方法。</p>
@@ -128,6 +129,131 @@
 
 <p>&nbsp;</p>
 
+<p>&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Methods that data objects need to implement</h1>
+
+<p>&nbsp;&nbsp;&nbsp; refers to the method that the data model needs to implement, and you can implement related methods as needed. </p>
+
+<h2>1. Variables may be used</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Variables that may be used in data object methods. </p>
+
+<h3>1.1.theData</h3>
+
+<p>&nbsp;&nbsp;&nbsp; When performing methods such as create, update, and delete, theData object represents the current data object. </p>
+
+<ul>
+<li><strong>Primary key and its value</strong><br />
+Object[][] keys = theData.getMetadata().getKeyAndDatas();<br />
+There are multiple primary keys. For the nth primary key, the type of keys[n][0] is Thing, which is the attribute definition of the primary key, keys[n][1] is the value of the primary key, and the type is Object. <br />
+If keys=null or keys.length=0, then the entire table may be updated or deleted. This is a risky operation, and the data object should prompt or throw an exception. <br />
+&nbsp;&nbsp;</li>
+<li><strong>Dirty fields</strong><br />
+String[] dirtyFields = theData.getMetadata().getDirtyFields();<br />
+List of dirty field names. Dirty fields are modified fields. &nbsp;</li>
+</ul>
+
+<h3>1.2.queryConfig</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Query configuration, queryConfig commonly used attributes are as follows. </p>
+
+<ul>
+<li><strong>condition: Condition</strong><br />
+The query condition, including the value of the query condition. You can generate SQL conditional statements, or determine whether a data object meets the conditions. <br />
+&nbsp;</li>
+<li><strong>pageInfo: PageInfo</strong><br />
+Paging information. There is always paging, and the default paging size is 100. If you don't want paging, you should set limit (page size) to 0 or -1. <br />
+&nbsp;</li>
+<li><strong>orders: List&lt;Order&gt;</strong><br />
+Sort the list. <br />
+&nbsp;</li>
+<li><strong>groups: List&lt;Group&gt;</strong><br />
+Group list. <br />
+&nbsp;</li>
+<li><strong>projections: List&lt;Projection&gt;</strong><br />
+Aggregate list. Not currently used. </li>
+</ul>
+
+<h2>2. The method that the data object needs to implement</h2>
+
+<h3>2.1.DataObject doLoad(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Loading a data object is generally based on the input and the value of the primary key of the data object (theData). </p>
+
+<h3>2.2.DataObject doCreate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Insert data. For example, the database data object corresponds to the insert statement. </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Should only insert the value of the dirty field, the returned data object is the latest value of the data object after insertion. If the primary key is self-increasing, the value of the primary key before insertion is generally null, and the data object returned after the insertion must contain the value of the latest primary key. </p>
+
+<h3>2.3.int doUpdate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Modify the data and return the number of modified rows. If the database data object corresponds to the update statement, the actual number of rows modified is returned. </p>
+
+<p>&nbsp;&nbsp;&nbsp; When updating, the condition is the primary key, and the field to be modified is a dirty field. </p>
+
+<h3>2.4.int doDelete(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Delete data based on the value of the primary key, and return the number of deleted rows. For example, the database data object corresponds to the delete statement. </p>
+
+<h3>2.5.List&lt;DataObject&gt; doQuery(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Query data objects and return a list of data objects that meet the conditions. If there is paging information, you need to set the relevant attribute values ​​of pageInfo. &nbsp;&nbsp;</p>
+
+<h3>2.5.int updateBatch(DataObject theData, QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Update data in batches, the dirty field of theData is the field to be updated, and queryConfig provides query conditions. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Note that abnormal full table updates should be avoided. </p>
+
+<h3>2.6.int deleteBatch(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Batch delete, queryConfig provides query conditions. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Note that abnormal deletion of the entire table should be avoided. </p>
+
+<h3>2.7 DataObjectIterator iterator(QueryConfig queryConfig)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Returns an iterator based on the query conditions. It can avoid loading all query results at one time, and is suitable for traversal operations of large quantities of data. After the execution is completed, the close() method should be called to close the resource. </p>
+
+<h2>3. Methods related to the editor</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Generally used for data mapping tools. Such as quickly mapping the fields of the database table and so on. </p>
+
+<h3>3.1. boolean isMappingAble()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Whether to support mapping. </p>
+
+<h3>3.2. List&lt;Map&lt;String, Object&gt;) getMappingFields()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Returns a list of fields that can be mapped. Map generally contains the following fields. </p>
+
+<ul>
+<li><strong>colName</strong><br />
+Field name. </li>
+<li><strong>colTitle</strong><br />
+The label of the field. </li>
+<li><strong>size</strong><br />
+The size of the field. </li>
+<li><strong>type</strong><br />
+The type of the field. </li>
+</ul>
+
+<h3>3.3. String getMappingAttributeName()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The attribute name in the attribute model used to store the mapped field name. For example, DbDataObject is used to map database tables, and the field names in the database table are placed in the filedName property of the DbDataObject property model. </p>
+
+<h3>3.4. String getAttributeDescriptor()</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The path of the class model of the attribute model. </p>
+
+<h2>4. Other methods</h2>
+
+<h3>4.1. ValidateResult validate(DataObject theData)</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Check the data. Generally used for form verification, such as whether a field can be empty, etc. ValidateResult contains a list of fields. If the list of fields in ValidateResult is empty, it indicates that the verification is successful, and if there are fields, it indicates that the field has failed to verify. For fields that have failed validation, the field name and prompt information need to be added to the ValidateResult. </p>
+
 <p>&nbsp;</p>
-]]></description>
+
+<p>&nbsp;</p>]]></en_description>&#xd;
 </QuickContent>

@@ -91,6 +91,75 @@ snotXmlAttribute
 false
 sjson_isArray
 false
+Sen_description
+#$@text#$@
+<p><strong>thing form</strong></p>
+
+<p>The input form is created by the descriptor, and the rules are the same as the XWorker editor form and the DataObject form. </p>
+
+<p>For related documents of the thing form, please refer to <a href="do?sc=xworker.orgweb.ModuleWeb/@index&amp;menuPath=xworker.orgweb.toturial.ToturialModule/@examples/@descriptor">thing form</a> , Or <a href="http://www.xworker.org/do?sc=xworker.orgweb.ModuleWeb/@index&amp;menuPath=xworker.orgweb.toturial.ToturialModule/@examples/@descriptor">XWorker website< /a>. </p>
+
+<p><strong>Variable context and related variables</strong></p>
+
+<p>The thing form will create an independent variable context. The attribute controls in the form are all in the new variable context. For the variables in the variable context of the form itself, please refer to <a href="do?sc=xworker.orgweb.ModuleWeb /@index&amp;menuPath=xworker.orgweb.toturial.ToturialModule/@examples/@descriptor">thing form</a>, or <a href="http://www.xworker.org/do?sc=xworker. orgweb.ModuleWeb/@index&amp;menuPath=xworker.orgweb.toturial.ToturialModule/@examples/@descriptor">XWorker website</a>. </p>
+
+<p>After the thing form is created, the main Composite is returned. The variables saved in the current variable context are form things (Thing), and the form can be manipulated through the form things (Thing). </p>
+
+<p><strong>Data saved in the thing form</strong></p>
+
+<pre>
+Thing form = new Thing(&quot;xworker.swt.xworker.ThingForm&quot;);
+form.setData(&quot;formThing&quot;, self);&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //Original form things
+form.setData(&quot;parent&quot;, composite);&nbsp;&nbsp;&nbsp; //Main Composite, the main container of the form
+form.setData(&quot;actionContext&quot;, ac);&nbsp;&nbsp;&nbsp;&nbsp; //New variable context, form's own variable context</pre>
+
+<p><strong>Main method of form</strong></p>
+
+<ul>
+<li><strong>void setDescriptor(Thing descriptor)</strong><br />
+Set up a new descriptor and re-layout the form. <br />
+&nbsp;</li>
+<li><strong>void setThing(Thing thing)</strong><br />
+Set up a new thing to be edited, automatically generate a form based on the thing, and fill the form with the data of the thing itself. <br />
+&nbsp;</li>
+<li><strong>void setValues(Object values)</strong><br />
+For form assignment, values ​​can be Map&lt;String, Object&gt; or other objects, and the value of the attribute can be obtained through Ognl. <br />
+&nbsp;</li>
+<li><strong>void setPartialValues(Object values)</strong><br />
+Assign values ​​to some attributes of the form, and the parameters are of type Map&lt;String, Object&gt;. <br />
+&nbsp;</li>
+<li><strong>Map&lt;String, Object&gt; getValues()</strong><br />
+Get the value of the form, the return type is Map&lt;String, Object&gt;. <br />
+&nbsp;</li>
+<li><strong>boolean validate()</strong><br />
+Check the form and return true/false. <br />
+&nbsp;</li>
+<li><strong>void setVariablesActionContext(ActionContext variablesActionContext)</strong><br />
+Set the variable context required for the code editor auxiliary tool to display the variable type. <br />
+&nbsp;</li>
+<li><strong>Thing getFormThing()</strong><br />
+Create a new thing based on the current form and return it, where the descriptor uses the form's presenter, and the value is the value of the current form. </li>
+</ul>
+
+<p><strong>Monitoring methods that can be implemented</strong></p>
+
+<ul>
+<li><strong>void modified(Event event)</strong><br />
+If the form is modified. <br />
+&nbsp;</li>
+<li><strong>void defaultSelection(Event event)</strong><br />
+The event is selected by default. </li>
+</ul>
+
+<p><strong>Methods that can be overridden</strong></p>
+
+<ul>
+<li><strong>Thing getThing()</strong><br />
+Return to the thing to be edited. </li>
+</ul>
+
+<p>&nbsp;</p>
+#$@text#$@
   @/@actions
   sname
   actions
@@ -191,6 +260,8 @@ false
     <p>设置数据对象，可以是数据对象或者数据对象的结构。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Set the data object, which can be a data object or the structure of a data object. </p>
     sid
     setDataObject
       @/@actions/@setDataObject/@ins
@@ -242,6 +313,8 @@ false
     <p>设置表单的数据。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Set the data of the form. </p>
     sid
     setValues
       @/@actions/@setValues/@ins
@@ -293,6 +366,8 @@ false
     <p>设置表单的部分数据。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Set some data of the form. </p>
     sid
     setPartialValues
       @/@actions/@setPartialValues/@ins
@@ -344,6 +419,8 @@ false
     <p>获得表单数据。返回的是Map格式的数据。</p>
     sdescriptors
     xworker.lang.actions.JavaAction
+    sen_description
+    <p>Get form data. What is returned is the data in Map format. </p>
     sid
     getValues
       @/@actions/@getValues/@outs
@@ -631,6 +708,8 @@ return formContext.get(name + "Input");
         false
         sth_registDisabled
         false
+        sen_description
+        <p>Enter the name of the control. </p>
         sth_mark
         false
         sid
@@ -945,6 +1024,8 @@ formContext.g().put("variablesActionContext", actionContext.get("variablesAction
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If it is not empty, edit this item after the form is opened. </p>
   sth_mark
   false
   sid
@@ -992,6 +1073,8 @@ formContext.g().put("variablesActionContext", actionContext.get("variablesAction
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If the thing attribute is empty, then this thing can be used as the descriptor used to create the form interface, and the form data is the default. </p>
   sth_mark
   false
   sid
@@ -1029,6 +1112,8 @@ formContext.g().put("variablesActionContext", actionContext.get("variablesAction
   false
   sth_registDisabled
   false
+  sen_description
+  <p>-1 or less than 1 is the default. </p>
   sth_mark
   false
   sid
@@ -1067,6 +1152,11 @@ formContext.g().put("variablesActionContext", actionContext.get("variablesAction
   false
   sth_registDisabled
   false
+  Sen_description
+#$@text#$@
+<p>BaseParams provides initial parameters for the DataStore such as the drop-down list in the form, and must be of the Map type. </p>
+<p>When the controls in the form are linked, the fields in the basic parameters will be covered by the same fields in the form. </p>
+#$@text#$@
   sth_mark
   false
   sid
@@ -1558,6 +1648,8 @@ if(actionContext.get("thing") != null){
   false
   sth_registDisabled
   false
+  sen_description
+  <p>If the attribute description thing is empty, then this child thing can be used as the descriptor of the creation form. </p>
   sth_mark
   false
   sid

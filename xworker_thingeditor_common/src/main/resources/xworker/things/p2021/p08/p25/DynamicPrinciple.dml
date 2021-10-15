@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="DynamicPrinciple" descriptors="xworker.content.QuickContent" label="动态模型的原理"
      type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="200" simpleBrowser="true"
-     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     en_label="Principles of dynamic models" th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>动态模型原理</h1>
 
 <h2>1.概要</h2>
@@ -68,6 +68,71 @@
 <pre class="brush:xml;">
 &lt;JavaAction name=&quot;run&quot; useOuterJava=&quot;true&quot; outerClassName=&quot;test.HelloWorld&quot; methodName=&quot;run&quot;/&gt;</pre>
 
-<p>&nbsp; &nbsp; 比如上面的模型（XML）执行时并不需要执行它的run方法，它是由引擎直接执行的，引擎会根据它的属性定义执行Java类test.HelloWorld的run()方法。</p>
-]]></description>
+<p>&nbsp; &nbsp; 比如上面的模型（XML）执行时并不需要执行它的run方法，它是由引擎直接执行的，引擎会根据它的属性定义执行Java类test.HelloWorld的run()方法。</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>Principle of dynamic model</h1>
+
+<h2>1. Summary</h2>
+
+<p>&nbsp; &nbsp; The dynamic model uses structured data programming, which has two core problems. </p>
+
+<ol>
+<li><strong>How to use data to represent various things</strong><br />
+The dynamic model uses an object-oriented approach. <br />
+&nbsp;</li>
+<li><strong>How to make data an executable program</strong><br />
+The dynamic model adopts the method of iterative interpretation and execution. </li>
+</ol>
+
+<h2>2. Object-oriented</h2>
+
+<h3>2.1. Basic Ideas</h3>
+
+<p>&nbsp; &nbsp; To interpret data as objects, we can assign different roles to the data as needed. </p>
+
+<h3>2.2. Models and things</h3>
+
+<p>&nbsp; &nbsp; The dynamic model first assumes that the data can represent various things, so at this time we call it things (Thing) and models. Things refer to what the data represents, and models refer to the data itself. </p>
+
+<p>&nbsp; &nbsp; In the dynamic model, the data is in a tree structure. The dynamic model treats each tree node as an independent model, and a tree node can contain attributes and sub-nodes. Therefore, a model is composed of attributes and sub-nodes. Nodes (sub-models) are made up. </p>
+
+<h3>2.3. Action</h3>
+
+<p>&nbsp; &nbsp; Because we finally want to realize programming with data, that is, the final data must be able to run as a program. For this goal, we can first assume that any data is executable. At this time, we call data an action, and any model or thing can be transformed into an action. </p>
+
+<p>&nbsp;&nbsp;&nbsp; In actual implementation, actions are equivalent to methods and functions. </p>
+
+<h3>2.4. Object</h3>
+
+<p>&nbsp; &nbsp; Since a model can contain attributes and sub-models (the definition of 2.2), and any model can be executed (the assumption of 2.3), some child nodes of a model can be regarded as its behavior, which can Think of a model as an object. </p>
+
+<p>&nbsp; &nbsp; Actions are equivalent to methods and functions. When an action belongs to an object and the object can call the action, the action can be regarded as the behavior of the object. </p>
+
+<h3>2.5. Descriptor</h3>
+
+<p>&nbsp; &nbsp; The descriptor is a model used to describe the model, and the descriptor can also be regarded as a class of the model, used to describe the structure and behavior of the model. In a dynamic model, the descriptor of a model can be any model, and the model inherits the behavior of the descriptor. </p>
+
+<h3>2.6. Inheritance</h3>
+
+<p>&nbsp; &nbsp; In a dynamic model, a model can inherit any model other than itself, thereby inheriting the behavior of the inherited model. </p>
+
+<h3>2.7. Object-oriented</h3>
+
+<p>&nbsp; &nbsp; Above, the object-oriented method is actually implemented. </p>
+
+<h2>3. Realization of dynamic model</h2>
+
+<p>&nbsp; &nbsp; The core of implementing dynamic model programming is how to interpret and execute a model. </p>
+
+<ol>
+<li>In 2.2. above, it is assumed that any model can be transformed into actions for execution. The specific execution method is to use the model as an object, and to execute the object is the run method. </li>
+<li>The run method of the model is still the model (see 2.4, Use the child nodes of the model to define the behavior of the model), so execute the run method and return to step 1.</li>
+<li>The above is a recursive method. If the recursion is to be terminated, some models are directly executed by the engine. </li>
+</ol>
+
+<p>&nbsp; &nbsp; The above is how to execute a model. For example, the dynamic model engine of XWorker is implemented in Java, and the model named JavaAction is directly executed by the engine, that is, the execution of JavaAction does not need to execute its run method, but is directly interpreted and executed by the engine. </p>
+
+<pre class="brush:xml;">
+&lt;JavaAction name=&quot;run&quot; useOuterJava=&quot;true&quot; outerClassName=&quot;test.HelloWorld&quot; methodName=&quot;run&quot;/&gt;</pre>
+
+<p>&nbsp; &nbsp; For example, the above model (XML) does not need to execute its run method when it is executed. It is executed directly by the engine, and the engine will execute the run() of the Java class test.HelloWorld according to its attribute definition. method. </p>]]></en_description>&#xd;
 </QuickContent>

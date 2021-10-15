@@ -136,6 +136,102 @@ sth_noThingRegistViewer
 false
 sth_fileMonitor
 false
+Sen_description
+#$@text#$@
+<h1>Use variables</h1>
+
+<p>&nbsp;&nbsp;&nbsp; Some knowledge and skills related to the use of variables in the context of actions. </p>
+
+<h2>1. Special variables</h2>
+
+<p>&nbsp;&nbsp;&nbsp; These special variables should maintain their agreed usage, and do not change their usage at will. </p>
+
+<h3>1.1.actionContext</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Usually the action context puts itself as a variable in itself, where the variable name is actionContext, see the following ActionContext constructor for the code. </p>
+
+<pre class="brush:java;">
+public class ActionContext{
+    public ActionContext(){
+        this.put(&quot;actionContext&quot;, this);
+    }
+}</pre>
+
+<p>&nbsp;&nbsp;&nbsp; So it is its own to get the actionContext variable in the action context. The purpose of setting the actionContext variable is to get the action context correctly in some script models, because the user may need to use the action context object itself. </p>
+
+<h3>1.2.parentContext</h3>
+
+<p>&nbsp;&nbsp;&nbsp; parentContext is the parent action context, and the parentContext variable may not exist. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Its occasion is generally used for variable isolation. For example, to call other actions in an action, in order to avoid possible variable confusion, you can create a new variable context, and set the current variable context as the parentContext variable in the new variable context. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Setting the parentContext requires the user to operate by himself, as shown in the following code. </p>
+
+<pre class="brush:java;">
+public static Object doSomeThing(ActionContext actionContext){
+     ActionContext context = new ActionContext();
+     context.put(&quot;parentContext&quot;, actionContext);
+
+     ......
+}</pre>
+
+<h3>1.3.world</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The instance of the engine (org.xmeta.World), the action context always contains this variable. </p>
+
+<h2>2. Use variables in the script model</h2>
+
+<p>&nbsp;&nbsp;&nbsp; In some scripting models (refer to the documentation of the scripting model), such as the GroovyAction model, variables can be used directly without getting the variables through the action context. </p>
+
+<p>&nbsp;&nbsp;&nbsp; For example, if there is a variable named name in the action context, it can be used directly in the Groovy script as follows. </p>
+
+<pre class="brush:groovy;">
+//Use the name variable directly
+println name;</pre>
+
+<h2>3. Clearly set variables</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Avoid setting variables directly through the ActionContext.put() method, but first obtain the desired stack layer, and then set the variable through the stack layer. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The main methods of obtaining the stack layer are as follows:</p>
+
+<pre class="brush:groovy;">
+import org.xmeta.Bindings;
+
+//Get global variable stack
+Bindings bindings = actionContext.g();
+
+//Get the local variable stack, which may be null
+Bindings bindings = actionConext.l();
+
+//Get the top stack layer
+Bindings bindings = actionContext.peek();
+
+//Get the pressed stack layer
+Binding bindings = actionContext.push(null);
+try{
+}finally{
+    actionContext.pop();
+}</pre>
+
+<h2>4. Variable isolation</h2>
+
+<p>&nbsp;&nbsp;&nbsp; Why do we need variable isolation? It's because we generally don't know what variables are in the action context. </p>
+
+<p>&nbsp;&nbsp;&nbsp; Because actions are equivalent to functions and methods, actions can call other actions in actions, and each action can modify the action context and set its variables. In this way, after n actions, the dynamic model does not have a strict and clear variable declaration method, so it is difficult to know which variables are in the action context. </p>
+
+<p>&nbsp;&nbsp;&nbsp; I don’t know what variables are in the action context. This seems to be a serious problem, but it won’t cause too much problem in actual programming, but to ensure that variables are used in certain situations There will be no problems with management. At this time, attention needs to be paid to the isolation of variables. </p>
+
+<p>&nbsp;&nbsp;&nbsp; The basic method of variable isolation is to declare a new action context to execute the target action. For example, in the interface model, after each model node is executed, an interface control object will be created in the action context. When one interface is opened on another interface, in order to prevent the new interface variables from overwriting the current interface variables, new actions will be used Context to open a new interface. </p>
+
+<p>&nbsp;&nbsp;&nbsp; In short, variable isolation is something that needs attention. </p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;</p>
+
+<p>&nbsp;</p>
+#$@text#$@
 sth_mark
 false
 sth_registQueryOnlySelf

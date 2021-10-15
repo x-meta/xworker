@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 
 <QuickContent name="ThingLoaderDoc" descriptors="xworker.content.QuickContent" label="ThingLoader"
      type="thingDesc" group="dynamicModel" icon="icons/html.png" th_sortWeight="10" simpleBrowser="true"
-     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">
+     th_createIndex="true" th_registThing="child|xworker.example.ExamplesIndex">&#xd;
     <description><![CDATA[<h1>ThingLoader</h1>
 
 <h2>1.作用</h2>
@@ -134,6 +134,131 @@ object.init();</pre>
 
 <p>&nbsp;</p>
 
-<p>&nbsp;</p>
-]]></description>
+<p>&nbsp;</p>]]></description>&#xd;
+    <en_description><![CDATA[<h1>ThingLoader</h1>
+
+<h2>1. Role</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;ThingLoader is used for mutual calls between Java code and models. </p>
+
+<h3>1.1. Difficulties and solutions of Java code calling model</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The difficulty of Java code calling model refers to calling a special model, such as SWT and JavaFX interface class models, these models usually agree to have a create method, when the create method is executed, the interface The model creates a large number of Java objects, and it is difficult to write Java code because it is not possible to know which variables are available through the action context when writing the code. </p>
+
+<p>&nbsp;&nbsp;&nbsp; In order to solve this problem, you can use ThingLoader. </p>
+
+<ul>
+<li><strong>Generate Java code using available variable tools</strong><br />
+Through the code assist tool of the model, here specifically refers to the menu <strong>Tools->Available variables</strong> in the model editor. This tool can be used to select variables and generate variable-related codes with @ActionField annotations . <br />
+&nbsp;</li>
+<li><strong>Use ThingLoader to load the model</strong><br />
+ThingLoader executes the create method of the model, looks for the field annotated with @ActionField in the Java object, and then automatically takes the value from the variable context and assigns the value to the field. </li>
+</ul>
+
+<h3>1.2. Trouble with model calling Java</h3>
+
+<p>&nbsp;&nbsp;&nbsp; Models generally only support calling Java static methods, so how to call methods of specific object instances in the model? It can also be achieved through ThingLoader, but the implementation of the corresponding model is required. </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;The principle is that when ThingLoader loads the model, it will pass in an object, which will be placed in ThreadLocal, and then the object can be obtained in the model’s create method, so that the model can use it Object. </p>
+
+<h2>2. Example</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The sample model is an SWT window, in which there is a browser that displays the home page of XWorker, and there is a close button, click it to close the window. </p>
+
+<h3>2.2. Calling the model in Java code</h3>
+
+<h4>2.2.1. Model code</h4>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;shell&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;SwtExample&quot; label=&quot;SwtExample&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Browser name=&quot;browser&quot;&gt;
+        &lt;GridData name=&quot;GridData&quot; style=&quot;FILL_BOTH&quot;&gt;&lt;/GridData&gt;
+    &lt;/Browser&gt;
+    &lt;Composite name=&quot;buttonComposite&quot;&gt;
+        &lt;GridData name=&quot;buttonCompositeGridData&quot; style=&quot;FILL_HORIZONTAL&quot;
+             horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+        &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot;&gt;&lt;/RowLayout&gt;
+        &lt;Button name=&quot;closeButton&quot; text=&quot;lang:d=Close&amp;amp;en=Close&quot;&gt;
+            &lt;RowData name=&quot;RowData&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
+            &lt;Listeners&gt;
+                &lt;Listener name=&quot;closeButtonSelection&quot; methodName=&quot;close&quot;&gt;&lt;/Listener&gt;
+            &lt;/Listeners&gt;
+        &lt;/Button&gt;
+    &lt;/Composite&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp; The above is the SWT model. The SWT model has a create method. After the create method is executed, a corresponding Java object is usually created. The name of the Java application model is saved as a variable name in the global variable stack. . </p>
+
+<h4>2.2.2.Java object code</h4>
+
+<pre class="brush:java;">
+package xworker.examples.lang.thingloader;
+
+import org.xmeta.annotation.ActionField;
+
+public class SwtExample {
+    @ActionField
+    public org.eclipse.swt.browser.Browser browser;
+    @ActionField
+    public org.eclipse.swt.widgets.Button closeButton;
+    @ActionField
+    public org.eclipse.swt.widgets.Shell shell;
+
+    public void init(){
+        browser.setUrl(&quot;https://www.xworker.org&quot;);
+    }
+
+    public void close(){
+        shell.dispose();
+    }
+}</pre>
+
+<h4>2.2.3. Use ThingLoader to load the model</h4>
+
+<pre class="brush:groovy;">
+import org.xmeta.util.ThingLoader;
+
+//Get model
+Thing thing = world.getThing(&quot;xworker.example.lang.thingloader.SwtExample&quot;);
+
+//Instantiate the Java object
+SwtExample object = new SwtExample();
+
+//Load the model, execute the create method of the model, and finally assign values ​​to the field annotated by the ActionField of the object
+Shell shell = ThingLoader.load(object, thing, actionContext);
+
+//Other Java code, such as calling the method initialization of the Java object
+object.init();</pre>
+
+<h3>2.3. Call Java code in the model</h3>
+
+<pre class="brush:xml;">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+
+&lt;Shell name=&quot;SwtExample2&quot; descriptors=&quot;xworker.swt.widgets.Shell&quot; text=&quot;SwtExample&quot;&gt;
+    &lt;GridLayout name=&quot;GridLayout&quot;&gt;&lt;/GridLayout&gt;
+    &lt;Browser name=&quot;browser&quot;&gt;
+        &lt;GridData name=&quot;GridData&quot; style=&quot;FILL_BOTH&quot;&gt;&lt;/GridData&gt;
+    &lt;/Browser&gt;
+    &lt;ThingLoader name=&quot;swtExample&quot; init=&quot;true&quot; objectForLoadClass=&quot;xworker.examples.lang.thingloader.SwtExample&quot;&gt;
+        &lt;Composite name=&quot;buttonComposite&quot;&gt;
+            &lt;GridData name=&quot;buttonCompositeGridData&quot; style=&quot;FILL_HORIZONTAL&quot;
+                 horizontalAlignment=&quot;END&quot;&gt;&lt;/GridData&gt;
+            &lt;RowLayout name=&quot;buttonCompositeRowLayout&quot; &gt;&lt;/RowLayout&gt;
+            &lt;Button name=&quot;closeButton&quot; text=&quot;lang:d=Close&amp;amp;en=Close&quot;&gt;
+                &lt;RowData name=&quot;RowData&quot; width=&quot;80&quot;&gt;&lt;/RowData&gt;
+                &lt;Listeners&quot;&gt;
+                    &lt;Listener name=&quot;closeButtonSelection&quot; methodName=&quot;close&quot;&gt;&lt;/Listener&gt;
+                &lt;/Listeners&gt;
+            &lt;/Button&gt;
+        &lt;/Composite&gt;
+    &lt;/ThingLoader&gt;
+&lt;/Shell&gt;</pre>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;Calling Java objects in the model uses the ThingLoader model. The ThingLoader model can call an existing object, or instantiate an object through the class name (must have a default constructor), ThingLoader can The public void init() method of the object is executed, and the Java object obtained or created by ThingLoader is saved in the global variable context. </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The Java code here is the same as the above <strong>SwtExample.java, <a href="javascript:invo]]></en_description>&#xd;
 </QuickContent>
